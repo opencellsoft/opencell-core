@@ -564,7 +564,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     }
 
     @Override
-    public void updateCfValues(CustomFieldValues cfValues) {
+    public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 

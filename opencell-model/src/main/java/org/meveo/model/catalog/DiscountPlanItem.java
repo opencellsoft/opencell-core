@@ -312,7 +312,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     }
 
     @Override
-    public void updateCfValues(CustomFieldValues cfValues) {
+    public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 

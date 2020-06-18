@@ -93,7 +93,6 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
             if(customFieldEntity.isDirtyCF()) {
             	List<String> propertyNamesList = Arrays.asList(propertyNames);
             	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
-            	customFieldEntity.clearDirtyCF();
             }
         }
     	

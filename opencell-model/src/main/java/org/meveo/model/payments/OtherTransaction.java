@@ -471,7 +471,7 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     }
 
     @Override
-    public void updateCfValues(CustomFieldValues cfValues) {
+    public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 

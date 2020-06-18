@@ -70,16 +70,6 @@ public class EntityManagerProvider {
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
     
-
-    
-    /*  
-    @PostConstruct
-    protected void init() {
-        SessionFactoryImpl sessionFactory = emf.unwrap(SessionFactoryImpl.class);
-        EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
-        registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(listener);
-    }*/
-
     /**
      * Instantiates an Entity manager for use CDI injection. Will consider a tenant that currently connected user belongs to.
      * 
