@@ -19,6 +19,7 @@
 package org.meveo.api.dto.billing;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 
@@ -40,6 +41,9 @@ public class OneShotChargeInstanceDto extends BusinessEntityDto {
     private BigDecimal quantity;
     private BigDecimal amountWithoutTax;
     private BigDecimal amountWithTax;
+    
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
     public OneShotChargeInstanceDto() {
         super();
@@ -122,6 +126,14 @@ public class OneShotChargeInstanceDto extends BusinessEntityDto {
 
     public void setStatus(InstanceStatusEnum status) {
         this.status = status;
+    }
+    
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     @Override

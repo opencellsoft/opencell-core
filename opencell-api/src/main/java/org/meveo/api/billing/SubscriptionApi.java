@@ -1881,6 +1881,7 @@ public class SubscriptionApi extends BaseApi {
                 oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             }
 
+            oneShotChargeInstanceDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(oneShotChargeInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
             oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
         }
 

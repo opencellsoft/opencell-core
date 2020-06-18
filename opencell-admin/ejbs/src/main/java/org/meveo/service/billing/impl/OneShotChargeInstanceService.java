@@ -129,6 +129,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         } else {
             oneShotChargeInstance = new TerminationChargeInstance(amoutWithoutTax, amoutWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
         }
+                
         List<WalletTemplate> walletTemplates = null;
 
         // FIXME : this code should not be here
