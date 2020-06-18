@@ -20,6 +20,8 @@ package org.meveo.admin.web.interceptor;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -35,6 +37,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
@@ -60,6 +63,19 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
     @Inject
     private AuditOrigin auditOrigin;
+
+    @Inject
+    private ResourceBundle resourceMessages;
+
+    /**
+     * Unique constraint exception parsing to retrieve fields and values affected by the constraint. Might be Postgres specific.
+     */
+    private static Pattern uniqueConstraintMsgPattern = Pattern.compile(".*violates unique constraint.*\\R*.*: Key \\((.*)\\)=\\((.*)\\).*");
+
+    /**
+     * Check constraint exception parsing to retrieve a constraint name. Might be Postgres specific.
+     */
+    private static Pattern checkConstraintMsgPattern = Pattern.compile(".*violates check constraint \"(\\w*)\".*\\R*.*");
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
@@ -99,17 +115,26 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     StringBuilder builder = new StringBuilder();
                     builder.append("Invalid values passed: ");
                     for (ConstraintViolation<?> violation : ((ConstraintViolationException) cause).getConstraintViolations()) {
-                        builder.append(String.format("    %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(),
-                            violation.getInvalidValue(), violation.getMessage()));
+                        builder.append(
+                            String.format("    %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
                     }
                     message = builder.toString();
                     break;
 
                 } else if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
 
-                	message = ((org.hibernate.exception.ConstraintViolationException)cause).getSQLException().getMessage();
-                    log.error("Database operation was unsuccessful because of constraint violation: "+message);
-                    messageKey = "error.database.constraint.violation";
+                    message = ((org.hibernate.exception.ConstraintViolationException) cause).getSQLException().getMessage();
+
+                    log.error("Database operation was unsuccessful because of constraint violation: " + message);
+
+                    Matcher matcherUnique = uniqueConstraintMsgPattern.matcher(message);
+                    Matcher matcherCheck = checkConstraintMsgPattern.matcher(message);
+                    if (matcherUnique.matches() && matcherUnique.groupCount() == 2) {
+                        message = resourceMessages.getString("commons.unqueFieldWithValue", matcherUnique.group(1), matcherUnique.group(2));
+
+                    } else if (matcherCheck.matches() && matcherCheck.groupCount() == 1) {
+                        message = resourceMessages.getString("error.database.constraint.violationWName", matcherCheck.group(1));
+                    }
                     break;
                 }
                 cause = cause.getCause();

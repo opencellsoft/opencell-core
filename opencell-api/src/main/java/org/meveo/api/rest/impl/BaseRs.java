@@ -19,7 +19,8 @@
 package org.meveo.api.rest.impl;
 
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -78,6 +80,9 @@ public abstract class BaseRs implements IBaseRs {
     protected HttpServletResponse httpServletResponse;
 
     @Inject
+    private ResourceBundle resourceMessages;
+
+    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -86,6 +91,16 @@ public abstract class BaseRs implements IBaseRs {
     protected Provider appProvider;
 
     protected final String RESPONSE_DELIMITER = " - ";
+
+    /**
+     * Unique constraint exception parsing to retrieve fields and values affected by the constraint. Might be Postgres specific.
+     */
+    private static Pattern uniqueConstraintMsgPattern = Pattern.compile(".*violates unique constraint.*\\R*.*: Key \\((.*)\\)=\\((.*)\\).*");
+
+    /**
+     * Check constraint exception parsing to retrieve a constraint name. Might be Postgres specific.
+     */
+    private static Pattern checkConstraintMsgPattern = Pattern.compile(".*violates check constraint \"(\\w*)\".*\\R*.*");
 
     public ActionStatus index() {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "Opencell Rest API version " + Version.appVersion + " commit " + Version.buildNumber);
@@ -159,39 +174,70 @@ public abstract class BaseRs implements IBaseRs {
                 log.error("Failed to execute API", e);
             }
 
-            String message = e.getMessage();
             MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
-            Throwable cause = e;
 
             // See if can get to the root of the exception cause
-            if (!(e instanceof BusinessException)) {
-                cause = e.getCause();
-                while (cause != null) {
+            String message = e.getMessage();
+            String messageKey = null;
+            boolean validation = false;
+            Throwable cause = e;
+            while (cause != null) {
 
-                    if (cause instanceof SQLException || cause instanceof BusinessException || cause instanceof ConstraintViolationException) {
-
-                        if (cause instanceof ConstraintViolationException) {
-                            ConstraintViolationException cve = (ConstraintViolationException) (cause);
-                            Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-                            message = "";
-                            for (ConstraintViolation<?> cv : violations) {
-                                message += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-                            }
-                            message = message.substring(0, message.length() - 1);
-                            errorCode = MeveoApiErrorCodeEnum.INVALID_PARAMETER;
-                        } else {
-                            message = cause.getMessage();
-                            errorCode = cause instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
-                        }
-                        break;
+                if (cause instanceof SQLException || cause instanceof BusinessException) {
+                    message = cause.getMessage();
+                    if (cause instanceof ValidationException) {
+                        validation = true;
+                        messageKey = ((ValidationException) cause).getMessageKey();
                     }
-                    cause = cause.getCause();
+                    break;
+
+                } else if (cause instanceof ConstraintViolationException) {
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("Invalid values passed: ");
+                    for (ConstraintViolation<?> violation : ((ConstraintViolationException) cause).getConstraintViolations()) {
+                        builder.append(
+                            String.format("    %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
+                    }
+                    message = builder.toString();
+                    errorCode = MeveoApiErrorCodeEnum.INVALID_PARAMETER;
+                    break;
+
+                } else if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
+
+                    message = ((org.hibernate.exception.ConstraintViolationException) cause).getSQLException().getMessage();
+
+                    log.error("Database operation was unsuccessful because of constraint violation: " + message);
+
+                    Matcher matcherUnique = uniqueConstraintMsgPattern.matcher(message);
+                    Matcher matcherCheck = checkConstraintMsgPattern.matcher(message);
+                    if (matcherUnique.matches() && matcherUnique.groupCount() == 2) {
+                        message = resourceMessages.getString("commons.unqueFieldWithValue", matcherUnique.group(1), matcherUnique.group(2));
+                        errorCode = MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION;
+
+                    } else if (matcherCheck.matches() && matcherCheck.groupCount() == 1) {
+                        message = resourceMessages.getString("error.database.constraint.violationWName", matcherCheck.group(1));
+                        errorCode = MeveoApiErrorCodeEnum.INVALID_PARAMETER;
+
+                    } else {
+                        errorCode = MeveoApiErrorCodeEnum.INVALID_PARAMETER;
+                    }
+                    break;
                 }
+                cause = cause.getCause();
+            }
+
+            if (validation && messageKey != null) {
+                message = resourceMessages.getString(messageKey);
+
+            } else if (message == null) {
+                message = e.getClass().getSimpleName();
             }
 
             status.setErrorCode(errorCode);
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(message);
+
         }
 
         handleErrorStatus(status);
