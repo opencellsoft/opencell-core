@@ -18,6 +18,7 @@
 
 package org.meveo.interceptor;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
@@ -26,6 +27,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.service.audit.AuditableFieldConfiguration;
 import org.meveo.service.audit.AuditableFieldService;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,5 +99,21 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
     public void afterTransactionCompletion(Transaction tx) {
         //Called after a transaction is committed or rolled back.
         auditableFieldService.resetChangedEntities();
+    }
+    
+    @Override
+    public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+
+    	int[] dirtyProps = super.findDirty(entity, id, currentState, previousState, propertyNames, types);
+    	
+    	if(entity instanceof ICustomFieldEntity) {
+        	ICustomFieldEntity customFieldEntity = (ICustomFieldEntity) entity;
+            if(customFieldEntity.isDirtyCF()) {
+            	List<String> propertyNamesList = Arrays.asList(propertyNames);
+            	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
+            }
+        }
+    	
+		return dirtyProps;
     }
 }
