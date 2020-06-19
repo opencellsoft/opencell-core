@@ -21,7 +21,7 @@ import javax.ejb.ApplicationException;
 
 
 @ApplicationException(rollback=true)
-public class IncorrectChargeTemplateException extends BusinessException {
+public class IncorrectChargeTemplateException extends ValidationException {
 	private static final long serialVersionUID = 1L;
 
 	public IncorrectChargeTemplateException(String message) {
