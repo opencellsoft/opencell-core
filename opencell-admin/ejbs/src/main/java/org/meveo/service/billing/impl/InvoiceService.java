@@ -3696,7 +3696,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
-        return assignInvoiceNumber(invoice, false);
+        return invoiceService.assignInvoiceNumber(invoice, false);
     }
 
     /**
@@ -3706,7 +3706,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
-        return assignInvoiceNumber(invoice, true);
+        return invoiceService.assignInvoiceNumber(invoice, true);
     }
 
     /**
@@ -3717,7 +3717,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("deprecation")
-    private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
