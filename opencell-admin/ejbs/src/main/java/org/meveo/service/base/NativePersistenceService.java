@@ -17,6 +17,31 @@
  */
 package org.meveo.service.base;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -47,18 +72,6 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.*;
-import java.util.Date;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -551,9 +564,10 @@ public class NativePersistenceService extends BaseService {
      */
     public int remove(String tableName, Long id) throws BusinessException {
         this.deletionService.checkTableNotreferenced(tableName, id);
+        Map<String, Object> values = findById(tableName, id);
         int nrDeleted = getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
         if (nrDeleted > 0) {
-            entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
+            entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, values, NotificationEventTypeEnum.REMOVED));
         }
         return nrDeleted;
     }
@@ -567,8 +581,15 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Set<Long> ids) throws BusinessException {
-        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
-        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
+        int nrDeleted = 0;
+        for (Long id : ids) {
+            nrDeleted = nrDeleted + remove(tableName, id);
+        }
+        return nrDeleted;
+
+        // TODO. Here could be a check that if no notification exist, delete it in batch mode
+//        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
+//        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**

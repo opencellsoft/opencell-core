@@ -18,7 +18,23 @@
 
 package org.meveo.admin.exception;
 
-public class ExistsRelatedEntityException extends BusinessException {
+public class ExistsRelatedEntityException extends ValidationException {
 
     private static final long serialVersionUID = -6868672182563855750L;
+
+    /**
+     * Constructs a new exception
+     */
+    public ExistsRelatedEntityException() {
+        super();
+    }
+
+    /**
+     * Constructs a new exception with the specified detail message
+     * 
+     * @param message The detail message
+     */
+    public ExistsRelatedEntityException(String message) {
+        super(message);
+    }
 }

@@ -15822,6 +15822,85 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="17d1c58e-95d5-4001-b8bd-2c647834a10d" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
+      <con:endpoint>http://Alexander:8080/opencell/NotificationWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="ccada34b-7996-4d94-b7f5-b00e8deade44" isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="baa02538-652a-4344-9510-5eb8213895d5" isOneWay="false" action="" name="createNotification" bindingOperationName="createNotification" type="Request-Response" outputName="createNotificationResponse" inputName="createNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="92e24af2-6e53-4a64-b896-29da6726fb34" isOneWay="false" action="" name="createOrUpdateEmailNotification" bindingOperationName="createOrUpdateEmailNotification" type="Request-Response" outputName="createOrUpdateEmailNotificationResponse" inputName="createOrUpdateEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="85f2f0e0-12a1-4533-89a9-4ae158e5b528" isOneWay="false" action="" name="createOrUpdateNotification" bindingOperationName="createOrUpdateNotification" type="Request-Response" outputName="createOrUpdateNotificationResponse" inputName="createOrUpdateNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="285e9242-4312-4289-ab0b-71328c54a8e6" isOneWay="false" action="" name="createOrUpdateWebHookNotification" bindingOperationName="createOrUpdateWebHookNotification" type="Request-Response" outputName="createOrUpdateWebHookNotificationResponse" inputName="createOrUpdateWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d562fcaa-fb3e-483b-8608-74490f29f31f" isOneWay="false" action="" name="createWebHookNotification" bindingOperationName="createWebHookNotification" type="Request-Response" outputName="createWebHookNotificationResponse" inputName="createWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a5973fe2-03b1-471f-8678-0c1edb165e7f" isOneWay="false" action="" name="findEmailNotification" bindingOperationName="findEmailNotification" type="Request-Response" outputName="findEmailNotificationResponse" inputName="findEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5096aa24-4095-450c-b057-5748c67565f3" isOneWay="false" action="" name="findNotification" bindingOperationName="findNotification" type="Request-Response" outputName="findNotificationResponse" inputName="findNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8255cd05-1f72-4cd6-861f-4ba307b73352" isOneWay="false" action="" name="findWebHookNotification" bindingOperationName="findWebHookNotification" type="Request-Response" outputName="findWebHookNotificationResponse" inputName="findWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="57452456-b817-49b7-aaeb-02c044686639" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e3ca3603-25b2-47f6-9180-d13ccd785231" isOneWay="false" action="" name="listInboundRequest" bindingOperationName="listInboundRequest" type="Request-Response" outputName="listInboundRequestResponse" inputName="listInboundRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e5645481-b016-4b70-a084-01206939399b" isOneWay="false" action="" name="listNotificationHistory" bindingOperationName="listNotificationHistory" type="Request-Response" outputName="listNotificationHistoryResponse" inputName="listNotificationHistory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f754fa4b-c0b7-4004-bd5a-134aa5619328" isOneWay="false" action="" name="removeEmailNotification" bindingOperationName="removeEmailNotification" type="Request-Response" outputName="removeEmailNotificationResponse" inputName="removeEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a33dd52a-18c4-46fe-a18c-2504b31af898" isOneWay="false" action="" name="removeNotification" bindingOperationName="removeNotification" type="Request-Response" outputName="removeNotificationResponse" inputName="removeNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="61b3ba58-3b99-40d1-913c-0e3494271df9" isOneWay="false" action="" name="removeWebHookNotification" bindingOperationName="removeWebHookNotification" type="Request-Response" outputName="removeWebHookNotificationResponse" inputName="removeWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="19e1fdcf-6ac3-4ae1-95bd-0253a39672c8" isOneWay="false" action="" name="updateEmailNotification" bindingOperationName="updateEmailNotification" type="Request-Response" outputName="updateEmailNotificationResponse" inputName="updateEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6a60d7bd-c38f-479d-b8d6-8742925c5a67" isOneWay="false" action="" name="updateNotification" bindingOperationName="updateNotification" type="Request-Response" outputName="updateNotificationResponse" inputName="updateNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8fa3a95e-050a-4180-80eb-34d3fc25add0" isOneWay="false" action="" name="updateWebHookNotification" bindingOperationName="updateWebHookNotification" type="Request-Response" outputName="updateWebHookNotificationResponse" inputName="updateWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="581220c0-2eed-41f2-af2c-d1e9dcd4bef0" isOneWay="false" action="" name="enableWebHookNotification" bindingOperationName="enableWebHookNotification" type="Request-Response" outputName="enableWebHookNotificationResponse" inputName="enableWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="05863e8b-f546-459b-be02-e2b87104ac16" isOneWay="false" action="" name="disableEmailNotification" bindingOperationName="disableEmailNotification" type="Request-Response" outputName="disableEmailNotificationResponse" inputName="disableEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="7c599aff-9f04-483e-83db-df134f244f18" isOneWay="false" action="" name="disableWebHookNotification" bindingOperationName="disableWebHookNotification" type="Request-Response" outputName="disableWebHookNotificationResponse" inputName="disableWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="606f590a-30e2-473a-aaa3-b903b6d40777" isOneWay="false" action="" name="disableNotification" bindingOperationName="disableNotification" type="Request-Response" outputName="disableNotificationResponse" inputName="disableNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6fbf9bcf-de75-4925-b2c3-4b082e6b8778" isOneWay="false" action="" name="enableEmailNotification" bindingOperationName="enableEmailNotification" type="Request-Response" outputName="enableEmailNotificationResponse" inputName="enableEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ceb1a35c-4e6b-4f92-9882-4cb70899ef10" isOneWay="false" action="" name="enableNotification" bindingOperationName="enableNotification" type="Request-Response" outputName="enableNotificationResponse" inputName="enableNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="7ac4d3d1-236f-4d01-a647-b086f07ebe6a" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -24520,7 +24599,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:testSuite id="f9a42275-8cd5-4115-8747-660812819cdd" name="Custom table">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="a3a4f403-e740-43f4-80a9-6e5fc1d5463d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Test" searchProperties="true">
+    <con:testCase id="a3a4f403-e740-43f4-80a9-6e5fc1d5463d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create and search test" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Create custom table - wrong storage type" id="f26f4c79-c2e4-40b6-ab7b-60eee68faed2">
         <con:settings/>
@@ -26508,6 +26587,607 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="55756aff-d1e6-4d34-b282-9335aa7f0800" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Delete notification test" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create custom table 1" id="524d72dc-a988-4ddc-a758-0bfc9a0241de">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Create custom table 1" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createEntityTemplate>\r
+         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_Table_one" name="Custom Table one" description="Custom table one" storeAsTable="true">\r
+            <fields>\r
+               <field code="Prefix" description="Prefix">\r
+                  <fieldType>STRING</fieldType>\r
+               </field>\r
+               <field code="Prefix reference" description="Prefix reference">
+                  <fieldType>STRING</fieldType>
+               </field>
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Append data via API" id="00d19c24-a4ce-47d1-98d3-563163b0f37b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Append data via API" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:appendTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_Table_one">\r
+            <records>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>prefix</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">one</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>prefix_reference</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">any</value>\r
+                     </entry>\r
+                  </values>\r
+               </record>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>prefix</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">two</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>prefix_reference</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">one</value>\r
+                     </entry>\r
+                  </values>\r
+               </record>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>prefix</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">three</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>prefix_reference</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">any</value>\r
+                     </entry>\r
+                  </values>\r
+               </record>\r
+            </records>\r
+         </tableData>\r
+      </ws:appendTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="List data" id="7f170078-ec27-45b7-af72-c81ac476cb4f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="List data" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listTableData>\r
+         <customTableCode>${#Project#entityPrefix}_${#TestSuite#index}_Table_one</customTableCode>\r
+      </ws:listTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="423f040e-0fb7-4b15-aa1d-131e9a042ddb" name="XPath Match">
+              <con:configuration>
+                <path>count(//record)</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a67aca98-e3a6-470d-9405-9ff88a551e8f" name="XPath Match 1">
+              <con:configuration>
+                <path>//totalNumberOfRecords</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create delete notification" id="ac07560d-3b48-4722-adac-28a6021911e6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Create delete notification" id="648bfe89-e15a-4777-bee3-85c7cb8f113e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createNotification>\r
+         <notification code="${#Project#entityPrefix}_${#TestSuite#index}_Notif1">\r
+            <classNameFilter>org.meveo.model.customEntities.CustomEntityInstance</classNameFilter>\r
+            <eventTypeFilter>REMOVED</eventTypeFilter>\r
+            <elFilter>#{event.getCetCode().equalsIgnoreCase('${#Project#entityPrefix}_${#TestSuite#index}_table_one')}</elFilter>\r
+            <scriptInstanceCode>org.meveo.service.script.validation.CheckReferencesWhenDeletingScript</scriptInstanceCode>\r
+            <scriptParams>\r
+               <entry>\r
+                  <key>prefix</key>\r
+                  <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">${#Project#entityPrefix}_${#TestSuite#index}_table_one.prefix_reference</value>\r
+               </entry>\r
+            </scriptParams>\r
+         </notification>\r
+      </ws:createNotification>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad94f33a-7ed2-436d-b38f-282bf5e66663"/>
+            <con:assertion type="Simple Contains" id="474b5607-2a9f-4a65-9b2d-e65bc66ded90" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="09d9ff27-0d90-48ff-bd32-7121bff45be1" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createNotificationResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Valid HTTP Status Codes" id="1a5fa72e-fb51-469f-a97d-0a5176c91b83" name="Valid HTTP Status Codes [200]">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete record one - via search" id="1fc28053-8776-492b-90bf-5302f0b819d6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete record one - via search" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableDataByFilter>\r
+         <customTableCode>${#Project#entityPrefix}_${#TestSuite#index}_table_one</customTableCode>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>prefix</key>\r
+                  <value xsi:type="xs:string">one</value>\r
+               </entry>\r
+            </filters>\r
+         </pagingAndFiltering>\r
+      </ws:removeTableDataByFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e303227f-4c2c-4549-a959-496ce8b0953d" name="XPath Match">
+              <con:configuration>
+                <path>//message</path>
+                <content>Failed to delete. Entity *_table_one/prefix=one is referred from at least the following places: *_table_one.prefix_reference</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete record two - via search" id="c9400051-e7a9-46d4-866d-a18badb5d51b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete record two - via search" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableDataByFilter>\r
+         <customTableCode>${#Project#entityPrefix}_${#TestSuite#index}_table_one</customTableCode>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>prefix</key>\r
+                  <value xsi:type="xs:string">two</value>\r
+               </entry>\r
+            </filters>\r
+         </pagingAndFiltering>\r
+      </ws:removeTableDataByFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="09275a9c-b38a-4f49-bc54-e7338f80c7d8" name="Contains 1">
+              <con:configuration>
+                <token>&lt;nrAffected>1&lt;/nrAffected></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete record one again - via search" id="d2e1ace4-678d-4147-a1b5-b0f460e51775">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete record one again - via search" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableDataByFilter>\r
+         <customTableCode>${#Project#entityPrefix}_${#TestSuite#index}_table_one</customTableCode>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>prefix</key>\r
+                  <value xsi:type="xs:string">one</value>\r
+               </entry>\r
+            </filters>\r
+         </pagingAndFiltering>\r
+      </ws:removeTableDataByFilter>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="09275a9c-b38a-4f49-bc54-e7338f80c7d8" name="Contains 1">
+              <con:configuration>
+                <token>&lt;nrAffected>1&lt;/nrAffected></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete all data" id="36ab7361-bdec-4bcb-879e-09b27d168625">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete all data" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_Table_one"></tableData>\r
+      </ws:removeTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="List data after all delete" id="c2e0bce8-309c-4f20-be50-aba8c8847b11">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="List data after all delete" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listTableData>\r
+         <customTableCode>${#Project#entityPrefix}_${#TestSuite#index}_Table_one</customTableCode>\r
+      </ws:listTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="423f040e-0fb7-4b15-aa1d-131e9a042ddb" name="XPath Match">
+              <con:configuration>
+                <path>count(//record)</path>
+                <content>0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a67aca98-e3a6-470d-9405-9ff88a551e8f" name="XPath Match 1">
+              <con:configuration>
+                <path>//totalNumberOfRecords</path>
+                <content>0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete custom table" id="b824b0c2-42b7-4fe1-a3cd-7226bf4afa0d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete custom table" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeEntityTemplate>\r
+         <code>${#Project#entityPrefix}_${#TestSuite#index}_Table_one</code>\r
+      </ws:removeEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete notification" id="462f3545-a46e-40b8-809c-880bd62e5643">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Delete notification" id="648bfe89-e15a-4777-bee3-85c7cb8f113e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeNotification>\r
+         <notificationCode>${#Project#entityPrefix}_${#TestSuite#index}_Notif1</notificationCode>\r
+      </ws:removeNotification>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad94f33a-7ed2-436d-b38f-282bf5e66663"/>
+            <con:assertion type="Simple Contains" id="474b5607-2a9f-4a65-9b2d-e65bc66ded90" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Valid HTTP Status Codes" id="1a5fa72e-fb51-469f-a97d-0a5176c91b83" name="Valid HTTP Status Codes [200]">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
