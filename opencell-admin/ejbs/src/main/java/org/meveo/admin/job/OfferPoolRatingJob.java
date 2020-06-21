@@ -58,4 +58,34 @@ public class OfferPoolRatingJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.RATING;
     }
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
+
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
+        result.put("nbRuns", customFieldNbRuns);
+
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:1");
+        result.put("waitingMillis", customFieldNbWaiting);
+
+        return result;
+    }
+
 }

@@ -30,15 +30,19 @@ import java.util.concurrent.Future;
 @Stateless
 public class OfferPoolRatingJobBean extends BaseJobBean {
 
-    private String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id)\n" +
+    private static final String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id)\n" +
             "  FROM billing_wallet_operation wo\n" +
             "   INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
             "  WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' AND wo.parameter_2 != 'DEDUCTED_FROM_POOL'";
+            "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' " +
+            "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
 
-    private String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id " +
-            "  FROM cat_offer_template ot WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'";
-
+    private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id\n" +
+            "FROM billing_wallet_operation wo\n" +
+            " INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
+            "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
+            " AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE'\n" +
+            " AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -61,23 +65,29 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
-            BigInteger offersWOsCount = (BigInteger) emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_COUNT_QUERY)
+            BigInteger offersWOsCount = (BigInteger) emWrapper.getEntityManager()
+                    .createNativeQuery(OFFER_OPENED_WO_COUNT_QUERY)
                     .getSingleResult();
 
-            log.info("Nbrs of WOs with offers shared pools to process: {}", offersWOsCount.longValue());
+            log.info("Total of WOs with offers shared pools to check: {}", offersWOsCount.longValue());
             result.setNbItemsToProcess(offersWOsCount.longValue());
 
             @SuppressWarnings("unchecked")
             List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFER_WITH_SHARED_POOL)
                     .getResultList();
 
+            log.info("Nbrs of offers with shared pools to process: {}", offerIds.size());
+            result.setNbItemsToProcess(offersWOsCount.longValue());
+
+            SubListCreator<BigInteger> subListCreator = new SubListCreator<>(offerIds, nbRuns.intValue());
             List<Future<String>> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
-            for (BigInteger offerId : offerIds) {
 
-                futures.add(offerPoolRatingAsync.launchAndForget(offerId.longValue(), result, lastCurrentUser));
+            while (subListCreator.isHasNext()) {
+                futures.add(offerPoolRatingAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
+
                 } catch (InterruptedException e) {
                     log.error("", e);
                 }
