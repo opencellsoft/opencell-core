@@ -98,25 +98,23 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
 	@Override
-    @ActionMethod
+	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null
+		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null || recurringChargeTemplateService.findByCode(entity.getCode()) != null
 				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
 
-        getEntity().getEdrTemplates().clear();
-        getEntity().getEdrTemplates().addAll(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
-        
-        String outcome = super.saveOrUpdate(killConversation);
+		getEntity().setEdrTemplates(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
 
-        if (outcome != null) {
-            return getEditViewName();
-        }
-        return null;
+		String outcome = super.saveOrUpdate(killConversation);
+
+		if (outcome != null) {
+			return getEditViewName();
+		}
+		return null;
 	}
 
 	/**
