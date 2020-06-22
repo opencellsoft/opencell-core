@@ -428,9 +428,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setAccumulator(counterTemplate.getAccumulator());
         counterPeriod.isCorrespondsToPeriod(chargeDate);
         counterPeriod.setAccumulatorType(counterTemplate.getAccumulatorType());
-        counterPeriod.setFilterEl(counterPeriod.getFilterEl());
-        counterPeriod.setKeyEl(counterTemplate.getKeyEl());
-        counterPeriod.setValueEl(counterTemplate.getValueEl());
 
         return counterPeriod;
     }
@@ -791,8 +788,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal previousValue = counterPeriod.getValue();
+        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
         boolean isMultiValuesAccumulator = counterPeriod.getAccumulatorType() != null && counterPeriod.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
-        boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterPeriod.getFilterEl(),walletOperation);
+        boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterTemplate.getFilterEl(),walletOperation);
         if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
             if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
                 value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
@@ -832,10 +831,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return
      */
     private BigDecimal applyMultiAccumulatedValues(CounterPeriod counterPeriod, WalletOperation walletOperation) {
-        BigDecimal value;
-        value = evaluateValueElExpression(counterPeriod.getValueEl(), walletOperation);
+        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
+        BigDecimal value = evaluateValueElExpression(counterTemplate.getValueEl(), walletOperation);
         log.debug("Extract the multi accumulator counter period value {}", value);
-        String key = evaluateKeyElExpression(counterPeriod.getKeyEl(), walletOperation);
+        String key = evaluateKeyElExpression(counterTemplate.getKeyEl(), walletOperation);
         log.debug("Extract the multi accumulator counter period key {}", key);
         if(counterPeriod.getAccumulatedValues() == null){
             Map<String, BigDecimal> accumulatedValues = new HashMap<>();
