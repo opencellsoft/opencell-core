@@ -18,7 +18,7 @@
 
 package org.meveo.admin.exception;
 
-public class InvalidPermissionException extends BusinessException {
+public class InvalidPermissionException extends LoginException {
 
 	/**
 	 * 

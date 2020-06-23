@@ -15,22 +15,32 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-
 package org.meveo.admin.exception;
 
 /**
- * @author Edward P. Legaspi
- **/
-public class JobDoesNotExistsException extends BusinessException {
+ * Unrecoverable exception, which is thrown then application can not work
+ * correctly dues to misconfiguration or environment issues.
+ * 
+ * @author Donatas Remeika
+ * @since Mar 10, 2009
+ */
+public class ConfigurationException extends RuntimeException {
 
-	private static final long serialVersionUID = -2859519167962774523L;
+    private static final long serialVersionUID = 1L;
 
-	public JobDoesNotExistsException() {
+    public ConfigurationException() {
+        super();
+    }
 
-	}
+    public ConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public JobDoesNotExistsException(String jobName) {
-		super("Job with name=" + jobName + " does not exists.");
-	}
+    public ConfigurationException(String message) {
+        super(message);
+    }
 
+    public ConfigurationException(Throwable cause) {
+        super(cause);
+    }
 }

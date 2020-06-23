@@ -23,7 +23,7 @@ package org.meveo.admin.exception;
  * @author R.AITYAAZZA
  *
  */
-public class DuplicateDefaultAccountException extends BusinessException {
+public class DuplicateDefaultAccountException extends ValidationException {
 
 	private static final long serialVersionUID = 1L;
 

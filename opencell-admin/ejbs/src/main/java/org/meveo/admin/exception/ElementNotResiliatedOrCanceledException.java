@@ -21,7 +21,7 @@ import javax.ejb.ApplicationException;
 
 
 @ApplicationException(rollback=true)
-public class ElementNotResiliatedOrCanceledException extends BusinessException {
+public class ElementNotResiliatedOrCanceledException extends ValidationException {
 	private static final long serialVersionUID = 1L;
 
 	public ElementNotResiliatedOrCanceledException(String elementName, String code) {
