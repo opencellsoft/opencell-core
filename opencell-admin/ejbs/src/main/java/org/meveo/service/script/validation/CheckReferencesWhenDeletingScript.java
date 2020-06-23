@@ -1,5 +1,6 @@
 package org.meveo.service.script.validation;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -24,14 +25,15 @@ import org.meveo.service.script.Script;
  * <ul>
  * <li>Create a new 'script type' notification. Specify the following values:</li>
  * <ul>
- * <li>Classname: CustomEntityInstance</li>
- * <li>Event type filter: Remove</li>
- * <li>EL filter: #{event.getCetCode().equalsIgnoreCase('custom entity table name')}
- * <li>Script instance: CheckReferencesWhenDeletingScript</li>
- * <li>Specify the following script parameters:
+ * <li><b>Classname:</b> CustomEntityInstance</li>
+ * <li><b>Event type filter:</b> Removed</li>
+ * <li><b>EL filter:</b> #{event.getCetCode().equalsIgnoreCase('custom entity table name')}
+ * <li><b>Script instance:</b> CheckReferencesWhenDeletingScript</li>
+ * <li><b>Specify the following script parameters:</b>
  * <ul>
  * <li>name - name of the field identifying a record being deleted - usually id, but can be code or any other field</li>
- * <li>value - where the data is being referenced from. Format: &lt;table name&gt;.&lt;field name&gt; *
+ * <li>value - where the data is being referenced from. In case of multiple references, use comma as a separator. Format: &lt;table name&gt;.&lt;field name&gt;,&lt;table
+ * name&gt;.&lt;field name&gt;
  * </ul>
  * <li>e.g. A custom entity or a custom table "Service type", identifiable by a field code and is referenced from another entity "Product set" from a field called "service type
  * code".<br/>
@@ -54,6 +56,7 @@ public class CheckReferencesWhenDeletingScript extends Script {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void execute(Map<String, Object> initContext) throws ExistsRelatedEntityException {
 
@@ -72,22 +75,27 @@ public class CheckReferencesWhenDeletingScript extends Script {
                 continue;
             }
 
-            String referencedFromField = (String) parameter.getValue();
-            String[] refTableAndField = referencedFromField.split("\\.");
-            // The reference field format is tableName.fieldName
-            if (refTableAndField.length != 2 || StringUtils.isBlank(refTableAndField[0]) || StringUtils.isBlank(refTableAndField[1])) {
-                continue;
-            }
-            String sql = "select count(*) from " + refTableAndField[0].toLowerCase() + " where " + refTableAndField[1].toLowerCase() + "=:refValue";
+            String referencedFromFields = (String) parameter.getValue();
 
-            String fieldName = parameter.getKey();
-            Number totalRefRecords = (Number) em.createNativeQuery(sql).setParameter("refValue", fieldValue).getSingleResult();
+            String[] refTableAndFieldItems = referencedFromFields.split(",");
+            for (String referencedFromField : refTableAndFieldItems) {
 
-            if (totalRefRecords.intValue() > 0) {
+                String[] refTableAndField = referencedFromField.split("\\.");
+                // The reference field format is tableName.fieldName
+                if (refTableAndField.length != 2 || StringUtils.isBlank(refTableAndField[0]) || StringUtils.isBlank(refTableAndField[1])) {
+                    continue;
+                }
+                String sql = "select id from " + refTableAndField[0].toLowerCase() + " where " + refTableAndField[1].toLowerCase() + "=:refValue";
 
-                String referencedRecord = ce.getCetCode() + "/" + (fieldName.equalsIgnoreCase("id") ? ce.getId() : fieldName + "=" + fieldValue);
-                log.error("Failed to delete an entity. Entity {} is referred from at least the following places: {}", referencedRecord, referencedFromField);
-                throw new ExistsRelatedEntityException(resourceMessages.getString("error.delete.entityUsedWDetails", referencedRecord, referencedFromField));
+                String fieldName = parameter.getKey();
+                List<Number> records = em.createNativeQuery(sql).setParameter("refValue", fieldValue).setMaxResults(1).getResultList();
+
+                if (!records.isEmpty()) {
+
+                    String referencedRecord = ce.getCetCode() + "/" + (fieldName.equalsIgnoreCase("id") ? ce.getId() : fieldName + "=" + fieldValue);
+                    log.error("Failed to delete an entity. Entity {} is referred from at least the following places: {}", referencedRecord, referencedFromField);
+                    throw new ExistsRelatedEntityException(resourceMessages.getString("error.delete.entityUsedWDetails", referencedRecord, referencedFromField));
+                }
             }
         }
     }
