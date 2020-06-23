@@ -76,9 +76,6 @@ public class CounterInstanceDto extends BusinessEntityDto {
             dto.setAccumulatedValues(cp.getAccumulatedValues());
             dto.setAccumulator(cp.getAccumulator());
             dto.setAccumulatorType(cp.getAccumulatorType());
-            dto.setFilterEl(cp.getFilterEl());
-            dto.setKeyEl(cp.getKeyEl());
-            dto.setValueEl(cp.getValueEl());
             return dto;
         }).collect(Collectors.toList());
         this.counterPeriods = new CountersPeriodsDto(counterPeriodDtos);
