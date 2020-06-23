@@ -12,10 +12,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.inject.Inject;
 import java.math.BigInteger;
 import java.util.List;
@@ -49,12 +46,12 @@ public class OfferPoolRatingAsync {
     @Inject
     private OfferPoolRatingUnitJobBean offerPoolRatingUnitJobBean;
 
-
+    @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        log.info("Start new thread to process offers pools overage usage. Nbr offerIds={}", offerIds.size());
+        log.info("Start new offer pool rating thread to process workSet of offerIds={}", offerIds.size());
 
         int i = 0;
         for (BigInteger offerId : offerIds) {
@@ -68,7 +65,7 @@ public class OfferPoolRatingAsync {
                     .setParameter("offerId", offerId.longValue())
                     .getResultList();
 
-            log.info("Checking overage usage on offerId={}. nbr of WO={}", offerId, walletOperations.size());
+            log.info("Start rating overage usage for offerId={}. nbr of WO={}", offerId, walletOperations.size());
             int j = 0;
             for (BigInteger walletOperationId : walletOperations) {
                 j++;

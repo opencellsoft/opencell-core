@@ -68,7 +68,7 @@ public class OfferPoolRatingUnitJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long walletOperationId) throws BusinessException {
-        log.debug("Checking for pool shared overage usage on walletOperationId={}", walletOperationId);
+        log.info("Check overage usage on walletOperationId={}", walletOperationId);
         try {
             WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
 

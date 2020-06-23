@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Class RatedTransactionsJob create RatedTransaction for all OPEN WalletOperations.
+ * The Class OfferPoolRatingJob create RatedTransaction for all OPEN WalletOperations.
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
@@ -65,7 +65,7 @@ public class OfferPoolRatingJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_OfferPoolRatingJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -76,7 +76,7 @@ public class OfferPoolRatingJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_OfferPoolRatingJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
