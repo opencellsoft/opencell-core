@@ -104,6 +104,11 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     /** The rating unit description. */
     private String ratingUnitDescription;
+    
+    /**
+     * Applied priceplan code
+     */
+    private String pricePlanCode;
 
     /**
      * Tax applied - code
@@ -255,7 +260,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
         this.customFields = customFields;
-        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
+        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;        
+        pricePlanCode = walletOperation.getPriceplan() != null ? walletOperation.getPriceplan().getCode() : null;
+
     }
 
     /**
@@ -952,6 +959,20 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+    
+    /**
+     * @return the pricePlanCode
+     */
+    public String getPricePlanCode() {
+        return pricePlanCode;
+    }
+
+    /**
+     * @param pricePlanCode the pricePlanCode to set
+     */
+    public void setPricePlanCode(String pricePlanCode) {
+        this.pricePlanCode = pricePlanCode;
     }
 
     @Override
