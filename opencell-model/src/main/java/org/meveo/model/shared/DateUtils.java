@@ -783,7 +783,7 @@ public class DateUtils {
                     // periodStart < normFrom < periodEnd
                     // Handles case when period starts earlier than the normalized period. Will result in matching of the beginning of the period.
                     // E.g. matching period 1-10 to a normalized period 3-12. Will result in match of the beginning: 1-3
-                    if (periodStart.before(normFrom) && (periodEnd == null || periodEnd.after(normFrom))) {
+                    if (periodStart.before(normFrom) && (periodEnd == null || periodEnd.compareTo(normFrom) >= 0)) {
                         periodEnd = normFrom;
                         foundUnoverlappedSpace = true;
 
@@ -935,12 +935,12 @@ public class DateUtils {
         DatePeriod period;
 
         /**
-         * Priority as string
+         * Priority as string, in ascending order. e.g 'a' wins over 'b'.
          */
         String priority;
 
         /**
-         * Priority as integer
+         * Priority as integer, in ascending order. e.g 1 wins over 2.
          */
         int priorityInt;
 
@@ -953,7 +953,7 @@ public class DateUtils {
          * Constructor
          * 
          * @param period Date period
-         * @param priority Priority as string
+         * @param priority Priority as string, in ascending order. e.g 'a' wins over 'b'.
          * @param value Value
          */
         public DatePeriodSplit(DatePeriod period, String priority, Object value) {
@@ -967,7 +967,7 @@ public class DateUtils {
          * Constructor
          * 
          * @param period Date period
-         * @param priorityInt Priority as integer
+         * @param priorityInt Priority as integer, in ascending order. e.g 1 wins over 2.
          * @param value Value
          */
         public DatePeriodSplit(DatePeriod period, int priorityInt, Object value) {

@@ -375,4 +375,21 @@ public class DateUtilsTest {
         Assert.assertEquals("d", normalized.get(3).getValue());
         Assert.assertEquals("c", normalized.get(4).getValue());
     }
+
+    @Test()
+    public void normalizeOverlapingDatePeriods9_priorityInt_withDateTime() {
+
+        DatePeriod datePeriod1 = new DatePeriod(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 8, 0, 0), DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 9, 0, 0));
+        DatePeriod datePeriod2 = new DatePeriod(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 7, 0, 0), DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 8, 0, 0));
+
+        DatePeriodSplit period1 = new DateUtils.DatePeriodSplit(datePeriod1, 1, "a");
+        DatePeriodSplit period2 = new DateUtils.DatePeriodSplit(datePeriod2, 2, "b");
+        List<DatePeriodSplit> normalized = DateUtils.normalizeOverlapingDatePeriods(period1, period2);
+
+        Assert.assertEquals(2, normalized.size());
+        Assert.assertEquals(datePeriod2, normalized.get(0).getPeriod());
+        Assert.assertEquals(datePeriod1, normalized.get(1).getPeriod());
+        Assert.assertEquals("b", normalized.get(0).getValue());
+        Assert.assertEquals("a", normalized.get(1).getValue());
+    }
 }
