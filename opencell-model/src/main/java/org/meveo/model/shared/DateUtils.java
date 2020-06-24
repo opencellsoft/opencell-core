@@ -38,6 +38,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.meveo.commons.utils.ParamBean;
@@ -150,9 +151,12 @@ public class DateUtils {
     public static Date parseDate(Object dateValue) {
         if (dateValue instanceof Number) {
             return new Date(((Number) dateValue).longValue());
-
         } else if (dateValue instanceof String) {
-            String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat() };
+            Long time = NumberUtils.toLong((String) dateValue);
+            if (time > 0L) {
+                return new Date(time);
+            }
+            String[] datePatterns = new String[]{DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat()};
             return parseDate((String) dateValue, datePatterns);
         }
         return null;
