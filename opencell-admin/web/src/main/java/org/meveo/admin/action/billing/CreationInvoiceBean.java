@@ -635,7 +635,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
             taxInvAgr.setInvoice(entity);
             taxInvAgr.updateAudit(currentUser);
-            entity.addInvoiceAggregate(taxInvAgr);
         }
 
         for (Entry<String, CategoryInvoiceAgregate> entry : aggregateHandler.getCatInvAgregateMap().entrySet()) {
@@ -643,7 +642,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             catInvAgr.setInvoice(entity);
             catInvAgr.updateAudit(currentUser);
             catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
-            entity.addInvoiceAggregate(catInvAgr);
         }
 
         List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
@@ -651,7 +649,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
             subCatInvAggr.setInvoice(entity);
             subCatInvAggr.updateAudit(currentUser);
-            entity.addInvoiceAggregate(subCatInvAggr);
 
             for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
                 rt.setInvoice(entity);

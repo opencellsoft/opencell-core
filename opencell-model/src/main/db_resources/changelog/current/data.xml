@@ -1687,4 +1687,24 @@ public class ValidateBRScript extends Script {
         </insert>        
       </changeSet>
     
+      <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.validation.CheckReferencesWhenDeletingScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Data integrity check at deletion - reference to custom table"/>
+            <column name="created" valueDate="now()" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.validation.CheckValidityDatesScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Data integrity check at create - update - record validity overlap"/>
+            <column name="created" valueDate="now()" />
+        </insert>
+      </changeSet>
+    
+    
 </databaseChangeLog>

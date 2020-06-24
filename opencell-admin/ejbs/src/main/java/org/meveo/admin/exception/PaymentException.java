@@ -15,11 +15,29 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.commons.exceptions;
 
-public class ProviderNotAllowedException extends RuntimeException {
+package org.meveo.admin.exception;
 
+import org.meveo.model.payments.PaymentErrorEnum;
+
+/**
+ * An exception extending BusinessException, used for payment exceptions. 
+ * @author Said Ramli
+ */
+public class PaymentException extends ValidationException {
     private static final long serialVersionUID = 1L;
+    private String code;
+    
+    public PaymentException(PaymentErrorEnum errorCode, String message) {
+        super(message);
+        this.code = errorCode.toString();
+    }
 
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+    
 }
-

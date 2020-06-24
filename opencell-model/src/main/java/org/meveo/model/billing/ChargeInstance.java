@@ -294,9 +294,12 @@ public abstract class ChargeInstance extends BusinessCFEntity {
                 this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
         }
+        
         if (StringUtils.isBlank(this.description)) {
             this.description = chargeTemplate.getDescription();
         }
+        
+        this.setCfValues(chargeTemplate.getCfValues());
     }
 
     public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {

@@ -23,7 +23,7 @@ package org.meveo.admin.exception;
  * @author R.AITYAAZZA
  *
  */
-public class AccountAlreadyExistsException extends BusinessException {
+public class AccountAlreadyExistsException extends ValidationException {
 
 	private static final long serialVersionUID = 1L;
 
