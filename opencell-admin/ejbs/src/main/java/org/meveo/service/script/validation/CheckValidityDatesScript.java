@@ -27,11 +27,11 @@ import org.meveo.service.script.Script;
  * <ul>
  * <li>Create a new 'script type' notification. Specify the following values:</li>
  * <ul>
- * <li>Classname: CustomEntityInstance</li>
- * <li>Event type filter: Remove</li>
- * <li>EL filter: #{event.getCetCode().equalsIgnoreCase('custom entity table name')}
- * <li>Script instance: CheckValidityDatesScript</li>
- * <li>Specify the following script parameters:
+ * <li><b>Classname:</b> CustomEntityInstance</li>
+ * <li><b>Event type filter:</b> Created or Updated</li>
+ * <li><b>EL filter:</b> #{event.getCetCode().equalsIgnoreCase('custom entity table name')}
+ * <li><b>Script instance:</b> CheckValidityDatesScript</li>
+ * <li><b>Specify the following script parameters:</b>
  * <ul>
  * <li>field1, field2, field3... - field names to concider for matching record identification
  * <li>table - custom table name</li>
