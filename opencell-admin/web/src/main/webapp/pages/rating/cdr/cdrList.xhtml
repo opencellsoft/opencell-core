@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:o="http://omnifaces.org/ui"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{cdrBean.preRenderView}" />
+        </f:metadata>
+
+        <o:importConstants type="org.meveo.model.rating.CDRStatusEnum" />
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+                <p:menuitem outcome="cdrList" value="#{messages['menu.cdr']}" />
+            </p:breadCrumb>
+        </h:form>   
+
+        <hftl:searchPanel label="#{messages['commons.search']}" backingBean="#{cdrBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['cdr.accessCode']}" field="accessCode" />            
+          	<hftl:searchField label="#{messages['commons.status']}" field="status"/>
+          	<hftl:searchField label="#{messages['edr.eventDate']}" field="eventDate"/>
+            <c:forEach items="#{cdrBean.params}" var="param">
+          		<hftl:searchField label="#{params[param]}" field="#{param}"/>
+            </c:forEach>
+        </hftl:searchPanel>
+
+        <hftl:dataList checkMany="true" noClose="false" backingBean="#{cdrBean}">
+
+            <hftl:column label="#{messages['cdr.accessCode']}" field="accessCode" />
+            <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true"  />
+            <hftl:column label="#{messages['edr.eventDate']}" field="eventDate" isDate="true" />
+            <hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" />
+            <c:forEach items="#{cdrBean.params}" var="param">
+            	<hftl:column label="#{params[param]}" field="#{param}" />
+            </c:forEach>
+            <p:column style="width: 50px;">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['commons.actions']}" />
+                </f:facet>
+
+                <p:commandButton id="updateCdr" icon="ui-icon-play"
+                    actionListener="#{cdrBean.updateStatus(entity)}"
+                    rendered="#{cdrBean.canUserUpdateEntity()}"
+                    update=":results_form">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}"
+                        message="#{messages['message.confirm.cdr.update']}"
+                        icon="ui-icon-alert" />
+                </p:commandButton>
+                <hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"/>                
+            </p:column>
+
+        </hftl:dataList>
+
+        <p:panel styleClass="action-buttons" rendered="#{cdrBean.canUserUpdateEntity()}">
+            <p:commandButton id="massUpdateCdr"
+                value="#{messages['action.massUpdate']}"
+                update=":results_form" action="#{cdrBean.massUpdate()}">
+                <p:confirm header="#{messages['commons.confirmationHeader']}"
+                    message="#{messages['message.confirm.cdr.update']}"
+                    icon="ui-icon-alert" />
+            </p:commandButton>
+        </p:panel>
+
+
+    </ui:define>
+
+</ui:composition>
