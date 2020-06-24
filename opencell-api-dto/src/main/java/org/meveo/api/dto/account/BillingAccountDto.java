@@ -208,9 +208,11 @@ public class BillingAccountDto extends AccountDto {
             setInvoicingThreshold(e.getInvoicingThreshold());
         }
         BillingCycle bc = e.getBillingCycle();
-        if (bc != null && bc.getInvoicingThreshold() != null) {
+        if (bc != null) {
             setBillingCycle(bc.getCode());
-            setInvoicingThreshold(bc.getInvoicingThreshold());
+            if(bc.getInvoicingThreshold() != null) {
+                setInvoicingThreshold(bc.getInvoicingThreshold());
+            }
         }
         if (e.getCheckThreshold() != null) {
             setCheckThreshold(e.getCheckThreshold());
