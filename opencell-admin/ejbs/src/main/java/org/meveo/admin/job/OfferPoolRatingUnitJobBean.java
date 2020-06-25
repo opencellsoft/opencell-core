@@ -81,10 +81,11 @@ public class OfferPoolRatingUnitJobBean {
             String agencyCode = walletOperation.getSubscription().getUserAccount().getCode();
             String agencyCounterKey = agencyCode + "_value";
 
-            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, new Date());
+            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate,
+                    CF_POOL_PER_OFFER_MAP, walletOperation.getOperationDate());
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
                 throw new IllegalStateException(String.format("Pool counter not yet initialized. " +
-                        "ServiceTemplate=%s%s Agency=", serviceTemplate.getCode(),  agencyCode));
+                        "ServiceTemplate=%s Agency=%s", serviceTemplate.getCode(),  agencyCode));
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
 

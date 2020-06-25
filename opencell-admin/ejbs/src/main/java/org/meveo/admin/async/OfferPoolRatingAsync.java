@@ -27,7 +27,7 @@ public class OfferPoolRatingAsync {
     private static final String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
             "  FROM billing_wallet_operation wo \n" +
             "  WHERE wo.offer_id = :offerId \n" +
-            "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
+            "   AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
             "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
 
     @Inject
@@ -56,19 +56,15 @@ public class OfferPoolRatingAsync {
         int i = 0;
         for (BigInteger offerId : offerIds) {
             i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                break;
-            }
-
             @SuppressWarnings("unchecked")
             List<BigInteger> walletOperations = emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_QUERY)
                     .setParameter("offerId", offerId.longValue())
                     .getResultList();
 
             log.info("Start rating overage usage for offerId={}. nbr of WO={}", offerId, walletOperations.size());
-            int j = 0;
+
             for (BigInteger walletOperationId : walletOperations) {
-                j++;
+                i++;
                 if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }

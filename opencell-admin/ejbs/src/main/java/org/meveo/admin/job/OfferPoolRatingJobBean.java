@@ -34,14 +34,14 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
             "  FROM billing_wallet_operation wo\n" +
             "   INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
             "  WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' " +
+            "   AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' " +
             "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
 
     private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id\n" +
             "FROM billing_wallet_operation wo\n" +
             " INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
             "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            " AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE'\n" +
+            " AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE'\n" +
             " AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
     @Inject
     @MeveoJpa
@@ -76,8 +76,7 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
             List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFER_WITH_SHARED_POOL)
                     .getResultList();
 
-            log.info("Nbrs of offers with shared pools to process: {}", offerIds.size());
-            result.setNbItemsToProcess(offersWOsCount.longValue());
+            log.info("Total of offers with shared pools to process: {}", offerIds.size());
 
             SubListCreator<BigInteger> subListCreator = new SubListCreator<>(offerIds, nbRuns.intValue());
             List<Future<String>> futures = new ArrayList<>();
