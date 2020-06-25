@@ -81,12 +81,13 @@ public class OfferPoolInitializerJob extends Job {
         customFieldDate.setCode("DATE");
         customFieldDate.setAppliesTo("JobInstance_OfferPoolInitializerJob");
         customFieldDate.setActive(true);
+        customFieldDate.setAllowEdit(true);
         customFieldDate.setDescription("DATE");
         customFieldDate.setFieldType(CustomFieldTypeEnum.STRING);
         customFieldDate.setDefaultValue("");
         customFieldDate.setValueRequired(false);
         customFieldDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:2");
-        result.put("DATE", customFieldNbWaiting);
+        result.put("DATE", customFieldDate);
 
         return result;
     }
