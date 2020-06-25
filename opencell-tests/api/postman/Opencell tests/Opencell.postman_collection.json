@@ -3,7 +3,6 @@
 		"_postman_id": "39cec2f0-4de4-484e-8e92-097f918ad111",
 		"name": "Opencell",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
 	"item": [
 		{
 			"name": "API",
@@ -166,7 +165,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}",
+											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
@@ -177,7 +176,7 @@
 											"query": [
 												{
 													"key": "accountingCode",
-													"value": "{{testCode}}"
+													"value": "{{testCode}}_AC"
 												}
 											]
 										}
@@ -14653,87 +14652,6 @@
 									"response": []
 								},
 								{
-									"name": "Delete Offer Template ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "07052c55-07ca-4d54-b05b-2139aebd286b",
-												"exec": [
-													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT /  /  does not exists.\");",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "basic",
-											"basic": [
-												{
-													"key": "password",
-													"value": "{{opencell.password}}",
-													"type": "string"
-												},
-												{
-													"key": "username",
-													"value": "{{opencell.username}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "DELETE",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/offerTemplate/{{testCode}}_OT",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"offerTemplate",
-												"{{testCode}}_OT"
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "Delete Offer Template SUCCESS",
 									"event": [
 										{
@@ -14819,6 +14737,87 @@
 													"key": "validTo",
 													"value": "2020-02-01"
 												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Offer Template ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "07052c55-07ca-4d54-b05b-2139aebd286b",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(404);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT /  /  does not exists.\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/offerTemplate/{{testCode}}_OT",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"offerTemplate",
+												"{{testCode}}_OT"
 											]
 										}
 									},
