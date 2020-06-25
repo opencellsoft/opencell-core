@@ -663,7 +663,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         super.saveOrUpdate(false);
 
         for (RatedTransaction rt : rts) {
-            ratedTransactionService.create(rt);
+        	if(rt.getId() == null) {
+        		ratedTransactionService.create(rt);
+        	}else {
+        		ratedTransactionService.update(rt);
+        	}
         }
 
         invoiceService.postCreate(entity);
