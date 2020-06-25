@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1230,7 +1231,8 @@ public abstract class BaseApi {
                 if (fieldClassType == null) {
                     throw new BusinessException("Field '" + fieldName + "' is not a valid field name");
                 }
-                Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
+                Object valueConverted = castFilterValue(value, fieldClassType,
+                    (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts);
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1288,9 +1290,46 @@ public abstract class BaseApi {
 
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         } else if (expectedList) {
-            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
-                return value;
+            if (value instanceof Collection || value.getClass().isArray()) {
+                Object firstValue = null;
+                if (value instanceof List) {
+                    firstValue = ((List) value).get(0);
+                } else if (value instanceof Set) {
+                    firstValue = ((Set) value).iterator().next();
+                } else if (value.getClass().isArray()) {
+                    firstValue = ((Object[]) value)[0];
+                }
 
+                // Its a list, but of a different data type
+                if (!targetClass.isAssignableFrom(firstValue.getClass())) {
+                    List valuesConverted = new ArrayList<>();
+                    if (value.getClass().isArray()) {
+                        value = Arrays.asList(value);
+                    }
+                    Iterator valueIterator = ((Collection) value).iterator();
+                    boolean invalidReference = false;
+                    while (valueIterator.hasNext()) {
+                        Object valueItem = valueIterator.next();
+                        try {
+                            Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
+                            if (valueConverted != null) {
+                                valuesConverted.add(valueConverted);
+                            } else {
+                                throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                            }
+                        } catch (InvalidReferenceException e) {
+                            invalidReference = true;
+                            continue;
+                        }
+                    }
+                    if (invalidReference && valuesConverted.isEmpty()) {
+                        throw new InvalidReferenceException(targetClass.getSimpleName(), value.toString());
+                    }
+                    return valuesConverted;
+
+                } else {
+                    return value;
+                }
                 // Parse comma separated string
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
@@ -1437,8 +1476,10 @@ public abstract class BaseApi {
                 }
 
             } else if (targetClass == BigDecimal.class) {
-                if (numberVal != null || bdVal != null || listVal != null) {
+                if (bdVal != null || listVal != null) {
                     return value;
+                } else if (numberVal != null) {
+                    return BigDecimal.valueOf(numberVal.doubleValue());
                 } else if (stringVal != null) {
                     return new BigDecimal(stringVal);
                 }

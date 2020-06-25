@@ -2477,7 +2477,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Return all invoices with now - invoiceDate date &gt; n years.
+     * Return all invoices with invoiceDate date more than n years old
      *
      * @param nYear age of the invoices
      * @return Filtered list of invoices
@@ -2487,7 +2487,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound, true, false);
 
         return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }

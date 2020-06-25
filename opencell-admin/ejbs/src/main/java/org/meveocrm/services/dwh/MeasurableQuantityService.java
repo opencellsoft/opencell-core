@@ -45,7 +45,7 @@ public class MeasurableQuantityService extends BusinessService<MeasurableQuantit
     @SuppressWarnings("unchecked")
     public List<MeasurableQuantity> listToBeExecuted(Date date) {
         QueryBuilder queryBuilder = new QueryBuilder(MeasurableQuantity.class, "a", null);
-        queryBuilder.addCriterionDateRangeToTruncatedToDay("last_measure_date", date);
+        queryBuilder.addCriterionDateRangeToTruncatedToDay("last_measure_date", date, false, false);
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }

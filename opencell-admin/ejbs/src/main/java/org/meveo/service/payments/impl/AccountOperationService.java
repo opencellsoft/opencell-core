@@ -207,7 +207,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
-     * Return all AccountOperation with now - invoiceDate date &gt; n years.
+     * Return all AccountOperation with invoiceDate date more than n years old
      * 
      * @param nYear age of the account operation
      * @return Filtered list of account operations
@@ -217,13 +217,13 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound, true, false);
 
         return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
     }
 
     /**
-     * Return all unpaid AccountOperation with now - invoiceDate date &gt; n years.
+     * Return all unpaid AccountOperation with invoiceDate date more than n years old
      * 
      * @param nYear age of the account operation
      * @return Filtered list of account operations
@@ -233,7 +233,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound, true, false);
         qb.startOrClause();
         qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.L);
         qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.P);
