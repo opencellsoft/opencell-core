@@ -30,6 +30,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
@@ -217,12 +218,18 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         if (walletOperation.getSeller() != null) {
             seller = walletOperation.getSeller().getCode();
         }
-        if (walletOperation.getWallet() != null) {
-            walletId = walletOperation.getWallet().getId();
+        WalletInstance wallet = walletOperation.getWallet();
+		if (wallet != null) {
+            walletId = wallet.getId();
+            walletTemplate = wallet.getCode();
+            if (wallet.getWalletTemplate() != null) {
+                walletTemplate = wallet.getWalletTemplate().getCode();
+            }
+            if (wallet.getUserAccount() != null) {
+            	userAccount = wallet.getUserAccount().getCode();
+            }
         }
-        if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
-            walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();
-        }
+        
         currency = walletOperation.getCurrency().getCurrencyCode();
         type = walletOperation.getType();
         status = walletOperation.getStatus();
@@ -246,8 +253,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         endDate = walletOperation.getEndDate();
         operationDate = walletOperation.getOperationDate();
         subscriptionDate = walletOperation.getSubscriptionDate();
-        walletTemplate = walletOperation.getWallet().getCode();
-        userAccount = walletOperation.getWallet().getUserAccount().getCode();
+
         offerCode = walletOperation.getOfferCode() != null ?
                 walletOperation.getOfferCode() :
                 walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;

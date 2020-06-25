@@ -33,7 +33,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.NumberUtils;
 
 /**
  * Usage charge template
@@ -163,15 +162,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
     public String getChargeType() {
         return CHARGE_TYPE;
-    }
-
-    public BigDecimal getInChargeUnit(BigDecimal edrUnitValue) {
-
-        if (edrUnitValue == null) {
-            return BigDecimal.ZERO;
-        }
-        BigDecimal result = NumberUtils.getInChargeUnit(edrUnitValue, getUnitMultiplicator(), unitNbDecimal, roundingMode);
-        return result;
     }
 
     public BigDecimal getInEDRUnit(BigDecimal chargeUnitValue) {
