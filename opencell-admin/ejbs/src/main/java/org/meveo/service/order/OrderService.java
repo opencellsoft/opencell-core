@@ -178,7 +178,7 @@ public class OrderService extends BusinessService<Order> {
     }
 
     /**
-     * Return all orders with now - orderDate date &gt; n years.
+     * Return all orders with orderDate more than n years old
      * 
      * @param nYear age of the subscription
      * @return Filtered list of orders
@@ -188,7 +188,7 @@ public class OrderService extends BusinessService<Order> {
         QueryBuilder qb = new QueryBuilder(Order.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("orderDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("orderDate", higherBound, true, false);
 
         return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
     }

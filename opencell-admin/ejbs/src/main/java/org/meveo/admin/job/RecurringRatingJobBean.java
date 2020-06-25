@@ -90,7 +90,7 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
                 rateUntilDate = new Date();
             }
 
-            List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate, false);
+            List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate);
             int inputSize = ids.size();
             result.setNbItemsToProcess(inputSize);
             log.info("RecurringRatingJob - charges to rate={}", inputSize);
