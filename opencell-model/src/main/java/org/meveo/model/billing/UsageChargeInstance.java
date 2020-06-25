@@ -93,7 +93,8 @@ public class UsageChargeInstance extends ChargeInstance {
 
         super(amountWithoutTax, amountWithTax, usageChargeTemplate, serviceInstance, status);
 
-        this.ratingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
+        String chargeRatingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
+		this.ratingUnitDescription = chargeRatingUnitDescription==null || chargeRatingUnitDescription.length()<20?chargeRatingUnitDescription:chargeRatingUnitDescription.substring(0,20);
         this.priority = usageChargeTemplate.getPriority();
     }
 
