@@ -107717,5 +107717,149 @@
 			"protocolProfileBehavior": {}
 		}
 	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "03aaaa65-83b2-48e7-84a8-7f89e98b1ba6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2eceb79c-936e-4bfc-be21-0f77b6361899",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "17e73ab2-dea9-4f0b-8de0-34c8822c5a6e",
+			"key": "opencell.base",
+			"value": "http://localhost:8080/opencell",
+			"type": "string"
+		},
+		{
+			"id": "63dcea45-1eae-49a6-8745-c24ed4896ba2",
+			"key": "opencell.url",
+			"value": "{{opencell.base}}/api/rest",
+			"type": "string"
+		},
+		{
+			"id": "2992de34-fe31-4add-b08b-5c14bc8658c2",
+			"key": "opencell.username",
+			"value": "opencell.admin",
+			"type": "string"
+		},
+		{
+			"id": "bed21163-7406-4401-8a5a-3b261f71984e",
+			"key": "opencell.password",
+			"value": "opencell.admin",
+			"type": "string"
+		},
+		{
+			"id": "4e97114a-4994-42e6-b770-3db5b991dd50",
+			"key": "opencell.superusername",
+			"value": "opencell.superadmin",
+			"type": "string"
+		},
+		{
+			"id": "88e0cbef-61c8-46ea-ac15-ead3d62fda1f",
+			"key": "opencell.superpassword",
+			"value": "opencell.superadmin",
+			"type": "string"
+		},
+		{
+			"id": "e5d49ebd-f6c1-4188-812d-354216ae40f6",
+			"key": "entityPrefix",
+			"value": "RS_FULL",
+			"type": "string"
+		},
+		{
+			"id": "63eb0b94-a1c4-40d4-8ffb-a5d68deb7bf2",
+			"key": "baseEntityPrefix",
+			"value": "RS_BASE",
+			"type": "string"
+		},
+		{
+			"id": "5a34ee53-ae8a-455e-8f13-cca967f56077",
+			"key": "testCode",
+			"value": "TEST",
+			"type": "string"
+		},
+		{
+			"id": "4e2b25ca-4fc6-4e71-8994-02ba054f36aa",
+			"key": "testDescription",
+			"value": "This is a test description",
+			"type": "string"
+		},
+		{
+			"id": "4c70510b-08e7-4181-b2e2-f6e5de206f71",
+			"key": "timezone",
+			"value": "CET",
+			"type": "string"
+		},
+		{
+			"id": "26908062-8f7f-4ba0-be12-0c21fbacacec",
+			"key": "timezone",
+			"value": "CET",
+			"type": "string"
+		},
+		{
+			"id": "ca71d9d2-398d-4e63-afd5-2e3a0875d46c",
+			"key": "provider.code",
+			"value": "DEMO",
+			"type": "string"
+		},
+		{
+			"id": "2d2903ca-3318-402e-a6c3-5fd261f1dda5",
+			"key": "seller.code",
+			"value": "MAIN_SELLER",
+			"type": "string"
+		},
+		{
+			"id": "3e162a80-c9b4-4818-8ddc-6534be1f8c20",
+			"key": "template.code",
+			"value": "SIMPLE",
+			"type": "string"
+		},
+		{
+			"id": "c2b944c0-37fa-433f-8e44-7a98233716ed",
+			"key": "template.label",
+			"value": "Simple usage",
+			"type": "string"
+		},
+		{
+			"id": "7be699d7-8a22-490e-81aa-e234ba11da9b",
+			"key": "project.code",
+			"value": "SimpleUsage-001",
+			"type": "string"
+		},
+		{
+			"id": "7db202d5-cc0f-4de6-bcf0-dedc3365a817",
+			"key": "project.description",
+			"value": "Simple usage offer",
+			"type": "string"
+		},
+		{
+			"id": "a69bfe0b-7e8d-40a1-ad28-4167cb8cb1c0",
+			"key": "project.type",
+			"value": "Setup",
+			"type": "string"
+		},
+		{
+			"id": "dce03afd-788e-4b4c-82f3-7a8cb6d7cc07",
+			"key": "project.version",
+			"value": "9.2+",
+			"type": "string"
+		}
+	],
 	"protocolProfileBehavior": {}
 }
