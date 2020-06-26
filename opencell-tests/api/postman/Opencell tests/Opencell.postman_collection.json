@@ -3,6 +3,7 @@
 		"_postman_id": "39cec2f0-4de4-484e-8e92-097f918ad111",
 		"name": "Opencell",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
 	"item": [
 		{
 			"name": "API",
@@ -6479,6 +6480,11 @@
 													"pm.test(request.name + \" - Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.billingAccount.description).to.eql(pm.environment.get(\"testDescription\"));",
+													"});",
+													"",
+													"pm.test(request.name + \" - Billing Cycle is correct \", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.billingAccount.billingCycle).to.eql(pm.environment.get(\"testCode\")+\"_BC\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -6889,6 +6895,11 @@
 													"pm.test(request.name + \" - Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.billingAccount.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Billing Cycle is correct \", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.billingAccount.billingCycle).to.eql(pm.environment.get(\"testCode\")+\"_BC\");",
 													"});"
 												],
 												"type": "text/javascript"
