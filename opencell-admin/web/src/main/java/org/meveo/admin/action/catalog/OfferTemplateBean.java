@@ -180,10 +180,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         }
 
         // lazy loading service templates
-        for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
-            ost.getServiceTemplate().getCode();
-            for (ServiceTemplate serviceTemplate : ost.getIncompatibleServices()) {
-                serviceTemplate.getCode();
+        if(entity.getOfferServiceTemplates() != null) {
+            for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+                ost.getServiceTemplate().getCode();
+                for (ServiceTemplate serviceTemplate : ost.getIncompatibleServices()) {
+                    serviceTemplate.getCode();
+                }
             }
         }
 
