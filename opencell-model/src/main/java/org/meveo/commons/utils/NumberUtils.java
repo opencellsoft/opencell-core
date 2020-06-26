@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
@@ -81,16 +82,20 @@ public class NumberUtils {
         return minuend.subtract(subtrahend);
     }
 
-    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingMode) {
-        if (unitMultiplicator == null) {
+    public static BigDecimal getInChargeUnit(BigDecimal unitValue,ChargeTemplate chargeTemplate) {
+    	
+        BigDecimal unitMultiplicator=chargeTemplate.getUnitMultiplicator();
+		if (unitMultiplicator == null) {
             unitMultiplicator = BigDecimal.ONE;
         }
-        if (unitNbDecimal == null) {
+        int unitNbDecimal=chargeTemplate.getUnitNbDecimal();
+		if (unitNbDecimal == 0) {
             unitNbDecimal = 2;
         }
 
         BigDecimal result = unitValue.multiply(unitMultiplicator);
-        result = result.setScale(unitNbDecimal, roundingMode.getRoundingMode());
+        RoundingModeEnum roundingMode = chargeTemplate.getRoundingMode();
+		result = result.setScale(unitNbDecimal, roundingMode.getRoundingMode());
         return result;
     }
 
