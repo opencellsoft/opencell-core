@@ -21,12 +21,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<base-name>help</base-name>
 		<var>help</var>
 	</resource-bundle>
-	<resource-bundle>
-		<base-name>params</base-name>
-		<var>params</var>
-	</resource-bundle>
 	<message-bundle>messages</message-bundle>
-	<message-bundle>params</message-bundle>
 
 	<action-listener>org.primefaces.application.DialogActionListener</action-listener>
 	<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>

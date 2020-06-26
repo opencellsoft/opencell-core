@@ -36,18 +36,23 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Charging Data Record - CDR - information
  * 
  * @author anasseh
+ * @author Mohammed Amine TAZI
  * @since 9.1
  */
 @Entity
 @Table(name = "rating_cdr")
+@CustomFieldEntity(cftCodePrefix = "CDR")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "rating_cdr_seq"), })
-public class CDR extends BaseEntity {
+public class CDR extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1278336601263933734L;
 
@@ -262,6 +267,15 @@ public class CDR extends BaseEntity {
 
 	@Transient
 	private Exception rejectReasonException = null;
+
+	@Transient
+    private CustomFieldValues cfValues;
+
+	@Transient
+    private CustomFieldValues cfAccumulatedValues;
+
+	@Transient
+    private String uuid;
 
 	public String getLine() {
 		return line;
@@ -600,4 +614,39 @@ public class CDR extends BaseEntity {
 		}
 		return result;
 	}
+
+    @Override
+    public String getUuid() {
+        return null;
+    }
+
+    @Override
+    public String clearUuid() {
+        return null;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
 }

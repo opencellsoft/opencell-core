@@ -20,17 +20,20 @@ package org.meveo.admin.action.medina;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
@@ -42,12 +45,25 @@ public class CdrBean extends BaseBean<CDR> {
     @Inject
     private CDRService cdrService;
     
-    private List<String> params;
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
+    
+    private Set<String> params;
+    
+    Map<String,CustomFieldTemplate> cfs;
 
     public CdrBean() {
         super(CDR.class);
-        params = new ArrayList<>();
-        ResourceBundle.getBundle("params").getKeys().asIterator().forEachRemaining(entry-> params.add(entry));
+    }
+    
+    @PostConstruct
+    public void initParams() {
+        cfs = customFieldTemplateService.findByAppliesTo("CDR");
+        params = cfs.keySet();  
+    }
+    
+    public String getParamLabel(String param) {
+        return cfs.get(param).getDescription();
     }
 
     @Override
@@ -55,7 +71,7 @@ public class CdrBean extends BaseBean<CDR> {
         return "cdrDetail";
     }
 
-    public void massUpdate() {
+    public void massReprocessing() {
         if (getSelectedEntities() == null) {
             return;
         }
@@ -67,12 +83,20 @@ public class CdrBean extends BaseBean<CDR> {
                 selectedIds.add(cdr.getId());
             }
         }
+    }
+    
+    public void massWritingOff() {
+        if (getSelectedEntities() == null) {
+            return;
+        }
+        log.debug("Reopening {} rejected cdrs", getSelectedEntities().size());
 
-//        if (selectedIds.size() > 0) {
-//            cdrService.(selectedIds);
-//        } else {
-//            messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
-//        }
+        List<Long> selectedIds = new ArrayList<>();
+        for (CDR cdr : getSelectedEntities()) {
+            if (CDRStatusEnum.ERROR.equals(cdr.getStatus())) {
+                selectedIds.add(cdr.getId());
+            }
+        }
     }
 
     @Override
@@ -80,10 +104,10 @@ public class CdrBean extends BaseBean<CDR> {
         return cdrService;
     }
     
-    public List<String> getParams() {
+    public Set<String> getParams() {
         return params;
     }
-    public void setParams(List<String> params) {
+    public void setParams(Set<String> params) {
         this.params = params;
     }
 }

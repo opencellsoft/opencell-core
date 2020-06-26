@@ -28,7 +28,7 @@
           	<hftl:searchField label="#{messages['commons.status']}" field="status"/>
           	<hftl:searchField label="#{messages['edr.eventDate']}" field="eventDate"/>
             <c:forEach items="#{cdrBean.params}" var="param">
-          		<hftl:searchField label="#{params[param]}" field="#{param}"/>
+          		<hftl:searchField label="#{cdrBean.getParamLabel(param)}" field="#{param}"/>
             </c:forEach>
         </hftl:searchPanel>
 
@@ -39,7 +39,7 @@
             <hftl:column label="#{messages['edr.eventDate']}" field="eventDate" isDate="true" />
             <hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" />
             <c:forEach items="#{cdrBean.params}" var="param">
-            	<hftl:column label="#{params[param]}" field="#{param}" />
+            	<hftl:column label="#{cdrBean.getParamLabel(param)}" field="#{param}" />
             </c:forEach>
             <p:column style="width: 50px;">
                 <f:facet name="header">
@@ -60,13 +60,20 @@
         </hftl:dataList>
 
         <p:panel styleClass="action-buttons" rendered="#{cdrBean.canUserUpdateEntity()}">
-            <p:commandButton id="massUpdateCdr"
-                value="#{messages['action.massUpdate']}"
-                update=":results_form" action="#{cdrBean.massUpdate()}">
+            <p:commandButton id="massReprocessCdr"
+                value="Mass reprocessing"
+                update=":results_form" action="#{cdrBean.massReprocessing()}">
                 <p:confirm header="#{messages['commons.confirmationHeader']}"
                     message="#{messages['message.confirm.cdr.update']}"
                     icon="ui-icon-alert" />
             </p:commandButton>
+            <p:commandButton id="massWriteOffCdr"
+                value="Mass writing off"
+                update=":results_form" action="#{cdrBean.massWritingOff()}">
+                <p:confirm header="#{messages['commons.confirmationHeader']}"
+                    message="#{messages['message.confirm.cdr.update']}"
+                    icon="ui-icon-alert" />
+            </p:commandButton>         
         </p:panel>
 
 
