@@ -83,12 +83,11 @@ public class WalletReservation extends WalletOperation {
      * @param startDate Operation date range - start date
      * @param endDate Operation date range - end date
      * @param accountingCode Accounting code
+     * @param ratingQuantity 
      */
-    public WalletReservation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
+    public WalletReservation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal ratingQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3, 
             String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode) {
-
-        super(chargeInstance, inputQuantity, quantityInChargeUnits, operationDate, orderNumber, criteria1, criteria2, criteria3, criteriaExtra, tax, startDate, endDate, accountingCode);
-
+        super(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, operationDate, orderNumber, criteria1, criteria2, criteria3, criteriaExtra, tax, startDate, endDate, accountingCode);
         setStatus(WalletOperationStatusEnum.RESERVED);
     }
 

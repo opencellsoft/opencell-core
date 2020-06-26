@@ -119,7 +119,4 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 		return null;
 	} 
 	
-	
-
-	
 }

@@ -87,6 +87,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -141,6 +142,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @EJB
     private RatingService ratingServiceNewTX;
+
+    @Inject
+    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
 //    private Map<String, String> descriptionMap = new HashMap<>();
 
@@ -254,14 +258,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
         }
 
         WalletOperation walletOperation = null;
-
+        
+		BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
+		
         if (isReservation) {
-            walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletReservation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
         } else {
-            walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletOperation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);

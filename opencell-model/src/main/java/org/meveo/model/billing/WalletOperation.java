@@ -535,7 +535,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param endDate Operation date range - end date
      * @param accountingCode Accounting code
      */
-    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
+    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal ratingQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
             String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
@@ -588,8 +588,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         if (quantityInChargeUnits != null) {
             this.quantity = quantityInChargeUnits;
 
-        } else if (inputQuantity != null) {
-            this.quantity = NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
+        } else if (ratingQuantity != null) {
+            this.quantity = ratingQuantity;
         }
 
         UserAccount userAccount = chargeInstance.getUserAccount();
