@@ -40,13 +40,14 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.CdrCsvReader;
 import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @author HORRI Khalid
- * @lastModifiedVersion 9.1
+ * @author H.ZNIBAR
+ * @lastModifiedVersion 10.0
  * 
  */
 
@@ -72,7 +73,7 @@ public class MediationFileProcessing {
 	 * NO transaction - each line will be processed in a separate transaction, one
 	 * line failure will not affect processing of other lines.
 	 * 
-	 * @param cdrParser        CDR file parser
+	 * @param cdrReader        CDR file parser
 	 * @param result           Job execution result
 	 * @param fileName         File name being processed
 	 * @param outputFileWriter File writer to output processed data
@@ -87,7 +88,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> processFileAsync(CSVCDRParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
+	public Future<String> processFileAsync(CdrCsvReader cdrReader, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -103,7 +104,7 @@ public class MediationFileProcessing {
 			}
 
 			try {
-				cdr = cdrParser.getNextRecord();
+				cdr = cdrReader.getNextRecord();
 				if (cdr == null) {
 					break;
 				}

@@ -26,11 +26,11 @@ import org.meveo.model.rating.EDR;
 
 
 /**
- * This Interface must be implemented to parse CDR and create EDR from it The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
+ * This Interface must be implemented to parse CDR and create EDR from it.The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
  * 
  * @author h.znibar
  */
-public interface CDRParser {
+public interface CdrParser {
 
     /**
      * Convert record into a CDR object. Parsing exceptions are available in CDR.rejectReason

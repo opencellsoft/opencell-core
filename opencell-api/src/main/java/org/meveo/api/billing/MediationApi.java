@@ -56,7 +56,7 @@ import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.CdrParser;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
@@ -105,11 +105,11 @@ public class MediationApi extends BaseApi {
 
         handleMissingParameters();
 
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), postData.getIpAddress());
+        CdrParser cdrParser = cdrParsingService.getCDRParser();
 
         try {
             for (String line : cdrLines) {
-                CDR cdr = cdrParser.parseCDR(line);
+                CDR cdr = cdrParser.parse(line);
                 cdrParsingService.createEdrs(cdr);
             }
         } catch (CDRParsingException e) {
@@ -131,10 +131,10 @@ public class MediationApi extends BaseApi {
         }
 
         handleMissingParameters();
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
+        CdrParser cdrParser = cdrParsingService.getCDRParser();
        
         try {
-            CDR cdr = cdrParser.parseCDR(cdrLine);           
+            CDR cdr = cdrParser.parse(cdrLine);           
             List<EDR> edrs = cdrParsingService.getEDRList(cdr);
             List<WalletOperation> walletOperations = new ArrayList<>();
             for (EDR edr : edrs) {            	 
@@ -213,12 +213,12 @@ public class MediationApi extends BaseApi {
 
         handleMissingParameters();
 
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), ip);
+        CdrParser cdrParser = cdrParsingService.getCDRParser();
 
         List<EDR> edrs;
         try {
 
-            CDR cdr = cdrParser.parseCDR(cdrLine);
+            CDR cdr = cdrParser.parse(cdrLine);
 
             edrs = cdrParsingService.getEDRList(cdr);
             for (EDR edr : edrs) {

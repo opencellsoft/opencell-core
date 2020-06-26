@@ -19,10 +19,10 @@ public interface CdrCsvReader extends CdrReader {
     void init(File file) throws FileNotFoundException;
     
     /**
-     * Initialize CDR Reader
-     *
-     * @param userName the user name
-     * @param ip the ip address
+     * Initialize CDR parser from API
+     * 
+     * @param username user name
+     * @param ip Ip address
      */
     void init(String userName, String ip);
 

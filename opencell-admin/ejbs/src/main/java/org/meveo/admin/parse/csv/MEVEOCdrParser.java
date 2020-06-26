@@ -18,27 +18,24 @@
 
 package org.meveo.admin.parse.csv;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
-import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.model.rating.EDR;
+import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.medina.impl.CdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
 import org.slf4j.Logger;
@@ -50,50 +47,25 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
+ * @author h.znibar
  */
 @Named
-public class MEVEOCdrParser implements CSVCDRParser {
+public class MEVEOCdrParser implements CdrParser {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
-
-    static MessageDigest messageDigest = null;
-    static {
-        try {
-            messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            log.error("No message digest of type MD5", e);
-        }
-    }
-
+    
     private String batchName;
-    private String username;
-    private BufferedReader cdrReader = null;
-    private CDR_ORIGIN_ENUM origin;
+    private String originRecord;
+    
+    @Inject
+    private AccessService accessService;
+    
+    @Inject
+    @RejectedCDR
+    private Event<Serializable> rejectededCdrEventProducer;
 
     @Override
-    public void init(File cdrFile) throws FileNotFoundException {
-        batchName = "CDR_" + cdrFile.getName();
-        cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
-    }
-
-    @Override
-    public void initByApi(String username, String ip) {
-        this.batchName = "API_" + ip;
-        this.username = username;
-    }
-
-    public String getBatchName() {
-        return batchName;
-    }
-
-    @Override
-    public synchronized CDR getNextRecord() throws IOException {
-
-        return parseCDR(cdrReader.readLine());
-    }
-
-    @Override
-    public CDR parseCDR(String line) {
+    public CDR parse(String line) {
 
         if (line == null) {
             return null;
@@ -256,7 +228,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
             }
 
             cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(getOriginRecord(line));
+            cdr.setOriginRecord(originRecord);
 
             if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
                 cdr.setRejectReasonException(new InvalidAccessException(line, "userId is empty"));
@@ -268,40 +240,70 @@ public class MEVEOCdrParser implements CSVCDRParser {
         }
         return cdr;
     }
+        
+    @Override
+    public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
 
-    /**
-     * Build and return a unique identifier from the CDR in order. To avoid importing twice the same CDR.
-     * 
-     * @param cdr : CDR object parsed
-     * @return CDR's unique key
-     */
-    private String getOriginRecord(String cdr) {
-
-        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
-
-            if (messageDigest != null) {
-                synchronized (messageDigest) {
-                    messageDigest.reset();
-                    messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                    final byte[] resultByte = messageDigest.digest();
-                    StringBuffer sb = new StringBuffer();
-                    for (int i = 0; i < resultByte.length; ++i) {
-                        sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                    }
-                    return sb.toString();
-                }
-            }
-        } else {
-            return username + "_" + new Date().getTime();
+        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
+        if (accesses == null || accesses.size() == 0) {
+            rejectededCdrEventProducer.fire(cdr);
+            throw new InvalidAccessException(cdr);
         }
+        return accesses;
+    }
 
+    @Override
+    public List<EDR> convertCdrToEdr(CDR cdr) {
+        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void close() throws IOException {
-        if (cdrReader != null) {
-            cdrReader.close();
-        }
+    public String getType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isApplicable(String type) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+   
+    /**
+     * Gets the batch name.
+     *
+     * @return the batch name
+     */
+    public String getBatchName() {
+        return batchName;
+    }
+
+    /**
+     * Sets the batch name.
+     *
+     * @param batchName the new batch name
+     */
+    public void setBatchName(String batchName) {
+        this.batchName = batchName;
+    }
+        
+    /**
+     * Gets the origin record.
+     *
+     * @return the origin record
+     */
+    public String getOriginRecord() {
+        return originRecord;
+    }
+
+    /**
+     * Sets the origin record.
+     *
+     * @param originRecord the new origin record
+     */
+    public void setOriginRecord(String originRecord) {
+        this.originRecord = originRecord;
     }
 }
