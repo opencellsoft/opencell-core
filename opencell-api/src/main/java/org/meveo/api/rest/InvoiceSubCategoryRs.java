@@ -32,6 +32,8 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
+import org.meveo.api.dto.response.InvoiceSubCategoryResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceSubCategory}.
@@ -93,5 +95,15 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
     @DELETE
     @Path("/{invoiceSubCategoryCode}")
     ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+    
+    /**
+     * List InvoiceSubCategory matching a given criteria
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of InvoiceSubCategory
+     */
+    @POST
+    @Path("/list")
+    public InvoiceSubCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

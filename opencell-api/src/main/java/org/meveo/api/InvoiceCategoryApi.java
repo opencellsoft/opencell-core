@@ -18,10 +18,13 @@
 
 package org.meveo.api;
 
+import java.util.function.BiFunction;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -41,7 +44,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * @lastModifiedVersion 5.1
  **/
 @Stateless
-public class InvoiceCategoryApi extends BaseApi {
+public class InvoiceCategoryApi extends BaseCrudApi<InvoiceCategory, InvoiceCategoryDto> {
 
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
@@ -50,7 +53,7 @@ public class InvoiceCategoryApi extends BaseApi {
     @Inject
     private OCCTemplateService occTemplateService;
 
-    public void create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceCategory create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -101,9 +104,10 @@ public class InvoiceCategoryApi extends BaseApi {
 
         invoiceCategoryService.create(invoiceCategory);
 
+        return invoiceCategory;
     }
 
-    public void update(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceCategory update(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -155,6 +159,7 @@ public class InvoiceCategoryApi extends BaseApi {
         }
 
         invoiceCategory = invoiceCategoryService.update(invoiceCategory);
+        return invoiceCategory;
     }
 
     public InvoiceCategoryDto find(String code) throws MeveoApiException {
@@ -199,13 +204,19 @@ public class InvoiceCategoryApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceCategory createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
 
         if (invoiceCategory == null) {
-            create(postData);
+            return create(postData);
         } else {
-            update(postData);
+            return update(postData);
         }
     }
+    
+    @Override
+    protected BiFunction<InvoiceCategory, CustomFieldsDto, InvoiceCategoryDto> getEntityToDtoFunction() {
+        return InvoiceCategoryDto::new;
+    }
+
 }
