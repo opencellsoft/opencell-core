@@ -19,11 +19,13 @@
 package org.meveo.api;
 
 import java.util.Arrays;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -48,7 +50,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * @lastModifiedVersion 5.0
  **/
 @Stateless
-public class InvoiceSubCategoryApi extends BaseApi {
+public class InvoiceSubCategoryApi extends BaseCrudApi<InvoiceSubCategory, InvoiceSubCategoryDto> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
@@ -63,7 +65,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
     @Inject
     private OCCTemplateService occTemplateService;
 
-    public void create(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceSubCategory create(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -129,9 +131,11 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         invoiceSubCategoryService.create(invoiceSubCategory);
+        
+        return invoiceSubCategory;
     }
 
-    public void update(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceSubCategory update(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -201,6 +205,8 @@ public class InvoiceSubCategoryApi extends BaseApi {
         }
 
         invoiceSubCategory = invoiceSubCategoryService.update(invoiceSubCategory);
+        
+        return invoiceSubCategory;
     }
 
     public InvoiceSubCategoryDto find(String code) throws MeveoApiException {
@@ -246,11 +252,16 @@ public class InvoiceSubCategoryApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
+    public InvoiceSubCategory createOrUpdate(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
         if (invoiceSubCategoryService.findByCode(postData.getCode()) != null) {
-            update(postData);
+            return update(postData);
         } else {
-            create(postData);
+            return create(postData);
         }
+    }
+    
+    @Override
+    protected BiFunction<InvoiceSubCategory, CustomFieldsDto, InvoiceSubCategoryDto> getEntityToDtoFunction() {
+        return InvoiceSubCategoryDto::new;
     }
 }
