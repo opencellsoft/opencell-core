@@ -19,7 +19,6 @@ package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
@@ -275,22 +273,35 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     	return super.update(entity);
     }
     
-	public java.math.BigDecimal evaluateUnitRating(ChargeTemplate chargeTemplate) throws BusinessException {
+    
+    public BigDecimal evaluateEffectiveUnitMultiplicator(ChargeTemplate chargeTemplate) throws BusinessException {
+    	return evaluateRatingQuantity(chargeTemplate, BigDecimal.ONE);
+    }
+    
+	public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws BusinessException {
 		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
 		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
+		BigDecimal multiplicator = chargeTemplate.getUnitMultiplicator();
+
+		inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
+		outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
+
 		if (inputUnitFromEL != null || outputUnitFromEL != null) {
-			inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
-			outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
-			if (inputUnitFromEL != null && outputUnitFromEL != null ) {
-				if(inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
-					return BigDecimal.valueOf(inputUnitFromEL.getMultiplicator()).divide( BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+			if (inputUnitFromEL != null && outputUnitFromEL != null) {
+				if (inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
+					return quantity.multiply(BigDecimal.valueOf(inputUnitFromEL.getMultiplicator())).divide(BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()));
+				} else {
+					throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitFromEL 
+							+ "/" + outputUnitFromEL +" for chargeTemplate "+chargeTemplate.getCode());
 				}
-				else {
-					throw new BusinessException("incompatible input/rating UnitOfMeasures: "+inputUnitFromEL+"/"+outputUnitFromEL);
-				}
+			} else {
+				throw new BusinessException("null value not accepted on input/rating UnitOfMeasures: "
+							+ inputUnitFromEL + "/" + outputUnitFromEL);
 			}
+		} else if (multiplicator != null) {
+			return quantity.multiply(multiplicator);
 		}
-		return chargeTemplate.getUnitMultiplicator();
+		return quantity;
 	}
 
 	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
@@ -309,11 +320,10 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 	private void validateEntity(P entity) throws BusinessException {
 		UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
 		UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
-		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
-			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
-				throw new BusinessException("incompatible input/rating UnitOfMeasures: "+inputUnitOfMeasure+"/"+ratingUnitOfMeasure);
-			}
+		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null && !inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
+			throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
+		} else if (inputUnitOfMeasure == null || ratingUnitOfMeasure == null) {
+			throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
 		}
 	}
-	
 }
