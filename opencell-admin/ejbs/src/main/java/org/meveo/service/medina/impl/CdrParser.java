@@ -23,8 +23,6 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 
-
-
 /**
  * This Interface must be implemented to parse CDR and create EDR from it.The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
  * 
