@@ -320,9 +320,11 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 	private void validateEntity(P entity) throws BusinessException {
 		UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
 		UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
-		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null && !inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
-			throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
-		} else if (inputUnitOfMeasure == null || ratingUnitOfMeasure == null) {
+		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
+			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
+				throw new BusinessException( "incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
+			}
+		} else if (inputUnitOfMeasure != null || ratingUnitOfMeasure != null) {
 			throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
 		}
 	}
