@@ -261,6 +261,19 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	 */
 	@Column(name = "reject_reason", columnDefinition = "text")
 	private String rejectReason;
+	
+	/** The times tried. */
+	@Column(name = "times_tried")
+	private Integer timesTried;
+	
+	/** The source : line to parse */
+	@Column(name = "source", columnDefinition = "text")
+    private String source;
+	
+	/** The type. */
+	@Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private CDRTypeEnum type = CDRTypeEnum.CSV;
 
 	@Transient
 	private String line;
@@ -589,8 +602,62 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
 	}
-
+	
 	/**
+	 * Gets the times tried.
+	 *
+	 * @return the times tried
+	 */
+	public Integer getTimesTried() {
+        return timesTried;
+    }
+
+    /**
+     * Sets the times tried.
+     *
+     * @param timesTried the new times tried
+     */
+    public void setTimesTried(Integer timesTried) {
+        this.timesTried = timesTried;
+    }
+
+    /**
+     * Gets the source.
+     *
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * Sets the source.
+     *
+     * @param source the new source
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
+    public CDRTypeEnum getType() {
+        return type;
+    }
+
+    /**
+     * Sets the type.
+     *
+     * @param type the new type
+     */
+    public void setType(CDRTypeEnum type) {
+        this.type = type;
+    }
+
+    /**
 	 * Convert to a CSV-like line with ";" as field separator
 	 * 
 	 * @return CSV-line line string

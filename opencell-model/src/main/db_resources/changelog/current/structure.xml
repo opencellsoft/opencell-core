@@ -3167,5 +3167,13 @@ END $$;]]>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
         <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>               
     </changeSet>
+    
+    <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="times_tried" type="int4"/>
+            <column name="source" type="text"/>
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
