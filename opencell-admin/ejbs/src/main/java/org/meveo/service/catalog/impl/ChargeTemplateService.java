@@ -274,10 +274,15 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     }
     
     
-    public BigDecimal evaluateEffectiveUnitMultiplicator(ChargeTemplate chargeTemplate) throws BusinessException {
-    	return evaluateRatingQuantity(chargeTemplate, BigDecimal.ONE);
-    }
-    
+	/**
+	 * calculate rating quantity to be used based on chargeTemplate
+	 * 
+	 * 
+	 * @param chargeTemplate
+	 * @param quantity
+	 * @return
+	 * @throws BusinessException
+	 */
 	public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws BusinessException {
 		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
 		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
