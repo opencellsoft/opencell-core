@@ -19,11 +19,12 @@ public interface CdrReader {
     
     /**
      * Get next record. A synchronized method to read from CDR source
-     * 
+     *
+     * @param cdrParser the cdr parser
      * @return CDR record
      * @throws IOException Failure to read the CDR source
      */
-    CDR getNextRecord() throws IOException;
+    CDR getNextRecord(CdrParser cdrParser) throws IOException;
     
     /**
      * Close CDR record reader

@@ -38,6 +38,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CdrCsvReader;
+import org.meveo.service.medina.impl.CdrParser;
+import org.meveo.service.medina.impl.CdrReader;
 import org.slf4j.Logger;
 
 /**
@@ -116,7 +118,8 @@ public class MediationJobBean {
         PrintWriter outputFileWriter = null;
 
         File currentFile = null;
-        CdrCsvReader cdrReader = null;
+        CdrReader cdrReader = null;
+        CdrParser cdrParser = null;
 
         try {
 
@@ -129,13 +132,15 @@ public class MediationJobBean {
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
             cdrReader = cdrParserService.getCDRReader(currentFile);
+            
+            cdrParser = cdrParserService.getCDRParser();
 
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
             for (long i = 0; i < nbRuns; i++) {
 
-                futures.add(mediationFileProcessing.processFileAsync(cdrReader, result, fileName, rejectFileWriter, outputFileWriter, lastCurrentUser));
+                futures.add(mediationFileProcessing.processFileAsync(cdrReader, cdrParser, result, fileName, rejectFileWriter, outputFileWriter, lastCurrentUser));
 
                 if (waitingMillis > 0) {
                     try {

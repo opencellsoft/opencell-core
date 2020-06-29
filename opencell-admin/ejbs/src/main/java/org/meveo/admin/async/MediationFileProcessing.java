@@ -40,7 +40,8 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CdrCsvReader;
+import org.meveo.service.medina.impl.CdrParser;
+import org.meveo.service.medina.impl.CdrReader;
 import org.slf4j.Logger;
 
 /**
@@ -72,12 +73,13 @@ public class MediationFileProcessing {
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
 	 * NO transaction - each line will be processed in a separate transaction, one
 	 * line failure will not affect processing of other lines.
-	 * 
-	 * @param cdrReader        CDR file parser
+	 *
+	 * @param cdrReader        CDR file reader
+	 * @param cdrParser        The cdr parser
 	 * @param result           Job execution result
 	 * @param fileName         File name being processed
-	 * @param outputFileWriter File writer to output processed data
 	 * @param rejectFileWriter File writer to output failed data
+	 * @param outputFileWriter File writer to output processed data
 	 * @param lastCurrentUser  Current user. In case of multitenancy, when user
 	 *                         authentication is forced as result of a fired trigger
 	 *                         (scheduled jobs, other timed event expirations),
@@ -88,7 +90,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> processFileAsync(CdrCsvReader cdrReader, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
+	public Future<String> processFileAsync(CdrReader cdrReader, CdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -104,7 +106,7 @@ public class MediationFileProcessing {
 			}
 
 			try {
-				cdr = cdrReader.getNextRecord();
+				cdr = cdrReader.getNextRecord(cdrParser);
 				if (cdr == null) {
 					break;
 				}

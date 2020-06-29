@@ -38,8 +38,6 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A default CDR file parser
@@ -51,11 +49,6 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 public class MEVEOCdrParser implements CdrParser {
-
-    private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
-    
-    private String batchName;
-    private String originRecord;
     
     @Inject
     private AccessService accessService;
@@ -227,9 +220,6 @@ public class MEVEOCdrParser implements CdrParser {
                 }
             }
 
-            cdr.setOriginBatch(batchName);
-            cdr.setOriginRecord(originRecord);
-
             if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
                 cdr.setRejectReasonException(new InvalidAccessException(line, "userId is empty"));
             }
@@ -268,42 +258,5 @@ public class MEVEOCdrParser implements CdrParser {
     public boolean isApplicable(String type) {
         // TODO Auto-generated method stub
         return false;
-    }
-    
-   
-    /**
-     * Gets the batch name.
-     *
-     * @return the batch name
-     */
-    public String getBatchName() {
-        return batchName;
-    }
-
-    /**
-     * Sets the batch name.
-     *
-     * @param batchName the new batch name
-     */
-    public void setBatchName(String batchName) {
-        this.batchName = batchName;
-    }
-        
-    /**
-     * Gets the origin record.
-     *
-     * @return the origin record
-     */
-    public String getOriginRecord() {
-        return originRecord;
-    }
-
-    /**
-     * Sets the origin record.
-     *
-     * @param originRecord the new origin record
-     */
-    public void setOriginRecord(String originRecord) {
-        this.originRecord = originRecord;
-    }
+    }    
 }

@@ -42,7 +42,6 @@ import org.meveo.admin.parse.csv.CdrParser;
 import org.meveo.admin.parse.csv.CdrReader;
 import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.parse.csv.MEVEOCdrReader;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -141,8 +140,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
     }
     
     public org.meveo.service.medina.impl.CdrParser getCDRParser() throws BusinessException {
-//        org.meveo.service.medina.impl.CdrParser cdrParser = getParser();
-//        cdrParser.init(cdrFile);
         return getParser();
     }
 
@@ -378,8 +375,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	
 	@SuppressWarnings({ "unchecked", "serial" })
     private CdrCsvReader getReader() throws BusinessException {
-//	    ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-//	    Bean<CdrCsvReader> bean = (Bean<CdrCsvReader>) paramBean.getProperty("cdr.reader", MEVEOCdrReader.class);
 	    
         Set<Bean<?>> parsers = beanManager.getBeans(CdrCsvReader.class, new AnnotationLiteral<CdrReader>() {
         });
