@@ -324,7 +324,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
 				throw new BusinessException( "incompatible input/rating UnitOfMeasures: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
 			}
-		} else if (inputUnitOfMeasure == null || ratingUnitOfMeasure == null) {
+		} else if (inputUnitOfMeasure != null || ratingUnitOfMeasure != null) {
 			throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
 		}
 	}
