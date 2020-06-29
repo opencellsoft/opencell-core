@@ -107723,6 +107723,149 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "#4895 - Create a fixed date calendar ",
+					"item": [
+						{
+							"name": "FIXED_CALENDAR",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "31ab2e1d-cbd3-40bf-b5ff-0fd2b3debd8f",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"FIXED_CALENDAR_2020\",\n    \"description\":\"FIXED_CALENDAR_2020\",\n    \"calendarType\": \"FIXED\",\n     \"fixedDates\": [\n            \"01/01/2020 15:15 - 31/05/2020 15:15\"\n        ]\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE_FIXED_CALENDAR",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "789c5e59-18e8-47db-89bc-a8473c84a3b7",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/calendar/FIXED_CALENDAR_2020",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"FIXED_CALENDAR_2020"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -107752,118 +107895,99 @@
 	],
 	"variable": [
 		{
-			"id": "9fa92931-87be-4bbd-a67b-4ebdb4007906",
+			"id": "0a2fed5b-e038-470c-ae93-0934032b321e",
 			"key": "opencell.base",
-			"value": "http://localhost:8080/opencell",
-			"type": "string"
+			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "428592e9-994e-4154-b851-e9d0aa1241ee",
+			"id": "2cdb61ba-33cf-4f1f-8053-8888c3038aa3",
 			"key": "opencell.url",
-			"value": "{{opencell.base}}/api/rest",
-			"type": "string"
+			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "bd00b621-b25b-4911-ad8b-995af3ae01d7",
+			"id": "dddd1bd0-3f2a-4128-ac6a-f501e3928505",
 			"key": "opencell.username",
-			"value": "opencell.admin",
-			"type": "string"
+			"value": "opencell.admin"
 		},
 		{
-			"id": "2c5b6265-f689-4f20-a480-289786329e07",
+			"id": "3e790f6c-4350-4999-bd7b-5ba915680813",
 			"key": "opencell.password",
-			"value": "opencell.admin",
-			"type": "string"
+			"value": "opencell.admin"
 		},
 		{
-			"id": "ad9c80fb-d18f-46ee-9085-c36b403dc29b",
+			"id": "834a17f2-b601-478c-8cc0-b45a601aac85",
 			"key": "opencell.superusername",
-			"value": "opencell.superadmin",
-			"type": "string"
+			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a5bfc524-85bc-4e6e-b182-2c4d2fefcd7b",
+			"id": "45fe5e98-d2ee-41a9-88c2-9fec398238af",
 			"key": "opencell.superpassword",
-			"value": "opencell.superadmin",
-			"type": "string"
+			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a483c08c-996d-4f5e-a277-bba664394266",
+			"id": "4e6d0d31-b791-45fb-a7fb-d2b91519e078",
 			"key": "entityPrefix",
-			"value": "RS_FULL",
-			"type": "string"
+			"value": "RS_FULL"
 		},
 		{
-			"id": "37401a52-0ee1-4116-814c-c0ed5838ab09",
+			"id": "e319c997-11a2-40b4-b315-34be71487690",
 			"key": "baseEntityPrefix",
-			"value": "RS_BASE",
-			"type": "string"
+			"value": "RS_BASE"
 		},
 		{
-			"id": "6b9993d0-833e-4ea8-b909-b8aad02350a8",
+			"id": "cb136163-f896-4a62-a1a5-3beb44a77e61",
 			"key": "testCode",
-			"value": "TEST",
-			"type": "string"
+			"value": "TEST"
 		},
 		{
-			"id": "4a9785ce-6837-4bc7-aeb8-8767bc604ab3",
+			"id": "01fe3d5b-09aa-4543-8637-2aeb12d217e1",
 			"key": "testDescription",
-			"value": "This is a test description",
-			"type": "string"
+			"value": "This is a test description"
 		},
 		{
-			"id": "2c02612c-4311-4bd4-bd53-ba720f11a840",
+			"id": "fafa72e7-34d8-4827-bcbb-6a65744564ff",
 			"key": "timezone",
-			"value": "CET",
-			"type": "string"
+			"value": "CET"
 		},
 		{
-			"id": "b0eddf1c-42bd-4dd0-9a9a-e54036a4ecf6",
+			"id": "05f16fb0-4aa6-4ffc-83a4-66328afe12fb",
 			"key": "provider.code",
-			"value": "DEMO",
-			"type": "string"
+			"value": "DEMO"
 		},
 		{
-			"id": "9ad3b5f4-d3e8-462c-96c8-25f47bb24394",
+			"id": "fd668819-dcfa-4f93-9541-66b15ed39f52",
 			"key": "seller.code",
-			"value": "MAIN_SELLER",
-			"type": "string"
+			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "646e9d47-9192-47c8-870e-0075e4a74420",
+			"id": "f0f05882-2ab2-4927-b26f-1f1be958ef61",
 			"key": "template.code",
-			"value": "SIMPLE",
-			"type": "string"
+			"value": "SIMPLE"
 		},
 		{
-			"id": "48529b84-8486-4811-bf4a-e1c3c699231c",
+			"id": "d286794d-3f32-45d0-a2c2-4a6e2cf40a94",
 			"key": "template.label",
-			"value": "Simple usage",
-			"type": "string"
+			"value": "Simple usage"
 		},
 		{
-			"id": "59b1f845-aba2-4430-8e14-2a92a2f755eb",
+			"id": "7a76ad8a-c4d1-407d-93e7-2d574a8afc34",
 			"key": "project.code",
-			"value": "SimpleUsage-001",
-			"type": "string"
+			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "5732738d-c132-42c5-b96b-75b15dac3367",
+			"id": "11bfaead-ea58-4bf1-8c72-717f109ac449",
 			"key": "project.description",
-			"value": "Simple usage offer",
-			"type": "string"
+			"value": "Simple usage offer"
 		},
 		{
-			"id": "42938544-32e0-43e4-bda2-0763efaf1b3c",
+			"id": "d24d93a5-20c6-41bb-ac05-2c424215fd4e",
 			"key": "project.type",
-			"value": "Setup",
-			"type": "string"
+			"value": "Setup"
 		},
 		{
-			"id": "0aae75c9-d3d1-40f3-8b32-8ea2cf046dd3",
+			"id": "3a532dde-65bc-4984-a447-ee57a8ab638c",
 			"key": "project.version",
-			"value": "9.2+",
-			"type": "string"
+			"value": "9.2+"
 		}
 	],
 	"protocolProfileBehavior": {}
