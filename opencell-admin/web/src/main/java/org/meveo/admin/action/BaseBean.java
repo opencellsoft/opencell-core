@@ -445,17 +445,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
             }
         }
-
         
-        try {
-        	entity = saveOrUpdate(entity);
-		} catch (BusinessEntityException e) {
-			messages.error(new BundleKey("messages", e.getMessage()));
-		} catch (Exception e) {
-			log.error("failed to save or update chargeTemplate",e);
-			messages.error(new BundleKey("messages", e.getMessage()));
-		}
-        
+        entity = saveOrUpdate(entity);
+		
         if (killConversation) {
             endConversation();
         }
