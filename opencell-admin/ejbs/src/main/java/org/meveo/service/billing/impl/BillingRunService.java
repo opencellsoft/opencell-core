@@ -804,6 +804,51 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
         }
     }
+    
+    /**
+     * Assign invoice number and increment BA invoice dates.
+     *
+     * @param billingRun    The billing run
+     * @param nbRuns        the nb runs
+     * @param waitingMillis The waiting millis
+     * @param jobInstanceId The job instance id
+     * @param result        the Job execution result
+     * @throws BusinessException the business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void RejectBAWithoutBillableTransactions(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
+            throws BusinessException {
+    	
+            List<BillingAccount> billingAccounts = billingAccountService.findNotProcessedBillingAccounts(billingRun);
+  
+            SubListCreator<BillingAccount> subListCreator = null;
+
+            try {
+                subListCreator = new SubListCreator<BillingAccount>(billingAccounts, (int) nbRuns);
+            } catch (Exception e1) {
+                throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+            }
+
+            List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
+            while (subListCreator.isHasNext()) {
+                asyncReturns.add(invoicingAsync.RejectBAWithoutBillableTransactions(billingRun, subListCreator.getNextWorkSet(), jobInstanceId, result, lastCurrentUser));
+                try {
+                    Thread.sleep(waitingMillis);
+                } catch (InterruptedException e) {
+                    log.error("Failed to increment BA next invoicing date waiting for thread", e);
+                    throw new BusinessException(e);
+                }
+            }
+            for (Future<String> futureItsNow : asyncReturns) {
+                try {
+                    futureItsNow.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("Failed to increment BA next invoicing date", e);
+                    throw new BusinessException(e);
+                }
+            }
+    }
 
     /**
      * Launch exceptional invoicing.
@@ -995,6 +1040,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus())) {
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
             billingRunService.applyThreshold(billingRun);
+            RejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
@@ -1008,7 +1054,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-
             log.info("Will assign invoice numbers to invoices of Billing run {} of type {}", billingRun.getId(), type);
             invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);

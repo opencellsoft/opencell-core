@@ -291,6 +291,32 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         return null;
     }
+    
+    public List<BillingAccount> findNotProcessedBillingAccounts(BillingRun billingRun) {
+        try {
+        	Date startDate = billingRun.getStartDate();
+        	Date endDate = billingRun.getEndDate();
+        	
+        	if(endDate==null) {
+        		endDate=new Date();
+        	}
+            
+            QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
+            qb.addCriterionEntity("b.billingCycle.id", billingRun.getBillingCycle().getId());
+            qb.addSql("((b.billingRun.id is null) OR (b.billingRun.id<> :billingRunId))");
+            qb.addCriterionDateRangeToTruncatedToDay("b.nextInvoiceDate", endDate, false, true);
+            
+            if (startDate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("b.nextInvoiceDate", startDate);
+            }
+
+            
+            return (List<BillingAccount>) qb.getQuery(getEntityManager()).setParameter("billingRunId", billingRun.getId()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
+        return null;
+    }
 
     /**
      * List billing accounts that are associated with a given billing run
@@ -426,4 +452,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
+    
 }
