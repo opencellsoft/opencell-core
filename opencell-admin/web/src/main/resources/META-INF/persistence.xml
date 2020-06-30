@@ -37,7 +37,7 @@
         <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
         <!-- <jar-file>C:\\project\\git\\meveo\\opencell-model\\target\\opencell-model-${project.version}.jar</jar-file> -->
         <!-- <jar-file>C:\\mvn_repository\\com\\opencellsoft\\opencell-model\\5.0.1-SNAPSHOT\\opencell-model-${project.version}.jar</jar-file> -->
-        <jar-file>/opt/jboss/opencell-model.jar</jar-file>
+        <jar-file>/Users/anasseh/opencell-model-10.0.0-SNAPSHOT.jar</jar-file>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
@@ -56,6 +56,9 @@
             <property name="hibernate.ejb.event.post-delete" value="org.meveo.jpa.event.DeleteEventListener" /> <!-- Needed for ES -->
             <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
+                        <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
+            <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
         </properties>
     </persistence-unit>
 
