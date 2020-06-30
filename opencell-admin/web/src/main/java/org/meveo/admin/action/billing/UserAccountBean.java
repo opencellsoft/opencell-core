@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -486,7 +484,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
                 new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("WalletOperationStatusEnum.TREATED")),
                 new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("WalletOperationStatusEnum.CANCELED")),
                 new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("WalletOperationStatusEnum.RESERVED")),
-                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("WalletOperationStatusEnum.TO_RERATE"))));
+                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("WalletOperationStatusEnum.TO_RERATE")),
+                new SelectItem(WalletOperationStatusEnum.REJECTED, resourceBundle.getString("WalletOperationStatusEnum.REJECTED"))));
 
         return filterLockedOptions;
     }
