@@ -983,6 +983,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if ((startDate != null) && (endDate == null)) {
             endDate = new Date();
         }
+        if (endDate != null && startDate == null) {
+        	startDate = new Date(0);
+        }
 
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch"
                 : startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
