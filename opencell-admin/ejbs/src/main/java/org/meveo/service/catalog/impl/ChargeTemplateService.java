@@ -275,7 +275,14 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     
     
 	/**
-	 * calculate rating quantity to be used based on chargeTemplate
+	 * calculate rating quantity to be used based on chargeTemplate:
+	 * 
+	 * First evaluate inputUnitEl and ratingUnitEl When an EL is not defined, then
+	 * use the corresponding unit field (resp input and rating) if we have both
+	 * units (from ELs or reference fields), then ignore unitMultiplicator and
+	 * compute multiplicator from units. if we don't have both units, then use
+	 * unitMultiplicator from ChargeTemplate ultimately, if unitMultiplicator is not
+	 * set, then use default value of 1
 	 * 
 	 * 
 	 * @param chargeTemplate
