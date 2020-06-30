@@ -52,8 +52,9 @@ public interface CdrParser {
      *
      * @param cdr the cdr
      * @return the list
+     * @throws CDRParsingException 
      */
-    List<EDR> convertCdrToEdr(CDR cdr);
+    List<EDR> convertCdrToEdr(CDR cdr) throws CDRParsingException;
 
     /**
      * Identifies a specific data type. Null by default. Would be needed only in case where multiple CDR formats have to be supported at once.

@@ -34,7 +34,8 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.medina.impl.CDRParsingException;
+import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
@@ -51,7 +52,7 @@ import org.meveo.service.medina.impl.InvalidFormatException;
 public class MEVEOCdrParser implements CdrParser {
     
     @Inject
-    private AccessService accessService;
+    CDRParsingService cdrParsingService;
     
     @Inject
     @RejectedCDR
@@ -233,30 +234,21 @@ public class MEVEOCdrParser implements CdrParser {
         
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
-
-        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
-            rejectededCdrEventProducer.fire(cdr);
-            throw new InvalidAccessException(cdr);
-        }
-        return accesses;
+        return cdrParsingService.accessPointLookup(cdr);
     }
 
     @Override
-    public List<EDR> convertCdrToEdr(CDR cdr) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<EDR> convertCdrToEdr(CDR cdr) throws CDRParsingException {
+        return cdrParsingService.getEDRList(cdr);
     }
 
     @Override
     public String getType() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isApplicable(String type) {
-        // TODO Auto-generated method stub
         return false;
     }    
 }

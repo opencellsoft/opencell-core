@@ -135,7 +135,7 @@ public class MediationApi extends BaseApi {
        
         try {
             CDR cdr = cdrParser.parse(cdrLine);           
-            List<EDR> edrs = cdrParsingService.getEDRList(cdr);
+            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr);
             List<WalletOperation> walletOperations = new ArrayList<>();
             for (EDR edr : edrs) {            	 
                 log.debug("edr={}", edr);
@@ -220,7 +220,7 @@ public class MediationApi extends BaseApi {
 
             CDR cdr = cdrParser.parse(cdrLine);
 
-            edrs = cdrParsingService.getEDRList(cdr);
+            edrs = cdrParser.convertCdrToEdr(cdr);
             for (EDR edr : edrs) {
                 edrService.create(edr);
                 try {
