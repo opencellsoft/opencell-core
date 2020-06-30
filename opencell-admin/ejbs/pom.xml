@@ -201,6 +201,17 @@
             <artifactId>opencell-api-dto</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-ee-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-ee-dto</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Libraries included in Jboss -->
 
         <dependency>

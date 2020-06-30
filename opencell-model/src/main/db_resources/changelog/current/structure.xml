@@ -3165,15 +3165,53 @@ END $$;]]>
 
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>               
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
     </changeSet>
-    
+
     <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
         <dropColumn tableName="billing_counter_period">
             <column name="filter_el"></column>
             <column name="key_el"></column>
             <column name="value_el"></column>
         </dropColumn>
-     </changeSet>
+    </changeSet>
+    <changeSet id="#5241_20200622" author="khalidHORRI">
+        <createTable tableName="wo_aggregation_line">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_line_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="field" type="varchar(255)"/>
+            <column name="action" type="varchar(25)"/>
+            <column name="value" type="varchar(255)"/>
+            <column name="required" type="${type.boolean}"/>
+            <column name="aggregation_matrix_id" type="bigint"/>
+        </createTable>
+        <createTable tableName="wo_aggregation_matrix">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_matrix_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="aggregation_matrix_id"
+                                 constraintName="wo_aggregation_matrix_id_fk" referencedTableName="wo_aggregation_matrix"
+                                 referencedColumnNames="id"/>
+        <createSequence sequenceName="wo_aggregation_line_seq" startValue="1"/>
+        <createSequence sequenceName="wo_aggregation_matrix_seq" startValue="1"/>
+    </changeSet>
 
 </databaseChangeLog>

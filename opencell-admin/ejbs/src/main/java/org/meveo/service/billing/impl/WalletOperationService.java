@@ -37,7 +37,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 
+import org.hibernate.annotations.QueryHints;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.InsufficientBalanceException;
@@ -78,6 +82,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.RatingResult;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -991,10 +996,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
-
         // get the aggregated data
-        @SuppressWarnings("unchecked")
-        List<AggregatedWalletOperation> result = (List<AggregatedWalletOperation>) query.getResultList();
+        @SuppressWarnings("unchecked") List result = query.unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new AliasToAggregatedWalletOperationResultTransformer(AggregatedWalletOperation.class)).getResultList();
 
         return result;
     }

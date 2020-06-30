@@ -25,8 +25,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.tax.TaxClass;
 
 /**
@@ -138,6 +145,14 @@ public class AggregatedWalletOperation {
 	 * Sorting index
 	 */
 	private Integer sortIndex;
+
+	private Subscription subscription;
+	private ChargeInstance chargeInstance;
+	private ServiceInstance serviceInstance;
+	private OfferTemplate offer;
+	private UserAccount userAccount;
+	private BillingAccount billingAccount;
+	private org.meveo.model.admin.Seller seller;
 
 	/**
 	 * List of wallet operations.
@@ -392,8 +407,8 @@ public class AggregatedWalletOperation {
 	/**
 	 * @param unitAmountTax the unitAmountTax to set
 	 */
-	public void setUnitAmountTax(BigDecimal unitAmountTax) {
-		this.unitAmountTax = unitAmountTax;
+	public void setUnitAmountTax(Double unitAmountTax) {
+		this.unitAmountTax = BigDecimal.valueOf(unitAmountTax);
 	}
 
 	/**
@@ -408,5 +423,61 @@ public class AggregatedWalletOperation {
 	 */
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public ChargeInstance getChargeInstance() {
+		return chargeInstance;
+	}
+
+	public void setChargeInstance(ChargeInstance chargeInstance) {
+		this.chargeInstance = chargeInstance;
+	}
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
+
+	public OfferTemplate getOffer() {
+		return offer;
+	}
+
+	public void setOffer(OfferTemplate offer) {
+		this.offer = offer;
+	}
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 }

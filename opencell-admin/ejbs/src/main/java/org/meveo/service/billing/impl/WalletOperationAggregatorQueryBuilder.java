@@ -18,10 +18,22 @@
 
 package org.meveo.service.billing.impl;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationActionEnum;
+import org.meveo.model.billing.WalletOperationAggregationLine;
+import org.meveo.model.billing.WalletOperationAggregationMatrix;
+
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import java.lang.reflect.Field;
+import java.util.List;
+
 /**
  * Generates the query use to group wallet operations with the given
  * {@link RatedTransactionsJobAggregationSetting}.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -31,6 +43,7 @@ public class WalletOperationAggregatorQueryBuilder {
 	private String groupBy = "";
 	private String id = "";
 	private String dateAggregateSelect = "";
+	private String select = "";
 
 	public WalletOperationAggregatorQueryBuilder(RatedTransactionsJobAggregationSetting aggregationSettings) {
 		this.aggregationSettings = aggregationSettings;
@@ -39,89 +52,93 @@ public class WalletOperationAggregatorQueryBuilder {
 	}
 
 	private void prepareQuery() {
-		if (aggregationSettings.isAggregateByDay()) {
-			// truncate by day
-			dateAggregateSelect += ", YEAR(operation_date), MONTH(operation_date), DAY(operation_date)";
-			groupBy += "YEAR(operation_date), MONTH(operation_date), DAY(operation_date)";
+		WalletOperationAggregationMatrix aggregationMatrix = aggregationSettings.getWalletOperationAggregationMatrix();
+		List<WalletOperationAggregationLine> aggregationLines = aggregationMatrix.getAggregationLines();
+		for (WalletOperationAggregationLine aggregationLine : aggregationLines) {
+			select += getSelect(aggregationLine);
+			groupBy += getQueryGroupBy(aggregationLine);
+		}
+		if (!StringUtils.isBlank(select)) {
+			select = select.substring(0, select.length() - 2);
+		}
+		if (!StringUtils.isBlank(groupBy)) {
+			groupBy = groupBy.substring(0, groupBy.length() - 2);
+		}
+	}
 
+	private String getQueryGroupBy(WalletOperationAggregationLine aggregationLine) {
+		String field = aggregationLine.getField();
+		if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.KEY)) {
+			return "o." + field + ".id, ";
+		}
+
+		if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.TRUNCATE)) {
+			if (aggregationLine.getValue().equalsIgnoreCase("day")) {
+				return "YEAR(o." + field + "), MONTH(o." + field + "), DAY(o." + field + "), ";
+			}
+			if (aggregationLine.getValue().equalsIgnoreCase("month")) {
+				return "YEAR(o." + field + "), MONTH(o." + field + "), ";
+			}
+			if (aggregationLine.getValue().equalsIgnoreCase("year")) {
+				return "YEAR(o." + field + "), ";
+			}
+		}
+		return "";
+	}
+
+	private String getSelect(WalletOperationAggregationLine aggregationLine) {
+		String selectStr = "";
+		String field = aggregationLine.getField();
+
+		if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.EMPTY)) {
+			selectStr = "";
+		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.KEY)) {
+			selectStr = "o." + field + ".id as " + getFieldSuffix(field);
+		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.TRUNCATE)) {
+			if (aggregationLine.getValue().equalsIgnoreCase("day")) {
+				selectStr = "YEAR(o." + field + ") as year, MONTH(o." + field + ") as month, DAY(o." + field + ") as day ";
+			}
+			if (aggregationLine.getValue().equalsIgnoreCase("month")) {
+				selectStr = "YEAR(o." + field + ") as year, MONTH(o." + field + ") as month, 1 as day ";
+			}
+			if (aggregationLine.getValue().equalsIgnoreCase("year")) {
+				selectStr = "YEAR(o." + field + "), as year, 0 as month, 1 as day ";
+			}
+		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.VALUE)) {
+			selectStr = field + "as " + field;
 		} else {
-			// truncate by month
-			dateAggregateSelect += ", YEAR(operation_date), MONTH(operation_date), 0";
-			groupBy += "YEAR(operation_date), MONTH(operation_date)";
+			selectStr = aggregationLine.getAction() + "(o." + field + ") as " + field;
 		}
-
-		switch (aggregationSettings.getAggregationLevel()) {
-		case BA:
-			groupBy += ", o.subscription.userAccount.billingAccount";
-			id = "o.subscription.userAccount.billingAccount.id";
-			break;
-
-		case UA:
-			groupBy += ", o.subscription.userAccount";
-			id = "o.subscription.userAccount.id";
-			break;
-
-		case SUB:
-			groupBy += ", o.subscription";
-			id = "o.subscription.id";
-			break;
-
-		case SI:
-			groupBy += ", o.serviceInstance";
-			id = "o.serviceInstance.id";
-			break;
-
-		case CI:
-			groupBy += ", o.chargeInstance";
-			id = "o.chargeInstance.id";
-			break;
-
-		case DESC:
-			groupBy += ", CONCAT(o.chargeInstance.id, '|', o.description)";
-			id = "CONCAT(o.chargeInstance.id, '|', o.description)";
-			break;
-
-		default:
-			groupBy += ", o.subscription.userAccount.billingAccount";
-			id = "o.subscription.userAccount.billingAccount.id";
+		if (StringUtils.isBlank(selectStr)) {
+			return "";
+		} else {
+			return selectStr + ", ";
 		}
+	}
 
-		// additional criteria
-		if (aggregationSettings.isAggregateByOrder()) {
-			groupBy += ", o.orderNumber";
+	private String getFieldSuffix(String field) {
+		if (field.contains(".")) {
+			String[] parts = field.split(".");
+			return parts[parts.length - 1];
+		} else {
+			return field;
 		}
-		if (aggregationSettings.isAggregateByUnitAmount()) {
-			groupBy += ", o.unitAmountWithoutTax";
-		}
-		if (aggregationSettings.isAggregateByParam1()) {
-			groupBy += ", o.parameter1";
-		}
-		if (aggregationSettings.isAggregateByParam2()) {
-			groupBy += ", o.parameter2";
-		}
-		if (aggregationSettings.isAggregateByParam3()) {
-			groupBy += ", o.parameter3";
-		}
-		if (aggregationSettings.isAggregateByExtraParam()) {
-			groupBy += ", o.parameterExtra";
-		}
-		
 	}
 
 	public String getParameter1Field() {
-		return aggregationSettings.isAggregateByParam1() ? "o.parameter1" : "'NULL'";
+		return aggregationSettings.isAggregateByParam1() ? "o.parameter_1" : "'NULL'";
 	}
 
 	public String getParameter2Field() {
-		return aggregationSettings.isAggregateByParam2() ? "o.parameter2" : "'NULL'";
+		return aggregationSettings.isAggregateByParam2() ? "o.parameter_2" : "'NULL'";
 	}
 
 	public String getParameter3Field() {
-		return aggregationSettings.isAggregateByParam3() ? "o.parameter3" : "'NULL'";
+		return aggregationSettings.isAggregateByParam3() ? "o.parameter_3" : "'NULL'";
 	}
 
 	public String getParameterExtraField() {
-		return aggregationSettings.isAggregateByExtraParam() ? "o.parameterExtra" : "'NULL'";
+		return aggregationSettings.isAggregateByExtraParam() ? "o.parameter_extra" : "'NULL'";
 	}
 
 	public String getOrderNumberField() {
@@ -129,30 +146,17 @@ public class WalletOperationAggregatorQueryBuilder {
 	}
 	
 	public String getUnitAmountField() {
-		return aggregationSettings.isAggregateByUnitAmount() ? "o.unitAmountWithoutTax" : "(CAST(AVG(o.unitAmountWithoutTax) as big_decimal))";
+		return aggregationSettings.isAggregateByUnitAmount() ? "o.unit_amount_withoutTax" : "AVG(o.unit_amount_without_tax)";
 	}
 
 	public String getGroupQuery() {
-		return "SELECT new org.meveo.service.billing.impl.AggregatedWalletOperation(" //
-				+ "STRING_AGG(cast(o.id as string), ','), "
-				+ "o.seller.id" //
-				+ dateAggregateSelect //
-				+ ", o.tax" //
-				+ ", o.invoiceSubCategory" //
-				+ ", " + id //
-				+ ", SUM(o.amountWithTax), SUM(o.amountWithoutTax), SUM(o.amountTax)" //
-				+ ", o.taxClass" //
-				+ ", SUM(o.quantity)" //
-				+ ", " + getUnitAmountField()//
-				+ ", " + getOrderNumberField() //
-				+ ", " + getParameter1Field() //
-				+ ", " + getParameter2Field() //
-				+ ", " + getParameter3Field() //
-				+ ", " + getParameterExtraField() //
-				+ ", MIN(o.sortIndex) "  //
-				+ ")" + " FROM WalletOperation o " //
+		return "SELECT " //
+				+ "STRING_AGG(cast(o.id as string), ','), " //
+				+ select //
+				+ " FROM WalletOperationPeriod o " //
 				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status='OPEN' " //
-				+ " GROUP BY o.seller.id, o.tax, o.taxClass, o.invoiceSubCategory, " + groupBy;
+				+ " GROUP BY " + groupBy;
+
 	}
 
 	public String getGroupBy() {

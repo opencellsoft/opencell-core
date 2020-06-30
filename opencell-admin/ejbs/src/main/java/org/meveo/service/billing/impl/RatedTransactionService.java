@@ -254,14 +254,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         InvoiceSubCategory isc = null;
 
         Calendar cal = Calendar.getInstance();
-        if (aggregationSettings.isAggregateByDay()) {
-            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth() - 1, aggregatedWo.getDay(), 0, 0, 0);
-            ratedTransaction.setUsageDate(cal.getTime());
-        } else {
-            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth() - 1, 1, 0, 0, 0);
-            ratedTransaction.setUsageDate(cal.getTime());
-
-        }
+        cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
+        ratedTransaction.setUsageDate(cal.getTime());
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
 

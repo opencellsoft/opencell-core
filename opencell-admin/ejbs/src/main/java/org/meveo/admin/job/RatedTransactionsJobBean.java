@@ -35,12 +35,16 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.WalletOperationAggregationMatrix;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
+import org.meveo.service.billing.impl.WalletOperationAggregationMatrixService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
@@ -65,6 +69,9 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionAsync ratedTransactionAsync;
 
+    @Inject
+    private WalletOperationAggregationMatrixService walletOperationAggregationMatrixService;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -83,18 +90,14 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             removeZeroWalletOperation();
             if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
-                aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
-                String aggregationLevel = ((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"));
-                if (aggregationLevel == null) {
-                    throw new BusinessException("Rated transactions aggregation is enabled, but aggregation level is not specified");
-                }
-                aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(aggregationLevel));
-                aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder", false));
-                aggregationSetting.setAggregateByUnitAmount((boolean) this.getParamOrCFValue(jobInstance, "aggregateByUnitAmount", false));
-                aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1", false));
-                aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2", false));
-                aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3", false));
-                aggregationSetting.setAggregateByExtraParam((boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam", false));
+                aggregationSetting.setFilter((Filter) this.getParamOrCFValue(jobInstance, "woFilters", null));
+                EntityReferenceWrapper aggregationMatrixWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationMatrix", null);
+                WalletOperationAggregationMatrix aggregationMatrix = (walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()) == null
+                        || walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).isEmpty()) ?
+                        null :
+                        walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).get(0);
+                aggregationSetting.setWalletOperationAggregationMatrix(aggregationMatrix);
+                aggregationSetting.setAggregationKeyEl((String) this.getParamOrCFValue(jobInstance, "aggregationKeyEl", null));
 
                 executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
 
