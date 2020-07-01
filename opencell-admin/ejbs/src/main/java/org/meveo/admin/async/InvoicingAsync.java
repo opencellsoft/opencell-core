@@ -226,11 +226,10 @@ public class InvoicingAsync {
     
     
     /**
-     * Increment BA invoice dates async. One invoice at a time in a separate transaction.
+     * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
      * @param billingRun the billing run to process
-     * @param invoiceIds the invoice ids
-     * @param invoicesToNumberInfo the invoices to number info
+     * @param billingAccounts the billingAccounts to be rejected
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -239,7 +238,7 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> RejectBAWithoutBillableTransactions(BillingRun billingRun, List<BillingAccount> billingAccounts,
+    public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<BillingAccount> billingAccounts,
             Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;

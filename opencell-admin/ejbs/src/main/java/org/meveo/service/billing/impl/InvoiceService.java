@@ -2356,11 +2356,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     /**
-     * increment BA invoice date.
-     * @param update 
-     *
-     * @param invoiceId invoice id
-     * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
+     * Increment BA invoice date.
+     * 
+     * @param billingRun
+     * @param billingAccount
+     * @param update
+     * 
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
