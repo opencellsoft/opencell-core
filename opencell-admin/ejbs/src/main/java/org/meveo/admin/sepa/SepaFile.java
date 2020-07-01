@@ -69,6 +69,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -243,8 +244,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		try {
 			ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
 			String fileName = fileNamePrefix + ddRequestLot.getId();
-			if (ddRequestLot.getSeller() != null) {
-				fileName = fileName + UNDERSCORE_SEPARATOR + ddRequestLot.getSeller().getCode();
+			Seller seller = ddRequestLot.getSeller();
+			if (seller != null) {
+				fileName = fileName + UNDERSCORE_SEPARATOR + seller.getCode();
 			} else {
 				fileName = fileName + UNDERSCORE_SEPARATOR + appProvider.getCode();
 			}
