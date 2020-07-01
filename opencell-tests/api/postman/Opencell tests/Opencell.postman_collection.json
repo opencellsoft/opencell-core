@@ -872,7 +872,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"OCCT already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"_OCCT already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1517,7 +1517,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\" does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"_OCCT does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1678,7 +1678,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.collectionVariables.get(\"testCode\")+\" does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.collectionVariables.get(\"testCode\")+\"_AC does not exists.\");",
 													"",
 													"});"
 												],
@@ -108601,97 +108601,97 @@
 	],
 	"variable": [
 		{
-			"id": "486b9e26-35de-4803-b449-6ca6ca54eef2",
+			"id": "969cc899-1e12-452a-a53d-d84b9e22f184",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "428a50da-85e9-49e2-be26-85b279a67b4d",
+			"id": "43d4d922-2919-4fee-9166-b2ef81b593d9",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "50a8a255-51fa-4d7c-b45f-9fd68481df78",
+			"id": "cdaf49cf-b71e-48e4-b500-3fa4d209f113",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "9f646d81-d650-4c92-bf92-eba6b3482ea5",
+			"id": "cbe9c752-781c-4a21-b339-6e1231888415",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "482b44a0-4f63-44cd-980d-c81e1c65b3bd",
+			"id": "3c45ad27-fd1e-485b-8c78-1914a6277665",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "7e0921ca-76fc-4a5e-a8b4-d1f5a0d5c884",
+			"id": "c3cb7d12-2dc2-4311-8e87-4bcc59b75d6c",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "e011ab13-0b53-4c33-bca4-e847459524fb",
+			"id": "3c730ffa-e4a0-4f7d-9f3c-5a7eaf627309",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "2130f483-9ee3-4f6f-895d-fa7e4395641b",
+			"id": "a7f16acf-0b63-4161-bf79-3f8a155eec71",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "46f011af-1aca-4cd5-a795-13fc7e13fcdc",
+			"id": "c990222f-ff6d-40c0-8bd0-59532ba7323f",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "6741469c-fb7c-4a45-a212-7d10322ca4a9",
+			"id": "99d65768-6377-4851-add3-40eb36347ed7",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "f5ed0bae-0874-430f-bf50-bf23403d6e39",
+			"id": "f537e58e-bf64-4e83-b7ec-b7fa30219267",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "d19f2243-266f-46d7-8222-e05d5a41463e",
+			"id": "d4b4e99e-74be-41cd-9454-94df7799c311",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "d7523e8e-384a-42b9-ae21-fa9a11239287",
+			"id": "f7145893-c9e6-40f8-ba3e-53205c5aba58",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "3b00de7c-4966-416e-b58c-c50642ace073",
+			"id": "09fcb4e0-0c15-4e1f-aef1-84f5bbf8295b",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "36d0c194-2609-4857-accd-3559a6822264",
+			"id": "1b452f29-f31d-4ff6-a065-05dbdb5a154d",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "b4764626-83b0-4c16-bf50-1f3ea2a125dd",
+			"id": "b541c55a-9d78-4532-934e-22060733ad62",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "d12ed41c-e86d-4175-9980-4574082b4afc",
+			"id": "44967ef3-5f66-4581-b20e-f97774485bd6",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "89aa3f18-f584-4fa6-948e-9943ef05f620",
+			"id": "a3475723-2da1-4661-a719-f31323325ae4",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "59c78175-2e68-4bb3-82e3-9f18c24766ae",
+			"id": "e7e76dfc-dac8-49ac-ab00-c24f1ca92c57",
 			"key": "project.version",
 			"value": "9.2+"
 		}
