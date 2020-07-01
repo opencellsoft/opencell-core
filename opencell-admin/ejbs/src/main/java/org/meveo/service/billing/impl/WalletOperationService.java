@@ -152,8 +152,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
-                quantityInChargeUnits, chargeTemplateService.evaluateEffectiveUnitMultiplicator(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
+        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
+                quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, null,
             false, isVirtual);
