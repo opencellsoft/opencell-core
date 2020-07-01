@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.BusinessService;
@@ -294,6 +295,11 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
 		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
 		BigDecimal multiplicator = chargeTemplate.getUnitMultiplicator();
+		RoundingModeEnum roundingMode = chargeTemplate.getRoundingMode();
+		int unitNbDecimal = chargeTemplate.getUnitNbDecimal();
+        if (unitNbDecimal == 0) {
+            unitNbDecimal = 2;
+        }
 
 		inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
 		outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
@@ -301,7 +307,8 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		if (inputUnitFromEL != null || outputUnitFromEL != null) {
 			if (inputUnitFromEL != null && outputUnitFromEL != null) {
 				if (inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
-					return quantity.multiply(BigDecimal.valueOf(inputUnitFromEL.getMultiplicator())).divide(BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()));
+			        quantity = quantity.multiply(BigDecimal.valueOf(inputUnitFromEL.getMultiplicator())).divide(BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()));
+			        return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
 				} else {
 					throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitFromEL 
 							+ "/" + outputUnitFromEL +" for chargeTemplate "+chargeTemplate.getCode());
@@ -311,9 +318,9 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 							+ inputUnitFromEL + "/" + outputUnitFromEL);
 			}
 		} else if (multiplicator != null) {
-			return quantity.multiply(multiplicator);
+			return quantity.multiply(multiplicator).setScale(unitNbDecimal, roundingMode.getRoundingMode());
 		}
-		return quantity;
+		return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
 	}
 
 	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
