@@ -816,7 +816,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws BusinessException the business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void RejectBAWithoutBillableTransactions(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
+    public void rejectBAWithoutBillableTransactions(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
             throws BusinessException {
     	
             List<BillingAccount> billingAccounts = billingAccountService.findNotProcessedBillingAccounts(billingRun);
@@ -832,7 +832,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                asyncReturns.add(invoicingAsync.RejectBAWithoutBillableTransactions(billingRun, subListCreator.getNextWorkSet(), jobInstanceId, result, lastCurrentUser));
+                asyncReturns.add(invoicingAsync.rejectBAWithoutBillableTransactions(billingRun, subListCreator.getNextWorkSet(), jobInstanceId, result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
@@ -1040,7 +1040,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus())) {
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
             billingRunService.applyThreshold(billingRun);
-            RejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+            rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
