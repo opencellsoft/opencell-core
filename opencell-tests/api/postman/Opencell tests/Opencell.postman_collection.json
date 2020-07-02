@@ -55760,15 +55760,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SUB_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-03-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-03-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2015-02-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2015-02-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2015-04-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2015-04-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -55945,15 +55945,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SUB_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"RESILIATED\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-03-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-03-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2015-02-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2015-02-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2015-04-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2015-04-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -56211,11 +56211,11 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_FUTURE_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"today\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"today\"));",
 													"    pm.expect(jsonData.subscription.renewalRule.initialTermType).to.eql(\"RECURRING\");",
 													"});"
 												],
@@ -56394,12 +56394,12 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_FUTURE_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"today\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"today\"));",
-													"    pm.expect(jsonData.subscription.subscribedTillDate).to.eql(pm.globals.get(\"terminationDate\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.subscribedTillDate).to.contains(pm.globals.get(\"terminationDate\"));",
 													"    pm.expect(jsonData.subscription.renewalRule.endOfTermAction).to.eql(\"TERMINATE\");",
 													"    pm.expect(jsonData.subscription.renewalRule.terminationReasonCode).to.eql(\"TERM_REASON_1\");",
 													"});"
@@ -56660,15 +56660,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_INBETWEEN_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"10daysBefore\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"10daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"5daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"5daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(pm.globals.get(\"2daysBefore\"));",
 													"});"
 												],
 												"type": "text/javascript"
@@ -56927,18 +56927,18 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_INBETWEEN_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"RESILIATED\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"10daysBefore\"));",
-													"    pm.expect(jsonData.subscription.terminationDate).to.eql(pm.globals.get(\"10daysBefore\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"10daysBefore\"));",
+													"    pm.expect(jsonData.subscription.terminationDate).to.contains(pm.globals.get(\"10daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"5daysBefore\"));",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.eql(pm.globals.get(\"5daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"5daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(pm.globals.get(\"5daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(pm.globals.get(\"2daysBefore\"));",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].terminationDate).to.eql(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].terminationDate).to.contains(pm.globals.get(\"2daysBefore\"));",
 													"});"
 												],
 												"type": "text/javascript"
@@ -57196,15 +57196,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_INBETWEEN_2_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"10daysBefore\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"10daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"5daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"5daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(pm.globals.get(\"2daysBefore\"));",
 													"});"
 												],
 												"type": "text/javascript"
@@ -57382,18 +57382,18 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_INBETWEEN_2_TERMINATION\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"RESILIATED\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"10daysBefore\"));",
-													"    pm.expect(jsonData.subscription.terminationDate).to.eql(pm.globals.get(\"3daysBefore\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"10daysBefore\"));",
+													"    pm.expect(jsonData.subscription.terminationDate).to.contains(pm.globals.get(\"3daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(pm.globals.get(\"5daysBefore\"));",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.eql(pm.globals.get(\"3daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"5daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(pm.globals.get(\"3daysBefore\"));",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(pm.globals.get(\"2daysBefore\"));",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].terminationDate).to.eql(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(pm.globals.get(\"2daysBefore\"));",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].terminationDate).to.contains(pm.globals.get(\"2daysBefore\"));",
 													"});"
 												],
 												"type": "text/javascript"
@@ -57570,8 +57570,8 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_FUTURE_TERMINATION_3\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"CREATED\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"today\"));",
-													"    pm.expect(jsonData.subscription.terminationDate).to.eql(pm.globals.get(\"terminationDate\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.terminationDate).to.contains(pm.globals.get(\"terminationDate\"));",
 													"});"
 												],
 												"type": "text/javascript"
@@ -57909,8 +57909,8 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_FUTURE_TERMINATION_4\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(pm.globals.get(\"today\"));",
-													"    pm.expect(jsonData.subscription.subscribedTillDate).to.eql(pm.globals.get(\"terminationDate\"));",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"today\"));",
+													"    pm.expect(jsonData.subscription.subscribedTillDate).to.contains(pm.globals.get(\"terminationDate\"));",
 													"    pm.expect(jsonData.subscription.renewalRule.initialTermType).to.eql(\"FIXED\");",
 													"    pm.expect(jsonData.subscription.renewalRule.autoRenew).to.eql(false);",
 													"    pm.expect(jsonData.subscription.renewalRule.endOfTermAction).to.eql(\"TERMINATE\");",
@@ -59892,7 +59892,6 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    var body = ",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_PROD\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"CREATED\");",
 													"    pm.expect(jsonData.subscription.productInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_PRODUCT2\");",
@@ -60878,8 +60877,8 @@
 													"",
 													"    pm.expect(jsonData.serviceInstances[0].code).to.eql(jsonBody.serviceInstances[0].code);",
 													"    pm.expect(jsonData.serviceInstances[0].quantity).to.eql(jsonBody.serviceInstances[0].quantity);",
-													"    pm.expect(jsonData.serviceInstances[0].subscriptionDate).to.eql(jsonBody.serviceInstances[0].subscriptionDate);",
-													"    pm.expect(jsonData.serviceInstances[0].terminationDate).to.eql(new Date(pm.globals.get(\"testCase.terminationDate\")));",
+													"    pm.expect(jsonData.serviceInstances[0].subscriptionDate).to.contains(jsonBody.serviceInstances[0].subscriptionDate);",
+													"    pm.expect(jsonData.serviceInstances[0].terminationDate).to.contains(pm.globals.get(\"testCase.terminationDate\"));",
 													"    pm.expect(jsonData.serviceInstances[0].serviceRenewal).to.eql(jsonBody.serviceInstances[0].serviceRenewal);",
 													"    ",
 													"});"
@@ -60922,7 +60921,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"actionStatus\": {\n        \"status\": \"SUCCESS\"\n    },\n    \"serviceInstances\": [\n        {\n            \"id\": 30,\n            \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n            \"description\": \"{{baseEntityPrefix}}_SERVICE1\",\n            \"subscriptionDate\": 1489536000000,\n            \"quantity\": 5,\n            \"serviceRenewal\": {\n                \"initialTermType\": \"FIXED\",\n                \"renewalTermType\": null,\n                \"initialyActiveFor\": null,\n                \"initialyActiveForUnit\": null,\n                \"calendarInitialyActiveFor\": null,\n                \"autoRenew\": false,\n                \"daysNotifyRenewal\": null,\n                \"endOfTermAction\": \"TERMINATE\",\n                \"terminationReasonCode\": \"TERM_REASON_1\",\n                \"renewFor\": null,\n                \"calendarRenewFor\": null,\n                \"renewForUnit\": null,\n                \"extendAgreementPeriodToSubscribedTillDate\": false\n            }\n        }\n    ]\n}",
+											"raw": "{\n    \"actionStatus\": {\n        \"status\": \"SUCCESS\"\n    },\n    \"serviceInstances\": [\n        {\n            \"id\": 30,\n            \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n            \"description\": \"{{baseEntityPrefix}}_SERVICE1\",\n            \"subscriptionDate\": \"2017-03-15\",\n            \"quantity\": 5,\n            \"serviceRenewal\": {\n                \"initialTermType\": \"FIXED\",\n                \"renewalTermType\": null,\n                \"initialyActiveFor\": null,\n                \"initialyActiveForUnit\": null,\n                \"calendarInitialyActiveFor\": null,\n                \"autoRenew\": false,\n                \"daysNotifyRenewal\": null,\n                \"endOfTermAction\": \"TERMINATE\",\n                \"terminationReasonCode\": \"TERM_REASON_1\",\n                \"renewFor\": null,\n                \"calendarRenewFor\": null,\n                \"renewForUnit\": null,\n                \"extendAgreementPeriodToSubscribedTillDate\": false\n            }\n        }\n    ]\n}",
 											"options": {
 												"raw": {}
 											}
@@ -63898,13 +63897,13 @@
 									"days2before.setDate(today.getDate() - 2);",
 									"",
 									"pm.globals.set(\"index\", 194);",
-									"pm.globals.set(\"today\", today.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"terminationDate\", terminationDate.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"20daysBefore\", days20before.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"10daysBefore\", days10before.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"5daysBefore\", days5before.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"3daysBefore\", days3before.toISOString().slice(0, 10)+\"T00:00:00Z\");",
-									"pm.globals.set(\"2daysBefore\", days2before.toISOString().slice(0, 10)+\"T00:00:00Z\");"
+									"pm.globals.set(\"today\", today.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"terminationDate\", terminationDate.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"20daysBefore\", days20before.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"10daysBefore\", days10before.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"5daysBefore\", days5before.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"3daysBefore\", days3before.toISOString().slice(0, 10)+\"T\");",
+									"pm.globals.set(\"2daysBefore\", days2before.toISOString().slice(0, 10)+\"T\");"
 								]
 							}
 						},
@@ -108598,97 +108597,97 @@
 	],
 	"variable": [
 		{
-			"id": "3b321fc6-292f-4752-a21e-62c0800c3cfa",
+			"id": "8fc6db95-46b2-498b-b112-5983fe3dbe97",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "72e6dd8b-317b-4443-9db5-8e8cc8a13864",
+			"id": "d01bc3e9-de53-41be-a968-715c9b35cf58",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "95aa2336-1008-417c-b36b-9f3058354537",
+			"id": "5031ccac-a1e9-42c5-a01f-a4157dd2af8e",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "3181acff-51ac-4b89-851c-0d2fd81ca3dc",
+			"id": "8e934b78-dd88-488b-8abf-d8ddd43993e0",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "ebc87632-962c-41fa-994f-49796121fd27",
+			"id": "752223ce-4739-4ecc-ab33-803d2207a726",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5ae1cb1d-31ab-4b16-b207-17241fc7fd64",
+			"id": "67124965-493e-475d-9e5f-408b80e00600",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "b9ae7adf-f5bd-4ab3-ad73-1dc30147c606",
+			"id": "5f0c5e72-8e6c-442d-a018-2d67ee62240d",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "0b3db3fd-5329-449a-8b13-fa10d778cb0b",
+			"id": "82516fdd-b034-4e7e-9114-309599d6f303",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "c652fdab-e9e0-4885-917d-d726fabbe866",
+			"id": "8f171e83-4b15-47b7-b92f-293625d9a26f",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "4f903031-fd99-45dd-98ab-36f56538ce35",
+			"id": "51d4b3b8-5229-4c7d-854b-ca997e890005",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "3dd1e911-2c06-4a6c-8943-577f2e20ec61",
+			"id": "44989d5b-b260-4a29-a1d6-8b49b8330911",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "74fde225-4d55-4a27-bdbc-cece6384fc1f",
+			"id": "99a3652d-63c9-4928-8af8-3d80e587fa2d",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "70f890ec-bf40-4587-b5e4-ce1979f016e5",
+			"id": "fd389f63-1136-4d0e-a71c-6e3cdc790cd8",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "9d8660bc-9c13-4c52-823b-30270bfd73a0",
+			"id": "81ef0fae-8a0e-4d20-a417-3f83a08d6c10",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "a516b887-2588-4473-9bd6-db3fac018753",
+			"id": "1fce0740-d2ef-46b5-b066-318328155a42",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "0e84bf93-3c3b-48e6-be39-c1660134c2b8",
+			"id": "25d58bea-17a1-4a21-aa0b-03988abae4d4",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "1ec49ddc-82ec-4dd3-a748-fb5c61af03d9",
+			"id": "564f2719-2870-4498-b1d4-ebf8e6fb654b",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "3fb953c3-fd4e-4f56-bb35-62efa4b09001",
+			"id": "c69dd2f2-26e9-4dac-825d-c5067b7a5f40",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "2cc25603-17be-432b-ab5e-a00de6bc704b",
+			"id": "1f434498-67d6-4cec-861b-b2d602aa2080",
 			"key": "project.version",
 			"value": "9.2+"
 		}
