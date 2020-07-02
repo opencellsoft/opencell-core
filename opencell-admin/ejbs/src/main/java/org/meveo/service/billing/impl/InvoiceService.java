@@ -725,7 +725,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
                 lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
             } else {
-            	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
+                lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
@@ -2321,7 +2321,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 referenceDate = new Date();
                 break;
             case NEXT_INVOICE_DATE:
-				referenceDate = billingAccount != null ? billingAccount.getNextInvoiceDate() : null;
+                referenceDate = billingAccount != null ? billingAccount.getNextInvoiceDate() : null;
                 break;
             case LAST_TRANSACTION_DATE:
                 referenceDate = billingRun.getLastTransactionDate();
@@ -2357,7 +2357,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
 
-        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount, false);
+        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
     }
@@ -2367,24 +2367,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param billingRun
      * @param billingAccount
-     * @param update
      * 
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, boolean update) throws BusinessException {
-    	
+    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+        
         BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
-		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
-		if(nextCalendarDate!=null) {
-	        billingAccount.setNextInvoiceDate(nextCalendarDate);
-	        billingAccount.updateAudit(currentUser);
-	        if(update) {
-	        	billingAccountService.update(billingAccount);
-	        }
-		}
-		return billingAccount;
+        Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
+        if(nextCalendarDate!=null) {
+            billingAccount.setNextInvoiceDate(nextCalendarDate);
+            billingAccount.updateAudit(currentUser);
+            billingAccountService.update(billingAccount);
+        }
     }
 
     /**
