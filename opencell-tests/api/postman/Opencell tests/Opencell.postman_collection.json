@@ -14007,8 +14007,12 @@
 													"pm.test(request.name + \" - Description is equal \" + pm.collectionVariables.get(\"testDescription\"), function () {",
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.offerTemplate.description).to.eql(pm.collectionVariables.get(\"testDescription\"));",
-													"    pm.expect(jsonData.offerTemplate.validFrom).to.eql(1577836800000);",
-													"    pm.expect(jsonData.offerTemplate.validTo).to.eql(1580515200000);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.offerTemplate.validFrom).to.eql(\"2020-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.offerTemplate.validTo).to.eql(\"2020-02-01T00:00:00Z\");",
 													"});"
 												],
 												"type": "text/javascript"
