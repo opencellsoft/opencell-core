@@ -2292,7 +2292,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    private Date getReferenceDate(Invoice invoice) {
+    /**
+     * Determine a date to use in calendar to calculate the next invoice date
+     * @param invoice Invoice
+     * @return Date value
+     */
+    private Date getReferenceForNextInvoiceDateCalculation(Invoice invoice) {
         BillingRun billingRun = invoice.getBillingRun();
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
@@ -2347,7 +2352,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
 
-        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(getReferenceDate(invoice));
+        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate, getReferenceForNextInvoiceDateCalculation(invoice));
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
 //        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);

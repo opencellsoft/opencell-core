@@ -89,7 +89,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setCode("rateUntilDate");
         rateUntilDate.setAppliesTo("JobInstance_UsageRatingJob");
         rateUntilDate.setActive(true);
-        rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
+        rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDateUsage"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
         rateUntilDate.setMaxValue(50L);
