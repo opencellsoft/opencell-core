@@ -3176,4 +3176,7 @@ END $$;]]>
         </dropColumn>
      </changeSet>
 
+    <changeSet id="#5331_20190630" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RecurringRatingJob'</sql>
+    </changeSet>
 </databaseChangeLog>

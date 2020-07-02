@@ -27,7 +27,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -89,11 +91,34 @@ public class RecurringRatingJob extends Job {
         rateUntilDate.setCode("rateUntilDate");
         rateUntilDate.setAppliesTo("JobInstance_RecurringRatingJob");
         rateUntilDate.setActive(true);
-        rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
+        rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDateRec"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
         rateUntilDate.setGuiPosition("tab:Configuration:0;field:2");
         result.put("rateUntilDate", rateUntilDate);
+
+        CustomFieldTemplate rateUntilDateEL = new CustomFieldTemplate();
+        rateUntilDateEL.setCode("rateUntilDateEL");
+        rateUntilDateEL.setAppliesTo("JobInstance_RecurringRatingJob");
+        rateUntilDateEL.setActive(true);
+        rateUntilDateEL.setDescription(resourceMessages.getString("jobExecution.rateUntilDateRecEL"));
+        rateUntilDateEL.setFieldType(CustomFieldTypeEnum.STRING);
+        rateUntilDateEL.setMaxValue(100L);
+        rateUntilDateEL.setValueRequired(false);
+        rateUntilDateEL.setGuiPosition("tab:Configuration:0;field:3");
+        result.put("rateUntilDateEL", rateUntilDateEL);
+
+        CustomFieldTemplate rateBCs = new CustomFieldTemplate();
+        rateBCs.setCode("rateBC");
+        rateBCs.setAppliesTo("JobInstance_RecurringRatingJob");
+        rateBCs.setActive(true);
+        rateBCs.setDescription(resourceMessages.getString("jobExecution.rateWBillingCycle"));
+        rateBCs.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        rateBCs.setFieldType(CustomFieldTypeEnum.ENTITY);
+        rateBCs.setEntityClazz(BillingCycle.class.getName());
+        rateBCs.setValueRequired(false);
+        rateBCs.setGuiPosition("tab:Configuration:0;field:4");
+        result.put("rateBC", rateBCs);
 
         return result;
     }

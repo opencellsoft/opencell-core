@@ -2296,7 +2296,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    private Date getReferenceDate(BillingRun billingRun, BillingAccount billingAccount) {
+    /**
+     * Determine a date to use in calendar to calculate the next invoice date
+     * 
+     * @param billingRun Billing run
+     * @param billingAccount Billing account
+     * @return Reference date
+     */
+    private Date getReferenceDateForNextInvoiceDateCalculation(BillingRun billingRun, BillingAccount billingAccount) {
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
 
@@ -2366,10 +2373,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, boolean update) throws BusinessException {
+    public BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, boolean update) throws BusinessException {
     	
         BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
-		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDate(billingRun, billingAccount));
+		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
 		if(nextCalendarDate!=null) {
 	        billingAccount.setNextInvoiceDate(nextCalendarDate);
 	        billingAccount.updateAudit(currentUser);
@@ -2377,6 +2384,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	        	billingAccountService.update(billingAccount);
 	        }
 		}
+		return billingAccount;
     }
 
     /**
