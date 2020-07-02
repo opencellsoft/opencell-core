@@ -27397,6 +27397,86 @@
 									"response": []
 								},
 								{
+									"name": "CreateOrUpdate CurrencyIso  INVALID_PARAMETER",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "65050049-8fd3-40db-860c-8203c7f02f83",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"ERROR: null value in column\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"code\": \"TST\"\r\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/currencyIso/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"currencyIso",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "CreateOrUpdate CurrencyIso  MISSING_PARAMETER",
 									"event": [
 										{
@@ -27459,86 +27539,6 @@
 										"body": {
 											"mode": "raw",
 											"raw": "{\r\n    \"description\": \"{{testDescription}}\"\r\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{opencell.url}}/currencyIso/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"currencyIso",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "CreateOrUpdate CurrencyIso  GENERIC_API_EXCEPTION",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "65050049-8fd3-40db-860c-8203c7f02f83",
-												"exec": [
-													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(500);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql(\"GENERIC_API_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"ERROR: null value in column\");",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "basic",
-											"basic": [
-												{
-													"key": "password",
-													"value": "{{opencell.password}}",
-													"type": "string"
-												},
-												{
-													"key": "username",
-													"value": "{{opencell.username}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"TST\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -28377,6 +28377,86 @@
 									"response": []
 								},
 								{
+									"name": "CreateOrUpdate LanguageIso INVALID_PARAMETER",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "dd6d97bf-b0b5-4476-9662-10d1b2d9dddb",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"ERROR: null value in column\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"code\": \"TST\"\r\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/languageIso/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"languageIso",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "CreateOrUpdate LanguageIso MISSING_PARAMETER",
 									"event": [
 										{
@@ -28439,86 +28519,6 @@
 										"body": {
 											"mode": "raw",
 											"raw": "{\r\n    \"description\": \"{{testDescription}}\"\r\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{opencell.url}}/languageIso/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"languageIso",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "CreateOrUpdate LanguageIso GENERIC_API_EXCEPTION",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "dd6d97bf-b0b5-4476-9662-10d1b2d9dddb",
-												"exec": [
-													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(500);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql(\"GENERIC_API_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"ERROR: null value in column\");",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "basic",
-											"basic": [
-												{
-													"key": "password",
-													"value": "{{opencell.password}}",
-													"type": "string"
-												},
-												{
-													"key": "username",
-													"value": "{{opencell.username}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"TST\"\r\n}",
 											"options": {
 												"raw": {}
 											}
