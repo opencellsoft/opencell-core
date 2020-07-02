@@ -52158,57 +52158,6 @@
 							"name": "Service workflow - service multi activation",
 							"item": [
 								{
-									"name": "SET_VARIABLES",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "33287417-c5a2-4a7b-870d-891e95a8dff9",
-												"exec": [
-													"pm.globals.set(\"index\", 240);"
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "test",
-											"script": {
-												"id": "bbd683db-0e94-4f99-a4a2-bd64881f9ead",
-												"exec": [
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "noauth"
-										},
-										"method": "OPTIONS",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "https://postman-echo.com/",
-											"protocol": "https",
-											"host": [
-												"postman-echo",
-												"com"
-											],
-											"path": [
-												""
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "Set service.allowMultiInstantiation=true - AUTHORIZATION_SUPERADMIN",
 									"event": [
 										{
@@ -52565,7 +52514,7 @@
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"INACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(3);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-11T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-11T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1]).to.eql();",
 													"});"
 												],
@@ -52746,11 +52695,11 @@
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contain(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contain(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contain(\"2017-01-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -52847,7 +52796,7 @@
 													"    pm.expect(jsonData.serviceInstance.code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.serviceInstance.status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.serviceInstance.quantity).to.eql(1);",
-													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.contains(\"2016-12-02T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -53193,17 +53142,17 @@
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationReason).to.eql(\"TERM_REASON_1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].quantity).to.eql(5);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.eql(\"2016-12-08T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.contains(\"2016-12-08T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -53545,26 +53494,26 @@
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.globals.set(\"siid1\", jsonData.subscription.services.serviceInstance[0].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationDate).to.contains(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].terminationReason).to.eql(\"TERM_REASON_1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.globals.set(\"siid2\", jsonData.subscription.services.serviceInstance[1].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.globals.set(\"siid3\", jsonData.subscription.services.serviceInstance[2].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].quantity).to.eql(5);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.eql(\"2016-12-08T00:00:00Z\");",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[2].terminationDate).to.eql(\"2016-12-08T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[2].subscriptionDate).to.contains(\"2016-12-08T\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[2].terminationDate).to.contains(\"2016-12-08T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[2].terminationReason).to.eql(\"TERM_REASON_1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[3].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.globals.set(\"siid4\", jsonData.subscription.services.serviceInstance[3].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[3].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[3].quantity).to.eql(11);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[3].subscriptionDate).to.eql(\"2016-12-11T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[3].subscriptionDate).to.contains(\"2016-12-11T\");",
 													"});",
 													"",
 													"",
@@ -54188,6 +54137,28 @@
 									"response": []
 								}
 							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c7f7fd0d-0be3-4525-bef2-709c1fbeda09",
+										"type": "text/javascript",
+										"exec": [
+											"pm.globals.set(\"index\", 240);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "01b6e612-3c6b-4b29-a5c5-196098fe486c",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
 							"protocolProfileBehavior": {},
 							"_postman_isSubFolder": true
 						},
@@ -54548,11 +54519,11 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"CREATED\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-12-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-12-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"INACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -54729,17 +54700,17 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-12-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-12-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.globals.set(\"siid1\", jsonData.subscription.services.serviceInstance[0].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
 													"    pm.globals.set(\"siid2\", jsonData.subscription.services.serviceInstance[1].id);",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -54835,7 +54806,7 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.serviceInstance.code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.serviceInstance.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.contains(\"2016-12-02T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -55098,7 +55069,7 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.serviceInstance.code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.serviceInstance.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.serviceInstance.subscriptionDate).to.contains(\"2016-12-02T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -55280,15 +55251,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-12-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-12-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -55465,15 +55436,15 @@
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_WFL\");",
 													"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-													"    pm.expect(jsonData.subscription.subscriptionDate).to.eql(\"2016-12-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-12-01T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.eql(\"2016-12-02T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
 													"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -55537,6 +55508,28 @@
 										}
 									},
 									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e30b17aa-1a81-49f9-857d-e10de25a9caf",
+										"type": "text/javascript",
+										"exec": [
+											"pm.globals.set(\"index\", 240);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "c6a0f964-3779-4f72-8295-dedaf911db60",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
 								}
 							],
 							"protocolProfileBehavior": {},
@@ -108605,97 +108598,97 @@
 	],
 	"variable": [
 		{
-			"id": "969cc899-1e12-452a-a53d-d84b9e22f184",
+			"id": "3b321fc6-292f-4752-a21e-62c0800c3cfa",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "43d4d922-2919-4fee-9166-b2ef81b593d9",
+			"id": "72e6dd8b-317b-4443-9db5-8e8cc8a13864",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "cdaf49cf-b71e-48e4-b500-3fa4d209f113",
+			"id": "95aa2336-1008-417c-b36b-9f3058354537",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "cbe9c752-781c-4a21-b339-6e1231888415",
+			"id": "3181acff-51ac-4b89-851c-0d2fd81ca3dc",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "3c45ad27-fd1e-485b-8c78-1914a6277665",
+			"id": "ebc87632-962c-41fa-994f-49796121fd27",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c3cb7d12-2dc2-4311-8e87-4bcc59b75d6c",
+			"id": "5ae1cb1d-31ab-4b16-b207-17241fc7fd64",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "3c730ffa-e4a0-4f7d-9f3c-5a7eaf627309",
+			"id": "b9ae7adf-f5bd-4ab3-ad73-1dc30147c606",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "a7f16acf-0b63-4161-bf79-3f8a155eec71",
+			"id": "0b3db3fd-5329-449a-8b13-fa10d778cb0b",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "c990222f-ff6d-40c0-8bd0-59532ba7323f",
+			"id": "c652fdab-e9e0-4885-917d-d726fabbe866",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "99d65768-6377-4851-add3-40eb36347ed7",
+			"id": "4f903031-fd99-45dd-98ab-36f56538ce35",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "f537e58e-bf64-4e83-b7ec-b7fa30219267",
+			"id": "3dd1e911-2c06-4a6c-8943-577f2e20ec61",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "d4b4e99e-74be-41cd-9454-94df7799c311",
+			"id": "74fde225-4d55-4a27-bdbc-cece6384fc1f",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "f7145893-c9e6-40f8-ba3e-53205c5aba58",
+			"id": "70f890ec-bf40-4587-b5e4-ce1979f016e5",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "09fcb4e0-0c15-4e1f-aef1-84f5bbf8295b",
+			"id": "9d8660bc-9c13-4c52-823b-30270bfd73a0",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "1b452f29-f31d-4ff6-a065-05dbdb5a154d",
+			"id": "a516b887-2588-4473-9bd6-db3fac018753",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "b541c55a-9d78-4532-934e-22060733ad62",
+			"id": "0e84bf93-3c3b-48e6-be39-c1660134c2b8",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "44967ef3-5f66-4581-b20e-f97774485bd6",
+			"id": "1ec49ddc-82ec-4dd3-a748-fb5c61af03d9",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "a3475723-2da1-4661-a719-f31323325ae4",
+			"id": "3fb953c3-fd4e-4f56-bb35-62efa4b09001",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "e7e76dfc-dac8-49ac-ab00-c24f1ca92c57",
+			"id": "2cc25603-17be-432b-ab5e-a00de6bc704b",
 			"key": "project.version",
 			"value": "9.2+"
 		}
