@@ -26,6 +26,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -46,6 +48,9 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
 @Entity
 @DiscriminatorValue("R")
+
+@NamedQueries({ @NamedQuery(name = "RecurringChargeInstance.listToRateByStatusAndDate", query = "SELECT c.id FROM RecurringChargeInstance c where c.status=:status and c.nextChargeDate<:maxNextChargeDate"),
+        @NamedQuery(name = "RecurringChargeInstance.listToRateByStatusBCAndDate", query = "SELECT c.id FROM RecurringChargeInstance c where c.status=:status and c.nextChargeDate<:maxNextChargeDate and c.userAccount.billingAccount.billingCycle in :billingCycles") })
 public class RecurringChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;

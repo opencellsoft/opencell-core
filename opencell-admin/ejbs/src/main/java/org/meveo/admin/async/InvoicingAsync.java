@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -43,6 +44,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -76,6 +78,9 @@ public class InvoicingAsync {
 
     @EJB
     private InvoicingAsync invoicingNewTransaction;
+
+    @Inject
+    private RejectedBillingAccountService rejectedBillingAccountService;
 
     /**
      * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
@@ -214,6 +219,46 @@ public class InvoicingAsync {
                 if (result != null) {
                     result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
                 }
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
+    
+    
+    /**
+     * Increment BA invoice dates async. One BA at a time in a separate transaction.
+     *
+     * @param billingRun the billing run to process
+     * @param billingAccounts the billingAccounts to be rejected
+     * @param jobInstanceId the job instance id
+     * @param result the Job execution result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<BillingAccount> billingAccounts,
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        int i = 0;
+        for (BillingAccount ba : billingAccounts) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.incrementBAInvoiceDate(billingRun, ba, true);
+        		String reason = null;
+        	    if(ba.getNextInvoiceDate()==null) {
+        	    	reason = "Next Invoicing Date is null";
+        		} else {
+                    reason = "No billable transaction";
+        		}
+        		rejectedBillingAccountService.create(ba, billingRun, reason);
+
+            } catch (Exception e) {
+                log.error("Failed to increment next invoicing date for billingAccount {}", ba.getId(), e);
             }
         }
         return new AsyncResult<String>("OK");

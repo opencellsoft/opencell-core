@@ -872,7 +872,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"OCCT already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"_OCCT already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1517,7 +1517,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\" does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.collectionVariables.get(\"testCode\")+\"_OCCT does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1678,7 +1678,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.collectionVariables.get(\"testCode\")+\" does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.collectionVariables.get(\"testCode\")+\"_AC does not exists.\");",
 													"",
 													"});"
 												],
@@ -107723,6 +107723,855 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "#4895 - Create a fixed date calendar ",
+					"item": [
+						{
+							"name": "FIXED_CALENDAR",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "31ab2e1d-cbd3-40bf-b5ff-0fd2b3debd8f",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"FIXED_CALENDAR_2020\",\n    \"description\":\"FIXED_CALENDAR_2020\",\n    \"calendarType\": \"FIXED\",\n     \"fixedDates\": [\n            \"01/01/2020 15:15 - 31/05/2020 15:15\"\n        ]\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE_FIXED_CALENDAR",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "789c5e59-18e8-47db-89bc-a8473c84a3b7",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/calendar/FIXED_CALENDAR_2020",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"FIXED_CALENDAR_2020"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "#5064 - Add fileFormat attribute (CF) to FlatFile job and finish fileFormat Rest api",
+					"item": [
+						{
+							"name": "File Format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a26df116-a154-4ff9-be45-44241f2a40e1",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"test\",\n    \"fileTypes\": [\n        \"csv\"\n    ],\n    \"configurationTemplate\": \"test1\",\n    \"recordName\": \"record\",\n    \"inputDirectory\": \"imports/catalog/input\",\n    \"outputDirectory\": \"imports/catalog/output\",\n    \"rejectDirectory\": \"imports/catalog/reject\",\n    \"archiveDirectory\": \"imports/test\",\n    \"jobCode\": \"Catalog import job\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find file format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce22c81b-fe0e-4267-a913-886013507e9c",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"Check File Format code\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.code).to.eql(\"test\");\r",
+											"    });\r",
+											"pm.test(\"Check File Format type\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.fileTypes).to.eql([ 'csv' ] );\r",
+											"    });\r",
+											"\r",
+											"    pm.test(\"Check configurationTemplate\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.configurationTemplate).to.eql(\"test1\");\r",
+											"    });\r",
+											"    \r",
+											"     pm.test(\"Check recordName\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.recordName).to.eql(\"record\");\r",
+											"    });\r",
+											"    \r",
+											"      pm.test(\"Check input Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.inputDirectory).to.eql(\"imports/catalog/input\");\r",
+											"    });\r",
+											"\r",
+											"       pm.test(\"Check output Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.outputDirectory).to.eql(\"imports/catalog/output\");\r",
+											"    });\r",
+											"       pm.test(\"Check reject Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.rejectDirectory).to.eql(\"imports/catalog/reject\");\r",
+											"    });\r",
+											"    \r",
+											"     pm.test(\"Check archive Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.archiveDirectory).to.eql(\"imports/test\");\r",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat?code=test",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update fileFormat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "913387a4-774a-4418-92a8-87bb0cd8a45a",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"test\",\n    \"fileTypes\": [\n        \"txt\"\n    ],\n    \"configurationTemplate\": \"test2\",\n    \"recordName\": \"record\",\n    \"inputDirectory\": \"imports/catalog/input\",\n    \"outputDirectory\": \"imports/catalog/output\",\n    \"rejectDirectory\": \"imports/catalog/reject\",\n    \"archiveDirectory\": \"imports/test\",\n    \"jobCode\": \"Catalog import job\"\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find file format after update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8934bdd5-3031-4e9f-9953-2b3e6c945f31",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.message).to.eql();\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat?code=test",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List file formats",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f73ac31d-4af0-4505-b86e-5287a527f0d2",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.actionStatus.message).to.eql();\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete file format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4aa71634-3be9-4f7e-a374-ee22ff859c70",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat/test",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat",
+										"test"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find file format after delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a4dc04f1-81e1-4466-9b04-612e99a9621c",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"FAIL\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"FileFormat with code=test does not exists.\");\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"type": "text",
+										"value": ""
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat?code=test",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "File Format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bfc7d195-c039-4fb6-8246-e5e6a368c4f3",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"test\",\n    \"fileTypes\": [\n        \"csv\"\n    ],\n    \"configurationTemplate\": \"test1\",\n    \"recordName\": \"record\",\n    \"inputDirectory\": \"imports/catalog/input\",\n    \"outputDirectory\": \"imports/catalog/output\",\n    \"rejectDirectory\": \"imports/catalog/reject\",\n    \"archiveDirectory\": \"imports/test\",\n    \"jobCode\": \"Catalog import job\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find file format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "08631c6d-ed4f-469d-bfef-fb9446e1d807",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"Check File Format code\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.code).to.eql(\"test\");\r",
+											"    });\r",
+											"pm.test(\"Check File Format type\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.fileTypes).to.eql([ 'csv' ] );\r",
+											"    });\r",
+											"\r",
+											"    pm.test(\"Check configurationTemplate\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.configurationTemplate).to.eql(\"test1\");\r",
+											"    });\r",
+											"    \r",
+											"     pm.test(\"Check recordName\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.recordName).to.eql(\"record\");\r",
+											"    });\r",
+											"    \r",
+											"      pm.test(\"Check input Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.inputDirectory).to.eql(\"imports/catalog/input\");\r",
+											"    });\r",
+											"\r",
+											"       pm.test(\"Check output Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.outputDirectory).to.eql(\"imports/catalog/output\");\r",
+											"    });\r",
+											"       pm.test(\"Check reject Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.rejectDirectory).to.eql(\"imports/catalog/reject\");\r",
+											"    });\r",
+											"    \r",
+											"     pm.test(\"Check archive Directory\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.dto.archiveDirectory).to.eql(\"imports/test\");\r",
+											"    });"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/admin/fileFormat?code=test",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"admin",
+										"fileFormat"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -107752,118 +108601,99 @@
 	],
 	"variable": [
 		{
-			"id": "9fa92931-87be-4bbd-a67b-4ebdb4007906",
+			"id": "969cc899-1e12-452a-a53d-d84b9e22f184",
 			"key": "opencell.base",
-			"value": "http://localhost:8080/opencell",
-			"type": "string"
+			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "428592e9-994e-4154-b851-e9d0aa1241ee",
+			"id": "43d4d922-2919-4fee-9166-b2ef81b593d9",
 			"key": "opencell.url",
-			"value": "{{opencell.base}}/api/rest",
-			"type": "string"
+			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "bd00b621-b25b-4911-ad8b-995af3ae01d7",
+			"id": "cdaf49cf-b71e-48e4-b500-3fa4d209f113",
 			"key": "opencell.username",
-			"value": "opencell.admin",
-			"type": "string"
+			"value": "opencell.admin"
 		},
 		{
-			"id": "2c5b6265-f689-4f20-a480-289786329e07",
+			"id": "cbe9c752-781c-4a21-b339-6e1231888415",
 			"key": "opencell.password",
-			"value": "opencell.admin",
-			"type": "string"
+			"value": "opencell.admin"
 		},
 		{
-			"id": "ad9c80fb-d18f-46ee-9085-c36b403dc29b",
+			"id": "3c45ad27-fd1e-485b-8c78-1914a6277665",
 			"key": "opencell.superusername",
-			"value": "opencell.superadmin",
-			"type": "string"
+			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a5bfc524-85bc-4e6e-b182-2c4d2fefcd7b",
+			"id": "c3cb7d12-2dc2-4311-8e87-4bcc59b75d6c",
 			"key": "opencell.superpassword",
-			"value": "opencell.superadmin",
-			"type": "string"
+			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a483c08c-996d-4f5e-a277-bba664394266",
+			"id": "3c730ffa-e4a0-4f7d-9f3c-5a7eaf627309",
 			"key": "entityPrefix",
-			"value": "RS_FULL",
-			"type": "string"
+			"value": "RS_FULL"
 		},
 		{
-			"id": "37401a52-0ee1-4116-814c-c0ed5838ab09",
+			"id": "a7f16acf-0b63-4161-bf79-3f8a155eec71",
 			"key": "baseEntityPrefix",
-			"value": "RS_BASE",
-			"type": "string"
+			"value": "RS_BASE"
 		},
 		{
-			"id": "6b9993d0-833e-4ea8-b909-b8aad02350a8",
+			"id": "c990222f-ff6d-40c0-8bd0-59532ba7323f",
 			"key": "testCode",
-			"value": "TEST",
-			"type": "string"
+			"value": "TEST"
 		},
 		{
-			"id": "4a9785ce-6837-4bc7-aeb8-8767bc604ab3",
+			"id": "99d65768-6377-4851-add3-40eb36347ed7",
 			"key": "testDescription",
-			"value": "This is a test description",
-			"type": "string"
+			"value": "This is a test description"
 		},
 		{
-			"id": "2c02612c-4311-4bd4-bd53-ba720f11a840",
+			"id": "f537e58e-bf64-4e83-b7ec-b7fa30219267",
 			"key": "timezone",
-			"value": "CET",
-			"type": "string"
+			"value": "CET"
 		},
 		{
-			"id": "b0eddf1c-42bd-4dd0-9a9a-e54036a4ecf6",
+			"id": "d4b4e99e-74be-41cd-9454-94df7799c311",
 			"key": "provider.code",
-			"value": "DEMO",
-			"type": "string"
+			"value": "DEMO"
 		},
 		{
-			"id": "9ad3b5f4-d3e8-462c-96c8-25f47bb24394",
+			"id": "f7145893-c9e6-40f8-ba3e-53205c5aba58",
 			"key": "seller.code",
-			"value": "MAIN_SELLER",
-			"type": "string"
+			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "646e9d47-9192-47c8-870e-0075e4a74420",
+			"id": "09fcb4e0-0c15-4e1f-aef1-84f5bbf8295b",
 			"key": "template.code",
-			"value": "SIMPLE",
-			"type": "string"
+			"value": "SIMPLE"
 		},
 		{
-			"id": "48529b84-8486-4811-bf4a-e1c3c699231c",
+			"id": "1b452f29-f31d-4ff6-a065-05dbdb5a154d",
 			"key": "template.label",
-			"value": "Simple usage",
-			"type": "string"
+			"value": "Simple usage"
 		},
 		{
-			"id": "59b1f845-aba2-4430-8e14-2a92a2f755eb",
+			"id": "b541c55a-9d78-4532-934e-22060733ad62",
 			"key": "project.code",
-			"value": "SimpleUsage-001",
-			"type": "string"
+			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "5732738d-c132-42c5-b96b-75b15dac3367",
+			"id": "44967ef3-5f66-4581-b20e-f97774485bd6",
 			"key": "project.description",
-			"value": "Simple usage offer",
-			"type": "string"
+			"value": "Simple usage offer"
 		},
 		{
-			"id": "42938544-32e0-43e4-bda2-0763efaf1b3c",
+			"id": "a3475723-2da1-4661-a719-f31323325ae4",
 			"key": "project.type",
-			"value": "Setup",
-			"type": "string"
+			"value": "Setup"
 		},
 		{
-			"id": "0aae75c9-d3d1-40f3-8b32-8ea2cf046dd3",
+			"id": "e7e76dfc-dac8-49ac-ab00-c24f1ca92c57",
 			"key": "project.version",
-			"value": "9.2+",
-			"type": "string"
+			"value": "9.2+"
 		}
 	],
 	"protocolProfileBehavior": {}

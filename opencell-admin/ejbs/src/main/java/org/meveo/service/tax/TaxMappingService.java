@@ -349,8 +349,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             }
         }
 
-        log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory.getCode(), taxCategory.getId(), taxClass.getCode(),
-            taxClass.getId(), sellersCountry.getCode(), sellersCountry.getId(), buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+        log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory != null ? taxCategory.getCode() : null,
+            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry.getCode(), sellersCountry.getId(),
+            buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
         throw new IncorrectChargeTemplateException(
             "No Tax mapping matched for tax category=" + taxCategory.getCode() + "/" + taxCategory.getId() + ", tax class=" + taxClass.getCode() + "/" + taxClass.getId() + ", seller's country=" + sellersCountry.getCode()

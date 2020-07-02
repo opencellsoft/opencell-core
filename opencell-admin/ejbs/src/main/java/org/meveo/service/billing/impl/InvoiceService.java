@@ -106,6 +106,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -267,6 +268,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -2292,8 +2296,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    private Date getReferenceDate(Invoice invoice) {
-        BillingRun billingRun = invoice.getBillingRun();
+    /**
+     * Determine a date to use in calendar to calculate the next invoice date
+     * 
+     * @param billingRun Billing run
+     * @param billingAccount Billing account
+     * @return Reference date
+     */
+    private Date getReferenceDateForNextInvoiceDateCalculation(BillingRun billingRun, BillingAccount billingAccount) {
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
 
@@ -2311,7 +2321,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 referenceDate = new Date();
                 break;
             case NEXT_INVOICE_DATE:
-                referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
+				referenceDate = billingAccount != null ? billingAccount.getNextInvoiceDate() : null;
                 break;
             case LAST_TRANSACTION_DATE:
                 referenceDate = billingRun.getLastTransactionDate();
@@ -2347,11 +2357,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
 
-        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(getReferenceDate(invoice));
-        billingAccount.setNextInvoiceDate(nextCalendarDate);
-        billingAccount.updateAudit(currentUser);
-//        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount, false);
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
+    }
+    
+    /**
+     * Increment BA invoice date.
+     * 
+     * @param billingRun
+     * @param billingAccount
+     * @param update
+     * 
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, boolean update) throws BusinessException {
+    	
+        BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
+		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
+		if(nextCalendarDate!=null) {
+	        billingAccount.setNextInvoiceDate(nextCalendarDate);
+	        billingAccount.updateAudit(currentUser);
+	        if(update) {
+	        	billingAccountService.update(billingAccount);
+	        }
+		}
+		return billingAccount;
     }
 
     /**
