@@ -20,8 +20,11 @@ package org.meveo.admin.parse.csv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -30,13 +33,20 @@ import javax.inject.Named;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CdrParser;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.DuplicateException;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
 
@@ -49,10 +59,16 @@ import org.meveo.service.medina.impl.InvalidFormatException;
  * @author h.znibar
  */
 @Named
-public class MEVEOCdrParser implements CdrParser {
+public class MEVEOCdrParser implements ICdrParser {
     
     @Inject
     CDRParsingService cdrParsingService;
+    
+    @Inject
+    private EdrService edrService;
+
+    @Inject
+    private AccessService accessService;
     
     @Inject
     @RejectedCDR
@@ -234,12 +250,102 @@ public class MEVEOCdrParser implements CdrParser {
         
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
-        return cdrParsingService.accessPointLookup(cdr);
+        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
+        if (accesses == null || accesses.size() == 0) {
+            rejectededCdrEventProducer.fire(cdr);
+            throw new InvalidAccessException(cdr);
+        }
+        return accesses;
     }
 
     @Override
-    public List<EDR> convertCdrToEdr(CDR cdr) throws CDRParsingException {
-        return cdrParsingService.getEDRList(cdr);
+    public List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException {
+        try {            
+            if (cdr.getRejectReason() != null) {
+                throw (CDRParsingException) cdr.getRejectReasonException();
+            }
+
+            deduplicate(cdr);
+            List<EDR> edrs = new ArrayList<EDR>();
+
+            boolean foundMatchingAccess = false;
+
+            for (Access accessPoint : accessPoints) {
+                if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
+                        && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
+                    foundMatchingAccess = true;
+                    EDR edr = cdrToEdr(cdr, accessPoint, null);
+                    edrs.add(edr);
+                }
+            }
+
+            if (!foundMatchingAccess) {
+                throw new InvalidAccessException(cdr);
+            }
+            return edrs;
+        } catch (CDRParsingException e) {
+            cdr.setStatus(CDRStatusEnum.ERROR);
+            cdr.setRejectReason(e.getMessage());
+            throw e;
+        }
+    }
+    
+    /**
+     * Convert CDR to EDR
+     * 
+     * @param cdr          CDR to convert
+     * @param accessPoint  Access point to bind to
+     * @param subscription Subscription to bind to
+     * @return EDR
+     */
+    private EDR cdrToEdr(CDR cdr, Access accessPoint, Subscription subscription) {
+        EDR edr = new EDR();
+        edr.setCreated(new Date());
+        edr.setEventDate(cdr.getEventDate());
+        edr.setOriginBatch(cdr.getOriginBatch());
+        edr.setOriginRecord(cdr.getOriginRecord());
+        edr.setParameter1(cdr.getParameter1());
+        edr.setParameter2(cdr.getParameter2());
+        edr.setParameter3(cdr.getParameter3());
+        edr.setParameter4(cdr.getParameter4());
+        edr.setParameter5(cdr.getParameter5());
+        edr.setParameter6(cdr.getParameter6());
+        edr.setParameter7(cdr.getParameter7());
+        edr.setParameter8(cdr.getParameter8());
+        edr.setParameter9(cdr.getParameter9());
+        edr.setDateParam1(cdr.getDateParam1());
+        edr.setDateParam2(cdr.getDateParam2());
+        edr.setDateParam3(cdr.getDateParam3());
+        edr.setDateParam4(cdr.getDateParam4());
+        edr.setDateParam5(cdr.getDateParam5());
+        edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+        edr.setQuantity(cdr.getQuantity().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+        edr.setExtraParameter(cdr.getExtraParam());
+
+        if (accessPoint != null) {
+            edr.setSubscription(accessService.getEntityManager().getReference(Subscription.class, accessPoint.getSubscription().getId()));
+            edr.setAccessCode(accessPoint.getAccessUserId());
+        } else if (subscription != null) {
+            edr.setSubscription(subscription);
+        }
+
+        return edr;
+    }
+
+    /**
+     * Check if CDR was processed already by comparing Origin record/digest values
+     * 
+     * @param cdr CDR to check
+     * @throws DuplicateException CDR was processed already
+     */
+    private void deduplicate(CDR cdr) throws DuplicateException {
+        if (edrService.isDuplicateFound(cdr.getOriginBatch(), cdr.getOriginRecord())) {
+            throw new DuplicateException(cdr);
+        }
     }
 
     @Override
@@ -250,5 +356,29 @@ public class MEVEOCdrParser implements CdrParser {
     @Override
     public boolean isApplicable(String type) {
         return false;
+    }
+
+    @Override
+    public void init(Map<String, Object> methodContext) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void terminate(Map<String, Object> methodContext) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public String getLogMessages() {
+        // TODO Auto-generated method stub
+        return null;
     }    
 }

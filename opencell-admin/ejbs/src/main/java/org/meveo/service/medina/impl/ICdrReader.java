@@ -8,7 +8,7 @@ import org.meveo.model.rating.CDR;
  * The Interface CdrReader.
  * @author h.znibar
  */
-public interface CdrReader {
+public interface ICdrReader {
 
     /**
      * Initialize CDR Reader to read from originBatch.
@@ -24,7 +24,7 @@ public interface CdrReader {
      * @return CDR record
      * @throws IOException Failure to read the CDR source
      */
-    CDR getNextRecord(CdrParser cdrParser) throws IOException;
+    CDR getNextRecord(ICdrParser cdrParser) throws IOException;
     
     /**
      * Close CDR record reader

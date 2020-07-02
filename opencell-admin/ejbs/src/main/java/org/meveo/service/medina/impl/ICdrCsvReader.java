@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
  * @author h.znibar
  *
  */
-public interface CdrCsvReader extends CdrReader {
+public interface ICdrCsvReader extends ICdrReader {
     
     /**
      * Initialize CDR Reader to read from a file

@@ -35,8 +35,8 @@ import javax.inject.Named;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
-import org.meveo.service.medina.impl.CdrCsvReader;
-import org.meveo.service.medina.impl.CdrParser;
+import org.meveo.service.medina.impl.ICdrCsvReader;
+import org.meveo.service.medina.impl.ICdrParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @author H.ZNIBAR
  */
 @Named
-public class MEVEOCdrReader implements CdrCsvReader {
+public class MEVEOCdrReader implements ICdrCsvReader {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
 
@@ -96,7 +96,7 @@ public class MEVEOCdrReader implements CdrCsvReader {
     }
 
     @Override
-    public synchronized CDR getNextRecord(CdrParser cdrParser) throws IOException {
+    public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
         String line = cdrReader.readLine();
         CDR cdr = cdrParser.parse(line);
         if(cdr == null) {

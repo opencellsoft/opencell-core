@@ -23,6 +23,7 @@ package org.meveo.admin.async;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -34,14 +35,16 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CdrParser;
-import org.meveo.service.medina.impl.CdrReader;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
 
 /**
@@ -90,7 +93,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> processFileAsync(CdrReader cdrReader, CdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
+	public Future<String> processFileAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -108,12 +111,13 @@ public class MediationFileProcessing {
 			try {
 				cdr = cdrReader.getNextRecord(cdrParser);
 				if (cdr == null) {
-					break;
-				}
-
+                    break;
+                }
+	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
 				log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
 
-				cdrParserService.createEdrs(cdr);
+				cdrParserService.createEdrs(edrs,cdr);
 
 				synchronized (outputFileWriter) {
 					outputFileWriter.println(cdr.getLine());

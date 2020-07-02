@@ -22,13 +22,14 @@ import java.util.List;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.script.ScriptInterface;
 
 /**
  * This Interface must be implemented to parse CDR and create EDR from it.The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
  * 
  * @author h.znibar
  */
-public interface CdrParser {
+public interface ICdrParser extends ScriptInterface {
 
     /**
      * Convert record into a CDR object. Parsing exceptions are available in CDR.rejectReason
@@ -51,22 +52,23 @@ public interface CdrParser {
      * Convert cdr to edr.
      *
      * @param cdr the cdr
+     * @param accessPoints 
      * @return the list
      * @throws CDRParsingException 
      */
-    List<EDR> convertCdrToEdr(CDR cdr) throws CDRParsingException;
+    List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException;
 
     /**
-     * Identifies a specific data type. Null by default. Would be needed only in case where multiple CDR formats have to be supported at once.
+     * >Identifies a specific data type. Null by default. Would be needed only in case where multiple CDR formats have to be supported at once.
      * 
      * @return
      */
     String getType();
 
     /**
-     * - determine if cdrToEdrConverter is applicable for a given source/data type
+     * determine if cdrToEdrConverter is applicable for a given source/data type
      * 
-     * @param type
+     * @param type Identifies a specific data type. Would be needed only in case where multiple CDR formats have to be supported at once.
      * @return
      */
     boolean isApplicable(String type);

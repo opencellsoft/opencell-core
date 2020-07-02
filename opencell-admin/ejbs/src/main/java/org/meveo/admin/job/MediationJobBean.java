@@ -37,9 +37,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CdrCsvReader;
-import org.meveo.service.medina.impl.CdrParser;
-import org.meveo.service.medina.impl.CdrReader;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
 
 /**
@@ -47,7 +46,8 @@ import org.slf4j.Logger;
  *
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Houssine ZNIBAR
+ * @lastModifiedVersion 10.0
  * 
  */
 @Stateless
@@ -103,11 +103,13 @@ public class MediationJobBean {
      * @param rejectDir Directory to store a failed records
      * @param file File to process
      * @param nbRuns Number of parallel executions
+     * @param mappingConf 
+     * @param parserCode 
      * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String parameter, Long nbRuns,
-            Long waitingMillis) {
+            Long waitingMillis, String readerCode, String parserCode, String mappingConf) {
 
         log.debug("Processing mediation file  in inputDir={}, file={}", inputDir, file.getAbsolutePath());
 
@@ -118,8 +120,8 @@ public class MediationJobBean {
         PrintWriter outputFileWriter = null;
 
         File currentFile = null;
-        CdrReader cdrReader = null;
-        CdrParser cdrParser = null;
+        ICdrReader cdrReader = null;
+        ICdrParser cdrParser = null;
 
         try {
 
@@ -131,9 +133,9 @@ public class MediationJobBean {
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
-            cdrReader = cdrParserService.getCDRReader(currentFile);
+            cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
             
-            cdrParser = cdrParserService.getCDRParser();
+            cdrParser = cdrParserService.getCDRParser(parserCode);
 
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();

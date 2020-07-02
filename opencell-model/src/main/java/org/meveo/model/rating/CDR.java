@@ -266,14 +266,10 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 	@Column(name = "times_tried")
 	private Integer timesTried;
 	
-	/** The source : line to parse */
-	@Column(name = "source", columnDefinition = "text")
-    private String source;
-	
 	/** The type. */
-	@Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private CDRTypeEnum type = CDRTypeEnum.CSV;
+	@Column(name = "type", length = 255)
+    @Size(max = 255)
+    private String type;
 
 	@Transient
 	private String line;
@@ -620,40 +616,12 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     public void setTimesTried(Integer timesTried) {
         this.timesTried = timesTried;
     }
-
-    /**
-     * Gets the source.
-     *
-     * @return the source
-     */
-    public String getSource() {
-        return source;
-    }
-
-    /**
-     * Sets the source.
-     *
-     * @param source the new source
-     */
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    /**
-     * Gets the type.
-     *
-     * @return the type
-     */
-    public CDRTypeEnum getType() {
+    
+    public String getType() {
         return type;
     }
 
-    /**
-     * Sets the type.
-     *
-     * @param type the new type
-     */
-    public void setType(CDRTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 

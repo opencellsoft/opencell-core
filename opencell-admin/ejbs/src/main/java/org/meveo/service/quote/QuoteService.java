@@ -59,7 +59,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CdrParser;
+import org.meveo.service.medina.impl.ICdrParser;
 
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
@@ -217,7 +217,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && subscription != null) {
 
-                        CdrParser cdrParser = cdrParsingService.getCDRParser();
+                        ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
 
                         List<EDR> edrs = new ArrayList<>();
 
