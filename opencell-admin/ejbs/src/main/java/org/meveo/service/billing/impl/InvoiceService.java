@@ -2350,8 +2350,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
 
-        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount, false);
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
     }
     
@@ -2360,22 +2359,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param billingRun
      * @param billingAccount
-     * @param update
      * 
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount, boolean update) throws BusinessException {
+    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
     	
         BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
 		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDate(billingRun, billingAccount));
 		if(nextCalendarDate!=null) {
 	        billingAccount.setNextInvoiceDate(nextCalendarDate);
 	        billingAccount.updateAudit(currentUser);
-	        if(update) {
-	        	billingAccountService.update(billingAccount);
-	        }
+	        billingAccountService.update(billingAccount);
 		}
     }
 
