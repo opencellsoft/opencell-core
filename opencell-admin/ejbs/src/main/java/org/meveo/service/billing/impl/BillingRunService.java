@@ -63,7 +63,6 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
@@ -1032,10 +1031,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!includesFirstRun);
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, minAmountForAccountsIncludesFirstRun);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERRATED, null);
-            if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
-                billingRun = billingRunExtensionService.findById(billingRun.getId());
-            }
-
+            billingRun = billingRunExtensionService.findById(billingRun.getId());
         }
         if (BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus())) {
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
