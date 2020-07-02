@@ -1,0 +1,8 @@
+opencell-admin/web/target/
+opencell-client/target/
+opencell-api/target/classes/
+.settings
+opencell-admin/.project
+opencell-admin/ejbs/.classpath
+.project
+*.classpath
