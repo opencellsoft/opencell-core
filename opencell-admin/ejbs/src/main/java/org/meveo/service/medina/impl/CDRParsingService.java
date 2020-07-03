@@ -25,20 +25,15 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CdrReader;
 import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.parse.csv.MEVEOCdrReader;
 import org.meveo.commons.utils.ParamBean;
@@ -77,9 +72,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	@Inject
 	@RejectedCDR
 	private Event<Serializable> rejectededCdrEventProducer;
-
-	@Inject
-	private BeanManager beanManager;
 	
 	@Inject
 	ScriptInstanceService scriptInstance;
@@ -377,51 +369,30 @@ public class CDRParsingService extends PersistenceService<EDR> {
 		return accesses;
 	}
 
-//	@SuppressWarnings({ "unchecked", "serial" })
-	private org.meveo.service.medina.impl.ICdrParser getParser(String customParser) throws BusinessException {
+	/**
+	 * Gets the parser.
+	 *
+	 * @param customParser the custom parser
+	 * @return the parser
+	 * @throws BusinessException the business exception
+	 */
+	private ICdrParser getParser(String customParser) throws BusinessException {
 	    if(customParser != null) {
 	        return (org.meveo.service.medina.impl.ICdrParser) scriptInstance.getScriptInstance(customParser); 
 	    }
-	    
+	    ICdrParser parser = null;
 	    ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-	    String configuredParser = (String) paramBean.getProperty("mediation.cdr.parser", MEVEOCdrParser.class.getName());	    
-	    org.meveo.service.medina.impl.ICdrParser parser = (org.meveo.service.medina.impl.ICdrParser) scriptInstance.getScriptInstance(configuredParser);
+	    String configuredParser = (String) paramBean.getProperty("mediation.cdr.parser", null);	    
+	    if(configuredParser != null) {
+	        parser = (ICdrParser) scriptInstance.getScriptInstance(configuredParser);
+	    }
 	    if(parser == null) {
 	        log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
 	        parser =  meveoCdrParser;
 	    }
 	    return parser;
 	    
-//		Set<Bean<?>> parsers = beanManager.getBeans(org.meveo.service.medina.impl.CdrParser.class, new AnnotationLiteral<CdrParser>() {
-//		});
-//
-//		if (parsers.size() > 1) {
-//            log.warn("Multiple custom parser encountered! Get the parser from the configuration");
-//            ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-//            String configuredParser = (String) paramBean.getProperty("mediation.cdr.parser", MEVEOCdrParser.class.getName());
-//            org.meveo.service.medina.impl.CdrParser parser = (org.meveo.service.medina.impl.CdrParser) parsers.stream()
-//                    .filter(bean -> configuredParser.equals(bean.getBeanClass().getName()))
-//                    .findAny()
-//                    .orElse(null);
-//            if(parser == null) {
-//                log.error("Configured custom parser not found!");
-//                throw new BusinessException("Configured custom parser not found!");
-//            }
-//            return parser;
-//
-//		} else if (parsers.size() == 1) {
-//			Bean<org.meveo.service.medina.impl.CdrParser> bean = (Bean<org.meveo.service.medina.impl.CdrParser>) parsers.toArray()[0];
-//			log.debug("Found custom cdr parser={}", bean.getBeanClass());
-//			try {
-//			    org.meveo.service.medina.impl.CdrParser parser = (org.meveo.service.medina.impl.CdrParser) bean.getBeanClass().newInstance();
-//				return parser;
-//			} catch (InstantiationException | IllegalAccessException e) {
-//				throw new BusinessException("Cannot instantiate custom cdr parser class=" + bean.getBeanClass().getName() + ".");
-//			}
-//		} else {
-//			log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
-//			return meveoCdrParser;
-//		}
+
 	}
 		
     /**
@@ -448,8 +419,11 @@ public class CDRParsingService extends PersistenceService<EDR> {
         }
 
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-        String configuredReader = (String) paramBean.getProperty("mediation.cdr.reader", MEVEOCdrReader.class.getName());
-        ICdrCsvReader reader = (ICdrCsvReader) scriptInstance.getScriptInstance(configuredReader);
+        String configuredReader = (String) paramBean.getProperty("mediation.cdr.reader", null);
+        ICdrCsvReader reader = null;
+        if(configuredReader != null) {
+            reader = (ICdrCsvReader) scriptInstance.getScriptInstance(configuredReader);
+        }        
         if (reader == null) {
             log.debug("Use default cdr reader={}", meveoCdrReader.getClass());
             reader = meveoCdrReader;

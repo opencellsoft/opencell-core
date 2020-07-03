@@ -41,6 +41,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
@@ -87,9 +88,11 @@ public class MediationJob extends Job {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         
-        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
+        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
+        String readerCode = reader != null ? reader.getCode() : null;
         
+        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
+        String parserCode = parser != null ? parser.getCode() : null;        
         try {
 
             ParamBean parambean = paramBeanFactory.getInstance();
@@ -237,9 +240,9 @@ public class MediationJob extends Job {
         parserCF.setActive(true);
         parserCF.setDescription(resourceMessages.getString("mediationJob.parser"));
         parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        parserCF.setEntityClazz("org.meveo.service.medina.impl.ICdrParser");
+        parserCF.setEntityClazz(ScriptInstance.class.getName());
         parserCF.setDefaultValue(null);
-        parserCF.setValueRequired(true);
+        parserCF.setValueRequired(false);
         parserCF.setMaxValue(256L);
         parserCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put(MEDIATION_JOB_PARSER, parserCF);
@@ -250,9 +253,9 @@ public class MediationJob extends Job {
         readerCF.setActive(true);
         readerCF.setDescription(resourceMessages.getString("mediationJob.reader"));
         readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        readerCF.setEntityClazz("org.meveo.service.medina.impl.ICdrReader");
+        readerCF.setEntityClazz(ScriptInstance.class.getName());
         readerCF.setDefaultValue(null);
-        readerCF.setValueRequired(true);
+        readerCF.setValueRequired(false);
         readerCF.setMaxValue(256L);
         readerCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put(MEDIATION_JOB_READER, readerCF);
