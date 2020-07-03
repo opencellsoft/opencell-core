@@ -1059,7 +1059,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             WalletOperation wo = null;
             if (chargeInstance != null) {
                 BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), dto.getQuantity());
-                wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, null, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
+                wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
                     dto.getStartDate(), dto.getEndDate(), null);
 
             } else {
