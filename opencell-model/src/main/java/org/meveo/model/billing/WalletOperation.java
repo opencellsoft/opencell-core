@@ -231,7 +231,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountTax;
 
-    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
     private BigDecimal quantity;
 
     /**
