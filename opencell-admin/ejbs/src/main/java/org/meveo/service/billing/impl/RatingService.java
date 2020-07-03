@@ -259,15 +259,17 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         WalletOperation walletOperation = null;
         
-		BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
-		
+        if(quantityInChargeUnits==null) {
+            quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
+        }
+        
         if (isReservation) {
-            walletOperation = new WalletReservation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
         } else {
-            walletOperation = new WalletOperation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
