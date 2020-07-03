@@ -3175,6 +3175,11 @@ END $$;]]>
             <column name="value_el"></column>
         </dropColumn>
      </changeSet>
+     
+    <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>    
+    </changeSet>
+     
 
     <changeSet id="#5331_20190630" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RecurringRatingJob'</sql>
