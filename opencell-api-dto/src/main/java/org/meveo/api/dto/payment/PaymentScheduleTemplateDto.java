@@ -82,6 +82,9 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The tax class code. */
+    private String taxClassCode;
 
     /**
      * Instantiates a new payment schedule template dto.
@@ -115,6 +118,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.amountEl = paymentScheduleTemplate.getAmountEl();
         this.filterEl = paymentScheduleTemplate.getFilterEl();
         this.customFields = customFields;
+        this.taxClassCode = paymentScheduleTemplate.getTaxClass() == null ? null : paymentScheduleTemplate.getTaxClass().getCode();
     }
 
     /**
@@ -368,5 +372,23 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     public void setFilterEl(String filterEl) {
         this.filterEl = filterEl;
     }
+
+	/**
+	 * Gets the tax class code.
+	 *
+	 * @return the tax class code
+	 */
+	public String getTaxClassCode() {
+		return taxClassCode;
+	}
+
+	/**
+	 * Sets the tax class code.
+	 *
+	 * @param taxClassCode the new tax class code
+	 */
+	public void setTaxClassCode(String taxClassCode) {
+		this.taxClassCode = taxClassCode;
+	}
 
 }
