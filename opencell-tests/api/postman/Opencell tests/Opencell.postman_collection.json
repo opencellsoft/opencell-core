@@ -54135,6 +54135,57 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "SET_VARIABLES",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "33287417-c5a2-4a7b-870d-891e95a8dff9",
+												"exec": [
+													"pm.globals.set(\"index\", 240);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "bbd683db-0e94-4f99-a4a2-bd64881f9ead",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "OPTIONS",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "https://postman-echo.com/",
+											"protocol": "https",
+											"host": [
+												"postman-echo",
+												"com"
+											],
+											"path": [
+												""
+											]
+										}
+									},
+									"response": []
 								}
 							],
 							"event": [
@@ -108568,6 +108619,240 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "#CORE-5291 - [API] Missing List APIs",
+					"item": [
+						{
+							"name": "Filter on UsageChargeTemplate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5922fe77-8545-43a4-8c37-432623fe6351",
+										"exec": [
+											"pm.test(\"Check total Number Of Records\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.paging.totalNumberOfRecords).to.eql(10);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 1rst template\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[0].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 2nd template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[1].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 3rd template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[2].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 4rd template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[3].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 5th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[4].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 6th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[5].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 7th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[6].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 8th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[7].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 9th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[8].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});\r",
+											"pm.test(\"Check Invoice invoiceSubCategory for the 10th template \", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.usageChargeTemplates.usageChargeTemplates[9].invoiceSubCategory).to.eql(\"CLASSIC_USAGE_TIER\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fullTextFilter\" : null,\r\n\t\"filters\" : {\r\n\t\t\"invoiceSubCategory.code\": \"CLASSIC_USAGE_TIER\"\r\n\t},\r\n\t\"fields\" : null,\r\n\t\"offset\" : null,\r\n\t\"limit\" : null,\r\n\t\"sortBy\" : \"code\",\r\n\t\"sortOrder\" : \"DESCENDING\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/usageChargeTemplate/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"usageChargeTemplate",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Filter on InvoiceSubCategory",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c42247b3-6843-4b10-9649-86da81ad86c9",
+										"exec": [
+											"pm.test(\"Check total Number Of Records\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.paging.totalNumberOfRecords).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check invoiceSubCategory's description\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.invoiceSubCategories.invoiceSubCategory[0].description).to.eql(\"Commission\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fullTextFilter\" : null,\r\n\t\"filters\" : {\r\n\t\t\"invoiceCategory.description\": \"Commission\"\r\n\t},\r\n\t\"fields\" : null,\r\n\t\"offset\" : null,\r\n\t\"limit\" : null,\r\n\t\"sortBy\" : \"code\",\r\n\t\"sortOrder\" : \"DESCENDING\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSubCategory/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSubCategory",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Filter on InvoiceCategory",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9e732e0b-e184-4cdc-9fcf-bebef2c578a6",
+										"exec": [
+											"pm.test(\"Check total Number Of Records\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.paging.totalNumberOfRecords).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check invoiceSubCategory's description\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.invoiceCategories.invoiceCategory[0].code).to.eql(\"CLASSIC_COMMISSION\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fullTextFilter\" : null,\r\n\t\"filters\" : {\r\n\t\t\"code\": \"CLASSIC_COMMISSION\"\r\n\t},\r\n\t\"fields\" : null,\r\n\t\"offset\" : null,\r\n\t\"limit\" : null,\r\n\t\"sortBy\" : \"code\",\r\n\t\"sortOrder\" : \"DESCENDING\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceCategory/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceCategory",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -108597,97 +108882,97 @@
 	],
 	"variable": [
 		{
-			"id": "8fc6db95-46b2-498b-b112-5983fe3dbe97",
+			"id": "6c17c2c7-7b02-4df5-97e6-ba9e8553d81c",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "d01bc3e9-de53-41be-a968-715c9b35cf58",
+			"id": "f0b66cdd-62dd-48ab-80f6-a362ae9f80d4",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "5031ccac-a1e9-42c5-a01f-a4157dd2af8e",
+			"id": "5cff9cc1-7ea9-4449-9896-82c12b5cf85f",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "8e934b78-dd88-488b-8abf-d8ddd43993e0",
+			"id": "6f29e0a4-20a2-4d2c-a402-437066dbee10",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "752223ce-4739-4ecc-ab33-803d2207a726",
+			"id": "064c5da9-fa0d-4606-ae21-b23700cabf89",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "67124965-493e-475d-9e5f-408b80e00600",
+			"id": "c600ba0e-237d-4a93-9bb8-e277083ebd56",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5f0c5e72-8e6c-442d-a018-2d67ee62240d",
+			"id": "5a372e51-067c-499a-80bc-594852cd4972",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "82516fdd-b034-4e7e-9114-309599d6f303",
+			"id": "41a2a42c-c93b-4785-8544-db51c314c7e5",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "8f171e83-4b15-47b7-b92f-293625d9a26f",
+			"id": "0b99c674-2550-49b0-a56b-9d0177edb28b",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "51d4b3b8-5229-4c7d-854b-ca997e890005",
+			"id": "9393b863-03e2-4d99-8a59-3e08d1ae6810",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "44989d5b-b260-4a29-a1d6-8b49b8330911",
+			"id": "df7c60bb-3dff-4a80-8d75-bae612328526",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "99a3652d-63c9-4928-8af8-3d80e587fa2d",
+			"id": "f252903c-01b6-4759-9948-6fdf116ffca2",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "fd389f63-1136-4d0e-a71c-6e3cdc790cd8",
+			"id": "e2b1c3c9-0cbc-40b3-bfb1-d013201d43b6",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "81ef0fae-8a0e-4d20-a417-3f83a08d6c10",
+			"id": "965961a3-d636-48cb-bb97-fe795a408985",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "1fce0740-d2ef-46b5-b066-318328155a42",
+			"id": "df253b04-a40f-4cf3-9100-91d4506d9cf9",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "25d58bea-17a1-4a21-aa0b-03988abae4d4",
+			"id": "978e56b0-5bc2-4a6f-b745-026e77637c8a",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "564f2719-2870-4498-b1d4-ebf8e6fb654b",
+			"id": "af516649-1743-4e56-b379-b285b8ddd836",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "c69dd2f2-26e9-4dac-825d-c5067b7a5f40",
+			"id": "782a3679-7bf6-48cf-b041-5f726933a65d",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "1f434498-67d6-4cec-861b-b2d602aa2080",
+			"id": "562bb864-2fdb-4fd7-999b-a21f39b8a8e6",
 			"key": "project.version",
 			"value": "9.2+"
 		}
