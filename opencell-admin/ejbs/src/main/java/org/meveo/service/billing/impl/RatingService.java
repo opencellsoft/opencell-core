@@ -32,7 +32,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
@@ -63,7 +62,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
@@ -256,15 +254,18 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         WalletOperation walletOperation = null;
         
-		BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
+        if(quantityInChargeUnits==null) {
+        	quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
+        }
 		
         if (isReservation) {
-            walletOperation = new WalletReservation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                     orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(),
                     edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(), edr != null ? edr.getParameter4() : null, null, startdate, endDate);
         } else {
-            walletOperation = new WalletOperation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+        	
+            walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                     orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                     edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(),
                     edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(), edr != null ? edr.getParameter4() : null, null, startdate, endDate);

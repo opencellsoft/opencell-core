@@ -231,7 +231,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountTax;
 
-    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
     private BigDecimal quantity;
 
     /**
@@ -497,7 +498,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param endDate Operation date range - end date
      */
     @SuppressWarnings("deprecation")
-    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal ratingQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
+    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
             String criteriaExtra, Tax tax, Date startDate, Date endDate) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
@@ -547,12 +548,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
             }
         }
 
-        if (quantityInChargeUnits != null) {
-            this.quantity = quantityInChargeUnits;
-
-        } else if (ratingQuantity != null) {
-            this.quantity = ratingQuantity;
-        }
+        this.quantity = quantityInChargeUnits;
 
         UserAccount userAccount = chargeInstance.getUserAccount();
 
