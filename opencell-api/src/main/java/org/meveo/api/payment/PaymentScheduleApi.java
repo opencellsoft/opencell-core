@@ -170,15 +170,17 @@ public class PaymentScheduleApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceSubCategoryCode());
         }
         
-        TaxClass taxClass = taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
-        if (taxClass == null) {
-            throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
-        }
-
-        InvoiceType invoiceType = invoiceTypeService.findByCode(paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
-        if (invoiceType == null) {
-            throw new EntityDoesNotExistsException(InvoiceType.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
-        }
+		TaxClass taxClass = null;
+		if (!StringUtils.isBlank(paymentScheduleTemplateDto.getTaxClassCode())) {
+			taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
+			if (taxClass == null) {
+				throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
+			}
+		}
+		InvoiceType invoiceType = invoiceTypeService.findByCode(paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
+		if (invoiceType == null) {
+			throw new EntityDoesNotExistsException(InvoiceType.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
+		}
         PaymentScheduleTemplate paymentScheduleTemplate = new PaymentScheduleTemplate();
         paymentScheduleTemplate.setCode(paymentScheduleTemplateDto.getCode());
         paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());

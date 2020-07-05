@@ -34,18 +34,18 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.model.Auditable;
+import org.meveo.api.dto.CategoryInvoiceAgregateDto;
+import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -60,12 +60,13 @@ import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.tax.TaxClassService;
 import org.meveo.util.ApplicationProvider;
 
 /**
@@ -105,9 +106,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     /** The invoice sub category country service. */
     @Inject
     private TaxService taxService;
-
+    
     @Inject
-    private ServiceSingleton serviceSingleton;
+    private TaxClassService taxClassService;
 
     /** The Constant HUNDRED. */
     private static final BigDecimal HUNDRED = new BigDecimal("100");
@@ -160,65 +161,36 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
 
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
-            invoice = new Invoice();
-            invoice.setInvoiceType(invoiceType);
-            invoice.setBillingAccount(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount());
-            invoice.setInvoiceDate(new Date());
-            invoice.setDueDate(paymentScheduleInstanceItem.getDueDate());
-            invoice.setSeller(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller());
-
-            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
-            subCategoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
-            subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCat);
-            subCategoryInvoiceAgregate.setDescription(invoiceSubCat.getDescription());
-            subCategoryInvoiceAgregate.setAmountWithoutTax(amounts.getAmountWithoutTax());
-            subCategoryInvoiceAgregate.setAmountWithTax(amounts.getAmountWithTax());
-            subCategoryInvoiceAgregate.setAmountTax(amounts.getAmountTax());
-            subCategoryInvoiceAgregate.setQuantity(BigDecimal.ONE);
-            subCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
-            subCategoryInvoiceAgregate.setAccountingCode(invoiceSubCat.getAccountingCode());
-            subCategoryInvoiceAgregate.setBillingAccount(userAccount.getBillingAccount());
-            subCategoryInvoiceAgregate.setUserAccount(userAccount);
-            subCategoryInvoiceAgregate.setItemNumber(1);
-            subCategoryInvoiceAgregate.setInvoice(invoice);
-
-            TaxInvoiceAgregate invoiceAgregateTax = new TaxInvoiceAgregate();
-            invoiceAgregateTax.setAuditable(new Auditable(currentUser));
-            invoiceAgregateTax.setInvoice(invoice);
-            invoiceAgregateTax.setTax(tax);
-            invoiceAgregateTax.setTaxPercent(tax.getPercent());
-            invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-            invoiceAgregateTax.setAmountWithoutTax(amounts.getAmountWithoutTax());
-            invoiceAgregateTax.setAmountWithTax(amounts.getAmountWithTax());
-            invoiceAgregateTax.setAmountTax(amounts.getAmountTax());
-
-            CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
-            categoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
-            categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCat.getInvoiceCategory());
-            categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
-            categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
-            categoryInvoiceAgregate.setInvoice(invoice);
-            categoryInvoiceAgregate.setAmountWithoutTax(amounts.getAmountWithoutTax());
-            categoryInvoiceAgregate.setAmountWithTax(amounts.getAmountWithTax());
-            categoryInvoiceAgregate.setAmountTax(amounts.getAmountTax());
-
-            subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
-
-            invoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
-            invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
-
-            invoice.setAmountWithoutTax(amounts.getAmountWithoutTax());
-            invoice.setAmountTax(amounts.getAmountTax());
-            invoice.setAmountWithTax(amounts.getAmountWithTax());
-            invoice.setNetToPay(amounts.getAmountWithTax());
-
-            invoiceService.create(invoice);
-            invoiceService.postCreate(invoice);
-
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
-
-            paymentScheduleInstanceItem.setInvoice(invoice);
+      	InvoiceDto invoiceDTO = new InvoiceDto();
+        	
+        	invoiceDTO.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
+        	invoiceDTO.setInvoiceType(invoiceType.getCode());
+        	invoiceDTO.setBillingAccountCode(billingAccount.getCode());
+        	
+        	invoiceDTO.setInvoiceDate(paymentScheduleInstanceItem.getDueDate());
+        	invoiceDTO.setDueDate(paymentScheduleInstanceItem.getDueDate());
+        	invoiceDTO.setSellerCode(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller().getCode());
+        	
+        	List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+        	CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
+        	categoryInvoiceAgregateDto.setCategoryInvoiceCode(invoiceSubCat.getInvoiceCategory().getCode());
+        	categoryInvoiceAgregateDto.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
+        	
+        	List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto = new ArrayList<SubCategoryInvoiceAgregateDto>();
+        	
+        	SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new  SubCategoryInvoiceAgregateDto();
+        	subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(invoiceSubCat.getCode());
+        	subCategoryInvoiceAgregateDto.setDescription(invoiceSubCat.getDescription());
+        	subCategoryInvoiceAgregateDto.setAmountWithoutTax(amounts.getAmountWithoutTax());
+        	subCategoryInvoiceAgregateDto.setAmountWithTax(amounts.getAmountWithTax());
+        	subCategoryInvoiceAgregateDto.setAmountTax(amounts.getAmountTax());
+        	listSubCategoryInvoiceAgregateDto.add(subCategoryInvoiceAgregateDto);        	
+        	categoryInvoiceAgregateDto.setListSubCategoryInvoiceAgregateDto(listSubCategoryInvoiceAgregateDto);        	
+        	categoryInvoiceAgregates.add(categoryInvoiceAgregateDto);        	
+        	invoiceDTO.setCategoryInvoiceAgregates(categoryInvoiceAgregates);
+        	invoice = invoiceService.createInvoice(invoiceDTO, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), billingAccount, invoiceType);        	        	
         }
+
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
         aoIdsToPay.add(recordedInvoicePS.getId());
 
@@ -268,7 +240,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
         Amounts amounts = getAmounts(paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), tax);
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
-        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
+        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel,paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getTaxClass());
 
         try {
             oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), null, oneShot, null, new Date(),
@@ -302,7 +274,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @return the one shot charge template
      * @throws BusinessException the business exception
      */
-    private OneShotChargeTemplate createOneShotCharge(InvoiceSubCategory invoiceSubCategory, String paymentLabel) throws BusinessException {
+    private OneShotChargeTemplate createOneShotCharge(InvoiceSubCategory invoiceSubCategory, String paymentLabel,TaxClass taxClass) throws BusinessException {
         OneShotChargeTemplate oneShot = oneShotChargeTemplateService.findByCode("ADV_PAYMENT");
         if (oneShot == null) {
             oneShot = new OneShotChargeTemplate();
@@ -312,6 +284,10 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             oneShot.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.OTHER);
             oneShot.setType(OperationTypeEnum.CREDIT);
             oneShot.setAmountEditable(Boolean.TRUE);
+            if(taxClass == null) {
+            	taxClass = taxClassService.findByCode("NO_TAX");
+            }
+            oneShot.setTaxClass(taxClass);
             oneShotChargeTemplateService.create(oneShot);
         }
         return oneShot;
@@ -350,6 +326,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setTaxAmount(amounts.getAmountTax());
         recordedInvoicePS.setAmountWithoutTax(amounts.getAmountWithoutTax());
         recordedInvoicePS.setPaymentScheduleInstanceItem(paymentScheduleInstanceItem);
+        recordedInvoicePS.setInvoice(invoice);
         recordedInvoiceService.create(recordedInvoicePS);
         return recordedInvoicePS;
 
