@@ -121,7 +121,11 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
             String alias = aliases[i];
             if (alias != null) {
                 this.aliases[i] = alias;
-                setters[i] = propertyAccessStrategy.buildPropertyAccess(resultClass, alias).getSetter();
+                try {
+                    setters[i] = propertyAccessStrategy.buildPropertyAccess(resultClass, alias).getSetter();
+                } catch (Exception ignore) {
+                    //ignore
+                }
             }
         }
         isInitialized = true;

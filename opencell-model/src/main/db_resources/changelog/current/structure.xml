@@ -3191,6 +3191,10 @@ END $$;]]>
             <column name="action" type="varchar(25)"/>
             <column name="value" type="varchar(255)"/>
             <column name="required" type="${type.boolean}"/>
+            <column name="is_custom_field" type="${type.boolean}"/>
+            <column name="group_by" type="varchar(25)"/>
+            <column name="group_by_parameter" type="varchar(25)"/>
+            <column name="alias" type="varchar(255)"/>
             <column name="aggregation_matrix_id" type="bigint"/>
         </createTable>
         <createTable tableName="wo_aggregation_matrix">

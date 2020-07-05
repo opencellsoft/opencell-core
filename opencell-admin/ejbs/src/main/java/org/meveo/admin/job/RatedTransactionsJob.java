@@ -146,15 +146,6 @@ public class RatedTransactionsJob extends Job {
         customFieldAggregationMatrix.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:4");
         result.put("woAggregationMatrix", customFieldAggregationMatrix);
 
-        CustomFieldTemplate customFieldAggregationKeyEl = new CustomFieldTemplate();
-        customFieldAggregationKeyEl.setCode("aggregationKeyEl");
-        customFieldAggregationKeyEl.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldAggregationKeyEl.setActive(true);
-        customFieldAggregationKeyEl.setDescription(resourceMessages.getString("jobExecution.customFieldAggregationKeyEl"));
-        customFieldAggregationKeyEl.setFieldType(CustomFieldTypeEnum.STRING);
-        customFieldAggregationKeyEl.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:5");
-        result.put("aggregationKeyEl", customFieldAggregationKeyEl);
-
         return result;
     }
 

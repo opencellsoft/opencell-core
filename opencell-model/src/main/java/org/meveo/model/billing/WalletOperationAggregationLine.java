@@ -56,9 +56,39 @@ public class WalletOperationAggregationLine extends AuditableEntity {
      */
     @Column(name = "required")
     @Type(type = "numeric_boolean")
-    @NotNull
     private boolean required;
 
+    /**
+     * Whether the field is required or not.
+     */
+    @Column(name = "is_custom_field")
+    @Type(type = "numeric_boolean")
+    private boolean customField;
+
+    /**
+     * Function used in group by query clause.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "group_by")
+    private GroupByAggregationFunctionEnum groupBy;
+
+    /**
+     *
+     */
+    @Column(name = "group_by_parameter", length = 25)
+    @Size(max = 25)
+    private String groupByParameter;
+
+    /**
+     *
+     */
+    @Column(name = "alias", length = 255)
+    @Size(max = 255)
+    private String alias;
+
+    /**
+     *
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aggregation_matrix_id")
     private WalletOperationAggregationMatrix aggregationMatrix;
@@ -101,6 +131,38 @@ public class WalletOperationAggregationLine extends AuditableEntity {
 
     public void setAggregationMatrix(WalletOperationAggregationMatrix aggregationMatrix) {
         this.aggregationMatrix = aggregationMatrix;
+    }
+
+    public boolean isCustomField() {
+        return customField;
+    }
+
+    public void setCustomField(boolean customField) {
+        this.customField = customField;
+    }
+
+    public GroupByAggregationFunctionEnum getGroupBy() {
+        return groupBy;
+    }
+
+    public void setGroupBy(GroupByAggregationFunctionEnum groupBy) {
+        this.groupBy = groupBy;
+    }
+
+    public String getGroupByParameter() {
+        return groupByParameter;
+    }
+
+    public void setGroupByParameter(String groupByParameter) {
+        this.groupByParameter = groupByParameter;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     @Override

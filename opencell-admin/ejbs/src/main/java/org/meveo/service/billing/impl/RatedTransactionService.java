@@ -80,6 +80,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -88,6 +89,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -143,12 +145,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
+    @Inject
+    private TaxClassService taxClassService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
-     * 
-     * @param billingAccount billing account
+     *
+     * @param billingAccount       billing account
      * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
+     * @param lastTransactionDate  date of last transaction
      * @return true/false
      */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
@@ -254,89 +259,36 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         InvoiceSubCategory isc = null;
 
         Calendar cal = Calendar.getInstance();
-        cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
-        ratedTransaction.setUsageDate(cal.getTime());
+        if (aggregatedWo.getYear() != null && aggregatedWo.getMonth() != null && aggregatedWo.getDay() != null) {
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
+            ratedTransaction.setUsageDate(cal.getTime());
+        } else {
+            ratedTransaction.setUsageDate(aggregatedWo.getOperationDate());
+        }
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
-
-        switch (aggregationSettings.getAggregationLevel()) {
-        case BA:
-            ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case UA:
-            ua = userAccountService.findById(aggregatedWo.getIdAsLong());
-            ba = ua.getBillingAccount();
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case SUB:
-            sub = subscriptionService.findById(aggregatedWo.getIdAsLong());
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case SI:
-            si = serviceInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = si.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
+        ci = (ChargeInstance) chargeInstanceService.refreshOrRetrieve(aggregatedWo.getChargeInstance());
+        si = (aggregatedWo.getServiceInstance() == null && ci != null) ? ci.getServiceInstance() : serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance());
+        sub = (aggregatedWo.getSubscription() == null && ci != null) ? ci.getSubscription() : subscriptionService.refreshOrRetrieve(aggregatedWo.getSubscription());
+        ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
+        ba = (aggregatedWo.getBillingAccount() == null && ua != null) ? ua.getBillingAccount() : billingAccountService.refreshOrRetrieve(aggregatedWo.getBillingAccount());
+        seller = (aggregatedWo.getSeller() == null && sub != null) ? sub.getSeller() : sellerService.refreshOrRetrieve(aggregatedWo.getSeller());
+        if (ci != null) {
+            code = ci.getCode();
+        } else if (si != null) {
             code = si.getCode();
-            description = si.getDescription();
-            break;
+        } else {
+            code = isc.getCode();
+        }
+        description = aggregatedWo.getComputedDescription();
 
-        case CI:
-            ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = ci.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = ci.getCode();
-            description = ci.getDescription();
-            break;
-
-        case DESC:
-            ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = ci.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = ci.getCode();
-            description = aggregatedWo.getComputedDescription();
-            break;
-
-        default:
-            ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-        }
-
-        if (aggregationSettings.isAggregateByOrder()) {
-            ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
-        }
-        if (aggregationSettings.isAggregateByParam1()) {
-            ratedTransaction.setParameter1(aggregatedWo.getParameter1());
-        }
-        if (aggregationSettings.isAggregateByParam2()) {
-            ratedTransaction.setParameter2(aggregatedWo.getParameter2());
-        }
-        if (aggregationSettings.isAggregateByParam3()) {
-            ratedTransaction.setParameter3(aggregatedWo.getParameter3());
-        }
-        if (aggregationSettings.isAggregateByExtraParam()) {
-            ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
-        }
-
+        ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
+        ratedTransaction.setParameter1(aggregatedWo.getParameter1());
+        ratedTransaction.setParameter2(aggregatedWo.getParameter2());
+        ratedTransaction.setParameter3(aggregatedWo.getParameter3());
+        ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
         Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
-
+        TaxClass taxClass = taxClassService.refreshOrRetrieve(aggregatedWo.getTaxClass());
         ratedTransaction.setCode(code);
         ratedTransaction.setDescription(description);
         ratedTransaction.setTax(tax);
@@ -351,7 +303,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
         ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
         ratedTransaction.setQuantity(aggregatedWo.getQuantity());
-        ratedTransaction.setTaxClass(aggregatedWo.getTaxClass());
+        ratedTransaction.setTaxClass(taxClass);
         ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
         ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
         ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());

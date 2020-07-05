@@ -46,6 +46,7 @@ import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
 import org.meveo.service.billing.impl.WalletOperationAggregationMatrixService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.filter.FilterService;
 import org.slf4j.Logger;
 
 /**
@@ -72,6 +73,9 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     @Inject
     private WalletOperationAggregationMatrixService walletOperationAggregationMatrixService;
 
+    @Inject
+    private FilterService filterService;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -90,7 +94,11 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             removeZeroWalletOperation();
             if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
-                aggregationSetting.setFilter((Filter) this.getParamOrCFValue(jobInstance, "woFilters", null));
+                EntityReferenceWrapper filterWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woFilters", null);
+                Filter filter = (filterWrapper == null || filterService.findByCodeLike(filterWrapper.getCode()) == null || filterService.findByCodeLike(filterWrapper.getCode())
+                        .isEmpty()) ? null : filterService.findByCodeLike(filterWrapper.getCode()).get(0);
+                aggregationSetting.setFilter(filter);
+
                 EntityReferenceWrapper aggregationMatrixWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationMatrix", null);
                 WalletOperationAggregationMatrix aggregationMatrix = (walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()) == null
                         || walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).isEmpty()) ?
@@ -98,7 +106,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
                         walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).get(0);
                 aggregationSetting.setWalletOperationAggregationMatrix(aggregationMatrix);
                 aggregationSetting.setAggregationKeyEl((String) this.getParamOrCFValue(jobInstance, "aggregationKeyEl", null));
-
+                aggregationSetting.setPeriodAggregation((boolean) this.getParamOrCFValue(jobInstance, "periodAggregation", false));
                 executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
 
             } else {

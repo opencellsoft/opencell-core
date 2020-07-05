@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ import org.meveo.model.tax.TaxClass;
 
 /**
  * Aggregated wallet operation.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -48,6 +49,11 @@ public class AggregatedWalletOperation {
 	 * Id of the aggregated entity
 	 */
 	private Object id;
+
+	/**
+	 * Id of the aggregated entity
+	 */
+	private String code;
 
 	/**
 	 * Amount with tax
@@ -152,7 +158,8 @@ public class AggregatedWalletOperation {
 	private OfferTemplate offer;
 	private UserAccount userAccount;
 	private BillingAccount billingAccount;
-	private org.meveo.model.admin.Seller seller;
+	private Seller seller;
+	private Date operationDate;
 
 	/**
 	 * List of wallet operations.
@@ -163,7 +170,7 @@ public class AggregatedWalletOperation {
 			BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
 			String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
 		String[] stringIds = walletOpsIds.split(",");
-		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> new Long(x)).collect(Collectors.toList());
+		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> Long.valueOf(x)).collect(Collectors.toList());
 		this.walletOperationsIds = ids;
 		this.sellerId = sellerId;
 		this.year = year;
@@ -345,6 +352,10 @@ public class AggregatedWalletOperation {
 	 * @return the walletOperationsIds
 	 */
 	public List<Long> getWalletOperationsIds() {
+		if (walletOperationsIds == null) {
+			String[] stringIds = id.toString().split(",");
+			walletOperationsIds = Arrays.asList(stringIds).stream().map(x -> new Long(x)).collect(Collectors.toList());
+		}
 		return walletOperationsIds;
 	}
 
@@ -479,5 +490,25 @@ public class AggregatedWalletOperation {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setUnitAmountTax(BigDecimal unitAmountTax) {
+		this.unitAmountTax = unitAmountTax;
+	}
+
+	public Date getOperationDate() {
+		return operationDate;
+	}
+
+	public void setOperationDate(Date operationDate) {
+		this.operationDate = operationDate;
 	}
 }

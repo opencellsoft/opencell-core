@@ -92,6 +92,8 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.filter.FilterService;
 
 /**
  * Service class for WalletOperation entity
@@ -145,8 +147,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
-    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
-            String orderNumberOverride) throws BusinessException, RatingException {
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private FilterService filterService;
+
+    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
+            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -156,11 +164,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
-                quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
+        log.debug(
+                "WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
+                new Object[] { subscription.getId(), quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate,
+                        chargeInstance.getId(), chargeInstance.getDescription() });
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
-            ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
+        RatingResult ratingResult = ratingService
+                .rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
+                        ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
@@ -989,7 +1000,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, RatedTransactionsJobAggregationSetting aggregationSettings) {
 
-        WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
+        WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings, customFieldTemplateService, filterService);
 
         String strQuery = woa.getGroupQuery();
         log.debug("aggregated query={}", strQuery);

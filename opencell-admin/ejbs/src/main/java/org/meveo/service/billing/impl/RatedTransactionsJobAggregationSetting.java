@@ -97,6 +97,10 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	 * EL expression to get other aggregation setting
 	 */
 	private String aggregationKeyEl;
+	/**
+	 * Aggregat by continious periods
+	 */
+	private boolean periodAggregation;
 
 	/*
 	 * Aggregation level
@@ -313,5 +317,13 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 
 	public void setAggregationKeyEl(String aggregationKeyEl) {
 		this.aggregationKeyEl = aggregationKeyEl;
+	}
+
+	public boolean isPeriodAggregation() {
+		return periodAggregation;
+	}
+
+	public void setPeriodAggregation(boolean periodAggregation) {
+		this.periodAggregation = periodAggregation;
 	}
 }
