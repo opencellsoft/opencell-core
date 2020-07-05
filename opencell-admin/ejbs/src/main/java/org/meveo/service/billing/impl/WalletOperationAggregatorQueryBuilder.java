@@ -28,15 +28,11 @@ import org.meveo.model.billing.WalletOperationAggregationLine;
 import org.meveo.model.billing.WalletOperationAggregationMatrix;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -178,36 +174,78 @@ public class WalletOperationAggregatorQueryBuilder {
 
 	private String getSelect(WalletOperationAggregationLine aggregationLine) {
 		String selectStr = "";
-		String field = aggregationLine.getField();
-		String alias = aggregationLine.getAlias();
 		if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.EMPTY)) {
 			selectStr = "";
 		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.KEY)) {
-			if (aggregationLine.isCustomField()) {
-				selectStr = getCustomFieldSelect(field, alias);
-			} else {
-				selectStr = getSelectField(field, alias);
-			}
+
+			selectStr = getField(aggregationLine) + " as " + getAlias(aggregationLine);
+
 		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.TRUNCATE)) {
-			if (aggregationLine.getValue().equalsIgnoreCase("day")) {
-				selectStr = "YEAR(op." + field + ") as year, MONTH(op." + field + ") as month, DAY(op." + field + ") as day ";
-			}
-			if (aggregationLine.getValue().equalsIgnoreCase("month")) {
-				selectStr = "YEAR(op." + field + ") as year, MONTH(op." + field + ") as month, 1 as day ";
-			}
-			if (aggregationLine.getValue().equalsIgnoreCase("year")) {
-				selectStr = "YEAR(op." + field + "), as year, 0 as month, 1 as day ";
-			}
+
+			selectStr = getDateAggregation(aggregationLine);
+
 		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.VALUE)) {
-			selectStr = "'" + aggregationLine.getValue() + "' as " + field;
+
+			selectStr = "'" + aggregationLine.getValue() + "' as " + getAlias(aggregationLine);
+
 		} else {
-			selectStr = aggregationLine.getAction() + "(op." + field + ") as " + field;
+			selectStr = aggregationLine.getAction() + "(" + getField(aggregationLine) + ") as " + getAlias(aggregationLine);
 		}
 		if (StringUtils.isBlank(selectStr)) {
 			return "";
 		} else {
 			return selectStr + ", ";
 		}
+	}
+
+	private String getDateAggregation(WalletOperationAggregationLine aggregationLine) {
+		String selectStr = "";
+		String field = aggregationLine.getField();
+		if (aggregationLine.getValue().equalsIgnoreCase("day")) {
+			selectStr = "YEAR(op." + field + ") as year, MONTH(op." + field + ") as month, DAY(op." + field + ") as day ";
+		}
+		if (aggregationLine.getValue().equalsIgnoreCase("month")) {
+			selectStr = "YEAR(op." + field + ") as year, MONTH(op." + field + ") as month, 1 as day ";
+		}
+		if (aggregationLine.getValue().equalsIgnoreCase("year")) {
+			selectStr = "YEAR(op." + field + "), as year, 0 as month, 1 as day ";
+		}
+		return selectStr;
+	}
+
+	private String getField(WalletOperationAggregationLine aggregationLine) {
+		String fieldName = aggregationLine.getField();
+		try {
+			boolean isEntity = false;
+			if (aggregationLine.isCustomField()) {
+				CustomFieldTemplate cf = customFieldTemplateService.findByCode(fieldName);
+				if (cf == null) {
+					throw new BusinessException("Custom field '" + fieldName + "' not found");
+				}
+				return "varcharFromJson(op.cfValues, " + fieldName + ", " + cf.getFieldType().name().toLowerCase() + ") ";
+			}
+			if (!fieldName.contains(".")) {
+				Field field = WalletOperation.class.getDeclaredField(fieldName);
+				Class classField = field.getType();
+				isEntity = BaseEntity.class.isAssignableFrom(classField);
+			}
+			if (fieldName.contains(".") || isEntity) {
+				return "op." + fieldName + ".id ";
+			}
+
+			return "op." + fieldName;
+		} catch (NoSuchFieldException e) {
+			log.error("No such field {} exist in WalletOperation Class", fieldName, e);
+			return "";
+		}
+	}
+
+	private String getAlias(WalletOperationAggregationLine aggregationLine) {
+		String alias = aggregationLine.getAlias();
+		if (!StringUtils.isBlank(alias)) {
+			return alias;
+		}
+		return getFieldSuffix(aggregationLine.getField(), alias);
 	}
 
 	private String getSelectField(String fieldName, String alias) {
@@ -257,9 +295,6 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ " FROM WalletOperationPeriod op " //
 				+ " WHERE (op.invoicingDate is NULL or op.invoicingDate<:invoicingDate) " + where //
 				+ " GROUP BY " + groupBy;
-
-		//return "select varcharFromJson(cfValues, cf_wo_option_tarifaire_fournisseur, string, string) as result from WalletOperation";
-
 	}
 
 	public String getGroupBy() {

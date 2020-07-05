@@ -24,6 +24,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.meveo.model.admin.Seller;
@@ -35,6 +36,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.tax.TaxClass;
 
 /**
@@ -160,6 +162,9 @@ public class AggregatedWalletOperation {
 	private BillingAccount billingAccount;
 	private Seller seller;
 	private Date operationDate;
+	private Map<String, Object> cfValues;
+	private Date endDate;
+	private Date startDate;
 
 	/**
 	 * List of wallet operations.
@@ -510,5 +515,29 @@ public class AggregatedWalletOperation {
 
 	public void setOperationDate(Date operationDate) {
 		this.operationDate = operationDate;
+	}
+
+	public Map<String, Object> getCfValues() {
+		return cfValues;
+	}
+
+	public void setCfValues(Map<String, Object> cfValues) {
+		this.cfValues = cfValues;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }

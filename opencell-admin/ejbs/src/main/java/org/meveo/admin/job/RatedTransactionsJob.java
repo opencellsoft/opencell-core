@@ -88,17 +88,17 @@ public class RatedTransactionsJob extends Job {
         result.put("waitingMillis", customFieldNbWaiting);
 
         // aggregations
-
-        CustomFieldTemplate cfActivateAggregation = new CustomFieldTemplate();
-        cfActivateAggregation.setCode("activateAggregation");
-        cfActivateAggregation.setAppliesTo("JobInstance_RatedTransactionsJob");
-        cfActivateAggregation.setActive(true);
-        cfActivateAggregation.setDescription(resourceMessages.getString("ratedTransactionsJob.activateAggregation"));
-        cfActivateAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        cfActivateAggregation.setDefaultValue("false");
-        cfActivateAggregation.setValueRequired(false);
-        cfActivateAggregation.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0");
-        result.put("activateAggregation", cfActivateAggregation);
+        CustomFieldTemplate customFieldAggregationMatrix = new CustomFieldTemplate();
+        customFieldAggregationMatrix.setCode("woAggregationMatrix");
+        customFieldAggregationMatrix.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldAggregationMatrix.setActive(true);
+        customFieldAggregationMatrix.setDescription(resourceMessages.getString("jobExecution.woAggregationMatrix"));
+        customFieldAggregationMatrix.setFieldType(CustomFieldTypeEnum.ENTITY);
+        customFieldAggregationMatrix.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        customFieldAggregationMatrix.setEntityClazz("org.meveo.model.billing.WalletOperationAggregationMatrix");
+        customFieldAggregationMatrix.setValueRequired(false);
+        customFieldAggregationMatrix.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0");
+        result.put("woAggregationMatrix", customFieldAggregationMatrix);
 
         CustomFieldTemplate cfGlobalAggregation = new CustomFieldTemplate();
         cfGlobalAggregation.setCode("globalAggregation");
@@ -133,18 +133,6 @@ public class RatedTransactionsJob extends Job {
         customFieldFilter.setValueRequired(false);
         customFieldFilter.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:3");
         result.put("woFilters", customFieldFilter);
-
-        CustomFieldTemplate customFieldAggregationMatrix = new CustomFieldTemplate();
-        customFieldAggregationMatrix.setCode("woAggregationMatrix");
-        customFieldAggregationMatrix.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldAggregationMatrix.setActive(true);
-        customFieldAggregationMatrix.setDescription(resourceMessages.getString("jobExecution.woAggregationMatrix"));
-        customFieldAggregationMatrix.setFieldType(CustomFieldTypeEnum.ENTITY);
-        customFieldAggregationMatrix.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        customFieldAggregationMatrix.setEntityClazz("org.meveo.model.billing.WalletOperationAggregationMatrix");
-        customFieldAggregationMatrix.setValueRequired(false);
-        customFieldAggregationMatrix.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:4");
-        result.put("woAggregationMatrix", customFieldAggregationMatrix);
 
         return result;
     }

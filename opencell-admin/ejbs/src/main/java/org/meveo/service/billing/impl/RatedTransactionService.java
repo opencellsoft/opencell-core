@@ -308,7 +308,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
         ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
         ratedTransaction.setSortIndex(aggregatedWo.getSortIndex());
-
+        populateCustomfield(ratedTransaction, aggregatedWo);
         if (!isVirtual) {
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
@@ -317,9 +317,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return ratedTransaction;
     }
 
+    private void populateCustomfield(RatedTransaction ratedTransaction, AggregatedWalletOperation aggregatedWo) {
+        if (aggregatedWo.getCfValues() != null && !aggregatedWo.getCfValues().isEmpty()) {
+            /*for(String cfField : aggregatedWo.getCfValues().keySet()){
+                ratedTransaction.
+            }*/
+        }
+    }
+
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
-        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
+        String strQuery =
+                "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated"
+                        + " WHERE o.id in (:woIds) ";
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("woIds", woIds);
         query.setParameter("ratedTransaction", ratedTransaction);

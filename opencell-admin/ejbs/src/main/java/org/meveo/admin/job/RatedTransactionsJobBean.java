@@ -90,22 +90,19 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         try {
             RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
-            aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            EntityReferenceWrapper aggregationMatrixWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationMatrix", null);
+            WalletOperationAggregationMatrix aggregationMatrix = (walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()) == null
+                    || walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).isEmpty()) ?
+                    null :
+                    walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).get(0);
+            aggregationSetting.setWalletOperationAggregationMatrix(aggregationMatrix);
             removeZeroWalletOperation();
-            if (aggregationSetting.isEnable()) {
+            if (aggregationSetting.getWalletOperationAggregationMatrix() != null) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
                 EntityReferenceWrapper filterWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woFilters", null);
                 Filter filter = (filterWrapper == null || filterService.findByCodeLike(filterWrapper.getCode()) == null || filterService.findByCodeLike(filterWrapper.getCode())
                         .isEmpty()) ? null : filterService.findByCodeLike(filterWrapper.getCode()).get(0);
                 aggregationSetting.setFilter(filter);
-
-                EntityReferenceWrapper aggregationMatrixWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationMatrix", null);
-                WalletOperationAggregationMatrix aggregationMatrix = (walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()) == null
-                        || walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).isEmpty()) ?
-                        null :
-                        walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).get(0);
-                aggregationSetting.setWalletOperationAggregationMatrix(aggregationMatrix);
-                aggregationSetting.setAggregationKeyEl((String) this.getParamOrCFValue(jobInstance, "aggregationKeyEl", null));
                 aggregationSetting.setPeriodAggregation((boolean) this.getParamOrCFValue(jobInstance, "periodAggregation", false));
                 executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
 

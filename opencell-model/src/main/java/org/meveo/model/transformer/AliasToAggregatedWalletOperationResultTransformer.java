@@ -3,6 +3,8 @@ package org.meveo.model.transformer;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
@@ -14,6 +16,7 @@ import org.hibernate.property.access.spi.Setter;
 import org.hibernate.property.access.spi.SetterMethodImpl;
 import org.hibernate.transform.AliasedTupleSubsetResultTransformer;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
 
 /**
  * Result transformer that allows to transform a result to
@@ -46,6 +49,7 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
     private String[] aliases;
     private Setter[] setters;
 
+
     public AliasToAggregatedWalletOperationResultTransformer(Class resultClass) {
         if (resultClass == null) {
             throw new IllegalArgumentException("resultClass cannot be null");
@@ -71,18 +75,25 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
             }
 
             result = resultClass.newInstance();
-
+            Setter setterCustomField = null;
+            Map<String, Object> cfValues = new HashMap<>();
             for (int i = 0; i < aliases.length; i++) {
                 SetterMethodImpl setter = (SetterMethodImpl) setters[i];
                 if (setter != null) {
                     if (setter.getMethod().getParameterTypes()[0].isPrimitive()) {
                         setter.set(result, tuple[i], null);
                     } else {
-                        Object setterValue = getSetterValueAsObject(aliases[i], tuple[i]);
-                        setter.set(result, setterValue, null);
+                        if (setter.getMethodName().equals("setCfValues")) {
+                            cfValues.put(aliases[i], tuple[i]);
+                            setterCustomField = setter;
+                        } else {
+                            Object setterValue = getSetterValueAsObject(aliases[i], tuple[i]);
+                            setter.set(result, setterValue, null);
+                        }
                     }
                 }
             }
+            populateCustomField(result, setterCustomField, cfValues);
         } catch (InstantiationException e) {
             throw new RuntimeException("Could not instantiate resultclass: " + resultClass.getName(), e);
         } catch (IllegalAccessException | NoSuchFieldException e) {
@@ -96,8 +107,13 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
         return result;
     }
 
+    private void populateCustomField(Object result, Setter setterCustomField, Map<String, Object> cfValues) {
+        setterCustomField.set(result, cfValues, null);
+    }
+
     private Object getSetterValueAsObject(String field, Object value)
             throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+
         Class classField = resultClass.getDeclaredField(field).getType();
         if (BaseEntity.class.isAssignableFrom(classField)) {
             BaseEntity valueObject = (BaseEntity) classField.getDeclaredConstructor(null).newInstance();
@@ -109,7 +125,6 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
             }
             return value;
         }
-
     }
 
     private void initialize(String[] aliases) {
@@ -124,7 +139,7 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
                 try {
                     setters[i] = propertyAccessStrategy.buildPropertyAccess(resultClass, alias).getSetter();
                 } catch (Exception ignore) {
-                    //ignore
+                    setters[i] = propertyAccessStrategy.buildPropertyAccess(resultClass, "cfValues").getSetter();
                 }
             }
         }
