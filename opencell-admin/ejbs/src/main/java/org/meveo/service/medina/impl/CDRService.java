@@ -18,6 +18,7 @@
 package org.meveo.service.medina.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
@@ -43,4 +44,8 @@ public class CDRService extends PersistenceService<CDR> {
 		cdr.setUpdated(new Date());
 		return super.update(cdr);
 	}
+
+    public void reprocess(List<Long> selectedIds) throws BusinessException {
+        
+    }
 }

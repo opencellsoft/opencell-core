@@ -1,82 +1,129 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:o="http://omnifaces.org/ui"
-    xmlns:hftl="http://hftl.org"
-    template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{cdrBean.preRenderView}" />
-        </f:metadata>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{cdrBean.preRenderView}" />
+		</f:metadata>
 
-        <o:importConstants type="org.meveo.model.rating.CDRStatusEnum" />
-    </ui:define>
+		<o:importConstants type="org.meveo.model.rating.CDRStatusEnum" />
+	</ui:define>
 
-    <ui:define name="body">
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
-                <p:menuitem outcome="cdrList" value="#{messages['menu.cdr']}" />
-            </p:breadCrumb>
-        </h:form>   
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="cdrList" value="#{messages['menu.cdr']}" />
+			</p:breadCrumb>
+		</h:form>
 
-        <hftl:searchPanel label="#{messages['commons.search']}" backingBean="#{cdrBean}" renderNewButton="false">
-            <hftl:searchField label="#{messages['cdr.accessCode']}" field="accessCode" />            
-          	<hftl:searchField label="#{messages['commons.status']}" field="status"/>
-          	<hftl:searchField label="#{messages['edr.eventDate']}" field="eventDate"/>
-            <c:forEach items="#{cdrBean.params}" var="param">
-          		<hftl:searchField label="#{cdrBean.getParamLabel(param)}" field="#{param}"/>
-            </c:forEach>
-        </hftl:searchPanel>
+		<hftl:searchPanel label="#{messages['commons.search']}"
+			backingBean="#{cdrBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['cdr.accessCode']}"
+				field="accessCode" />
+			<hftl:searchField label="#{messages['commons.status']}"
+				field="status" />
+			<hftl:searchField label="#{messages['edr.eventDate']}"
+				field="eventDate" />
+			<c:forEach items="#{cdrBean.params}" var="param">
+				<hftl:searchField label="#{cdrBean.getParamLabel(param)}"
+					field="#{param}" isDate="#{cdrBean.isDate(param)}" />
+			</c:forEach>
+		</hftl:searchPanel>
 
-        <hftl:dataList checkMany="true" noClose="false" backingBean="#{cdrBean}">
+		<hftl:dataList id="cdrList" checkMany="true" noClose="false"
+			backingBean="#{cdrBean}" scrollable="true">
+			<f:facet name="header">
+				<p:commandButton id="toggler1" type="button" style="float:right"
+					icon="ui-icon-calculator" />
+				<p:columnToggler datasource="datatable_results" trigger="toggler1" />
+			</f:facet>
 
-            <hftl:column label="#{messages['cdr.accessCode']}" field="accessCode" />
-            <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true"  />
-            <hftl:column label="#{messages['edr.eventDate']}" field="eventDate" isDate="true" />
-            <hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" />
-            <c:forEach items="#{cdrBean.params}" var="param">
-            	<hftl:column label="#{cdrBean.getParamLabel(param)}" field="#{param}" />
-            </c:forEach>
-            <p:column style="width: 50px;">
-                <f:facet name="header">
-                    <h:outputText value="#{messages['commons.actions']}" />
-                </f:facet>
+			<hftl:column label="#{messages['cdr.accessCode']}" field="accessCode"/>
+			<hftl:column label="#{messages['commons.status']}" 
+				field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['edr.eventDate']}" field="eventDate" 
+				isDate="true" />
+			<hftl:column label="#{messages['edr.rejectReason']}"
+				field="rejectReason"/>
+			<c:forEach items="#{cdrBean.params}" var="param">
+				<hftl:column label="#{cdrBean.getParamLabel(param)}"
+					field="#{param}"/>
+			</c:forEach>
+			<p:column width="100">
+				<f:facet name="header">
+					<h:outputText value="#{messages['commons.actions']}" />
+				</f:facet>
+				<hftl:actionsColumn renderViewLink="true" renderEditLink="false"
+					renderDeleteLink="false" width="60" entityView="cdrDetail" valueIdField="id" />
+				<p:commandButton id="writeOff" icon="ui-icon-circle-close"
+					title="#{messages['cdr.writeOff']}"
+					rendered="#{cdrBean.canWriteOff(entity)}"
+					onclick="PF('fieldsConfirmWritingOff').show();">
+						<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />				
+					</p:commandButton>
+				<p:confirmDialog 
+					styleClass="confirm-dialog"
+					message="#{messages['message.confirm.cdr.writeoff']}" header=""
+					severity="alert" widgetVar="fieldsConfirmWritingOff"
+					appendTo="@(body)">
+						<p:panel styleClass="confirm-dialog-content">
+							<h:form>
+							<p:inputTextarea value="#{cdrBean.writeOffReason}" rows="5" cols="30"
+								 placeholder="Write-off reason"  />
+							<br/>
+							<p:commandButton value="#{messages['commons.ok']}"
+								oncomplete="PF('fieldsConfirmWritingOff').hide()" update="datatable_results"
+								process="@form"
+								action="#{cdrBean.writeOff()}" />
+							</h:form>
+						</p:panel>
+				</p:confirmDialog>
+				<p:commandButton id="reprocess" icon="ui-icon-play"
+					title="#{messages['cdr.reprocess']}"
+					rendered="#{cdrBean.canReprocess(entity)}"
+					actionListener="#{cdrBean.reprocess(entity)}">
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['message.confirm.cdr.reprocess']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:column>
+		</hftl:dataList>
 
-                <p:commandButton id="updateCdr" icon="ui-icon-play"
-                    actionListener="#{cdrBean.updateStatus(entity)}"
-                    rendered="#{cdrBean.canUserUpdateEntity()}"
-                    update=":results_form">
-                    <p:confirm header="#{messages['commons.confirmationHeader']}"
-                        message="#{messages['message.confirm.cdr.update']}"
-                        icon="ui-icon-alert" />
-                </p:commandButton>
-                <hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"/>                
-            </p:column>
-
-        </hftl:dataList>
-
-        <p:panel styleClass="action-buttons" rendered="#{cdrBean.canUserUpdateEntity()}">
-            <p:commandButton id="massReprocessCdr"
-                value="Mass reprocessing"
-                update=":results_form" action="#{cdrBean.massReprocessing()}">
-                <p:confirm header="#{messages['commons.confirmationHeader']}"
-                    message="#{messages['message.confirm.cdr.update']}"
-                    icon="ui-icon-alert" />
-            </p:commandButton>
-            <p:commandButton id="massWriteOffCdr"
-                value="Mass writing off"
-                update=":results_form" action="#{cdrBean.massWritingOff()}">
-                <p:confirm header="#{messages['commons.confirmationHeader']}"
-                    message="#{messages['message.confirm.cdr.update']}"
-                    icon="ui-icon-alert" />
-            </p:commandButton>         
-        </p:panel>
-
-
-    </ui:define>
-
+		<p:panel styleClass="action-buttons">
+			<p:commandButton id="massReprocessCdr"
+				value="#{messages['cdr.mass.reprocessing']}" update="datatable_results"
+				action="#{cdrBean.massReprocessing()}">
+				<p:confirm header="#{messages['commons.confirmationHeader']}"
+					message="#{messages['message.confirm.cdr.mass.reprocess']}"
+					icon="ui-icon-alert" />
+			</p:commandButton>
+			<p:commandButton id="massWriteOffCdr"
+					value="#{messages['cdr.mass.writeOff']}"
+					onclick="PF('fieldsConfirmMassWritingOff').show();">
+			</p:commandButton>
+			<p:confirmDialog 
+				styleClass="confirm-dialog"
+				message="#{messages['message.confirm.cdr.mass.writeoff']}" header=""
+				severity="alert" widgetVar="fieldsConfirmMassWritingOff"
+				appendTo="@(body)">
+					<p:panel styleClass="confirm-dialog-content">
+						<h:form>
+						<p:inputTextarea value="#{cdrBean.writeOffReason}" rows="5" cols="30"
+							 placeholder="Write-off reason"  />
+						<br/>
+						<p:commandButton value="#{messages['commons.ok']}"
+							oncomplete="PF('fieldsConfirmMassWritingOff').hide()" update="datatable_results"
+							process="@form"
+							action="#{cdrBean.massWritingOff()}" />
+						</h:form>
+					</p:panel>
+			</p:confirmDialog>
+		</p:panel>	
+	</ui:define>
 </ui:composition>

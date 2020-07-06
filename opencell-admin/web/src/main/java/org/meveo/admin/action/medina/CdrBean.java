@@ -18,18 +18,21 @@
 
 package org.meveo.admin.action.medina;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -37,7 +40,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class CdrBean extends BaseBean<CDR> {
 
     private static final long serialVersionUID = 7833532801870480214L;
@@ -50,10 +53,23 @@ public class CdrBean extends BaseBean<CDR> {
     
     private Set<String> params;
     
-    Map<String,CustomFieldTemplate> cfs;
+    private String writeOffReason;
+    
+    private Map<String,CustomFieldTemplate> cfs;
 
     public CdrBean() {
         super(CDR.class);
+    }
+    
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @return CDR
+     */
+    @Produces
+    @Named("cdr")
+    public CDR init() {
+        return initEntity();
     }
     
     @PostConstruct
@@ -62,6 +78,9 @@ public class CdrBean extends BaseBean<CDR> {
         params = cfs.keySet();  
     }
     
+    public boolean isDate(String param) {
+        return cfs.get(param).getFieldType().equals(CustomFieldTypeEnum.DATE);
+    }
     public String getParamLabel(String param) {
         return cfs.get(param).getDescription();
     }
@@ -70,35 +89,65 @@ public class CdrBean extends BaseBean<CDR> {
     public String getEditViewName() {
         return "cdrDetail";
     }
+    
+    public void reprocess(CDR cdr) {
+        cdrService.reprocess(Arrays.asList(cdr.getId()));
+    }
+    
+    public void writeOff() {
+        getEntity().setStatus(CDRStatusEnum.DISCARDED);
+        getEntity().setRejectReason(writeOffReason);
+        cdrService.update(getEntity());
+        writeOffReason = "";
+    }
 
+    public boolean canReprocess(CDR cdr) {
+        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
+        if(authorizedStatuses.contains(cdr.getStatus())) {
+            return true;
+        }
+        return false;
+    }
+    public boolean canWriteOff(CDR cdr) {
+        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
+        if(authorizedStatuses.contains(cdr.getStatus())) {
+            return true;
+        }
+        return false;
+    }
     public void massReprocessing() {
         if (getSelectedEntities() == null) {
             return;
         }
-        log.debug("Reopening {} rejected cdrs", getSelectedEntities().size());
+        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
 
-        List<Long> selectedIds = new ArrayList<>();
-        for (CDR cdr : getSelectedEntities()) {
-            if (CDRStatusEnum.ERROR.equals(cdr.getStatus())) {
-                selectedIds.add(cdr.getId());
-            }
-        }
+        log.debug("Reprocessing {} cdrs", getSelectedEntities().size());
+
+        List<Long> selectedIds = getSelectedEntities().parallelStream()
+                                        .filter(cdr -> authorizedStatuses.contains(cdr.getStatus()))
+                                        .map(CDR::getId)
+                                        .collect(Collectors.toList());
+        cdrService.reprocess(selectedIds);
     }
     
     public void massWritingOff() {
         if (getSelectedEntities() == null) {
             return;
         }
-        log.debug("Reopening {} rejected cdrs", getSelectedEntities().size());
+        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
 
-        List<Long> selectedIds = new ArrayList<>();
-        for (CDR cdr : getSelectedEntities()) {
-            if (CDRStatusEnum.ERROR.equals(cdr.getStatus())) {
-                selectedIds.add(cdr.getId());
-            }
-        }
+        log.debug("Writing off {}  cdrs", getSelectedEntities().size());
+
+        getSelectedEntities().parallelStream()
+                             .filter(cdr -> authorizedStatuses.contains(cdr.getStatus()))
+                             .forEach(cdr->{
+                                 cdr.setStatus(CDRStatusEnum.DISCARDED);
+                                 cdr.setRejectReason(writeOffReason);
+                                 cdrService.update(cdr);
+                             });
+        writeOffReason = "";
     }
-
+    
     @Override
     protected IPersistenceService<CDR> getPersistenceService() {
         return cdrService;
@@ -109,5 +158,12 @@ public class CdrBean extends BaseBean<CDR> {
     }
     public void setParams(Set<String> params) {
         this.params = params;
+    }
+
+    public String getWriteOffReason() {
+        return writeOffReason;
+    }
+    public void setWriteOffReason(String writeOffReason) {
+        this.writeOffReason = writeOffReason;
     }
 }
