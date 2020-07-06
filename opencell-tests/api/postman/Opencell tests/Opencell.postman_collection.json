@@ -5214,87 +5214,6 @@
 									"response": []
 								},
 								{
-									"name": "CreateOrUpdate Customer INVALID_PARAMETER",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "d79c771f-81b2-4490-9f4a-d5542ac07e82",
-												"exec": [
-													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `java.util.Date` from String\");",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "basic",
-											"basic": [
-												{
-													"key": "password",
-													"value": "{{opencell.password}}",
-													"type": "string"
-												},
-												{
-													"key": "username",
-													"value": "{{opencell.username}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_C\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"{{testCode}}_CC\",\r\n    \"customerBrand\": \"{{testCode}}_CB\",\r\n    \"seller\": \"{{testCode}}_SELLER\",\r\n    \"mandateDate\": \"INVALID\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{opencell.url}}/account/customer/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"account",
-												"customer",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "CreateOrUpdate Customer ENTITY_DOES_NOT_EXISTS_EXCEPTION 1",
 									"event": [
 										{
@@ -108882,97 +108801,97 @@
 	],
 	"variable": [
 		{
-			"id": "6c17c2c7-7b02-4df5-97e6-ba9e8553d81c",
+			"id": "cfc57892-6941-4bb7-b90b-46745ef473c1",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "f0b66cdd-62dd-48ab-80f6-a362ae9f80d4",
+			"id": "2d295770-a81e-44c3-ae55-0aa1bc593f6c",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "5cff9cc1-7ea9-4449-9896-82c12b5cf85f",
+			"id": "326001c2-ec9c-474b-ba81-5b00601e8a39",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "6f29e0a4-20a2-4d2c-a402-437066dbee10",
+			"id": "28c9acfb-2776-4d8f-a195-0bf83b7859d6",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "064c5da9-fa0d-4606-ae21-b23700cabf89",
+			"id": "ee28afc3-2f65-4a56-b909-385f88bebd3a",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c600ba0e-237d-4a93-9bb8-e277083ebd56",
+			"id": "d0e572d7-ac88-4ed0-9e23-7abefaa7bb75",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5a372e51-067c-499a-80bc-594852cd4972",
+			"id": "3bf0caff-4a49-4204-8684-0b61186216f2",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "41a2a42c-c93b-4785-8544-db51c314c7e5",
+			"id": "7cf79ec6-d332-4505-82bf-8643cef0c3fd",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "0b99c674-2550-49b0-a56b-9d0177edb28b",
+			"id": "b2d991ea-bbad-4d1e-9df0-33fc4f303171",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "9393b863-03e2-4d99-8a59-3e08d1ae6810",
+			"id": "bf81530a-16ad-466f-ad0e-b0ba8a0d29b8",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "df7c60bb-3dff-4a80-8d75-bae612328526",
+			"id": "0f965e8d-017c-429a-8490-11d825f1c230",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "f252903c-01b6-4759-9948-6fdf116ffca2",
+			"id": "e412e994-7c2c-4c0f-afc1-95d88c966812",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "e2b1c3c9-0cbc-40b3-bfb1-d013201d43b6",
+			"id": "6a38ef70-c051-4426-8eb3-8eb6fd92661c",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "965961a3-d636-48cb-bb97-fe795a408985",
+			"id": "5855b005-bcc0-4c5d-80b3-92271e21956e",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "df253b04-a40f-4cf3-9100-91d4506d9cf9",
+			"id": "4021cc10-ba5a-4659-bcda-e06460fd8ddd",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "978e56b0-5bc2-4a6f-b745-026e77637c8a",
+			"id": "11807141-67e4-40a2-bb86-a1f45fcfc595",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "af516649-1743-4e56-b379-b285b8ddd836",
+			"id": "13dbe5d9-3778-4a89-bc70-73dbfce0621f",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "782a3679-7bf6-48cf-b041-5f726933a65d",
+			"id": "afd9cc3b-695e-4ac8-9d90-a6298978a33e",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "562bb864-2fdb-4fd7-999b-a21f39b8a8e6",
+			"id": "f78ac6cd-f28e-416e-9b45-91a09f19710d",
 			"key": "project.version",
 			"value": "9.2+"
 		}
