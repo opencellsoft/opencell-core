@@ -171,7 +171,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         Date endDate = null;
 
         Calendar cal = calendarService.findByCode(paramBeanFactory.getInstance().getProperty("default.calendar.monthly", "MONTHLY"));
-        cal.setInitDate(subscriptionDate);
+        cal = CalendarService.initializeCalendar(cal, subscriptionDate, userAccount);
+
         startDate = cal.previousCalendarDate(subscriptionDate);
         endDate = cal.nextCalendarDate(subscriptionDate);
 

@@ -265,7 +265,8 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
 
         Calendar cal = paymentScheduleInstance.getCalendar();
-        cal.setInitDate(paymentScheduleInstance.getStartDate());
+        cal = CalendarService.initializeCalendar(cal, paymentScheduleInstance.getStartDate(), serviceInstance, subscription);
+                
         Date date = paymentScheduleInstance.getStartDate();
         CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();        
         while (date.before(paymentScheduleInstance.getEndDate())) {

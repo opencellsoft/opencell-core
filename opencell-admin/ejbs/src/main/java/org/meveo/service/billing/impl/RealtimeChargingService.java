@@ -142,7 +142,7 @@ public class RealtimeChargingService {
 
         BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeTemplate, inputQuantity);
         
-        WalletOperation op = new WalletOperation(ci, inputQuantity, ratingQuantity, subscriptionDate, null, param1, param2, param3, null, null, null, null,null);
+        WalletOperation op = new WalletOperation(ci, inputQuantity, ratingQuantity, subscriptionDate, null, param1, param2, param3, null, null, null, null,null, null);
         op.setOfferTemplate(offerTemplate);
         op.setSeller(seller);
 

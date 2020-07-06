@@ -124,6 +124,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -140,6 +141,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -2352,13 +2354,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         BillingAccount billingAccount = invoice.getBillingAccount();
 
-        Date initCalendarDate = billingAccount.getSubscriptionDate();
-        if (initCalendarDate == null) {
-            initCalendarDate = billingAccount.getAuditable().getCreated();
-        }
-
-        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
     }
     
@@ -2366,21 +2362,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Increment BA invoice date.
      * 
      * @param billingRun
-     * @param billingAccount
+     * @param billingAccount Billing account
+     * 
+     * @throws BusinessException business exception
+     */
+    private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+        
+        Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
+        Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
+
+        Date nextInvoiceDate = bcCalendar.nextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
+        if (nextInvoiceDate != null) {
+            billingAccount.setNextInvoiceDate(nextInvoiceDate);
+            billingAccount = billingAccountService.update(billingAccount);
+        }
+        return billingAccount;
+    }
+    
+    /**
+     * Increment BA invoice date.
+     * 
+     * @param billingRun Billing run
+     * @param billingAccountId Billing account identifier
      * 
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    public void incrementBAInvoiceDateInNewTx(BillingRun billingRun, Long billingAccountId) throws BusinessException {
         
-        BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
-        Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
-        if(nextCalendarDate!=null) {
-            billingAccount.setNextInvoiceDate(nextCalendarDate);
-            billingAccount.updateAudit(currentUser);
-            billingAccountService.update(billingAccount);
-        }
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        incrementBAInvoiceDate(billingRun, billingAccount);
     }
 
     /**
