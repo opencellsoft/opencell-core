@@ -104298,7 +104298,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-07T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-07T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104394,7 +104394,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-08T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-08T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104490,7 +104490,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-09T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-09T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(true);",
 													"});",
 													""
@@ -104586,7 +104586,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-01T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104682,7 +104682,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-05-01T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-05-01T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104778,7 +104778,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-02-14T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-02-14T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(true);",
 													"});",
 													""
@@ -108771,97 +108771,97 @@
 	],
 	"variable": [
 		{
-			"id": "d6b841ce-edc8-4d6f-b11e-14a828813f09",
+			"id": "948b8c1b-9051-4dd6-81fa-1c5a3b0b22f9",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "9b17ed1c-2680-4f3e-b8b2-b04882f53297",
+			"id": "0ff51f71-6776-46c0-bd35-9216ba5be3d8",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "5e36d60d-b265-46c3-9ecf-7cc3f81a1895",
+			"id": "dade795f-5dd0-4ba4-b279-bd7632da5ca0",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "61b6208c-284b-451e-a2e3-f7cd4fda4ad8",
+			"id": "e797e611-77df-485f-93ad-8bfc0a687107",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c00f628e-ee6c-46ad-a29f-24536c06165b",
+			"id": "e6f74396-efee-4e43-9fd4-77f1642247b0",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c616b632-91bd-441f-9ddf-aa58a9fe5a6c",
+			"id": "ebd7a9f3-8b2d-459f-8647-eea73346c7d2",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "be2e7b6c-1514-415e-8a87-82729fd27ad4",
+			"id": "de30c1d5-8618-41dd-bd21-7fd324bab4e9",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "c0d6cd71-9d5d-46ea-a267-60fa63d019de",
+			"id": "8cb5edd5-8097-49e9-bd67-aabfe2419b5b",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "37399114-b66f-487f-9bd6-a18166a7c5e9",
+			"id": "8ed5131d-77b4-4871-a77f-b0f0e10d9ea4",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "353e0d96-d286-4014-9fa0-de0c7dcf3dc1",
+			"id": "bd51de5e-5773-4df4-b1af-c050493cab34",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "9fd874f3-d506-445b-a20d-a4064da84179",
+			"id": "191560f7-9efe-4954-af98-821cd69d40ed",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "63ede7b4-8986-4219-a07b-cce8f00bb64e",
+			"id": "e5ddffe9-4422-4c81-a335-9a0ea7c71a19",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "3c50e6c9-e589-481a-a0e1-cb8b1c866eb6",
+			"id": "85205e29-4ef6-4a0a-8d3e-d3accb193328",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "83bda5f2-7c49-49e9-a25e-2471dac71f91",
+			"id": "4c34cfc2-fc61-4114-aa8a-28c4510eeee7",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "5961dbe0-2cd2-49f4-9287-8a7430c34619",
+			"id": "b7d719e1-a846-4140-ab24-7d15495975d1",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "325a0809-eace-4e49-99c2-0ab9fdded37d",
+			"id": "1eabba3f-5d6c-4532-92a5-c7712abd5ecf",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "1c44ae33-e555-4175-ba6e-ba9f06663eea",
+			"id": "82e4b046-76a1-44e0-9552-3cee85076976",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "6364a639-5c50-4fc7-962b-fe48b3488ac3",
+			"id": "56be2736-fbb5-47e6-b05b-ec376c974113",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "e335545a-a415-49d5-8394-9f553ce4eef1",
+			"id": "612eb61a-f57e-436f-a637-8d830baf6294",
 			"key": "project.version",
 			"value": "9.2+"
 		}
