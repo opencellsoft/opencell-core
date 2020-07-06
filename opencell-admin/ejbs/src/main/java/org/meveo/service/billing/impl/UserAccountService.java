@@ -47,13 +47,15 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setBillingAccount(billingAccount);
-		create(userAccount);
+		
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
-		wallet.setUserAccount(userAccount);
 		walletService.create(wallet);
-
+		
 		userAccount.setWallet(wallet);
+		create(userAccount);
+		
+		wallet.setUserAccount(userAccount);
 	}
 
 	@MeveoAudit
