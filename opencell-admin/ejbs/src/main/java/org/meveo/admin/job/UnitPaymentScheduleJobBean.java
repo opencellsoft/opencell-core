@@ -51,9 +51,8 @@ public class UnitPaymentScheduleJobBean {
     public void execute(JobExecutionResultImpl result,PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
         log.debug("Running with paymentScheduleInstanceItem ID={}", paymentScheduleInstanceItem.getId());       
         try {
-            
             paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
-
+            result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to process paymentScheduleInstanceItem id:" + paymentScheduleInstanceItem.getId(), e);
             result.registerError(paymentScheduleInstanceItem.getId(), e.getMessage());
