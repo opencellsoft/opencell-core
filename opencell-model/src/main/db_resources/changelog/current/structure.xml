@@ -3197,4 +3197,13 @@ END $$;]]>
 
      </changeSet>
      
+    
+    <changeSet id="#5330_20190630" author="AndriusKarpavicius">
+        <addColumn tableName="cat_calendar">
+            <column name="init_date_el" type="varchar(2000)"/>
+            <column name="init_date_el_sp" type="varchar(2000)"/>
+        </addColumn>
+    
+    </changeSet>
+    
 </databaseChangeLog>

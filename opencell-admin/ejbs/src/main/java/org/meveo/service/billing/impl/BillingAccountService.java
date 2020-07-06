@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -46,6 +47,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -291,31 +293,35 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         return null;
     }
-    
-    public List<BillingAccount> findNotProcessedBillingAccounts(BillingRun billingRun) {
-        try {
-        	Date startDate = billingRun.getStartDate();
-        	Date endDate = billingRun.getEndDate();
-        	
-        	if(endDate==null) {
-        		endDate=new Date();
-        	}
-            
-            QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle.id", billingRun.getBillingCycle().getId());
-            qb.addSql("((b.billingRun.id is null) OR (b.billingRun.id<> :billingRunId))");
-            qb.addCriterionDateRangeToTruncatedToDay("b.nextInvoiceDate", endDate, false, true);
-            
-            if (startDate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("b.nextInvoiceDate", startDate);
-            }
 
-            
-            return (List<BillingAccount>) qb.getQuery(getEntityManager()).setParameter("billingRunId", billingRun.getId()).getResultList();
-        } catch (Exception ex) {
-            log.error("failed to find billing accounts", ex);
+    /**
+     * Find a list of not processed billing accounts by a billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Billing Account identifiers
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> findNotProcessedBillingAccounts(BillingRun billingRun) {
+
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+
+        if (endDate == null) {
+            endDate = new Date();
         }
-        return null;
+
+        Date maxNextDate = DateUtils.truncateTime(endDate);
+        Query query = null;
+        if (startDate == null) {
+            query = getEntityManager().createNamedQuery("BillingAccount.getUnbilledByBC").setParameter("billingCycle", billingRun.getBillingCycle()).setParameter("billingRun", billingRun)
+                .setParameter("maxNextInvoiceDate", maxNextDate);
+        } else {
+            startDate = DateUtils.truncateTime(startDate);
+            query = getEntityManager().createNamedQuery("BillingAccount.getUnbilledByBCWithStartDate").setParameter("billingCycle", billingRun.getBillingCycle()).setParameter("billingRun", billingRun)
+                .setParameter("maxNextInvoiceDate", maxNextDate).setParameter("minNextInvoiceDate", startDate);
+        }
+
+        return query.getResultList();
     }
 
     /**
@@ -452,5 +458,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
-    
+
 }

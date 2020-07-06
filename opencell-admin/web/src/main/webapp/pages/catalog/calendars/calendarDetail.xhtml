@@ -175,6 +175,9 @@
 					rendered="#{ not calendarBean.edit}" />
 				<hftl:formField label="#{messages['calendar.nbPeriods']}"
 					field="nbPeriods" required="true" />
+                <hftl:formField label="#{messages['calendar.initDateEL']}" field="initDateEL" id="initDateEL" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                <hftl:formField label="#{messages['calendar.initDateELSpark']}" field="initDateELSpark" id="initDateELSpark" textArea="true"
+                    rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}" />                     
 			</h:panelGroup>
 
 			<h:panelGroup rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarJoin'}">

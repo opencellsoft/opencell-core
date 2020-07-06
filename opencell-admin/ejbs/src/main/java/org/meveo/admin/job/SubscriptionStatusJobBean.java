@@ -18,9 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,9 +38,9 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.slf4j.Logger;
 
 /**
@@ -91,10 +88,10 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 					while (subscribedTillDate.before(untillDate)) {
 						Date calendarDate = new Date();
 						Calendar calendar = new GregorianCalendar();
-						if (subscription.getSubscriptionRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR){
-							org.meveo.model.catalog.Calendar calendarRenew = subscription.getSubscriptionRenewal().getCalendarRenewFor();
-							calendarRenew.setInitDate(subscription.getSubscribedTillDate());
-							calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
+                        if (subscription.getSubscriptionRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR) {
+                            org.meveo.model.catalog.Calendar calendarRenew = CalendarService.initializeCalendar(subscription.getSubscriptionRenewal().getCalendarRenewFor(), subscription.getSubscribedTillDate(),
+                                subscription);
+                            calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
 						} else {
 							calendar.setTime(subscription.getSubscribedTillDate());
 							calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
@@ -154,10 +151,10 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 					while (serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().before(untillDate)) {
 						Date calendarDate = new Date();
 						Calendar calendar = new GregorianCalendar();
-						if (serviceInstance.getServiceRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR) {
-							org.meveo.model.catalog.Calendar calendarRenew = serviceInstance.getServiceRenewal().getCalendarRenewFor();
-							calendarRenew.setInitDate(serviceInstance.getSubscribedTillDate());
-							calendarDate = calendarRenew.nextCalendarDate(serviceInstance.getSubscribedTillDate());
+                        if (serviceInstance.getServiceRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR) {
+                            org.meveo.model.catalog.Calendar calendarRenew = CalendarService.initializeCalendar(serviceInstance.getServiceRenewal().getCalendarRenewFor(), serviceInstance.getSubscribedTillDate(),
+                                serviceInstance);
+                            calendarDate = calendarRenew.nextCalendarDate(serviceInstance.getSubscribedTillDate());
 						} else {
 							calendar.setTime(serviceInstance.getSubscribedTillDate());
 							calendar.add(serviceInstance.getServiceRenewal().getRenewForUnit().getCalendarField(),
