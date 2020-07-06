@@ -30,7 +30,9 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.finance.RevenueSchedule;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.finance.RevenueScheduleService;
 import org.meveo.service.script.Script;
 
@@ -61,22 +63,19 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		             public int compare(RevenueSchedule c0, RevenueSchedule c1) {
 		                 return c0.getRevenueDate().compareTo(c1.getRevenueDate());
 		             }
-		        });
-				BillingAccount billingAccount= chargeInstance.getUserAccount()
-						.getBillingAccount();
-				BillingCycle billingCycle = billingAccount.getBillingCycle();
-		        List<Date> invoicingDates = new ArrayList<>();
-		        Date initCalendarDate = billingAccount.getSubscriptionDate();
-				if(initCalendarDate==null){
-					initCalendarDate=billingAccount.getAuditable().getCreated();
-				}
-		        Date invoicingDate = new Date(startDate.getTime());
-		        invoicingDate = billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate);
-		        while(!billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate).after(endDate)){
-		        	invoicingDates.add(invoicingDate);
-		        	log.debug("added invoicingDate "+invoicingDate);
-		        	invoicingDate = new Date((billingCycle.getNextCalendarDate(initCalendarDate,invoicingDate)).getTime());
-		        }
+                });
+                BillingAccount billingAccount = chargeInstance.getUserAccount().getBillingAccount();
+                BillingCycle billingCycle = billingAccount.getBillingCycle();
+                List<Date> invoicingDates = new ArrayList<>();
+                Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
+                Calendar bcCalendar = CalendarService.initializeCalendar(billingCycle.getCalendar(), initCalendarDate, chargeInstance, billingAccount);
+                Date invoicingDate = bcCalendar.nextCalendarDate(new Date(startDate.getTime()));
+
+                while (!bcCalendar.nextCalendarDate(invoicingDate).after(endDate)) {
+                    invoicingDates.add(invoicingDate);
+                    log.debug("added invoicingDate " + invoicingDate);
+                    invoicingDate = bcCalendar.nextCalendarDate(invoicingDate);
+                }
 		        BigDecimal recognizedRevenue=BigDecimal.ZERO;
 		        BigDecimal chargedRevenue=BigDecimal.ZERO;
 		        int chargeIndex=0;

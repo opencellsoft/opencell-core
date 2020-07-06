@@ -63,7 +63,7 @@ public class RecurringChargeInstance extends ChargeInstance {
     private RecurringChargeTemplate recurringChargeTemplate;
 
     /**
-     * Subscription date
+     * Service subscription date
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
@@ -159,10 +159,16 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.description = recurringChargeTemplate.getDescription();
     }
 
+    /**
+     * @return Service subscription date
+     */
     public Date getSubscriptionDate() {
         return subscriptionDate;
     }
 
+    /**
+     * @param subscriptionDate Service subscription date
+     */
     public void setSubscriptionDate(Date subscriptionDate) {
         this.subscriptionDate = subscriptionDate;
     }

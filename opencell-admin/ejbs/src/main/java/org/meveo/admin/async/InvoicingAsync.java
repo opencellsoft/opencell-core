@@ -41,6 +41,7 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -82,6 +83,9 @@ public class InvoicingAsync {
     @Inject
     private RejectedBillingAccountService rejectedBillingAccountService;
 
+    @Inject
+    private BillingAccountService billingAccountService;
+
     /**
      * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
      * separate transaction.
@@ -99,8 +103,8 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId,
-            MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser) throws BusinessException {
+    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser)
+            throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -133,8 +137,7 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<AmountsToInvoice> entitiesAndAmounts, BillingRun billingRun, Long jobInstanceId,
-            MeveoUser lastCurrentUser) throws BusinessException {
+    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<AmountsToInvoice> entitiesAndAmounts, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -145,8 +148,7 @@ public class InvoicingAsync {
             if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(amountsToInvoice.getEntityToInvoiceId(), billingRun,
-                amountsToInvoice.getAmountsToInvoice());
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(amountsToInvoice.getEntityToInvoiceId(), billingRun, amountsToInvoice.getAmountsToInvoice());
             if (billableEntity != null) {
                 billableEntities.add(billableEntity);
             }
@@ -157,12 +159,12 @@ public class InvoicingAsync {
     /**
      * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
      *
-     * @param entities             the entity objects
-     * @param billingRun           the billing run
-     * @param jobInstanceId        the job instance id
+     * @param entities the entity objects
+     * @param billingRun the billing run
+     * @param jobInstanceId the job instance id
      * @param minAmountForAccounts Check if min amount is enabled in any account level
-     * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *                             expirations), current user might be lost, thus there is a need to reestablish.
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
@@ -199,8 +201,8 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
-            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId, JobExecutionResultImpl result,
+            MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -223,13 +225,12 @@ public class InvoicingAsync {
         }
         return new AsyncResult<String>("OK");
     }
-    
-    
+
     /**
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
      * @param billingRun the billing run to process
-     * @param billingAccounts the billingAccounts to be rejected
+     * @param billingAccountIds a list of Billing account Ids to be rejected
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -238,27 +239,26 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<BillingAccount> billingAccounts,
-            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> rejectBAWithoutBillableTransactions(BillingRun billingRun, List<Long> billingAccountIds, Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;
-        for (BillingAccount ba : billingAccounts) {
+        for (Long baId : billingAccountIds) {
             i++;
             if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.incrementBAInvoiceDate(billingRun, ba);
-        		String reason = null;
-        	    if(ba.getNextInvoiceDate()==null) {
-        	    	reason = "Next Invoicing Date is null";
-        		} else {
-                    reason = "No billable transaction";
-        		}
-        		rejectedBillingAccountService.create(ba, billingRun, reason);
+
+                // TODO this way of finding reason is not very good, as nextInvoiceDate will be null only of the first run.
+                BillingAccount ba = billingAccountService.findById(baId);
+                String reason = ba.getNextInvoiceDate() == null ? "Next Invoicing Date is null" : "No billable transaction";
+                invoiceService.incrementBAInvoiceDateInNewTx(billingRun, baId);
+                
+                ba = billingAccountService.findById(baId);
+                rejectedBillingAccountService.create(ba, billingRun, reason);
 
             } catch (Exception e) {
-                log.error("Failed to increment next invoicing date for billingAccount {}", ba.getId(), e);
+                log.error("Failed to increment next invoicing date for billingAccount {}", baId, e);
             }
         }
         return new AsyncResult<String>("OK");
