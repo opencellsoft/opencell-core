@@ -201,40 +201,6 @@
             <artifactId>opencell-api-dto</artifactId>
         </dependency>
 
-        <!--  To be removed -->
-
-
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-dto</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-ejb</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-job</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-model</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-elec-script</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <!-- Libraries included in Jboss -->
 
         <dependency>

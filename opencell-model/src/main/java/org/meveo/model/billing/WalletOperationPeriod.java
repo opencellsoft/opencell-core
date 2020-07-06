@@ -31,15 +31,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -47,15 +42,12 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Subselect;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.DatePeriod;
+
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -69,17 +61,15 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
 /**
- * Consumption operation
+ * Group WO by continuous period
  *
- * @author Andrius Karpavicius
- * @author Edward P. Legaspi
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
  */
 @Entity
 @Immutable
-//@Table(name = "wallet_operation_period_view")
 @Subselect("select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id, o.id) as period "
-        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id, o.id))+ interval '1' day = DATE(o.start_date)) then 0 else 1 end) as flag "
+        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id, o.id)) + interval '1' day = DATE(o.start_date)) then 0 else 1 end) as flag "
         + " FROM billing_wallet_operation o )  " + " o  WHERE  o.status='OPEN'")
 public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEntity {
 

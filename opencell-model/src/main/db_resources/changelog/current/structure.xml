@@ -3216,6 +3216,11 @@ END $$;]]>
                                  referencedColumnNames="id"/>
         <createSequence sequenceName="wo_aggregation_line_seq" startValue="1"/>
         <createSequence sequenceName="wo_aggregation_matrix_seq" startValue="1"/>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="cf_values_accum" type="${type.json}"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="uuid" type="varchar(60)"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

@@ -319,9 +319,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private void populateCustomfield(RatedTransaction ratedTransaction, AggregatedWalletOperation aggregatedWo) {
         if (aggregatedWo.getCfValues() != null && !aggregatedWo.getCfValues().isEmpty()) {
-            /*for(String cfField : aggregatedWo.getCfValues().keySet()){
-                ratedTransaction.
-            }*/
+            for (String cfField : aggregatedWo.getCfValues().keySet()) {
+                // customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
+            }
         }
     }
 
