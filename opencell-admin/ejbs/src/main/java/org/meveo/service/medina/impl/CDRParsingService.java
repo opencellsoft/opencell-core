@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.parse.csv.MEVEOCdrReader;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -379,20 +378,10 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	private ICdrParser getParser(String customParser) throws BusinessException {
 	    if(customParser != null) {
 	        return (org.meveo.service.medina.impl.ICdrParser) scriptInstance.getScriptInstance(customParser); 
-	    }
-	    ICdrParser parser = null;
-	    ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-	    String configuredParser = (String) paramBean.getProperty("mediation.cdr.parser", null);	    
-	    if(configuredParser != null) {
-	        parser = (ICdrParser) scriptInstance.getScriptInstance(configuredParser);
-	    }
-	    if(parser == null) {
+	    } else {
 	        log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
-	        parser =  meveoCdrParser;
+            return meveoCdrParser;
 	    }
-	    return parser;
-	    
-
 	}
 		
     /**
@@ -416,18 +405,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
     private ICdrCsvReader getReader(String readerCode) throws BusinessException {
         if (readerCode != null) {
             return (ICdrCsvReader) scriptInstance.getScriptInstance(readerCode);
-        }
-
-        ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-        String configuredReader = (String) paramBean.getProperty("mediation.cdr.reader", null);
-        ICdrCsvReader reader = null;
-        if(configuredReader != null) {
-            reader = (ICdrCsvReader) scriptInstance.getScriptInstance(configuredReader);
-        }        
-        if (reader == null) {
+        } else {
             log.debug("Use default cdr reader={}", meveoCdrReader.getClass());
-            reader = meveoCdrReader;
+            return meveoCdrReader;
         }
-        return reader;
     }
 }

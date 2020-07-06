@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -92,43 +91,39 @@ public class MediationJob extends Job {
         String readerCode = reader != null ? reader.getCode() : null;
         
         EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-        String parserCode = parser != null ? parser.getCode() : null;        
-        try {
-
-            ParamBean parambean = paramBeanFactory.getInstance();
-            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
-
-            String inputDir = meteringDir + "input";
-            String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
-            ArrayList<String> cdrExtensions = new ArrayList<String>();
-            cdrExtensions.add(cdrExtension);
-
-            String outputDir = meteringDir + "output";
-            String rejectDir = meteringDir + "reject";
-            String archiveDir = meteringDir + "archive";
+        String parserCode = parser != null ? parser.getCode() : null;
+        ParamBean parambean = paramBeanFactory.getInstance();
+        String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
+        ArrayList<String> cdrExtensions = new ArrayList<String>();
+        cdrExtensions.add(cdrExtension);
+        try {            
+            String inputDir = null;
+            String outputDir = null;
+            String rejectDir = null;
+            String archiveDir = null;
             String mappingConf = null;
-            
-            
-            
             EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
             FileFormat fileFormat = null;
             if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
                 fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
-            }
-            
+            }            
             if( fileFormat != null) {
                 inputDir = fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 outputDir = fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 rejectDir = fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 archiveDir = fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 mappingConf = fileFormat.getConfigurationTemplate();
-            }            
+            } else {                
+                String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
+                inputDir = meteringDir + "input";
+                outputDir = meteringDir + "output";
+                rejectDir = meteringDir + "reject";
+                archiveDir = meteringDir + "archive";
+            }
             File f = new File(inputDir);
             if (!f.exists()) {
                 f.mkdirs();
-            }
-
-                                           
+            }                                          
             f = new File(outputDir);
             if (!f.exists()) {
                 log.debug("outputDir {} not exist", outputDir);
