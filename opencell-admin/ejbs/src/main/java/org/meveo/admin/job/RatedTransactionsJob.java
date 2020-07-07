@@ -89,50 +89,16 @@ public class RatedTransactionsJob extends Job {
 
         // aggregations
         CustomFieldTemplate customFieldAggregationMatrix = new CustomFieldTemplate();
-        customFieldAggregationMatrix.setCode("woAggregationMatrix");
+        customFieldAggregationMatrix.setCode("woAggregationSettings");
         customFieldAggregationMatrix.setAppliesTo("JobInstance_RatedTransactionsJob");
         customFieldAggregationMatrix.setActive(true);
-        customFieldAggregationMatrix.setDescription(resourceMessages.getString("jobExecution.woAggregationMatrix"));
+        customFieldAggregationMatrix.setDescription(resourceMessages.getString("jobExecution.woAggregationSettings"));
         customFieldAggregationMatrix.setFieldType(CustomFieldTypeEnum.ENTITY);
         customFieldAggregationMatrix.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        customFieldAggregationMatrix.setEntityClazz("org.meveo.model.billing.WalletOperationAggregationMatrix");
+        customFieldAggregationMatrix.setEntityClazz("org.meveo.model.billing.WalletOperationAggregationSettings");
         customFieldAggregationMatrix.setValueRequired(false);
         customFieldAggregationMatrix.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0");
-        result.put("woAggregationMatrix", customFieldAggregationMatrix);
-
-        CustomFieldTemplate cfGlobalAggregation = new CustomFieldTemplate();
-        cfGlobalAggregation.setCode("globalAggregation");
-        cfGlobalAggregation.setAppliesTo("JobInstance_RatedTransactionsJob");
-        cfGlobalAggregation.setActive(true);
-        cfGlobalAggregation.setDescription(resourceMessages.getString("ratedTransactionsJob.globalAggregation"));
-        cfGlobalAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        cfGlobalAggregation.setDefaultValue("false");
-        cfGlobalAggregation.setValueRequired(false);
-        cfGlobalAggregation.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:1");
-        result.put("globalAggregation", cfGlobalAggregation);
-
-        CustomFieldTemplate cfPeriodAggregation = new CustomFieldTemplate();
-        cfPeriodAggregation.setCode("periodAggregation");
-        cfPeriodAggregation.setAppliesTo("JobInstance_RatedTransactionsJob");
-        cfPeriodAggregation.setActive(true);
-        cfPeriodAggregation.setDescription(resourceMessages.getString("ratedTransactionsJob.periodAggregation"));
-        cfPeriodAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        cfPeriodAggregation.setDefaultValue("false");
-        cfPeriodAggregation.setValueRequired(false);
-        cfPeriodAggregation.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:2");
-        result.put("periodAggregation", cfPeriodAggregation);
-
-        CustomFieldTemplate customFieldFilter = new CustomFieldTemplate();
-        customFieldFilter.setCode("woFilters");
-        customFieldFilter.setAppliesTo("JobInstance_RatedTransactionsJob");
-        customFieldFilter.setActive(true);
-        customFieldFilter.setDescription(resourceMessages.getString("jobExecution.woFilters"));
-        customFieldFilter.setFieldType(CustomFieldTypeEnum.ENTITY);
-        customFieldFilter.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        customFieldFilter.setEntityClazz("org.meveo.model.filter.Filter");
-        customFieldFilter.setValueRequired(false);
-        customFieldFilter.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:3");
-        result.put("woFilters", customFieldFilter);
+        result.put("woAggregationSettings", customFieldAggregationMatrix);
 
         return result;
     }

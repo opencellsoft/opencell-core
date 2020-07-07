@@ -69,7 +69,7 @@ import org.meveo.model.tax.TaxClass;
 @Entity
 @Immutable
 @Subselect("select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id, o.id) as period "
-        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id, o.id)) + interval '1' day = DATE(o.start_date)) then 0 else 1 end) as flag "
+        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id, o.id)) = DATE(o.start_date)) then 0 else 1 end) as flag "
         + " FROM billing_wallet_operation o )  " + " o  WHERE  o.status='OPEN'")
 public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEntity {
 

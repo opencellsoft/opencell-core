@@ -18,7 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
-import org.meveo.model.billing.WalletOperationAggregationMatrix;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.filter.Filter;
 
 import java.io.Serializable;
@@ -88,7 +88,7 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	/**
 	 * The aggregation matrix to aggregate multiple WO in one RT
 	 */
-	private WalletOperationAggregationMatrix walletOperationAggregationMatrix;
+	private WalletOperationAggregationSettings walletOperationAggregationSettings;
 	/**
 	 * Filter WO
 	 */
@@ -295,12 +295,12 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 		this.aggregateByUnitAmount = aggregateByUnitAmount;
 	}
 
-	public WalletOperationAggregationMatrix getWalletOperationAggregationMatrix() {
-		return walletOperationAggregationMatrix;
+	public WalletOperationAggregationSettings getWalletOperationAggregationSettings() {
+		return walletOperationAggregationSettings;
 	}
 
-	public void setWalletOperationAggregationMatrix(WalletOperationAggregationMatrix walletOperationAggregationMatrix) {
-		this.walletOperationAggregationMatrix = walletOperationAggregationMatrix;
+	public void setWalletOperationAggregationSettings(WalletOperationAggregationSettings walletOperationAggregationSettings) {
+		this.walletOperationAggregationSettings = walletOperationAggregationSettings;
 	}
 
 	public Filter getFilter() {

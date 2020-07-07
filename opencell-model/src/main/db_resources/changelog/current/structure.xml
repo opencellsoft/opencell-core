@@ -3195,9 +3195,9 @@ END $$;]]>
             <column name="group_by" type="varchar(25)"/>
             <column name="group_by_parameter" type="varchar(25)"/>
             <column name="alias" type="varchar(255)"/>
-            <column name="aggregation_matrix_id" type="bigint"/>
+            <column name="wo_aggregation_settings_id" type="bigint"/>
         </createTable>
-        <createTable tableName="wo_aggregation_matrix">
+        <createTable tableName="wo_aggregation_settings">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_matrix_pkey"/>
             </column>
@@ -3210,9 +3210,16 @@ END $$;]]>
             <column name="updater" type="varchar(100)"/>
             <column name="code" type="varchar(255)"/>
             <column name="description" type="varchar(255)"/>
+            <column name="global_aggregation" type="${type.boolean}"/>
+            <column name="period_aggregation" type="${type.boolean}"/>
+            <column name="period_end_date_included" type="${type.boolean}"/>
+            <column name="wallet_operation_filter_id" type="bigint"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="aggregation_matrix_id"
-                                 constraintName="wo_aggregation_matrix_id_fk" referencedTableName="wo_aggregation_matrix"
+        <addForeignKeyConstraint baseTableName="wo_aggregation_settings" baseColumnNames="wallet_operation_filter_id"
+                                 constraintName="wallet_operation_filter_id_fk" referencedTableName="meveo_filter"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="wo_aggregation_settings_id"
+                                 constraintName="wo_aggregation_settings_id_fk" referencedTableName="wo_aggregation_settings"
                                  referencedColumnNames="id"/>
         <createSequence sequenceName="wo_aggregation_line_seq" startValue="1"/>
         <createSequence sequenceName="wo_aggregation_matrix_seq" startValue="1"/>

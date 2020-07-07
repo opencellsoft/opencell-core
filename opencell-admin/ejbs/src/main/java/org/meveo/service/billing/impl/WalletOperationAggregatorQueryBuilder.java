@@ -25,7 +25,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationActionEnum;
 import org.meveo.model.billing.WalletOperationAggregationLine;
-import org.meveo.model.billing.WalletOperationAggregationMatrix;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -45,21 +45,34 @@ import java.util.List;
  */
 public class WalletOperationAggregatorQueryBuilder {
 	private Logger log = LoggerFactory.getLogger(WalletOperationAggregatorQueryBuilder.class);
-
-	private RatedTransactionsJobAggregationSetting aggregationSettings;
+	/**
+	 * Aggregation settings.
+	 */
+	private WalletOperationAggregationSettings aggregationSettings;
+	/**
+	 * Group by section.
+	 */
 	private String groupBy = "";
-	private String id = "";
-	private String dateAggregateSelect = "";
+
+	/**
+	 * Select section.
+	 */
 	private String select = "";
+	/**
+	 * Where section.
+	 */
 	private String where = "";
 
 	private CustomFieldTemplateService customFieldTemplateService;
+
 	private FilterService filterService;
 
 	/**
+	 * Constructor.
+	 *
 	 * @param aggregationSettings the aggregation settings matrix
 	 */
-	public WalletOperationAggregatorQueryBuilder(RatedTransactionsJobAggregationSetting aggregationSettings, CustomFieldTemplateService customFieldTemplateService,
+	public WalletOperationAggregatorQueryBuilder(WalletOperationAggregationSettings aggregationSettings, CustomFieldTemplateService customFieldTemplateService,
 			FilterService filterService) {
 		this.aggregationSettings = aggregationSettings;
 		this.customFieldTemplateService = customFieldTemplateService;
@@ -68,8 +81,8 @@ public class WalletOperationAggregatorQueryBuilder {
 	}
 
 	private void prepareQuery() {
-		WalletOperationAggregationMatrix aggregationMatrix = aggregationSettings.getWalletOperationAggregationMatrix();
-		List<WalletOperationAggregationLine> aggregationLines = aggregationMatrix.getAggregationLines();
+
+		List<WalletOperationAggregationLine> aggregationLines = aggregationSettings.getAggregationLines();
 		for (WalletOperationAggregationLine aggregationLine : aggregationLines) {
 			select += getSelect(aggregationLine);
 			groupBy += getQueryGroupBy(aggregationLine);
@@ -83,8 +96,8 @@ public class WalletOperationAggregatorQueryBuilder {
 		if (!StringUtils.isBlank(groupBy)) {
 			groupBy = groupBy.substring(0, groupBy.length() - 2);
 		}
-		if (aggregationSettings.getFilter() != null) {
-			where = getWhere(aggregationSettings.getFilter());
+		if (aggregationSettings.getWalletOperationFilter() != null) {
+			where = getWhere(aggregationSettings.getWalletOperationFilter());
 		}
 
 	}
@@ -248,34 +261,6 @@ public class WalletOperationAggregatorQueryBuilder {
 		return getFieldSuffix(aggregationLine.getField(), alias);
 	}
 
-	private String getSelectField(String fieldName, String alias) {
-		try {
-			boolean isEntity = false;
-			if (!fieldName.contains(".")) {
-				Field field = WalletOperation.class.getDeclaredField(fieldName);
-				Class classField = field.getType();
-				isEntity = BaseEntity.class.isAssignableFrom(classField);
-			}
-			if (fieldName.contains(".") || isEntity) {
-				return "op." + fieldName + ".id as " + getFieldSuffix(fieldName, alias);
-			}
-			return "op." + fieldName + " as " + getFieldSuffix(fieldName, alias);
-		} catch (NoSuchFieldException e) {
-			log.warn("No such field {} exist in WalletOperation Class", fieldName);
-			return "";
-		}
-
-	}
-
-	private String getCustomFieldSelect(String field, String alias) {
-		CustomFieldTemplate cf = customFieldTemplateService.findByCode(field);
-		String as = (StringUtils.isBlank(alias)) ? field : alias;
-		if (cf == null) {
-			throw new BusinessException("Custom field '" + field + "' not found");
-		}
-		return "varcharFromJson(op.cfValues, " + field + ", " + cf.getFieldType().name().toLowerCase() + ") as " + as;
-	}
-
 	private String getFieldSuffix(String field, String alias) {
 		if (!StringUtils.isBlank(alias)) {
 			return alias;
@@ -292,9 +277,17 @@ public class WalletOperationAggregatorQueryBuilder {
 		return "SELECT " //
 				+ "STRING_AGG(cast(op.id as string), ',') as id, " //
 				+ select //
-				+ " FROM WalletOperationPeriod op " //
+				+ getFrom() //
 				+ " WHERE (op.invoicingDate is NULL or op.invoicingDate<:invoicingDate) " + where //
 				+ " GROUP BY " + groupBy;
+	}
+
+	private String getFrom() {
+		if (aggregationSettings.isPeriodEndDateIncluded()) {
+			return " FROM WalletOperationPeriodEndDateIncluded op ";
+		} else {
+			return " FROM WalletOperationPeriod op ";
+		}
 	}
 
 	public String getGroupBy() {
@@ -303,14 +296,6 @@ public class WalletOperationAggregatorQueryBuilder {
 
 	public void setGroupBy(String groupBy) {
 		this.groupBy = groupBy;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getSelect() {

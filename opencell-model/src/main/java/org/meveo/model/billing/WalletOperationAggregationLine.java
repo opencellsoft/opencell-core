@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -73,14 +72,14 @@ public class WalletOperationAggregationLine extends AuditableEntity {
     private GroupByAggregationFunctionEnum groupBy;
 
     /**
-     *
+     * Paramter used in some group by function
      */
     @Column(name = "group_by_parameter", length = 25)
     @Size(max = 25)
     private String groupByParameter;
 
     /**
-     *
+     * The alias used in the SQL query
      */
     @Column(name = "alias", length = 255)
     @Size(max = 255)
@@ -90,8 +89,8 @@ public class WalletOperationAggregationLine extends AuditableEntity {
      *
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "aggregation_matrix_id")
-    private WalletOperationAggregationMatrix aggregationMatrix;
+    @JoinColumn(name = "wo_aggregation_settings_id")
+    private WalletOperationAggregationSettings aggregationSettings;
 
     public String getField() {
         return field;
@@ -125,12 +124,12 @@ public class WalletOperationAggregationLine extends AuditableEntity {
         this.required = required;
     }
 
-    public WalletOperationAggregationMatrix getAggregationMatrix() {
-        return aggregationMatrix;
+    public WalletOperationAggregationSettings getAggregationSettings() {
+        return aggregationSettings;
     }
 
-    public void setAggregationMatrix(WalletOperationAggregationMatrix aggregationMatrix) {
-        this.aggregationMatrix = aggregationMatrix;
+    public void setAggregationSettings(WalletOperationAggregationSettings aggregationSettings) {
+        this.aggregationSettings = aggregationSettings;
     }
 
     public boolean isCustomField() {

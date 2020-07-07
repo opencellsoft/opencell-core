@@ -32,10 +32,9 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.RatedTransactionAsync;
 import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.WalletOperationAggregationMatrix;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -43,8 +42,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
-import org.meveo.service.billing.impl.WalletOperationAggregationMatrixService;
+import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.filter.FilterService;
 import org.slf4j.Logger;
@@ -71,7 +69,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     private RatedTransactionAsync ratedTransactionAsync;
 
     @Inject
-    private WalletOperationAggregationMatrixService walletOperationAggregationMatrixService;
+    private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
     @Inject
     private FilterService filterService;
@@ -88,23 +86,16 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
-            RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
-            EntityReferenceWrapper aggregationMatrixWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationMatrix", null);
-            WalletOperationAggregationMatrix aggregationMatrix = (walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()) == null
-                    || walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).isEmpty()) ?
+            EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
+            WalletOperationAggregationSettings aggregationSettings = (walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()) == null
+                    || walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).isEmpty()) ?
                     null :
-                    walletOperationAggregationMatrixService.findByCodeLike(aggregationMatrixWrapper.getCode()).get(0);
-            aggregationSetting.setWalletOperationAggregationMatrix(aggregationMatrix);
+                    walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).get(0);
+
             removeZeroWalletOperation();
-            if (aggregationSetting.getWalletOperationAggregationMatrix() != null) {
-                aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
-                EntityReferenceWrapper filterWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woFilters", null);
-                Filter filter = (filterWrapper == null || filterService.findByCodeLike(filterWrapper.getCode()) == null || filterService.findByCodeLike(filterWrapper.getCode())
-                        .isEmpty()) ? null : filterService.findByCodeLike(filterWrapper.getCode()).get(0);
-                aggregationSetting.setFilter(filter);
-                aggregationSetting.setPeriodAggregation((boolean) this.getParamOrCFValue(jobInstance, "periodAggregation", false));
-                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
+            if (aggregationSettings != null) {
+                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSettings);
 
             } else {
                 executeWithoutAggregation(result, nbRuns, waitingMillis);
@@ -159,8 +150,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         result.setDone(walletOperations.isEmpty());
     }
 
-    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, RatedTransactionsJobAggregationSetting aggregationSetting)
-            throws Exception {
+    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, WalletOperationAggregationSettings aggregationSetting) throws Exception {
         Date invoicingDate = new Date();
         List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate, aggregationSetting);
 

@@ -72,6 +72,7 @@ import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -223,29 +224,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Create a {@link RatedTransaction} from a group of wallet operations.
-     * 
-     * @param aggregatedWo aggregated wallet operations
+     *
+     * @param aggregatedWo       aggregated wallet operations
      * @param aggregatedSettings aggregation settings of wallet operations
-     * @param invoicingDate the invoicing date
+     * @param invoicingDate      the invoicing date
      * @return created {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      * @see WalletOperation
      */
-    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregatedSettings, Date invoicingDate) throws BusinessException {
+    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregatedSettings, Date invoicingDate)
+            throws BusinessException {
         return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
     }
 
     /**
-     * 
-     * @param aggregatedWo aggregated wallet operations
+     * @param aggregatedWo        aggregated wallet operations
      * @param aggregationSettings aggregation settings of wallet operations
-     * @param isVirtual is virtual
-     * @param invoicingDate the invoicing date
+     * @param isVirtual           is virtual
+     * @param invoicingDate       the invoicing date
      * @return {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
-    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate, boolean isVirtual) throws BusinessException {
+    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregationSettings, Date invoicingDate,
+            boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction();
 
         Seller seller = null;
@@ -320,7 +322,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private void populateCustomfield(RatedTransaction ratedTransaction, AggregatedWalletOperation aggregatedWo) {
         if (aggregatedWo.getCfValues() != null && !aggregatedWo.getCfValues().isEmpty()) {
             for (String cfField : aggregatedWo.getCfValues().keySet()) {
-                // customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
+                customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
             }
         }
     }
