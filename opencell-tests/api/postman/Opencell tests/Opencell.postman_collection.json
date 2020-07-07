@@ -94569,7 +94569,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\",\r\n    \"description\": \"Dunning workflow from class\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.admin.wf.types.DunningWF\",\r\n    \"initStatus\": \"R0\",\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R0\",\r\n            \"toStatus\": \"R1\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R1\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\",\r\n    \"description\": \"Dunning workflow from class\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.admin.wf.types.DunningWF\",\r\n    \"initStatus\": \"R0\",\r\n    \"status\": [\r\n        {\r\n            \"code\": \"R0\"\r\n        }\r\n    ],\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R0\",\r\n            \"toStatus\": \"R1\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R1\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -94650,7 +94650,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\",\r\n    \"description\": \"Dunning workflow from script\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.service.script.DunningWFTypeScript\",\r\n    \"initStatus\": \"R0\",\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R1\",\r\n            \"toStatus\": \"R2\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R2\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\",\r\n    \"description\": \"Dunning workflow from script\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.service.script.DunningWFTypeScript\",\r\n    \"initStatus\": \"R0\",\r\n    \"status\": [\r\n        {\r\n            \"code\": \"R0\"\r\n        }\r\n    ],\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R1\",\r\n            \"toStatus\": \"R2\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R2\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
 											"options": {
 												"raw": {}
 											}
@@ -94828,7 +94828,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"baseEntityName\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"entityInstanceCode\": \"{{entityPrefix}}_{{index}}_WF_CA\",\r\n    \"workflowCode\": \"{{baseEntityPrefix}}_DunningWorkflow\"\r\n}\r\n",
+											"raw": "",
 											"options": {
 												"raw": {}
 											}
@@ -94923,7 +94923,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"baseEntityName\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"entityInstanceCode\": \"{{entityPrefix}}_{{index}}_WF_CA\",\r\n    \"workflowCode\": \"{{baseEntityPrefix}}_DunningRunTimeWF\"\r\n}\r\n",
+											"raw": "",
 											"options": {
 												"raw": {}
 											}
@@ -108771,97 +108771,97 @@
 	],
 	"variable": [
 		{
-			"id": "15e84980-f20c-4616-b9d4-dc6505ad639a",
+			"id": "2b3bff9c-422e-4c07-b33f-8d2a61da048e",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "4cf2d3bf-dab0-478c-8ca5-c7e0171de734",
+			"id": "00cfce09-a9ea-4b2b-a174-c1567f00c094",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "bc45a2c3-d3ec-49e6-ae48-490e72df9660",
+			"id": "fe93798c-fc38-4cf8-be47-23aabe16c810",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c7622d95-c08b-40a4-878b-be5fca08799b",
+			"id": "8536e739-8176-4b76-ab41-d340698af215",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "8b63f191-36e3-4e77-8784-835db64128ed",
+			"id": "d7a9551d-fc5e-4ef1-856b-26586b6fdde0",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "558ea8c8-e7e1-4bb3-97a3-5de7a2a452f6",
+			"id": "0f02edd8-b077-4857-a155-d8e806ec3b88",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "fa29f49a-e187-41f5-b607-38dc47f52e54",
+			"id": "ac42db31-1593-46ad-8c4a-7cca15e92c95",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "a5897dca-918b-487a-8f7d-d6f29fa6cfde",
+			"id": "518b2f54-41a5-4162-a8b3-4aac1561691b",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "7220b0d2-96f3-498d-a72e-584961d14480",
+			"id": "8b8a80a4-1b41-4301-a549-80f7b509f25a",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "9e401605-1e05-4021-92d2-ad6e33ebd1c3",
+			"id": "b18c6c95-4bab-44d9-8168-97fed4ac297e",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "a3da9f5b-6955-47c4-9811-77dfc4360a2a",
+			"id": "47c8be59-f275-4ddc-9421-07f7a7c1e3b1",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "a0d0d61c-d667-48d5-9a63-2907b85efcc8",
+			"id": "5469210e-0cfd-4890-9368-95ffeb33c0d3",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "64e640b8-7985-4c56-b571-7266c4f409b3",
+			"id": "98298bcd-a02f-4336-835b-22dec824dcee",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "67f23deb-9f35-4ca4-a636-af9e1b39794d",
+			"id": "0711573b-bba6-42d8-b74a-bba2f4da88fe",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "bc820b0d-737c-4aeb-9d96-d2baabc4a4b0",
+			"id": "163ba709-f374-47f1-976c-f45962f50deb",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "d194b96e-43b1-4b8f-885c-a4e9de39d345",
+			"id": "500c363c-0834-4aed-b7fe-b0d3d8f12946",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "2f9cfce4-2011-4959-8df2-019c5893cac9",
+			"id": "454aa833-852e-475f-8c1a-f7a501b37b4d",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "a7654b28-2b89-4265-9d27-8e8d76fb472e",
+			"id": "8e9e7041-6fcb-46cc-8394-d37b6dfad3db",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "d75f79f2-a1c7-4c21-9e35-94b21fa7f856",
+			"id": "27159b9b-d357-4cda-8718-f4e92858199b",
 			"key": "project.version",
 			"value": "9.2+"
 		}
