@@ -34887,7 +34887,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, calendarCode, serviceTemplateCode, paymentDayInMonth, amount, paymentLabel, advancePaymentInvoiceTypeCode, advancePaymentInvoiceSubCategoryCode, generateAdvancePaymentInvoice, doPayment.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, calendarCode, serviceTemplateCode, paymentDayInMonth, amount, paymentLabel, advancePaymentInvoiceTypeCode, advancePaymentInvoiceSubCategoryCode, doPayment.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -108771,97 +108771,97 @@
 	],
 	"variable": [
 		{
-			"id": "2b3bff9c-422e-4c07-b33f-8d2a61da048e",
+			"id": "c7509a96-6c71-45e5-9f88-f24709ef68a7",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "00cfce09-a9ea-4b2b-a174-c1567f00c094",
+			"id": "5c0be912-499e-4ca3-ba54-1cc69f0db513",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "fe93798c-fc38-4cf8-be47-23aabe16c810",
+			"id": "77397b30-7a42-40ef-8a50-be2c7fe290ec",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "8536e739-8176-4b76-ab41-d340698af215",
+			"id": "6bdba9c2-c4e6-4219-9b2a-afb944279861",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "d7a9551d-fc5e-4ef1-856b-26586b6fdde0",
+			"id": "45b373d7-94bc-4c2f-8042-c0e3a680bfcb",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "0f02edd8-b077-4857-a155-d8e806ec3b88",
+			"id": "09cf235f-52c0-4f35-9c0c-053906e4b2a3",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "ac42db31-1593-46ad-8c4a-7cca15e92c95",
+			"id": "564084a2-fbca-49aa-8ea1-80daff6de9ca",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "518b2f54-41a5-4162-a8b3-4aac1561691b",
+			"id": "02147d76-2f0f-4192-8eca-4a9b0a3df135",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "8b8a80a4-1b41-4301-a549-80f7b509f25a",
+			"id": "d63d8f7e-f0dc-4cbf-a21d-68280e6e86c6",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "b18c6c95-4bab-44d9-8168-97fed4ac297e",
+			"id": "0360aaed-d391-42ba-baad-03c9e890e96d",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "47c8be59-f275-4ddc-9421-07f7a7c1e3b1",
+			"id": "848ddf21-810a-499b-bdcb-72e69f6e0bbd",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "5469210e-0cfd-4890-9368-95ffeb33c0d3",
+			"id": "5413a87c-db06-4c1d-ac82-5e8fec6051e8",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "98298bcd-a02f-4336-835b-22dec824dcee",
+			"id": "0a3a1cf9-7d42-44c8-b3cd-61becbea14c7",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "0711573b-bba6-42d8-b74a-bba2f4da88fe",
+			"id": "f77b0274-deb7-42a2-9028-45e0e69e7c92",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "163ba709-f374-47f1-976c-f45962f50deb",
+			"id": "14d9b4ad-c03c-4321-91f7-7531fbbee1f0",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "500c363c-0834-4aed-b7fe-b0d3d8f12946",
+			"id": "2c36f648-eb14-48f3-b522-42a71da88bc6",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "454aa833-852e-475f-8c1a-f7a501b37b4d",
+			"id": "7d3b2d6a-f7cb-4f3a-92f1-a5766808e7a1",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "8e9e7041-6fcb-46cc-8394-d37b6dfad3db",
+			"id": "bfde14ec-1389-4381-9457-a9360e9291dd",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "27159b9b-d357-4cda-8718-f4e92858199b",
+			"id": "a9d32f4e-aba0-47c6-adca-3fb1cc72e917",
 			"key": "project.version",
 			"value": "9.2+"
 		}
