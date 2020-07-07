@@ -52342,7 +52342,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated or activated.\");",
+													"    pm.expect(jsonData.message).to.contain(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -108771,97 +108771,97 @@
 	],
 	"variable": [
 		{
-			"id": "90e01cdf-1580-4389-90cf-f6fd2b7d907a",
+			"id": "15e84980-f20c-4616-b9d4-dc6505ad639a",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "2754dd50-8d20-4e9a-9d95-1a5db4e20610",
+			"id": "4cf2d3bf-dab0-478c-8ca5-c7e0171de734",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "d7f11095-2a2d-407c-b2e7-44570255aa95",
+			"id": "bc45a2c3-d3ec-49e6-ae48-490e72df9660",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "94983c0a-70d5-4da1-b7a3-bce0edec0e75",
+			"id": "c7622d95-c08b-40a4-878b-be5fca08799b",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "2af10795-3e2a-4abd-b0a7-93dc1803d6f5",
+			"id": "8b63f191-36e3-4e77-8784-835db64128ed",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "d4dde14f-1420-4191-b62c-cf49c146e44d",
+			"id": "558ea8c8-e7e1-4bb3-97a3-5de7a2a452f6",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a221464a-8b92-4213-8deb-c24574a8504e",
+			"id": "fa29f49a-e187-41f5-b607-38dc47f52e54",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "9a63d12f-9fdc-4b9d-b91d-bf0ad10e4e41",
+			"id": "a5897dca-918b-487a-8f7d-d6f29fa6cfde",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "70070d2b-4fc3-4944-8c2b-c664d8b900ec",
+			"id": "7220b0d2-96f3-498d-a72e-584961d14480",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "ff1694e9-2b47-4ae6-817a-fc54da924f6b",
+			"id": "9e401605-1e05-4021-92d2-ad6e33ebd1c3",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "a260efe6-13ca-4478-b89d-8e7493feefa7",
+			"id": "a3da9f5b-6955-47c4-9811-77dfc4360a2a",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "4a2badc0-8d06-4562-ba64-ecde49fb3df7",
+			"id": "a0d0d61c-d667-48d5-9a63-2907b85efcc8",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "d6b7a792-3d42-4d84-9208-3c5fd2bbd858",
+			"id": "64e640b8-7985-4c56-b571-7266c4f409b3",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "b237e3a6-fa89-44f6-8f15-e2f8f83cec96",
+			"id": "67f23deb-9f35-4ca4-a636-af9e1b39794d",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "dba6a21f-bb97-4d23-9930-f89cfef5099f",
+			"id": "bc820b0d-737c-4aeb-9d96-d2baabc4a4b0",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "1349c962-7094-4b09-ba98-d30fcfc4bb01",
+			"id": "d194b96e-43b1-4b8f-885c-a4e9de39d345",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "a217dfe5-0099-4d1c-9a00-6f92155eaba9",
+			"id": "2f9cfce4-2011-4959-8df2-019c5893cac9",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "ca4a8aed-aaeb-4029-b07f-edcce964fb9c",
+			"id": "a7654b28-2b89-4265-9d27-8e8d76fb472e",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "f94b3b79-c499-406c-a684-92e413467d92",
+			"id": "d75f79f2-a1c7-4c21-9e35-94b21fa7f856",
 			"key": "project.version",
 			"value": "9.2+"
 		}
