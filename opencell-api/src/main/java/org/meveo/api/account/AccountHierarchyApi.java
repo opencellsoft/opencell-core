@@ -445,6 +445,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setMailingType(postData.getMailingType());
         billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
         billingAccountDto.setCcedEmails(postData.getCcedEmails());
+        billingAccountDto.setTaxCategoryCode(postData.getTaxCategoryCode());
         if (postData.getMinimumAmountEl() != null) {
             if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
                 billingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl());
@@ -686,7 +687,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
-
+        if (postData.getTaxCategoryCode() != null) {
+            billingAccountDto.setTaxCategoryCode(postData.getTaxCategoryCode());
+        }
         if (postData.getMailingType() != null) {
             billingAccountDto.setMailingType(postData.getMailingType());
         }

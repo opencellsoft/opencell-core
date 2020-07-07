@@ -12,6 +12,12 @@ html {
 	font-family: Roboto, "Helvetica Neue", sans-serif !important;
 }
 
+@-moz-document url-prefix() {
+	html {
+		top: -22px;
+	}
+}
+
 body {
 	width: 100%;
 	margin: auto;

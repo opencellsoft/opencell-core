@@ -27,6 +27,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
+import org.meveo.api.dto.response.InvoiceSubCategoryResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.InvoiceSubCategoryRs;
 
@@ -100,6 +102,19 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
             invoiceSubCategoryApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public InvoiceSubCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+        InvoiceSubCategoryResponseDto result = new InvoiceSubCategoryResponseDto();
+
+        try {
+            result = new InvoiceSubCategoryResponseDto(invoiceSubCategoryApi.search(pagingAndFiltering));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

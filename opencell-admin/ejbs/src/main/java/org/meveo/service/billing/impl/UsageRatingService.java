@@ -181,7 +181,7 @@ public class UsageRatingService implements Serializable {
             chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
-        BigDecimal quantityToDeduce = chargeTemplate.getInChargeUnit(edr.getQuantityLeftToRate());
+        BigDecimal quantityToDeduce = usageChargeTemplateService.evaluateRatingQuantity(chargeTemplate, edr.getQuantityLeftToRate());
         log.trace("Deduce counter instance {} current value {} by  {} * {} = {} ", isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId(), counterPeriod.getValue(),
             edr.getQuantityLeftToRate(), chargeTemplate.getUnitMultiplicator(), quantityToDeduce);
 

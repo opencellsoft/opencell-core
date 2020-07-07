@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -43,7 +44,6 @@ import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.FixedDate;
 import org.meveo.model.catalog.HourInDay;
 import org.meveo.model.shared.DateUtils;
-
 
 /**
  * The Class CalendarDto.
@@ -91,19 +91,31 @@ public class CalendarDto extends BusinessEntityDto {
 
     /** List of intervals. */
     private List<CalendarDateIntervalDto> intervals;
-    
+
     /** The weekend begin. */
     private Integer weekendBegin;
-    
+
     /** The weekend end. */
     private Integer weekendEnd;
-    
+
     /** The end date. */
     private Date endDate;
-    
+
     /** The start date. */
     private Date startDate;
-    
+
+    /**
+     * Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    @Size(max = 2000)
+    private String initDateEL;
+
+    /**
+     * Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    @Size(max = 2000)
+    private String initDateELSpark;
+
     private List<CalendarHolidayDto> holidays;
 
     /**
@@ -141,10 +153,9 @@ public class CalendarDto extends BusinessEntityDto {
         } else if (calendarEntity instanceof CalendarFixed) {
             CalendarFixed calendar = (CalendarFixed) calendarEntity;
             fixedDates = new ArrayList<>();
-            for(FixedDate fixedDate : calendar.getFixedDates()) {
-            	fixedDates.add(DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getFrom(),"dd/MM/yyyy HH:mm")
-            	                + "-" + DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getTo(),"dd/MM/yyyy HH:mm"));      	
-            }        
+            for (FixedDate fixedDate : calendar.getFixedDates()) {
+                fixedDates.add(DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getFrom(), "dd/MM/yyyy HH:mm") + "-" + DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getTo(), "dd/MM/yyyy HH:mm"));
+            }
         } else if (calendarEntity instanceof CalendarPeriod) {
             CalendarPeriod calendar = (CalendarPeriod) calendarEntity;
             periodLength = calendar.getPeriodLength();
@@ -201,17 +212,18 @@ public class CalendarDto extends BusinessEntityDto {
         this.calendarType = calendarType;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         final int maxLen = 10;
-        return "CalendarDto [code=" + getCode() + ", description=" + getDescription() + ", calendarType=" + calendarType + ", days="
-                + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours=" + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null)
-                + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinCalendar1Code=" + joinCalendar1Code + ", joinCalendar2Code="
-                + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals=" + (intervals != null ? intervals.subList(0, Math.min(intervals.size(), maxLen)) : null)
-                + ", startDate=" + startDate + ", endDate=" + endDate +", weekendBegin=" + weekendBegin + ", weekendEnd=" + weekendEnd + ", holidays="
+        return "CalendarDto [code=" + getCode() + ", description=" + getDescription() + ", calendarType=" + calendarType + ", days=" + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours="
+                + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null) + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinCalendar1Code="
+                + joinCalendar1Code + ", joinCalendar2Code=" + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals=" + (intervals != null ? intervals.subList(0, Math.min(intervals.size(), maxLen)) : null)
+                + ", startDate=" + startDate + ", endDate=" + endDate + ", weekendBegin=" + weekendBegin + ", weekendEnd=" + weekendEnd + ", holidays="
                 + (holidays != null ? holidays.subList(0, Math.min(holidays.size(), maxLen)) : null) + "]";
     }
 
@@ -376,7 +388,7 @@ public class CalendarDto extends BusinessEntityDto {
     public void setIntervals(List<CalendarDateIntervalDto> intervals) {
         this.intervals = intervals;
     }
-    
+
     /**
      * Gets the end date.
      *
@@ -469,20 +481,47 @@ public class CalendarDto extends BusinessEntityDto {
 
     /**
      * get Fixed Dates
+     * 
      * @return list of fixed dates
      */
-	public List<String> getFixedDates() {
-		return fixedDates;
-	}
+    public List<String> getFixedDates() {
+        return fixedDates;
+    }
 
-	/**
-	 * set Fixed Dates
-	 * @param fixedDates fixed dates
-	 */
-	public void setFixedDates(List<String> fixedDates) {
-		this.fixedDates = fixedDates;
-	}
-    
-    
-    
+    /**
+     * set Fixed Dates
+     * 
+     * @param fixedDates fixed dates
+     */
+    public void setFixedDates(List<String> fixedDates) {
+        this.fixedDates = fixedDates;
+    }
+
+    /**
+     * @return Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    public String getInitDateEL() {
+        return initDateEL;
+    }
+
+    /**
+     * @param initDateEL Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    public void setInitDateEL(String initDateEL) {
+        this.initDateEL = initDateEL;
+    }
+
+    /**
+     * @return Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    public String getInitDateELSpark() {
+        return initDateELSpark;
+    }
+
+    /**
+     * @param initDateELSpark Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    public void setInitDateELSpark(String initDateELSpark) {
+        this.initDateELSpark = initDateELSpark;
+    }
 }

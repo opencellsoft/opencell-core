@@ -18,7 +18,6 @@
 
 package org.meveo.service.intcrm.impl;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,10 +28,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -40,9 +37,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CSVUtils;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
@@ -63,8 +58,6 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 
 import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.CSVReaderHeaderAware;
 
 
 @Stateless
@@ -332,7 +325,7 @@ public class ContactService extends BusinessService<Contact> {
 	}
 	
 	/**
-     * Return all orders with now - orderDate date &gt; n years.
+     * Return all orders with orderDate date more than n years old
      * @param nYear age of the subscription
      * @return Filtered list of orders
      */
@@ -341,7 +334,7 @@ public class ContactService extends BusinessService<Contact> {
     	QueryBuilder qb = new QueryBuilder(Contact.class, "e");
     	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
     	
-    	qb.addCriterionDateRangeToTruncatedToDay("auditable.created", higherBound);
+    	qb.addCriterionDateRangeToTruncatedToDay("auditable.created", higherBound, true, false);
     	qb.addBooleanCriterion("isProspect", true);
     	
     	return (List<Contact>) qb.getQuery(getEntityManager()).getResultList();

@@ -76,6 +76,7 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -322,9 +323,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private void populateCustomfield(RatedTransaction ratedTransaction, AggregatedWalletOperation aggregatedWo) {
         if (aggregatedWo.getCfValues() != null && !aggregatedWo.getCfValues().isEmpty()) {
             for (String cfField : aggregatedWo.getCfValues().keySet()) {
-                customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
+                if (isCfAppliedTo(cfField, ratedTransaction)) {
+                    customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
+                }
             }
         }
+    }
+
+    private boolean isCfAppliedTo(String cfField, RatedTransaction ratedTransaction) {
+        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesTo(cfField, ratedTransaction);
+        return customFieldTemplate != null;
     }
 
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {

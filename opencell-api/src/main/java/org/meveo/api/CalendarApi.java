@@ -29,6 +29,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BankingDateStatusDto;
 import org.meveo.api.dto.CalendarDateIntervalDto;
@@ -42,7 +43,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
@@ -94,7 +94,7 @@ public class CalendarApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getCalendarType())) {
+        if (postData.getCalendarType()==null) {
             missingParameters.add("calendarType");
         }
 
@@ -175,7 +175,7 @@ public class CalendarApi extends BaseApi {
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.PERIOD) {
 
-            if (StringUtils.isBlank(postData.getPeriodUnit())) {
+            if (postData.getPeriodUnit()==null) {
                 missingParameters.add("periodUnit");
                 handleMissingParameters();
             }
@@ -186,6 +186,8 @@ public class CalendarApi extends BaseApi {
             calendar.setPeriodLength(postData.getPeriodLength());
             calendar.setNbPeriods(postData.getNbPeriods());
             calendar.setPeriodUnit(postData.getPeriodUnit().getUnitValue());
+            calendar.setInitDateEL(postData.getInitDateEL());
+            calendar.setInitDateELSpark(postData.getInitDateELSpark());
 
             calendarService.create(calendar);
 
@@ -275,7 +277,7 @@ public class CalendarApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getCalendarType())) {
+        if (postData.getCalendarType()==null) {
             missingParameters.add("calendarType");
         }
 
@@ -340,8 +342,14 @@ public class CalendarApi extends BaseApi {
 
             ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
             ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
-            if (!StringUtils.isBlank(postData.getPeriodUnit())) {
+            if (postData.getPeriodUnit()!=null) {
                 ((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit().getUnitValue());
+            }
+            if (postData.getInitDateEL() != null) {
+                calendar.setInitDateEL(StringUtils.isEmpty(postData.getInitDateEL()) ? null : postData.getInitDateEL());
+            }
+            if (postData.getInitDateELSpark() != null) {
+                calendar.setInitDateELSpark(StringUtils.isEmpty(postData.getInitDateELSpark()) ? null : postData.getInitDateELSpark());
             }
 
         } else if (calendar instanceof CalendarInterval) {

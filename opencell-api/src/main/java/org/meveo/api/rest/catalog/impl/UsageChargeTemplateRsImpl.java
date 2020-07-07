@@ -26,6 +26,8 @@ import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UsageChargeTemplateRs;
@@ -126,6 +128,19 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
             usageChargeTemplateApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public UsageChargeTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+        UsageChargeTemplateResponseDto result = new UsageChargeTemplateResponseDto();
+
+        try {
+            result = new UsageChargeTemplateResponseDto(usageChargeTemplateApi.search(pagingAndFiltering));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

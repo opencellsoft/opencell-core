@@ -72,7 +72,7 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
             query.addCriterionDateRangeFromTruncatedToDay("o.fromDueDate", fromDueDate);
         }
         if (!StringUtils.isBlank(toDueDate)) {
-            query.addCriterionDateRangeToTruncatedToDay("o.toDueDate", toDueDate);
+            query.addCriterionDateRangeToTruncatedToDay("o.toDueDate", toDueDate, false, false);
         }
 
         return query.getQuery(getEntityManager()).getResultList();

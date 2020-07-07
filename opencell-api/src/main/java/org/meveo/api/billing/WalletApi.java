@@ -73,6 +73,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -558,8 +559,7 @@ public class WalletApi extends BaseApi {
         walletOperation.setSubscriptionDate(postData.getSubscriptionDate());
         walletOperation.setOperationDate(postData.getOperationDate() == null ? new Date() : postData.getOperationDate());
         if (chargeInstance.getInvoicingCalendar() != null) {
-            Calendar cal = chargeInstance.getInvoicingCalendar();
-            cal.setInitDate(postData.getSubscriptionDate());
+            Calendar cal = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), postData.getSubscriptionDate(), chargeInstance) ;
             walletOperation.setInvoicingDate(cal.nextCalendarDate(walletOperation.getOperationDate()));
         }
 

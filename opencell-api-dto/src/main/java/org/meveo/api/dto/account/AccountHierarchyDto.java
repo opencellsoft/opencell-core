@@ -122,15 +122,20 @@ public class AccountHierarchyDto implements Serializable {
 
     /** Invoicing Threshold. */
     private BigDecimal invoicingThreshold;
-    
+
+    /**
+     * Account tax category code - overrides the value from a customer category
+     **/
+    private String taxCategoryCode;
+
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
     @XmlElementWrapper(name = "discountPlansForInstantiation")
-	@XmlElement(name = "discountPlanForInstantiation")
+    @XmlElement(name = "discountPlanForInstantiation")
     private List<DiscountPlanDto> discountPlansForInstantiation;
-    
+
     /** List of discount plans to be disassociated in a BillingAccount */
-	@XmlElementWrapper(name = "discountPlansForTermination")
-	@XmlElement(name = "discountPlanForTermination")
+    @XmlElementWrapper(name = "discountPlansForTermination")
+    @XmlElement(name = "discountPlanForTermination")
     private List<String> discountPlansForTermination;
 
     /** Custom Fiends. */
@@ -834,76 +839,78 @@ public class AccountHierarchyDto implements Serializable {
     public void setVatNo(String vatNo) {
         this.vatNo = vatNo;
     }
-    
+
     @Override
     public String toString() {
-        return "AccountHierarchyDto [email=" + email + ", customerId=" + customerId + ", customerCode=" + customerCode + ", sellerCode=" + sellerCode + ", customerBrandCode="
-                + customerBrandCode + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
-                + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber
-                + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3 + ", zipCode=" + zipCode + ", state="
-                + state + ", city=" + city + ", usePrefix=" + usePrefix + ", invoicingThreshold=" + invoicingThreshold + ", discountPlansForInstantiation="
-                + discountPlansForInstantiation + ", discountPlansForTermination=" + discountPlansForTermination + ", customFields=" + customFields + ", limit=" + limit
-                + ", sortField=" + sortField + ", index=" + index + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle
-                + ", registrationNo=" + registrationNo + ", vatNo=" + vatNo + "]";
+        return "AccountHierarchyDto [email=" + email + ", customerId=" + customerId + ", customerCode=" + customerCode + ", sellerCode=" + sellerCode + ", customerBrandCode=" + customerBrandCode
+                + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode + ", firstName="
+                + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2
+                + ", address3=" + address3 + ", zipCode=" + zipCode + ", state=" + state + ", city=" + city + ", usePrefix=" + usePrefix + ", invoicingThreshold=" + invoicingThreshold + ", discountPlansForInstantiation="
+                + discountPlansForInstantiation + ", discountPlansForTermination=" + discountPlansForTermination + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index=" + index
+                + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle + ", registrationNo=" + registrationNo + ", vatNo=" + vatNo + "]";
     }
 
     /**
      * Gets a list of discount plans for termination.
+     * 
      * @return List of discount plan code.
      */
-	public List<String> getDiscountPlansForTermination() {
-		return discountPlansForTermination;
-	}
+    public List<String> getDiscountPlansForTermination() {
+        return discountPlansForTermination;
+    }
 
-	/**
-	 * Sets a list of discount plan code for termination.
-	 * @param discountPlansForTermination list of discount plan code
-	 */
-	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
-		this.discountPlansForTermination = discountPlansForTermination;
-	}
+    /**
+     * Sets a list of discount plan code for termination.
+     * 
+     * @param discountPlansForTermination list of discount plan code
+     */
+    public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+        this.discountPlansForTermination = discountPlansForTermination;
+    }
 
-	/**
-	 * Gets a list of discount plan dto for instantiation.
-	 * @return list of discount plan dto
-	 */
-	public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
-		return discountPlansForInstantiation;
-	}
+    /**
+     * Gets a list of discount plan dto for instantiation.
+     * 
+     * @return list of discount plan dto
+     */
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+        return discountPlansForInstantiation;
+    }
 
-	/**
-	 * Sets a list of discount plan dto for instantiation.
-	 * @param discountPlansForInstantiation list of discount plan dto
-	 */
-	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
-		this.discountPlansForInstantiation = discountPlansForInstantiation;
-	}
+    /**
+     * Sets a list of discount plan dto for instantiation.
+     * 
+     * @param discountPlansForInstantiation list of discount plan dto
+     */
+    public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+        this.discountPlansForInstantiation = discountPlansForInstantiation;
+    }
 
-	/**
-	 * @return mailingType
-	 */
-	public String getMailingType() {
-		return mailingType;
-	}
+    /**
+     * @return mailingType
+     */
+    public String getMailingType() {
+        return mailingType;
+    }
 
-	/**
-	 * @return emailTemplate
-	 */
-	public String getEmailTemplate() {
-		return emailTemplate;
-	}
+    /**
+     * @return emailTemplate
+     */
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
 
-	/**
-	 * @return ccedEmails
-	 */
-	public String getCcedEmails() {
-		return ccedEmails;
-	}
+    /**
+     * @return ccedEmails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
 
-	/**
-	 * @param mailingType
-	 */
-	public void setMailingType(String mailingType) {
+    /**
+     * @param mailingType
+     */
+    public void setMailingType(String mailingType) {
         this.mailingType = mailingType;
     }
 
@@ -938,6 +945,7 @@ public class AccountHierarchyDto implements Serializable {
     public void setMinimumAmountEl(MinimumAmountElDto minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
+
     /**
      * @return the customer's invoicingThreshold
      */
@@ -968,6 +976,7 @@ public class AccountHierarchyDto implements Serializable {
 
     /**
      * Gets the threshold option.
+     * 
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -1017,5 +1026,19 @@ public class AccountHierarchyDto implements Serializable {
      */
     public void setCustomerCheckThreshold(ThresholdOptionsEnum customerCheckThreshold) {
         this.customerCheckThreshold = customerCheckThreshold;
+    }
+
+    /**
+     * @return Account tax category code - overrides the value from a customer category
+     */
+    public String getTaxCategoryCode() {
+        return taxCategoryCode;
+    }
+
+    /**
+     * @param taxCategory Account tax category code - overrides the value from a customer category
+     */
+    public void setTaxCategoryCode(String taxCategoryCode) {
+        this.taxCategoryCode = taxCategoryCode;
     }
 }

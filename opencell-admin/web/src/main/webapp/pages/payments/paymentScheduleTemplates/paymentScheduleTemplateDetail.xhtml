@@ -32,6 +32,11 @@
         	selection="#{paymentScheduleTemplateBean.entity.scriptInstance}" backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
         	column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
+        
+        <hftl:entityPopup id="searchTaxClassPopup" header="#{messages['paymentScheduleTemplate.taxClass']}" updateField=":formPaymentScheduleTemplate:tabView:taxClassId :formPaymentScheduleTemplate:tabView:taxClassId_text"
+            selection="#{paymentScheduleTemplateBean.entity.taxClass}" backingBean="#{taxClassBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>        
 	    
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -63,11 +68,12 @@
                 		required="true" />
                     <hftl:formField label="#{messages['paymentScheduleTemplate.advancePaymentInvoiceSubCategory']}" id="subCatSelectedId" field="advancePaymentInvoiceSubCategory" valueLabelField="code" popup="true" popupId="searchSubCatPopup"
                 		required="true" />
+                    <hftl:formField label="#{messages['paymentScheduleTemplate.taxClass']}" id="taxClassId" field="taxClass" valueLabelField="code" popup="true" popupId="searchTaxClassPopup"
+                		required="false" />                		
                 	<hftl:formField label="#{messages['paymentScheduleTemplate.scriptInstance']}" id="scriptInstanceId" field="scriptInstance" valueLabelField="code" popup="true" popupId="searchScriptInsPopup" 
                 		required="false" showResetButton="true" />
 	               	<hftl:formField label="#{messages['paymentScheduleTemplate.doPayment']}" field="doPayment" required="true"/>	
-	                <hftl:formField label="#{messages['paymentScheduleTemplate.applyAgreement']}" field="applyAgreement" required="true"/>		
-	                <hftl:formField label="#{messages['paymentScheduleTemplate.generateAdvancePaymentInvoice']}" field="generateAdvancePaymentInvoice" required="true"/>
+	                <hftl:formField label="#{messages['paymentScheduleTemplate.applyAgreement']}" field="applyAgreement" required="true"/>			               
 	                <hftl:formField label="#{messages['paymentScheduleTemplate.filterEl']}" field="filterEl" textArea="true" rows="1" maxlength="2000" />		
 
 				</p:tab>

@@ -48,8 +48,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "cal_type")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
 public abstract class Calendar extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -60,6 +59,20 @@ public abstract class Calendar extends BusinessEntity {
     @Column(name = "cal_type", insertable = false, updatable = false)
     @Size(max = 31)
     private String calendarType;
+
+    /**
+     * Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    @Column(name = "init_date_el", length = 2000)
+    @Size(max = 2000)
+    private String initDateEL;
+
+    /**
+     * Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    @Column(name = "init_date_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String initDateELSpark;
 
     /**
      * Calendar initialization date
@@ -133,5 +146,42 @@ public abstract class Calendar extends BusinessEntity {
      */
     public Date truncateDateTime(Date dateToTruncate) {
         return dateToTruncate;
+    }
+
+    /**
+     * @return Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    public String getInitDateEL() {
+        return initDateEL;
+    }
+
+    /**
+     * @param initDateEL Calendar initialization date - expression to determine a value for calendar initialization date
+     */
+    public void setInitDateEL(String initDateEL) {
+        this.initDateEL = initDateEL;
+    }
+
+    /**
+     * @return Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    public String getInitDateELSpark() {
+        return initDateELSpark;
+    }
+
+    /**
+     * @param initDateELSpark Calendar initialization date - expression to determine a value for calendar initialization date for Spark
+     */
+    public void setInitDateELSpark(String initDateELSpark) {
+        this.initDateELSpark = initDateELSpark;
+    }
+
+    /**
+     * Is calendar initialization with a starting date required to determine calendar dates
+     * 
+     * @return True it setInitDate() method should be called before nextCalendarDate(), previousCalendarDate(), nextPeriodStarDate(), previousPeriodEndDate()
+     */
+    public boolean isInitializationRequired() {
+        return false;
     }
 }

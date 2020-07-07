@@ -17,13 +17,17 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.Date;
+
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.IEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
  * Calendar service implementation.
@@ -42,4 +46,34 @@ public class CalendarService extends PersistenceService<Calendar> {
             return null;
         }
     }
+
+    /**
+     * Initialize calendar with a starting date.<br/>
+     * If date, to initialize the calendar with, was not specified as EL expression, a default initialize date will be applied
+     * 
+     * @param calendar Calendar to initialize
+     * @param defaultInitDate Default date to initialize with
+     * @return Calendar initialized with a starting date
+     */
+    public static Calendar initializeCalendar(Calendar calendar, Date defaultInitDate, Object... elParameters) {
+
+        if (calendar == null) {
+            return null;
+        }
+        if (!calendar.isInitializationRequired()) {
+            return calendar;
+        }
+
+        Date initDate = null;
+        if (calendar.getInitDateEL() != null) {
+            initDate = ValueExpressionWrapper.evaluateExpression(calendar.getInitDateEL(), Date.class, elParameters);
+        }
+        if (initDate == null) {
+            initDate = defaultInitDate;
+        }
+        calendar.setInitDate(initDate);
+
+        return calendar;
+    }
+
 }

@@ -402,7 +402,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
             cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance, serviceInstance, chargeInstance.getSubscription());
         }
-        cal.setInitDate(initDate);
+        cal = CalendarService.initializeCalendar(cal, initDate, chargeInstance, serviceInstance);
+        
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
             log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);

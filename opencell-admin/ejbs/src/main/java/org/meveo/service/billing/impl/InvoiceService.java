@@ -106,6 +106,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -123,6 +124,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -139,6 +141,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -267,6 +270,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -721,7 +727,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
                 lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
             } else {
-            	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
+                lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
@@ -2292,8 +2298,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    private Date getReferenceDate(Invoice invoice) {
-        BillingRun billingRun = invoice.getBillingRun();
+    /**
+     * Determine a date to use in calendar to calculate the next invoice date
+     * 
+     * @param billingRun Billing run
+     * @param billingAccount Billing account
+     * @return Reference date
+     */
+    private Date getReferenceDateForNextInvoiceDateCalculation(BillingRun billingRun, BillingAccount billingAccount) {
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
 
@@ -2311,7 +2323,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 referenceDate = new Date();
                 break;
             case NEXT_INVOICE_DATE:
-                referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
+                referenceDate = billingAccount != null ? billingAccount.getNextInvoiceDate() : null;
                 break;
             case LAST_TRANSACTION_DATE:
                 referenceDate = billingRun.getLastTransactionDate();
@@ -2342,16 +2354,45 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         BillingAccount billingAccount = invoice.getBillingAccount();
 
-        Date initCalendarDate = billingAccount.getSubscriptionDate();
-        if (initCalendarDate == null) {
-            initCalendarDate = billingAccount.getAuditable().getCreated();
-        }
-
-        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(getReferenceDate(invoice));
-        billingAccount.setNextInvoiceDate(nextCalendarDate);
-        billingAccount.updateAudit(currentUser);
-//        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
+    }
+    
+    /**
+     * Increment BA invoice date.
+     * 
+     * @param billingRun
+     * @param billingAccount Billing account
+     * 
+     * @throws BusinessException business exception
+     */
+    private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+        
+        Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
+        Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
+
+        Date nextInvoiceDate = bcCalendar.nextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
+        if (nextInvoiceDate != null) {
+            billingAccount.setNextInvoiceDate(nextInvoiceDate);
+            billingAccount = billingAccountService.update(billingAccount);
+        }
+        return billingAccount;
+    }
+    
+    /**
+     * Increment BA invoice date.
+     * 
+     * @param billingRun Billing run
+     * @param billingAccountId Billing account identifier
+     * 
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void incrementBAInvoiceDateInNewTx(BillingRun billingRun, Long billingAccountId) throws BusinessException {
+        
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        incrementBAInvoiceDate(billingRun, billingAccount);
     }
 
     /**
@@ -2477,7 +2518,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Return all invoices with now - invoiceDate date &gt; n years.
+     * Return all invoices with invoiceDate date more than n years old
      *
      * @param nYear age of the invoices
      * @return Filtered list of invoices
@@ -2487,7 +2528,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound, true, false);
 
         return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }

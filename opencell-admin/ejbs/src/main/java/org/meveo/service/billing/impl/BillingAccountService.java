@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -279,12 +280,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
-                if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-                	qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
-                } else {
-                	qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
-                }
-                
+                boolean inclusive = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"));
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, inclusive, false);
             }
 
             qb.addOrderCriterionAsIs("id", true);
@@ -295,6 +292,36 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
 
         return null;
+    }
+
+    /**
+     * Find a list of not processed billing accounts by a billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Billing Account identifiers
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> findNotProcessedBillingAccounts(BillingRun billingRun) {
+
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+
+        if (endDate == null) {
+            endDate = new Date();
+        }
+
+        Date maxNextDate = DateUtils.truncateTime(endDate);
+        Query query = null;
+        if (startDate == null) {
+            query = getEntityManager().createNamedQuery("BillingAccount.getUnbilledByBC").setParameter("billingCycle", billingRun.getBillingCycle()).setParameter("billingRun", billingRun)
+                .setParameter("maxNextInvoiceDate", maxNextDate);
+        } else {
+            startDate = DateUtils.truncateTime(startDate);
+            query = getEntityManager().createNamedQuery("BillingAccount.getUnbilledByBCWithStartDate").setParameter("billingCycle", billingRun.getBillingCycle()).setParameter("billingRun", billingRun)
+                .setParameter("maxNextInvoiceDate", maxNextDate).setParameter("minNextInvoiceDate", startDate);
+        }
+
+        return query.getResultList();
     }
 
     /**
@@ -431,4 +458,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
+
 }

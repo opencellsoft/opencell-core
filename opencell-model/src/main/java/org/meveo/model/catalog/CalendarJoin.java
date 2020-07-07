@@ -308,4 +308,9 @@ public class CalendarJoin extends Calendar {
     public String getCalendarTypeWSubtypes() {
         return joinType.name();
     }
+
+    @Override
+    public boolean isInitializationRequired() {
+        return joinCalendar1.isInitializationRequired() || joinCalendar2.isInitializationRequired();
+    }
 }

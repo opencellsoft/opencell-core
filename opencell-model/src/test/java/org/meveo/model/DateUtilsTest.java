@@ -209,7 +209,7 @@ public class DateUtilsTest {
         DatePeriodSplit period2 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-04-10", "2020-05-31", DateUtils.DATE_PATTERN), "4", "b");
         DatePeriodSplit period3 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-03", "2020-05-17", DateUtils.DATE_PATTERN), "2", "c");
         DatePeriodSplit period4 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), "2", "d");
-        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "3", "d");
+        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "3", "e");
 
         List<DatePeriodSplit> normalized = DateUtils.normalizeOverlapingDatePeriods(period1, period2, period3, period4, period5);
 
@@ -221,11 +221,17 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(4).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-30", "2020-05-31", DateUtils.DATE_PATTERN), normalized.get(5).getPeriod());
         Assert.assertEquals("b", normalized.get(0).getValue());
+        Assert.assertEquals("4", normalized.get(0).getPriority());
         Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals("1", normalized.get(1).getPriority());
         Assert.assertEquals("c", normalized.get(2).getValue());
+        Assert.assertEquals("2", normalized.get(2).getPriority());
         Assert.assertEquals("b", normalized.get(3).getValue());
+        Assert.assertEquals("4", normalized.get(3).getPriority());
         Assert.assertEquals("d", normalized.get(4).getValue());
+        Assert.assertEquals("2", normalized.get(4).getPriority());
         Assert.assertEquals("b", normalized.get(5).getValue());
+        Assert.assertEquals("4", normalized.get(5).getPriority());
     }
 
     @Test()
@@ -235,7 +241,7 @@ public class DateUtilsTest {
         DatePeriodSplit period2 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-04-10", "2020-05-31", DateUtils.DATE_PATTERN), "4", "b");
         DatePeriodSplit period3 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-03", "2020-05-17", DateUtils.DATE_PATTERN), "3", "c");
         DatePeriodSplit period4 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), "3", "d");
-        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "2", "d");
+        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "2", "e");
 
         List<DatePeriodSplit> normalized = DateUtils.normalizeOverlapingDatePeriods(period1, period2, period3, period4, period5);
 
@@ -249,13 +255,21 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(6).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-30", "2020-05-31", DateUtils.DATE_PATTERN), normalized.get(7).getPeriod());
         Assert.assertEquals("b", normalized.get(0).getValue());
+        Assert.assertEquals("4", normalized.get(0).getPriority());
         Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals("1", normalized.get(1).getPriority());
         Assert.assertEquals("c", normalized.get(2).getValue());
-        Assert.assertEquals("d", normalized.get(3).getValue());
+        Assert.assertEquals("3", normalized.get(2).getPriority());
+        Assert.assertEquals("e", normalized.get(3).getValue());
+        Assert.assertEquals("2", normalized.get(3).getPriority());
         Assert.assertEquals("c", normalized.get(4).getValue());
+        Assert.assertEquals("3", normalized.get(4).getPriority());
         Assert.assertEquals("b", normalized.get(5).getValue());
+        Assert.assertEquals("4", normalized.get(5).getPriority());
         Assert.assertEquals("d", normalized.get(6).getValue());
+        Assert.assertEquals("3", normalized.get(6).getPriority());
         Assert.assertEquals("b", normalized.get(7).getValue());
+        Assert.assertEquals("4", normalized.get(7).getPriority());
     }
 
     @Test()
@@ -265,7 +279,7 @@ public class DateUtilsTest {
         DatePeriodSplit period2 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-01", "2020-05-30", DateUtils.DATE_PATTERN), "4", "b");
         DatePeriodSplit period3 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-03", "2020-05-17", DateUtils.DATE_PATTERN), "2", "c");
         DatePeriodSplit period4 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), "2", "d");
-        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "3", "d");
+        DatePeriodSplit period5 = new DateUtils.DatePeriodSplit(new DatePeriod("2020-05-10", "2020-05-15", DateUtils.DATE_PATTERN), "3", "e");
 
         List<DatePeriodSplit> normalized = DateUtils.normalizeOverlapingDatePeriods(period1, period2, period3, period4, period5);
 
@@ -275,9 +289,13 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-17", "2020-05-20", DateUtils.DATE_PATTERN), normalized.get(2).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(3).getPeriod());
         Assert.assertEquals("a", normalized.get(0).getValue());
+        Assert.assertEquals("1", normalized.get(0).getPriority());
         Assert.assertEquals("c", normalized.get(1).getValue());
+        Assert.assertEquals("2", normalized.get(1).getPriority());
         Assert.assertEquals("b", normalized.get(2).getValue());
+        Assert.assertEquals("4", normalized.get(2).getPriority());
         Assert.assertEquals("d", normalized.get(3).getValue());
+        Assert.assertEquals("2", normalized.get(3).getPriority());
     }
 
     @Test()
@@ -294,8 +312,11 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-05", "2020-05-17", DateUtils.DATE_PATTERN), normalized.get(1).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(2).getPeriod());
         Assert.assertEquals("a", normalized.get(0).getValue());
+        Assert.assertEquals("1", normalized.get(0).getPriority());
         Assert.assertEquals("c", normalized.get(1).getValue());
+        Assert.assertEquals("2", normalized.get(1).getPriority());
         Assert.assertEquals("d", normalized.get(2).getValue());
+        Assert.assertEquals("2", normalized.get(2).getPriority());
     }
 
     @Test()
@@ -311,7 +332,9 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-01", "2020-05-05", DateUtils.DATE_PATTERN), normalized.get(0).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-05", null, DateUtils.DATE_PATTERN), normalized.get(1).getPeriod());
         Assert.assertEquals("a", normalized.get(0).getValue());
+        Assert.assertEquals("1", normalized.get(0).getPriority());
         Assert.assertEquals("c", normalized.get(1).getValue());
+        Assert.assertEquals("2", normalized.get(1).getPriority());
     }
 
     @Test()
@@ -328,8 +351,11 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-01", "2020-05-05", DateUtils.DATE_PATTERN), normalized.get(1).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-05", null, DateUtils.DATE_PATTERN), normalized.get(2).getPeriod());
         Assert.assertEquals("c", normalized.get(0).getValue());
+        Assert.assertEquals("2", normalized.get(0).getPriority());
         Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals("1", normalized.get(1).getPriority());
         Assert.assertEquals("c", normalized.get(2).getValue());
+        Assert.assertEquals("2", normalized.get(2).getPriority());
     }
 
     @Test()
@@ -348,10 +374,15 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(3).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-30", null, DateUtils.DATE_PATTERN), normalized.get(4).getPeriod());
         Assert.assertEquals("c", normalized.get(0).getValue());
+        Assert.assertEquals("3", normalized.get(0).getPriority());
         Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals("1", normalized.get(1).getPriority());
         Assert.assertEquals("c", normalized.get(2).getValue());
+        Assert.assertEquals("3", normalized.get(2).getPriority());
         Assert.assertEquals("d", normalized.get(3).getValue());
+        Assert.assertEquals("2", normalized.get(3).getPriority());
         Assert.assertEquals("c", normalized.get(4).getValue());
+        Assert.assertEquals("3", normalized.get(4).getPriority());
     }
 
     @Test()
@@ -370,9 +401,33 @@ public class DateUtilsTest {
         Assert.assertEquals(new DatePeriod("2020-05-20", "2020-05-30", DateUtils.DATE_PATTERN), normalized.get(3).getPeriod());
         Assert.assertEquals(new DatePeriod("2020-05-30", null, DateUtils.DATE_PATTERN), normalized.get(4).getPeriod());
         Assert.assertEquals("c", normalized.get(0).getValue());
+        Assert.assertEquals(3, normalized.get(0).getPriorityInt());
         Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals(1, normalized.get(1).getPriorityInt());
         Assert.assertEquals("c", normalized.get(2).getValue());
+        Assert.assertEquals(3, normalized.get(2).getPriorityInt());
         Assert.assertEquals("d", normalized.get(3).getValue());
+        Assert.assertEquals(2, normalized.get(3).getPriorityInt());
         Assert.assertEquals("c", normalized.get(4).getValue());
+        Assert.assertEquals(3, normalized.get(4).getPriorityInt());
+    }
+
+    @Test()
+    public void normalizeOverlapingDatePeriods9_priorityInt_withDateTime() {
+
+        DatePeriod datePeriod1 = new DatePeriod(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 8, 0, 0), DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 9, 0, 0));
+        DatePeriod datePeriod2 = new DatePeriod(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 7, 0, 0), DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 3, 8, 0, 0));
+
+        DatePeriodSplit period1 = new DateUtils.DatePeriodSplit(datePeriod1, 1, "a");
+        DatePeriodSplit period2 = new DateUtils.DatePeriodSplit(datePeriod2, 2, "b");
+        List<DatePeriodSplit> normalized = DateUtils.normalizeOverlapingDatePeriods(period1, period2);
+
+        Assert.assertEquals(2, normalized.size());
+        Assert.assertEquals(datePeriod2, normalized.get(0).getPeriod());
+        Assert.assertEquals(datePeriod1, normalized.get(1).getPeriod());
+        Assert.assertEquals("b", normalized.get(0).getValue());
+        Assert.assertEquals(2, normalized.get(0).getPriorityInt());
+        Assert.assertEquals("a", normalized.get(1).getValue());
+        Assert.assertEquals(1, normalized.get(1).getPriorityInt());
     }
 }

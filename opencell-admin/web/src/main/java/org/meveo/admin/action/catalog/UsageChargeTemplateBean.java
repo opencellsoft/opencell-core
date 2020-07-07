@@ -28,6 +28,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -105,8 +106,13 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 
         getEntity().setEdrTemplates(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
 
-        String outcome = super.saveOrUpdate(killConversation);
-
+        String outcome = null;
+        try {
+        	outcome = super.saveOrUpdate(killConversation);
+		} catch (BusinessEntityException e) {
+			messages.error(new BundleKey("messages", e.getMessage()));
+			throw e;
+		}
         if (outcome != null) {
             return getEditViewName();
         }
