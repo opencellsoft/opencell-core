@@ -19,7 +19,6 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -55,8 +54,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "BillingCycle")
 @Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })
 public class BillingCycle extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
@@ -83,13 +81,14 @@ public class BillingCycle extends BusinessCFEntity {
     private Calendar calendar;
 
     /**
-     * Transaction date delay
+     * A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
+     * BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay.
      */
     @Column(name = "transaction_date_delay")
     private Integer transactionDateDelay;
 
     /**
-     * Used to compute the invoice date from date of billing run
+     * A delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate + BillingCycle.invoiceDateProductionDelay.
      */
     @Column(name = "invoice_date_production_delay")
     private Integer invoiceDateProductionDelay;
@@ -259,19 +258,6 @@ public class BillingCycle extends BusinessCFEntity {
         this.billingAccounts = billingAccounts;
     }
 
-    public Date getNextCalendarDate(Date subscriptionDate, Date date) {
-        Date result = null;
-        if (calendar != null) {
-            calendar.setInitDate(subscriptionDate);
-            result = calendar.nextCalendarDate(date != null ? date : new Date());
-        }
-        return result;
-    }
-
-    public Date getNextCalendarDate(Date subscriptionDate) {
-        return getNextCalendarDate(subscriptionDate, new Date());
-    }
-
     /**
      * @return the invoicingThreshold
      */
@@ -409,6 +395,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Gets the threshold option.
+     * 
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -417,6 +404,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Sets the threshold option.
+     * 
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {

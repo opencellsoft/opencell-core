@@ -203,6 +203,8 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
                     walletReportConfig.setNbrWalletOpTreated(((Long) s[1]).intValue());
                 } else if (WalletOperationStatusEnum.SCHEDULED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpScheduled(((Long) s[1]).intValue());
+                } else if (WalletOperationStatusEnum.REJECTED.equals(s[0])) {
+                    walletReportConfig.setNbrWalletOpRejected(((Long) s[1]).intValue());
                 }
             }
         }

@@ -156,7 +156,7 @@ public class DateUtils {
             if (time > 0L) {
                 return new Date(time);
             }
-            String[] datePatterns = new String[]{DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat()};
+            String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat() };
             return parseDate((String) dateValue, datePatterns);
         }
         return null;
@@ -810,7 +810,11 @@ public class DateUtils {
                     }
                 }
 
-                normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriority(), overlappingPeriod.getValue()));
+                if (overlappingPeriod.getPriority() != null) {
+                    normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriority(), overlappingPeriod.getValue()));
+                } else {
+                    normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriorityInt(), overlappingPeriod.getValue()));
+                }
                 normalizedPeriods.sort(Comparator.comparing(DatePeriodSplit::getPeriod));
 
                 nextDate = periodEnd;

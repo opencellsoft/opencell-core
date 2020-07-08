@@ -48,8 +48,7 @@ public class CalendarPeriod extends Calendar {
     @Column(name = "period_unit")
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
 
-    public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(java.util.Calendar.MONTH, java.util.Calendar.DAY_OF_MONTH, java.util.Calendar.HOUR_OF_DAY,
-            java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
+    public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(java.util.Calendar.MONTH, java.util.Calendar.DAY_OF_MONTH, java.util.Calendar.HOUR_OF_DAY, java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
 
     @Column(name = "nb_periods")
     private Integer nbPeriods = 0;
@@ -123,7 +122,7 @@ public class CalendarPeriod extends Calendar {
 
             GregorianCalendar calendarOld = new GregorianCalendar();
             calendarOld.setTime(getInitDate());
-            calendarOld.add(periodUnit, (i-1) * periodLength);
+            calendarOld.add(periodUnit, (i - 1) * periodLength);
             Date oldDate = calendarOld.getTime();
 
             calendar.add(periodUnit, i * periodLength);
@@ -227,8 +226,7 @@ public class CalendarPeriod extends Calendar {
 
             calendar.set(java.util.Calendar.MINUTE, 0);
         }
-        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.DAY_OF_MONTH || lastUnitInDateTruncate.intValue() == java.util.Calendar.HOUR_OF_DAY
-                || lastUnitInDateTruncate.intValue() == java.util.Calendar.MINUTE) {
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.DAY_OF_MONTH || lastUnitInDateTruncate.intValue() == java.util.Calendar.HOUR_OF_DAY || lastUnitInDateTruncate.intValue() == java.util.Calendar.MINUTE) {
             calendar.set(java.util.Calendar.SECOND, 0);
         }
 
@@ -258,5 +256,10 @@ public class CalendarPeriod extends Calendar {
                 lastUnitInDateTruncate = java.util.Calendar.SECOND;
             }
         }
+    }
+
+    @Override
+    public boolean isInitializationRequired() {
+        return true;
     }
 }

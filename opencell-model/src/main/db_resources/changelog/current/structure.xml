@@ -3175,5 +3175,35 @@ END $$;]]>
             <column name="value_el"></column>
         </dropColumn>
      </changeSet>
+     
+    <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>    
+    </changeSet>
+     
 
+    <changeSet id="#5331_20190630" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RecurringRatingJob'</sql>
+    </changeSet>
+    
+        <changeSet id="#5295_20200626" author="anasseh">
+         <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="tax_class_id" type="bigint"></column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_tax_class_pst" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
+            
+            <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set is_generate_adv_pay_inv=1</sql>
+
+     </changeSet>
+     
+    
+    <changeSet id="#5330_20190630" author="AndriusKarpavicius">
+        <addColumn tableName="cat_calendar">
+            <column name="init_date_el" type="varchar(2000)"/>
+            <column name="init_date_el_sp" type="varchar(2000)"/>
+        </addColumn>
+    
+    </changeSet>
+    
 </databaseChangeLog>

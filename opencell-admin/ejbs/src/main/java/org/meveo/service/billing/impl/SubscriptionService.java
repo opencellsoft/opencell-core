@@ -22,7 +22,9 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -53,10 +55,10 @@ import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -71,6 +73,7 @@ import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
@@ -115,7 +118,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Override
     public void create(Subscription subscription) throws BusinessException {
 
-        subscription.updateSubscribedTillAndRenewalNotifyDates();
+        updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         subscription.createAutoRenewDate();
 
@@ -139,7 +142,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Override
     public Subscription update(Subscription subscription) throws BusinessException {
 
-        subscription.updateSubscribedTillAndRenewalNotifyDates();
+        updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         Subscription subscriptionOld = this.findByCode(subscription.getCode());
         subscription.updateAutoRenewDate(subscriptionOld);
@@ -439,7 +442,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     /**
-     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and initialAgreement date more than n years old
      * 
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
@@ -449,7 +452,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound, true, false);
         qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>", false);
         qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>", false);
 
@@ -776,5 +779,47 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public List<Subscription> findSubscriptions(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
+    
+
+    /**
+     * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
+     */
+    public void updateSubscribedTillAndRenewalNotifyDates(Subscription subscription) {
+        if (subscription.isRenewed()) {
+            return;
+        }
+        if (subscription.getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+            if (subscription.getSubscriptionDate() != null && subscription.getSubscriptionRenewal() != null && subscription.getSubscriptionRenewal().getInitialyActiveFor() != null) {
+                if (subscription.getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+                    subscription.getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+                }
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(subscription.getSubscriptionDate());
+                calendar.add(subscription.getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getInitialyActiveFor());
+                subscription.setSubscribedTillDate(calendar.getTime());
+
+            } else {
+                subscription.setSubscribedTillDate(null);
+            }
+        } else if (subscription.getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.CALENDAR)) {
+            if (subscription.getSubscriptionDate() != null && subscription.getSubscriptionRenewal() != null && subscription.getSubscriptionRenewal().getCalendarInitialyActiveFor() != null) {
+                org.meveo.model.catalog.Calendar calendar = CalendarService.initializeCalendar(subscription.getSubscriptionRenewal().getCalendarInitialyActiveFor(), subscription.getSubscriptionDate(), subscription);
+                Date date = calendar.nextCalendarDate(subscription.getSubscriptionDate());
+                subscription.setSubscribedTillDate(date);
+            } else {
+                subscription.setSubscribedTillDate(null);
+            }
+        }
+
+        if (subscription.getSubscribedTillDate() != null && subscription.getSubscriptionRenewal().isAutoRenew() && subscription.getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(subscription.getSubscribedTillDate());
+            calendar.add(Calendar.DAY_OF_MONTH, subscription.getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+            subscription.setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            subscription.setNotifyOfRenewalDate(null);
+        }
+        subscription.autoUpdateEndOfEngagementDate();
     }
 }

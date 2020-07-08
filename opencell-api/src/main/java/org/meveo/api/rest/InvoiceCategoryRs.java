@@ -32,6 +32,8 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
+import org.meveo.api.dto.response.InvoiceCategoryResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceCategory}.
@@ -93,5 +95,15 @@ public interface InvoiceCategoryRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(InvoiceCategoryDto postData);
+    
+    /**
+     * List InvoiceCategory matching a given criteria
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of InvoiceCategory
+     */
+    @POST
+    @Path("/list")
+    public InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

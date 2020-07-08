@@ -72,7 +72,7 @@ public class WalletReservation extends WalletOperation {
      * 
      * @param chargeInstance Charge instance
      * @param inputQuantity Input quantity
-     * @param quantityInChargeUnits Quantity in charge units
+     * @param quantityInChargeUnits Input quantity converted to charge units
      * @param operationDate Operation date
      * @param orderNumber Order number
      * @param criteria1 Criteria 1
@@ -83,12 +83,11 @@ public class WalletReservation extends WalletOperation {
      * @param startDate Operation date range - start date
      * @param endDate Operation date range - end date
      * @param accountingCode Accounting code
+     * @param invoicingDate Date from which operation can be included in an invoice
      */
     public WalletReservation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
-            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode) {
-
-        super(chargeInstance, inputQuantity, quantityInChargeUnits, operationDate, orderNumber, criteria1, criteria2, criteria3, criteriaExtra, tax, startDate, endDate, accountingCode);
-
+            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode, Date invoicingDate) {
+        super(chargeInstance, inputQuantity, quantityInChargeUnits, operationDate, orderNumber, criteria1, criteria2, criteria3, criteriaExtra, tax, startDate, endDate, accountingCode, invoicingDate);
         setStatus(WalletOperationStatusEnum.RESERVED);
     }
 

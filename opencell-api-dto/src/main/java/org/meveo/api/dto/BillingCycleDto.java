@@ -74,7 +74,9 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement(required = false)
     private Integer invoiceDateProductionDelay;
 
-    /** The transaction date delay. */
+    /**
+     * A delay to apply when calculating BillingRun.lastTransactionDate value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay.
+     */
     @XmlElement(required = false)
     private Integer transactionDateDelay;
 
@@ -120,7 +122,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
 
-
     /**
      * Instantiates a new billing cycle dto.
      */
@@ -152,9 +153,9 @@ public class BillingCycleDto extends BusinessEntityDto {
             invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
             invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
             referenceDate = billingCycleEntity.getReferenceDate();
-			if (billingCycleEntity.getScriptInstance() != null) {
-				scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
-			}
+            if (billingCycleEntity.getScriptInstance() != null) {
+                scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
+            }
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -364,10 +365,9 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @Override
     public String toString() {
-        return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay="
-                + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay
-                + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode="
-                + invoiceTypeCode + ", customFields=" + customFields + ", referenceDate=" + referenceDate + "]";
+        return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay
+                + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar
+                + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + invoiceTypeCode + ", customFields=" + customFields + ", referenceDate=" + referenceDate + "]";
     }
 
     /**
@@ -462,22 +462,25 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /**
      * Gets the scriptInstanceCode.
+     * 
      * @return code of script instance
      */
-	public String getScriptInstanceCode() {
-		return scriptInstanceCode;
-	}
+    public String getScriptInstanceCode() {
+        return scriptInstanceCode;
+    }
 
-	/**
-	 * Sets the scriptInstanceCode.
-	 * @param scriptInstanceCode code of script instance
-	 */
-	public void setScriptInstanceCode(String scriptInstanceCode) {
-		this.scriptInstanceCode = scriptInstanceCode;
-	}
+    /**
+     * Sets the scriptInstanceCode.
+     * 
+     * @param scriptInstanceCode code of script instance
+     */
+    public void setScriptInstanceCode(String scriptInstanceCode) {
+        this.scriptInstanceCode = scriptInstanceCode;
+    }
 
     /**
      * Gets the threshold option.
+     * 
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -486,6 +489,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /**
      * Sets the threshold option.
+     * 
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {

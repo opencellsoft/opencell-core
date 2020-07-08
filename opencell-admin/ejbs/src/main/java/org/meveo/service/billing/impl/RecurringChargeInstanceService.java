@@ -29,7 +29,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -40,6 +39,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
@@ -109,43 +109,43 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return chargeInstance;
     }
 
-    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, String subscriptionCode, boolean truncateToDay) {
+    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, String subscriptionCode) {
 
-        QueryBuilder qb = queryIdsByStatus(status, maxChargeDate, truncateToDay);
+        QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
+        qb.addCriterionEnum("c.status", status);
+        qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate, false, false);
         qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+
         List<Long> ids = qb.getIdQuery(getEntityManager()).getResultList();
         log.trace("Found recurring charges by status {} and subscriptionCode {} . Result size found={}.", status, subscriptionCode, (ids != null ? ids.size() : "NULL"));
 
         return ids;
     }
 
-    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean truncateToDay) {
+    /**
+     * Find recurring charge instances to rate
+     * 
+     * @param status Status to match
+     * @param maxChargeDate Date to rate to. chargeInstance.nextChargeDate must be less than a given date.
+     * @param billingCycles Limit to accounts with a given billing cycles
+     * @return A list of recurring charge instance IDs to rate
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> findRecurringChargeInstancesToRate(InstanceStatusEnum status, Date maxChargeDate, List<BillingCycle> billingCycles) {
 
-        QueryBuilder qb = queryIdsByStatus(status, maxChargeDate, truncateToDay);
-        List<Long> ids = qb.getIdQuery(getEntityManager()).getResultList();
-        log.trace("Found recurring charges by status (status={}). Result size found={}.", status, (ids != null ? ids.size() : "NULL"));
+        List<Long> ids = null;
+        if (billingCycles == null || billingCycles.isEmpty()) {
+            ids = getEntityManager().createNamedQuery("RecurringChargeInstance.listToRateByStatusAndDate").setParameter("status", status).setParameter("maxNextChargeDate", DateUtils.truncateTime(maxChargeDate))
+                .getResultList();
+            log.trace("Found {} recurring charges of status {} to rate up to {}.", (ids != null ? ids.size() : "0"), status, DateUtils.formatAsDate(maxChargeDate));
+
+        } else {
+            ids = getEntityManager().createNamedQuery("RecurringChargeInstance.listToRateByStatusBCAndDate").setParameter("status", status).setParameter("maxNextChargeDate", DateUtils.truncateTime(maxChargeDate))
+                .setParameter("billingCycles", billingCycles).getResultList();
+            log.trace("Found {} recurring charges of status {} and billing cycles {} to rate up to {}.", (ids != null ? ids.size() : "0"), status, billingCycles, DateUtils.formatAsDate(maxChargeDate));
+        }
 
         return ids;
-    }
-
-    /**
-     * Query ids by status.
-     *
-     * @param status the status
-     * @param maxChargeDate the max charge date
-     * @param truncateToDay the truncate to day
-     * @return the query builder
-     */
-    private QueryBuilder queryIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean truncateToDay) {
-        QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
-        qb.addCriterionEnum("c.status", status);
-
-        if (truncateToDay) {
-            qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-        } else {
-            qb.addCriterion("c.nextChargeDate", "<", maxChargeDate, false);
-        }
-        return qb;
     }
 
     @SuppressWarnings("unchecked")

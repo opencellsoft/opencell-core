@@ -291,11 +291,11 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             return;
         }
 
-        if (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.RESERVED) || (op.getStatus() == WalletOperationStatusEnum.CANCELED)) {
+        if (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.RESERVED) || (op.getStatus() == WalletOperationStatusEnum.CANCELED) || (op.getStatus() == WalletOperationStatusEnum.REJECTED) ) {
 
             oldValue = reservedBalanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-            if (op.getStatus() == WalletOperationStatusEnum.CANCELED) {
+            if (op.getStatus() == WalletOperationStatusEnum.CANCELED || op.getStatus() == WalletOperationStatusEnum.REJECTED) {
                 newValue = oldValue.subtract(op.getAmountWithTax());
             } else {
                 newValue = oldValue.add(op.getAmountWithTax());

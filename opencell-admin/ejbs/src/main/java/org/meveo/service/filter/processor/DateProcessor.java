@@ -74,8 +74,10 @@ public class DateProcessor extends PrimitiveFilterProcessor {
             queryBuilder.addCriterionDateTruncatedToDay(condition.getFieldName(), dateValue);
         } else if (">=".equals(condition.getOperator())) {
             queryBuilder.addCriterionDateRangeFromTruncatedToDay(condition.getFieldName(), dateValue);
+        } else if ("<".equals(condition.getOperator())) {
+            queryBuilder.addCriterionDateRangeToTruncatedToDay(condition.getFieldName(), dateValue, false, false);
         } else if ("<=".equals(condition.getOperator())) {
-            queryBuilder.addCriterionDateRangeToTruncatedToDay(condition.getFieldName(), dateValue);
+            queryBuilder.addCriterionDateRangeToTruncatedToDay(condition.getFieldName(), dateValue, true, false);
         }
     }
 }

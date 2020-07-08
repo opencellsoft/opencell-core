@@ -78,7 +78,7 @@ public class PaymentScheduleProcessingJobBean extends BaseJobBean {
 
         try {
 
-            List<PaymentScheduleInstanceItem> itemsToProcess = paymentScheduleInstanceItemService.getItemsToProcess(new Date());
+        	List<PaymentScheduleInstanceItem> itemsToProcess = paymentScheduleInstanceItemService.getItemsToProcess(new Date());
             log.debug("nb itemsToProcess:" + itemsToProcess.size());
             result.setNbItemsToProcess(itemsToProcess.size());
 

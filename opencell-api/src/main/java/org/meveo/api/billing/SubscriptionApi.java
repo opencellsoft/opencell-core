@@ -437,7 +437,7 @@ public class SubscriptionApi extends BaseApi {
         }
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
-            subscription.updateSubscribedTillAndRenewalNotifyDates();
+            subscriptionService.updateSubscribedTillAndRenewalNotifyDates(subscription);
         }
         if (postData.getRatingGroup() != null) {
             subscription.setRatingGroup(postData.getRatingGroup());
@@ -2066,7 +2066,7 @@ public class SubscriptionApi extends BaseApi {
         RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
 
         // Recurring charges :
-        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode);
         for (Long chargeId : activeRecurringChargeIds) {
             int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate).getNbRating();
             result.addResult(chargeId, nbRating);
@@ -2282,7 +2282,7 @@ public class SubscriptionApi extends BaseApi {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
         }
 
-        subscription.updateSubscribedTillAndRenewalNotifyDates();
+        subscriptionService.updateSubscribedTillAndRenewalNotifyDates(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
             subscription.setEndAgreementDate(postData.getEndAgreementDate());

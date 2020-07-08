@@ -19,11 +19,13 @@
 package org.meveo.api.catalog;
 
 import java.util.Arrays;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -162,4 +164,10 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
 
         return result;
     }
+    
+    @Override
+    protected BiFunction<UsageChargeTemplate, CustomFieldsDto, UsageChargeTemplateDto> getEntityToDtoFunction() {
+        return UsageChargeTemplateDto::new;
+    }
+
 }

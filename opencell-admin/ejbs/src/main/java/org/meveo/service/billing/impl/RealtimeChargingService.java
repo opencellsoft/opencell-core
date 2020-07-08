@@ -37,11 +37,13 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
 
@@ -70,6 +72,9 @@ public class RealtimeChargingService {
     /** The recurring charge template service. */
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
+    
+    @Inject
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
@@ -135,8 +140,9 @@ public class RealtimeChargingService {
         ci.setCurrency(currency);
         ci.setChargeTemplate(chargeTemplate);
 
-        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, null, null, null, null);
-
+        BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeTemplate, inputQuantity);
+        
+        WalletOperation op = new WalletOperation(ci, inputQuantity, ratingQuantity, subscriptionDate, null, param1, param2, param3, null, null, null, null,null, null);
         op.setOfferTemplate(offerTemplate);
         op.setSeller(seller);
 

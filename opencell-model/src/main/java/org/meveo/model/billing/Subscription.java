@@ -712,48 +712,6 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
                 && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
     }
 
-    /**
-     * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
-     */
-    public void updateSubscribedTillAndRenewalNotifyDates() {
-        if (isRenewed()) {
-            return;
-        }
-        if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
-            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-                if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-                    getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-                }
-                Calendar calendar = new GregorianCalendar();
-                calendar.setTime(getSubscriptionDate());
-                calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-                setSubscribedTillDate(calendar.getTime());
-
-            } else {
-                setSubscribedTillDate(null);
-            }
-        } else if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.CALENDAR)) {
-            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getCalendarInitialyActiveFor() != null) {
-                org.meveo.model.catalog.Calendar calendar = getSubscriptionRenewal().getCalendarInitialyActiveFor();
-                calendar.setInitDate(getSubscriptionDate());
-                Date date = calendar.nextCalendarDate(getSubscriptionDate());
-                setSubscribedTillDate(date);
-            } else {
-                setSubscribedTillDate(null);
-            }
-        }
-
-        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(getSubscribedTillDate());
-            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-            setNotifyOfRenewalDate(calendar.getTime());
-        } else {
-            setNotifyOfRenewalDate(null);
-        }
-        this.autoUpdateEndOfEngagementDate();
-    }
-
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
 
