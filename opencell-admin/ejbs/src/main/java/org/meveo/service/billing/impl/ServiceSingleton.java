@@ -1,6 +1,5 @@
 package org.meveo.service.billing.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.ejb.Lock;
@@ -10,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -31,6 +29,7 @@ import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -72,6 +71,9 @@ public class ServiceSingleton {
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
+    
+    @Inject
+    private ProviderService providerService;
 
     @Inject
     private Logger log;
@@ -258,18 +260,33 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-        GenericSequence sequence = appProvider.getRumSequence();
+    	 Provider provider = providerService.findById(appProvider.getId());
+        GenericSequence sequence = provider.getRumSequence();
         if (type == SequenceTypeEnum.CUSTOMER_NO) {
             sequence = appProvider.getCustomerNoSequence();
         }
-
         if (sequence == null) {
             sequence = new GenericSequence();
         }
-
-        sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
-
+        sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);             
+        if(SequenceTypeEnum.CUSTOMER_NO == type) {
+        	provider.setCustomerNoSequence(sequence);
+        }
+        if(SequenceTypeEnum.RUM == type) {
+        	provider.setRumSequence(sequence);
+        }
         return sequence;
+    }
+    
+    
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void updateCustomerNumberSequence(GenericSequence genericSequence) {
+    	 Provider provider = providerService.findById(appProvider.getId());
+         provider.setCustomerNoSequence(genericSequence);
+
+        
     }
 
     @Lock(LockType.WRITE)

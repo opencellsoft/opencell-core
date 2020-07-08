@@ -640,7 +640,7 @@ public class CustomerApi extends AccountEntityApi {
             customer = update(postData);
         }
         return customer;
-    }
+    } 
 
     /**
      * Create or update customer brand based on code.
@@ -807,24 +807,20 @@ public class CustomerApi extends AccountEntityApi {
         gdprService.anonymize(entity);
     }
 
-    public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
+    public  void updateCustomerNumberSequence(GenericSequenceDto postData) throws  BusinessException {
         if (postData.getSequenceSize() > 20) {
             throw new MeveoApiException("sequenceSize must be <= 20.");
-        }
-
-        Provider provider = providerService.findById(appProvider.getId());
-        provider.setCustomerNoSequence(GenericSequenceApi.toGenericSequence(postData, provider.getCustomerNoSequence()));
-        providerService.update(provider);
+        }        
+        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence())); 
+             
     }
 
-    public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
-        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
-
-        GenericSequence genericSequence = providerService.getNextCustomerNumber();
+    public  GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();        
+        GenericSequence genericSequence = providerService.getNextCustomerNumber();      
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
         result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-        result.setValue(genericSequence.getPrefix() + sequenceNumber);
-
+        result.setValue(genericSequence.getPrefix() + sequenceNumber);       
         return result;
     }
 

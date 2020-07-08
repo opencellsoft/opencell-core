@@ -139,22 +139,20 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (recurringChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
+		if (recurringChargeTemplateService.findByCode(entity.getCode()) != null || usageChargeTemplateService.findByCode(entity.getCode()) != null
 				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
 
-        getEntity().getEdrTemplates().clear();
-        getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+		getEntity().setEdrTemplates(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
 
-        String outcome = super.saveOrUpdate(killConversation);
+		String outcome = super.saveOrUpdate(killConversation);
 
-        if (outcome != null) {
-            return getEditViewName();
-        }
-        return null;
+		if (outcome != null) {
+			return getEditViewName();
+		}
+		return null;
 	}
 
 	/**
