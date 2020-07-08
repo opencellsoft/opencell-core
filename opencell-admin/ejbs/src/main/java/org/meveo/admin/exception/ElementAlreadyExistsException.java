@@ -17,22 +17,19 @@
  */
 package org.meveo.admin.exception;
 
-
-
 /**
  * @author R.AITYAAZZA
  *
  */
-public class ElementAlreadyExistsException extends BusinessException {
+public class ElementAlreadyExistsException extends ValidationException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ElementAlreadyExistsException(String code, String elementName) {
-		super(elementName+" already exist code="+code);
-	}
-	
+    public ElementAlreadyExistsException(String code, String elementName) {
+        super(elementName + " with code=" + code + " already exists");
+    }
 
-	
-	
-
+    public ElementAlreadyExistsException(Number id, String elementName) {
+        super(elementName + " with id=" + id + " already exist");
+    }
 }

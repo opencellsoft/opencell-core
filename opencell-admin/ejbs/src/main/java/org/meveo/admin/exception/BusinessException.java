@@ -26,44 +26,65 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.ApplicationException;
 
 /**
+ * General business exception. Will result in data rollback
+ * 
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
 @ApplicationException(rollback = true)
 public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    
+
     private static final boolean sendException;
-    
+
     static {
         ParamBean paramBean = ParamBean.getInstance();
-        if (paramBean!=null) {
+        if (paramBean != null) {
             sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
         } else {
             sendException = false;
         }
     }
-    
+
+    /**
+     * Constructs a new exception
+     */
     public BusinessException() {
         super();
         registerEvent();
     }
-    
+
+    /**
+     * Constructs a new runtime exception with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause the cause
+     */
     public BusinessException(String message, Throwable cause) {
         super(message, cause);
         registerEvent();
     }
-    
+
+    /**
+     * Constructs a new exception with the specified detail message
+     * 
+     * @param message The detail message
+     */
     public BusinessException(String message) {
         super(message);
         registerEvent();
     }
-    
+
+    /**
+     * Constructs a new exception with the specified cause
+     * 
+     * @param cause the cause
+     */
     public BusinessException(Throwable cause) {
         super(cause);
         registerEvent();
     }
-    
+
     public void registerEvent() {
         if (sendException) {
             try {

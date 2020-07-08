@@ -239,7 +239,7 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public int remove(String tableName, Long id) throws BusinessException {
-        validateExistance(tableName, Arrays.asList(id));
+        // validateExistance(tableName, Arrays.asList(id));
         int nrDeleted = super.remove(tableName, id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
         return nrDeleted;
@@ -547,36 +547,30 @@ public class CustomTableService extends NativePersistenceService {
             updateESImediately = false;
         }
 
-        try {
+        for (Map<String, Object> value : values) {
 
-            for (Map<String, Object> value : values) {
+            // Save to DB every 1000 records
+            if (importedLines >= 1000) {
+                valuesPartial = convertValues(valuesPartial, cftsMap, false);
+                customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
-                // Save to DB every 1000 records
-                if (importedLines >= 1000) {
-                    valuesPartial = convertValues(valuesPartial, cftsMap, false);
-                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
-
-                    valuesPartial.clear();
-                    importedLines = 0;
-                }
-
-                valuesPartial.add(value);
-
-                importedLines++;
-                importedLinesTotal++;
+                valuesPartial.clear();
+                importedLines = 0;
             }
 
-            // Save to DB remaining records
-            valuesPartial = convertValues(valuesPartial, cftsMap, false);
-            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
+            valuesPartial.add(value);
 
-            // Repopulate ES index
-            if (!updateESImediately) {
-                elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
-            }
+            importedLines++;
+            importedLinesTotal++;
+        }
 
-        } catch (Exception e) {
-            throw new BusinessException(e);
+        // Save to DB remaining records
+        valuesPartial = convertValues(valuesPartial, cftsMap, false);
+        customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
+
+        // Repopulate ES index
+        if (!updateESImediately) {
+            elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
         }
 
         return importedLinesTotal;

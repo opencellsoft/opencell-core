@@ -38,6 +38,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.meveo.commons.utils.ParamBean;
@@ -150,8 +151,11 @@ public class DateUtils {
     public static Date parseDate(Object dateValue) {
         if (dateValue instanceof Number) {
             return new Date(((Number) dateValue).longValue());
-
         } else if (dateValue instanceof String) {
+            Long time = NumberUtils.toLong((String) dateValue);
+            if (time > 0L) {
+                return new Date(time);
+            }
             String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat() };
             return parseDate((String) dateValue, datePatterns);
         }
@@ -199,6 +203,14 @@ public class DateUtils {
         }
     }
 
+    /**
+     * Check if given date is in the period [periodStart,periodEnd[. Start and end dates will NOT be truncated.
+     * 
+     * @param date date to check
+     * @param periodStart Period start date.
+     * @param periodEnd Period end date.
+     * @return True if date are in the period
+     */
     public static boolean isDateTimeWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)
             return true;
@@ -227,12 +239,12 @@ public class DateUtils {
     }
 
     /**
-     * Check if given date are in period [periodStart,periodEnd[
+     * Check if given date is in the period [periodStart,periodEnd[. Start and end dates will be truncated to day.
      * 
      * @param date date to check
-     * @param periodStart periodStart
-     * @param periodEnd periodEnd
-     * @return true if date are in period
+     * @param periodStart Period start date. Will be truncated to day.
+     * @param periodEnd Period end date. Will be truncated to day.
+     * @return True if date are in the period
      */
     public static boolean isDateWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)
@@ -775,7 +787,7 @@ public class DateUtils {
                     // periodStart < normFrom < periodEnd
                     // Handles case when period starts earlier than the normalized period. Will result in matching of the beginning of the period.
                     // E.g. matching period 1-10 to a normalized period 3-12. Will result in match of the beginning: 1-3
-                    if (periodStart.before(normFrom) && (periodEnd == null || periodEnd.after(normFrom))) {
+                    if (periodStart.before(normFrom) && (periodEnd == null || periodEnd.compareTo(normFrom) >= 0)) {
                         periodEnd = normFrom;
                         foundUnoverlappedSpace = true;
 
@@ -798,7 +810,11 @@ public class DateUtils {
                     }
                 }
 
-                normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriority(), overlappingPeriod.getValue()));
+                if (overlappingPeriod.getPriority() != null) {
+                    normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriority(), overlappingPeriod.getValue()));
+                } else {
+                    normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriorityInt(), overlappingPeriod.getValue()));
+                }
                 normalizedPeriods.sort(Comparator.comparing(DatePeriodSplit::getPeriod));
 
                 nextDate = periodEnd;
@@ -927,12 +943,12 @@ public class DateUtils {
         DatePeriod period;
 
         /**
-         * Priority as string
+         * Priority as string, in ascending order. e.g 'a' wins over 'b'.
          */
         String priority;
 
         /**
-         * Priority as integer
+         * Priority as integer, in ascending order. e.g 1 wins over 2.
          */
         int priorityInt;
 
@@ -945,7 +961,7 @@ public class DateUtils {
          * Constructor
          * 
          * @param period Date period
-         * @param priority Priority as string
+         * @param priority Priority as string, in ascending order. e.g 'a' wins over 'b'.
          * @param value Value
          */
         public DatePeriodSplit(DatePeriod period, String priority, Object value) {
@@ -959,7 +975,7 @@ public class DateUtils {
          * Constructor
          * 
          * @param period Date period
-         * @param priorityInt Priority as integer
+         * @param priorityInt Priority as integer, in ascending order. e.g 1 wins over 2.
          * @param value Value
          */
         public DatePeriodSplit(DatePeriod period, int priorityInt, Object value) {

@@ -151,8 +151,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
-                quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
+        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
+                quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
             ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
@@ -581,16 +581,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             if (counterInstance != null) {
                 // get the counter period of charge instance
                 log.debug("Get accumulator counter period for counter instance {}", counterInstance);
-                counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
-                if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
-                    // The counter will be incremented by charge quantity
-                    if (counterPeriod == null) {
-                        counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                            chargeInstance.getServiceInstance());
-                    }
-                }
 
                 for (WalletOperation wo : walletOperations) {
+                    counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, wo.getOperationDate());
+                    if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
+                        // The counter will be incremented by charge quantity
+                        if (counterPeriod == null) {
+                            counterPeriod = counterInstanceService
+                                    .getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                                            chargeInstance, chargeInstance.getServiceInstance());
+                        }
+                    }
+                    
                     log.debug("Increment accumulator counter period value {} by the WO's amount {} or quantity {} ", counterPeriod, wo.getAmountWithoutTax(), wo.getQuantity());
                     counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
                 }
@@ -1056,7 +1058,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             WalletOperation wo = null;
             if (chargeInstance != null) {
-                wo = new WalletOperation(chargeInstance, dto.getQuantity(), null, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
+                BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), dto.getQuantity());
+                wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, null, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
                     dto.getStartDate(), dto.getEndDate(), null);
 
             } else {

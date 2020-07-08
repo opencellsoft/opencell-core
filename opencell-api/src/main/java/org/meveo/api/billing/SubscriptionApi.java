@@ -1881,6 +1881,7 @@ public class SubscriptionApi extends BaseApi {
                 oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             }
 
+            oneShotChargeInstanceDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(oneShotChargeInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
             oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
         }
 
@@ -2065,7 +2066,7 @@ public class SubscriptionApi extends BaseApi {
         RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
 
         // Recurring charges :
-        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode);
         for (Long chargeId : activeRecurringChargeIds) {
             int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate).getNbRating();
             result.addResult(chargeId, nbRating);

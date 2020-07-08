@@ -45,23 +45,6 @@ public class CounterPeriodDto {
      */
     private AccumulatorCounterTypeEnum accumulatorType;
 
-    /**
-     * An EL expression that returns a boolean that tells us if we accumulate or not.
-     */
-
-    private String filterEl;
-    /**
-     * An EL expression that Returns a string that is an identifier for what we count.
-     */
-
-    private String keyEl;
-
-    /**
-     * An EL expression that returns a number (BigDecimal) that contains the quantity we count.
-     */
-
-    private String valueEl;
-
     public CounterTypeEnum getCounterType() {
         return counterType;
     }
@@ -126,27 +109,4 @@ public class CounterPeriodDto {
         this.accumulatorType = accumulatorType;
     }
 
-    public String getFilterEl() {
-        return filterEl;
-    }
-
-    public void setFilterEl(String filterEl) {
-        this.filterEl = filterEl;
-    }
-
-    public String getKeyEl() {
-        return keyEl;
-    }
-
-    public void setKeyEl(String keyEl) {
-        this.keyEl = keyEl;
-    }
-
-    public String getValueEl() {
-        return valueEl;
-    }
-
-    public void setValueEl(String valueEl) {
-        this.valueEl = valueEl;
-    }
 }

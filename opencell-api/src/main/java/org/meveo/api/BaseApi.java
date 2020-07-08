@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,7 +61,6 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
@@ -1164,17 +1164,18 @@ public abstract class BaseApi {
 
     private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
         Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
-		if (pagingAndFiltering != null) {
-			if (pagingAndFiltering.getLimit() != null) {
-				limit = pagingAndFiltering.getLimit();
-			} else {
-				pagingAndFiltering.setLimit(limit);
-			}
-		}
-		
+        if (pagingAndFiltering != null) {
+            if (pagingAndFiltering.getLimit() != null) {
+                limit = pagingAndFiltering.getLimit();
+            } else {
+                pagingAndFiltering.setLimit(limit);
+            }
+        }
 
-		// Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI it will consider as fields to join with.
-		// fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering!=null && pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
+        // it will consider as fields to join with.
+        // fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering!=null && pagingAndFiltering.getFields() != null ?
+        // Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
@@ -1227,7 +1228,11 @@ public abstract class BaseApi {
             } else {
 
                 Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
-                Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
+                if (fieldClassType == null) {
+                    throw new BusinessException("Field '" + fieldName + "' is not a valid field name");
+                }
+                Object valueConverted = castFilterValue(value, fieldClassType,
+                    (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts);
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1278,16 +1283,53 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
-        log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
+        log.trace("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
             return value;
 
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         } else if (expectedList) {
-            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
-                return value;
+            if (value instanceof Collection || value.getClass().isArray()) {
+                Object firstValue = null;
+                if (value instanceof List) {
+                    firstValue = ((List) value).get(0);
+                } else if (value instanceof Set) {
+                    firstValue = ((Set) value).iterator().next();
+                } else if (value.getClass().isArray()) {
+                    firstValue = ((Object[]) value)[0];
+                }
 
+                // Its a list, but of a different data type
+                if (!targetClass.isAssignableFrom(firstValue.getClass())) {
+                    List valuesConverted = new ArrayList<>();
+                    if (value.getClass().isArray()) {
+                        value = Arrays.asList(value);
+                    }
+                    Iterator valueIterator = ((Collection) value).iterator();
+                    boolean invalidReference = false;
+                    while (valueIterator.hasNext()) {
+                        Object valueItem = valueIterator.next();
+                        try {
+                            Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
+                            if (valueConverted != null) {
+                                valuesConverted.add(valueConverted);
+                            } else {
+                                throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                            }
+                        } catch (InvalidReferenceException e) {
+                            invalidReference = true;
+                            continue;
+                        }
+                    }
+                    if (invalidReference && valuesConverted.isEmpty()) {
+                        throw new InvalidReferenceException(targetClass.getSimpleName(), value.toString());
+                    }
+                    return valuesConverted;
+
+                } else {
+                    return value;
+                }
                 // Parse comma separated string
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
@@ -1434,8 +1476,10 @@ public abstract class BaseApi {
                 }
 
             } else if (targetClass == BigDecimal.class) {
-                if (numberVal != null || bdVal != null || listVal != null) {
+                if (bdVal != null || listVal != null) {
                     return value;
+                } else if (numberVal != null) {
+                    return BigDecimal.valueOf(numberVal.doubleValue());
                 } else if (stringVal != null) {
                     return new BigDecimal(stringVal);
                 }
@@ -1443,7 +1487,7 @@ public abstract class BaseApi {
             } else if (targetClass == EntityReferenceWrapper.class) {
                 if (numberVal != null) {
                     return numberVal.longValue();
-                    
+
                 } else if (stringVal != null) {
                     return Long.parseLong(stringVal);
                 }
@@ -1594,13 +1638,6 @@ public abstract class BaseApi {
             e = e.getCause();
         }
         return false;
-    }
-
-    public MeveoApiException getMeveoApiException(Throwable e) {
-        if (isRootCause(e, ConstraintViolationException.class)) {
-            return new ConstraintViolationApiException(e.getMessage());
-        }
-        return new MeveoApiException(e);
     }
 
     public String getCustomFieldDataType(Class clazz) {

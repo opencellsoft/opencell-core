@@ -56,7 +56,6 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -439,7 +438,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     /**
-     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and initialAgreement date more than n years old
      * 
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
@@ -449,7 +448,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
-        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound, true, false);
         qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>", false);
         qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>", false);
 

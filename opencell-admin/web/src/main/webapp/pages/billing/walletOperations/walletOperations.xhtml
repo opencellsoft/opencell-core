@@ -129,7 +129,7 @@
             column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
             column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" >
           </hftl:entityPopup>
-
+		<p:messages id="messages" />
         <hftl:searchPanel label="#{messages['walletOperation.search']}" backingBean="#{walletOperationBean}" renderNewButton="false">
 
             <hftl:decorateFormField fieldId="currency" label="#{messages['currency.codeCurrency']}" style="width:105px">
@@ -168,46 +168,56 @@
             <hftl:searchField label="#{messages['invoice.amountWithTax']}" field="amountWithTax"/>
 
         </hftl:searchPanel>
-        <hftl:dataList label="#{messages['walletOperations.title']}"
-            backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING" deleteManyButton="false">
-            
-            <hftl:column label="#{messages['businessEntity.code']}" field="code" />
-            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['userAccount']}" field="wallet.userAccount.code" entityView="userAccountDetail" valueIdField="wallet.userAccount.id" objectIdParamName="userAccountId" backView="walletOperations" />
-            <hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
-            <hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance.code" />
-            <hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
-            <hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true"/>
-            <hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
-            <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
-                 <p:column  width="50px"> 
-            <f:facet name="header">
-            <h:outputText value="Actions" />
-        </f:facet>
-            <hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
-                permission="#{currentUser.hasRole('billingManagement')}" />
-                <p:commandButton id="updateWallet" icon="ui-icon-play"
-                    actionListener="#{walletOperationBean.updatedToRerate(entity)}"
-                    rendered="#{walletOperationBean.canUserUpdateEntity()}"
-                    update="@all">
-                    <p:confirm header="#{messages['commons.confirmationHeader']}"
-                        message="#{messages['message.confirm.walletOperation.update']}"
-                        icon="ui-icon-alert" />
-                </p:commandButton>
-                </p:column>
-                </hftl:dataList>
-            <p:panel styleClass="action-buttons"
-                rendered="#{walletOperationBean.canUserUpdateEntity()}">
-            <p:commandButton id="massUpdateWallet"
-            value="#{messages['action.massRerate']}"
-            action="#{walletOperationBean.massToRerate()}" 
-            icon="ui-icon-check">
-            <p:confirm header="#{messages['commons.confirmationHeader']}"
-                message="#{messages['message.confirm.walletOperation.update']}"
-                icon="ui-icon-alert" />
-           </p:commandButton> 
-            </p:panel>
+		<hftl:dataList label="#{messages['walletOperations.title']}"
+			backingBean="#{walletOperationBean}" sortBy="operationDate"
+			sortOrder="DESCENDING" deleteManyButton="false">
 
-    </ui:define>
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['userAccount']}"
+				field="wallet.userAccount.code" entityView="userAccountDetail"
+				valueIdField="wallet.userAccount.id"
+				objectIdParamName="userAccountId" backView="walletOperations" />
+			<hftl:column label="#{messages['walletOperation.operationDate']}"
+				field="operationDate" isDate="true" />
+			<hftl:column label="#{messages['walletOperation.chargeInstance']}"
+				field="chargeInstance.code" />
+			<hftl:column label="#{messages['walletOperation.quantity']}"
+				field="quantity" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['invoice.amountWithTax']}"
+				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['walletOperation.status']}"
+				field="status.label" isMessage="true" />
+			<p:column width="50px">
+				<f:facet name="header">
+					<h:outputText value="Actions" />
+				</f:facet>
+				<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
+					permission="#{currentUser.hasRole('billingManagement')}" />
+				<p:commandButton id="updateWallet" icon="ui-icon-play"
+					actionListener="#{walletOperationBean.updatedToRerate(entity)}"
+					rendered="#{walletOperationBean.canUserUpdateEntity()}"
+					update="@form messages">
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['message.confirm.walletOperation.update']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:column>
+		</hftl:dataList>
+		<p:panel styleClass="action-buttons"
+			rendered="#{walletOperationBean.canUserUpdateEntity()}">
+			<p:commandButton id="massUpdateWallet"
+				value="#{messages['action.massRerate']}"
+				action="#{walletOperationBean.massToRerate()}" icon="ui-icon-check">
+				<p:confirm header="#{messages['commons.confirmationHeader']}"
+					message="#{messages['message.confirm.walletOperation.update']}"
+					icon="ui-icon-alert" />
+			</p:commandButton>
+		</p:panel>
+
+	</ui:define>
 
 </ui:composition>

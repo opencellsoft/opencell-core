@@ -17,6 +17,29 @@
  */
 package org.meveo.service.base;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -35,7 +58,6 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CustomTableEvent;
-import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -47,18 +69,6 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.*;
-import java.util.Date;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -114,7 +124,7 @@ public class NativePersistenceService extends BaseService {
      *
      * @param tableName Table name
      * @param id Identifier
-     * @return A map of values with field name as a map key and field value as a map value
+     * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
@@ -137,7 +147,8 @@ public class NativePersistenceService extends BaseService {
 
                 return values;
             } else {
-                throw new BusinessException("Failed to retrieve values from table " + tableName + " by id " + id);
+                return null;
+                // throw new BusinessException("Failed to retrieve values from table " + tableName + " by id " + id);
             }
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
@@ -551,9 +562,13 @@ public class NativePersistenceService extends BaseService {
      */
     public int remove(String tableName, Long id) throws BusinessException {
         this.deletionService.checkTableNotreferenced(tableName, id);
+        Map<String, Object> values = findById(tableName, id);
+        if (values == null) {
+            return 0;
+        }
         int nrDeleted = getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
         if (nrDeleted > 0) {
-            entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
+            entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, values, NotificationEventTypeEnum.REMOVED));
         }
         return nrDeleted;
     }
@@ -567,8 +582,15 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Set<Long> ids) throws BusinessException {
-        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
-        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
+        int nrDeleted = 0;
+        for (Long id : ids) {
+            nrDeleted = nrDeleted + remove(tableName, id);
+        }
+        return nrDeleted;
+
+        // TODO. Here could be a check that if no notification exist, delete it in batch mode
+//        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
+//        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -626,26 +648,42 @@ public class NativePersistenceService extends BaseService {
      * <p>
      * Following conditions are supported:
      * <ul>
-     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field.value. Applies to date and number type fields.</li>
-     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
-     * <li>fromOptionalRange. Ranged search - field value in between from - to values. Field value is optional. Specifies "from" part value: e.g value&lt;=field.value. Applies to
-     * date and number type fields.</li>
-     * <li>toOptionalRange. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g field.value&lt;=value</li>
-     * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
-     * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
-     * of one item</li>
-     * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
-     * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
-     * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two
-     * values.</li>
-     * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
-     * be used. In either case case insensative matching is used. Applies to String type fields.</li>
-     * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
-     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
-     * <li>eq. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
-     * <li>eqOptional. Equals. Supports wildcards in case of string value. Field value is optional.
-     * <li>ne. Not equal.
-     * <li>neOptional. Not equal. Field value is optional
+     * <li><b>fromRange</b>. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fieldValue. Applies to date and number type fields.
+     * Date value is truncated to start of the day</li>
+     * <li><b>toRange</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;value. Value is exclusive. Applies to date and
+     * number type fields. Date value is truncated to the start of the day</li>
+     * <li><b>toRangeInclusive</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;=value. Value is inclusive. Applies to
+     * date and number type fields. Date value is truncated to the end of the day</li>
+     * <li><b>fromOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "from" part value: e.g value&lt;=field.value.
+     * Applies to date and number type fields. Date value is truncated to start of the day</li>
+     * <li><b>toOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;value. Value is
+     * inclusive. Applies to date and number type fields. Date value is truncated to the start of the day</li>
+     * <li><b>toOptionalRangeInclusive</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;=value.
+     * Value is inclusive. Applies to date and number type fields. Date value is truncated to the end of the day</li>
+     * <li><b>list</b>. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li><b>inList</b>/<b>not-inList</b>. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered
+     * as a list value of one item</li>
+     * <li><b>minmaxRange</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is exclusive.
+     * Date value is truncated to the start of the day. E.f. field1Value&lt;value&ltfield2Value</li>
+     * <li><b>minmaxRangeInclusive</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is
+     * inclusive. Date value is truncated to the start of the day. E.g. field1Value&lt;=value&ltfield2Value</li>
+     * <li><b>minmaxOptionalRange</b>. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified. The TO
+     * field value is exclusive. Date value is truncated to the start of the day.</li>
+     * <li><b>minmaxOptionalRangeInclusive</b>. Similar to minmaxRangeOptional. The value is in between two field values with either them being optional. TWO fieldnames must be
+     * specified. The TO field value is inclusive. Date value is truncated to the start of the day.</li>
+     * <li><b>overlapOptionalRange</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array or
+     * a list of two values. End fields and to values are exclusive.</li>
+     * <li><b>overlapOptionalRangeInclusive</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an
+     * array or a list of two values. End fields and to values are inclusive.</li>
+     * <li><b>likeCriterias</b>. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria
+     * match will be used. In either case case insensative matching is used. Applies to String type fields.</li>
+     * <li><b>wildcardOr</b>. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies
+     * to
+     * <li><b>wildcardOrIgnoreCase</b>. Similar to wildcardOr but ignoring case String type fields.</li>
+     * <li><b>eq</b>. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
+     * <li><b>eqOptional</b>. Equals. Supports wildcards in case of string value. Field value is optional.
+     * <li><b>ne</b>. Not equal.
+     * <li><b>neOptional</b>. Not equal. Field value is optional
      * </ul>
      * <p>
      * <p>
@@ -719,27 +757,13 @@ public class NativePersistenceService extends BaseService {
                     condition = "eq";
                 }
 
-                // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
+                // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=fieldValue
                 if ("fromRange".equals(condition) || "fromOptionalRange".equals(condition)) {
-                    if (filterValue instanceof Double) {
-                        BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                        queryBuilder.addCriterion("a." + fieldName, " >= ", rationalNumber, false, "fromOptionalRange".equals(condition));
-                    } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, " >= ", filterValue, false, "fromOptionalRange".equals(condition));
-                    } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + fieldName, (Date) filterValue, "fromOptionalRange".equals(condition));
-                    }
+                    queryBuilder.addValueIsGreaterThanField("a." + fieldName, filterValue, "fromOptionalRange".equals(condition));
 
-                    // if ranged search - field value in between from - to values. Specifies "to" value: e.g field.value<=value
-                } else if ("toRange".equals(condition) || "toOptionalRange".equals(condition)) {
-                    if (filterValue instanceof Double) {
-                        BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, false, "toOptionalRange".equals(condition));
-                    } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, false, "toOptionalRange".equals(condition));
-                    } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue, true, "toOptionalRange".equals(condition));
-                    }
+                    // if ranged search - field value in between from - to values. Specifies "to" value: e.g fieldValue<value or fieldValue<=value
+                } else if ("toRange".equals(condition) || "toRangeInclusive".equals(condition) || "toOptionalRange".equals(condition) || "toOptionalRangeInclusive".equals(condition)) {
+                    queryBuilder.addValueIsLessThanField("a." + fieldName, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
 
                     // Value is in field value (list)
                 } else if ("list".equals(condition)) {
@@ -749,73 +773,29 @@ public class NativePersistenceService extends BaseService {
                     // Field value is in value (list)
                 } else if ("inList".equals(condition) || "not-inList".equals(condition)) {
 
-                    boolean isNot = "not-inList".equals(condition);
+                    queryBuilder.addFieldInAListOfValues("a." + fieldName, filterValue, "not-inList".equals(condition), condition.endsWith("Optional"));
 
-                    String paramName = queryBuilder.convertFieldToParam(fieldName);
+                    // The value is in between two field values with optionally either them being optional eg. field1Value<=value<field2Value or field1Value<=value<=field2Value
+                } else if ("minmaxRange".equals(condition) || "minmaxRangeInclusive".equals(condition) || "minmaxOptionalRange".equals(condition) || "minmaxOptionalRangeInclusive".equals(condition)) {
 
-                    if (filterValue instanceof String) {
-                        queryBuilder.addSql("lower(a." + fieldName + ")" + (isNot ? " NOT " : "") + " IN (" + filterValue + ")");
-
-                    } else if (filterValue instanceof Collection) {
-
-                        // Convert to lowercase and do case insensitive search for String based search
-                        Object firstValue = ((Collection) filterValue).iterator().next();
-                        if (firstValue instanceof String) {
-                            filterValue = ((Collection<String>) filterValue).stream().map(val -> val != null ? val.toLowerCase() : val).collect(Collectors.toList());
-                            queryBuilder.addSqlCriterion("lower(a." + fieldName + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
-
-                        } else {
-                            queryBuilder.addSqlCriterion("a." + fieldName + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
-                        }
-                    }
-
-                    // The value is in between two field values
-                } else if ("minmaxRange".equals(condition)) {
-                    if (filterValue instanceof Double) {
-                        BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, false);
-                        queryBuilder.addCriterion("a." + fieldName2, " >= ", rationalNumber, false);
-                    } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, false);
-                        queryBuilder.addCriterion("a." + fieldName2, " >= ", filterValue, false);
-                    }
-                    if (filterValue instanceof Date) {
-                        Date value = (Date) filterValue;
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(value);
-                        int year = c.get(Calendar.YEAR);
-                        int month = c.get(Calendar.MONTH);
-                        int date = c.get(Calendar.DATE);
-                        c.set(year, month, date, 0, 0, 0);
-                        value = c.getTime();
-                        queryBuilder.addCriterion("a." + fieldName, "<=", value, false);
-                        queryBuilder.addCriterion("a." + fieldName2, ">=", value, false);
-                    }
-
-                    // The value is in between two field values with either them being optional
-                } else if ("minmaxOptionalRange".equals(condition)) {
-
-                    String paramName = queryBuilder.convertFieldToParam(fieldName);
-
-                    String sql = "((a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or (a." + fieldName + "<=:" + paramName + " and :" + paramName + "<a." + fieldName2 + ") or (a." + fieldName + "<=:"
-                            + paramName + " and a." + fieldName2 + " IS NULL) or (a." + fieldName + " IS NULL and :" + paramName + "<a." + fieldName2 + "))";
-                    queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
+                    queryBuilder.addValueInBetweenTwoFields("a." + fieldName, "a." + fieldName2, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
 
                     // The value range is overlapping two field values with either them being optional
-                } else if ("overlapOptionalRange".equals(condition)) {
+                } else if ("overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition)) {
 
-                    String paramNameFrom = queryBuilder.convertFieldToParam(fieldName);
-                    String paramNameTo = queryBuilder.convertFieldToParam(fieldName2);
-
-                    String sql = "(( a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or  ( a." + fieldName + " IS NULL and a." + fieldName2 + ">:" + paramNameFrom + ") or (a." + fieldName2
-                            + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2 + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :"
-                            + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a." + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
+                    Object valueFrom = null;
+                    Object valueTo = null;
 
                     if (filterValue.getClass().isArray()) {
-                        queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
+                        valueFrom = ((Object[]) filterValue)[0];
+                        valueTo = ((Object[]) filterValue)[1];
+
                     } else if (filterValue instanceof List) {
-                        queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((List) filterValue).get(0), paramNameTo, ((List) filterValue).get(1));
+                        valueFrom = ((List) filterValue).get(0);
+                        valueTo = ((List) filterValue).get(1);
                     }
+
+                    queryBuilder.addValueRangeOverlapTwoFieldRange("a." + fieldName, "a." + fieldName2, valueFrom, valueTo, condition.endsWith("Inclusive"));
 
                     // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
                 } else if ("likeCriterias".equals(condition)) {
@@ -856,50 +836,17 @@ public class NativePersistenceService extends BaseService {
                         queryBuilder.addSql((String) filterValue);
                     }
 
-                    // Search by equals/not equals condition
-                } else {
-
                     // Search by IS NULL
-                    if (filterValue instanceof String && PersistenceService.SEARCH_IS_NULL.equals(filterValue)) {
-                        queryBuilder.addSql("a." + fieldName + " is null ");
+                } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NULL.equals(filterValue)) {
+                    queryBuilder.addSql("a." + fieldName + " is null ");
 
-                        // Search by IS NOT NULL
-                    } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                        queryBuilder.addSql("a." + fieldName + " is not null ");
+                    // Search by IS NOT NULL
+                } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(filterValue)) {
+                    queryBuilder.addSql("a." + fieldName + " is not null ");
 
-                        // Search by equals/not equals to a string value
-                    } else if (filterValue instanceof String) {
-
-                        // if contains dot, that means join is needed
-                        String filterString = (String) filterValue;
-
-                        queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, condition.startsWith("ne"), condition.endsWith("Optional"));
-
-                        // Search by equals to truncated date value
-                    } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue, condition.endsWith("Optional"));
-
-                        // Search by equals/not equals to a number value
-                    } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, condition.startsWith("ne") ? " != " : " = ", filterValue, true, condition.endsWith("Optional"));
-
-                        // Search by equals/not equals to a boolean value
-                    } else if (filterValue instanceof Boolean) {
-                        boolean bValue = (boolean) filterValue;
-                        queryBuilder.addBooleanCriterion("a." + fieldName, condition.startsWith("ne") ? !bValue : bValue);
-
-                        // Search by equals/not equals to an enum value
-                    } else if (filterValue instanceof Enum) {
-                        if (filterValue instanceof IdentifiableEnum) {
-                            String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
-                            queryBuilder.addCriterion("a." + enumIdKey, condition.startsWith("ne") ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true, condition.endsWith("Optional"));
-                        } else {
-                            queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
-                        }
-
-                    } else if (filterValue instanceof List) {
-                        queryBuilder.addCriterionInList("a." + fieldName, (List) filterValue, condition.startsWith("ne") ? " not in " : " in ", condition.endsWith("Optional"));
-                    }
+                    // Search by equals/not equals to a string, date, number, boolean, enum or list value
+                } else if (filterValue instanceof String || filterValue instanceof Date || filterValue instanceof Number || filterValue instanceof Boolean || filterValue instanceof Enum || filterValue instanceof List) {
+                    queryBuilder.addValueIsEqualToField("a." + fieldName, filterValue, condition.startsWith("ne"), condition.endsWith("Optional"));
                 }
             }
         }
@@ -910,6 +857,7 @@ public class NativePersistenceService extends BaseService {
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
+
     }
 
     /**

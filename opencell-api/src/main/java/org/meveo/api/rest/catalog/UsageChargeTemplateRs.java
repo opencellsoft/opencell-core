@@ -31,6 +31,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -114,4 +116,14 @@ public interface UsageChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
+    
+    /**
+     * List UsageChargeTemplate matching a given criteria
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of UsageChargeTemplate
+     */
+    @POST
+    @Path("/list")
+    public UsageChargeTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 }

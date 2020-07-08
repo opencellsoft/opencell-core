@@ -31,6 +31,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
     private Integer nbrWalletOpTorerate;
     private Integer nbrWalletOpRerated;
     private Integer nbrWalletOpScheduled;
+    private Integer nbrWalletOpRejected;
     private Integer nbrEdrRejected;
     private Integer nbrEdrRated;
     private Integer nbrEdrOpen;
@@ -47,6 +48,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
         this.nbrWalletOpTorerate = 0;
         this.nbrWalletOpRerated = 0;
         this.nbrWalletOpScheduled = 0;
+        this.nbrWalletOpRejected = 0;
         this.nbrEdrRejected = 0;
         this.nbrEdrRated = 0;
         this.nbrEdrOpen = 0;
@@ -57,8 +59,8 @@ public class ConfigIssuesReportingDTO implements Serializable {
     public ConfigIssuesReportingDTO(Integer nbrLanguagesNotAssociated, Integer nbrTaxesNotAssociated, Integer nbrInvoiceCatNotAssociated, Integer nbrInvoiceSubCatNotAssociated,
             Integer nbrUsagesChrgNotAssociated, Integer nbrCountersNotAssociated, Integer nbrRecurringChrgNotAssociated, Integer nbrSubChrgNotAssociated,
             Integer nbrTerminationChrgNotAssociated, Integer nbrServicesWithNotOffer, Integer nbrChargesWithNotPricePlan, Integer nbrRejectedEDR, Integer nbrWalletOpOpen,
-            Integer nbrWalletOpTreated, Integer nbrWalletOpCancled, Integer nbrWalletOpReserved, Integer nbrWalletOpTorerate, Integer nbrWalletOpRerated, Integer nbrEdrRejected,
-            Integer nbrEdrRated, Integer nbrEdrOpen, Integer nbrJasperDir) {
+            Integer nbrWalletOpTreated, Integer nbrWalletOpCancled, Integer nbrWalletOpReserved, Integer nbrWalletOpTorerate, Integer nbrWalletOpRerated, Integer nbrWalletOpRejected, 
+            Integer nbrEdrRejected, Integer nbrEdrRated, Integer nbrEdrOpen, Integer nbrJasperDir) {
         super();
         this.nbrRejectedEDR = nbrRejectedEDR;
         this.nbrWalletOpOpen = nbrWalletOpOpen;
@@ -67,6 +69,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
         this.nbrWalletOpReserved = nbrWalletOpReserved;
         this.nbrWalletOpTorerate = nbrWalletOpTorerate;
         this.nbrWalletOpRerated = nbrWalletOpRerated;
+        this.nbrWalletOpRejected = nbrWalletOpRejected;
         this.nbrEdrRejected = nbrEdrRejected;
         this.nbrEdrRated = nbrEdrRated;
         this.nbrEdrOpen = nbrEdrOpen;
@@ -175,5 +178,13 @@ public class ConfigIssuesReportingDTO implements Serializable {
     public void setNbrEdrAggregated(Integer nbrEdrAggregated) {
         this.nbrEdrAggregated = nbrEdrAggregated;
     }
+
+	public Integer getNbrWalletOpRejected() {
+		return nbrWalletOpRejected;
+	}
+
+	public void setNbrWalletOpRejected(Integer nbrWalletOpRejected) {
+		this.nbrWalletOpRejected = nbrWalletOpRejected;
+	}
 
 }

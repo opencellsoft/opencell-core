@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -444,9 +445,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
             }
         }
-
+        
         entity = saveOrUpdate(entity);
-
+		
         if (killConversation) {
             endConversation();
         }

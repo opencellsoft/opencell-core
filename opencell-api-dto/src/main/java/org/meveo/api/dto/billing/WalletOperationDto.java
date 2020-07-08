@@ -30,6 +30,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
@@ -104,6 +105,11 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     /** The rating unit description. */
     private String ratingUnitDescription;
+    
+    /**
+     * Applied priceplan code
+     */
+    private String pricePlanCode;
 
     /**
      * Tax applied - code
@@ -217,12 +223,17 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         if (walletOperation.getSeller() != null) {
             seller = walletOperation.getSeller().getCode();
         }
-        if (walletOperation.getWallet() != null) {
-            walletId = walletOperation.getWallet().getId();
+        WalletInstance wallet = walletOperation.getWallet();
+		if (wallet != null) {
+            walletId = wallet.getId();
+            if (wallet.getWalletTemplate() != null) {
+                walletTemplate = wallet.getWalletTemplate().getCode();
+            }
+            if (wallet.getUserAccount() != null) {
+            	userAccount = wallet.getUserAccount().getCode();
+            }
         }
-        if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
-            walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();
-        }
+        
         currency = walletOperation.getCurrency().getCurrencyCode();
         type = walletOperation.getType();
         status = walletOperation.getStatus();
@@ -246,8 +257,6 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         endDate = walletOperation.getEndDate();
         operationDate = walletOperation.getOperationDate();
         subscriptionDate = walletOperation.getSubscriptionDate();
-        walletTemplate = walletOperation.getWallet().getCode();
-        userAccount = walletOperation.getWallet().getUserAccount().getCode();
         offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
@@ -255,7 +264,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
         this.customFields = customFields;
-        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
+        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;        
+        pricePlanCode = walletOperation.getPriceplan() != null ? walletOperation.getPriceplan().getCode() : null;
+
     }
 
     /**
@@ -952,6 +963,20 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+    
+    /**
+     * @return the pricePlanCode
+     */
+    public String getPricePlanCode() {
+        return pricePlanCode;
+    }
+
+    /**
+     * @param pricePlanCode the pricePlanCode to set
+     */
+    public void setPricePlanCode(String pricePlanCode) {
+        this.pricePlanCode = pricePlanCode;
     }
 
     @Override
