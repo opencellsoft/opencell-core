@@ -10,7 +10,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{cdrBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{cdrBean.objectId}" />
         </f:metadata>
 
         <o:importConstants type="org.meveo.model.rating.CDRStatusEnum" />
@@ -24,13 +24,14 @@
                 <p:menuitem outcome="cdrDetail" value="#{messages['menu.cdrDetails']}" />               
             </p:breadCrumb>
         </h:form>   
-        <hftl:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{cdrBean}" showBackButton="true" edit="false">
+        <hftl:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{cdrBean}" showBackButton="true" showEditButton="false" edit="false">
             <hftl:formField label="#{messages['cdr.accessCode']}" field="accessCode" />            
           	<hftl:formField label="#{messages['commons.status']}" field="status"/>
           	<hftl:formField label="#{messages['edr.eventDate']}" field="eventDate"/>
-          	<hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" />
+          	<hftl:formField label="#{messages['edr.rejectReason']}" field="rejectReason" />
+
             <c:forEach items="#{cdrBean.params}" var="param">
-          		<hftl:formField label="#{params[param]}" field="#{param}"/>
+          		<hftl:formField label="#{cdrBean.getParamLabel(param)}" field="#{param}"/>
             </c:forEach>
 
             <ui:param name="buttons" value="true" />
