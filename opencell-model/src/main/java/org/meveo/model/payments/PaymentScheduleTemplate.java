@@ -46,14 +46,16 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.tax.TaxClass;
+
 
 /**
  * The Class PaymentScheduleTemplate.
  *
  * @author anasseh
- * @since Opencell 5.2
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @since Opencell 5.2
+ * @lastModifiedVersion 10.0
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "PaymentScheduleTemplate")
@@ -102,7 +104,7 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     @Type(type = "numeric_boolean")
     @Column(name = "is_generate_adv_pay_inv", nullable = false)
     @NotNull
-    private boolean generateAdvancePaymentInvoice;
+    private boolean generateAdvancePaymentInvoice = true;
 
     /** The advance payment invoice sub category. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -139,6 +141,11 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     @Column(name = "filter_el", length = 2000)
     @Size(max = 2000)
     private String filterEl;
+    
+    /** The tax class. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_class_id")
+    private TaxClass taxClass;
     
 
     /**
@@ -394,6 +401,24 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     public void setFilterEl(String filterEl) {
         this.filterEl = filterEl;
     }
+
+	/**
+	 * Gets the tax class.
+	 *
+	 * @return the tax class
+	 */
+	public TaxClass getTaxClass() {
+		return taxClass;
+	}
+
+	/**
+	 * Sets the tax class.
+	 *
+	 * @param taxClass the new tax class
+	 */
+	public void setTaxClass(TaxClass taxClass) {
+		this.taxClass = taxClass;
+	}
     
     
 }

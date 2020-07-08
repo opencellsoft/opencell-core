@@ -82,6 +82,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -206,7 +207,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (cal == null) {
             throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
         }
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+
+        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
 
         Date previousChargeDate = cal.previousCalendarDate(cal.truncateDateTime(date));
         return previousChargeDate;
@@ -225,14 +227,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (cal == null) {
             throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
         }
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+
+        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
 
         Date nextChargeDate = cal.nextCalendarDate(cal.truncateDateTime(date));
         return nextChargeDate;
     }
 
     /**
-     * Determine recurring period star and end dates
+     * Determine recurring period start and end dates
      * 
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
@@ -244,8 +247,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (cal == null) {
             throw new BusinessException("Recurring charge instance has no calendar: id=" + chargeInstance.getId());
         }
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
 
+        cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
+        
         Date startPeriodDate = cal.previousCalendarDate(cal.truncateDateTime(date));
         Date endPeriodDate = cal.nextCalendarDate(cal.truncateDateTime(date));
 
@@ -1059,8 +1063,25 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             WalletOperation wo = null;
             if (chargeInstance != null) {
                 BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), dto.getQuantity());
-                wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, null, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
-                    dto.getStartDate(), dto.getEndDate(), null);
+
+                Date invoicingDate = null;
+                if (chargeInstance.getInvoicingCalendar() != null) {
+
+                    Date defaultInitDate = null;
+                    if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+                        defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
+                    } else if (chargeInstance.getServiceInstance() != null) {
+                        defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
+                    } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
+                        defaultInitDate = chargeInstance.getSubscription().getSubscriptionDate();
+                    }
+
+                    Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
+                    invoicingDate = invoicingCalendar.nextCalendarDate(dto.getOperationDate());
+                }
+
+                wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
+                    dto.getParameterExtra(), tax, dto.getStartDate(), dto.getEndDate(), null, invoicingDate);
 
             } else {
                 Seller seller = null;

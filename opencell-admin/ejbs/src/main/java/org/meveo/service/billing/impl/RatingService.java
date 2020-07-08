@@ -87,6 +87,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -259,18 +260,36 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         WalletOperation walletOperation = null;
         
-		BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
-		
+        if(quantityInChargeUnits==null) {
+            quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
+        }
+        
+        Date invoicingDate = null;
+        if (chargeInstance.getInvoicingCalendar() != null) {
+
+            Date defaultInitDate = null;
+            if (chargeInstance instanceof RecurringChargeInstance && ((RecurringChargeInstance) chargeInstance).getSubscriptionDate() != null) {
+                defaultInitDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
+            } else if (chargeInstance.getServiceInstance() != null) {
+                defaultInitDate = chargeInstance.getServiceInstance().getSubscriptionDate();
+            } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
+                defaultInitDate = chargeInstance.getSubscription().getSubscriptionDate();
+            }
+
+            Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
+            invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+        }
+
         if (isReservation) {
-            walletOperation = new WalletReservation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
+                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
         } else {
-            walletOperation = new WalletOperation(chargeInstance, inputQuantity, ratingQuantity, quantityInChargeUnits, applicationDate,
+            walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
+                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
         }
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);

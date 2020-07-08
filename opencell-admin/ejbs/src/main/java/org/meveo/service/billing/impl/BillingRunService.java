@@ -818,12 +818,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void rejectBAWithoutBillableTransactions(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
             throws BusinessException {
     	
-            List<BillingAccount> billingAccounts = billingAccountService.findNotProcessedBillingAccounts(billingRun);
+            List<Long> billingAccountIds = billingAccountService.findNotProcessedBillingAccounts(billingRun);
   
-            SubListCreator<BillingAccount> subListCreator = null;
+            SubListCreator<Long> subListCreator = null;
 
             try {
-                subListCreator = new SubListCreator<BillingAccount>(billingAccounts, (int) nbRuns);
+                subListCreator = new SubListCreator<Long>(billingAccountIds, (int) nbRuns);
             } catch (Exception e1) {
                 throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
             }
