@@ -5214,87 +5214,6 @@
 									"response": []
 								},
 								{
-									"name": "CreateOrUpdate Customer INVALID_PARAMETER",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "d79c771f-81b2-4490-9f4a-d5542ac07e82",
-												"exec": [
-													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `java.util.Date` from String\");",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "basic",
-											"basic": [
-												{
-													"key": "password",
-													"value": "{{opencell.password}}",
-													"type": "string"
-												},
-												{
-													"key": "username",
-													"value": "{{opencell.username}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_C\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"{{testCode}}_CC\",\r\n    \"customerBrand\": \"{{testCode}}_CB\",\r\n    \"seller\": \"{{testCode}}_SELLER\",\r\n    \"mandateDate\": \"INVALID\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{opencell.url}}/account/customer/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"account",
-												"customer",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "CreateOrUpdate Customer ENTITY_DOES_NOT_EXISTS_EXCEPTION 1",
 									"event": [
 										{
@@ -14011,8 +13930,8 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.offerTemplate.validFrom).to.eql(\"2020-01-01T00:00:00Z\");",
-													"    pm.expect(jsonData.offerTemplate.validTo).to.eql(\"2020-02-01T00:00:00Z\");",
+													"    pm.expect(jsonData.offerTemplate.validFrom).to.contains(\"2020-01-01T\");",
+													"    pm.expect(jsonData.offerTemplate.validTo).to.contains(\"2020-02-01T\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -21673,7 +21592,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_WLT_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"ben.ohara\",\r\n    \"subscriptionDate\": \"INVALID\",\r\n    \"chargeInstance\": \"PR_CLASSIC_DEFAULT\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\"\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_WLT_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"ben.ohara\",\r\n    \"subscriptionDate\": \"INVALID\",\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}\r\n",
 											"options": {
 												"raw": {}
 											}
@@ -22198,7 +22117,7 @@
 									"response": []
 								},
 								{
-									"name": "Read Subscription SUCCESS Copy",
+									"name": "Read Subscription SUCCESS",
 									"event": [
 										{
 											"listen": "test",
@@ -34968,7 +34887,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, calendarCode, serviceTemplateCode, paymentDayInMonth, amount, paymentLabel, advancePaymentInvoiceTypeCode, advancePaymentInvoiceSubCategoryCode, generateAdvancePaymentInvoice, doPayment.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, calendarCode, serviceTemplateCode, paymentDayInMonth, amount, paymentLabel, advancePaymentInvoiceTypeCode, advancePaymentInvoiceSubCategoryCode, doPayment.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -52423,7 +52342,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated or activated.\");",
+													"    pm.expect(jsonData.message).to.contain(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -94650,7 +94569,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\",\r\n    \"description\": \"Dunning workflow from class\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.admin.wf.types.DunningWF\",\r\n    \"initStatus\": \"R0\",\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R0\",\r\n            \"toStatus\": \"R1\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R1\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningWorkflow\",\r\n    \"description\": \"Dunning workflow from class\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.admin.wf.types.DunningWF\",\r\n    \"initStatus\": \"R0\",\r\n    \"status\": [\r\n        {\r\n            \"code\": \"R0\"\r\n        }\r\n    ],\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R0\",\r\n            \"toStatus\": \"R1\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R1\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -94731,7 +94650,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\",\r\n    \"description\": \"Dunning workflow from script\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.service.script.DunningWFTypeScript\",\r\n    \"initStatus\": \"R0\",\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R1\",\r\n            \"toStatus\": \"R2\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R2\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_DunningRunTimeWF\",\r\n    \"description\": \"Dunning workflow from script\",\r\n    \"enableHistory\": \"true\",\r\n    \"targetEntityClass\": \"org.meveo.service.script.DunningWFTypeScript\",\r\n    \"initStatus\": \"R0\",\r\n    \"status\": [\r\n        {\r\n            \"code\": \"R0\"\r\n        }\r\n    ],\r\n    \"transition\": [\r\n        {\r\n            \"fromStatus\": \"R1\",\r\n            \"toStatus\": \"R2\",\r\n            \"conditionEl\": \"#{true}\",\r\n            \"description\": \"DESCRIPTION to R2\",\r\n            \"actionScriptCode\": \"#{mv:executeScript(entity,\\\"org.meveo.service.script.TheAction\\\",null)}\"\r\n        }\r\n    ]\r\n}\r\n",
 											"options": {
 												"raw": {}
 											}
@@ -94909,7 +94828,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"baseEntityName\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"entityInstanceCode\": \"{{entityPrefix}}_{{index}}_WF_CA\",\r\n    \"workflowCode\": \"{{baseEntityPrefix}}_DunningWorkflow\"\r\n}\r\n",
+											"raw": "",
 											"options": {
 												"raw": {}
 											}
@@ -95004,7 +94923,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"baseEntityName\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"entityInstanceCode\": \"{{entityPrefix}}_{{index}}_WF_CA\",\r\n    \"workflowCode\": \"{{baseEntityPrefix}}_DunningRunTimeWF\"\r\n}\r\n",
+											"raw": "",
 											"options": {
 												"raw": {}
 											}
@@ -96764,7 +96683,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"scriptType\": \"SQL\",\n    \"filenameFormat\": \"#{re.category}_accounts-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"sqlQuery\": \"select code, description from ${dbSchema}account_entity where :START_DATE<>:END_DATE\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"scriptType\": \"SQL\",\n    \"filenameFormat\": \"#{re.category}_accounts-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"sqlQuery\": \"select code, description from account_entity where :START_DATE<>:END_DATE\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
 											"options": {
 												"raw": {}
 											}
@@ -99792,22 +99711,7 @@
 												"id": "6966b375-3506-4380-be74-ad8a86591b5e",
 												"exec": [
 													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"    pm.response.to.have.status(201);",
 													"});"
 												],
 												"type": "text/javascript"
@@ -99872,22 +99776,7 @@
 												"id": "54e1f919-a98c-4e3b-afe1-b65631a509f9",
 												"exec": [
 													"pm.test(request.name + \" - Check Code\", function () {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(request.name + \" - Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"    pm.response.to.have.status(201);",
 													"});"
 												],
 												"type": "text/javascript"
@@ -104409,7 +104298,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-07T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-07T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104505,7 +104394,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-08T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-08T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104601,7 +104490,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-09T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-09T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(true);",
 													"});",
 													""
@@ -104697,7 +104586,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-01-01T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-01-01T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104793,7 +104682,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-05-01T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-05-01T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(false);",
 													"});",
 													""
@@ -104889,7 +104778,7 @@
 													"",
 													"pm.test(request.name + \" - Check Data\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.bankingDateStatus.date).to.eql(\"2017-02-14T00:00:00Z\");",
+													"    pm.expect(jsonData.bankingDateStatus.date).to.contains(\"2017-02-14T\");",
 													"    pm.expect(jsonData.bankingDateStatus.isWorkingDate).to.eql(true);",
 													"});",
 													""
@@ -108882,97 +108771,97 @@
 	],
 	"variable": [
 		{
-			"id": "6c17c2c7-7b02-4df5-97e6-ba9e8553d81c",
+			"id": "c7509a96-6c71-45e5-9f88-f24709ef68a7",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "f0b66cdd-62dd-48ab-80f6-a362ae9f80d4",
+			"id": "5c0be912-499e-4ca3-ba54-1cc69f0db513",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "5cff9cc1-7ea9-4449-9896-82c12b5cf85f",
+			"id": "77397b30-7a42-40ef-8a50-be2c7fe290ec",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "6f29e0a4-20a2-4d2c-a402-437066dbee10",
+			"id": "6bdba9c2-c4e6-4219-9b2a-afb944279861",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "064c5da9-fa0d-4606-ae21-b23700cabf89",
+			"id": "45b373d7-94bc-4c2f-8042-c0e3a680bfcb",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c600ba0e-237d-4a93-9bb8-e277083ebd56",
+			"id": "09cf235f-52c0-4f35-9c0c-053906e4b2a3",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5a372e51-067c-499a-80bc-594852cd4972",
+			"id": "564084a2-fbca-49aa-8ea1-80daff6de9ca",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "41a2a42c-c93b-4785-8544-db51c314c7e5",
+			"id": "02147d76-2f0f-4192-8eca-4a9b0a3df135",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "0b99c674-2550-49b0-a56b-9d0177edb28b",
+			"id": "d63d8f7e-f0dc-4cbf-a21d-68280e6e86c6",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "9393b863-03e2-4d99-8a59-3e08d1ae6810",
+			"id": "0360aaed-d391-42ba-baad-03c9e890e96d",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "df7c60bb-3dff-4a80-8d75-bae612328526",
+			"id": "848ddf21-810a-499b-bdcb-72e69f6e0bbd",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "f252903c-01b6-4759-9948-6fdf116ffca2",
+			"id": "5413a87c-db06-4c1d-ac82-5e8fec6051e8",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "e2b1c3c9-0cbc-40b3-bfb1-d013201d43b6",
+			"id": "0a3a1cf9-7d42-44c8-b3cd-61becbea14c7",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "965961a3-d636-48cb-bb97-fe795a408985",
+			"id": "f77b0274-deb7-42a2-9028-45e0e69e7c92",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "df253b04-a40f-4cf3-9100-91d4506d9cf9",
+			"id": "14d9b4ad-c03c-4321-91f7-7531fbbee1f0",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "978e56b0-5bc2-4a6f-b745-026e77637c8a",
+			"id": "2c36f648-eb14-48f3-b522-42a71da88bc6",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "af516649-1743-4e56-b379-b285b8ddd836",
+			"id": "7d3b2d6a-f7cb-4f3a-92f1-a5766808e7a1",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "782a3679-7bf6-48cf-b041-5f726933a65d",
+			"id": "bfde14ec-1389-4381-9457-a9360e9291dd",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "562bb864-2fdb-4fd7-999b-a21f39b8a8e6",
+			"id": "a9d32f4e-aba0-47c6-adca-3fb1cc72e917",
 			"key": "project.version",
 			"value": "9.2+"
 		}
