@@ -32,16 +32,19 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.RatedTransactionAsync;
 import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
+import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.filter.FilterService;
 import org.slf4j.Logger;
 
 /**
@@ -65,6 +68,12 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionAsync ratedTransactionAsync;
 
+    @Inject
+    private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
+
+    @Inject
+    private FilterService filterService;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -77,26 +86,18 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
-            RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
-            aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
+            WalletOperationAggregationSettings aggregationSettings = null;
+            if (aggregationSettingsWrapper != null) {
+                aggregationSettings = (walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()) == null
+                        || walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).isEmpty()) ?
+                        null :
+                        walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).get(0);
+            }
             removeZeroWalletOperation();
-            if (aggregationSetting.isEnable()) {
-                aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
-                aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
-                String aggregationLevel = ((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"));
-                if (aggregationLevel == null) {
-                    throw new BusinessException("Rated transactions aggregation is enabled, but aggregation level is not specified");
-                }
-                aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(aggregationLevel));
-                aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder", false));
-                aggregationSetting.setAggregateByUnitAmount((boolean) this.getParamOrCFValue(jobInstance, "aggregateByUnitAmount", false));
-                aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1", false));
-                aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2", false));
-                aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3", false));
-                aggregationSetting.setAggregateByExtraParam((boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam", false));
-
-                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
+            if (aggregationSettings != null) {
+                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSettings);
 
             } else {
                 executeWithoutAggregation(result, nbRuns, waitingMillis);
@@ -151,8 +152,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         result.setDone(walletOperations.isEmpty());
     }
 
-    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, RatedTransactionsJobAggregationSetting aggregationSetting)
-            throws Exception {
+    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, WalletOperationAggregationSettings aggregationSetting) throws Exception {
         Date invoicingDate = new Date();
         List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate, aggregationSetting);
 

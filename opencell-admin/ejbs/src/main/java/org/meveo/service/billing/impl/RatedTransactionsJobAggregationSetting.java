@@ -18,6 +18,9 @@
 
 package org.meveo.service.billing.impl;
 
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.filter.Filter;
+
 import java.io.Serializable;
 
 /**
@@ -82,10 +85,26 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	 * Whether to aggregate by extra param.
 	 */
 	private boolean aggregateByExtraParam = false;
+	/**
+	 * The aggregation matrix to aggregate multiple WO in one RT
+	 */
+	private WalletOperationAggregationSettings walletOperationAggregationSettings;
+	/**
+	 * Filter WO
+	 */
+	private Filter filter;
+	/**
+	 * EL expression to get other aggregation setting
+	 */
+	private String aggregationKeyEl;
+	/**
+	 * Aggregat by continious periods
+	 */
+	private boolean periodAggregation;
 
 	/*
 	 * Aggregation level
-	 * 
+	 *
 	 * <pre>
 	 * BA - BillingAccount
 	 * UA - UserAccount
@@ -274,5 +293,37 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	 */
 	public void setAggregateByUnitAmount(boolean aggregateByUnitAmount) {
 		this.aggregateByUnitAmount = aggregateByUnitAmount;
+	}
+
+	public WalletOperationAggregationSettings getWalletOperationAggregationSettings() {
+		return walletOperationAggregationSettings;
+	}
+
+	public void setWalletOperationAggregationSettings(WalletOperationAggregationSettings walletOperationAggregationSettings) {
+		this.walletOperationAggregationSettings = walletOperationAggregationSettings;
+	}
+
+	public Filter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Filter filter) {
+		this.filter = filter;
+	}
+
+	public String getAggregationKeyEl() {
+		return aggregationKeyEl;
+	}
+
+	public void setAggregationKeyEl(String aggregationKeyEl) {
+		this.aggregationKeyEl = aggregationKeyEl;
+	}
+
+	public boolean isPeriodAggregation() {
+		return periodAggregation;
+	}
+
+	public void setPeriodAggregation(boolean periodAggregation) {
+		this.periodAggregation = periodAggregation;
 	}
 }

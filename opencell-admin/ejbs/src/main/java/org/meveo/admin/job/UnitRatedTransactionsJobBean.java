@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -69,7 +70,7 @@ public class UnitRatedTransactionsJobBean {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
+    public void execute(JobExecutionResultImpl result, AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregationSettings, Date invoicingDate) {
         log.debug("Running with aggregatedWo={}", aggregatedWo);
         try {
             ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);

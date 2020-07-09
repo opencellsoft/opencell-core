@@ -86,6 +86,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 
@@ -187,6 +188,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected CfValueAccumulator cfValueAccumulator;
+
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
 
     /**
      * Constructor.
@@ -819,8 +823,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li><b>ne</b>. Not equal.
      * <li><b>neOptional</b>. Not equal. Field value is optional.
      * </ul>
-     * 
-     * 
+     *
+     *
      * "eq" is a default condition when no condition is not specified
      *
      * Following special meaning values are supported:
@@ -904,7 +908,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         queryBuilder.addValueIsGreaterThanField(fieldWAlias, filterValue, "fromOptionalRange".equals(condition));
 
                         // if ranged search - field value in between from - to values. Specifies "to" value: e.g fieldValue<value or fieldValue<=value
-                    } else if ("toRange".equals(condition) || "toRangeInclusive".equals(condition) || "toOptionalRange".equals(condition) || "toOptionalRangeInclusive".equals(condition)) {
+                    } else if ("toRange".equals(condition) || "toRangeInclusive".equals(condition) || "toOptionalRange".equals(condition) || "toOptionalRangeInclusive"
+                            .equals(condition)) {
                         queryBuilder.addValueIsLessThanField(fieldWAlias, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
 
                         // Value, which is a list, should be in field value (list)
@@ -982,7 +987,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         }
 
                         // The value is in between two field values with optionally either them being optional eg. field1Value<=value<field2Value or field1Value<=value<=field2Value
-                    } else if ("minmaxRange".equals(condition) || "minmaxRangeInclusive".equals(condition) || "minmaxOptionalRange".equals(condition) || "minmaxOptionalRangeInclusive".equals(condition)) {
+                    } else if ("minmaxRange".equals(condition) || "minmaxRangeInclusive".equals(condition) || "minmaxOptionalRange".equals(condition)
+                            || "minmaxOptionalRangeInclusive".equals(condition)) {
 
                         queryBuilder.addValueInBetweenTwoFields(fieldWAlias, fieldWAlias2, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
 
@@ -1066,8 +1072,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDateTruncatedToDay("a.auditable." + k, (Date) value));
 
                         // Search by equals/not equals to a string, date, number, boolean, enum or list value
-                    } else if (filterValue instanceof String || filterValue instanceof Date || filterValue instanceof Number || filterValue instanceof Boolean || filterValue instanceof Enum
-                            || filterValue instanceof List) {
+                    } else if (filterValue instanceof String || filterValue instanceof Date || filterValue instanceof Number || filterValue instanceof Boolean
+                            || filterValue instanceof Enum || filterValue instanceof List) {
 
                         queryBuilder.addValueIsEqualToField(fieldWAlias, filterValue, condition.startsWith("ne"), condition.endsWith("Optional"));
 

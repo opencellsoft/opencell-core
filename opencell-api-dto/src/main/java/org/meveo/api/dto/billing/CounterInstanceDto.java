@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.billing;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,7 @@ public class CounterInstanceDto extends BusinessEntityDto {
         if (periods == null) {
             return;
         }
+        periods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
         List<CounterPeriodDto> counterPeriodDtos = periods.stream().map(cp -> {
             CounterPeriodDto dto = new CounterPeriodDto();
             dto.setCounterType(cp.getCounterType());
