@@ -82,7 +82,7 @@ public class CdrBean extends BaseBean<CDR> {
         return cfs.get(param).getFieldType().equals(CustomFieldTypeEnum.DATE);
     }
     public String getParamLabel(String param) {
-        return cfs.get(param).getDescription();
+        return cfs.get(param).getDescription(getProviderLanguageCode());
     }
 
     @Override
@@ -95,22 +95,18 @@ public class CdrBean extends BaseBean<CDR> {
     }
     
     public void writeOff() {
-        getEntity().setStatus(CDRStatusEnum.DISCARDED);
-        getEntity().setRejectReason(writeOffReason);
-        cdrService.update(getEntity());
+        cdrService.writeOff(Arrays.asList(getEntity().getId()), writeOffReason);
         writeOffReason = "";
     }
 
     public boolean canReprocess(CDR cdr) {
-        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
-        if(authorizedStatuses.contains(cdr.getStatus())) {
+        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
             return true;
         }
         return false;
     }
     public boolean canWriteOff(CDR cdr) {
-        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
-        if(authorizedStatuses.contains(cdr.getStatus())) {
+        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
             return true;
         }
         return false;
@@ -119,12 +115,10 @@ public class CdrBean extends BaseBean<CDR> {
         if (getSelectedEntities() == null) {
             return;
         }
-        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
-
         log.debug("Reprocessing {} cdrs", getSelectedEntities().size());
 
         List<Long> selectedIds = getSelectedEntities().parallelStream()
-                                        .filter(cdr -> authorizedStatuses.contains(cdr.getStatus()))
+                                        .filter(cdr -> CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))
                                         .map(CDR::getId)
                                         .collect(Collectors.toList());
         cdrService.reprocess(selectedIds);
@@ -134,17 +128,9 @@ public class CdrBean extends BaseBean<CDR> {
         if (getSelectedEntities() == null) {
             return;
         }
-        List<CDRStatusEnum> authorizedStatuses = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.ERROR);
-
         log.debug("Writing off {}  cdrs", getSelectedEntities().size());
-
-        getSelectedEntities().parallelStream()
-                             .filter(cdr -> authorizedStatuses.contains(cdr.getStatus()))
-                             .forEach(cdr->{
-                                 cdr.setStatus(CDRStatusEnum.DISCARDED);
-                                 cdr.setRejectReason(writeOffReason);
-                                 cdrService.update(cdr);
-                             });
+        List<Long> selectedIds = getSelectedEntities().stream().map(CDR::getId).collect(Collectors.toList());
+        cdrService.writeOff(selectedIds, writeOffReason);
         writeOffReason = "";
     }
     
