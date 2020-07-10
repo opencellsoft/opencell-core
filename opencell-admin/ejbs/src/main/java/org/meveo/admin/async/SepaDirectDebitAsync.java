@@ -39,6 +39,7 @@ import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
 import org.meveo.admin.sepa.SepaFile;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -54,6 +55,7 @@ import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Name;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
@@ -80,6 +82,10 @@ public class SepaDirectDebitAsync {
 	/** The account operation service. */
 	@Inject
 	private AccountOperationService accountOperationService;
+	
+	/** The seller service. */
+    @Inject
+    private SellerService sellerService;
 
 	/** The dd request LOT service. */
 	@Inject
@@ -149,7 +155,8 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
 		ddRequestLOT.setSendDate(new Date());
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-		ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
+		Seller seller = sellerService.refreshOrRetrieve(ddrequestLotOp.getSeller());
+		ddRequestLOT.setSeller(seller);
 		ddRequestLOTService.create(ddRequestLOT);
         ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		int nbItemsKo = 0;

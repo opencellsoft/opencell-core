@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.BusinessService;
@@ -276,14 +277,31 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     }
     
     
-    public BigDecimal evaluateEffectiveUnitMultiplicator(ChargeTemplate chargeTemplate) throws BusinessException {
-    	return evaluateRatingQuantity(chargeTemplate, BigDecimal.ONE);
-    }
-    
+	/**
+	 * calculate rating quantity to be used based on chargeTemplate:
+	 * 
+	 * First evaluate inputUnitEl and ratingUnitEl When an EL is not defined, then
+	 * use the corresponding unit field (resp input and rating) if we have both
+	 * units (from ELs or reference fields), then ignore unitMultiplicator and
+	 * compute multiplicator from units. if we don't have both units, then use
+	 * unitMultiplicator from ChargeTemplate ultimately, if unitMultiplicator is not
+	 * set, then use default value of 1
+	 * 
+	 * 
+	 * @param chargeTemplate
+	 * @param quantity
+	 * @return
+	 * @throws BusinessException
+	 */
 	public BigDecimal evaluateRatingQuantity(ChargeTemplate chargeTemplate, BigDecimal quantity) throws BusinessException {
 		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
 		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
 		BigDecimal multiplicator = chargeTemplate.getUnitMultiplicator();
+		RoundingModeEnum roundingMode = chargeTemplate.getRoundingMode();
+		int unitNbDecimal = chargeTemplate.getUnitNbDecimal();
+        if (unitNbDecimal == 0) {
+            unitNbDecimal = 2;
+        }
 
 		inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
 		outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
@@ -304,9 +322,9 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 							+ inputUnitFromEL + "/" + outputUnitFromEL);
 			}
 		} else if (multiplicator != null) {
-			return quantity.multiply(multiplicator);
+			return quantity.multiply(multiplicator).setScale(unitNbDecimal, roundingMode.getRoundingMode());
 		}
-		return quantity;
+		return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
 	}
 
 	/**

@@ -248,7 +248,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.incrementBAInvoiceDate(billingRun, ba, true);
+                invoiceService.incrementBAInvoiceDate(billingRun, ba);
         		String reason = null;
         	    if(ba.getNextInvoiceDate()==null) {
         	    	reason = "Next Invoicing Date is null";
