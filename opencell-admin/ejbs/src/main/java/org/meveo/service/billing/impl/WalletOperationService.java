@@ -166,8 +166,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
-                quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
+        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
+            new Object[] { subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
         RatingResult ratingResult = ratingService
                 .rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
@@ -195,7 +195,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (immediateInvoicing != null && immediateInvoicing) {
             BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
-            int delay = billingAccount.getBillingCycle().getInvoiceDateDelay();
+            int delay = InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperation, billingAccount);
             Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
             nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
             applicationDate = DateUtils.setTimeToZero(applicationDate);
@@ -606,12 +606,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
                         // The counter will be incremented by charge quantity
                         if (counterPeriod == null) {
-                            counterPeriod = counterInstanceService
-                                    .getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                                            chargeInstance, chargeInstance.getServiceInstance());
+                            counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                                chargeInstance.getServiceInstance());
                         }
                     }
-                    
+
                     log.debug("Increment accumulator counter period value {} by the WO's amount {} or quantity {} ", counterPeriod, wo.getAmountWithoutTax(), wo.getQuantity());
                     counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
                 }
