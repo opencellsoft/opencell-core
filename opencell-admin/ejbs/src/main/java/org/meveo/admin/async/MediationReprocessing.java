@@ -109,7 +109,7 @@ public class MediationReprocessing {
                 }
 	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
 	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
-				log.debug("Processing record line content:{}", cdr.getLine());
+				log.debug("Processing cdr id:{}", cdr.getId());
 
 				cdrParserService.createEdrs(edrs,cdr);
 
@@ -117,19 +117,19 @@ public class MediationReprocessing {
 
 			} catch (IOException e) {
 				log.error("Failed to read a CDR line", e);
-				result.addReport("Failed to read a CDR line " + e.getMessage());
+				result.addReport("Failed to read a CDR " + e.getMessage());
 				break;
 
 			} catch (Exception e) {
 
 				String errorReason = e.getMessage();
 				if (e instanceof CDRParsingException) {
-					log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason);
+					log.error("Failed to process CDR id: {} error {}", cdr != null ? cdr.getId() : null, errorReason);
 				} else {
-					log.error("Failed to process a CDR line: {}  error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
+					log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
 				}
 
-				result.registerError("line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
+				result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
 			}
 		}
 		return new AsyncResult<String>("OK");

@@ -84,9 +84,9 @@ public class MediationReprocessingJobBean {
 
         try {
             cdrReader = (ICdrReader) scriptInstanceService.getScriptInstance(readerCode);
-            
-            cdrParser = (ICdrParser) scriptInstanceService.getScriptInstance(parserCode);
+            cdrReader.init("DB");
 
+            cdrParser = (ICdrParser) scriptInstanceService.getScriptInstance(parserCode);
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
