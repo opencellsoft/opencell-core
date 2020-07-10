@@ -311,6 +311,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
         ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
         ratedTransaction.setSortIndex(aggregatedWo.getSortIndex());
+        ratedTransaction.setStartDate(aggregatedWo.getStartDate());
+        ratedTransaction.setEndDate(aggregatedWo.getEndDate());
         populateCustomfield(ratedTransaction, aggregatedWo);
         if (!isVirtual) {
             create(ratedTransaction);
