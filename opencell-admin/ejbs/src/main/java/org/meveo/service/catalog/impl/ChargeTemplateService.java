@@ -322,10 +322,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		
 	}
 	
-public static void main(String[] args) {
-	BigDecimal a = new BigDecimal("1234446.11");
-	System.out.println(a.toBigInteger().bitCount());
-}
 	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
 		UnitOfMeasure unitFromEL = null;
 		if (!StringUtils.isBlank(expression)) {
