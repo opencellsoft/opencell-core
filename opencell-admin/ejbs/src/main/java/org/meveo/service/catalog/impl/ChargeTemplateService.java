@@ -19,6 +19,7 @@ package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -307,8 +309,10 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		if (inputUnitFromEL != null || outputUnitFromEL != null) {
 			if (inputUnitFromEL != null && outputUnitFromEL != null) {
 				if (inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
-			        quantity = quantity.multiply(BigDecimal.valueOf(inputUnitFromEL.getMultiplicator())).divide(BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()));
-			        return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
+					BigDecimal outputMultiplicator = BigDecimal.valueOf(outputUnitFromEL.getMultiplicator());
+					BigDecimal inputMultiplicator = BigDecimal.valueOf(inputUnitFromEL.getMultiplicator());
+					Integer scale = calculateNeededScale(inputMultiplicator, outputMultiplicator);
+					return quantity.multiply(inputMultiplicator).divide(outputMultiplicator, scale, RoundingMode.HALF_UP);
 				} else {
 					throw new BusinessException("incompatible input/rating UnitOfMeasures: " + inputUnitFromEL 
 							+ "/" + outputUnitFromEL +" for chargeTemplate "+chargeTemplate.getCode());
@@ -323,6 +327,19 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		return quantity.setScale(unitNbDecimal, roundingMode.getRoundingMode());
 	}
 
+	/**
+	 * This method calculate the needed scale based on default scale + the difference of precision from the two numbers
+	 * 
+	 * @param inputMultiplicator
+	 * @param outputMultiplicator
+	 * 
+	 * @return scale
+	 */
+	private Integer calculateNeededScale(BigDecimal inputMultiplicator, BigDecimal outputMultiplicator) {
+		return BaseEntity.NB_DECIMALS + Math.abs(inputMultiplicator.toBigInteger().toString().length() - outputMultiplicator.toBigInteger().toString().length()) ;
+		
+	}
+	
 	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
 		UnitOfMeasure unitFromEL = null;
 		if (!StringUtils.isBlank(expression)) {
