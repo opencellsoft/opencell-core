@@ -270,9 +270,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
-    
-    @Inject
-    private BillingCycleService billingCycleService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -648,14 +645,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
-     * @param entityToInvoice        entity to be billed
-     * @param billingRun             billing run
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate            date of invoice
-     * @param firstTransactionDate   date of first transaction
-     * @param lastTransactionDate    date of last transaction
-     * @param minAmountForAccounts   Check if min amount is enabled in any account level
-     * @param isDraft                Is this a draft invoice
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param isDraft Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -670,14 +667,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates
      *
-     * @param entityToInvoice        entity to be billed
-     * @param billingRun             billing run
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate            date of invoice
-     * @param firstTransactionDate   date of first transaction
-     * @param lastTransactionDate    date of last transaction
-     * @param minAmountForAccounts   Check if min amount is enabled in any account level
-     * @param isDraft                Is this a draft invoice
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param isDraft Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -948,8 +945,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                         subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
                     }
-                    
-                    invoice = invoiceService.evalDueDate(invoice, rtGroup.getBillingCycle());
+
+                    setInvoiceDueDate(invoice, rtGroup.getBillingCycle());
 
 // End of alternative 1 for 4326   
 // Start of alternative 2 for 4326       
@@ -2151,7 +2148,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return result of evaluation
      * @throws BusinessException business exception.
      */
-    public Integer evaluateDueDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
+    public static Integer evaluateDueDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
         Integer result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
@@ -2290,9 +2287,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (billingCycle != null && billingCycle.getInvoiceType() != null && !StringUtils.isBlank(billingCycle.getInvoiceType().getBillingTemplateName())) {
             billingTemplateName = billingCycle.getInvoiceType().getBillingTemplateName();
-
-        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
-            billingTemplateName = billingCycle.getBillingTemplateName();
         }
 
         return billingTemplateName;
@@ -2357,7 +2351,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
     }
-    
+
     /**
      * Increment BA invoice date.
      * 
@@ -2367,7 +2361,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
-        
+
         Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
         Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
 
@@ -2378,7 +2372,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return billingAccount;
     }
-    
+
     /**
      * Increment BA invoice date.
      * 
@@ -2390,7 +2384,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void incrementBAInvoiceDateInNewTx(BillingRun billingRun, Long billingAccountId) throws BusinessException {
-        
+
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
         incrementBAInvoiceDate(billingRun, billingAccount);
     }
@@ -3345,37 +3339,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return invoice;
     }
-    
-    private Invoice evalDueDate(Invoice invoice, BillingCycle billingCycle) {
-    
+
+    private void setInvoiceDueDate(Invoice invoice, BillingCycle billingCycle) {
+
         BillingAccount billingAccount = invoice.getBillingAccount();
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
         Order order = invoice.getOrder();
-            
+
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
-        Integer delay = billingCycle.getDueDateDelay();
+        Integer delay = 0;
         if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
-    
+
         } else if (!StringUtils.isBlank(customerAccount.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(customerAccount.getDueDateDelayEL(), billingAccount, invoice, order);
-    
+
         } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
         }
         if (delay == null) {
-            delay = billingCycle.getDueDateDelay();
-        }
-    
-        Date dueDate = invoice.getInvoiceDate();
-        if (delay != null) {
-            dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
-        } else {
             throw new BusinessException("Due date delay is null");
         }
+
+        Date dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
+
         invoice.setDueDate(dueDate);
-        
-        return invoice;
+    }
+
+    /**
+     * Resolve Invoice production date delay for a given billing run
+     * 
+     * @param el EL expression to resolve
+     * @param billingRun Billing run
+     * @return An integer value
+     */
+    public static Integer resolveInvoiceProductionDateDelay(String el, BillingRun billingRun) {
+        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
     }
 
     /**
@@ -3927,5 +3926,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
         accountsAmounts.put(CustomerAccount.class, caAmounts);
         accountsAmounts.put(Customer.class, custAmounts);
         return accountsAmounts;
+    }
+    
+
+    /**
+     * Resolve Invoice production date delay for a given billing run
+     * 
+     * @param el EL expression to resolve
+     * @param billingRun Billing run
+     * @return An integer value
+     */
+    public static Integer resolveInvoiceDateDelay(String el, BillingRun billingRun) {
+        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
+    }
+    
+
+    /**
+     * Resolve Invoice date delay for given parameters
+     * 
+     * @param el EL expression to resolve
+     * @param parameters A list of parameters
+     * @return An integer value
+     */
+    public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) {
+        return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
     }
 }
