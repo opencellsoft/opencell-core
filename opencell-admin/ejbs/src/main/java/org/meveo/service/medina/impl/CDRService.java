@@ -23,7 +23,9 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -45,7 +47,34 @@ public class CDRService extends PersistenceService<CDR> {
 		return super.update(cdr);
 	}
 
-    public void reprocess(List<Long> selectedIds) throws BusinessException {
-        
+    public void reprocess(List<Long> ids) throws BusinessException {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to reprocess CDR");
+        }
+        CDR cdr;
+        for(Long id : ids) {
+           cdr = findById(id);
+           if(cdr == null) {
+               throw new BusinessException("CDR not found with id: " + id);
+           }
+           cdr.setStatus(CDRStatusEnum.TO_REPROCESS);
+           update(cdr);
+        }
+    }
+    
+    public void writeOff(List<Long> ids, String writeOffReason) throws BusinessException {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+        CDR cdr;
+        for(Long id : ids) {
+           cdr = findById(id);
+           if(cdr == null) {
+               throw new BusinessException("CDR not found with id: " + id);
+           }
+           cdr.setStatus(CDRStatusEnum.DISCARDED);
+           cdr.setRejectReason(writeOffReason);
+           update(cdr);
+        }
     }
 }
