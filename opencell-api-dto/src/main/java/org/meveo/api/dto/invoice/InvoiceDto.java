@@ -197,7 +197,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * This option is allowed only if invoiceMode=="DETAILLED"
      * 
      */
-    protected List<Long> ratedTransactionsTolink;
+    protected List<Long> ratedTransactionsToLink;
 
 
     /**
@@ -206,7 +206,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * @return the ratedTransactionsTolink
      */
     public List<Long> getRatedTransactionsTolink() {
-		return ratedTransactionsTolink;
+		return ratedTransactionsToLink;
 	}
 
     /**
@@ -215,7 +215,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * @param the ratedTransactionTolink
      */
 	public void setRatedTransactionsTolink(List<Long> ratedTransactionsTolink) {
-		this.ratedTransactionsTolink = ratedTransactionsTolink;
+		this.ratedTransactionsToLink = ratedTransactionsTolink;
 	}
 
 	/**

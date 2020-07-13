@@ -3778,7 +3778,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			ratedTransactionsTolink = ratedTransactionService.listByBillingAccountAndIDs(billingAccount.getId(), uniqueIds);
 			if (ratedTransactionsTolink == null || ratedTransactionsTolink.size() != uniqueIds.size()) {
-				Set<Long> matchedIds = new HashSet<>();
+				Set<Long> matchedIds = ratedTransactionsTolink.stream().map(x -> x.getId()).collect(Collectors.toSet());
 				uniqueIds.removeIf(id -> !matchedIds.add(id));
 				throw new BusinessException("ratedTransactionsTolink contains invalid Ids: " + uniqueIds.toString());
 			}
