@@ -3432,7 +3432,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED == invoiceDTO.getInvoiceMode();
         
         Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap = extractMappedRatedTransactionsTolink(invoiceDTO, billingAccount);
-		Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap = existingRtsTolinkMap.isEmpty() ? new TreeMap<InvoiceCategory, List<InvoiceSubCategory>>() : existingRtsTolinkMap.keySet().stream().collect(Collectors.groupingBy(InvoiceSubCategory::getInvoiceCategory));
+		Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap = existingRtsTolinkMap.isEmpty() ? new HashMap<InvoiceCategory, List<InvoiceSubCategory>>() : existingRtsTolinkMap.keySet().stream().collect(Collectors.groupingBy(InvoiceSubCategory::getInvoiceCategory));
         Invoice invoice = this.initInvoice(invoiceDTO, billingAccount, invoiceType, seller);
 
         for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
@@ -3449,7 +3449,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 	linkRTsByIdsFromDTO(isEnterprise, existingRtsTolinkMap, invoice, invoiceSubCategory, invoiceAgregateSubcat);
                 }
                 linkExistingRTsForCommercialInvoice(invoiceDTO, isEnterprise, invoice, userAccount, invoiceSubCategory, invoiceAgregateSubcat);
-                saveInvoiceSubCatAndRts(invoice, invoiceAgregateSubcat, billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode, isDetailledInvoiceMode, catInvAgrDto);
+                saveInvoiceSubCatAndRts(invoice, invoiceAgregateSubcat, subCatInvAgrDTO, billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode, isDetailledInvoiceMode);
                 addSubCategoryAmountsToCategory(invoiceAgregateCat, invoiceAgregateSubcat);
             }
             
@@ -3566,19 +3566,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoiceAgregateCat.addAmountWithTax(invoiceAgregateSubcat.getAmountWithTax());
 	}
 	
-	private void saveInvoiceSubCatAndRts( Invoice invoice, SubCategoryInvoiceAgregate invoiceAgregateSubcat, BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, 
-			boolean isEnterprise, Auditable auditable, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, boolean isDetailledInvoiceMode, CategoryInvoiceAgregateDto subCatInvAgrDTO) {
+	private void saveInvoiceSubCatAndRts( Invoice invoice, SubCategoryInvoiceAgregate invoiceAgregateSubcat, SubCategoryInvoiceAgregateDto invAgrCatDTO, BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, 
+			boolean isEnterprise, Auditable auditable, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, boolean isDetailledInvoiceMode) {
 		List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 		if (isDetailledInvoiceMode) {
 	        invoiceAgregateSubcat.setItemNumber(invoiceAgregateSubcat.getRatedtransactionsToAssociate().size());
 	        putTaxInvoiceAgregate(billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoice, invoiceAgregateSubcat, invoiceRounding, invoiceRoundingMode);
 			ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
 		} else {
-			if (subCatInvAgrDTO.getAmountWithoutTax() == null || subCatInvAgrDTO.getAmountWithTax() == null || subCatInvAgrDTO.getAmountTax() == null) {
+			if (invAgrCatDTO.getAmountWithoutTax() == null || invAgrCatDTO.getAmountWithTax() == null || invAgrCatDTO.getAmountTax() == null) {
 	            throw new InvalidParameterException("For aggregated invoices, all amounts: amount without tax, tax amount and amount with tax must be provided ");
 	        }
 			// we add subCatAmountWithoutTax, in the case if there any opened RT to include
-			BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), subCatInvAgrDTO.getAmountTax(), isEnterprise,
+			BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(invAgrCatDTO.getAmountWithoutTax(), invAgrCatDTO.getAmountWithTax(), invAgrCatDTO.getAmountTax(), isEnterprise,
 			    invoiceRounding, invoiceRoundingMode.getRoundingMode());
 			invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
 			invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
@@ -3651,7 +3651,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		rt.setInvoice(invoice);
 		rt.setInvoiceAgregateF(invoiceAgregateSubcat);
 		invoiceAgregateSubcat.addRatedTransaction(rt, isEnterprise);
-        invoiceAgregateSubcat.addAmountWithoutTax(rt.getAmountWithoutTax());
+        addRTAmountsToSubcategoryInvoiceAggregate(invoiceAgregateSubcat, rt);
+	}
+
+	private void addRTAmountsToSubcategoryInvoiceAggregate(SubCategoryInvoiceAgregate invoiceAgregateSubcat,
+			RatedTransaction rt) {
+		invoiceAgregateSubcat.addAmountWithoutTax(rt.getAmountWithoutTax());
         invoiceAgregateSubcat.addAmountTax(rt.getAmountTax());
         invoiceAgregateSubcat.addAmountWithTax(rt.getAmountWithTax());
 	}
@@ -3779,7 +3784,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			return ratedTransactionsTolink.stream().collect(Collectors.groupingBy(RatedTransaction::getInvoiceSubCategory));
 		}
-		return new TreeMap<InvoiceSubCategory, List<RatedTransaction>>();
+		return new HashMap<InvoiceSubCategory, List<RatedTransaction>>();
     	/*ratedTransactionsTolink.stream().collect(Collectors.toMap(RatedTransaction::getInvoiceSubCategory, Function.identity()));
     	ratedTransactionsTolink.stream().map(rt -> new AbstractMap.SimpleEntry<>(rt::getInvoiceSubCategory, rt))
     	.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));*/
