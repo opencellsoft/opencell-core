@@ -93,6 +93,9 @@ public class WalletOperationAggregationLine extends AuditableEntity {
     private WalletOperationAggregationSettings aggregationSettings;
 
     public String getField() {
+        if (field != null) {
+            field = field.trim();
+        }
         return field;
     }
 

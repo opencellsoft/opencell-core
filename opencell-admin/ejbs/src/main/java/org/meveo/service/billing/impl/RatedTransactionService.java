@@ -283,7 +283,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else {
             code = isc.getCode();
         }
-        description = aggregatedWo.getComputedDescription();
+        description = (aggregatedWo.getDescription() != null) ? aggregatedWo.getDescription() : aggregatedWo.getComputedDescription();
 
         ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
         ratedTransaction.setParameter1(aggregatedWo.getParameter1());

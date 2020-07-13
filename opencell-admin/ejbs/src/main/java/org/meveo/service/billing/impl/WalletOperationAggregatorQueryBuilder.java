@@ -107,11 +107,11 @@ public class WalletOperationAggregatorQueryBuilder {
 		FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(filter);
 		String query = filteredQueryBuilder.getSqlString();
 		if (query != null && query.contains("where")) {
-			String[] parts = query.toLowerCase().split("where");
-			if (!parts[1].contains("order")) {
+			String[] parts = query.split("where");
+			if (!org.apache.commons.lang3.StringUtils.containsIgnoreCase(parts[1], "order")) {
 				return " AND (" + parts[1] + ")";
 			} else {
-				String[] wheres = parts[1].split("order");
+				String[] wheres = parts[1].split("(order|ORDER)");
 				return "AND (" + wheres[0] + ")";
 			}
 		}
@@ -201,6 +201,9 @@ public class WalletOperationAggregatorQueryBuilder {
 
 			selectStr = "'" + aggregationLine.getValue() + "' as " + getAlias(aggregationLine);
 
+		} else if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.CUSTOM)) {
+
+			selectStr = aggregationLine.getField() + " as " + getAlias(aggregationLine);
 		} else {
 			selectStr = aggregationLine.getAction() + "(" + getField(aggregationLine) + ") as " + getAlias(aggregationLine);
 		}

@@ -165,6 +165,7 @@ public class AggregatedWalletOperation {
 	private Map<String, Object> cfValues;
 	private Date endDate;
 	private Date startDate;
+	private String description;
 
 	/**
 	 * List of wallet operations.
@@ -540,4 +541,14 @@ public class AggregatedWalletOperation {
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
 }
