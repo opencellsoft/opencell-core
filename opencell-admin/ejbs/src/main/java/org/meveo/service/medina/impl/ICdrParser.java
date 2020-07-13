@@ -22,14 +22,13 @@ import java.util.List;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.script.ScriptInterface;
 
 /**
  * This Interface must be implemented to parse CDR and create EDR from it.The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
  * 
  * @author h.znibar
  */
-public interface ICdrParser extends ScriptInterface {
+public interface ICdrParser {
 
     /**
      * Convert record into a CDR object. Parsing exceptions are available in CDR.rejectReason

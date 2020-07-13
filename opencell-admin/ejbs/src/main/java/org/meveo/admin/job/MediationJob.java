@@ -87,11 +87,14 @@ public class MediationJob extends Job {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         
-        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-        String readerCode = reader != null ? reader.getCode() : null;
+//        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
+//        String readerCode = reader != null ? reader.getCode() : null;
+//        
+//        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
+//        String parserCode = parser != null ? parser.getCode() : null;
+        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
         
-        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-        String parserCode = parser != null ? parser.getCode() : null;
+        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
         ParamBean parambean = paramBeanFactory.getInstance();
         String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
         ArrayList<String> cdrExtensions = new ArrayList<String>();
@@ -234,8 +237,9 @@ public class MediationJob extends Job {
         parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         parserCF.setActive(true);
         parserCF.setDescription(resourceMessages.getString("mediationJob.parser"));
-        parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        parserCF.setEntityClazz(ScriptInstance.class.getName());
+        parserCF.setFieldType(CustomFieldTypeEnum.STRING);
+//        parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+//        parserCF.setEntityClazz(ScriptInstance.class.getName());
         parserCF.setDefaultValue(null);
         parserCF.setValueRequired(false);
         parserCF.setMaxValue(256L);
@@ -247,8 +251,9 @@ public class MediationJob extends Job {
         readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         readerCF.setActive(true);
         readerCF.setDescription(resourceMessages.getString("mediationJob.reader"));
-        readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        readerCF.setEntityClazz(ScriptInstance.class.getName());
+        readerCF.setFieldType(CustomFieldTypeEnum.STRING);
+//        readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+//        readerCF.setEntityClazz(ScriptInstance.class.getName());
         readerCF.setDefaultValue(null);
         readerCF.setValueRequired(false);
         readerCF.setMaxValue(256L);

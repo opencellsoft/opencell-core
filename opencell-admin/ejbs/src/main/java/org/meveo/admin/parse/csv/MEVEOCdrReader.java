@@ -28,12 +28,10 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
@@ -151,30 +149,6 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             return username + "_" + new Date().getTime();
         }
 
-        return null;
-    }
-
-    @Override
-    public void init(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void execute(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void terminate(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public String getLogMessages() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

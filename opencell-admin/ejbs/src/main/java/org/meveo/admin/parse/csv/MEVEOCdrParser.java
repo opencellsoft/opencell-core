@@ -24,7 +24,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -37,6 +36,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
@@ -45,8 +45,8 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.DuplicateException;
+import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
 
@@ -269,12 +269,11 @@ public class MEVEOCdrParser implements ICdrParser {
             List<EDR> edrs = new ArrayList<EDR>();
 
             boolean foundMatchingAccess = false;
-
             for (Access accessPoint : accessPoints) {
                 if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
                         && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
-                    foundMatchingAccess = true;
-                    EDR edr = cdrToEdr(cdr, accessPoint, null);
+                    foundMatchingAccess = true;                    
+                    EDR edr = cdrToEdr(cdr, accessPoint, accessPoint.getSubscription());
                     edrs.add(edr);
                 }
             }
@@ -327,11 +326,13 @@ public class MEVEOCdrParser implements ICdrParser {
         edr.setExtraParameter(cdr.getExtraParam());
 
         if (accessPoint != null) {
-            edr.setSubscription(accessService.getEntityManager().getReference(Subscription.class, accessPoint.getSubscription().getId()));
             edr.setAccessCode(accessPoint.getAccessUserId());
-        } else if (subscription != null) {
-            edr.setSubscription(subscription);
         }
+        
+        if(subscription != null && !subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
+            throw new BusinessException("The subscription " + subscription.getCode() + " is not active");
+        }
+        edr.setSubscription(subscription);
 
         return edr;
     }
@@ -355,30 +356,7 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public boolean isApplicable(String type) {
+        //TODO Add implementation of this method
         return false;
-    }
-
-    @Override
-    public void init(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void execute(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void terminate(Map<String, Object> methodContext) throws BusinessException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public String getLogMessages() {
-        // TODO Auto-generated method stub
-        return null;
-    }    
+    }  
 }

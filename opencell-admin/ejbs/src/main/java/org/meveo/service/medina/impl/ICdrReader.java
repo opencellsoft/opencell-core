@@ -3,13 +3,12 @@ package org.meveo.service.medina.impl;
 import java.io.IOException;
 
 import org.meveo.model.rating.CDR;
-import org.meveo.service.script.ScriptInterface;
 
 /**
  * The Interface CdrReader.
  * @author h.znibar
  */
-public interface ICdrReader extends ScriptInterface {
+public interface ICdrReader {
 
     /**
      * Initialize CDR Reader to read from originBatch.

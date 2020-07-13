@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.parse.csv.MEVEOCdrReader;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -371,13 +372,13 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	/**
 	 * Gets the parser.
 	 *
-	 * @param customParser the custom parser
+	 * @param customParser the custom parser: the class name of the custom parser
 	 * @return the parser
 	 * @throws BusinessException the business exception
 	 */
 	private ICdrParser getParser(String customParser) throws BusinessException {
 	    if(customParser != null) {
-	        return (org.meveo.service.medina.impl.ICdrParser) scriptInstance.getScriptInstance(customParser); 
+	        return (ICdrParser) EjbUtils.getServiceInterface(customParser);
 	    } else {
 	        log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
             return meveoCdrParser;
@@ -404,7 +405,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
      */
     private ICdrCsvReader getReader(String readerCode) throws BusinessException {
         if (readerCode != null) {
-            return (ICdrCsvReader) scriptInstance.getScriptInstance(readerCode);
+            return (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
         } else {
             log.debug("Use default cdr reader={}", meveoCdrReader.getClass());
             return meveoCdrReader;
