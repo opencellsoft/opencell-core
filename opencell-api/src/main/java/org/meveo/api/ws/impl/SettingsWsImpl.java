@@ -129,6 +129,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * SOAP endpoints for settings.
+ * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -558,7 +559,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetSellerResponse findSeller(String sellerCode,CustomFieldInheritanceEnum inheritCF) {
+    public GetSellerResponse findSeller(String sellerCode, CustomFieldInheritanceEnum inheritCF) {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
@@ -858,10 +859,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public BankingDateStatusResponse getBankingDateStatus(Date date) {
-        
+
         BankingDateStatusResponse result = new BankingDateStatusResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
@@ -1562,13 +1563,17 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public GetInvoiceTypesResponse listInvoiceTypes() {
+
         GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
-        result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
+
         try {
-            result.setInvoiceTypesDto(invoiceTypeApi.list());
+            result = new GetInvoiceTypesResponse(invoiceTypeApi.search(pagingAndFiltering));
         } catch (Exception e) {
-            super.processException(e, result.getActionStatus());
+            processException(e, result.getActionStatus());
         }
+
         return result;
     }
 

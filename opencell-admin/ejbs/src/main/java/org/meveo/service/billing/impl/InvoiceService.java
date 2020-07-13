@@ -2180,25 +2180,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return the string
      */
     public String evaluateBillingTemplateName(String expression, Invoice invoice) {
-        String billingTemplateName = null;
 
-        if (!StringUtils.isBlank(expression)) {
-            Map<Object, Object> contextMap = new HashMap<>();
-            contextMap.put("invoice", invoice);
+        try {
+            String value = ValueExpressionWrapper.evaluateExpression(expression, String.class, invoice);
 
-            try {
-                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
-
-                if (value != null) {
-                    billingTemplateName = value;
-                }
-            } catch (BusinessException e) {
-                // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
+            if (value != null) {
+                return StringUtils.normalizeFileName(value);
             }
+        } catch (BusinessException e) {
+            // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
         }
 
-        billingTemplateName = StringUtils.normalizeFileName(billingTemplateName);
-        return billingTemplateName;
+        return null;
     }
 
     /**
@@ -2275,20 +2268,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getInvoiceTemplateName(Invoice invoice, BillingCycle billingCycle, InvoiceType invoiceType) {
 
-        String billingTemplateName = "default";
+        String billingTemplateName = null;
         if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
             billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
 
         } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateNameEL())) {
             billingTemplateName = evaluateBillingTemplateName(billingCycle.getBillingTemplateNameEL(), invoice);
-
-        } else if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
-            billingTemplateName = invoiceType.getBillingTemplateName();
-
-        } else if (billingCycle != null && billingCycle.getInvoiceType() != null && !StringUtils.isBlank(billingCycle.getInvoiceType().getBillingTemplateName())) {
-            billingTemplateName = billingCycle.getInvoiceType().getBillingTemplateName();
         }
-
+        if (billingTemplateName == null) {
+            billingTemplateName = "default";
+        }
         return billingTemplateName;
     }
 
@@ -3927,7 +3916,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         accountsAmounts.put(Customer.class, custAmounts);
         return accountsAmounts;
     }
-    
 
     /**
      * Resolve Invoice production date delay for a given billing run
@@ -3939,7 +3927,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public static Integer resolveInvoiceDateDelay(String el, BillingRun billingRun) {
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, billingRun);
     }
-    
 
     /**
      * Resolve Invoice date delay for given parameters
