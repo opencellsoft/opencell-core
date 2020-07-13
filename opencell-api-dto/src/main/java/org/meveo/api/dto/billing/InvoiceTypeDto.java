@@ -79,7 +79,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private List<String> appliesTo = new ArrayList<>();
 
     /** The matching auto. */
-    private boolean matchingAuto = false;
+    private Boolean matchingAuto;
     
     /** Used to decide if AccountOperations will be created or not , during AO_Job execution */
     private Boolean invoiceAccountable;
@@ -103,7 +103,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private CustomFieldsDto customFields;
 
     /** The use Self Sequence . */
-    private boolean useSelfSequence = true;
+    private Boolean useSelfSequence;
 
     private String mailingType;
 
@@ -139,7 +139,6 @@ public class InvoiceTypeDto extends BusinessEntityDto {
             sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence(), seq.getPrefixEL()));
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
-        this.billingTemplateName = invoiceType.getBillingTemplateName();
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
@@ -190,7 +189,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      *
      * @return true, if is matching auto
      */
-    public boolean isMatchingAuto() {
+    public Boolean isMatchingAuto() {
         return matchingAuto;
     }
 
@@ -199,7 +198,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      *
      * @param matchingAuto the new matching auto
      */
-    public void setMatchingAuto(boolean matchingAuto) {
+    public void setMatchingAuto(Boolean matchingAuto) {
         this.matchingAuto = matchingAuto;
     }
 
@@ -340,14 +339,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     /**
      * @return the useSelfSequence
      */
-    public boolean isUseSelfSequence() {
+    public Boolean isUseSelfSequence() {
         return useSelfSequence;
     }
 
     /**
      * @param useSelfSequence the useSelfSequence to set
      */
-    public void setUseSelfSequence(boolean useSelfSequence) {
+    public void setUseSelfSequence(Boolean useSelfSequence) {
         this.useSelfSequence = useSelfSequence;
     }
 

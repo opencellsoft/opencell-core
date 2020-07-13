@@ -79,47 +79,47 @@ public class BillingCycleDto extends BusinessEntityDto {
     /**
      * Expression to calculate Invoice due date delay from the invoicing date
      */
-    @XmlElement(required = false)
+    @XmlElement()
     @Size(max = 2000)
     private String dueDateDelayEL;
 
     /**
      * Expression to calculate Invoice due date delay from the invoicing date - for Spark
      */
-    @XmlElement(required = false)
+    @XmlElement()
     private String dueDateDelayELSpark;
 
     /**
      * A delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate + BillingCycle.invoiceDateProductionDelay
      */
     @Deprecated
-    @XmlElement(required = false)
+    @XmlElement()
     private Integer invoiceDateProductionDelay;
 
     /**
      * Expression to calculate a delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate +
      * BillingCycle.invoiceDateProductionDelay (resolved from EL).
      */
-    @XmlElement(required = false)
+    @XmlElement()
     @Size(max = 2000)
     private String invoiceDateProductionDelayEL;
 
     /**
      * A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
      * BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL). <br/>
-     * Deprecated in v 10.0.0. Use transactionDateDelayEL instead
+     * Deprecated in v 10.0.0. Use lastTransactionDateDelayEL instead
      */
     @Deprecated
-    @XmlElement(required = false)
+    @XmlElement()
     private Integer transactionDateDelay;
 
     /**
      * Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
      * (resolved from EL)
      */
-    @XmlElement(required = false)
+    @XmlElement()
     @Size(max = 2000)
-    private String transactionDateDelayEL;
+    private String lastTransactionDateDelayEL;
 
     /**
      * Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
@@ -133,7 +133,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     private String calendar;
 
     /** The invoicing threshold. */
-    @XmlElement(required = false)
+    @XmlElement()
     private BigDecimal invoicingThreshold;
 
     /** The invoice type code. */
@@ -195,7 +195,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             dueDateDelayEL = billingCycleEntity.getDueDateDelayEL();
             dueDateDelayELSpark = billingCycleEntity.getDueDateDelayELSpark();
             invoiceDateProductionDelayEL = billingCycleEntity.getInvoiceDateProductionDelayEL();
-            transactionDateDelayEL = billingCycleEntity.getLastTransactionDateDelayEL();
+            lastTransactionDateDelayEL = billingCycleEntity.getLastTransactionDateDelayEL();
             lastTransactionDateEL = billingCycleEntity.getLastTransactionDateEL();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();
             type = billingCycleEntity.getType();
@@ -320,7 +320,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * @return A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
      *         BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    public Integer getTransactionDateDelay() {
+    public Integer getLastTransactionDateDelay() {
         return transactionDateDelay;
     }
 
@@ -328,7 +328,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * @param transactionDateDelay A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate
      *        value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    public void setTransactionDateDelay(Integer transactionDateDelay) {
+    public void setLastTransactionDateDelay(Integer transactionDateDelay) {
         this.transactionDateDelay = transactionDateDelay;
     }
 
@@ -337,7 +337,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      *         BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
     public String getTransactionDateDelayEL() {
-        return transactionDateDelayEL;
+        return lastTransactionDateDelayEL;
     }
 
     /**
@@ -345,7 +345,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      *        value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
     public void setTransactionDateDelayEL(String transactionDateDelayEL) {
-        this.transactionDateDelayEL = transactionDateDelayEL;
+        this.lastTransactionDateDelayEL = transactionDateDelayEL;
     }
 
     /**

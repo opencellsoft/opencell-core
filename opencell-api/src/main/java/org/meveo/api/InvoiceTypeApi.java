@@ -21,30 +21,30 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
-import org.meveo.api.dto.billing.InvoiceTypesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
@@ -61,469 +61,301 @@ import org.meveo.service.script.ScriptInstanceService;
  * @lastModifiedVersion 5.2
  */
 @Stateless
-public class InvoiceTypeApi extends BaseApi {
+public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
 
-	/** The invoice type service. */
-	@Inject
-	private InvoiceTypeService invoiceTypeService;
+    /** The invoice type service. */
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
-	/** The invoice sequence service. */
-	@Inject
-	private InvoiceSequenceService invoiceSequenceService;
+    /** The invoice sequence service. */
+    @Inject
+    private InvoiceSequenceService invoiceSequenceService;
 
-	/** The occ template service. */
-	@Inject
-	private OCCTemplateService occTemplateService;
+    /** The occ template service. */
+    @Inject
+    private OCCTemplateService occTemplateService;
 
-	/** The seller service. */
-	@Inject
-	private SellerService sellerService;
+    /** The seller service. */
+    @Inject
+    private SellerService sellerService;
 
-	@Inject
-	protected EntityToDtoConverter entityToDtoConverter;
+    @Inject
+    protected EntityToDtoConverter entityToDtoConverter;
 
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     private EmailTemplateService emailTemplateService;
 
     /**
-	 * Handle parameters.
-	 *
-	 * @param postData the post data
-	 * @throws MeveoApiException the meveo api exception
-	 */
-	private void handleParameters(InvoiceTypeDto postData) throws MeveoApiException {
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		handleMissingParametersAndValidate(postData);
-	}
+     * Handle parameters.
+     *
+     * @param postData the post data
+     * @throws MeveoApiException the meveo api exception
+     */
+    private void handleParameters(InvoiceTypeDto postData) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        handleMissingParametersAndValidate(postData);
+    }
 
-	/**
-	 * Creates the InvoiceType.
-	 *
-	 * @param postData the post data
-	 * @return the action status
-	 * @throws MeveoApiException the meveo api exception
-	 * @throws BusinessException the business exception
-	 */
-	public ActionStatus create(InvoiceTypeDto postData) throws MeveoApiException, BusinessException {
-		handleParameters(postData);
-		ActionStatus result = new ActionStatus();
+    /**
+     * Creates the InvoiceType.
+     *
+     * @param dto the post data
+     * @return Invoice type entity
+     * @throws MeveoApiException the meveo api exception
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType create(InvoiceTypeDto dto) throws MeveoApiException, BusinessException {
+        handleParameters(dto);
 
-		if (invoiceTypeService.findByCode(postData.getCode()) != null) {
-			throw new EntityAlreadyExistsException(InvoiceType.class, postData.getCode());
-		}
-		
-		OCCTemplate occTemplate = null;
-		if(!StringUtils.isBlank(postData.getOccTemplateCode())) {
-        occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
-	        if (occTemplate == null) {
-	            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
-	        }
-		}
+        if (invoiceTypeService.findByCode(dto.getCode()) != null) {
+            throw new EntityAlreadyExistsException(InvoiceType.class, dto.getCode());
+        }
 
-		OCCTemplate occTemplateNegative = null;
-		if (!StringUtils.isBlank(postData.getOccTemplateNegativeCode())) {
-			occTemplateNegative = occTemplateService.findByCode(postData.getOccTemplateNegativeCode());
-			if (occTemplateNegative == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateNegativeCode());
-			}
-		}
+        InvoiceType entity = new InvoiceType();
 
-		ScriptInstance customInvoiceXmlScriptInstance = null;
-		if (!StringUtils.isBlank(postData.getCustomInvoiceXmlScriptInstanceCode())) {
-			customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(postData.getCustomInvoiceXmlScriptInstanceCode());
-			if (customInvoiceXmlScriptInstance == null) {
-				throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getCustomInvoiceXmlScriptInstanceCode());
-			}
-		}
+        dtoToEntity(entity, dto);
+        invoiceTypeService.create(entity);
 
-		List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();
-		if (postData.getAppliesTo() != null) {
-			for (String invoiceTypeCode : postData.getAppliesTo()) {
-				InvoiceType tmpInvoiceType = null;
-				tmpInvoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-				if (tmpInvoiceType == null) {
-					throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-				}
-				invoiceTypesToApplies.add(tmpInvoiceType);
-			}
-		}
+        return entity;
+    }
+
+    /**
+     * Update the InvoiceType.
+     *
+     * @param dto the invoice type dto
+     * @return the action status
+     * @throws MeveoApiException the meveo api exception
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType update(InvoiceTypeDto dto) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(dto.getCode())) {
+            missingParameters.add("code");
+        }
+        handleMissingParametersAndValidate(dto);
+
+        // check if invoiceType exists
+        InvoiceType invoiceType = invoiceTypeService.findByCode(dto.getCode());
+        if (invoiceType == null) {
+            throw new EntityDoesNotExistsException(InvoiceType.class, dto.getCode());
+        }
+
+        if (!StringUtils.isBlank(dto.getUpdatedCode())) {
+            if (invoiceTypeService.findByCode(dto.getUpdatedCode()) != null) {
+                throw new EntityAlreadyExistsException(TaxCategory.class, dto.getUpdatedCode());
+            }
+        }
+
+        dtoToEntity(invoiceType, dto);
+
+        invoiceType = invoiceTypeService.update(invoiceType);
+        return invoiceType;
+    }
+
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param entity Entity to populate
+     * @param dto DTO entity object to populate from
+     **/
+    private void dtoToEntity(InvoiceType entity, InvoiceTypeDto dto) {
+
+        boolean isNew = entity.getId() == null;
+        if (isNew) {
+            entity.setCode(dto.getCode());
+        } else if (!StringUtils.isBlank(dto.getUpdatedCode())) {
+            entity.setCode(dto.getUpdatedCode());
+        }
+
+        if (dto.getOccTemplateCode() != null) {
+            if (!StringUtils.isBlank(dto.getOccTemplateCode())) {
+                OCCTemplate occTemplate = occTemplateService.findByCode(dto.getOccTemplateCode());
+                if (occTemplate == null) {
+                    throw new EntityDoesNotExistsException(OCCTemplate.class, dto.getOccTemplateCode());
+                }
+                entity.setOccTemplate(occTemplate);
+            } else {
+                entity.setOccTemplate(null);
+            }
+        }
+
+        if (dto.getOccTemplateNegativeCode() != null) {
+            if (!StringUtils.isBlank(dto.getOccTemplateNegativeCode())) {
+                OCCTemplate occTemplateNegative = occTemplateService.findByCode(dto.getOccTemplateNegativeCode());
+                if (occTemplateNegative == null) {
+                    throw new EntityDoesNotExistsException(OCCTemplate.class, dto.getOccTemplateNegativeCode());
+                }
+                entity.setOccTemplateNegative(occTemplateNegative);
+            } else {
+                entity.setOccTemplateNegative(null);
+            }
+        }
+
+        if (dto.getCustomInvoiceXmlScriptInstanceCode() != null) {
+            if (!StringUtils.isBlank(dto.getCustomInvoiceXmlScriptInstanceCode())) {
+                ScriptInstance customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(dto.getCustomInvoiceXmlScriptInstanceCode());
+                if (customInvoiceXmlScriptInstance == null) {
+                    throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getCustomInvoiceXmlScriptInstanceCode());
+                }
+                entity.setCustomInvoiceXmlScriptInstance(customInvoiceXmlScriptInstance);
+            } else {
+                entity.setCustomInvoiceXmlScriptInstance(null);
+            }
+        }
+
+        List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();
+        if (dto.getAppliesTo() != null) {
+            for (String invoiceTypeCode : dto.getAppliesTo()) {
+                InvoiceType tmpInvoiceType = null;
+                tmpInvoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+                if (tmpInvoiceType == null) {
+                    throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+                }
+                invoiceTypesToApplies.add(tmpInvoiceType);
+            }
+            entity.setAppliesTo(invoiceTypesToApplies);
+        }
         // Checking electronic billing fields
-        EmailTemplate emailTemplate = null;
-        MailingTypeEnum mailingType = null;
-        if (!StringUtils.isBlank(postData.getMailingType())) {
-            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
-            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplateCode());
-            if (mailingType != null && emailTemplate == null) {
-                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplateCode());
+        if (dto.getMailingType() != null) {
+            if (!StringUtils.isBlank(dto.getMailingType())) {
+                MailingTypeEnum mailingType = MailingTypeEnum.getByLabel(dto.getMailingType());
+                EmailTemplate emailTemplate = emailTemplateService.findByCode(dto.getEmailTemplateCode());
+                if (mailingType != null && emailTemplate == null) {
+                    throw new EntityDoesNotExistsException(EmailTemplate.class, dto.getEmailTemplateCode());
+                }
+                entity.setMailingType(mailingType);
+                entity.setEmailTemplate(emailTemplate);
+            } else {
+                entity.setMailingType(null);
+                entity.setEmailTemplate(null);
             }
         }
 
-		InvoiceType invoiceType = new InvoiceType();
-		invoiceType.setCode(postData.getCode());
-		invoiceType.setMailingType(mailingType);
-		invoiceType.setEmailTemplate(emailTemplate);
-
-		if (postData.getSequenceDto() != null) {
-			if (StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {
-				// v5.2 : code for API backward compatibility call, invoice sequence code must
-				// be mandatory in future versions
-				InvoiceSequence invoiceSequence = postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto();
-				if (invoiceSequence != null) {
-					invoiceSequence.setCode(invoiceType.getCode());
-					invoiceSequenceService.create(invoiceSequence);
-					invoiceType.setInvoiceSequence(invoiceSequence);
-					invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
-				}
-			} else {
-				InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(postData.getSequenceDto().getInvoiceSequenceCode());
-				if (invoiceSequence == null) {
-					throw new EntityDoesNotExistsException(InvoiceSequence.class, postData.getSequenceDto().getInvoiceSequenceCode());
-				}
-				invoiceType.setInvoiceSequence(invoiceSequence);
-				invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
-			}
-		}
-
-		invoiceType.setDescription(postData.getDescription());
-		invoiceType.setOccTemplate(occTemplate);
-		invoiceType.setOccTemplateNegative(occTemplateNegative);
-		invoiceType.setCustomInvoiceXmlScriptInstance(customInvoiceXmlScriptInstance);
-		invoiceType.setOccTemplateCodeEl(postData.getOccTemplateCodeEl());
-		invoiceType.setOccTemplateNegativeCodeEl(postData.getOccTemplateNegativeCodeEl());
-		invoiceType.setAppliesTo(invoiceTypesToApplies);
-		invoiceType.setUseSelfSequence(postData.isUseSelfSequence());
-
-		if (postData.getSellerSequences() != null) {
-			for (Entry<String, SequenceDto> entry : postData.getSellerSequences().entrySet()) {
-				Seller seller = sellerService.findByCode(entry.getKey());
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class, entry.getKey());
-				}
-				SequenceDto value = entry.getValue();
-				if (value == null || value.getSequenceSize().intValue() < 0) {
-					throw new MeveoApiException("sequence size value must be positive");
-				}
-
-				if (value == null || value.getCurrentInvoiceNb().intValue() < 0) {
-					throw new MeveoApiException("current invoice number value must be positive");
-				}
-
-				InvoiceSequence invoiceSequenceInvoiceTypeSeller = value.fromDto();
-				invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
-				invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
-
-				invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, value.getPrefixEL()));
-			}
-		}
-
-		Boolean invoiceAccountable = postData.isInvoiceAccountable();
-        if (invoiceAccountable != null) {
-        	 invoiceType.setInvoiceAccountable(invoiceAccountable);
-        } // else default value = true
-
-		invoiceType.setMatchingAuto(postData.isMatchingAuto());
-		invoiceType.setBillingTemplateName(postData.getBillingTemplateName());
-		invoiceType.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
-		invoiceType.setPdfFilenameEL(postData.getPdfFilenameEL());
-		invoiceType.setXmlFilenameEL(postData.getXmlFilenameEL());
-
-		// populate customFields
-		try {
-			populateCustomFields(postData.getCustomFields(), invoiceType, true, true);
-
-		} catch (MissingParameterException | InvalidParameterException e) {
-			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-			throw e;
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw e;
-		}
-
-		invoiceTypeService.create(invoiceType);
-		return result;
-	}
-
-	/**
-	 * Update the InvoiceType.
-	 *
-	 * @param invoiceTypeDto the invoice type dto
-	 * @return the action status
-	 * @throws MeveoApiException the meveo api exception
-	 * @throws BusinessException the business exception
-	 */
-	@SuppressWarnings("unlikely-arg-type")
-	public ActionStatus update(InvoiceTypeDto invoiceTypeDto) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(invoiceTypeDto.getCode())) {
-			missingParameters.add("code");
-		}
-		handleMissingParametersAndValidate(invoiceTypeDto);
-		ActionStatus result = new ActionStatus();
-
-		// check if invoiceType exists
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeDto.getCode());
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeDto.getCode());
-		}
-		invoiceType.setCode(StringUtils.isBlank(invoiceTypeDto.getUpdatedCode()) ? invoiceTypeDto.getCode() : invoiceTypeDto.getUpdatedCode());
-
-		if (invoiceTypeDto.getSequenceDto() != null) {
-			if (StringUtils.isBlank(invoiceTypeDto.getSequenceDto().getInvoiceSequenceCode())) {
-				InvoiceSequence invoiceSequence = invoiceType.getInvoiceSequence();
-				if (invoiceSequence != null) {
-					InvoiceSequence invoiceSequenceFromDto = invoiceTypeDto.getSequenceDto().fromDto();
-					if (invoiceTypeDto.getSequenceDto() != null && invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
-						if (invoiceSequenceFromDto.getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequence.getCode()).longValue()) {
-							throw new MeveoApiException("Not able to update, check the current number");
-						}
-					}
-					if (invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
-						invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
-					}
-					if (invoiceSequenceFromDto.getSequenceSize() != null) {
-						invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
-					}
-					invoiceSequence.setCode(invoiceType.getCode());
-					invoiceSequenceService.update(invoiceSequence);
-				} else {
-					InvoiceSequence newInvoiceSequence = invoiceTypeDto.getSequenceDto().fromDto();
-					newInvoiceSequence.setCode(invoiceType.getCode());
-					invoiceSequenceService.create(newInvoiceSequence);
-				}
-			} else {
-				InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(invoiceTypeDto.getSequenceDto().getInvoiceSequenceCode());
-				if (invoiceSequence == null) {
-					throw new EntityDoesNotExistsException(InvoiceSequence.class, invoiceTypeDto.getSequenceDto().getInvoiceSequenceCode());
-				}
-				invoiceType.setInvoiceSequence(invoiceSequence);
-				invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
-			}
-			invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
-		}
-
-        MailingTypeEnum mailingType = null;
-        if (invoiceTypeDto.getMailingType() != null) {
-            mailingType = MailingTypeEnum.getByLabel(invoiceTypeDto.getMailingType());
-        }
-        if (mailingType != null) {
-            invoiceType.setMailingType(mailingType);
+        if (dto.getSequenceDto() != null) {
+            if (StringUtils.isBlank(dto.getSequenceDto().getInvoiceSequenceCode())) {
+                InvoiceSequence invoiceSequence = entity.getInvoiceSequence();
+                if (invoiceSequence != null) {
+                    InvoiceSequence invoiceSequenceFromDto = dto.getSequenceDto().fromDto();
+                    if (dto.getSequenceDto() != null && invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
+                        if (invoiceSequenceFromDto.getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequence.getCode()).longValue()) {
+                            throw new MeveoApiException("Not able to update, check the current number");
+                        }
+                    }
+                    if (invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
+                        invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
+                    }
+                    if (invoiceSequenceFromDto.getSequenceSize() != null) {
+                        invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
+                    }
+                    invoiceSequence.setCode(entity.getCode());
+                    invoiceSequenceService.update(invoiceSequence);
+                } else {
+                    InvoiceSequence newInvoiceSequence = dto.getSequenceDto().fromDto();
+                    newInvoiceSequence.setCode(entity.getCode());
+                    invoiceSequenceService.create(newInvoiceSequence);
+                }
+            } else {
+                InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(dto.getSequenceDto().getInvoiceSequenceCode());
+                if (invoiceSequence == null) {
+                    throw new EntityDoesNotExistsException(InvoiceSequence.class, dto.getSequenceDto().getInvoiceSequenceCode());
+                }
+                entity.setInvoiceSequence(invoiceSequence);
+                entity.setPrefixEL(dto.getSequenceDto().getPrefixEL());
+            }
+            entity.setPrefixEL(dto.getSequenceDto().getPrefixEL());
         }
 
-        EmailTemplate emailTemplate = null;
-        if (invoiceTypeDto.getEmailTemplateCode() != null) {
-            emailTemplate = emailTemplateService.findByCode(invoiceTypeDto.getEmailTemplateCode());
-            if (emailTemplate == null) {
-                throw new EntityDoesNotExistsException(EmailTemplate.class, invoiceTypeDto.getEmailTemplateCode());
+        if (dto.getDescription() != null) {
+            entity.setDescription(StringUtils.isEmpty(dto.getDescription()) ? null : dto.getDescription());
+        }
+        if (dto.getOccTemplateCodeEl() != null) {
+            entity.setOccTemplateCodeEl(StringUtils.isEmpty(dto.getOccTemplateCodeEl()) ? null : dto.getOccTemplateCodeEl());
+        }
+        if (dto.getOccTemplateNegativeCodeEl() != null) {
+            entity.setOccTemplateNegativeCodeEl(StringUtils.isEmpty(dto.getOccTemplateNegativeCodeEl()) ? null : dto.getOccTemplateNegativeCodeEl());
+        }
+
+        if (isNew && dto.isUseSelfSequence() == null) {
+            dto.setUseSelfSequence(true);
+        }
+        if (dto.isUseSelfSequence() != null) {
+            entity.setUseSelfSequence(dto.isUseSelfSequence());
+        }
+
+        if (dto.getSellerSequences() != null) {
+            for (Entry<String, SequenceDto> entry : dto.getSellerSequences().entrySet()) {
+                Seller seller = sellerService.findByCode(entry.getKey());
+                if (seller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, entry.getKey());
+                }
+                if (entry.getValue().getSequenceSize().intValue() < 0) {
+                    throw new MeveoApiException("sequence size value must be positive");
+                }
+                if (entry.getValue().getCurrentInvoiceNb().intValue() < 0) {
+                    throw new MeveoApiException("current invoice number value must be positive");
+                }
+
+                if (entry.getValue() == null) {
+                    entity.getSellerSequence().remove(seller);
+                } else if (entity.isContainsSellerSequence(seller)) {
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = entity.getSellerSequenceByType(seller).getInvoiceSequence();
+                    invoiceSequenceInvoiceTypeSeller = entry.getValue().updateFromDto(invoiceSequenceInvoiceTypeSeller);
+                    invoiceSequenceService.update(invoiceSequenceInvoiceTypeSeller);
+                    entity.getSellerSequenceByType(seller).setInvoiceSequence(invoiceSequenceInvoiceTypeSeller);
+                    entity.getSellerSequenceByType(seller).setPrefixEL(entry.getValue().getPrefixEL());
+                } else {
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+                    invoiceSequenceInvoiceTypeSeller.setCode(entity.getCode() + "_" + seller.getCode());
+                    invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
+                    entity.getSellerSequence().add(new InvoiceTypeSellerSequence(entity, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                }
             }
         }
-        if (emailTemplate != null) {
-            invoiceType.setEmailTemplate(emailTemplate);
-        }
 
-		OCCTemplate occTemplate = null;
-		if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
-			occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());
-			if (occTemplate == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
-			}
-			invoiceType.setOccTemplate(occTemplate);
-		}
-		OCCTemplate occTemplateNegative = null;
-		if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
-			occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode());
-			if (occTemplateNegative == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
-			}
-			invoiceType.setOccTemplateNegative(occTemplateNegative);
-		}
-
-		ScriptInstance customInvoiceXmlScriptInstance = null;
-		if (!StringUtils.isBlank(invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode())) {
-			customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode());
-			if (customInvoiceXmlScriptInstance == null) {
-				throw new EntityDoesNotExistsException(ScriptInstance.class, invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode());
-			}
-			invoiceType.setCustomInvoiceXmlScriptInstance(customInvoiceXmlScriptInstance);
-
-		}
-
-		if (invoiceTypeDto.getOccTemplateCodeEl() != null) {
-			invoiceType.setOccTemplateCodeEl(invoiceTypeDto.getOccTemplateCodeEl());
-		}
-		if (invoiceTypeDto.getOccTemplateNegativeCodeEl() != null) {
-			invoiceType.setOccTemplateNegativeCodeEl(invoiceTypeDto.getOccTemplateNegativeCodeEl());
-		}
-
-
-		if (!StringUtils.isBlank(invoiceTypeDto.getDescription())) {
-			invoiceType.setDescription(invoiceTypeDto.getDescription());
-		}
-
-		Boolean invoiceAccountable = invoiceTypeDto.isInvoiceAccountable();
-        if (invoiceAccountable != null) {
-        	 invoiceType.setInvoiceAccountable(invoiceAccountable);
+        if (dto.isInvoiceAccountable() != null) {
+            entity.setInvoiceAccountable(dto.isInvoiceAccountable());
         } // else default value = true
 
-		if (!StringUtils.isBlank(invoiceTypeDto.isMatchingAuto())) {
-			invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
-		}
-		List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();
-		if (invoiceTypeDto.getAppliesTo() != null) {
-			for (String invoiceTypeCode : invoiceTypeDto.getAppliesTo()) {
-				InvoiceType tmpInvoiceType = null;
-				tmpInvoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-				if (tmpInvoiceType == null) {
-					throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-				}
-				invoiceTypesToApplies.add(tmpInvoiceType);
-			}
-		}
-		invoiceType.setAppliesTo(invoiceTypesToApplies);
+        if (!StringUtils.isBlank(dto.getBillingTemplateName()) && StringUtils.isBlank(dto.getBillingTemplateNameEL())) {
+            dto.setBillingTemplateNameEL(dto.getBillingTemplateName());
+        }
+        if (dto.getBillingTemplateNameEL() != null) {
+            entity.setBillingTemplateNameEL(StringUtils.isEmpty(dto.getBillingTemplateNameEL()) ? null : dto.getBillingTemplateNameEL());
+        }
 
-		if (invoiceTypeDto.getSellerSequences() != null) {
-			for (Entry<String, SequenceDto> entry : invoiceTypeDto.getSellerSequences().entrySet()) {
-				Seller seller = sellerService.findByCode(entry.getKey());
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class, entry.getKey());
-				}
-				if (entry.getValue().getSequenceSize().intValue() < 0) {
-					throw new MeveoApiException("sequence size value must be positive");
-				}
-				if (entry.getValue().getCurrentInvoiceNb().intValue() < 0) {
-					throw new MeveoApiException("current invoice number value must be positive");
-				}
+        if (isNew && dto.isMatchingAuto() == null) {
+            dto.setMatchingAuto(false);
+        }
+        if (dto.isMatchingAuto() != null) {
+            entity.setMatchingAuto(dto.isMatchingAuto());
+        }
 
-				if (entry.getValue() == null) {
-					invoiceType.getSellerSequence().remove(seller);
-				} else if (invoiceType.isContainsSellerSequence(seller)) {
-					InvoiceSequence invoiceSequenceInvoiceTypeSeller = invoiceType.getSellerSequenceByType(seller).getInvoiceSequence();
-					invoiceSequenceInvoiceTypeSeller = entry.getValue().updateFromDto(invoiceSequenceInvoiceTypeSeller);
-					invoiceSequenceService.update(invoiceSequenceInvoiceTypeSeller);
-					invoiceType.getSellerSequenceByType(seller).setInvoiceSequence(invoiceSequenceInvoiceTypeSeller);
-					invoiceType.getSellerSequenceByType(seller).setPrefixEL(entry.getValue().getPrefixEL());
-				} else {
-					InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
-					invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
-					invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
-					invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
-				}
-			}
-		}
-		if (invoiceTypeDto.getBillingTemplateName() != null) {
-			invoiceType.setBillingTemplateName(invoiceTypeDto.getBillingTemplateName());
-		}
-		if (invoiceTypeDto.getBillingTemplateNameEL() != null) {
-			invoiceType.setBillingTemplateNameEL(invoiceTypeDto.getBillingTemplateNameEL());
-		}
-		if (invoiceTypeDto.getPdfFilenameEL() != null) {
-			invoiceType.setPdfFilenameEL(invoiceTypeDto.getPdfFilenameEL());
-		}
-		if (invoiceTypeDto.getXmlFilenameEL() != null) {
-			invoiceType.setXmlFilenameEL(invoiceTypeDto.getXmlFilenameEL());
-		}
+        if (dto.getPdfFilenameEL() != null) {
+            entity.setPdfFilenameEL(StringUtils.isEmpty(dto.getPdfFilenameEL()) ? null : dto.getPdfFilenameEL());
+        }
+        if (dto.getXmlFilenameEL() != null) {
+            entity.setXmlFilenameEL(StringUtils.isEmpty(dto.getXmlFilenameEL()) ? null : dto.getXmlFilenameEL());
+        }
 
-		invoiceType.setUseSelfSequence(invoiceTypeDto.isUseSelfSequence());
+        // populate customFields
+        try {
+            populateCustomFields(dto.getCustomFields(), entity, isNew, true);
 
-		// populate customFields
-		try {
-			populateCustomFields(invoiceTypeDto.getCustomFields(), invoiceType, false, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+    }
 
-		} catch (MissingParameterException | InvalidParameterException e) {
-			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-			throw e;
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw e;
-		}
-
-		invoiceTypeService.update(invoiceType);
-		return result;
-	}
-
-	/**
-	 * Find the InvoiceType.
-	 *
-	 * @param invoiceTypeCode the invoice type code
-	 * @return the invoice type dto
-	 * @throws MeveoApiException the meveo api exception
-	 */
-	public InvoiceTypeDto find(String invoiceTypeCode) throws MeveoApiException {
-
-		if (StringUtils.isBlank(invoiceTypeCode)) {
-			missingParameters.add("code");
-			handleMissingParameters();
-		}
-
-		InvoiceTypeDto result = new InvoiceTypeDto();
-
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-		}
-		result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-		return result;
-	}
-
-	/**
-	 * Removes the InvoiceType.
-	 *
-	 * @param invoiceTypeCode the invoice type code
-	 * @return the action status
-	 * @throws MeveoApiException the meveo api exception
-	 * @throws BusinessException the business exception
-	 */
-	public ActionStatus remove(String invoiceTypeCode) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(invoiceTypeCode)) {
-			missingParameters.add("code");
-			handleMissingParameters();
-		}
-		ActionStatus result = new ActionStatus();
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-		}
-		invoiceTypeService.remove(invoiceType);
-		return result;
-	}
-
-	/**
-	 * Creates the or update the InvoiceType.
-	 *
-	 * @param invoiceTypeDto the invoice type dto
-	 * @throws MeveoApiException the meveo api exception
-	 * @throws BusinessException the business exception
-	 */
-	public void createOrUpdate(InvoiceTypeDto invoiceTypeDto) throws MeveoApiException, BusinessException {
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeDto.getCode());
-
-		if (invoiceType == null) {
-			create(invoiceTypeDto);
-		} else {
-			update(invoiceTypeDto);
-		}
-	}
-
-	/**
-	 * List InvoiceTypes.
-	 *
-	 * @return the invoice types dto
-	 * @throws MeveoApiException the meveo api exception
-	 */
-	public InvoiceTypesDto list() throws MeveoApiException {
-		InvoiceTypesDto invoiceTypeesDto = new InvoiceTypesDto();
-
-		List<InvoiceType> invoiceTypees = invoiceTypeService.list();
-		if (invoiceTypees != null && !invoiceTypees.isEmpty()) {
-			for (InvoiceType t : invoiceTypees) {
-				InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-				invoiceTypeesDto.getInvoiceTypes().add(invoiceTypeDto);
-			}
-		}
-
-		return invoiceTypeesDto;
-	}
+    @Override
+    protected BiFunction<InvoiceType, CustomFieldsDto, InvoiceTypeDto> getEntityToDtoFunction() {
+        return InvoiceTypeDto::new;
+    }
 }

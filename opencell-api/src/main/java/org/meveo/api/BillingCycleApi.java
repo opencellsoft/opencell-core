@@ -177,8 +177,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDueDateDelay() != null && StringUtils.isBlank(dto.getDueDateDelayEL())) {
             dto.setDueDateDelayEL(dto.getDueDateDelay().toString());
         }
-        if (dto.getTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
-            dto.setTransactionDateDelayEL(dto.getTransactionDateDelay().toString());
+        if (dto.getLastTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
+            dto.setTransactionDateDelayEL(dto.getLastTransactionDateDelay().toString());
         }
         if (dto.getInvoiceDateProductionDelay() != null && StringUtils.isBlank(dto.getInvoiceDateProductionDelayEL())) {
             dto.setInvoiceDateProductionDelayEL(dto.getInvoiceDateProductionDelay().toString());
@@ -226,7 +226,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 
         // populate customFields
         try {
-            populateCustomFields(dto.getCustomFields(), entity, true, true);
+            populateCustomFields(dto.getCustomFields(), entity, isNew, true);
 
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());

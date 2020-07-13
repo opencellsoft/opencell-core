@@ -3225,6 +3225,12 @@ END $$;]]>
         <dropColumn tableName="billing_cycle" columnName="due_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="billing_template_name"/>
     </changeSet>
+    
+    
+    <changeSet id="#5372_20200711" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
+        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
+    </changeSet>
 
     <changeSet id="#5241_20200622" author="khalidHORRI">
         <createTable tableName="wo_aggregation_line">
