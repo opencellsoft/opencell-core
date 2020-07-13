@@ -93,10 +93,6 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "invoice_accountable")
     private boolean invoiceAccountable = true;
 
-    @Column(name = "billing_template_name")
-    @Size(max = 50)
-    private String billingTemplateName;
-
     @Type(type = "numeric_boolean")
     @Column(name = "use_self_sequence")
     private boolean useSelfSequence = true;
@@ -207,14 +203,6 @@ public class InvoiceType extends BusinessCFEntity {
     public boolean isContainsSellerSequence(Seller seller) {
         InvoiceTypeSellerSequence seq = getSellerSequenceByType(seller);
         return seq != null;
-    }
-
-    public String getBillingTemplateName() {
-        return billingTemplateName;
-    }
-
-    public void setBillingTemplateName(String billingTemplateName) {
-        this.billingTemplateName = billingTemplateName;
     }
 
     public String getPdfFilenameEL() {

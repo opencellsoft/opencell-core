@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
 
 /**
@@ -31,7 +32,7 @@ import org.meveo.api.dto.billing.InvoiceTypesDto;
  */
 @XmlRootElement(name = "GetInvoiceTypesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetInvoiceTypesResponse extends BaseResponse {
+public class GetInvoiceTypesResponse extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1336652304727158329L;
@@ -43,6 +44,11 @@ public class GetInvoiceTypesResponse extends BaseResponse {
      * Instantiates a new gets the invoice types response.
      */
     public GetInvoiceTypesResponse() {
+    }
+
+    public GetInvoiceTypesResponse(GenericSearchResponse<InvoiceTypeDto> searchResponse) {
+        super(searchResponse.getPaging());
+        this.invoiceTypesDto.setInvoiceTypes(searchResponse.getSearchResults());
     }
 
     /**

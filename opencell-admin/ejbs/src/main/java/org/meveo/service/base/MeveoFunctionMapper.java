@@ -244,7 +244,10 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "addToDate", MeveoFunctionMapper.class.getMethod("addToDate", Date.class, Long.class, Long.class));
 
+
             addFunction("mv", "getEndOfMonth", MeveoFunctionMapper.class.getMethod("getEndOfMonth", Date.class));
+            
+            addFunction("mv", "getStartOfMonth", MeveoFunctionMapper.class.getMethod("getStartOfMonth", Date.class));
 
             addFunction("mv", "getStartOfNextMonth", MeveoFunctionMapper.class.getMethod("getStartOfNextMonth", Date.class));
 
@@ -1571,13 +1574,29 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
         return c.getTime();
     }
+    
+    public static Date getStartOfMonth(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        return c.getTime();
+    }
 
     public static Date getStartOfNextMonth(Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         c.set(Calendar.DAY_OF_MONTH, 1);
         c.add(Calendar.MONTH, 1);
-
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        
         return c.getTime();
     }
 

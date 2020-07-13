@@ -46,6 +46,7 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -68,57 +69,59 @@ public class InvoicingApi extends BaseApi {
     @MeveoParamBean
     private ParamBean paramBean;
 
-    public long createBillingRun(CreateBillingRunDto createBillingRunDto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public long createBillingRun(CreateBillingRunDto dto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-        
+
         if (billingRunService.isActiveBillingRunsExist() && !isAllowed) {
             throw new BusinessApiException("error.invoicing.alreadyLunched");
         }
 
-        if (StringUtils.isBlank(createBillingRunDto.getBillingCycleCode())) {
+        if (StringUtils.isBlank(dto.getBillingCycleCode())) {
             missingParameters.add("billingCycleCode");
         }
-        if (createBillingRunDto.getBillingRunTypeEnum() == null) {
+        if (dto.getBillingRunTypeEnum() == null) {
             missingParameters.add("billingRunType");
         }
 
         handleMissingParameters();
 
-        BillingCycle billingCycleInput = billingCycleService.findByCode(createBillingRunDto.getBillingCycleCode());
-        if (billingCycleInput == null) {
-            throw new EntityDoesNotExistsException(BillingCycle.class, createBillingRunDto.getBillingCycleCode());
+        BillingCycle billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
+        if (billingCycle == null) {
+            throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
         }
-        BillingRun billingRunEntity = new BillingRun();
-        billingRunEntity.setBillingCycle(billingCycleInput);
-        billingRunEntity.setProcessType(createBillingRunDto.getBillingRunTypeEnum());
-        billingRunEntity.setStartDate(createBillingRunDto.getStartDate());
-        billingRunEntity.setEndDate(createBillingRunDto.getEndDate());
-        billingRunEntity.setProcessDate(new Date());
-        billingRunEntity.setInvoiceDate(createBillingRunDto.getInvoiceDate());
-        if (createBillingRunDto.getInvoiceDate() == null) {
-            if (billingCycleInput.getInvoiceDateProductionDelay() != null) {
-                billingRunEntity.setInvoiceDate(DateUtils.addDaysToDate(billingRunEntity.getProcessDate(), billingCycleInput.getInvoiceDateProductionDelay()));
+        BillingRun billingRun = new BillingRun();
+        billingRun.setBillingCycle(billingCycle);
+        billingRun.setProcessType(dto.getBillingRunTypeEnum());
+        billingRun.setStartDate(dto.getStartDate());
+        billingRun.setEndDate(dto.getEndDate());
+        billingRun.setProcessDate(new Date());
+        billingRun.setReferenceDate(dto.getReferenceDate());
+        billingRun.setStatus(BillingRunStatusEnum.NEW);
+        billingRun.setInvoiceDate(dto.getInvoiceDate());
+        billingRun.setLastTransactionDate(dto.getLastTransactionDate());
+        if (dto.getInvoiceDate() == null) {
+            if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
+                billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
             } else {
-                billingRunEntity.setInvoiceDate(billingRunEntity.getProcessDate());
+                billingRun.setInvoiceDate(billingRun.getProcessDate());
             }
         }
-        billingRunEntity.setLastTransactionDate(createBillingRunDto.getLastTransactionDate());
-        if (createBillingRunDto.getLastTransactionDate() == null) {
-            if (billingCycleInput.getTransactionDateDelay() != null) {
-                billingRunEntity.setLastTransactionDate(DateUtils.addDaysToDate(billingRunEntity.getProcessDate(), billingCycleInput.getTransactionDateDelay()));
+        if (dto.getLastTransactionDate() == null) {
+            if (billingCycle.getLastTransactionDateEL() != null) {
+                billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
+            } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
+                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
             } else {
-                billingRunEntity.setLastTransactionDate(DateUtils.addDaysToDate(billingRunEntity.getProcessDate(), 1));
+                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
             }
         }
-        billingRunEntity.setReferenceDate(createBillingRunDto.getReferenceDate());
-        billingRunEntity.setStatus(BillingRunStatusEnum.NEW);
-        billingRunService.create(billingRunEntity);
-        
+        billingRunService.create(billingRun);
+
         // populate customFields
         try {
-            populateCustomFields(createBillingRunDto.getCustomFields(), billingRunEntity, true);
+            populateCustomFields(dto.getCustomFields(), billingRun, true);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -127,8 +130,7 @@ public class InvoicingApi extends BaseApi {
             throw e;
         }
 
-        
-        return billingRunEntity.getId();
+        return billingRun.getId();
     }
 
     public BillingRunDto getBillingRunInfo(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException {
@@ -141,7 +143,7 @@ public class InvoicingApi extends BaseApi {
         BillingRunDto billingRunDtoResult = new BillingRunDto();
         billingRunDtoResult.setFromEntity(billingRunEntity);
         billingRunDtoResult.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(billingRunEntity));
-        
+
         return billingRunDtoResult;
     }
 
@@ -178,8 +180,7 @@ public class InvoicingApi extends BaseApi {
         return billingRunEntity;
     }
 
-    public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException,
-            BusinessException {
+    public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");
             handleMissingParameters();
@@ -192,8 +193,7 @@ public class InvoicingApi extends BaseApi {
         return preInvoicingReportsDTO;
     }
 
-    public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException,
-            EntityDoesNotExistsException, BusinessException {
+    public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");
             handleMissingParameters();
@@ -212,7 +212,7 @@ public class InvoicingApi extends BaseApi {
             handleMissingParameters();
         }
         billingRunService.forceValidate(billingRunId);
-       
+
     }
 
     public void cancelBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
@@ -220,14 +220,14 @@ public class InvoicingApi extends BaseApi {
             missingParameters.add("billingRunId");
             handleMissingParameters();
         }
-    	BillingRun billingRun = getBillingRun(billingRunId);
+        BillingRun billingRun = getBillingRun(billingRunId);
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a POSTVALIDATED billingRun");
         }
         if (BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a VALIDATED billingRun");
         }
-        
+
         billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
         billingRunService.cancelAsync(billingRun.getId());
     }

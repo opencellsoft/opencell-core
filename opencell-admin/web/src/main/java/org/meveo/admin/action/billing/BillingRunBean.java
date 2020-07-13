@@ -41,6 +41,7 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.SortOrder;
 
@@ -141,13 +142,17 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             }
             log.debug("setBillingCycle {}, invoicedate={}, lastTransactionDate={}", billingCycle.getCode(), entity.getInvoiceDate(), entity.getLastTransactionDate());
 
-            if (billingCycle.getInvoiceDateProductionDelay() != null) {
-                entity.setInvoiceDate(DateUtils.addDaysToDate(entity.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
+            if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
+                entity.setInvoiceDate(DateUtils.addDaysToDate(entity.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), entity)));
             } else {
                 entity.setInvoiceDate(entity.getProcessDate());
             }
-            if (billingCycle.getTransactionDateDelay() != null) {
-                entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), billingCycle.getTransactionDateDelay()));
+            if (billingCycle.getLastTransactionDateEL() != null) {
+                entity.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateDelayEL(), entity));
+
+            } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
+                entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), entity)));
+
             } else {
                 entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
             }
@@ -156,8 +161,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     }
 
     public String launchRecurringInvoicing() {
-        log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(),
-            entity.getLastTransactionDate());
+        log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(), entity.getLastTransactionDate());
         try {
             ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");

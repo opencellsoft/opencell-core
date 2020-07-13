@@ -3203,7 +3203,33 @@ END $$;]]>
             <column name="init_date_el" type="varchar(2000)"/>
             <column name="init_date_el_sp" type="varchar(2000)"/>
         </addColumn>
+    </changeSet>
 
+    <changeSet id="#5372_20190630" author="AndriusKarpavicius">
+        <addColumn tableName="billing_cycle">
+            <column name="transaction_date_delay_el" type="varchar(2000)"/>
+            <column name="invoice_date_production_delay_el" type="varchar(2000)"/>
+            <column name="invoice_date_delay_el" type="varchar(2000)"/>
+            <column name="transaction_date_el" type="varchar(2000)"/>
+        </addColumn>
+        
+        <sql>update ${db.schema.adapted}billing_cycle set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set due_date_delay_el = due_date_delay where due_date_delay_el is null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set transaction_date_delay_el = transaction_date_delay where transaction_date_delay is not null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set invoice_date_production_delay_el = invoice_date_production_delay where invoice_date_production_delay is not null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set invoice_date_delay_el = invoice_date_delay where invoice_date_delay is not null</sql>
+                
+        <dropColumn tableName="billing_cycle" columnName="transaction_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="invoice_date_production_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="invoice_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="due_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="billing_template_name"/>
+    </changeSet>
+    
+    
+    <changeSet id="#5372_20200711" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
+        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
 
     <changeSet id="#5241_20200622" author="khalidHORRI">
