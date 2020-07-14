@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1581,7 +1580,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
 	public List<RatedTransaction> listByBillingAccountAndIDs(Long billingAccountId, Set<Long> ids) throws BusinessException {
 		return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountAndIDs", RatedTransaction.class)
-				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).setHint("org.hibernate.readOnly", true).getResultList();
+				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).getResultList();
 	}
     
     /**

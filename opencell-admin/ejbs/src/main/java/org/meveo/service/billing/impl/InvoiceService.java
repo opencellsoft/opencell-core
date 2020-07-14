@@ -3446,9 +3446,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDetailledInvoiceMode) {
                 	createAndLinkRTsFromDTO(seller, billingAccount, isEnterprise, invoiceRounding, invoiceRoundingMode, isDetailledInvoiceMode, 
                 			invoice, userAccount, subCatInvAgrDTO, invoiceSubCategory, invoiceAgregateSubcat);
-                	linkRTsByIdsFromDTO(isEnterprise, existingRtsTolinkMap, invoice, invoiceSubCategory, invoiceAgregateSubcat);
                 }
-                linkExistingRTsForCommercialInvoice(invoiceDTO, isEnterprise, invoice, userAccount, invoiceSubCategory, invoiceAgregateSubcat);
+                linkExistingRTs(invoiceDTO, existingRtsTolinkMap, isEnterprise, invoice, userAccount, invoiceSubCategory, invoiceAgregateSubcat, isDetailledInvoiceMode);
                 saveInvoiceSubCatAndRts(invoice, invoiceAgregateSubcat, subCatInvAgrDTO, billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode, isDetailledInvoiceMode);
                 addSubCategoryAmountsToCategory(invoiceAgregateCat, invoiceAgregateSubcat);
             }
@@ -3468,25 +3467,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-	private void linkExistingRTsForCommercialInvoice(InvoiceDto invoiceDTO, boolean isEnterprise, Invoice invoice,
-			UserAccount userAccount, InvoiceSubCategory invoiceSubCategory,
-			SubCategoryInvoiceAgregate invoiceAgregateSubcat) {
+	private void linkExistingRTs(InvoiceDto invoiceDTO, Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, boolean isEnterprise, Invoice invoice,
+			UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat, boolean isDetailledInvoiceMode) {
+		List<RatedTransaction> rtsToLink = new ArrayList<RatedTransaction>();
 		if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-		    List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, null, null);
-		    for (RatedTransaction rt : openedRT) {
-		        linkRt(isEnterprise, invoice, invoiceAgregateSubcat, rt);
-		    }
+			rtsToLink = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, null, null);
+		} else if (isDetailledInvoiceMode && !existingRtsTolinkMap.isEmpty() && existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
+			rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
 		}
-	}
-
-	private void linkRTsByIdsFromDTO(boolean isEnterprise,
-			Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, Invoice invoice,
-			InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat) {
-		if(!existingRtsTolinkMap.isEmpty() && existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
-			List<RatedTransaction> rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
-			for(RatedTransaction rt : rtsToLink) {
-		    	linkRt(isEnterprise, invoice, invoiceAgregateSubcat, rt);
-			}
+		
+		for (RatedTransaction rt : rtsToLink) {
+			linkRt(isEnterprise, invoice, invoiceAgregateSubcat, rt);
 		}
 	}
 
@@ -3785,10 +3776,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return ratedTransactionsTolink.stream().collect(Collectors.groupingBy(RatedTransaction::getInvoiceSubCategory));
 		}
 		return new HashMap<InvoiceSubCategory, List<RatedTransaction>>();
-    	/*ratedTransactionsTolink.stream().collect(Collectors.toMap(RatedTransaction::getInvoiceSubCategory, Function.identity()));
-    	ratedTransactionsTolink.stream().map(rt -> new AbstractMap.SimpleEntry<>(rt::getInvoiceSubCategory, rt))
-    	.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));*/
-		
 	}
 
     private Invoice initInvoice(InvoiceDto invoiceDTO, BillingAccount billingAccount, InvoiceType invoiceType, Seller seller) throws BusinessException, EntityDoesNotExistsException, BusinessApiException {
