@@ -32,6 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -126,8 +127,9 @@ public class BillingCycle extends BusinessCFEntity {
     /**
      * Expression to calculate Invoice due date delay from the invoicing date
      */
-    @Column(name = "due_date_delay_el", length = 2000)
+    @Column(name = "due_date_delay_el", length = 2000, nullable = false)
     @Size(max = 2000)
+    @NotNull
     private String dueDateDelayEL;
 
     /**
