@@ -75,176 +75,180 @@ public class MEVEOCdrParser implements ICdrParser {
     private Event<Serializable> rejectededCdrEventProducer;
 
     @Override
-    public CDR parse(String line) {
+    public CDR parse(Object line) {
 
         if (line == null) {
             return null;
         }
 
         CDR cdr = new CDR();
-        cdr.setLine(line);
-        try {
-            String[] fields = line.split(";");
-            if (fields.length == 0) {
-                throw new InvalidFormatException(line, "record empty");
+        if(line instanceof String) {
+            String sLine = (String) line;
+            cdr.setLine(sLine);
+            try {
+                String[] fields = sLine.split(";");
+                if (fields.length == 0) {
+                    throw new InvalidFormatException(sLine, "record empty");
 
-            } else if (fields.length < 4) {
-                throw new InvalidFormatException(line, "only " + fields.length + " in the record");
+                } else if (fields.length < 4) {
+                    throw new InvalidFormatException(sLine, "only " + fields.length + " in the record");
 
-            } else {
+                } else {
 
-                DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-                try {
-                    DateTime dt = formatter1.parseDateTime(fields[0]);
-                    cdr.setEventDate(new Date(dt.getMillis()));
-                } catch (Exception e1) {
-                    DateTime dt = formatter2.parseDateTime(fields[0]);
-                    cdr.setEventDate(new Date(dt.getMillis()));
-                }
-                cdr.setQuantity(new BigDecimal(fields[1]));
-
-                cdr.setAccessCode(fields[2]);
-
-                cdr.setParameter1(fields[3]);
-                if (fields.length <= 4) {
-                    cdr.setParameter2(null);
-                } else {
-                    cdr.setParameter2(fields[4]);
-                }
-                if (fields.length <= 5) {
-                    cdr.setParameter3(null);
-                } else {
-                    cdr.setParameter3(fields[5]);
-                }
-                if (fields.length <= 6) {
-                    cdr.setParameter4(null);
-                } else {
-                    cdr.setParameter4(fields[6]);
-                }
-                if (fields.length <= 7) {
-                    cdr.setParameter5(null);
-                } else {
-                    cdr.setParameter5(fields[7]);
-                }
-                if (fields.length <= 8) {
-                    cdr.setParameter6(null);
-                } else {
-                    cdr.setParameter6(fields[8]);
-                }
-                if (fields.length <= 9) {
-                    cdr.setParameter7(null);
-                } else {
-                    cdr.setParameter7(fields[9]);
-                }
-                if (fields.length <= 10) {
-                    cdr.setParameter8(null);
-                } else {
-                    cdr.setParameter8(fields[10]);
-                }
-                if (fields.length <= 11) {
-                    cdr.setParameter9(null);
-                } else {
-                    cdr.setParameter9(fields[11]);
-                }
-
-                if (fields.length <= 12 || "".equals(fields[12])) {
-                    cdr.setDateParam1(null);
-                } else {
                     try {
-                        DateTime dt = formatter1.parseDateTime(fields[12]);
-                        cdr.setDateParam1(new Date(dt.getMillis()));
+                        DateTime dt = formatter1.parseDateTime(fields[0]);
+                        cdr.setEventDate(new Date(dt.getMillis()));
                     } catch (Exception e1) {
-                        DateTime dt = formatter2.parseDateTime(fields[12]);
-                        cdr.setDateParam1(new Date(dt.getMillis()));
+                        DateTime dt = formatter2.parseDateTime(fields[0]);
+                        cdr.setEventDate(new Date(dt.getMillis()));
+                    }
+                    cdr.setQuantity(new BigDecimal(fields[1]));
+
+                    cdr.setAccessCode(fields[2]);
+
+                    cdr.setParameter1(fields[3]);
+                    if (fields.length <= 4) {
+                        cdr.setParameter2(null);
+                    } else {
+                        cdr.setParameter2(fields[4]);
+                    }
+                    if (fields.length <= 5) {
+                        cdr.setParameter3(null);
+                    } else {
+                        cdr.setParameter3(fields[5]);
+                    }
+                    if (fields.length <= 6) {
+                        cdr.setParameter4(null);
+                    } else {
+                        cdr.setParameter4(fields[6]);
+                    }
+                    if (fields.length <= 7) {
+                        cdr.setParameter5(null);
+                    } else {
+                        cdr.setParameter5(fields[7]);
+                    }
+                    if (fields.length <= 8) {
+                        cdr.setParameter6(null);
+                    } else {
+                        cdr.setParameter6(fields[8]);
+                    }
+                    if (fields.length <= 9) {
+                        cdr.setParameter7(null);
+                    } else {
+                        cdr.setParameter7(fields[9]);
+                    }
+                    if (fields.length <= 10) {
+                        cdr.setParameter8(null);
+                    } else {
+                        cdr.setParameter8(fields[10]);
+                    }
+                    if (fields.length <= 11) {
+                        cdr.setParameter9(null);
+                    } else {
+                        cdr.setParameter9(fields[11]);
+                    }
+
+                    if (fields.length <= 12 || "".equals(fields[12])) {
+                        cdr.setDateParam1(null);
+                    } else {
+                        try {
+                            DateTime dt = formatter1.parseDateTime(fields[12]);
+                            cdr.setDateParam1(new Date(dt.getMillis()));
+                        } catch (Exception e1) {
+                            DateTime dt = formatter2.parseDateTime(fields[12]);
+                            cdr.setDateParam1(new Date(dt.getMillis()));
+                        }
+                    }
+                    if (fields.length <= 13 || "".equals(fields[13])) {
+                        cdr.setDateParam2(null);
+                    } else {
+                        try {
+                            DateTime dt = formatter1.parseDateTime(fields[13]);
+                            cdr.setDateParam2(new Date(dt.getMillis()));
+                        } catch (Exception e1) {
+                            DateTime dt = formatter2.parseDateTime(fields[13]);
+                            cdr.setDateParam2(new Date(dt.getMillis()));
+                        }
+                    }
+                    if (fields.length <= 14 || "".equals(fields[14])) {
+                        cdr.setDateParam3(null);
+                    } else {
+                        try {
+                            DateTime dt = formatter1.parseDateTime(fields[14]);
+                            cdr.setDateParam3(new Date(dt.getMillis()));
+                        } catch (Exception e1) {
+                            DateTime dt = formatter2.parseDateTime(fields[14]);
+                            cdr.setDateParam3(new Date(dt.getMillis()));
+                        }
+                    }
+                    if (fields.length <= 15 || "".equals(fields[15])) {
+                        cdr.setDateParam4(null);
+                    } else {
+                        try {
+                            DateTime dt = formatter1.parseDateTime(fields[15]);
+                            cdr.setDateParam4(new Date(dt.getMillis()));
+                        } catch (Exception e1) {
+                            DateTime dt = formatter2.parseDateTime(fields[15]);
+                            cdr.setDateParam4(new Date(dt.getMillis()));
+                        }
+                    }
+                    if (fields.length <= 16 || "".equals(fields[16])) {
+                        cdr.setDateParam5(null);
+                    } else {
+                        try {
+                            DateTime dt = formatter1.parseDateTime(fields[16]);
+                            cdr.setDateParam5(new Date(dt.getMillis()));
+                        } catch (Exception e1) {
+                            DateTime dt = formatter2.parseDateTime(fields[16]);
+                            cdr.setDateParam5(new Date(dt.getMillis()));
+                        }
+                    }
+                    if (fields.length <= 17 || "".equals(fields[17])) {
+                        cdr.setDecimalParam1(null);
+                    } else {
+                        cdr.setDecimalParam1(new BigDecimal(fields[17]));
+                    }
+                    if (fields.length <= 18 || "".equals(fields[18])) {
+                        cdr.setDecimalParam2(null);
+                    } else {
+                        cdr.setDecimalParam2(new BigDecimal(fields[18]));
+                    }
+                    if (fields.length <= 19 || "".equals(fields[19])) {
+                        cdr.setDecimalParam3(null);
+                    } else {
+                        cdr.setDecimalParam3(new BigDecimal(fields[19]));
+                    }
+                    if (fields.length <= 20 || "".equals(fields[20])) {
+                        cdr.setDecimalParam4(null);
+                    } else {
+                        cdr.setDecimalParam4(new BigDecimal(fields[20]));
+                    }
+                    if (fields.length <= 21 || "".equals(fields[21])) {
+                        cdr.setDecimalParam5(null);
+                    } else {
+                        cdr.setDecimalParam5(new BigDecimal(fields[21]));
+                    }
+
+                    if (fields.length <= 22 || "".equals(fields[22])) {
+                        cdr.setExtraParameter(null);
+                    } else {
+                        cdr.setExtraParameter(fields[22]);
                     }
                 }
-                if (fields.length <= 13 || "".equals(fields[13])) {
-                    cdr.setDateParam2(null);
-                } else {
-                    try {
-                        DateTime dt = formatter1.parseDateTime(fields[13]);
-                        cdr.setDateParam2(new Date(dt.getMillis()));
-                    } catch (Exception e1) {
-                        DateTime dt = formatter2.parseDateTime(fields[13]);
-                        cdr.setDateParam2(new Date(dt.getMillis()));
-                    }
-                }
-                if (fields.length <= 14 || "".equals(fields[14])) {
-                    cdr.setDateParam3(null);
-                } else {
-                    try {
-                        DateTime dt = formatter1.parseDateTime(fields[14]);
-                        cdr.setDateParam3(new Date(dt.getMillis()));
-                    } catch (Exception e1) {
-                        DateTime dt = formatter2.parseDateTime(fields[14]);
-                        cdr.setDateParam3(new Date(dt.getMillis()));
-                    }
-                }
-                if (fields.length <= 15 || "".equals(fields[15])) {
-                    cdr.setDateParam4(null);
-                } else {
-                    try {
-                        DateTime dt = formatter1.parseDateTime(fields[15]);
-                        cdr.setDateParam4(new Date(dt.getMillis()));
-                    } catch (Exception e1) {
-                        DateTime dt = formatter2.parseDateTime(fields[15]);
-                        cdr.setDateParam4(new Date(dt.getMillis()));
-                    }
-                }
-                if (fields.length <= 16 || "".equals(fields[16])) {
-                    cdr.setDateParam5(null);
-                } else {
-                    try {
-                        DateTime dt = formatter1.parseDateTime(fields[16]);
-                        cdr.setDateParam5(new Date(dt.getMillis()));
-                    } catch (Exception e1) {
-                        DateTime dt = formatter2.parseDateTime(fields[16]);
-                        cdr.setDateParam5(new Date(dt.getMillis()));
-                    }
-                }
-                if (fields.length <= 17 || "".equals(fields[17])) {
-                    cdr.setDecimalParam1(null);
-                } else {
-                    cdr.setDecimalParam1(new BigDecimal(fields[17]));
-                }
-                if (fields.length <= 18 || "".equals(fields[18])) {
-                    cdr.setDecimalParam2(null);
-                } else {
-                    cdr.setDecimalParam2(new BigDecimal(fields[18]));
-                }
-                if (fields.length <= 19 || "".equals(fields[19])) {
-                    cdr.setDecimalParam3(null);
-                } else {
-                    cdr.setDecimalParam3(new BigDecimal(fields[19]));
-                }
-                if (fields.length <= 20 || "".equals(fields[20])) {
-                    cdr.setDecimalParam4(null);
-                } else {
-                    cdr.setDecimalParam4(new BigDecimal(fields[20]));
-                }
-                if (fields.length <= 21 || "".equals(fields[21])) {
-                    cdr.setDecimalParam5(null);
-                } else {
-                    cdr.setDecimalParam5(new BigDecimal(fields[21]));
+
+                if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
+                    cdr.setRejectReasonException(new InvalidAccessException(sLine, "userId is empty"));
                 }
 
-                if (fields.length <= 22 || "".equals(fields[22])) {
-                    cdr.setExtraParameter(null);
-                } else {
-                    cdr.setExtraParameter(fields[22]);
-                }
+            } catch (Exception e) {
+                cdr.setRejectReasonException(new InvalidFormatException(sLine, e));
+                cdr.setRejectReason(e.getMessage());
             }
-
-            if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
-                cdr.setRejectReasonException(new InvalidAccessException(line, "userId is empty"));
-            }
-
-        } catch (Exception e) {
-            cdr.setRejectReasonException(new InvalidFormatException(line, e));
-            cdr.setRejectReason(e.getMessage());
         }
+        
         return cdr;
     }
         

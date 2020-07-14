@@ -31,6 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.MediationFileProcessing;
+import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -94,7 +95,7 @@ public class MediationJobBean {
     String report;
 
     /**
-     * Process a single file
+     * Process a single file.
      *
      * @param result Job execution result
      * @param inputDir Input directory
@@ -102,14 +103,17 @@ public class MediationJobBean {
      * @param archiveDir Directory to store a copy of a processed file
      * @param rejectDir Directory to store a failed records
      * @param file File to process
+     * @param parameter the parameter
      * @param nbRuns Number of parallel executions
-     * @param mappingConf 
-     * @param parserCode 
-     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
+     * @param waitingMillis the waiting millis
+     * @param readerCode the reader code
+     * @param parserCode the parser code
+     * @param mappingConf the mapping conf
+     * @param recordVariableName the record variable name
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String parameter, Long nbRuns,
-            Long waitingMillis, String readerCode, String parserCode, String mappingConf) {
+            Long waitingMillis, String readerCode, String parserCode, String mappingConf, String recordVariableName) {
 
         log.debug("Processing mediation file  in inputDir={}, file={}", inputDir, file.getAbsolutePath());
 
@@ -136,6 +140,13 @@ public class MediationJobBean {
             cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
             
             cdrParser = cdrParserService.getCDRParser(parserCode);
+            
+            if (cdrReader instanceof MEVEOCdrFlatFileReader) {
+                ((MEVEOCdrFlatFileReader) cdrReader).setDataFile(currentFile);
+                ((MEVEOCdrFlatFileReader) cdrReader).setMappingDescriptor(mappingConf);
+                ((MEVEOCdrFlatFileReader) cdrReader).setDataName(recordVariableName);
+                ((MEVEOCdrFlatFileReader) cdrReader).parsing();
+            }
 
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();

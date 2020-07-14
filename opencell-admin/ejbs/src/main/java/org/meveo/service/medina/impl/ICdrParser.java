@@ -36,7 +36,7 @@ public interface ICdrParser {
      * @param source the source
      * @return the cdr
      */
-    CDR parse(String source);
+    CDR parse(Object source);
 
     /**
      * Get a list of Access points CDR corresponds to

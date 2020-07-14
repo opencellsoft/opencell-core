@@ -104,6 +104,7 @@ public class MediationJob extends Job {
             String rejectDir = null;
             String archiveDir = null;
             String mappingConf = null;
+            String recordName = null;
             EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
             FileFormat fileFormat = null;
             if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
@@ -115,6 +116,7 @@ public class MediationJob extends Job {
                 rejectDir = fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 archiveDir = fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 mappingConf = fileFormat.getConfigurationTemplate();
+                recordName = fileFormat.getRecordName();
             } else {                
                 String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
                 inputDir = meteringDir + "input";
@@ -157,7 +159,7 @@ public class MediationJob extends Job {
                 }
 
                 String fileName = file.getName();
-                mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf);
+                mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf,recordName);
                 
                 result.addReport("Processed file: " + fileName);
                 if (oneFilePerJob) {
