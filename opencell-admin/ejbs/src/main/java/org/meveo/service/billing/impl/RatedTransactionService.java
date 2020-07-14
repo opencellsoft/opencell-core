@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -1570,6 +1571,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return new ArrayList<>();
     }
 
+    /**
+     * Get a list of invoiceable Rated transactions for a given BllingAccount and a list of ids
+     * 
+     * @param billingAccountId
+     * @param ids
+     * 
+     * @return A list of RT entities
+     * @throws BusinessException General exception
+     */
+	public List<RatedTransaction> listByBillingAccountAndIDs(Long billingAccountId, Set<Long> ids) throws BusinessException {
+		return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountAndIDs", RatedTransaction.class)
+				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).getResultList();
+	}
+    
     /**
      * Determine if minimum RT transactions functionality is used at service level
      * 
