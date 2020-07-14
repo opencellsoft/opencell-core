@@ -90,8 +90,6 @@ public class ServiceSingleton {
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
     
-    @Inject
-    private ProviderService providerService;
 
     @Inject
     private Logger log;
@@ -278,8 +276,8 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-		Provider provider = providerService.findById(appProvider.getId());
-		GenericSequence sequence = provider.getRumSequence();
+		
+		GenericSequence sequence = appProvider.getRumSequence();
 		if (type == SequenceTypeEnum.CUSTOMER_NO) {
 			sequence = appProvider.getCustomerNoSequence();
 		}
@@ -288,10 +286,10 @@ public class ServiceSingleton {
 		}
 		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
 		if (SequenceTypeEnum.CUSTOMER_NO == type) {
-			provider.setCustomerNoSequence(sequence);
+			appProvider.setCustomerNoSequence(sequence);
 		}
 		if (SequenceTypeEnum.RUM == type) {
-			provider.setRumSequence(sequence);
+			appProvider.setRumSequence(sequence);
 		}
 		return sequence;
 	}
@@ -299,9 +297,8 @@ public class ServiceSingleton {
 	@Lock(LockType.WRITE)
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateCustomerNumberSequence(GenericSequence genericSequence) {
-		Provider provider = providerService.findById(appProvider.getId());
-		provider.setCustomerNoSequence(genericSequence);
+	public void updateCustomerNumberSequence(GenericSequence genericSequence) {		
+		appProvider.setCustomerNoSequence(genericSequence);
 	}
 
     @Lock(LockType.WRITE)

@@ -201,8 +201,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return currentInvoiceNb
      * @throws BusinessException business exception
      */
-    public Long getCurrentGlobalInvoiceBb() throws BusinessException {
-        appProvider = providerService.findById(appProvider.getId());
+    public Long getCurrentGlobalInvoiceBb() throws BusinessException {       
         Long currentInvoiceNb = appProvider.getInvoiceConfiguration().getCurrentInvoiceNb();
         if (currentInvoiceNb == null) {
             currentInvoiceNb = 0L;
@@ -216,9 +215,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      */
     public void setCurrentGlobalInvoiceBb(Long currentInvoiceNb) throws BusinessException {
         try {
-
-            appProvider = providerService.findById(appProvider.getId());
-
             appProvider.getInvoiceConfiguration().setCurrentInvoiceNb(currentInvoiceNb);
 
         } catch (Exception e) {
