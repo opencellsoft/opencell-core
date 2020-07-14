@@ -57,13 +57,11 @@ public class ScriptingJobBean extends BaseJobBean {
 	@Inject
 	@CurrentUser
 	protected MeveoUser currentUser;
-
+	
 	@Resource(lookup = "java:jboss/ee/concurrency/executor/default")
 	ManagedExecutorService executor;
-
-
 	
-    @Inject
+	@Inject
 	private ScriptingAsync scriptingAsync;
 
 	@JpaAmpNewTx
@@ -84,7 +82,9 @@ public class ScriptingJobBean extends BaseJobBean {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
 			throws BusinessException {
-		Callable<String> task = () -> scriptingAsync.runScript(result, scriptCode, context);
+		ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+		MeveoUser lastCurrentUser = currentUser.unProxy();
+		Callable<String> task = () -> scriptingAsync.runScript(result, scriptCode, context,lastCurrentUser,script);
 		Future<String> futureResult = executor.submit(task);
 		while (!futureResult.isDone()) {
 			try {
