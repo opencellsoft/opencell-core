@@ -59,7 +59,8 @@ import org.slf4j.Logger;
  * @author Edward Legaspi
  * @author akadid abdelmounaim
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author anasseh
+ * @lastModifiedVersion 10.0
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -86,6 +87,9 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private ProviderService providerService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
@@ -276,21 +280,22 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-		
-		GenericSequence sequence = appProvider.getRumSequence();
+		Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
+		GenericSequence sequence = provider.getRumSequence();
 		if (type == SequenceTypeEnum.CUSTOMER_NO) {
-			sequence = appProvider.getCustomerNoSequence();
+			sequence = provider.getCustomerNoSequence();
 		}
 		if (sequence == null) {
 			sequence = new GenericSequence();
 		}
 		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
 		if (SequenceTypeEnum.CUSTOMER_NO == type) {
-			appProvider.setCustomerNoSequence(sequence);
+			provider.setCustomerNoSequence(sequence);
 		}
 		if (SequenceTypeEnum.RUM == type) {
-			appProvider.setRumSequence(sequence);
+			provider.setRumSequence(sequence);
 		}
+		
 		return sequence;
 	}
 
@@ -367,7 +372,6 @@ public class ServiceSingleton {
      * @param saveInvoice Should invoice be persisted
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("deprecation")
     private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
