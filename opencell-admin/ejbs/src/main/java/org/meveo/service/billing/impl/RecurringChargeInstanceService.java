@@ -527,22 +527,37 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int resetRecurringCharge(Long chargeInstanceId, Date fromDate) {
 
-        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate).getResultList();
+        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findUnbilledByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate)
+            .getResultList();
         if (woIds.isEmpty()) {
             log.warn("No wallet operations found to rerate for recurring charge {} from date {}. Rerating will be skipped.", chargeInstanceId, DateUtils.formatAsDate(fromDate));
             return 0;
         }
 
-        RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
+        int resetNr = walletOperationService.cancelWalletOperations(woIds);
 
-        log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
-            DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
+        if (resetNr > 0) {
 
-        chargeInstance.setChargeDate(fromDate);
-        chargeInstance.setChargedToDate(fromDate);
-        chargeInstance.setNextChargeDate(fromDate);
+            RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
 
-        return walletOperationService.cancelWalletOperations(woIds);
+            try {
+                Date minStartDate = getEntityManager().createNamedQuery("WalletOperation.getMinStartDateOfResetRecurringCharges", Date.class).setParameter("ids", woIds).getSingleResult();
+
+                log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
+                    DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(minStartDate));
+
+                chargeInstance.setChargeDate(minStartDate);
+                chargeInstance.setChargedToDate(minStartDate);
+                chargeInstance.setNextChargeDate(minStartDate);
+
+            } catch (NoResultException e) {
+                log.info("Will NOT reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}. No unbilled wallet operations were found.", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
+                    DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
+
+            }
+        }
+
+        return resetNr;
     }
 
     /**
@@ -552,10 +567,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * Recurring charge will be reset to a given date and existing wallet operations canceled independently of new wallet operations recreated
      * 
      * @param chargeInstanceId Recurring charge instance id
-     * @param maxDate Date to rate until. Only full periods will be considered
+     * @param fromDate Date to reset recurring charge to (chargedToDate value)
+     * @param toDate Date to rate until. Only full periods will be considered
      * @throws BusinessException General business exception
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER) // THIS IS NEVER, so two inner methods are executed in new transactions
+    @TransactionAttribute(TransactionAttributeType.NEVER) // This is set to NEVER, so two inner methods are executed in new transactions
     public void rerateRecurringChargeInNewTx(Long chargeInstanceId, Date fromDate, Date toDate) {
 
         int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate);
@@ -570,7 +586,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * aggregation will be marked as open.
      * 
      * @param chargeInstanceId Recurring charge instance id
-     * @param maxDate Date to rate until. Only full periods will be considered
+     * @param fromDate Date to reset recurring charge to (chargedToDate value)
+     * @param toDate Date to rate until. Only full periods will be considered
      * @throws BusinessException General business exception
      */
     public void rerateRecurringCharge(Long chargeInstanceId, Date fromDate, Date toDate) {
