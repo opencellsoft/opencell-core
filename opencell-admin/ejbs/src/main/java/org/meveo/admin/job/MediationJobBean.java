@@ -133,7 +133,7 @@ public class MediationJobBean {
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
-            cdrReader = cdrParserService.getCDRReaderByCode(file, readerCode);
+            cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
             
             cdrParser = cdrParserService.getCDRParser(parserCode);
 
