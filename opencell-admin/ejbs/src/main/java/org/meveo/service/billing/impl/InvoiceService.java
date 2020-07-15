@@ -3538,7 +3538,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				
 			    SubCategoryInvoiceAgregate invoiceAgregateSubcat = initSubCategoryInvoiceAgregate(auditable, invoice, userAccount, invoiceAgregateCat, invoiceSubCategory.getDescription(), invoiceSubCategory);
 				for (RatedTransaction rt : rtsToLink) {
-					linkRt(isEnterprise, invoice, rt.getInvoiceAgregateF(), rt);
+					linkRt(isEnterprise, invoice, invoiceAgregateSubcat, rt);
 				}
 				addSubCategoryAmountsToCategory(invoiceAgregateCat, invoiceAgregateSubcat);
 			}
