@@ -58,11 +58,12 @@
                     <hftl:formField label="#{messages['usageChargeTemplate.priority']}" field="priority" />
 
 
-
-                    <hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesure']}" field="inputUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"
-                        newLine="true" />
-                    <hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesure']}" field="ratingUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}" />
-                    <hftl:formField label="#{messages['chargeTemplate.unitMultiplicator']}" field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
+					<h:panelGroup id="unitOfMeasureInfos">
+	                    <hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesure']}" field="inputUnitOfMeasure" listenerUpdate="unitOfMeasureInfos" mandatory="#{usageChargeTemplateBean.entity.ratingUnitOfMeasure!=null}" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"
+	                        newLine="true" />
+	                    <hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesure']}" field="ratingUnitOfMeasure" listenerUpdate="unitOfMeasureInfos" mandatory="#{usageChargeTemplateBean.entity.inputUnitOfMeasure!=null}" valueLabelField="symbol" listBean="#{unitOfMeasureBean}" />
+	                    <hftl:formField label="#{messages['chargeTemplate.unitMultiplicator']}" field="unitMultiplicator" converter="bigDecimal12DigitsConverter" disabled="#{usageChargeTemplateBean.entity.inputUnitOfMeasure!=null || usageChargeTemplateBean.entity.ratingUnitOfMeasure!=null}"/>
+                    </h:panelGroup>
                     <hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}" field="unitNbDecimal" />
                     <hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
                     <hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
