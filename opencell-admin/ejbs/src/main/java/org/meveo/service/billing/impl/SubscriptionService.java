@@ -56,7 +56,6 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -720,7 +719,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         // check if selected available services are part of incompatible services of subscribed service's
         for (ServiceInstance subscribedService : serviceInstances) {
-            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getCode(), offerTemplate);
+            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getServiceTemplate().getCode(), offerTemplate);
             // list of incompatible services of an element of current subscribed service's
             List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
 
