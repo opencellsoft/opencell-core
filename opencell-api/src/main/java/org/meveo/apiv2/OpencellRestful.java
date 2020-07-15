@@ -35,8 +35,6 @@ import java.util.Set;
 
 @ApplicationPath("/api/rest/v2")
 public class OpencellRestful extends Application {
-       private Logger log = LoggerFactory.getLogger(OpencellRestful.class);
-
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
         public Set<Class<?>> getClasses() {
@@ -46,13 +44,9 @@ public class OpencellRestful extends Application {
             resources.add(OrderResourceImpl.class);
             resources.add(NotYetImplementedResource.class);
 
-
             resources.add(NotFoundExceptionMapper.class);
             resources.add(BadRequestExceptionMapper.class);
             resources.add(UnhandledExceptionMapper.class);
-            log.debug("Documenting {} rest services...", resources.size());
-            resources.add(OpenApiResource.class);
-            log.debug("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
             return resources;
         }
 
