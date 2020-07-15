@@ -37,7 +37,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 
+import org.hibernate.annotations.QueryHints;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.InsufficientBalanceException;
@@ -67,6 +71,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -78,6 +83,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.RatingResult;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
@@ -88,6 +94,8 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.filter.FilterService;
 
 /**
  * Service class for WalletOperation entity
@@ -141,8 +149,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
-    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
-            String orderNumberOverride) throws BusinessException, RatingException {
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private FilterService filterService;
+
+    public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
+            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -152,11 +166,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             applicationDate = new Date();
         }
 
-        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
-                quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
+        log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
+            new Object[] { subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
-            ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
+        RatingResult ratingResult = ratingService
+                .rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
+                        ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
@@ -180,7 +195,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (immediateInvoicing != null && immediateInvoicing) {
             BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
-            int delay = billingAccount.getBillingCycle().getInvoiceDateDelay();
+            int delay = InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperation, billingAccount);
             Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
             nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
             applicationDate = DateUtils.setTimeToZero(applicationDate);
@@ -249,7 +264,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
 
         cal = CalendarService.initializeCalendar(cal, chargeInstance.getSubscriptionDate(), chargeInstance);
-        
+
         Date startPeriodDate = cal.previousCalendarDate(cal.truncateDateTime(date));
         Date endPeriodDate = cal.nextCalendarDate(cal.truncateDateTime(date));
 
@@ -591,12 +606,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
                         // The counter will be incremented by charge quantity
                         if (counterPeriod == null) {
-                            counterPeriod = counterInstanceService
-                                    .getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
-                                            chargeInstance, chargeInstance.getServiceInstance());
+                            counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, wo.getOperationDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                                chargeInstance.getServiceInstance());
                         }
                     }
-                    
+
                     log.debug("Increment accumulator counter period value {} by the WO's amount {} or quantity {} ", counterPeriod, wo.getAmountWithoutTax(), wo.getQuantity());
                     counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
                 }
@@ -986,19 +1000,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
     }
 
-    public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, RatedTransactionsJobAggregationSetting aggregationSettings) {
+    public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, WalletOperationAggregationSettings aggregationSettings) {
 
-        WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
+        WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings, customFieldTemplateService, filterService);
 
         String strQuery = woa.getGroupQuery();
         log.debug("aggregated query={}", strQuery);
 
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
-
         // get the aggregated data
-        @SuppressWarnings("unchecked")
-        List<AggregatedWalletOperation> result = (List<AggregatedWalletOperation>) query.getResultList();
+        @SuppressWarnings("unchecked") List result = query.unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new AliasToAggregatedWalletOperationResultTransformer(AggregatedWalletOperation.class)).getResultList();
 
         return result;
     }

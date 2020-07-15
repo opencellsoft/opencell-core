@@ -28,14 +28,13 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.util.ApplicationProvider;
 
 /**
  * The Class InvoiceTypeService.
  *
  * @author anasseh
  * @author Phung tien lan
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 10.0
  * 
  */
 @Stateless
@@ -48,10 +47,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     /** The o CC template service. */
     @Inject
     OCCTemplateService oCCTemplateService;
-
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
 
     @Inject
     private ProviderService providerService;
@@ -197,32 +192,30 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         return cfName;
     }
 
-    /**
-     * @return currentInvoiceNb
-     * @throws BusinessException business exception
-     */
-    public Long getCurrentGlobalInvoiceBb() throws BusinessException {
-        appProvider = providerService.findById(appProvider.getId());
-        Long currentInvoiceNb = appProvider.getInvoiceConfiguration().getCurrentInvoiceNb();
-        if (currentInvoiceNb == null) {
-            currentInvoiceNb = 0L;
-        }
-        return currentInvoiceNb;
-    }
+	/**
+	 * @return currentInvoiceNb
+	 * @throws BusinessException business exception
+	 */
+	public Long getCurrentGlobalInvoiceBb() throws BusinessException {		
+		Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
+		Long currentInvoiceNb = provider.getInvoiceConfiguration().getCurrentInvoiceNb();
+		if (currentInvoiceNb == null) {
+			currentInvoiceNb = 0L;
+		}
+		return currentInvoiceNb;
+	}
 
-    /**
-     * @param currentInvoiceNb
-     * @throws BusinessException business exception
-     */
-    public void setCurrentGlobalInvoiceBb(Long currentInvoiceNb) throws BusinessException {
-        try {
+	/**
+	 * @param currentInvoiceNb
+	 * @throws BusinessException business exception
+	 */
+	public void setCurrentGlobalInvoiceBb(Long currentInvoiceNb) throws BusinessException {
+		try {			
+			Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
+			provider.getInvoiceConfiguration().setCurrentInvoiceNb(currentInvoiceNb);
 
-            appProvider = providerService.findById(appProvider.getId());
-
-            appProvider.getInvoiceConfiguration().setCurrentInvoiceNb(currentInvoiceNb);
-
-        } catch (Exception e) {
-            throw new BusinessException("Cant update global InvoiceTypeSequence : " + e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			throw new BusinessException("Cant update global InvoiceTypeSequence : " + e.getMessage());
+		}
+	}
 }
