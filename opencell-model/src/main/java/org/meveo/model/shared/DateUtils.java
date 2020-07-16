@@ -1030,4 +1030,81 @@ public class DateUtils {
         }
     }
 
+    /**
+     * Used to split a specific date period by prioritized Calendars
+     * @param datePeriod Date period
+     * @param initDate Init Date
+     * @param calendars List of calendars
+     * @return Split date periods
+     */
+    public static List<DatePeriodSplit> splitDatePeriodByCalendars(DatePeriod datePeriod, Date initDate, CalendarSplit... calendars) {
+        if (datePeriod.getFrom() == null || datePeriod.getTo() == null || datePeriod.getTo().before(datePeriod.getFrom())) {
+            throw new IllegalArgumentException("Please provide a valid period!");
+        }
+        if(initDate == null) {
+            throw new IllegalArgumentException("Please provide a valid init Date!");
+        }
+        if(calendars == null || calendars.length == 0) {
+            throw new IllegalArgumentException("Please provide at least one calendar!");
+        }
+        List<DatePeriodSplit> periods = new ArrayList<>();     
+        Date fromDate = null;
+        Date toDate = null;
+        for (CalendarSplit calendar : calendars) {
+            calendar.getCalendar().setInitDate(initDate);
+            fromDate = datePeriod.getFrom();
+            toDate = fromDate;
+            while (true) {
+                toDate = calendar.getCalendar().nextCalendarDate(fromDate);
+                if(toDate != null) {
+                    if(toDate.after(datePeriod.getTo())) {
+                        toDate = datePeriod.getTo();
+                    }                      
+                    periods.add(new DatePeriodSplit(new DatePeriod(fromDate, toDate), calendar.getPriority(), calendar.getValue()));
+                } 
+                fromDate = calendar.getCalendar().nextPeriodStartDate((toDate == null)? fromDate : toDate);
+                if(fromDate == null || fromDate.after(datePeriod.getTo())) {
+                    break;
+                }
+            }           
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fromDate);
+        return normalizeOverlapingDatePeriods(periods.toArray(new DatePeriodSplit[] {}));
+    }
+
+    /**
+     * Calendar Split holder that is used for sending prioritized calendars to apply on a specific Date Period
+     *
+     */
+    public static class CalendarSplit implements Serializable {
+        private static final long serialVersionUID = -5526548624466778266L;
+        private org.meveo.model.catalog.Calendar calendar;
+        private int priority;
+        private Object value;
+        
+        public CalendarSplit(org.meveo.model.catalog.Calendar calendar, int priority, Object value) {
+            this.calendar = calendar;
+            this.priority = priority;
+            this.value = value;
+        }
+        public org.meveo.model.catalog.Calendar getCalendar() {
+            return calendar;
+        }
+        public void setCalendar(org.meveo.model.catalog.Calendar calendar) {
+            this.calendar = calendar;
+        }
+        public int getPriority() {
+            return priority;
+        }
+        public void setPriority(int priority) {
+            this.priority = priority;
+        }
+        public Object getValue() {
+            return value;
+        }
+        public void setValue(Object value) {
+            this.value = value;
+        }       
+    }
 }
