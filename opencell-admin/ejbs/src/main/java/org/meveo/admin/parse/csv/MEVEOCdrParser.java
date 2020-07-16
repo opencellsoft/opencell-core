@@ -42,6 +42,7 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -73,6 +74,9 @@ public class MEVEOCdrParser implements ICdrParser {
     @Inject
     @RejectedCDR
     private Event<Serializable> rejectededCdrEventProducer;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
 
     @Override
     public CDR parse(Object line) {
@@ -271,13 +275,15 @@ public class MEVEOCdrParser implements ICdrParser {
 
             deduplicate(cdr);
             List<EDR> edrs = new ArrayList<EDR>();
-
             boolean foundMatchingAccess = false;
+            
+            Subscription subscription;
             for (Access accessPoint : accessPoints) {
                 if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
                         && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
-                    foundMatchingAccess = true;                    
-                    EDR edr = cdrToEdr(cdr, accessPoint, accessPoint.getSubscription());
+                    foundMatchingAccess = true; 
+                    subscription =  accessPoint.getSubscription() != null ? subscriptionService.findById(accessPoint.getSubscription().getId()) : null;
+                    EDR edr = cdrToEdr(cdr, accessPoint, subscription);
                     edrs.add(edr);
                 }
             }
