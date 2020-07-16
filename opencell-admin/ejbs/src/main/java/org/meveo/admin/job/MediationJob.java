@@ -109,16 +109,17 @@ public class MediationJob extends Job {
             FileFormat fileFormat = null;
             if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
                 fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
-            }            
+            } 
+            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator;
             if( fileFormat != null) {
-                inputDir = fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                outputDir = fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                rejectDir = fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                archiveDir = fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                inputDir = meteringDir + fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                outputDir = meteringDir + fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                rejectDir = meteringDir + fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                archiveDir = meteringDir + fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
                 mappingConf = fileFormat.getConfigurationTemplate();
                 recordName = fileFormat.getRecordName();
             } else {                
-                String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
+                meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
                 inputDir = meteringDir + "input";
                 outputDir = meteringDir + "output";
                 rejectDir = meteringDir + "reject";

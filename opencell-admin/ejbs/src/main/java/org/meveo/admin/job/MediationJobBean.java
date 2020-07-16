@@ -141,7 +141,7 @@ public class MediationJobBean {
             
             cdrParser = cdrParserService.getCDRParser(parserCode);
             
-            if (cdrReader instanceof MEVEOCdrFlatFileReader) {
+            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
                 ((MEVEOCdrFlatFileReader) cdrReader).setDataFile(currentFile);
                 ((MEVEOCdrFlatFileReader) cdrReader).setMappingDescriptor(mappingConf);
                 ((MEVEOCdrFlatFileReader) cdrReader).setDataName(recordVariableName);

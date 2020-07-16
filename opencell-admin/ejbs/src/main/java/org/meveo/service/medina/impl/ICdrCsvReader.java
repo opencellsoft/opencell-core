@@ -24,6 +24,6 @@ public interface ICdrCsvReader extends ICdrReader {
      * @param username user name
      * @param ip Ip address
      */
-    void init(String userName, String ip);
+    void init(String userName, String ip);        
 
 }
