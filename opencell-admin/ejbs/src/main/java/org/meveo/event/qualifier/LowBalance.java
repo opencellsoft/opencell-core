@@ -30,6 +30,10 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+
+/**
+ * Reached low balance on prepaid wallet instance event
+ */
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)

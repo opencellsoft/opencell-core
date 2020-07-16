@@ -29,14 +29,12 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.RecurringChargeAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -63,10 +61,6 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
 
     @Inject
     private Logger log;
-
-    @Inject
-    @Rejected
-    private Event<Serializable> rejectededChargeProducer;
 
     @Inject
     private BillingCycleService billingCycleService;

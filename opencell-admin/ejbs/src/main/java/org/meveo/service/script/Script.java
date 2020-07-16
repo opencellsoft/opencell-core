@@ -58,6 +58,11 @@ public abstract class Script implements Serializable, ScriptInterface {
     public static String RESULT_VALUE = "RESULT_VALUE";
 
     /**
+     * Entity or event on which script acts on in case of fired notification
+     */
+    public static final String CONTEXT_ENTITY_OR_EVENT = "entityOrEvent";
+
+    /**
      * Entity, on which script acts on
      */
     public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
