@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +45,8 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -50,6 +54,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
@@ -67,6 +72,7 @@ import org.meveo.model.tax.TaxClass;
  */
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "RatedTransaction")
 @Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
@@ -75,6 +81,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription.id=:subscriptionId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
 
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountAndIDs", query = "SELECT r FROM RatedTransaction r where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND id in (:listOfIds) "),
+
+        
         @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r where r.subscription=:subscription AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
         @NamedQuery(name = "RatedTransaction.listOrdersByBillingAccount", query = "SELECT distinct r.orderNumber FROM RatedTransaction r where r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
 
@@ -148,11 +157,12 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.amountWithoutTax<>0 and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.invoiceAgregateF=:invoiceAgregateF and r.status='BILLED' order by r.usageDate"),
 
-        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
-                + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
+                "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
+                        + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now , r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice.id IN (:invoicesIds)") })
-public class RatedTransaction extends BaseEntity implements ISearchable {
+public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -485,6 +495,28 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Unique identifier - UUID
+     */
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid;
 
     public RatedTransaction() {
         super();
@@ -1229,5 +1261,67 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    @Override
+    public String getUuid() {
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
+     * Set a new UUID value.
+     *
+     * @return Old UUID value
+     */
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+
+    /**
+     * Get an array of parent custom field entity in case custom field values should be inherited from a parent entity.
+     *
+     * @return An entity
+     */
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[0];
+    }
+
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
 }

@@ -33,6 +33,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRatedTransactionsJobBean;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -84,7 +85,7 @@ public class RatedTransactionAsync {
 
     /**
      * Rate aggregated wallet operations, one operation at a time in a separate transaction.
-     * 
+     *
      * @param nextWorkSet A list of aggregated wallet operation.
      * @param result Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -95,7 +96,7 @@ public class RatedTransactionAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<AggregatedWalletOperation> nextWorkSet, JobExecutionResultImpl result, MeveoUser lastCurrentUser,
-            RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
+            WalletOperationAggregationSettings aggregationSettings, Date invoicingDate) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 

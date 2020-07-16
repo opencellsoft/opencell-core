@@ -22,16 +22,26 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.tax.TaxClass;
 
 /**
  * Aggregated wallet operation.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -41,6 +51,11 @@ public class AggregatedWalletOperation {
 	 * Id of the aggregated entity
 	 */
 	private Object id;
+
+	/**
+	 * Id of the aggregated entity
+	 */
+	private String code;
 
 	/**
 	 * Amount with tax
@@ -139,6 +154,19 @@ public class AggregatedWalletOperation {
 	 */
 	private Integer sortIndex;
 
+	private Subscription subscription;
+	private ChargeInstance chargeInstance;
+	private ServiceInstance serviceInstance;
+	private OfferTemplate offer;
+	private UserAccount userAccount;
+	private BillingAccount billingAccount;
+	private Seller seller;
+	private Date operationDate;
+	private Map<String, Object> cfValues;
+	private Date endDate;
+	private Date startDate;
+	private String description;
+
 	/**
 	 * List of wallet operations.
 	 */
@@ -148,7 +176,7 @@ public class AggregatedWalletOperation {
 			BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
 			String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
 		String[] stringIds = walletOpsIds.split(",");
-		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> new Long(x)).collect(Collectors.toList());
+		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> Long.valueOf(x)).collect(Collectors.toList());
 		this.walletOperationsIds = ids;
 		this.sellerId = sellerId;
 		this.year = year;
@@ -330,6 +358,10 @@ public class AggregatedWalletOperation {
 	 * @return the walletOperationsIds
 	 */
 	public List<Long> getWalletOperationsIds() {
+		if (walletOperationsIds == null) {
+			String[] stringIds = id.toString().split(",");
+			walletOperationsIds = Arrays.asList(stringIds).stream().map(x -> new Long(x)).collect(Collectors.toList());
+		}
 		return walletOperationsIds;
 	}
 
@@ -392,8 +424,8 @@ public class AggregatedWalletOperation {
 	/**
 	 * @param unitAmountTax the unitAmountTax to set
 	 */
-	public void setUnitAmountTax(BigDecimal unitAmountTax) {
-		this.unitAmountTax = unitAmountTax;
+	public void setUnitAmountTax(Double unitAmountTax) {
+		this.unitAmountTax = BigDecimal.valueOf(unitAmountTax);
 	}
 
 	/**
@@ -409,4 +441,114 @@ public class AggregatedWalletOperation {
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
 	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public ChargeInstance getChargeInstance() {
+		return chargeInstance;
+	}
+
+	public void setChargeInstance(ChargeInstance chargeInstance) {
+		this.chargeInstance = chargeInstance;
+	}
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
+
+	public OfferTemplate getOffer() {
+		return offer;
+	}
+
+	public void setOffer(OfferTemplate offer) {
+		this.offer = offer;
+	}
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setUnitAmountTax(BigDecimal unitAmountTax) {
+		this.unitAmountTax = unitAmountTax;
+	}
+
+	public Date getOperationDate() {
+		return operationDate;
+	}
+
+	public void setOperationDate(Date operationDate) {
+		this.operationDate = operationDate;
+	}
+
+	public Map<String, Object> getCfValues() {
+		return cfValues;
+	}
+
+	public void setCfValues(Map<String, Object> cfValues) {
+		this.cfValues = cfValues;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
 }

@@ -3175,16 +3175,16 @@ END $$;]]>
             <column name="value_el"></column>
         </dropColumn>
      </changeSet>
-     
+
     <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
-        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>    
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>
     </changeSet>
-     
+
 
     <changeSet id="#5331_20190630" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RecurringRatingJob'</sql>
     </changeSet>
-    
+
         <changeSet id="#5295_20200626" author="anasseh">
          <addColumn tableName="ar_payment_schedule_tmpl">
             <column name="tax_class_id" type="bigint"></column>
@@ -3192,10 +3192,45 @@ END $$;]]>
 
         <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_tax_class_pst" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
-            
+
             <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set is_generate_adv_pay_inv=1</sql>
 
      </changeSet>
+
+
+    <changeSet id="#5330_20190630" author="AndriusKarpavicius">
+        <addColumn tableName="cat_calendar">
+            <column name="init_date_el" type="varchar(2000)"/>
+            <column name="init_date_el_sp" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5372_20190630" author="AndriusKarpavicius">
+        <addColumn tableName="billing_cycle">
+            <column name="transaction_date_delay_el" type="varchar(2000)"/>
+            <column name="invoice_date_production_delay_el" type="varchar(2000)"/>
+            <column name="invoice_date_delay_el" type="varchar(2000)"/>
+            <column name="transaction_date_el" type="varchar(2000)"/>
+        </addColumn>
+        
+        <sql>update ${db.schema.adapted}billing_cycle set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set due_date_delay_el = due_date_delay where due_date_delay_el is null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set transaction_date_delay_el = transaction_date_delay where transaction_date_delay is not null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set invoice_date_production_delay_el = invoice_date_production_delay where invoice_date_production_delay is not null</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set invoice_date_delay_el = invoice_date_delay where invoice_date_delay is not null</sql>
+                
+        <dropColumn tableName="billing_cycle" columnName="transaction_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="invoice_date_production_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="invoice_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="due_date_delay"/>
+        <dropColumn tableName="billing_cycle" columnName="billing_template_name"/>
+    </changeSet>
+    
+    
+    <changeSet id="#5372_20200711" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
+        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
+    </changeSet>
     
     <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
         <addColumn tableName="rating_cdr">
@@ -3203,13 +3238,60 @@ END $$;]]>
             <column name="type" type="varchar(255)"/>
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#5330_20190630" author="AndriusKarpavicius">
-        <addColumn tableName="cat_calendar">
-            <column name="init_date_el" type="varchar(2000)"/>
-            <column name="init_date_el_sp" type="varchar(2000)"/>
+
+    <changeSet id="#5241_20200622" author="khalidHORRI">
+        <createTable tableName="wo_aggregation_line">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_line_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="field" type="varchar(255)"/>
+            <column name="action" type="varchar(25)"/>
+            <column name="value" type="varchar(255)"/>
+            <column name="required" type="${type.boolean}"/>
+            <column name="is_custom_field" type="${type.boolean}"/>
+            <column name="group_by" type="varchar(25)"/>
+            <column name="group_by_parameter" type="varchar(25)"/>
+            <column name="alias" type="varchar(255)"/>
+            <column name="wo_aggregation_settings_id" type="bigint"/>
+        </createTable>
+        <createTable tableName="wo_aggregation_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wo_aggregation_matrix_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="global_aggregation" type="${type.boolean}"/>
+            <column name="period_aggregation" type="${type.boolean}"/>
+            <column name="period_end_date_included" type="${type.boolean}"/>
+            <column name="wallet_operation_filter_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="wo_aggregation_settings" baseColumnNames="wallet_operation_filter_id"
+                                 constraintName="wallet_operation_filter_id_fk" referencedTableName="meveo_filter"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="wo_aggregation_line" baseColumnNames="wo_aggregation_settings_id"
+                                 constraintName="wo_aggregation_settings_id_fk" referencedTableName="wo_aggregation_settings"
+                                 referencedColumnNames="id"/>
+        <createSequence sequenceName="wo_aggregation_line_seq" startValue="1"/>
+        <createSequence sequenceName="wo_aggregation_matrix_seq" startValue="1"/>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="cf_values_accum" type="${type.json}"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="uuid" type="varchar(60)"/>
         </addColumn>
-    
     </changeSet>
-    
+
 </databaseChangeLog>

@@ -23,7 +23,6 @@ import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
@@ -52,6 +50,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
 
 /**
@@ -60,97 +59,102 @@ import org.slf4j.Logger;
 @Stateless
 public class BillingRunJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private BillingRunService billingRunService;
+    @Inject
+    private BillingRunService billingRunService;
 
-	@Inject
-	private BillingCycleService billingCycleService;
+    @Inject
+    private BillingCycleService billingCycleService;
 
-	@Inject
-	protected ParamBeanFactory paramBeanFactory;
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
-	@Inject
-	protected ResourceBundle resourceMessages;
+    @Inject
+    protected ResourceBundle resourceMessages;
 
+    @SuppressWarnings("unchecked")
     @JpaAmpNewTx
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
-		List<EntityReferenceWrapper> billingCyclesCf = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "BillingRunJob_billingCycle");
-		Date lastTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_lastTransactionDate");
-		Date invoiceDate = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_invoiceDate");
-		String billingCycleTypeId = (String) this.getParamOrCFValue(jobInstance, "BillingRunJob_billingRun_Process");
-		List<String> billingCyclesCode = Collections.EMPTY_LIST;
-		if (billingCyclesCf != null) {
-			billingCyclesCode = billingCyclesCf.stream().map(EntityReferenceWrapper::getCode).collect(Collectors.toList());
-		}
-    	log.debug("Creating Billing Runs for billingCycles ={} with invoiceDate = {} and lastTransactionDate={}", billingCyclesCode, invoiceDate, lastTransactionDate);
+        List<EntityReferenceWrapper> billingCyclesCf = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "BillingRunJob_billingCycle");
+        Date lastTransactionDateFromCF = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_lastTransactionDate");
+        Date invoiceDateFromCF = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_invoiceDate");
+        String billingCycleTypeId = (String) this.getParamOrCFValue(jobInstance, "BillingRunJob_billingRun_Process");
 
-		try {
-			int nbItemsToProcess = 0;
-			int nbItemsProcessedWithError = 0;
-			BillingProcessTypesEnum billingCycleType = BillingProcessTypesEnum.FULL_AUTOMATIC;
-			if (billingCycleTypeId != null) {
-				billingCycleType = BillingProcessTypesEnum.getValue(Integer.valueOf(billingCycleTypeId));
-			}
-			ParamBean param = paramBeanFactory.getInstance();
-			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
-			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-			log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
-			for (String billingCycleCode : billingCyclesCode) {
-				List<BillingRun> billruns = billingRunService.getBillingRuns(billingCycleCode, POSTVALIDATED, NEW, PREVALIDATED, PREINVOICED);
-				boolean alreadyLaunched = billruns != null && billruns.size() > 0;
-				if (alreadyLaunched && !isAllowed) {
-					log.warn("Not allowed to launch many invoicing for the billingCycle = {}", billingCycleCode);
-					result.registerError(resourceMessages.getString("error.invoicing.alreadyLunched"));
-					result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
-					continue;
-				}
+        List<String> billingCyclesCode = Collections.emptyList();
+        if (billingCyclesCf != null) {
+            billingCyclesCode = billingCyclesCf.stream().map(EntityReferenceWrapper::getCode).collect(Collectors.toList());
+        }
+        log.debug("Creating Billing Runs for billingCycles ={} with invoiceDate = {} and lastTransactionDate={}", billingCyclesCode, invoiceDateFromCF, lastTransactionDateFromCF);
 
-				BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
+        try {
+            int nbItemsToProcess = 0;
+            int nbItemsProcessedWithError = 0;
+            BillingProcessTypesEnum billingCycleType = BillingProcessTypesEnum.FULL_AUTOMATIC;
+            if (billingCycleTypeId != null) {
+                billingCycleType = BillingProcessTypesEnum.getValue(Integer.valueOf(billingCycleTypeId));
+            }
+            ParamBean param = paramBeanFactory.getInstance();
+            String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
+            boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
+            log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+            for (String billingCycleCode : billingCyclesCode) {
+                List<BillingRun> billruns = billingRunService.getBillingRuns(billingCycleCode, POSTVALIDATED, NEW, PREVALIDATED, PREINVOICED);
+                boolean alreadyLaunched = billruns != null && billruns.size() > 0;
+                if (alreadyLaunched && !isAllowed) {
+                    log.warn("Not allowed to launch many invoicing for the billingCycle = {}", billingCycleCode);
+                    result.registerError(resourceMessages.getString("error.invoicing.alreadyLunched"));
+                    result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
+                    continue;
+                }
 
-				if (billingCycle == null) {
-					result.registerError("Cannot create a biling run with billing cycle '" + billingCycleCode);
-					result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
-					continue;
-				}
-						BillingRun billingRun = new BillingRun();
-						billingRun.setBillingCycle(billingCycle);
-						billingRun.setProcessDate(new Date());
+                BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
 
-						if (invoiceDate != null) {
-							billingRun.setInvoiceDate(invoiceDate);
-						} else if (billingCycle.getInvoiceDateProductionDelay() != null) {
-							billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),
-									billingCycle.getInvoiceDateProductionDelay()));
-						} else if (billingRun.getProcessDate() != null) {
-							billingRun.setInvoiceDate(billingRun.getProcessDate());
-						}
-						if (lastTransactionDate != null) {
-							billingRun.setLastTransactionDate(lastTransactionDate);
-						} else if (billingCycle.getTransactionDateDelay() != null) {
-							billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),
-									billingCycle.getTransactionDateDelay()));
-						} else {
-							billingRun.setLastTransactionDate(billingRun.getProcessDate());
-						}
-						billingRun.setProcessType(billingCycleType);
-						billingRun.setStatus(BillingRunStatusEnum.NEW);
-						billingRunService.create(billingRun);
-						//result.setNbItemsCorrectlyProcessed(++nbItemsToProcess);
-						result.registerSucces();
+                if (billingCycle == null) {
+                    result.registerError("Cannot create a biling run with billing cycle '" + billingCycleCode);
+                    result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
+                    continue;
+                }
 
+                BillingRun billingRun = new BillingRun();
+                billingRun.setBillingCycle(billingCycle);
+                billingRun.setProcessDate(new Date());
+                billingRun.setProcessType(billingCycleType);
+                billingRun.setStatus(BillingRunStatusEnum.NEW);
 
-			}
-			result.setNbItemsToProcess(nbItemsToProcess+nbItemsProcessedWithError);
-		} catch (Exception e) {
-			result.registerError(e.getMessage());
-			log.error("Failed to run billing ", e);
-		}
-	}
+                if (invoiceDateFromCF != null) {
+                    billingRun.setInvoiceDate(invoiceDateFromCF);
 
+                } else if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
+                    billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
+                } else {
+                    billingRun.setInvoiceDate(billingRun.getProcessDate());
+                }
+
+                if (lastTransactionDateFromCF != null) {
+                    billingRun.setLastTransactionDate(lastTransactionDateFromCF);
+
+                } else if (billingCycle.getLastTransactionDateEL() != null) {
+                    billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
+
+                } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
+                    billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
+                } else {
+                    billingRun.setLastTransactionDate(billingRun.getProcessDate());
+                }
+                billingRunService.create(billingRun);
+                // result.setNbItemsCorrectlyProcessed(++nbItemsToProcess);
+                result.registerSucces();
+
+            }
+            result.setNbItemsToProcess(nbItemsToProcess + nbItemsProcessedWithError);
+        } catch (Exception e) {
+            result.registerError(e.getMessage());
+            log.error("Failed to run billing ", e);
+        }
+    }
 }

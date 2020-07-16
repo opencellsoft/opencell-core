@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -72,14 +73,17 @@ import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -88,6 +92,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -143,12 +148,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
+    @Inject
+    private TaxClassService taxClassService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
-     * 
-     * @param billingAccount billing account
+     *
+     * @param billingAccount       billing account
      * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
+     * @param lastTransactionDate  date of last transaction
      * @return true/false
      */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
@@ -218,29 +226,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Create a {@link RatedTransaction} from a group of wallet operations.
-     * 
-     * @param aggregatedWo aggregated wallet operations
+     *
+     * @param aggregatedWo       aggregated wallet operations
      * @param aggregatedSettings aggregation settings of wallet operations
-     * @param invoicingDate the invoicing date
+     * @param invoicingDate      the invoicing date
      * @return created {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      * @see WalletOperation
      */
-    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregatedSettings, Date invoicingDate) throws BusinessException {
+    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregatedSettings, Date invoicingDate)
+            throws BusinessException {
         return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
     }
 
     /**
-     * 
-     * @param aggregatedWo aggregated wallet operations
+     * @param aggregatedWo        aggregated wallet operations
      * @param aggregationSettings aggregation settings of wallet operations
-     * @param isVirtual is virtual
-     * @param invoicingDate the invoicing date
+     * @param isVirtual           is virtual
+     * @param invoicingDate       the invoicing date
      * @return {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
-    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate, boolean isVirtual) throws BusinessException {
+    public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, WalletOperationAggregationSettings aggregationSettings, Date invoicingDate,
+            boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction();
 
         Seller seller = null;
@@ -254,95 +263,36 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         InvoiceSubCategory isc = null;
 
         Calendar cal = Calendar.getInstance();
-        if (aggregationSettings.isAggregateByDay()) {
-            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth() - 1, aggregatedWo.getDay(), 0, 0, 0);
+        if (aggregatedWo.getYear() != null && aggregatedWo.getMonth() != null && aggregatedWo.getDay() != null) {
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
         } else {
-            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth() - 1, 1, 0, 0, 0);
-            ratedTransaction.setUsageDate(cal.getTime());
-
+            ratedTransaction.setUsageDate(aggregatedWo.getOperationDate());
         }
 
         isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
-
-        switch (aggregationSettings.getAggregationLevel()) {
-        case BA:
-            ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case UA:
-            ua = userAccountService.findById(aggregatedWo.getIdAsLong());
-            ba = ua.getBillingAccount();
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case SUB:
-            sub = subscriptionService.findById(aggregatedWo.getIdAsLong());
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = isc.getCode();
-            description = isc.getDescription();
-            break;
-
-        case SI:
-            si = serviceInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = si.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
+        ci = (ChargeInstance) chargeInstanceService.refreshOrRetrieve(aggregatedWo.getChargeInstance());
+        si = (aggregatedWo.getServiceInstance() == null && ci != null) ? ci.getServiceInstance() : serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance());
+        sub = (aggregatedWo.getSubscription() == null && ci != null) ? ci.getSubscription() : subscriptionService.refreshOrRetrieve(aggregatedWo.getSubscription());
+        ua = (aggregatedWo.getUserAccount() == null && sub != null) ? sub.getUserAccount() : userAccountService.refreshOrRetrieve(aggregatedWo.getUserAccount());
+        ba = (aggregatedWo.getBillingAccount() == null && ua != null) ? ua.getBillingAccount() : billingAccountService.refreshOrRetrieve(aggregatedWo.getBillingAccount());
+        seller = (aggregatedWo.getSeller() == null && sub != null) ? sub.getSeller() : sellerService.refreshOrRetrieve(aggregatedWo.getSeller());
+        if (ci != null) {
+            code = ci.getCode();
+        } else if (si != null) {
             code = si.getCode();
-            description = si.getDescription();
-            break;
+        } else {
+            code = isc.getCode();
+        }
+        description = (aggregatedWo.getDescription() != null) ? aggregatedWo.getDescription() : aggregatedWo.getComputedDescription();
 
-        case CI:
-            ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = ci.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = ci.getCode();
-            description = ci.getDescription();
-            break;
-
-        case DESC:
-            ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
-            sub = ci.getSubscription();
-            ua = sub.getUserAccount();
-            ba = ua.getBillingAccount();
-            seller = sub.getSeller();
-            code = ci.getCode();
-            description = aggregatedWo.getComputedDescription();
-            break;
-
-        default:
-            ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
-            seller = ba.getCustomerAccount().getCustomer().getSeller();
-        }
-
-        if (aggregationSettings.isAggregateByOrder()) {
-            ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
-        }
-        if (aggregationSettings.isAggregateByParam1()) {
-            ratedTransaction.setParameter1(aggregatedWo.getParameter1());
-        }
-        if (aggregationSettings.isAggregateByParam2()) {
-            ratedTransaction.setParameter2(aggregatedWo.getParameter2());
-        }
-        if (aggregationSettings.isAggregateByParam3()) {
-            ratedTransaction.setParameter3(aggregatedWo.getParameter3());
-        }
-        if (aggregationSettings.isAggregateByExtraParam()) {
-            ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
-        }
-
+        ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
+        ratedTransaction.setParameter1(aggregatedWo.getParameter1());
+        ratedTransaction.setParameter2(aggregatedWo.getParameter2());
+        ratedTransaction.setParameter3(aggregatedWo.getParameter3());
+        ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
         Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
-
+        TaxClass taxClass = taxClassService.refreshOrRetrieve(aggregatedWo.getTaxClass());
         ratedTransaction.setCode(code);
         ratedTransaction.setDescription(description);
         ratedTransaction.setTax(tax);
@@ -357,12 +307,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
         ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
         ratedTransaction.setQuantity(aggregatedWo.getQuantity());
-        ratedTransaction.setTaxClass(aggregatedWo.getTaxClass());
+        ratedTransaction.setTaxClass(taxClass);
         ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
         ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
         ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
         ratedTransaction.setSortIndex(aggregatedWo.getSortIndex());
-
+        ratedTransaction.setStartDate(aggregatedWo.getStartDate());
+        ratedTransaction.setEndDate(aggregatedWo.getEndDate());
+        populateCustomfield(ratedTransaction, aggregatedWo);
         if (!isVirtual) {
             create(ratedTransaction);
             updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
@@ -371,9 +323,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return ratedTransaction;
     }
 
+    private void populateCustomfield(RatedTransaction ratedTransaction, AggregatedWalletOperation aggregatedWo) {
+        if (aggregatedWo.getCfValues() != null && !aggregatedWo.getCfValues().isEmpty()) {
+            for (String cfField : aggregatedWo.getCfValues().keySet()) {
+                if (isCfAppliedTo(cfField, ratedTransaction)) {
+                    customFieldInstanceService.setCFValue(ratedTransaction, cfField, aggregatedWo.getCfValues().get(cfField));
+                }
+            }
+        }
+    }
+
+    private boolean isCfAppliedTo(String cfField, RatedTransaction ratedTransaction) {
+        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesTo(cfField, ratedTransaction);
+        return customFieldTemplate != null;
+    }
+
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
-        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
+        String strQuery =
+                "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated"
+                        + " WHERE o.id in (:woIds) ";
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("woIds", woIds);
         query.setParameter("ratedTransaction", ratedTransaction);
@@ -1602,6 +1571,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return new ArrayList<>();
     }
 
+    /**
+     * Get a list of invoiceable Rated transactions for a given BllingAccount and a list of ids
+     * 
+     * @param billingAccountId
+     * @param ids
+     * 
+     * @return A list of RT entities
+     * @throws BusinessException General exception
+     */
+	public List<RatedTransaction> listByBillingAccountAndIDs(Long billingAccountId, Set<Long> ids) throws BusinessException {
+		return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountAndIDs", RatedTransaction.class)
+				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).getResultList();
+	}
+    
     /**
      * Determine if minimum RT transactions functionality is used at service level
      * 

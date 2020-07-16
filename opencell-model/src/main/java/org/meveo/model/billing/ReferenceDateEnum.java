@@ -19,13 +19,28 @@
 package org.meveo.model.billing;
 
 /**
- * Represents a reference date Enum
+ * What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
  *
  * @author Abdellatif BARI
  * @since 7.0
  */
 public enum ReferenceDateEnum {
-    TODAY, NEXT_INVOICE_DATE, LAST_TRANSACTION_DATE, END_DATE;
+    /**
+     * Today
+     */
+    TODAY,
+
+    /**
+     * Next invoice date set on billing account, subscription or order
+     */
+    NEXT_INVOICE_DATE,
+
+    /**
+     * Last transaction date as specified in Billing run
+     */
+    LAST_TRANSACTION_DATE,
+
+    END_DATE;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

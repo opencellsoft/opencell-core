@@ -1,0 +1,7264 @@
+{
+	"info": {
+		"_postman_id": "438bbd8a-8f69-465d-bade-42451f8e7fc9",
+		"name": "Opencell URL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Index",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c82f25fa-daf5-4af3-8f95-95728b5cac4a",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/index.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"index.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/providers/providerSelfDetail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "99c9f860-0633-4afc-a9a2-2b090a27e224",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/providers/providerSelfDetail.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"providers",
+						"providerSelfDetail.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/providerContacts/providerContacts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "df494a8d-8634-4dd7-abf1-30188ab9be9d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/providerContacts/providerContacts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"providerContacts",
+						"providerContacts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/meveoUsers/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6bdf1793-e3b5-4cb9-98c9-ffd5ac634c5f",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/meveoUsers/users.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"meveoUsers",
+						"users.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/userRoles/userRoles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e25ba9de-c530-4929-9d7f-33e8a904a370",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/userRoles/userRoles.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"userRoles",
+						"userRoles.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/userGroupHierarchy/userGroupHierarchy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4bd0745c-6879-4edc-9a1c-f6123506d945",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/userGroupHierarchy/userGroupHierarchy.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"userGroupHierarchy",
+						"userGroupHierarchy.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/sellers/sellers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a85cab90-5f93-4db0-8a5f-e974ef4590af",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/sellers/sellers.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"sellers",
+						"sellers.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/title/titles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "662ee8b8-3cce-4dd7-b33f-50de3b638342",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/title/titles.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"title",
+						"titles.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/customerBrands/customerBrands",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "109d5b84-3608-4006-84d3-5e9cc9a7fac3",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/customerBrands/customerBrands.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"customerBrands",
+						"customerBrands.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/customerCategories/customerCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "49e3a57d-306d-4eb0-9f0f-db9e198b087a",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/customerCategories/customerCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"customerCategories",
+						"customerCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/creditCategories/creditCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c2d342a-9260-45b3-b8e9-9a3892365d96",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/creditCategories/creditCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"creditCategories",
+						"creditCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/occTemplates/occTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0d621480-b940-49b8-8042-7284276700e5",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/occTemplates/occTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"occTemplates",
+						"occTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/tradingLanguages/tradingLanguages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5405f633-cdf4-4fee-9897-836c6d1b79e1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/tradingLanguages/tradingLanguages.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"tradingLanguages",
+						"tradingLanguages.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/tradingCurrencies/tradingCurrencies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d5211619-5830-4305-95ce-fab92c190eb1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/tradingCurrencies/tradingCurrencies.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"tradingCurrencies",
+						"tradingCurrencies.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/tradingCountries/tradingCountries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec588ee1-ba8d-4d2d-8dee-283206beeb75",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/tradingCountries/tradingCountries.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"tradingCountries",
+						"tradingCountries.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/multiLanguageField/multiLanguageFields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d5c4bb42-4fe7-48da-a5fb-83931420f39e",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/multiLanguageField/multiLanguageFields.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"multiLanguageField",
+						"multiLanguageFields.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/communication/emailTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "abf22fdf-7628-43f8-b137-c665738f88db",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/communication/emailTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"communication",
+						"emailTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/calendars/calendars",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1114b16a-fc6b-44cd-816e-d0f7f501582d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/calendars/calendars.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"calendars",
+						"calendars.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/billingCycles/billingCycles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f12c8723-90ad-4628-a469-add121594bef",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/billingCycles/billingCycles.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"billingCycles",
+						"billingCycles.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/taxes/taxes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f9cdb8f2-02de-42b8-9fc7-622003858c28",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/taxes/taxes.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"taxes",
+						"taxes.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/invoiceCategories/invoiceCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "82cabd31-d8af-4a41-ab2f-f341f48f88ec",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/invoiceCategories/invoiceCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"invoiceCategories",
+						"invoiceCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/invoiceSubCategories/invoiceSubCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "965d6c56-ae01-4cf5-859d-ac1717b37b6e",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/invoiceSubCategories/invoiceSubCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"invoiceSubCategories",
+						"invoiceSubCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoiceTypes/invoiceTypes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d0ac7cd5-a01d-460b-a6be-a7f499f53226",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoiceTypes/invoiceTypes.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoiceTypes",
+						"invoiceTypes.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoiceSequences/invoiceSequences",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a34b6dcf-f47e-4bfb-be43-bfd3737775f8",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_SELLER_A\",\n    \"description\": \"{{entityPrefix}}_{{index}}_SELLER_A\",\n    \"currencyCode\": \"EUR\",\n    \"countryCode\": \"FR\",\n    \"languageCode\": \"FRA\",\n    \"parentSeller\": \"MAIN_SELLER\"\n}\n",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoiceSequences/invoiceSequences.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoiceSequences",
+						"invoiceSequences.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/terminationReason/terminationReasons",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "944d5cd0-c7f9-41bc-b3bb-d3615864fc30",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/terminationReason/terminationReasons.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"terminationReason",
+						"terminationReasons.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/channels/channels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70caf574-8b82-4b68-8268-95f9a149227c",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/channels/channels.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"channels",
+						"channels.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/offerTemplates/offerTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eaace7bb-7edb-46a8-9215-f5317ca0bdb1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/offerTemplates/offerTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"offerTemplates",
+						"offerTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/offerTemplateCategories/offerTemplateCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6153e216-b078-4b6f-8d09-be846d10d019",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/offerTemplateCategories/offerTemplateCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"offerTemplateCategories",
+						"offerTemplateCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/serviceTemplates/serviceTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aef9d432-65d5-4aac-aed4-0de5929ea344",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/serviceTemplates/serviceTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"serviceTemplates",
+						"serviceTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/chargeTemplates/chargeTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7b4e68ec-f5f2-43dd-a45d-d0f4614e40be",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/chargeTemplates/chargeTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"chargeTemplates",
+						"chargeTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/recurringChargeTemplates/recurringChargeTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b2a275b5-dab0-4863-8523-92c7ff73726f",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"recurringChargeTemplates",
+						"recurringChargeTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/usageChargeTemplates/usageChargeTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce02083f-d643-4da0-8b64-599a178be9ad",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/usageChargeTemplates/usageChargeTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"usageChargeTemplates",
+						"usageChargeTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/oneShotChargeTemplates/oneShotChargeTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "15f2af92-fe94-477d-942f-1b54c40b9225",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"oneShotChargeTemplates",
+						"oneShotChargeTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/counterTemplates/counterTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f3697183-ba3f-4103-a886-c2c22f6fbed0",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/counterTemplates/counterTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"counterTemplates",
+						"counterTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/productTemplates/productTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b97dc2ba-e49d-4c0e-ad38-168efe101bbd",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/productTemplates/productTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"productTemplates",
+						"productTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/productChargeTemplates/productChargeTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f2bbb8d3-8b43-4d37-a098-bb95be9afb06",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/productChargeTemplates/productChargeTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"productChargeTemplates",
+						"productChargeTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/bundleTemplates/bundleTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d9368db4-78b0-4ed7-bb26-5f519efe3a27",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/bundleTemplates/bundleTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"bundleTemplates",
+						"bundleTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/triggeredEdrTemplates/triggeredEdrTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7991def0-995c-4978-93dc-fa7541ecafd0",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"triggeredEdrTemplates",
+						"triggeredEdrTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/walletTemplates/walletTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "65144c78-907c-4ad1-ba6a-9cb24f9faca5",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/walletTemplates/walletTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"walletTemplates",
+						"walletTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/businessOfferModels/businessOfferModels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7ba96e8b-5f38-45cd-865b-ad52e2d6fc44",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/businessOfferModels/businessOfferModels.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"businessOfferModels",
+						"businessOfferModels.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/businessServiceModels/businessServiceModels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "365a39a6-23e9-479b-bbef-a7288bc2d485",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/businessServiceModels/businessServiceModels.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"businessServiceModels",
+						"businessServiceModels.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/businessProductModels/businessProductModels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3f0f251-f2e7-4deb-a312-2fb83c298c17",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/businessProductModels/businessProductModels.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"businessProductModels",
+						"businessProductModels.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/pricePlanMatrixes/pricePlanMatrixes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fff39c6-0453-4cc2-95f9-dc0e779e77ec",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"pricePlanMatrixes",
+						"pricePlanMatrixes.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog/discountPlans/discountPlans",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e88359eb-b739-4b54-b52c-6fe8d95aa74d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/catalog/discountPlans/discountPlans.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"catalog",
+						"discountPlans",
+						"discountPlans.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/customers/customerSearch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e1166cbd-ef3c-4160-bc05-8ceb2f27dab5",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/customers/customerSearch.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"customers",
+						"customerSearch.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/customers/customers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "81843175-33f1-49d0-80e3-1b4e62181984",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/customers/customers.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"customers",
+						"customers.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/customerAccounts/customerAccounts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8d84da20-1de1-4294-96c7-7d18ef4f7ba7",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/customerAccounts/customerAccounts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"customerAccounts",
+						"customerAccounts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/billingAccounts/billingAccounts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d82bbb30-607f-4916-afe7-c3adcd163c6b",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/billingAccounts/billingAccounts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"billingAccounts",
+						"billingAccounts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/userAccounts/userAccounts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a43be096-527b-4804-a082-23e72173ce81",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/userAccounts/userAccounts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"userAccounts",
+						"userAccounts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/crmAccounts/crmAccounts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5ad6447c-44ee-49ae-abcd-e281c37ca7f0",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/crmAccounts/crmAccounts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"crmAccounts",
+						"crmAccounts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/subscriptions/subscriptions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c53f306f-c860-414b-91d3-0112f0285e7f",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/subscriptions/subscriptions.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"subscriptions",
+						"subscriptions.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "medina/access/access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a46731a6-6da6-4a0d-a322-a1cd971b57b9",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/medina/access/access.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"medina",
+						"access",
+						"access.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crm/businessAccountModels/businessAccountModels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "558ab2da-e907-4141-8791-66b390fd50f6",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/crm/businessAccountModels/businessAccountModels.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"crm",
+						"businessAccountModels",
+						"businessAccountModels.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "quote/quotes/quotes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "97f3e163-2938-452a-9e3b-4e97c27c370f",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/quote/quotes/quotes.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"quote",
+						"quotes",
+						"quotes.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/orders/orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "84bec75d-171e-4bd9-85a7-41afe322ae49",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/order/orders/orders.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"order",
+						"orders",
+						"orders.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rating/edr/edrList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8be736f9-c2e9-44f9-9f94-0546a909f673",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/rating/edr/edrList.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"rating",
+						"edr",
+						"edrList.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "medina/importedFile/importedFiles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "789db514-e7ed-4cac-a2da-243b7dc18eb3",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/medina/importedFile/importedFiles.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"medina",
+						"importedFile",
+						"importedFiles.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/walletOperations/walletOperations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28f68ae4-5801-4bc9-88cd-f25c3a230db0",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/walletOperations/walletOperations.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"walletOperations",
+						"walletOperations.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/ratedTransactions/ratedTransactions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a8552e27-02b7-4d2f-a4e2-8224c6098c9b",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/ratedTransactions/ratedTransactions.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"ratedTransactions",
+						"ratedTransactions.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoicing/billingRuns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "67e28bd3-217d-4dc2-bee8-353d340662ee",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoicing/billingRuns.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoicing",
+						"billingRuns.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoicing/recurringInvoicing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a00293a-f795-4f2e-8204-6cbba8c6634d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoicing/recurringInvoicing.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoicing",
+						"recurringInvoicing.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoicing/exceptionelInvoicing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc7e1856-0fb5-4cf1-8802-c81d4c3eb539",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoicing/exceptionelInvoicing.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoicing",
+						"exceptionelInvoicing.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoices/invoices",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "44a2ad96-e312-4100-8090-9ee79a952d3b",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoices/invoices.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoices",
+						"invoices.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/invoices/createInvoiceDetail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "234ca85e-05bd-42bb-bd29-46247e8b6599",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/invoices/createInvoiceDetail.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"invoices",
+						"createInvoiceDetail.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/dDRequestBuilders/dDRequestBuilders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1fa9c8e1-51b1-4164-a50f-f3bac3ac5552",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/dDRequestBuilders/dDRequestBuilders.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"dDRequestBuilders",
+						"dDRequestBuilders.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/dDRequestBuilders/dDRequestBuilders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b7b6051b-682f-4289-beff-38ee7e77fdfb",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/dDRequestBuilders/dDRequestBuilders.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"dDRequestBuilders",
+						"dDRequestBuilders.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/ddrequestLotOp/ddrequestLotOps",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9b337c0a-0008-483f-ad83-e0e4cac6fa0e",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/ddrequestLotOp/ddrequestLotOps.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"ddrequestLotOp",
+						"ddrequestLotOps.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/ddrequestLot/ddrequestLots",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7f5e37dc-2672-4db8-a991-66bdcafd1b8b",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/ddrequestLot/ddrequestLots.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"ddrequestLot",
+						"ddrequestLots.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/paymentGateways/paymentGateways",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a6978c35-5c18-4c28-adb5-d553c0f0336b",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/paymentGateways/paymentGateways.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"paymentGateways",
+						"paymentGateways.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payments/paymentScheduleTemplates/paymentScheduleTemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c55aca8d-266f-4d88-a38c-1ceba674ae98",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/payments/paymentScheduleTemplates/paymentScheduleTemplates.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"payments",
+						"paymentScheduleTemplates",
+						"paymentScheduleTemplates.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/workflow/genericWorkflows",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d6b36ef-fbeb-4fcf-9367-c4c9b78735a5",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/workflow/genericWorkflows.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"workflow",
+						"genericWorkflows.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/workflow/workflowInstanceHistories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec221ea9-d3af-4135-9eb8-c47938d72dc7",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/workflow/workflowInstanceHistories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"workflow",
+						"workflowInstanceHistories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/accountingCodes/accountingCodes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4df0f82c-348a-4399-9845-056dcc6b1bb8",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/accountingCodes/accountingCodes.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"accountingCodes",
+						"accountingCodes.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "billing/generalLedgers/generalLedgers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a78b3e59-b597-4d6f-83bb-48c3a730c2cc",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/billing/generalLedgers/generalLedgers.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"billing",
+						"generalLedgers",
+						"generalLedgers.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "finance/revenueRecognitionRules/revenueRecognitionRules",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7eed47a7-d5a2-48b9-880a-0b5b002e0b4d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/finance/revenueRecognitionRules/revenueRecognitionRules.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"finance",
+						"revenueRecognitionRules",
+						"revenueRecognitionRules.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "finance/revenueSchedules/revenueSchedules",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d02f5ede-e013-45ef-8c98-a61499550873",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/finance/revenueSchedules/revenueSchedules.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"finance",
+						"revenueSchedules",
+						"revenueSchedules.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "finance/reportExtracts/reportExtracts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "209950c5-831a-45b6-8b41-407237e9c1c1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/finance/reportExtracts/reportExtracts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"finance",
+						"reportExtracts",
+						"reportExtracts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "finance/reportExtractHistories/reportExtractHistories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "52508065-465d-4a23-8321-18baaaf853c3",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/finance/reportExtractHistories/reportExtractHistories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"finance",
+						"reportExtractHistories",
+						"reportExtractHistories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "finance/accountingWriting/accountingWritings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b5459c45-2c0b-4e3b-8b5f-2b4509fa92db",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/finance/accountingWriting/accountingWritings.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"finance",
+						"accountingWriting",
+						"accountingWritings.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reporting/dwh/measurableQuantities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be94c578-93b1-48a5-8f21-e078e5c4c196",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/reporting/dwh/measurableQuantities.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"reporting",
+						"dwh",
+						"measurableQuantities.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reporting/dwh/measuredValueDetail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1c9f0576-ec1d-47a9-a353-ce89002f218d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/reporting/dwh/measuredValueDetail.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"reporting",
+						"dwh",
+						"measuredValueDetail.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reporting/dwh/charts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "848e2746-1a0a-4844-a36a-dd1416299b76",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/reporting/dwh/charts.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"reporting",
+						"dwh",
+						"charts.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/job/jobInstances",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "173f2eca-4cd7-42bd-a3da-3a39cc5ec0c5",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/job/jobInstances.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"job",
+						"jobInstances.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/job/timerEntities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2bf26fc5-f838-4fc6-bc9a-272ec6d923c9",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/job/timerEntities.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"job",
+						"timerEntities.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/meveoInstance/meveoInstances",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6ea5e924-1aaa-4429-9bda-560e306e009f",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/meveoInstance/meveoInstances.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"meveoInstance",
+						"meveoInstances.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/module/modules",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5bfde723-568c-4874-b0e8-31cdbddbd9e3",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/module/modules.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"module",
+						"modules.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/customEntities/customizedEntities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fed9eda1-c747-47df-b060-af4f04484981",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/customEntities/customizedEntities.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"customEntities",
+						"customizedEntities.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/scriptInstanceCategories/scriptInstanceCategories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e1ef0950-3dff-4a90-a074-863929d264ac",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/scriptInstanceCategories/scriptInstanceCategories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"scriptInstanceCategories",
+						"scriptInstanceCategories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/scriptInstances/scriptInstances",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "48fbb14c-bfbd-44eb-aa63-66be4d93dbf4",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/scriptInstances/scriptInstances.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"scriptInstances",
+						"scriptInstances.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/filters/filters/filters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "db022aaf-c7d5-4065-88a7-bd836b3606ee",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/filters/filters/filters.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"filters",
+						"filters",
+						"filters.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9ed8aaa0-308f-40ff-8669-f32ed890858d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/notifications.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"notifications.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/webHooks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4b440d64-bb5d-40b3-b90a-1b60ab846878",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/webHooks.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"webHooks.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/emailNotifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f008d3a7-bdfb-4a87-9b24-5d7be53487d2",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/emailNotifications.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"emailNotifications.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/jobTriggers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c1bf22e-1dd8-47dc-9937-07c21988aad1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/jobTriggers.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"jobTriggers.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/notificationHistories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "56524525-35f5-4bf0-9faa-ca0052cc17f1",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/notificationHistories.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"notificationHistories.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notification/inboundRequests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cb12d616-7a9b-425b-8836-55b17db059d3",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/notification/inboundRequests.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"notification",
+						"inboundRequests.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/export/import",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f40ce781-ba5d-4dd3-b1a7-4dd73b48718d",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/export/import.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"export",
+						"import.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/export/export",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7fa33648-96a8-4eed-b928-f9ab995aeab4",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/export/export.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"export",
+						"export.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/auditLogs/auditConfiguration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bcec146b-b476-47ae-b5ec-b735a2b06087",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/auditLogs/auditConfiguration.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"auditLogs",
+						"auditConfiguration.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin/auditLogs/auditLogs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c55ddf7f-281b-483f-9ae9-b9ecc477db09",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/admin/auditLogs/auditLogs.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"admin",
+						"auditLogs",
+						"auditLogs.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reporting/cache/caches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d3243ec9-3628-4aab-96d8-b0fb63ce97de",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/reporting/cache/caches.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"reporting",
+						"cache",
+						"caches.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "index/fullTextSearch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0a5e3c7b-697c-4192-9f07-db1f60770aa6",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/index/fullTextSearch.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"index",
+						"fullTextSearch.jsf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "index/index",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e735e91e-7713-4dab-8c49-c65fe738bd4e",
+						"exec": [
+							"pm.test(request.name + \" - Check Code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{opencell.password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{opencell.username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/pages/index/index.jsf",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"pages",
+						"index",
+						"index.jsf"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "4715ee85-42ef-49e7-be8a-ec7c5924a171",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a445731e-0e14-470e-af89-e00aab20bea7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "a0d56fac-66b9-4750-9081-b75005b559b5",
+			"key": "opencell.base",
+			"value": "http://localhost:8080/opencell"
+		},
+		{
+			"id": "17369119-f7fc-44a9-8872-955c0ac57ba2",
+			"key": "opencell.url",
+			"value": "{{opencell.base}}/api/rest"
+		},
+		{
+			"id": "a90f660d-cd58-44b7-a898-71f3b09f2f81",
+			"key": "opencell.username",
+			"value": "opencell.admin"
+		},
+		{
+			"id": "532c4c75-c5b5-48b0-a673-fab548799677",
+			"key": "opencell.password",
+			"value": "opencell.admin"
+		},
+		{
+			"id": "06b35412-f1ae-4274-a1ed-b994b128860c",
+			"key": "opencell.superusername",
+			"value": "opencell.superadmin"
+		},
+		{
+			"id": "ca714046-3c25-43ba-81e2-6556c3046ff1",
+			"key": "opencell.superpassword",
+			"value": "opencell.superadmin"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -59,7 +59,8 @@ import org.slf4j.Logger;
  * @author Edward Legaspi
  * @author akadid abdelmounaim
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author anasseh
+ * @lastModifiedVersion 10.0
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -86,12 +87,13 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private ProviderService providerService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
     
-    @Inject
-    private ProviderService providerService;
 
     @Inject
     private Logger log;
@@ -278,10 +280,10 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-		Provider provider = providerService.findById(appProvider.getId());
+		Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
 		GenericSequence sequence = provider.getRumSequence();
 		if (type == SequenceTypeEnum.CUSTOMER_NO) {
-			sequence = appProvider.getCustomerNoSequence();
+			sequence = provider.getCustomerNoSequence();
 		}
 		if (sequence == null) {
 			sequence = new GenericSequence();
@@ -293,15 +295,15 @@ public class ServiceSingleton {
 		if (SequenceTypeEnum.RUM == type) {
 			provider.setRumSequence(sequence);
 		}
+		
 		return sequence;
 	}
 
 	@Lock(LockType.WRITE)
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateCustomerNumberSequence(GenericSequence genericSequence) {
-		Provider provider = providerService.findById(appProvider.getId());
-		provider.setCustomerNoSequence(genericSequence);
+	public void updateCustomerNumberSequence(GenericSequence genericSequence) {		
+		appProvider.setCustomerNoSequence(genericSequence);
 	}
 
     @Lock(LockType.WRITE)
@@ -370,7 +372,6 @@ public class ServiceSingleton {
      * @param saveInvoice Should invoice be persisted
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("deprecation")
     private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());

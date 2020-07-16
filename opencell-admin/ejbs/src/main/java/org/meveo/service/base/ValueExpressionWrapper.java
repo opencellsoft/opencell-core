@@ -66,6 +66,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.crm.impl.ProviderService;
@@ -472,6 +473,10 @@ public class ValueExpressionWrapper {
                 } else {
                     return (T) Boolean.FALSE;
                 }
+            } else if (resultClass.equals(Integer.class)) {
+                return (T) Integer.valueOf(expression);
+            } else if (resultClass.equals(Date.class)) {
+                return (T) DateUtils.parseDate(expression);
             }
         }
 
@@ -558,6 +563,7 @@ public class ValueExpressionWrapper {
         BillingAccount billingAccount = null;
         CustomerAccount customerAccount = null;
         Customer customer = null;
+        Invoice invoice = null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {
@@ -595,6 +601,9 @@ public class ValueExpressionWrapper {
             if (parameter instanceof Customer) {
                 customer = (Customer) parameter;
             }
+            if (parameter instanceof Invoice) {
+                invoice = (Invoice) parameter;
+            }
         }
 
         // Append any derived parameters
@@ -615,6 +624,8 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_SUBSCRIPTION, chargeInstance.getSubscription());
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
                 contextMap.put(VAR_SUBSCRIPTION, chargeInstance.getServiceInstance().getSubscription());
+            } else if (invoice != null && invoice.getSubscription() != null) {
+                contextMap.put(VAR_SUBSCRIPTION, invoice.getSubscription());
             }
         }
         if (el.contains(VAR_USER_ACCOUNT) && !contextMap.containsKey(VAR_USER_ACCOUNT)) {
@@ -640,6 +651,8 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_BILLING_ACCOUNT, chargeInstance.getSubscription().getUserAccount().getBillingAccount());
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
                 contextMap.put(VAR_BILLING_ACCOUNT, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount());
+            } else if (invoice != null) {
+                contextMap.put(VAR_BILLING_ACCOUNT, invoice.getBillingAccount());
             }
         }
 
@@ -656,6 +669,8 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_CUSTOMER_ACCOUNT, chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
                 contextMap.put(VAR_CUSTOMER_ACCOUNT, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
+            } else if (invoice != null) {
+                contextMap.put(VAR_CUSTOMER_ACCOUNT, invoice.getBillingAccount().getCustomerAccount());
             }
         }
 
@@ -674,6 +689,8 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_CUSTOMER, chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
                 contextMap.put(VAR_CUSTOMER, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+            } else if (invoice != null) {
+                contextMap.put(VAR_CUSTOMER, invoice.getBillingAccount().getCustomerAccount().getCustomer());
             }
         }
 
@@ -708,6 +725,13 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_OFFER, chargeInstance.getServiceInstance().getSubscription().getOffer());
             }
         }
+
+        if (el.contains(VAR_BILLING_RUN) && !contextMap.containsKey(VAR_BILLING_RUN)) {
+            if (invoice != null && invoice.getBillingRun() != null) {
+                contextMap.put(VAR_BILLING_RUN, invoice.getBillingRun());
+            }
+        }
+
         return contextMap;
     }
 }

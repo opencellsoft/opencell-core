@@ -226,6 +226,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         WalletInstance wallet = walletOperation.getWallet();
 		if (wallet != null) {
             walletId = wallet.getId();
+            walletTemplate = wallet.getCode();
             if (wallet.getWalletTemplate() != null) {
                 walletTemplate = wallet.getWalletTemplate().getCode();
             }
@@ -266,6 +267,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.customFields = customFields;
         taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;        
         pricePlanCode = walletOperation.getPriceplan() != null ? walletOperation.getPriceplan().getCode() : null;
+        if (walletOperation.getSortIndex() != null) {
+            sortIndex = walletOperation.getSortIndex();
+        }
 
     }
 

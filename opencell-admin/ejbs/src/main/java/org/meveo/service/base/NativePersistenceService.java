@@ -827,7 +827,7 @@ public class NativePersistenceService extends BaseService {
                     queryBuilder.endOrClause();
 
                     // Search by additional Sql clause with specified parameters
-                } else if (PersistenceService.SEARCH_SQL.equals(key)) {
+                } else if (key.startsWith(PersistenceService.SEARCH_SQL)) {
                     if (filterValue.getClass().isArray()) {
                         String additionalSql = (String) ((Object[]) filterValue)[0];
                         Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);

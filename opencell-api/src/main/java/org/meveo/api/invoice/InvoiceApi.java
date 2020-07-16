@@ -21,6 +21,7 @@ package org.meveo.api.invoice;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -46,6 +48,7 @@ import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -168,6 +171,7 @@ public class InvoiceApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
         }
+        
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
@@ -218,8 +222,8 @@ public class InvoiceApi extends BaseApi {
         String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
         invoice.setInvoiceNumber(prefix + invoice.getInvoiceNumber());
         invoice.assignTemporaryInvoiceNumber();
-        invoiceDTO.setReturnPdf(Boolean.TRUE);
-        invoiceDTO.setReturnXml(Boolean.TRUE);
+        invoiceDTO.setReturnPdf(Boolean.FALSE);
+        invoiceDTO.setReturnXml(Boolean.FALSE);
     }
 
     private Seller getSeller(InvoiceDto invoiceDTO, BillingAccount billingAccount) throws EntityDoesNotExistsException {

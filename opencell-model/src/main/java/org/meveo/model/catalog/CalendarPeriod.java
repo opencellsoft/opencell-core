@@ -160,11 +160,20 @@ public class CalendarPeriod extends Calendar {
         calendar.setTime(getInitDate());
 
         int i = 1;
+
         while (date.compareTo(calendar.getTime()) >= 0) {
-            Date oldDate = calendar.getTime();
-            calendar.add(periodUnit, periodLength);
+
+            calendar.setTime(getInitDate());
+
+            GregorianCalendar calendarOld = new GregorianCalendar();
+            calendarOld.setTime(getInitDate());
+            calendarOld.add(periodUnit, (i - 1) * periodLength);
+            Date oldDate = calendarOld.getTime();
+
+            calendar.add(periodUnit, i * periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
-                return truncateDateTime(oldDate);
+                truncateDateTime(calendarOld);
+                return calendarOld.getTime();
             }
 
             i++;

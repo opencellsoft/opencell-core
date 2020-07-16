@@ -32,6 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -60,13 +61,6 @@ public class BillingCycle extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Invoice template name
-     */
-    @Column(name = "billing_template_name")
-    @Size(max = 50)
-    private String billingTemplateName;
-
-    /**
      * Expression to calculate Invoice template name
      */
     @Column(name = "billing_template_name_el", length = 2000)
@@ -74,36 +68,42 @@ public class BillingCycle extends BusinessCFEntity {
     private String billingTemplateNameEL;
 
     /**
-     * Invoicing calendar (identifier
+     * Invoicing calendar
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar")
     private Calendar calendar;
 
     /**
-     * A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
-     * BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay.
+     * Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
+     * BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    @Column(name = "transaction_date_delay")
-    private Integer transactionDateDelay;
+    @Column(name = "transaction_date_delay_EL", length = 2000)
+    @Size(max = 2000)
+    private String lastTransactionDateDelayEL;
 
     /**
-     * A delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate + BillingCycle.invoiceDateProductionDelay.
+     * Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
+     * (resolved from EL)
      */
-    @Column(name = "invoice_date_production_delay")
-    private Integer invoiceDateProductionDelay;
+    @Column(name = "transaction_date_el", length = 2000)
+    @Size(max = 2000)
+    private String lastTransactionDateEL;
 
     /**
-     * Used for immediate invoicing by oneshot charge
+     * Expression to calculate a delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate +
+     * BillingCycle.invoiceDateProductionDelay (resolved from EL).
      */
-    @Column(name = "invoice_date_delay")
-    private Integer invoiceDateDelay;
+    @Column(name = "invoice_date_production_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceDateProductionDelayEL;
 
     /**
-     * Invoice due date delay from the invoicing date
+     * Expression to calculate the invoice date delay from a one shot charge date for immediate invoicing
      */
-    @Column(name = "due_date_delay")
-    private Integer dueDateDelay;
+    @Column(name = "invoice_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceDateDelayEL;
 
     /**
      * Billing accounts
@@ -125,10 +125,11 @@ public class BillingCycle extends BusinessCFEntity {
     private InvoiceType invoiceType;
 
     /**
-     * Expression to calculate Invoice due date delay from the invoicing date value
+     * Expression to calculate Invoice due date delay from the invoicing date
      */
-    @Column(name = "due_date_delay_el", length = 2000)
+    @Column(name = "due_date_delay_el", length = 2000, nullable = false)
     @Size(max = 2000)
+    @NotNull
     private String dueDateDelayEL;
 
     /**
@@ -167,7 +168,7 @@ public class BillingCycle extends BusinessCFEntity {
     private ScriptInstance scriptInstance;
 
     /**
-     * Reference date
+     * What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
@@ -180,74 +181,78 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
 
-    public String getBillingTemplateName() {
-        return billingTemplateName;
-    }
-
-    public void setBillingTemplateName(String billingTemplateName) {
-        this.billingTemplateName = billingTemplateName;
-    }
-
+    /**
+     * @return Invoicing calendar
+     */
     public Calendar getCalendar() {
         return calendar;
     }
 
+    /**
+     * @param calendar Invoicing calendar
+     */
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
     }
 
-    public Integer getTransactionDateDelay() {
-        return transactionDateDelay;
-    }
-
-    public void setTransactionDateDelay(Integer transactionDateDelay) {
-        this.transactionDateDelay = transactionDateDelay;
+    /**
+     * @return Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate
+     *         value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
+     */
+    public String getLastTransactionDateDelayEL() {
+        return lastTransactionDateDelayEL;
     }
 
     /**
-     * @return Number of days to add to a billing run date to compute the invoice date
+     * @param lastTransactionDateDelayEL Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice -
+     *        BillingRun.lastTransactionDate value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    public Integer getInvoiceDateProductionDelay() {
-        return invoiceDateProductionDelay;
+    public void setLastTransactionDateDelayEL(String lastTransactionDateDelayEL) {
+        this.lastTransactionDateDelayEL = lastTransactionDateDelayEL;
     }
 
     /**
-     * @param invoiceDateProductionDelay Number of days to add to a billing run date to compute the invoice date
+     * @return Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
+     *         (resolved from EL)
      */
-    public void setInvoiceDateProductionDelay(Integer invoiceDateProductionDelay) {
-        this.invoiceDateProductionDelay = invoiceDateProductionDelay;
+    public String getLastTransactionDateEL() {
+        return lastTransactionDateEL;
     }
 
     /**
-     * Used for immediate invoicing by oneshot charge
-     *
-     * @return Number of days to add to a charge date to compute the invoice date
+     * @param lastTransactionDateEL Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate =
+     *        BillingCycle.lastTransactionDate (resolved from EL)
      */
-    public Integer getInvoiceDateDelay() {
-        return invoiceDateDelay;
+    public void setLastTransactionDateEL(String lastTransactionDateEL) {
+        this.lastTransactionDateEL = lastTransactionDateEL;
     }
 
     /**
-     * Used for immediate invoicing by oneshot charge
-     *
-     * @param invoiceDateDelay Number of days to add to a charge date to compute the invoice date
+     * @return Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
-    public void setInvoiceDateDelay(Integer invoiceDateDelay) {
-        this.invoiceDateDelay = invoiceDateDelay;
+    public String getInvoiceDateProductionDelayEL() {
+        return invoiceDateProductionDelayEL;
     }
 
     /**
-     * @return Invoice due date delay from the invoicing date
+     * @param invoiceDateProductionDelay Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
-    public Integer getDueDateDelay() {
-        return dueDateDelay;
+    public void setInvoiceDateProductionDelayEL(String invoiceDateProductionDelayEL) {
+        this.invoiceDateProductionDelayEL = invoiceDateProductionDelayEL;
     }
 
     /**
-     * @param dueDateDelay Invoice due date delay from the invoicing date
+     * @return Expression to calculate the invoice date delay from a one shot charge date for immediate invoicing
      */
-    public void setDueDateDelay(Integer dueDateDelay) {
-        this.dueDateDelay = dueDateDelay;
+    public String getInvoiceDateDelayEL() {
+        return invoiceDateDelayEL;
+    }
+
+    /**
+     * @param invoiceDateDelayEL Expression to calculate the invoice date delay from a one shot charge date for immediate invoicing
+     */
+    public void setInvoiceDateDelayEL(String invoiceDateDelayEL) {
+        this.invoiceDateDelayEL = invoiceDateDelayEL;
     }
 
     public List<BillingAccount> getBillingAccounts() {
@@ -376,18 +381,15 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * Gets the reference date
-     *
-     * @return the reference date
+     * @return What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
      */
     public ReferenceDateEnum getReferenceDate() {
         return referenceDate;
     }
 
     /**
-     * Sets the reference date.
-     *
-     * @param referenceDate the new reference date
+     * @param referenceDate What reference date to use when calculating the next invoicing date with an invoice calendar as in:
+     *        BillingCycle.calendar.nextCalendarDate(referenceDate)
      */
     public void setReferenceDate(ReferenceDateEnum referenceDate) {
         this.referenceDate = referenceDate;

@@ -108,6 +108,7 @@ public class ProviderService extends PersistenceService<Provider> {
     public Provider getProviderNoCache() {
 
         Provider provider = getEntityManager().find(Provider.class, Provider.CURRENT_PROVIDER_ID);
+        getEntityManager().refresh(provider);
         if (provider.getInvoiceConfiguration() != null) {
             provider.getInvoiceConfiguration().getDisplayBillingCycle();
         }
