@@ -118,8 +118,7 @@ public class MediationReprocessingJob extends Job {
         parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         parserCF.setActive(true);
         parserCF.setDescription(resourceMessages.getString("mediationJob.parser"));
-        parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        parserCF.setEntityClazz(ScriptInstance.class.getName());
+        parserCF.setFieldType(CustomFieldTypeEnum.STRING);
         parserCF.setDefaultValue(null);
         parserCF.setValueRequired(false);
         parserCF.setMaxValue(256L);
@@ -131,8 +130,7 @@ public class MediationReprocessingJob extends Job {
         readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         readerCF.setActive(true);
         readerCF.setDescription(resourceMessages.getString("mediationJob.reader"));
-        readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        readerCF.setEntityClazz(ScriptInstance.class.getName());
+        readerCF.setFieldType(CustomFieldTypeEnum.STRING);
         readerCF.setDefaultValue(null);
         readerCF.setValueRequired(false);
         readerCF.setMaxValue(256L);
