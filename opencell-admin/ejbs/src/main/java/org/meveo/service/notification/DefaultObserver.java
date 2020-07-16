@@ -48,14 +48,17 @@ import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.InstantiateWF;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
+import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.event.qualifier.XMLGenerated;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -63,6 +66,7 @@ import org.meveo.model.CustomTableEvent;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -107,7 +111,7 @@ public class DefaultObserver {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     @Inject
     private DefaultNotificationService defaultNotificationService;
 
@@ -121,102 +125,102 @@ public class DefaultObserver {
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        
-		for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
-			if (notif.isRunAsync()) {
-				defaultNotificationService.fireNotificationAsync(notif, entityOrEvent);
-				result = true;
 
-			} else {
-				result = defaultNotificationService.fireNotification(notif, entityOrEvent) || result;
-			}
+        for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
+            if (notif.isRunAsync()) {
+                defaultNotificationService.fireNotificationAsync(notif, entityOrEvent);
+                result = true;
 
-		}
-		
+            } else {
+                result = defaultNotificationService.fireNotification(notif, entityOrEvent) || result;
+            }
+
+        }
+
         return result;
     }
 
     public void entityInstantiateWF(@Observes @InstantiateWF BusinessEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
 
         List<GenericWorkflow> genericWorkflows = genericWorkflowService.findByBusinessEntity(e);
         for (GenericWorkflow genericWorkflow : genericWorkflows) {
             workflowInstanceService.create(e, genericWorkflow);
         }
     }
-    
+
     public void customEntityChange(@Observes CustomTableEvent e) throws BusinessException {
-        log.debug("Defaut observer : CustomEntity {} with id {} created", e.getClass().getName());
+        log.debug("Defaut observer: CustomEntity {} with id {} created", e.getClass().getName());
         checkEvent(e.getType(), e);
     }
 
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
-    
+
     public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
 
     public void entityRemoved(@Observes @Removed BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} removed", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} removed", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REMOVED, e);
     }
 
     public void entityDisabled(@Observes @Disabled BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} disabled", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} disabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.DISABLED, e);
     }
 
     public void entityEnabled(@Observes @Enabled BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} enabled", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} enabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.ENABLED, e);
     }
 
     public void entityTerminated(@Observes @Terminated BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} terminated", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} terminated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.TERMINATED, e);
     }
 
     public void entityProcessed(@Observes @Processed BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} processed", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} processed", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.PROCESSED, e);
     }
 
     public void entityRejected(@Observes @Rejected BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
 
     public void entityEndOfTerm(@Observes @EndOfTerm BaseEntity e) throws BusinessException {
-        log.debug("Defaut observer : Entity {} with id {} end of term", e.getClass().getName(), e.getId());
+        log.debug("Defaut observer: Entity {} with id {} end of term", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.END_OF_TERM, e);
     }
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
-        log.debug("Defaut observer : cdr {} rejected", cdr);
+        log.debug("Defaut observer: cdr {} rejected", cdr);
         for (Notification notif : genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             defaultNotificationService.fireCdrNotification(notif, cdr);
         }
     }
 
     public void loggedIn(@Observes @LoggedIn User e) throws BusinessException {
-        log.debug("Defaut observer : logged in class={} ", e.getClass().getName());
+        log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
     @MeveoAudit
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) throws BusinessException {
-        log.debug("Defaut observer : inbound request {} ", e.getCode());
+        log.debug("Defaut observer: inbound request {} ", e.getCode());
         boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
         e.getHeaders().put("fired", fired ? "true" : "false");
     }
 
     @MeveoAudit
     public void LowBalance(@Observes @LowBalance WalletInstance e) throws BusinessException {
-        log.debug("Defaut observer : low balance on {} ", e.getCode());
+        log.debug("Defaut observer: low balance on {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
 
     }
@@ -224,13 +228,13 @@ public class DefaultObserver {
     public void businesException(@Observes BusinessExceptionEvent bee) {
         log.debug("BusinessExceptionEvent handler inactivated {}",
             bee);/*
-                  * log.debug("Defaut observer : BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
+                  * log.debug("Defaut observer: BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
                   * PrintWriter(errors)); String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", ""); int bodyMaxLegthByte =
                   * Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999")); String stackTrace = errors.toString(); String input =
                   * "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #subject#: #" + bee.getException().getMessage() + "#," + "	  #body#: #" +
                   * StringUtils.truncate(stackTrace, bodyMaxLegthByte, true) + "#," + "	  #additionnalInfo1#: #" + LogExtractionService.getLogs( new Date(System.currentTimeMillis()
                   * - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#," + "	  #additionnalInfo2#: ##," +
-                  * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
+                  * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer: input {} ", input.replaceAll("#", "\""));
                   * remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
                   * ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
                   * 
@@ -239,7 +243,7 @@ public class DefaultObserver {
     }
 
     public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
-        log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
+        log.debug("Defaut observer: custom field period expired : {}", event);
     }
 
     public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
@@ -247,28 +251,61 @@ public class DefaultObserver {
     }
 
     public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile) throws BusinessException {
-        log.debug("observe a file upload event ");
+        log.debug("Defaut observer:  a file upload event ");
         checkEvent(NotificationEventTypeEnum.FILE_UPLOAD, importedFile);
     }
 
     public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile) throws BusinessException {
-        log.debug("observe a file download event ");
+        log.debug("Defaut observer: a file download event ");
         checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD, importedFile);
     }
 
     public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile) throws BusinessException {
-        log.debug("observe a file delete event ");
+        log.debug("Defaut observer: a file delete event ");
         checkEvent(NotificationEventTypeEnum.FILE_DELETE, importedFile);
     }
 
     public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) throws BusinessException {
-        log.debug("observe a file rename event ");
+        log.debug("Defaut observer: a file rename event ");
         checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
     }
 
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
-        log.debug("DefaultObserver.counterUpdated " + event);
+        log.debug("Defaut observer: Counter period deduced " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+
+    /**
+     * Handle Invoice PDF generated event
+     * 
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void pdfGenerated(@Observes @PDFGenerated Invoice invoice) throws BusinessException {
+        log.debug("Defaut observer: PDF generated for invoice {} ", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.PDF_GENERATED, invoice);
+    }
+
+    /**
+     * Handle Invoice XML generated event
+     * 
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void xmlGenerated(@Observes @XMLGenerated Invoice invoice) throws BusinessException {
+        log.debug("Defaut observer: XML generated for invoice {} ", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.XML_GENERATED, invoice);
+    }
+
+    /**
+     * Handle Invoice number assigned event
+     * 
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void invoiceNumberAssigned(@Observes @InvoiceNumberAssigned Invoice invoice) throws BusinessException {
+        log.debug("Defaut observer: Assigned a number to the invoice {} ", invoice.getId());
+        checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {

@@ -27,17 +27,17 @@ import java.util.List;
 import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.client.ml.job.config.Job;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -82,11 +82,10 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-			if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$$")) {
-				continue;
-			}
-            if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class)) || clazz.isAnnotationPresent(NotifiableEntity.class))
-                    && clazz.getName().toLowerCase().contains(queryLc)) {
+            if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$$")) {
+                continue;
+            }
+            if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class)) || clazz.isAnnotationPresent(NotifiableEntity.class)) && clazz.getName().toLowerCase().contains(queryLc)) {
                 classNames.add(clazz.getName());
             }
         }
@@ -124,15 +123,14 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 
         List<NotificationEventTypeEnum> events = new ArrayList<NotificationEventTypeEnum>();
         if (hasObservableEntity(clazz)) {
-            events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED, NotificationEventTypeEnum.UPDATED, NotificationEventTypeEnum.REMOVED, NotificationEventTypeEnum.DISABLED,
-                NotificationEventTypeEnum.ENABLED));
+            events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED, NotificationEventTypeEnum.UPDATED, NotificationEventTypeEnum.REMOVED, NotificationEventTypeEnum.DISABLED, NotificationEventTypeEnum.ENABLED));
             if (clazzStr.equals(WalletInstance.class.getName())) {
                 events.add(NotificationEventTypeEnum.LOW_BALANCE);
             } else if (clazzStr.equals(org.meveo.model.admin.User.class.getName())) {
                 events.add(NotificationEventTypeEnum.LOGGED_IN);
             } else if (clazzStr.equals(InboundRequest.class.getName())) {
                 events.add(NotificationEventTypeEnum.INBOUND_REQ);
-            } else if (clazzStr.equals(WalletOperation.class.getName()) || clazzStr.equals(EDR.class.getName()) || clazzStr.equals(RecurringChargeTemplate.class.getName())) {
+            } else if (clazzStr.equals(EDR.class.getName()) || clazzStr.equals(RecurringChargeTemplate.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED);
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
@@ -140,12 +138,19 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
+            } else if (clazzStr.equals(Job.class.getName())) {
+                events.add(NotificationEventTypeEnum.PROCESSED);
+            } else if (clazzStr.equals(Invoice.class.getName())) {
+                events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
+                events.add(NotificationEventTypeEnum.XML_GENERATED);
+                events.add(NotificationEventTypeEnum.PDF_GENERATED);
             }
         } else if (hasNotificableEntity(clazz)) {
-            if (clazzStr.equals(MeveoFtpFile.class.getName())) {
-                events = Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD, NotificationEventTypeEnum.FILE_DOWNLOAD, NotificationEventTypeEnum.FILE_DELETE,
-                    NotificationEventTypeEnum.FILE_RENAME);
-            } else if (clazzStr.equals(CDR.class.getName())) {
+            // No longer is being used
+//            if (clazzStr.equals(MeveoFtpFile.class.getName())) {
+//                events = Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD, NotificationEventTypeEnum.FILE_DOWNLOAD, NotificationEventTypeEnum.FILE_DELETE, NotificationEventTypeEnum.FILE_RENAME);
+//            } else 
+            if (clazzStr.equals(CDR.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
             }
         }
