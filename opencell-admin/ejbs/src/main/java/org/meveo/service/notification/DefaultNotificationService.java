@@ -137,14 +137,14 @@ public class DefaultNotificationService {
 
         try {
 
-            context.put("entityOrEvent", entityOrEvent);
+            context.put(Script.CONTEXT_ENTITY_OR_EVENT, entityOrEvent);
 
-            Map<Object, Object> userMap = new HashMap<>();
-            userMap.put("event", entityOrEvent);
-            userMap.put("manager", manager);
+            Map<Object, Object> elContext = new HashMap<>();
+            elContext.put("event", entityOrEvent);
+            elContext.put("manager", manager);
 
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
+                context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), elContext, Object.class));
             }
 
             if (scriptInstance.getReuse()) {

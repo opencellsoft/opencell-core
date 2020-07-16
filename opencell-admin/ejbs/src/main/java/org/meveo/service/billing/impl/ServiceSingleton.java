@@ -25,10 +25,12 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
@@ -87,13 +89,16 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
-    
+
     @Inject
     private ProviderService providerService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
-    
+
+    @Inject
+    @InvoiceNumberAssigned
+    private Event<Invoice> invoiceNumberAssignedEventProducer;
 
     @Inject
     private Logger log;
@@ -218,15 +223,11 @@ public class ServiceSingleton {
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
         return sequence;
-        
+
         /*
-        try {
-            sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence);
-            return sequence;
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BusinessException("Failed to close invoice numbering sequence", e);
-        }
-        */
+         * try { sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence); return sequence; } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
+         * NoSuchMethodException e) { throw new BusinessException("Failed to close invoice numbering sequence", e); }
+         */
     }
 
     /**
@@ -279,32 +280,32 @@ public class ServiceSingleton {
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-		Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
-		GenericSequence sequence = provider.getRumSequence();
-		if (type == SequenceTypeEnum.CUSTOMER_NO) {
-			sequence = provider.getCustomerNoSequence();
-		}
-		if (sequence == null) {
-			sequence = new GenericSequence();
-		}
-		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
-		if (SequenceTypeEnum.CUSTOMER_NO == type) {
-			provider.setCustomerNoSequence(sequence);
-		}
-		if (SequenceTypeEnum.RUM == type) {
-			provider.setRumSequence(sequence);
-		}
-		
-		return sequence;
-	}
+    public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
+        Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
+        GenericSequence sequence = provider.getRumSequence();
+        if (type == SequenceTypeEnum.CUSTOMER_NO) {
+            sequence = provider.getCustomerNoSequence();
+        }
+        if (sequence == null) {
+            sequence = new GenericSequence();
+        }
+        sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
+        if (SequenceTypeEnum.CUSTOMER_NO == type) {
+            provider.setCustomerNoSequence(sequence);
+        }
+        if (SequenceTypeEnum.RUM == type) {
+            provider.setRumSequence(sequence);
+        }
 
-	@Lock(LockType.WRITE)
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateCustomerNumberSequence(GenericSequence genericSequence) {		
-		appProvider.setCustomerNoSequence(genericSequence);
-	}
+        return sequence;
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void updateCustomerNumberSequence(GenericSequence genericSequence) {
+        appProvider.setCustomerNoSequence(genericSequence);
+    }
 
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
@@ -332,8 +333,7 @@ public class ServiceSingleton {
         if (!StringUtils.isBlank(entityClass)) {
             customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
             if (customGenericEntityCode != null) {
-                customGenericEntityCode
-                    .setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
+                customGenericEntityCode.setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
             }
         }
         return customGenericEntityCode;
@@ -369,10 +369,10 @@ public class ServiceSingleton {
      * Assign invoice number to an invoice
      *
      * @param invoice invoice
-     * @param saveInvoice Should invoice be persisted
-     * @throws BusinessException business exception
+     * @param isVirtual Is its a virtual invoice - should invoice be persisted
+     * @throws BusinessException General business exception
      */
-    private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
+    private Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
@@ -413,7 +413,10 @@ public class ServiceSingleton {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
-        if (saveInvoice) {
+        if (isVirtual) {
+
+            invoiceNumberAssignedEventProducer.fire(invoice);
+
             if (invoice.getId() == null) {
                 invoiceService.create(invoice);
             } else {
