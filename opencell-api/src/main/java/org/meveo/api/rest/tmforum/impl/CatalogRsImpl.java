@@ -29,6 +29,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.catalog.BundleTemplateApi;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
@@ -39,6 +40,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
+import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -47,6 +49,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.slf4j.Logger;
@@ -82,6 +85,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Inject
     private ProductChargeTemplateApi productChargeTemplateApi;
+    
+    @Inject
+    private BundleTemplateApi bundleTemplateApi;
 
     @Override
     public Response findCategories(UriInfo info) {
@@ -293,6 +299,16 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         }
 
         return getResponse(responseBuilder);
+        
+        
+        try {
+            BundleTemplate bundleTemplate = bundleTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(bundleTemplate.getCode());
+            }
+        } catch (Exception e) {
+            processException(e, result);
+        }
     }
 
     @Override
@@ -552,6 +568,36 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         }
 
         return response;
+    }
+
+    @Override
+    public Response createBundleTemplate(BundleTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+            BundleTemplate bundleTemplate = bundleTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(bundleTemplate.getCode());
+            }
+            responseBuilder = Response.ok().entity(result);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return getResponse(responseBuilder);
+    }
+
+    @Override
+    public Response updateBundleTemplate(BundleTemplateDto postData) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createOrUpdateBundleTemplate(BundleTemplateDto postData) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     
