@@ -64,11 +64,9 @@ public class MediationReprocessingJob extends Job {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
         
-        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-        String readerCode = reader != null ? reader.getCode() : null;
+        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
+        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
         
-        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-        String parserCode = parser != null ? parser.getCode() : null;
         try {            
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 return;
