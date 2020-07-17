@@ -195,7 +195,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (immediateInvoicing != null && immediateInvoicing) {
             BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
-            int delay = InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperation, billingAccount);
+            int delay = billingAccount.getBillingCycle().getInvoiceDateDelayEL() == null ? 0
+                    : InvoiceService.resolveImmediateInvoiceDateDelay(billingAccount.getBillingCycle().getInvoiceDateDelayEL(), walletOperation, billingAccount);
             Date nextInvoiceDate = DateUtils.addDaysToDate(billingAccount.getNextInvoiceDate(), -delay);
             nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
             applicationDate = DateUtils.setTimeToZero(applicationDate);
