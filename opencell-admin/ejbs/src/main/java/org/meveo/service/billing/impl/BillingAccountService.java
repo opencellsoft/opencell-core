@@ -282,6 +282,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
             }
 
+            qb.addOrderCriterion("code", false);
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
@@ -354,7 +355,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
             }
-
+            qb.addOrderCriterion("code", false);
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
