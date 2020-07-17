@@ -11822,6 +11822,10 @@
 									"script": {
 										"id": "8d657514-0363-4d0e-b4ed-25e18d7ec690",
 										"exec": [
+											"pm.test(\"get the mainOfferId\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.collectionVariables.set(\"mainOfferId\", jsonData)\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript"
@@ -13106,7 +13110,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"code\":\"elminster.aumar\",\n\t\"description\":\"elminster.aumar Subscription to OF_{{templateCode}}_MAIN\",\n    \"userAccount\":\"elminster.aumar\",\n    \"offerTemplate\":\"OF_{{templateCode}}_MAIN\",\n    \"subscriptionDate\":\"2018-10-20\"\n         \n\t\n}",
+									"raw": "{\n    \"code\": \"elminster.aumar\",\n    \"description\": \"elminster.aumar Subscription to OF_{{templateCode}}_MAIN\",\n    \"userAccount\": \"elminster.aumar\",\n    \"offerTemplate\": \"OF_{{templateCode}}_MAIN\",\n    \"subscriptionDate\": \"2018-10-20\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -13121,46 +13125,6 @@
 									"path": [
 										"billing",
 										"subscription"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Service Activation ",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3869ca96-16a9-4b1e-9af2-51d04cf34a58",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"subscription\": \"elminster.aumar\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_REC_FLAT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\" \n            },\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_OSS_UNIT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_USG_UNIT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription/activateServices",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription",
-										"activateServices"
 									]
 								}
 							},
@@ -13201,6 +13165,46 @@
 										"account",
 										"access",
 										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Service Activation ",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3869ca96-16a9-4b1e-9af2-51d04cf34a58",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subscription\": \"elminster.aumar\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_REC_FLAT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\" \n            },\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_OSS_UNIT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"code\": \"{{mainOfferId}}_SE_{{templateCode}}_USG_UNIT\",\n                \"subscriptionDate\": \"2018-10-20\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/activateServices",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"activateServices"
 									]
 								}
 							},
@@ -15596,7 +15600,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \"code\":\"90590_41115_00000_000_0000_00000000_00000\" ,\n\"description\":\"90590_41115_00000_000_0000_00000000_00000\",\n  \"chartOfAccountTypeEnum\":\"EXPENSE\",\n   \"chartOfAccountViewTypeEnum\":\"REGULAR\",\n\"disabled\":\"false\",\n \"reportingAccount\":\"sales\"\n}",
+									"raw": "{\n  \"code\": \"90590_41115_00000_000_0000_00000000_00000\",\n  \"description\": \"90590_41115_00000_000_0000_00000000_00000\",\n  \"chartOfAccountTypeEnum\": \"EXPENSE\",\n  \"chartOfAccountViewTypeEnum\": \"REGULAR\",\n  \"disabled\": \"false\",\n  \"reportingAccount\": \"sales\"\n}",
 									"options": {
 										"raw": {}
 									}
@@ -15739,12 +15743,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/accountOperation ",
+									"raw": "{{opencell.url}}/accountOperation",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"accountOperation "
+										"accountOperation"
 									]
 								}
 							},
@@ -15805,12 +15809,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/accountOperation ",
+									"raw": "{{opencell.url}}/accountOperation",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"accountOperation "
+										"accountOperation"
 									]
 								}
 							},
@@ -15871,12 +15875,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/accountOperation ",
+									"raw": "{{opencell.url}}/accountOperation",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"accountOperation "
+										"accountOperation"
 									]
 								}
 							},
@@ -15934,12 +15938,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/accountOperation ",
+									"raw": "{{opencell.url}}/accountOperation",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"accountOperation "
+										"accountOperation"
 									]
 								}
 							},
@@ -25646,217 +25650,217 @@
 	],
 	"variable": [
 		{
-			"id": "947f348e-bdc5-4f73-b93f-d4140733d8fd",
+			"id": "f8c2a533-10fc-47ad-a4b9-7437907793b8",
 			"key": "adminUsername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "b5f2dac5-694e-40d0-82c1-baf7bc054054",
+			"id": "65fee4d0-4543-467d-a3b9-9733e7f0d85a",
 			"key": "adminPassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "89d55d1d-05b4-4e39-89fd-a7abef3af106",
+			"id": "b96e1023-c4cd-4108-b10d-d5e664de5b5e",
 			"key": "provideraddrName",
 			"value": "opencell"
 		},
 		{
-			"id": "eb75fb7f-34f6-44d5-b6d2-1338a6ad0342",
+			"id": "8492c22c-0202-4306-9ccb-68523a50156d",
 			"key": "MMUsername",
 			"value": "opencell.marketingmanager"
 		},
 		{
-			"id": "dbb444c4-85e8-45dd-8050-89b31c7130cf",
+			"id": "2a371148-db38-4657-b28f-4632de5001a8",
 			"key": "MMPassword",
 			"value": "opencell.marketingmanager"
 		},
 		{
-			"id": "9da234ac-dbe3-4a1e-baba-56ddffbde034",
+			"id": "9242e413-26e1-4f84-995b-b689a847bdd8",
 			"key": "provider",
 			"value": "DEMO"
 		},
 		{
-			"id": "58b1437d-8d7f-4678-b89e-a4c4f220e573",
+			"id": "d1c11ad6-684c-4810-be42-d7abfd818912",
 			"key": "providerAddrLine1",
 			"value": "14 rue Crespin du Gast"
 		},
 		{
-			"id": "eab6854c-dec5-4f25-8332-53e06ef2c07a",
+			"id": "4ff1ab18-9a52-4d74-b1f0-27802ddbb697",
 			"key": "providerAddrLine2",
 			"value": "3rd floor"
 		},
 		{
-			"id": "61fba718-34be-415b-838b-934d3a8ec66a",
+			"id": "f73a9bab-d212-4c9f-b9b2-9be1d3914025",
 			"key": "providerAddrZip",
 			"value": "75011"
 		},
 		{
-			"id": "cb6291fe-e8dc-4971-9f4f-d0b29de376fc",
+			"id": "38edbb45-387f-49f1-9a70-846938c3e70a",
 			"key": "providerAddrCity",
 			"value": "Paris"
 		},
 		{
-			"id": "8002d6bf-c529-4f3e-94a6-c110c162291a",
+			"id": "cfc148e3-1fdb-4b9f-b7c4-1d7ac77540fc",
 			"key": "providerAddrPhone",
 			"value": "+00 123 456 798"
 		},
 		{
-			"id": "3089e8fe-d59a-4928-82f8-b8bad28e8f32",
+			"id": "33f3760e-8ec0-464e-ba4d-f8d87c087519",
 			"key": "providerAddrEmail",
 			"value": "contact@opencellsoft.com"
 		},
 		{
-			"id": "2bb87f91-3000-40fb-b587-1ff10e1b38b3",
+			"id": "805c8715-f365-45ad-a8af-1be18553de33",
 			"key": "CCUsername",
 			"value": "opencell.customercare"
 		},
 		{
-			"id": "4a995893-9c52-493f-b5bf-da8b21f87cd3",
+			"id": "aa302835-948a-4204-b1a6-973134aa7f4d",
 			"key": "CCPassword",
 			"value": "opencell.customercare"
 		},
 		{
-			"id": "758483be-9d8d-4ff4-b454-cd4857b27959",
+			"id": "78301d4b-df87-429e-a498-dabf186bbc7e",
 			"key": "SCUsername",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "02bcb2e3-ff92-41fe-8252-7ca558ae136f",
+			"id": "a1cdeb12-1f97-446b-9a0a-935df8547b0a",
 			"key": "SCPassword",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "51dc5209-4e0e-4fcf-abca-1c5fc3b51aa3",
+			"id": "9837a0fe-8120-4c93-a4c4-deeb961f3808",
 			"key": "CCLastname",
 			"value": "Doe"
 		},
 		{
-			"id": "4a7fff77-7ccd-4357-b472-891ef87e7a81",
+			"id": "3e71e0b4-66b1-45a4-8958-ab10de03a8ab",
 			"key": "CCFirstname",
 			"value": "Jeanette"
 		},
 		{
-			"id": "6ea22dd9-8a65-453c-8f85-3bf2e2d82fc3",
+			"id": "f4dbf2d2-2925-40fc-ba50-c7aca5321d5b",
 			"key": "SCLastname",
 			"value": "Clive"
 		},
 		{
-			"id": "577b6238-4bea-4513-8b52-ff0cf00a5a47",
+			"id": "c67f3c5e-21e5-4cce-a685-a7cb868f2a9f",
 			"key": "SCFirstname",
 			"value": "Gildarts"
 		},
 		{
-			"id": "9dda3e46-790a-40e1-bcc1-e7602a83d29f",
+			"id": "579201ae-daa5-4f63-9d42-df3d2f948935",
 			"key": "reseller1",
 			"value": "Reseller1"
 		},
 		{
-			"id": "bf6e2719-ed8b-4ff4-b4a0-63aa319cfcac",
+			"id": "01148ee4-42c0-46e9-ab1c-3f9ef8a6e028",
 			"key": "reseller2",
 			"value": "Reseller2"
 		},
 		{
-			"id": "74babfd0-5594-4d23-bd5c-331cd61c940a",
+			"id": "2ff72e0c-ab15-4dc8-ab2a-22e610b32ec1",
 			"key": "ingenico.merchantId",
 			"value": "XCSmoovetest003"
 		},
 		{
-			"id": "687e3a4e-3202-4f57-ac77-0222ace2b531",
+			"id": "26385f38-11fc-401c-a887-304a69d7be56",
 			"key": "ingenico.SecretApiKey",
 			"value": "+bEfYyY1YVUP2J/80yZOxD4Jj+/N/j2s/GcoY7F5rAg="
 		},
 		{
-			"id": "dd2da174-bc75-4321-b273-99562f280195",
+			"id": "85482582-d248-444f-afe7-2d12cf3f7bc4",
 			"key": "ingenico.ApiKeyId",
 			"value": "85c81e73917d806c"
 		},
 		{
-			"id": "10e9b3ce-aab9-49d6-be67-0520ec3d1906",
+			"id": "5cc124a1-bb49-4df3-8d55-d4a9f6d3fc5a",
 			"key": "slimPay.userId",
 			"value": "opencelldev"
 		},
 		{
-			"id": "d723ab5d-b253-4d44-8a53-aad0f0fdaacf",
+			"id": "b61867a8-abe8-4bb0-8849-7a969a78aa05",
 			"key": "slimPay.secretKey",
 			"value": "OSpPCH4jYWfg7SRT53d5OTNCIcodepvfpfKHULQi"
 		},
 		{
-			"id": "a8f03b21-7394-4218-a775-42bfa2ee346d",
+			"id": "facd87fd-ab50-4c18-804c-1d09c6718fe7",
 			"key": "templateCode",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "3dd9d49d-f946-48c5-a9a8-cd6e6e6fbd5b",
+			"id": "7496529c-9102-4266-8735-b0b2d29ac9a2",
 			"key": "templateLabel",
 			"value": "Generic"
 		},
 		{
-			"id": "1111aea7-35fe-4a06-b8a6-5cf1823e9e8d",
+			"id": "aa3fc54f-6229-4d9f-ac35-17d3c4c29f5c",
 			"key": "partnerOfferId",
 			"value": "4"
 		},
 		{
-			"id": "ccebdf9c-d43f-4c79-8c83-90619885213d",
+			"id": "26fb8720-3608-439c-af59-677baa9d538d",
 			"key": "recOfferId",
 			"value": "6"
 		},
 		{
-			"id": "347f048e-c3b8-46fb-b01d-39e0f2e193a1",
+			"id": "dda069b7-6e5a-4bad-b4b0-d9af97ab8895",
 			"key": "billingCycle",
 			"value": "BC_{{templateCode}}_MONTHLY_1ST"
 		},
 		{
-			"id": "a967258d-8f9e-48b0-83f2-6cc7f86b0fd6",
+			"id": "f65a10e7-eb9a-46ad-bf9e-0202edc13eb6",
 			"key": "offerCode",
 			"value": "OF_{{templateCode}}_REC"
 		},
 		{
-			"id": "a6ff5838-b748-4a79-8c33-1c2f0747c582",
+			"id": "7066f525-3c52-447c-8013-cd7b25298aa5",
 			"key": "serviceCode",
 			"value": "{{recOfferId}_SE_{{templateCode}_REC_NO_PRORATA"
 		},
 		{
-			"id": "5a6dcdd6-81c9-47da-aa80-69e031556541",
+			"id": "8f5f3c2f-13f9-44b2-9f8d-177cfabaaa67",
 			"key": "CUST",
 			"value": "{{provider}}.partner.{{templateCode}"
 		},
 		{
-			"id": "e411934e-73e2-4beb-822a-de4456d0b07f",
+			"id": "8d01e09b-d1b0-474c-9699-15f588dba19a",
 			"key": "invoiceNumber1",
-			"value": ""
+			"value": "INV-CLASSIC-000000003"
 		},
 		{
-			"id": "b721086a-9d3a-46b6-a03e-e2e432c5a9b4",
+			"id": "1ea29993-40d0-4d48-b7dc-37156159fbff",
 			"key": "invoiceNumber2",
-			"value": ""
+			"value": "INV-CLASSIC-000000004"
 		},
 		{
-			"id": "cbf93180-ae99-4b92-9ae8-356fb8313e18",
+			"id": "a3839881-8d48-4cf5-89d1-d997e83ffd9a",
 			"key": "unduePaymentID",
 			"value": ""
 		},
 		{
-			"id": "a4a2e937-8140-4ed9-9d78-89dcaf5f2513",
+			"id": "72f04e8d-cc53-4a1e-8397-1b3e8655398f",
 			"key": "refundPaymentID",
 			"value": ""
 		},
 		{
-			"id": "7c980c96-0d5a-4872-8a2f-8e116f720697",
+			"id": "ade3cc28-497e-4435-bcee-c7fc05e9bbcd",
 			"key": "mainOfferId",
 			"value": ""
 		},
 		{
-			"id": "96e173ac-9e2d-4f36-9558-8e962b5190c1",
+			"id": "6d79f6a3-345c-4f1e-8950-93cf3ca0dbc7",
 			"key": "invoiceNumberSC",
 			"value": ""
 		},
 		{
-			"id": "4a42519d-4ee1-48c9-80e4-ca0d805acc25",
+			"id": "99b057eb-2893-4936-a1f6-b7818613f3be",
 			"key": "pdfFilename",
 			"value": ""
 		},
 		{
-			"id": "0a334c86-2783-428f-a791-2af67b20f902",
+			"id": "54777246-064e-4615-a566-dc0b293a1e02",
 			"key": "xmlFilename",
 			"value": ""
 		}
