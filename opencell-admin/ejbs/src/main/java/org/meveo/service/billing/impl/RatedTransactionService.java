@@ -302,9 +302,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setUserAccount(ua);
         ratedTransaction.setSubscription(sub);
         ratedTransaction.setChargeInstance(ci);
-        ratedTransaction.setAmountWithTax(aggregatedWo.getAmountWithTax());
-        ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
-        ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
+        BigDecimal amountWithoutTax = aggregatedWo.getAmountWithoutTax();
+        BigDecimal amountWithTax = aggregatedWo.getAmountWithTax();
+        BigDecimal amountTax = aggregatedWo.getAmountTax();
+        if (aggregationSettings.getAggregationRoundingMode() != null) {
+            amountWithoutTax = amountWithoutTax.setScale(aggregationSettings.getAggregationRounding(), aggregationSettings.getAggregationRoundingMode().getRoundingMode());
+            amountWithTax = amountWithTax.setScale(aggregationSettings.getAggregationRounding(), aggregationSettings.getAggregationRoundingMode().getRoundingMode());
+            amountTax = amountTax.setScale(aggregationSettings.getAggregationRounding(), aggregationSettings.getAggregationRoundingMode().getRoundingMode());
+        }
+        ratedTransaction.setAmountWithTax(amountWithTax);
+        ratedTransaction.setAmountTax(amountTax);
+        ratedTransaction.setAmountWithoutTax(amountWithoutTax);
         ratedTransaction.setQuantity(aggregatedWo.getQuantity());
         ratedTransaction.setTaxClass(taxClass);
         ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());

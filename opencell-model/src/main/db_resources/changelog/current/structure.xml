@@ -3271,6 +3271,8 @@ END $$;]]>
             <column name="period_aggregation" type="${type.boolean}"/>
             <column name="period_end_date_included" type="${type.boolean}"/>
             <column name="wallet_operation_filter_id" type="bigint"/>
+            <column name="aggregation_rounding" type="int4" defaultValueNumeric="2"/>
+            <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
         </createTable>
         <addForeignKeyConstraint baseTableName="wo_aggregation_settings" baseColumnNames="wallet_operation_filter_id"
                                  constraintName="wallet_operation_filter_id_fk" referencedTableName="meveo_filter"
