@@ -29,9 +29,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.MediationReprocessing;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
 import org.meveo.service.script.ScriptInstanceService;
@@ -83,10 +85,10 @@ public class MediationReprocessingJobBean {
         ICdrParser cdrParser = null;
 
         try {
-            cdrReader = (ICdrReader) scriptInstanceService.getScriptInstance(readerCode);
+            cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
             cdrReader.init("DB");
 
-            cdrParser = (ICdrParser) scriptInstanceService.getScriptInstance(parserCode);
+            cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
