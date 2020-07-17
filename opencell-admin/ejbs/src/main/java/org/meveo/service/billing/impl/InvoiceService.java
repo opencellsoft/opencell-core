@@ -3184,7 +3184,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
-            final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
+            final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getBillingAccount(), scAggregate.getWallet(), invoice, amount);
             log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
             if (computedDiscount != null) {
                 computedDiscount = evalDiscountValue;
@@ -3258,23 +3258,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param expression el expression
-     * @param userAccount user account
-     * @param wallet wallet
-     * @param invoice invoice
-     * @param subCatTotal total of sub category
+     * @param expression     el expression
+     * @param billingAccount billing account
+     * @param wallet         wallet
+     * @param invoice        invoice
+     * @param subCatTotal    total of sub category
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal)
+    private BigDecimal evaluateDiscountPercentExpression(String expression, BillingAccount billingAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal)
             throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("ca", userAccount.getBillingAccount().getCustomerAccount());
-        userMap.put("ba", userAccount.getBillingAccount());
+        userMap.put("ca", billingAccount.getCustomerAccount());
+        userMap.put("ba", billingAccount);
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
