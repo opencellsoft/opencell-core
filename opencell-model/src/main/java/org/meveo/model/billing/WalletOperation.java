@@ -117,7 +117,8 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
 
-        @NamedQuery(name = "WalletOperation.findByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o WHERE o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
+        @NamedQuery(name = "WalletOperation.findUnbilledByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE (o.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
+        @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringCharges", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE o.status='CANCELED' and o.id in (:ids)"),
 
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),

@@ -18,7 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +27,10 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.UsageRatingAsync;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
@@ -57,10 +54,6 @@ public class UsageRatingJobBean extends BaseJobBean {
 
     @Inject
     private UsageRatingAsync usageRatingAsync;
-
-    @Inject
-    @Rejected
-    private Event<Serializable> rejectededEdrProducer;
 
     @Inject
     @CurrentUser

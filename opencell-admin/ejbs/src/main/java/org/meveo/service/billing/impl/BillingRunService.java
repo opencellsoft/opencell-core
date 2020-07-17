@@ -1220,24 +1220,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
 
         if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
-
-            Calendar calFrom = Calendar.getInstance();
-            calFrom.setTime(startDate);
-            calFrom.set(Calendar.HOUR_OF_DAY, 0);
-            calFrom.set(Calendar.MINUTE, 0);
-            calFrom.set(Calendar.SECOND, 0);
-            calFrom.set(Calendar.MILLISECOND, 0);
-
-            startDate = calFrom.getTime();
-
-            Calendar calTo = Calendar.getInstance();
-            calTo.setTime(endDate);
-            calTo.set(Calendar.HOUR_OF_DAY, 0);
-            calTo.set(Calendar.MINUTE, 0);
-            calTo.set(Calendar.SECOND, 0);
-            calTo.set(Calendar.MILLISECOND, 0);
-
-            endDate = calTo.getTime();
+            startDate = DateUtils.setDateToEndOfDay(startDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+            	endDate= DateUtils.setDateToEndOfDay(endDate);
+            } else {
+            	endDate= DateUtils.setDateToStartOfDay(endDate);
+            }
 
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);

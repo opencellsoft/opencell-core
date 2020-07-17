@@ -3289,4 +3289,9 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+ 
+    <changeSet id="#5388_20200715" author="AndriusKarpavicius">
+        <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
+    </changeSet>
+    
 </databaseChangeLog>

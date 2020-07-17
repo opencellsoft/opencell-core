@@ -29,6 +29,10 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+
+/**
+ * Subscription or service renewal period is approaching event
+ */
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)

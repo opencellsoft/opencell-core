@@ -30,11 +30,13 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Entity was updated event
+ * Generated XML for the invoice event
+ * 
+ * @author Adrius Karpavicius
  */
 @Qualifier
 @Target({ METHOD, FIELD, PARAMETER, TYPE })
 @Retention(RUNTIME)
-public @interface Updated {
+public @interface XMLGenerated {
 
 }

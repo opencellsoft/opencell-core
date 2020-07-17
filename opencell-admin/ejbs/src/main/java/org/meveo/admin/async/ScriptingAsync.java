@@ -21,21 +21,22 @@ package org.meveo.admin.async;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.meveo.util.ApplicationProvider;
+
+/**
+ * 
+ * @author anasseh
+ *
+ */
 
 @Stateless
 public class ScriptingAsync {
@@ -44,22 +45,24 @@ public class ScriptingAsync {
 	protected ScriptInstanceService scriptInstanceService;
 
 	@Inject
-	@CurrentUser
-	protected MeveoUser currentUser;
+	private CurrentUserProvider currentUserProvider;
+	
 
-	@Inject
-	@ApplicationProvider
-	protected Provider appProvider;
-
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
-		ScriptInterface script = null;
+	/**
+	 * 
+	 * @param result
+	 * @param scriptCode
+	 * @param context
+	 * @param currentUser
+	 * @param script
+	 * @return
+	 */
+	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context, MeveoUser currentUser, ScriptInterface script) {
 
 		try {
-			script = scriptInstanceService.getScriptInstance(scriptCode);
-			context.put(Script.CONTEXT_CURRENT_USER, currentUser);
-			context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+			if (currentUserProvider.getCurrentUserProviderCode() == null) {
+				currentUserProvider.forceAuthentication(currentUser.getUserName(), currentUser.getProviderCode());
+			}
 			script.execute(context);
 			if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
 				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
