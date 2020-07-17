@@ -27740,7 +27740,18 @@
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});"
+											"});",
+											"",
+											"",
+											"pm.test(request.name + \" - Check dATA\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.businessEntities.length).to.eql(3);",
+											"    pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST\");",
+											"    pm.expect(jsonData.businessEntities[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
+											"    pm.expect(jsonData.businessEntities[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_3\");",
+											"});",
+											"",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -27830,7 +27841,15 @@
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});"
+											"});",
+											"",
+											"",
+											"pm.test(request.name + \" - Check dATA\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.businessEntities.length).to.eql(1);",
+											"    pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
+											"});",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -61798,77 +61817,77 @@
 	],
 	"variable": [
 		{
-			"id": "bf9c30b2-bed2-4268-a0d6-4ec3ffce2ec2",
+			"id": "2fa1dab2-0656-4505-bd8d-2a35cc522102",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "b4dd0d86-c7cb-4c72-a68b-f8831ed31f4b",
+			"id": "19f6b39b-fb74-419a-bfce-ba45cfb8727e",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "06a2d06d-f475-4d83-9549-7c8b33a37335",
+			"id": "9607bb3f-76cf-439b-aeeb-03c1bd2803bd",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "feb8d8f0-abc3-44b5-812c-fcf2d9112ce2",
+			"id": "78058d65-d981-4cf3-9984-3b6777432123",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "25e31fb0-7325-4d09-bef1-ad9763245f66",
+			"id": "1fe3589b-5190-4a7b-8b99-2e49c78585b5",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "8249a483-4acd-45f5-bd99-0dec12d09631",
+			"id": "dd27c9d8-76bb-4514-a08e-c657eaf1c0e4",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "feed853c-2a14-45e3-9402-fefac4a246e7",
+			"id": "2606eb54-5dac-4d17-9880-be1cb019db9b",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "b1becd15-7927-455c-b955-c9027760f702",
+			"id": "7970cac1-47f7-4d71-960a-a87b40d7d741",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "5e375587-6ea4-4448-8a03-278c94b628e8",
+			"id": "7884ffd3-6241-4931-9c78-e9f02eead6a1",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "00e809c4-eb34-4ba1-b983-e787265c0f89",
+			"id": "7be601e9-99a7-4e8c-bb9b-a6289e8b63c2",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "d239e1fe-1599-46e3-9c7d-d116e7fa4e2b",
+			"id": "f5e8d3cd-f19d-43f2-8a84-6718d5c0f065",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "3eb9d37b-1952-45c6-b715-f54d1f7f7712",
+			"id": "e7903154-2a2c-42b1-adb1-a7be78b41d4c",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "2290e70c-d61d-4252-a4db-41b544953166",
+			"id": "c7621133-2aab-4ce5-94e8-f43f82aaaa12",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "b50e305f-b19d-4097-aa08-f49185c01d70",
+			"id": "d59e2aa9-2f12-4835-bda8-8c32fb5efd2d",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "9339ed4c-2d42-45cb-a256-9dc7fd1c742d",
+			"id": "2229036d-e405-4e26-a3a4-028a05cfcbfb",
 			"key": "project.version",
 			"value": "9.2+"
 		}
