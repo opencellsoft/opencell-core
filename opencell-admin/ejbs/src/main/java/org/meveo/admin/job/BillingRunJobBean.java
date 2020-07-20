@@ -113,10 +113,6 @@ public class BillingRunJobBean extends BaseJobBean {
 							billingRun.setInvoiceDate(billingRun.getProcessDate());
 						}
 						if (lastTransactionDate != null) {
-							//Set hour of lastTransactionDate to 00h00min01sec
-							lastTransactionDate = DateUtils.setHourToDate(lastTransactionDate, 0);
-							lastTransactionDate = DateUtils.setMinuteToDate(lastTransactionDate, 0);
-							lastTransactionDate = DateUtils.setSecondsToDate(lastTransactionDate, 1);
 							billingRun.setLastTransactionDate(lastTransactionDate);
 						} else if (billingCycle.getTransactionDateDelay() != null) {
 							billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(),
