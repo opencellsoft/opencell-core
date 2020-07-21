@@ -193,8 +193,10 @@ public class InvoiceApi extends BaseApi {
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
             invoice = invoiceService.produceInvoiceXml(invoice);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
-            response.setXmlInvoice(invoiceXml);
-            response.setXmlFilename(invoice.getXmlFilename());
+            if((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml())) {
+	            response.setXmlInvoice(invoiceXml);
+	            response.setXmlFilename(invoice.getXmlFilename());
+            }
         }
 
         if (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf()) {
