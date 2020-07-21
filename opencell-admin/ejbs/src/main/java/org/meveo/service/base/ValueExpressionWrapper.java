@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.el.ArrayELResolver;
@@ -238,7 +239,7 @@ public class ValueExpressionWrapper {
      * EL expression variable - amount - 'amount'
      */
     public static final String VAR_AMOUNT = "amount";
-
+    
     /**
      * Variables in EL expression
      * 
@@ -564,6 +565,7 @@ public class ValueExpressionWrapper {
         CustomerAccount customerAccount = null;
         Customer customer = null;
         Invoice invoice = null;
+        List<Access> accessPoints=null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {
@@ -603,6 +605,14 @@ public class ValueExpressionWrapper {
             }
             if (parameter instanceof Invoice) {
                 invoice = (Invoice) parameter;
+            }
+            if (parameter instanceof List) {
+            	List list = (List) parameter;
+            	if(list!=null && !list.isEmpty()) {
+            		if(list.get(0) instanceof Access) {
+            			accessPoints=list;
+            		}
+            	}
             }
         }
 
@@ -731,7 +741,9 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_BILLING_RUN, invoice.getBillingRun());
             }
         }
-
+        if (el.contains(VAR_ACCESS) && !contextMap.containsKey(VAR_ACCESS) && subscription != null) {
+            contextMap.put(VAR_ACCESS, subscription.getAccessPoints());
+        }
         return contextMap;
     }
 }
