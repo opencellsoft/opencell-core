@@ -25,10 +25,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RatingStatusEnum;
@@ -52,7 +49,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
     public void execute(JobExecutionResultImpl result, Long chargeInstanceId, Date maxDate) {
 
         try {
-            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, maxDate);
+            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, maxDate, false);
             if (ratingStatus.getNbRating() == 1) {
                 result.registerSucces();
             } else if (ratingStatus.getNbRating() > 1) {
