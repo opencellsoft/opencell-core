@@ -37,11 +37,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.Tuple;
 
-import org.hibernate.annotations.QueryHints;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
-import org.hibernate.transform.Transformers;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.InsufficientBalanceException;

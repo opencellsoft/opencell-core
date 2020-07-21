@@ -3294,4 +3294,11 @@ END $$;]]>
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
     
+    <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
+        <addColumn tableName="cat_wallet_template">
+            <column name="low_balance_level_el" type="varchar(2000)"/>
+            <column name="reject_level_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -686,18 +686,13 @@ public class WalletApi extends BaseApi {
         }
 
         WalletTemplate wt = new WalletTemplate();
-        wt.setCode(postData.getCode());
-        wt.setDescription(postData.getDescription());
-        wt.setWalletType(postData.getWalletType());
-        wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
-        wt.setFastRatingLevel(postData.getFastRatingLevel());
-        wt.setLowBalanceLevel(postData.getLowBalanceLevel());
-        wt.setRejectLevel(postData.getRejectLevel());
+        postData.mapToEntity(wt, postData.getCode());
 
         walletTemplateService.create(wt);
         return wt;
 
     }
+
 
     public WalletTemplate update(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -716,13 +711,7 @@ public class WalletApi extends BaseApi {
             throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getCode());
         }
 
-        wt.setDescription(postData.getDescription());
-        wt.setWalletType(postData.getWalletType());
-
-        wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
-        wt.setFastRatingLevel(postData.getFastRatingLevel());
-        wt.setLowBalanceLevel(postData.getLowBalanceLevel());
-        wt.setRejectLevel(postData.getRejectLevel());
+        postData.mapToEntity(wt, null);
 
         return walletTemplateService.update(wt);
     }
