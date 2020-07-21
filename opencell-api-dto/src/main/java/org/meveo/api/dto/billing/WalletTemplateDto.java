@@ -57,6 +57,16 @@ public class WalletTemplateDto extends BusinessEntityDto {
      */
     private BigDecimal rejectLevel;
 
+	/**
+     * Expression to determine reject Level
+     */
+	private String rejectLevelEl;
+
+    /**
+     * Expression to determine low Balance Level
+     */
+	private String lowBalanceLevelEl;
+
     /**
      * Instantiates a new wallet template dto.
      */
@@ -75,6 +85,8 @@ public class WalletTemplateDto extends BusinessEntityDto {
         fastRatingLevel = walletTemplate.getFastRatingLevel();
         lowBalanceLevel = walletTemplate.getLowBalanceLevel();
         rejectLevel = walletTemplate.getRejectLevel();
+		lowBalanceLevelEl = walletTemplate.getLowBalanceLevelEl();
+		rejectLevelEl = walletTemplate.getRejectLevelEl();
     }
 
     /**
@@ -158,10 +170,58 @@ public class WalletTemplateDto extends BusinessEntityDto {
     public void setRejectLevel(BigDecimal rejectLevel) {
         this.rejectLevel = rejectLevel;
     }
+    
+    
+    
+    /**
+     * @return lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+    public String getLowBalanceLevelEl() {
+		return lowBalanceLevelEl;
+	}
+
+    /**
+     * @param lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+	public void setLowBalanceLevelEl(String lowBalanceLevelEl) {
+		this.lowBalanceLevelEl = lowBalanceLevelEl;
+	}
+
+	/**
+     * @return RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public String getRejectLevelEl() {
+		return rejectLevelEl;
+	}
+
+	/**
+     * @param RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public void setRejectLevelEl(String rejectLevelEl) {
+		this.rejectLevelEl = rejectLevelEl;
+	}
 
     @Override
     public String toString() {
         return "WalletTemplateDto [code=" + code + ", description=" + description + ", walletType=" + walletType + ", consumptionAlertSet=" + consumptionAlertSet
                 + ", fastRatingLevel=" + fastRatingLevel + ", lowBalanceLevel=" + lowBalanceLevel + ", rejectLevel=" + rejectLevel + "]";
     }
+
+	/**
+	 * @param wt
+	 * @param code
+	 */
+	public void mapToEntity(WalletTemplate wt, String code) {
+		if(code !=null) {
+			wt.setCode(code);
+		}
+		wt.setDescription(this.description);
+        wt.setWalletType(this.walletType);
+        wt.setConsumptionAlertSet(this.consumptionAlertSet);
+        wt.setFastRatingLevel(this.fastRatingLevel);
+        wt.setLowBalanceLevel(this.lowBalanceLevel);
+        wt.setRejectLevel(this.rejectLevel);
+        wt.setLowBalanceLevelEl(this.lowBalanceLevelEl);
+        wt.setRejectLevelEl(this.rejectLevelEl);
+	}
 }

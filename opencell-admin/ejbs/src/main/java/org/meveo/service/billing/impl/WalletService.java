@@ -34,12 +34,17 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
  * Wallet service implementation.
@@ -50,6 +55,11 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
+	
+    private static final String SERVICE = "service";
+    private static final String SERVICE_INSTANCE = "serviceInstance";
+	private static final String SUBSCRIPTION = "subscription";
+	private static final String BILLING_ACCOUNT = "billingAccount";
 
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
@@ -275,12 +285,53 @@ public class WalletService extends PersistenceService<WalletInstance> {
             Map<Long, BigDecimal> walletLimits = new HashMap<>();
 
             for (WalletInstance wallet : chargeInstance.getWalletInstances()) {
-                if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    walletLimits.put(wallet.getId(), wallet.getRejectLevel());
+            	WalletTemplate walletTemplate = wallet.getWalletTemplate();
+                if (walletTemplate != null && walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+    				walletLimits.put(wallet.getId(), evaluateRejectLevel(chargeInstance, wallet, walletTemplate));
                 }
             }
 
             return walletLimits;
         }
+    }
+
+	private BigDecimal evaluateRejectLevel(ChargeInstance chargeInstance, WalletInstance wallet, WalletTemplate walletTemplate) {
+		BigDecimal rejectLevel = wallet.getRejectLevel();
+		if(walletTemplate!=null && walletTemplate.getRejectLevelEl()!=null) {
+			rejectLevel = evaluateElExpressionValue(walletTemplate.getRejectLevelEl(), wallet, chargeInstance);
+		}
+		return rejectLevel;
+	}
+    
+    public BigDecimal evaluateElExpressionValue(String expression, WalletInstance walletInstance, ChargeInstance chargeInstance) {
+    	if(expression == null){
+            return null;
+        }
+		BillingAccount billingAccount = chargeInstance.getUserAccount() != null ? chargeInstance.getUserAccount().getBillingAccount() : null;
+		Subscription subscription = chargeInstance.getSubscription();
+		List<Access> accessPoints = subscription!=null? subscription.getAccessPoints():null;
+		ServiceInstance serviceInstance= chargeInstance.getServiceInstance();
+		
+        Map<Object, Object> context = new HashMap<>();
+        if (expression.indexOf("walletInstance") >= 0) {
+        	context.put("walletInstance", walletInstance);
+        }
+        if (expression.indexOf("chargeInstance") >= 0) {
+        	context.put("chargeInstance", chargeInstance);
+        }
+        if (expression.indexOf(SUBSCRIPTION) >= 0) {
+        	context.put(SUBSCRIPTION, subscription);
+        }
+        if (expression.indexOf("accessPoints") >= 0) {
+        	context.put("accessPoints", accessPoints);
+        }
+        if (expression.indexOf(BILLING_ACCOUNT) >= 0) {
+        	context.put(BILLING_ACCOUNT, billingAccount);
+        }
+        if (expression.indexOf(SERVICE) >= 0 || expression.indexOf(SERVICE_INSTANCE) >= 0) {
+			context.put(SERVICE, serviceInstance);
+        	context.put(SERVICE_INSTANCE, serviceInstance);
+        }
+        return ValueExpressionWrapper.evaluateExpression(expression, context, BigDecimal.class);
     }
 }
