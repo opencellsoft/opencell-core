@@ -23,9 +23,50 @@ package org.meveo.model.billing;
  */
 public enum InvoiceStatusEnum {
 
+    /**
+     * when invoice created
+     */
+    CREATED(1, "invoiceStatusEnum.created"),
     
-    CREATED(1, "invoiceStatusEnum.created"), GENERATED(2, "invoiceStatusEnum.generated"), SENT(3, "invoiceStatusEnum.sent"), PAID(4, "invoiceStatusEnum.paid"), PPAID(5, "invoiceStatusEnum.ppaid"), 
-    UNPAID(6, "invoiceStatusEnum.unpaid"), ABANDONED(7, "invoiceStatusEnum.abandonned"), REFUNDED(8, "invoiceStatusEnum.refunded"), DISPUTED(9, "invoiceStatusEnum.disputed");
+    /**
+     * when produced by a job (xml custom, xml, pdf...)
+     */
+    GENERATED(2, "invoiceStatusEnum.generated"),
+    
+    /**
+     * when exported by a job (email or custom processing)
+     */
+    SENT(3, "invoiceStatusEnum.sent"),
+    
+    /**
+     *  when fully paid (matched status)
+     */
+    PAID(4, "invoiceStatusEnum.paid"),
+    
+    /**
+     * when partially paid (unmatched amount >0)
+     */
+    PPAID(5, "invoiceStatusEnum.ppaid"),
+    
+    /**
+     * when when no payment and due date
+     */
+    UNPAID(6, "invoiceStatusEnum.unpaid"),
+    
+    /**
+     * when writen off (matched to a write off AO)
+     */
+    ABANDONED(7, "invoiceStatusEnum.abandonned"),
+    
+    /**
+     * when when refunded (by a credit note through linkedToInvoice )
+     */
+    REFUNDED(8, "invoiceStatusEnum.refunded"),
+    
+    /**
+     * when when invoice AO is disputed or into dunning active
+     */
+    DISPUTED(9, "invoiceStatusEnum.disputed");
     
     private Integer id;
     private String label;
