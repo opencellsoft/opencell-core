@@ -641,7 +641,7 @@ public class ValueExpressionWrapper {
             contextMap.put(VAR_SUBSCRIPTION, subscription);
         }
         
-        if (el.contains(VAR_ACCESS) && !contextMap.containsKey(VAR_ACCESS) && subscription != null) {
+        if (el.contains(VAR_ACCESS) && !contextMap.containsKey(VAR_ACCESS)) {
         	if (subscription != null) {
         		accessPoints = subscription.getAccessPoints();
         	} else if (serviceInstance != null && serviceInstance.getSubscription()!=null && serviceInstance.getSubscription().getAccessPoints()!=null) {
