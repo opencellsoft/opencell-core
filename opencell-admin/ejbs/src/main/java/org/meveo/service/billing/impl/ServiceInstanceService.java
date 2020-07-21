@@ -61,7 +61,6 @@ import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
@@ -105,12 +104,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private UsageChargeInstanceService usageChargeInstanceService;
 
     /**
-     * WalletOperationService
-     */
-    @Inject
-    private WalletOperationService walletOperationService;
-
-    /**
      * ServiceTemplateService
      */
     @Inject
@@ -132,9 +125,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private OrderHistoryService orderHistoryService;
-
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     private AuditableFieldService auditableFieldService;
@@ -458,7 +448,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             try {
                 recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
-                    serviceInstance.getRateUntilDate() != null, false);
+                    serviceInstance.getRateUntilDate() == null, false);
 
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

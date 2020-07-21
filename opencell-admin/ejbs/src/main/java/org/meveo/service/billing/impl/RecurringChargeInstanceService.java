@@ -282,12 +282,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param recurringChargeInstance Recurring charge instance
      * @param maxDate Date to rate until. Only full periods will be considered.
-     * @param isStrictlyBeforeMaxDate If true, <maxDate check is applied for iteration. If false <=maxDate is applied
+     * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * @return A list of wallet operations created
      * @throws BusinessException General business exception
      */
-    public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isStrictlyBeforeMaxDate, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
         boolean chargeWasUpdated = false;
@@ -337,10 +337,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
             Date nextChargeToDate = isApplyInAdvance ? recurringChargeInstance.getChargeDate() : recurringChargeInstance.getNextChargeDate();
 
-            log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isStrictlyBeforeMaxDate ? "exclusive" : "inclusive");
+            log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isMaxDateInclusive ? "inclusive" : "exclusive");
             int i = 0;
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
-                    && ((nextChargeToDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate) || (nextChargeToDate.getTime() < maxDate.getTime() && isStrictlyBeforeMaxDate))) {
+                    && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
                 List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, false, null, null, isVirtual);
                 walletOperations.addAll(wos);
@@ -395,13 +395,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param maxDate Date to rate until. Only full periods will be considered.
+     * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
      * @return Rating status summary
      * @throws BusinessException General business exception
      */
-    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
+    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive) throws BusinessException {
 
         RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, false, false);
+        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false);
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
@@ -415,14 +416,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param maxDate Date to rate until. Only full periods will be considered.
+     * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
      * @return Rating status summary
      * @throws BusinessException General business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public RatingStatus applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate) throws BusinessException {
+    public RatingStatus applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive) throws BusinessException {
 
-        return applyRecurringCharge(chargeInstanceId, maxDate);
+        return applyRecurringCharge(chargeInstanceId, maxDate, isMaxDateInclusive);
     }
 
     /**
@@ -577,7 +579,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate);
 
         if (nrWOCanceled > 0) {
-            recurringChargeInstanceServiceNewTx.applyRecurringChargeInNewTx(chargeInstanceId, toDate);
+            recurringChargeInstanceServiceNewTx.applyRecurringChargeInNewTx(chargeInstanceId, toDate, false);
         }
     }
 
@@ -595,7 +597,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         int nrWOCanceled = resetRecurringCharge(chargeInstanceId, fromDate);
 
         if (nrWOCanceled > 0) {
-            applyRecurringCharge(chargeInstanceId, toDate);
+            applyRecurringCharge(chargeInstanceId, toDate, false);
         }
     }
 }
