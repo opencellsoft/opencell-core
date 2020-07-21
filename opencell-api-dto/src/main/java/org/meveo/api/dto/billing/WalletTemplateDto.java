@@ -44,10 +44,10 @@ public class WalletTemplateDto extends BusinessEntityDto {
     private BillingWalletTypeEnum walletType;
 
     /** The consumption alert set. */
-    private boolean consumptionAlertSet;
+    private Boolean consumptionAlertSet;
 
     /** The fast rating level. */
-    private int fastRatingLevel;
+    private Integer fastRatingLevel;
 
     /** The low balance level. */
     private BigDecimal lowBalanceLevel;
@@ -130,7 +130,7 @@ public class WalletTemplateDto extends BusinessEntityDto {
      *
      * @return the fast rating level
      */
-    public int getFastRatingLevel() {
+    public Integer getFastRatingLevel() {
         return fastRatingLevel;
     }
 
@@ -139,7 +139,7 @@ public class WalletTemplateDto extends BusinessEntityDto {
      *
      * @param fastRatingLevel the new fast rating level
      */
-    public void setFastRatingLevel(int fastRatingLevel) {
+    public void setFastRatingLevel(Integer fastRatingLevel) {
         this.fastRatingLevel = fastRatingLevel;
     }
 
@@ -212,16 +212,33 @@ public class WalletTemplateDto extends BusinessEntityDto {
 	 * @param code
 	 */
 	public void mapToEntity(WalletTemplate wt, String code) {
-		if(code !=null) {
+		boolean isNew = code !=null;
+		if(isNew) {
 			wt.setCode(code);
 		}
-		wt.setDescription(this.description);
-        wt.setWalletType(this.walletType);
-        wt.setConsumptionAlertSet(this.consumptionAlertSet);
-        wt.setFastRatingLevel(this.fastRatingLevel);
-        wt.setLowBalanceLevel(this.lowBalanceLevel);
-        wt.setRejectLevel(this.rejectLevel);
-        wt.setLowBalanceLevelEl(this.lowBalanceLevelEl);
-        wt.setRejectLevelEl(this.rejectLevelEl);
+		if (this.description != null) {
+			wt.setDescription(this.description);
+		}
+		if (this.walletType != null) {
+			wt.setWalletType(this.walletType);
+		}
+		if (this.consumptionAlertSet != null) {
+			wt.setConsumptionAlertSet(this.consumptionAlertSet);
+		}
+		if (this.fastRatingLevel != null) {
+			wt.setFastRatingLevel(this.fastRatingLevel);
+		}
+		if (this.lowBalanceLevel != null) {
+			wt.setLowBalanceLevel(this.lowBalanceLevel);
+		}
+		if (this.rejectLevel != null) {
+			wt.setRejectLevel(this.rejectLevel);
+		}
+		if (this.lowBalanceLevelEl != null) {
+			wt.setLowBalanceLevelEl(this.lowBalanceLevelEl);
+		}
+		if (this.rejectLevelEl != null) {
+			wt.setRejectLevelEl(this.rejectLevelEl);
+		}
 	}
 }
