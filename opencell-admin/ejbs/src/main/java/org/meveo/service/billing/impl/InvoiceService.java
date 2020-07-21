@@ -3553,9 +3553,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             putTaxInvoiceAgregate(billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoice, invoiceAgregateSubcat, invoiceRounding, invoiceRoundingMode);
             ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
         } else {
-            if (invAgrCatDTO.getAmountWithoutTax() == null || invAgrCatDTO.getAmountWithTax() == null || invAgrCatDTO.getAmountTax() == null) {
-                throw new InvalidParameterException("For aggregated invoices, all amounts: amount without tax, tax amount and amount with tax must be provided ");
-            }
+        	if(isEnterprise) {
+        		if (invAgrCatDTO.getAmountWithoutTax() == null || invAgrCatDTO.getAmountTax() == null) {
+                    throw new InvalidParameterException("For aggregated invoices, when provider is an entreprise, amount without tax and tax amount must be provided");
+                }
+        	}else {
+        		if (invAgrCatDTO.getAmountWithTax() == null || invAgrCatDTO.getAmountTax() == null) {
+                    throw new InvalidParameterException("For aggregated invoices, when provider is not an entreprise, tax amount and amount with tax must be provided ");
+                }
+        	}
+            
             // we add subCatAmountWithoutTax, in the case if there any opened RT to include
             BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(invAgrCatDTO.getAmountWithoutTax(), invAgrCatDTO.getAmountWithTax(), invAgrCatDTO.getAmountTax(), isEnterprise, invoiceRounding,
                 invoiceRoundingMode.getRoundingMode());
