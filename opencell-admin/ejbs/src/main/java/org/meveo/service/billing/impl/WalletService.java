@@ -56,11 +56,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
 	
-    private static final String SERVICE = "service";
-    private static final String SERVICE_INSTANCE = "serviceInstance";
-	private static final String SUBSCRIPTION = "subscription";
-	private static final String BILLING_ACCOUNT = "billingAccount";
-
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
 
@@ -307,31 +302,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
     	if(expression == null){
             return null;
         }
-		BillingAccount billingAccount = chargeInstance.getUserAccount() != null ? chargeInstance.getUserAccount().getBillingAccount() : null;
-		Subscription subscription = chargeInstance.getSubscription();
-		List<Access> accessPoints = subscription!=null? subscription.getAccessPoints():null;
-		ServiceInstance serviceInstance= chargeInstance.getServiceInstance();
-		
-        Map<Object, Object> context = new HashMap<>();
-        if (expression.indexOf("walletInstance") >= 0) {
-        	context.put("walletInstance", walletInstance);
-        }
-        if (expression.indexOf("chargeInstance") >= 0) {
-        	context.put("chargeInstance", chargeInstance);
-        }
-        if (expression.indexOf(SUBSCRIPTION) >= 0) {
-        	context.put(SUBSCRIPTION, subscription);
-        }
-        if (expression.indexOf("accessPoints") >= 0) {
-        	context.put("accessPoints", accessPoints);
-        }
-        if (expression.indexOf(BILLING_ACCOUNT) >= 0) {
-        	context.put(BILLING_ACCOUNT, billingAccount);
-        }
-        if (expression.indexOf(SERVICE) >= 0 || expression.indexOf(SERVICE_INSTANCE) >= 0) {
-			context.put(SERVICE, serviceInstance);
-        	context.put(SERVICE_INSTANCE, serviceInstance);
-        }
-        return ValueExpressionWrapper.evaluateExpression(expression, context, BigDecimal.class);
+        Map<Object, Object> context =ValueExpressionWrapper.populateContext(expression, walletInstance, chargeInstance);
+		return ValueExpressionWrapper.evaluateExpression(expression, context, BigDecimal.class);
     }
 }
