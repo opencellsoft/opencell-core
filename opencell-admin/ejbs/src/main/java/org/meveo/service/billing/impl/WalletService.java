@@ -302,7 +302,11 @@ public class WalletService extends PersistenceService<WalletInstance> {
     	if(expression == null){
             return null;
         }
-        Map<Object, Object> context =ValueExpressionWrapper.populateContext(expression, walletInstance, chargeInstance);
+    	Map<Object, Object> initialContext = new HashMap<Object, Object>(); 
+        if (expression.indexOf(ValueExpressionWrapper.VAR_WALLET_INSTANCE) >= 0) {
+        	initialContext.put(ValueExpressionWrapper.VAR_WALLET_INSTANCE, walletInstance);
+        }
+        Map<Object, Object> context = ValueExpressionWrapper.completeContext(expression, initialContext, chargeInstance);
 		return ValueExpressionWrapper.evaluateExpression(expression, context, BigDecimal.class);
     }
 }

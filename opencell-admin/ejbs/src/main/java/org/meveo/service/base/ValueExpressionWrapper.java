@@ -241,6 +241,11 @@ public class ValueExpressionWrapper {
     public static final String VAR_AMOUNT = "amount";
     
     /**
+     * EL expression variable - wallet instance - 'wallet'
+     */
+    public static final String VAR_WALLET_INSTANCE = "wallet";
+    
+    /**
      * Variables in EL expression
      * 
      * @author Andrius Karpavicius
@@ -554,8 +559,18 @@ public class ValueExpressionWrapper {
      * @return A variable map for use as EL context
      */
     public static Map<Object, Object> populateContext(String el, Object... parameters) {
-
-        Map<Object, Object> contextMap = new HashMap<>();
+    	return completeContext(el, new HashMap<>(), parameters);
+    }
+    
+    /**
+     * complete context with variables by examining parameter classes, with an initial contextMap
+     * 
+     * @param el EL to construct the context for
+     * @param contextMap initial context map that will be completed by needed variables 
+     * @param parameters Available parameters
+     * @return A variable map for use as EL context
+     */
+    public static Map<Object, Object> completeContext(String el, Map<Object, Object> contextMap, Object... parameters) {
 
         ChargeInstance chargeInstance = null;
         ServiceInstance serviceInstance = null;
