@@ -25,8 +25,6 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -153,8 +151,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
 			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
-        } catch (Exception e) {
-        	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
+        } catch (Exception e) {        	
         }
         return recordedInvoice;
     }

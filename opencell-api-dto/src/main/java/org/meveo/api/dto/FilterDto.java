@@ -41,6 +41,8 @@ public class FilterDto extends EnableBusinessDto {
 
     /** The input xml. */
     private String inputXml;
+    
+    private String pollingQuery;
 
     /**
      * Instantiate a new Filter Dto
@@ -97,13 +99,19 @@ public class FilterDto extends EnableBusinessDto {
         this.inputXml = inputXml;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "FilterDto [code=" + getCode() + ", description=" + getDescription() + ", shared=" + shared + ", inputXml=" + inputXml + "]";
-    }
+	public String getPollingQuery() {
+		return pollingQuery;
+	}
+
+	public void setPollingQuery(String pollingQuery) {
+		this.pollingQuery = pollingQuery;
+	}
+
+	@Override
+	public String toString() {
+		return "FilterDto [shared=" + shared + ", inputXml=" + inputXml + ", pollingQuery=" + pollingQuery + "]";
+	}
+
+    
+  
 }

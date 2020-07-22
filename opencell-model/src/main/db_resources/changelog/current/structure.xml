@@ -3413,5 +3413,11 @@ END $$;]]>
             <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_filter">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+    </changeSet>
 
 </databaseChangeLog>

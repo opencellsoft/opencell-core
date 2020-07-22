@@ -40,8 +40,9 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class SepaDirectDebitJob generate sepa/paynum or custom files for available DirectDebit request operations.
+ * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class SepaDirectDebitJob extends Job {
