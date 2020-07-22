@@ -28,7 +28,7 @@
 				field="accessCode" />
 			<hftl:searchField label="#{messages['commons.status']}"
 				field="status" />
-			<hftl:searchField label="#{messages['edr.eventDate']}"
+			<hftl:searchField label="#{messages['cdr.callDate']}"
 				field="eventDate" />
 			<c:forEach items="#{cdrBean.params}" var="param">
 				<hftl:searchField label="#{cdrBean.getParamLabel(param)}"
@@ -47,10 +47,13 @@
 			<hftl:column label="#{messages['cdr.accessCode']}" field="accessCode"/>
 			<hftl:column label="#{messages['commons.status']}" 
 				field="status.label" isMessage="true" />
-			<hftl:column label="#{messages['edr.eventDate']}" field="eventDate" 
-				isDate="true" />
+			<hftl:column label="#{messages['cdr.callDate']}" field="eventDate" 
+				isDate="true" time="true"/>
+			<hftl:column label="#{messages['cdr.callDuration']}" field="quantity"/>
 			<hftl:column label="#{messages['edr.rejectReason']}"
 				field="rejectReason"/>
+			<hftl:column label="#{messages['cdr.timesTried']}"
+				field="timesTried"/>								
 			<c:forEach items="#{cdrBean.params}" var="param">
 				<hftl:column label="#{cdrBean.getParamLabel(param)}"
 					field="#{param}"/>
@@ -121,6 +124,48 @@
 							oncomplete="PF('fieldsConfirmMassWritingOff').hide()" update="datatable_results"
 							process="@form"
 							action="#{cdrBean.massWritingOff()}" />
+						</h:form>
+					</p:panel>
+			</p:confirmDialog>
+			<p:commandButton id="backoutCdr"
+					value="#{messages['cdr.backout']}"
+					onclick="PF('fieldsConfirmBackoutCdr').show();">
+			</p:commandButton>
+			<p:confirmDialog 
+				styleClass="confirm-dialog"
+				message="Be cautious! Back-out is an irreversible operation." header=""
+				severity="alert" widgetVar="fieldsConfirmBackoutCdr"
+				appendTo="@(body)">
+					<p:panel styleClass="confirm-dialog-content">
+						<h:form>
+							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="2" >
+								<hftl:searchField label="CDR File name" field="originBatch" />
+								<hftl:searchField label="Creation Date" field="created" />
+							</hftl:searchPanel>
+						
+							<br/>
+							<p:dataTable id="datatable" var="cdr" value="#{cdrs}" paginator="true" rows="20"
+	                     	styleClass="custom-grid" resizableColumns="true">
+			                    <p:column headerText="CDR File Name">
+			                        <h:outputText value="#{cdr.originBatch}" />
+			                    </p:column>
+								<p:column headerText="Creation Date">
+			                        <h:outputText value="#{cdr.created}">
+			                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+			                        </h:outputText>
+			                    </p:column>
+			                    <p:column headerText="Back-out">
+				                    <p:commandButton id="backout" icon="ui-icon-circle-close"
+										title="back-out" action="#{cdrBean.backout()}"
+										process="@form">
+										<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
+										<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
+									</p:commandButton>
+			                    </p:column>
+							</p:dataTable>
+							<p:commandButton value="Close"
+								oncomplete="PF('fieldsConfirmBackoutCdr').hide()">
+							</p:commandButton>
 						</h:form>
 					</p:panel>
 			</p:confirmDialog>

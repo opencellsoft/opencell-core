@@ -17,8 +17,10 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
@@ -76,5 +78,21 @@ public class CDRService extends PersistenceService<CDR> {
            cdr.setRejectReason(writeOffReason);
            update(cdr);
         }
+    }
+    
+    public List<CDR> getCDRFileNames() {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+        List<CDR> cdrs = new ArrayList<>();
+        String query =  "select distinct origin_batch, first_value (created) over (partition by origin_batch order by id) as created_date from rating_cdr";
+        List<Map<String,Object>> result = executeNativeSelectQuery(query, null);
+        result.stream().forEach(record-> {
+            CDR cdr = new CDR();
+            cdr.setOriginBatch((String)record.get("origin_batch"));
+            cdr.setCreated((Date)record.get("created_date"));
+            cdrs.add(cdr);
+        });
+        return cdrs;
     }
 }

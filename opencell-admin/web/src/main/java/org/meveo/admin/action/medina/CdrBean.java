@@ -53,6 +53,8 @@ public class CdrBean extends BaseBean<CDR> {
     
     private Set<String> params;
     
+    private List<CDR> cdrs;
+    
     private String writeOffReason;
     
     private Map<String,CustomFieldTemplate> cfs;
@@ -76,6 +78,8 @@ public class CdrBean extends BaseBean<CDR> {
     public void initParams() {
         cfs = customFieldTemplateService.findByAppliesTo("CDR");
         params = cfs.keySet();  
+        setCdrs(cdrService.getCDRFileNames());
+
     }
     
     public boolean isDate(String param) {
@@ -134,6 +138,15 @@ public class CdrBean extends BaseBean<CDR> {
         writeOffReason = "";
     }
     
+    public void backout() {
+        if (getSelectedEntities() == null) {
+            return;
+        }
+        CDR cdr = getSelectedEntities().get(0);
+        log.debug("Backing-out CDR File : " + cdr.getOriginBatch());
+    }
+        
+    
     @Override
     protected IPersistenceService<CDR> getPersistenceService() {
         return cdrService;
@@ -151,5 +164,11 @@ public class CdrBean extends BaseBean<CDR> {
     }
     public void setWriteOffReason(String writeOffReason) {
         this.writeOffReason = writeOffReason;
+    }
+    public List<CDR> getCdrs() {
+        return cdrs;
+    }
+    public void setCdrs(List<CDR> cdrs) {
+        this.cdrs = cdrs;
     }
 }
