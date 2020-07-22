@@ -29,8 +29,8 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getInputXml())) {
-            missingParameters.add("inputXml");
+        if (StringUtils.isBlank(postData.getInputXml()) && StringUtils.isBlank(postData.getPollingQuery())) {
+            missingParameters.add("inputXml or pollingQuery");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -47,8 +47,8 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getInputXml())) {
-            missingParameters.add("inputXml");
+        if (StringUtils.isBlank(postData.getInputXml()) && StringUtils.isBlank(postData.getPollingQuery())) {
+            missingParameters.add("inputXml or pollingQuery");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -81,6 +81,7 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         filter.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         filter.setDescription(dto.getDescription());
         filter.setInputXml(dto.getInputXml());
+        filter.setPollingQuery(dto.getPollingQuery());
         filter.setShared(dto.getShared());
 
         return filter;

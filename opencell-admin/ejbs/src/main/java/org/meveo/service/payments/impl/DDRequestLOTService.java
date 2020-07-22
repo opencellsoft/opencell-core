@@ -18,10 +18,13 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -38,28 +41,30 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.commons.utils.StringUtils;
-
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
-
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentLevelEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
-
 import org.meveo.service.base.PersistenceService;
-
-
 
 /**
  * The Class DDRequestLOTService.
+ * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
@@ -74,6 +79,15 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	@Inject
 	private SepaDirectDebitAsync sepaDirectDebitAsync;
 
+	@Inject
+	private DDRequestBuilderFactory ddRequestBuilderFactory;
+
+	@Inject
+	private AccountOperationService accountOperationService;
+	
+	
+	@Inject
+	private PaymentGatewayService paymentGatewayService;
 
 	/**
 	 * Creates the DDRequest lot.
@@ -94,10 +108,18 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			if (listAoToPay == null || listAoToPay.isEmpty()) {
 				throw new BusinessEntityException("no invoices!");
 			}
-			Future<DDRequestLOT> futureisNow = sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddrequestLotOp, ddRequestBuilder, listAoToPay, appProvider);
-			DDRequestLOT ddRequestLOT = retrieveIfNotManaged(futureisNow.get());
+
+			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
+
+			DDRequestLOT ddRequestLOT = new DDRequestLOT();
+			ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
+			ddRequestLOT.setSendDate(new Date());
+			ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
+			ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
+			ddRequestLOT.setSendDate(new Date());
 			create(ddRequestLOT);
-			log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
+			ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
+
 			return ddRequestLOT;
 		} catch (Exception e) {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
@@ -111,18 +133,105 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider)
-			throws BusinessEntityException, Exception {
-		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
-		ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));	
-		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
-		ddRequestLOT.setSendDate(new Date());
-		update(ddRequestLOT);
+	public void addItems(DDRequestLotOp ddrequestLotOp, DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder,
+			JobExecutionResultImpl result) throws BusinessEntityException, Exception {
+		try {
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			int nbItemsKo = 0;
+			int nbItemsOk = 0;
+			String allErrors = "";
+
+			if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
+
+				List<Future<Map<String, Object>>> futures = new ArrayList<>();
+				SubListCreator<AccountOperation> subListCreator = new SubListCreator(listAoToPay, Runtime.getRuntime().availableProcessors());
+				while (subListCreator.isHasNext()) {
+					futures.add(sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddRequestLOT, subListCreator.getNextWorkSet(), appProvider));
+				}
+				// Wait for all async methods to finish
+				for (Future<Map<String, Object>> future : futures) {
+					try {
+						Map<String, Object> futureResult = future.get();
+						nbItemsKo += (Long) futureResult.get("nbItemsKo");
+						nbItemsOk += (Long) futureResult.get("nbItemsOk");
+						totalAmount = totalAmount.add((BigDecimal) futureResult.get("totalAmount"));
+						allErrors += (String) futureResult.get("allErrors");
+
+					} catch (InterruptedException e) {
+						// It was cancelled from outside - no interest
+
+					} catch (ExecutionException e) {
+						Throwable cause = e.getCause();
+						result.registerError(cause.getMessage());
+						result.addReport(cause.getMessage());
+						log.error("Failed to execute async method", cause);
+					}
+				}
+
+			}
+
+			if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.CA) {
+				Map<CustomerAccount, List<AccountOperation>> aosByCA = new HashMap<CustomerAccount, List<AccountOperation>>();
+				for (AccountOperation ao : listAoToPay) {
+					ao = accountOperationService.refreshOrRetrieve(ao);
+					List<AccountOperation> aos = new ArrayList<AccountOperation>();
+					if (aosByCA.containsKey(ao.getCustomerAccount())) {
+						aos = aosByCA.get(ao.getCustomerAccount());
+					}
+					aos.add(ao);
+					aosByCA.put(ao.getCustomerAccount(), aos);
+				}
+				for (Map.Entry<CustomerAccount, List<AccountOperation>> entry : aosByCA.entrySet()) {
+					BigDecimal amountToPayByItem = BigDecimal.ZERO;
+					String allErrorsByItem = "";
+					CustomerAccount ca = entry.getKey();
+					String caFullName = ca.getName() != null ? ca.getName().getFullName() : "";
+					for (AccountOperation ao : entry.getValue()) {
+						String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
+						if (errorMsg != null) {
+							allErrorsByItem += errorMsg + " ; ";
+						} else {
+							amountToPayByItem = amountToPayByItem.add(ao.getUnMatchingAmount());
+						}
+					}
+
+					ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(amountToPayByItem, ddRequestLOT, caFullName, allErrorsByItem, entry.getValue()));
+
+					if (StringUtils.isBlank(allErrorsByItem)) {
+						nbItemsOk++;
+						totalAmount = totalAmount.add(amountToPayByItem);
+					} else {
+						nbItemsKo++;
+						allErrors += allErrorsByItem + " ; ";
+					}
+				}
+			}
+			ddRequestLOT.setNbItemsKo(nbItemsKo);
+			ddRequestLOT.setNbItemsOk(nbItemsOk);
+			ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
+			ddRequestLOT.setTotalAmount(totalAmount);
+			update(ddRequestLOT);
+			log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
+
+		} catch (Exception e) {
+			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
+			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
+			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
+			result.registerError(ddrequestLotOp.getId(), e.getMessage());
+			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
+
+		}
 
 	}
-	
+
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider)
+			throws BusinessEntityException, Exception {		
+		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
+	}
+
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws Exception {
-		createPaymentsOrRefundsForDDRequestLot( ddRequestLOT ,1L, 0L,null);
+		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, 1L, 0L, null);
 	}
 
 	/**
@@ -131,7 +240,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT ,Long nbRuns, Long waitingMillis,JobExecutionResultImpl result) throws Exception {
+	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
@@ -141,7 +250,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(),result));
+			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), result));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -156,7 +265,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				// It was cancelled from outside - no interest
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
-				if(result != null) {
+				if (result != null) {
 					result.registerError(cause.getMessage());
 					result.addReport(cause.getMessage());
 				}
@@ -230,4 +339,76 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			ddRequestItem.getDdRequestLOT().setReturnFileName(ddRejectFileInfos.getFileName());
 		}
 	}
+	
+	
+
+	/**
+	 * Gets the missing field.
+	 *
+	 * @param accountOperation the account operation
+	 * @param ddRequestLOT     the dd request LOT
+	 * @param appProvider      the app provider
+	 * @param ca 
+	 * @return the missing field
+	 * @throws BusinessException the business exception
+	 */
+	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider, CustomerAccount ca) throws BusinessException {
+		String prefix = "AO.id:" + accountOperation.getId() + " : ";
+		if (ca == null) {
+			return prefix + "recordedInvoice.ca";
+		}
+		if (ca.getName() == null) {
+			return prefix + "ca.name";
+		}
+		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
+			if (((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification() == null) {
+				return prefix + "paymentMethod.mandateIdentification";
+			}
+			if (((DDPaymentMethod) preferedPaymentMethod).getMandateDate() == null) {
+				return prefix + "paymentMethod.mandateDate";
+			}
+		} else {
+			return prefix + "DDPaymentMethod";
+		}
+
+		if (accountOperation.getUnMatchingAmount() == null) {
+			return prefix + "invoice.amount";
+		}
+		if (StringUtils.isBlank(appProvider.getDescription())) {
+			return prefix + "provider.description";
+		}
+		 BankCoordinates bankCoordinates = null;
+	        if (ddRequestLOT.getSeller() != null) {
+	             
+	            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(ddRequestLOT.getSeller(), PaymentMethodEnum.DIRECTDEBIT);
+	            if (paymentGateway == null) {
+	                throw new BusinessException("Cant find payment gateway for seller : " + ddRequestLOT.getSeller());
+	            }
+	            bankCoordinates =  paymentGateway.getBankCoordinates();
+	        } else {
+	            bankCoordinates =  appProvider.getBankCoordinates();
+	        }       
+	               
+	        if (bankCoordinates == null) {
+	            return prefix + "provider or seller bankCoordinates";
+	        }
+		if (bankCoordinates.getIban() == null) {
+			return prefix + "bankCoordinates.iban";
+		}
+		if (bankCoordinates.getBic() == null) {
+			return prefix + "bankCoordinates.bic";
+		}
+		if (bankCoordinates.getIcs() == null) {
+			return prefix + "bankCoordinates.ics";
+		}
+		if (accountOperation.getReference() == null) {
+			return prefix + "accountOperation.reference";
+		}
+		if (ca.getDescription() == null) {
+			return prefix + "ca.description";
+		}
+		return null;
+	}
+
 }

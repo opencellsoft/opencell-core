@@ -77,7 +77,7 @@ public class DDRequestLOT extends AuditableEntity {
     @Column(name = "invoice_amount", precision = 23, scale = 12)
     private BigDecimal totalAmount;
 
-    @OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY)
     private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 
     @Column(name = "return_status_code", length = 255)

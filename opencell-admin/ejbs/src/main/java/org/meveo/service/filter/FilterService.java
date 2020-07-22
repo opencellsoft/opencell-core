@@ -209,17 +209,20 @@ public class FilterService extends BusinessService<Filter> {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public List<? extends IEntity> filteredListAsObjects(Filter filter) throws BusinessException {
+	@SuppressWarnings("unchecked")
+	public List<? extends IEntity> filteredListAsObjects(Filter filter) throws BusinessException {
 
-        FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
+		if (!StringUtils.isBlank(filter.getPollingQuery())) {
+			return (List<? extends IEntity>) executeSelectQuery(filter.getPollingQuery(), null);
+		}
+		FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
 
-        Query query = fqb.getQuery(getEntityManager());
-        log.debug("query={}", fqb.getSqlString());
-        List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-        return objects;
+		Query query = fqb.getQuery(getEntityManager());
+		log.debug("query={}", fqb.getSqlString());
+		List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+		return objects;
 
-    }
+	}
 
     public String filteredList(String filterName, Integer firstRow, Integer numberOfRows) throws BusinessException {
         Filter filter = (Filter) findByCode(filterName);

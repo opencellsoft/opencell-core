@@ -2457,5 +2457,11 @@ END $$;]]>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
         <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
     </changeSet> 
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_job_instance">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+    </changeSet>
 </databaseChangeLog>
 

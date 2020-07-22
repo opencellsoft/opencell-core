@@ -91,7 +91,7 @@ public class DDRequestItem extends AuditableEntity {
     @Size(max = 255)
     private String reference;
 
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "ddrequest_lot_id")
     private DDRequestLOT ddRequestLOT;
 

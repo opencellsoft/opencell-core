@@ -18,6 +18,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
@@ -72,10 +73,9 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
             String scriptInstanceCode = null;
             Map<String, Object> context = new HashMap<String, Object>();
             try {
-
-                scriptInstanceCode = (String) this.getParamOrCFValue(jobInstance, "scriptInstanceCode");
-                if (this.getParamOrCFValue(jobInstance, "scriptInstanceVariables") != null) {
-                    context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "scriptInstanceVariables");
+            	scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
+                if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
+                    context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
                 }
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
