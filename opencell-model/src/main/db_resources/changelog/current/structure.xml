@@ -3044,6 +3044,12 @@ END $$;]]>
     <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
         <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>    
     </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_filter">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
-
