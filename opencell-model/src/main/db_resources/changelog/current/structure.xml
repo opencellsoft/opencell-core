@@ -3293,16 +3293,21 @@ END $$;]]>
             <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
         </addColumn>     
      </changeSet>
- 
+
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
-    
+
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
             <column name="low_balance_level_el" type="varchar(2000)"/>
             <column name="reject_level_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-    
+    <changeSet id="#5400_23072020" author="KhalidHORRI">
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="payment_day_in_month_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -196,6 +196,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setAmountEl(paymentScheduleTemplateDto.getAmountEl());
         paymentScheduleTemplate.setFilterEl(paymentScheduleTemplateDto.getFilterEl());
         paymentScheduleTemplate.setTaxClass(taxClass);
+        paymentScheduleTemplate.setPaymentDayInMonthEl(paymentScheduleTemplateDto.getPaymentDayInMonthEl());
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
@@ -308,11 +309,13 @@ public class PaymentScheduleApi extends BaseApi {
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getFilterEl())) {
             paymentScheduleTemplate.setFilterEl(paymentScheduleTemplateDto.getFilterEl());
-        }        
+        }
         if (taxClass != null) {
             paymentScheduleTemplate.setTaxClass(taxClass);
         }
-        
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonthEl())) {
+            paymentScheduleTemplate.setPaymentDayInMonthEl(paymentScheduleTemplateDto.getPaymentDayInMonthEl());
+        }
 
         // populate customFields
         try {
