@@ -21,23 +21,18 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
-import org.meveo.service.base.IVersionedBusinessEntityService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
 
@@ -93,10 +88,10 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setJobTitle(postData.getJobTitle());
         accountEntity.setVatNo(postData.getVatNo());
         accountEntity.setRegistrationNo(postData.getRegistrationNo());
-        
+
         if (postData.getContactInformation() != null) {
             if (accountEntity.getContactInformation() == null) {
-            	accountEntity.setContactInformation(new ContactInformation());
+                accountEntity.setContactInformation(new ContactInformation());
             }
             accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
@@ -141,24 +136,36 @@ public class AccountEntityApi extends BaseApi {
         }
 
         if (postData.getName() != null) {
-            Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
 
-            if (!StringUtils.isBlank(postData.getName().getFirstName())) {
-                name.setFirstName(postData.getName().getFirstName());
-            }
-            if (!StringUtils.isBlank(postData.getName().getLastName())) {
-                name.setLastName(postData.getName().getLastName());
-            }
-            if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(postData.getName().getTitle());
-                if (title == null) {
-                    throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
-                } else {
-                    name.setTitle(title);
+            // All name attributes are empty - remove name field alltogether
+            if ((postData.getName().getTitle() != null && StringUtils.isBlank(postData.getName().getTitle())) && (postData.getName().getFirstName() != null && StringUtils.isBlank(postData.getName().getFirstName()))
+                    && (postData.getName().getLastName() != null && StringUtils.isBlank(postData.getName().getLastName()))) {
+                accountEntity.setName(null);
+
+            } else {
+                Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
+
+                if (postData.getName().getFirstName() != null) {
+                    name.setFirstName(StringUtils.isBlank(postData.getName().getFirstName()) ? null : postData.getName().getFirstName());
                 }
-            }
+                if (postData.getName().getLastName() != null) {
+                    name.setLastName(StringUtils.isBlank(postData.getName().getLastName()) ? null : postData.getName().getLastName());
+                }
+                if (postData.getName().getTitle() != null) {
+                    if (StringUtils.isBlank(postData.getName().getTitle())) {
+                        name.setTitle(null);
+                    } else {
+                        Title title = titleService.findByCode(postData.getName().getTitle());
+                        if (title == null) {
+                            throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
+                        } else {
+                            name.setTitle(title);
+                        }
+                    }
+                }
 
-            accountEntity.setName(name);
+                accountEntity.setName(name);
+            }
         }
 
         accountEntity.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -184,13 +191,13 @@ public class AccountEntityApi extends BaseApi {
 
         if (postData.getContactInformation() != null) {
             if (accountEntity.getContactInformation() == null) {
-            	accountEntity.setContactInformation(new ContactInformation());
+                accountEntity.setContactInformation(new ContactInformation());
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
-            	accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+                accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
-            	accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+                accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
                 accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
