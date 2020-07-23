@@ -15,6 +15,7 @@ import org.meveo.service.script.Script;
 public abstract class AccountOperationFilterScript extends Script {
 
     public static final String LIST_AO_TO_PAY = "LIST_AO_TO_PAY";
+    public static final String DD_REQ_OP = "DD_REQ_OP";
 
     public abstract List<AccountOperation> filterAoToPay(Map<String, Object> methodContext);
 

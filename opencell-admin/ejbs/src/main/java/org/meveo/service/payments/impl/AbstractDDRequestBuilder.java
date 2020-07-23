@@ -3,7 +3,6 @@ package org.meveo.service.payments.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;

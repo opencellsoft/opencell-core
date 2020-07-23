@@ -154,8 +154,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
 			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
-        } catch (Exception e) {
-        	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
+        } catch (Exception e) {        	
         }
         return recordedInvoice;
     }
