@@ -1828,7 +1828,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
 									},
 									{
 										"key": "Content-Type",
@@ -1908,7 +1908,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
 									},
 									{
 										"key": "Content-Type",
@@ -9060,7 +9060,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
 									},
 									{
 										"key": "Content-Type",
@@ -11119,7 +11119,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
 									},
 									{
 										"key": "Content-Type",
@@ -18949,14 +18949,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate ",
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"offerTemplate",
-										"createOrUpdate "
+										"createOrUpdate"
 									]
 								}
 							},
@@ -23562,14 +23562,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate ",
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"recurringChargeTemplate",
-										"createOrUpdate "
+										"createOrUpdate"
 									]
 								}
 							},
@@ -24394,13 +24394,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/invoiceType/createOrUpdate ",
+									"raw": "{{opencell.url}}/invoiceType/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"invoiceType",
-										"createOrUpdate "
+										"createOrUpdate"
 									]
 								}
 							},
@@ -27253,7 +27253,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accessCode\": \"{{baseEntityPrefix}}_TEST_ACCP\",\n    \"subscriptionCode\": \"{{baseEntityPrefix}}_TEST_SUB\",\n    \"startDate\": \"2016-06-01\",\n    \"endDate\": \"2016-06-30\"\n  }",
+									"raw": "",
 									"options": {
 										"raw": {}
 									}
@@ -27740,7 +27740,18 @@
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});"
+											"});",
+											"",
+											"",
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.businessEntities.length).to.eql(4);",
+											"    pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST\");",
+											"    pm.expect(jsonData.businessEntities[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
+											"    pm.expect(jsonData.businessEntities[2].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_3\");",
+											"});",
+											"",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -27830,7 +27841,15 @@
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});"
+											"});",
+											"",
+											"",
+											"pm.test(request.name + \" - Check Data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.businessEntities.length).to.eql(1);",
+											"    pm.expect(jsonData.businessEntities[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_CUST_2\");",
+											"});",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -29267,13 +29286,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/scriptInstance/org.meveo.service.script.ExecuteCustomAction_{{index}}_Script ",
+									"raw": "{{opencell.url}}/scriptInstance/org.meveo.service.script.ExecuteCustomAction_{{index}}_Script",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"scriptInstance",
-										"org.meveo.service.script.ExecuteCustomAction_{{index}}_Script "
+										"org.meveo.service.script.ExecuteCustomAction_{{index}}_Script"
 									]
 								}
 							},
@@ -30918,7 +30937,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
 									},
 									{
 										"key": "Content-Type",
@@ -32943,7 +32962,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTA|seller:{{entityPrefix}}_{{index}}_SELLER_A",
+									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTA%7Cseller:{{entityPrefix}}_{{index}}_SELLER_A",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -32955,7 +32974,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "code:{{entityPrefix}}_{{index}}_CUSTA|seller:{{entityPrefix}}_{{index}}_SELLER_A"
+											"value": "code:{{entityPrefix}}_{{index}}_CUSTA%7Cseller:{{entityPrefix}}_{{index}}_SELLER_A"
 										}
 									]
 								}
@@ -33041,7 +33060,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB|seller:{{entityPrefix}}_{{index}}_SELLER_B",
+									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB%7Cseller:{{entityPrefix}}_{{index}}_SELLER_B",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -33053,7 +33072,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "code:{{entityPrefix}}_{{index}}_CUSTB|seller:{{entityPrefix}}_{{index}}_SELLER_B"
+											"value": "code:{{entityPrefix}}_{{index}}_CUSTB%7Cseller:{{entityPrefix}}_{{index}}_SELLER_B"
 										}
 									]
 								}
@@ -33760,7 +33779,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB|seller:{{entityPrefix}}_{{index}}_SELLER_A",
+									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB%7Cseller:{{entityPrefix}}_{{index}}_SELLER_A",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -33863,7 +33882,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB|seller:{{entityPrefix}}_{{index}}_SELLER_B",
+									"raw": "{{opencell.url}}/account/customer/list?query=code:{{entityPrefix}}_{{index}}_CUSTB%7Cseller:{{entityPrefix}}_{{index}}_SELLER_B",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -33875,7 +33894,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "code:{{entityPrefix}}_{{index}}_CUSTB|seller:{{entityPrefix}}_{{index}}_SELLER_B"
+											"value": "code:{{entityPrefix}}_{{index}}_CUSTB%7Cseller:{{entityPrefix}}_{{index}}_SELLER_B"
 										}
 									]
 								}
@@ -49303,13 +49322,13 @@
 									"type": "basic",
 									"basic": [
 										{
-											"key": "password",
-											"value": "{{opencell.superpassword}}",
+											"key": "username",
+											"value": "{{opencell.superusername}}",
 											"type": "string"
 										},
 										{
-											"key": "username",
-											"value": "{{opencell.superuser}}",
+											"key": "password",
+											"value": "{{opencell.superpassword}}",
 											"type": "string"
 										}
 									]
@@ -61798,77 +61817,77 @@
 	],
 	"variable": [
 		{
-			"id": "bf9c30b2-bed2-4268-a0d6-4ec3ffce2ec2",
+			"id": "cda91d95-3d26-4ba6-88cf-eabf9826c220",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "b4dd0d86-c7cb-4c72-a68b-f8831ed31f4b",
+			"id": "ecaa098d-e799-4a0d-9f95-22ce8e09cc9e",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "06a2d06d-f475-4d83-9549-7c8b33a37335",
+			"id": "e9e2326f-aac0-4b87-b481-e80fd14352de",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "feb8d8f0-abc3-44b5-812c-fcf2d9112ce2",
+			"id": "135e9295-98ef-4425-a1d4-2d2ea64904fd",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "25e31fb0-7325-4d09-bef1-ad9763245f66",
+			"id": "cf6cedb3-700a-4b49-b40c-5ed84d909816",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "8249a483-4acd-45f5-bd99-0dec12d09631",
+			"id": "3e52f0b2-e5d7-4f47-86a8-f3d967fc65de",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "feed853c-2a14-45e3-9402-fefac4a246e7",
+			"id": "434b3672-b89b-44f0-8292-cce0a71fb518",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "b1becd15-7927-455c-b955-c9027760f702",
+			"id": "ce0c6ff8-3905-46cf-9cd6-5b92c6153b2e",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "5e375587-6ea4-4448-8a03-278c94b628e8",
+			"id": "72147ef0-93f2-429f-8755-33cd26ec62df",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "00e809c4-eb34-4ba1-b983-e787265c0f89",
+			"id": "62395bad-f3cf-4331-9fa0-a85a4f8aeb68",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "d239e1fe-1599-46e3-9c7d-d116e7fa4e2b",
+			"id": "629f2d39-7d2f-41a1-a9ad-40f03eda5214",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "3eb9d37b-1952-45c6-b715-f54d1f7f7712",
+			"id": "be38551d-c251-405f-81ea-b7ba2195a1d9",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "2290e70c-d61d-4252-a4db-41b544953166",
+			"id": "a3f317ba-00ad-4cc4-b0ec-aba408bde5c5",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "b50e305f-b19d-4097-aa08-f49185c01d70",
+			"id": "68e6431d-e156-461e-ba93-7777957bb838",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "9339ed4c-2d42-45cb-a256-9dc7fd1c742d",
+			"id": "c6084812-be9e-4e97-9014-eb8f10939d94",
 			"key": "project.version",
 			"value": "9.2+"
 		}
