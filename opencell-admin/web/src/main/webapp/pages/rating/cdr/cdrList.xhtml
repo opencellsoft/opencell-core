@@ -23,7 +23,7 @@
 		</h:form>
 
 		<hftl:searchPanel label="#{messages['commons.search']}"
-			backingBean="#{cdrBean}" renderNewButton="false">
+			backingBean="#{cdrListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['cdr.accessCode']}"
 				field="accessCode" />
 			<hftl:searchField label="#{messages['commons.status']}"
@@ -37,7 +37,7 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList id="cdrList" checkMany="true" noClose="false"
-			backingBean="#{cdrBean}" scrollable="true">
+			backingBean="#{cdrListBean}" scrollable="true">
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right"
 					icon="ui-icon-calculator" />
@@ -137,32 +137,26 @@
 				severity="alert" widgetVar="fieldsConfirmBackoutCdr"
 				appendTo="@(body)">
 					<p:panel styleClass="confirm-dialog-content">
-						<h:form>
-							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="2" >
+						<h:form id="cdrform">						
+							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="2" ajaxUpdateIds=":cdrform:fileNamesList">
 								<hftl:searchField label="CDR File name" field="originBatch" />
 								<hftl:searchField label="Creation Date" field="created" />
-							</hftl:searchPanel>
-						
+							</hftl:searchPanel>						
 							<br/>
-							<p:dataTable id="datatable" var="cdr" value="#{cdrs}" paginator="true" rows="20"
-	                     	styleClass="custom-grid" resizableColumns="true">
-			                    <p:column headerText="CDR File Name">
-			                        <h:outputText value="#{cdr.originBatch}" />
-			                    </p:column>
-								<p:column headerText="Creation Date">
-			                        <h:outputText value="#{cdr.created}">
-			                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-			                        </h:outputText>
-			                    </p:column>
-			                    <p:column headerText="Back-out">
-				                    <p:commandButton id="backout" icon="ui-icon-circle-close"
-										title="back-out" action="#{cdrBean.backout()}"
-										process="@form">
-										<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
-										<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
-									</p:commandButton>
-			                    </p:column>
-							</p:dataTable>
+							<hftl:dataList  formId="fileNamesList" backingBean="#{cdrBean}" dataModel="#{cdrBean.filteredLazyDataModel}"
+								exportToXml="false" exportXlsxButton="false" disabledSelection="true"
+								sortBy="created" sortOrder="DESCENDING" selectionMode="single">						
+									<hftl:column label="CDR File Name" field="originBatch"/>
+									<hftl:column label="Creation Date" field="created"/>	
+									<p:column headerText="Back-out">
+					                    <p:commandButton id="backout" icon="ui-icon-circle-close"
+											title="back-out" action="#{cdrBean.backout()}"
+											process="@form">
+											<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
+											<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
+										</p:commandButton>
+		                    		</p:column>																
+							</hftl:dataList>
 							<p:commandButton value="Close"
 								oncomplete="PF('fieldsConfirmBackoutCdr').hide()">
 							</p:commandButton>

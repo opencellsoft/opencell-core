@@ -38,6 +38,9 @@ import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
+import org.meveo.util.view.LazyDataModelWSize;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ViewScoped
@@ -52,12 +55,12 @@ public class CdrBean extends BaseBean<CDR> {
     private CustomFieldTemplateService customFieldTemplateService;
     
     private Set<String> params;
-    
-    private List<CDR> cdrs;
-    
+        
     private String writeOffReason;
     
     private Map<String,CustomFieldTemplate> cfs;
+
+    protected LazyDataModel<CDR> cdrFileNames;
 
     public CdrBean() {
         super(CDR.class);
@@ -78,8 +81,6 @@ public class CdrBean extends BaseBean<CDR> {
     public void initParams() {
         cfs = customFieldTemplateService.findByAppliesTo("CDR");
         params = cfs.keySet();  
-        setCdrs(cdrService.getCDRFileNames());
-
     }
     
     public boolean isDate(String param) {
@@ -138,14 +139,33 @@ public class CdrBean extends BaseBean<CDR> {
         writeOffReason = "";
     }
     
-    public void backout() {
-        if (getSelectedEntities() == null) {
-            return;
-        }
-        CDR cdr = getSelectedEntities().get(0);
-        log.debug("Backing-out CDR File : " + cdr.getOriginBatch());
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel<CDR> getFilteredLazyDataModel() {
+        if (cdrFileNames == null) {
+            cdrFileNames = new LazyDataModelWSize<CDR>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                    List<CDR> entities = cdrService.getCDRFileNames();
+                    setRowCount(entities.size());
+                    return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+                }
+                @Override
+                public Object getRowKey(CDR cdr) {
+                    return cdr.getId();
+                }
+                
+            };
+        } 
+        return cdrFileNames; 
     }
-        
+    
+    public void backout() {
+        log.debug("Backing-out CDR File : " + getEntity().getOriginBatch());
+        cdrService.backout(getEntity().getOriginBatch());
+    }      
     
     @Override
     protected IPersistenceService<CDR> getPersistenceService() {
@@ -164,11 +184,5 @@ public class CdrBean extends BaseBean<CDR> {
     }
     public void setWriteOffReason(String writeOffReason) {
         this.writeOffReason = writeOffReason;
-    }
-    public List<CDR> getCdrs() {
-        return cdrs;
-    }
-    public void setCdrs(List<CDR> cdrs) {
-        this.cdrs = cdrs;
     }
 }

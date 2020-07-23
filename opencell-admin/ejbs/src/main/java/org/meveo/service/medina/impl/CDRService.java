@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.model.rating.CDR;
@@ -91,8 +92,31 @@ public class CDRService extends PersistenceService<CDR> {
             CDR cdr = new CDR();
             cdr.setOriginBatch((String)record.get("origin_batch"));
             cdr.setCreated((Date)record.get("created_date"));
-            cdrs.add(cdr);
+            if(StringUtils.isNotBlank(cdr.getOriginBatch())) {
+                cdrs.add(cdr);
+            }          
         });
         return cdrs;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void backout(String fileName) {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+        String query = "select id from EDR where originBatch=:fileName";
+        List<Long> edrs = (List<Long>) executeSelectQuery(query, Map.of("fileName", fileName));
+        
+        query = "delete from RatedTransaction where edr.id in :edrs";
+        executeSelectQuery(query, Map.of("edrs", edrs));
+        
+        query = "delete from WalletOperation where edr.id in :edrs";
+        executeSelectQuery(query, Map.of("edrs", edrs));
+
+        query = "delete from EDR where originBatch=:fileName";
+        executeSelectQuery(query, Map.of("fileName", fileName));
+
+        query = "delete from CDR where originBatch=:fileName";
+        executeSelectQuery(query, Map.of("fileName", fileName));
     }
 }
