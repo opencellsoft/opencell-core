@@ -70,7 +70,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Job {
 
-    public static String CFT_PREFIX = "JobInstance";
+    public static final String CFT_PREFIX = "JobInstance";
+
+    /**
+     * Custom field for a Number of simultaneous threads that job executes
+     */
+    public static final String CF_NB_RUNS = "nbRuns";
+
+    /**
+     * Custom field for a Milliseconds to wait before launching another async processing of data batch in a job
+     */
+    public static final String CF_WAITING_MILLIS = "waitingMillis";
 
     @Resource
     protected TimerService timerService;
@@ -130,9 +140,7 @@ public abstract class Job {
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
         // add counter metrics
-        Metadata metadata = new MetadataBuilder()
-                .withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode())
-                .build();
+        Metadata metadata = new MetadataBuilder().withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
         // counter that return 1 when job is running
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
@@ -145,9 +153,8 @@ public abstract class Job {
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentUser.toString(), Runtime.getRuntime().availableProcessors(),
-                customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
+            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+                currentUser.toString(), Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, CF_NB_RUNS, false), jobInstance.getParametres());
 
             try {
                 execute(executionResult, jobInstance);

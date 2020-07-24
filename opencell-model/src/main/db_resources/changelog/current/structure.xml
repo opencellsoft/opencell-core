@@ -3311,4 +3311,8 @@ END $$;]]>
         </addColumn>
     </changeSet>
     
+    <changeSet id="#5405_20190723" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReportExtractJob'</sql>
+    </changeSet>
+    
 </databaseChangeLog>
