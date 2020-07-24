@@ -86,10 +86,8 @@ import java.util.stream.Collectors;
 @Cacheable
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "crm_custom_field_tmpl", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_custom_fld_tmp_seq"), })
-@NamedQueries({
-        @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "crm_custom_fld_tmp_seq"), })
+@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null "),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
@@ -162,10 +160,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @OrderBy("columnUse ASC, position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
     @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
-            @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
-            @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)),
-            @AttributeOverride(name = "position", column = @Column(name = "position", nullable = false)),
-            @AttributeOverride(name = "columnUse", column = @Column(name = "column_use", nullable = false)) })
+            @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)), @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)),
+            @AttributeOverride(name = "position", column = @Column(name = "position", nullable = false)), @AttributeOverride(name = "columnUse", column = @Column(name = "column_use", nullable = false)) })
     private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
 
     /**
@@ -386,7 +382,6 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "fields_el", length = 2000)
     @Size(max = 2000)
     private String fieldsEL;
-
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -694,16 +689,16 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setAllowEdit(boolean allowEdit) {
         this.allowEdit = allowEdit;
     }
-    
+
     public boolean isAnonymizeGdpr() {
-		return anonymizeGdpr;
-	}
+        return anonymizeGdpr;
+    }
 
-	public void setAnonymizeGdpr(boolean anonymizeGdpr) {
-		this.anonymizeGdpr = anonymizeGdpr;
-	}
+    public void setAnonymizeGdpr(boolean anonymizeGdpr) {
+        this.anonymizeGdpr = anonymizeGdpr;
+    }
 
-	public boolean isHideOnNew() {
+    public boolean isHideOnNew() {
         return hideOnNew;
     }
 
@@ -714,7 +709,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public Long getMaxValue() {
         return maxValue;
     }
-    
+
     public Long getMaxValueOrDefault(Long defaultValue) {
         return Optional.ofNullable(maxValue).orElse(defaultValue);
     }
@@ -984,12 +979,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
         // Multi-value values are concatenated when stored - split them and set as separate map key/values
         String[] splitValues = multiValue.split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
-        for (int i = 0; i < splitValues.length; i++) {
+        for (int i = 0; i < splitValues.length && i < matrixValueColumns.size(); i++) {
             CustomFieldMapKeyEnum dataType = matrixValueColumns.get(i).getKeyType();
             if (!StringUtils.isBlank(splitValues[i])) {
                 if (dataType == CustomFieldMapKeyEnum.STRING) {
                     values.put(matrixValueColumns.get(i).getCode(), splitValues[i]);
-                    
+
                 } else {
                     try {
                         if (dataType == CustomFieldMapKeyEnum.LONG) {
@@ -1112,7 +1107,6 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         return dbFieldname;
     }
 
-
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
      *
@@ -1125,6 +1119,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Gets the number of digits in decimal part.
+     * 
      * @return number of digits.
      */
     public Integer getNbDecimal() {
@@ -1133,6 +1128,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Sets number of digits in decimal part.
+     * 
      * @param nbDecimal the number of digits.
      */
     public void setNbDecimal(Integer nbDecimal) {
@@ -1141,6 +1137,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Gets the rounding mode.
+     * 
      * @return the rounding mode.
      */
     public RoundingModeEnum getRoundingMode() {
@@ -1149,6 +1146,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Sets the rounding mode.
+     * 
      * @param roundingMode rounding mode.
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
@@ -1156,8 +1154,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     public String tableName() {
-        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
-                .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
+        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX)).map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1])
+            .orElse(null);
     }
 
     /**
