@@ -52,7 +52,7 @@ public class FileFormatDto extends BusinessEntityDto {
     /**
      * Indicates if file name uniqueness is required.
      */
-    private boolean fileNameUniqueness;
+    private Boolean fileNameUniqueness;
 
     /**
      * The file type codes.
@@ -159,7 +159,7 @@ public class FileFormatDto extends BusinessEntityDto {
      *
      * @return the fileNameUniqueness
      */
-    public boolean isFileNameUniqueness() {
+    public Boolean isFileNameUniqueness() {
         return fileNameUniqueness;
     }
 
@@ -168,7 +168,7 @@ public class FileFormatDto extends BusinessEntityDto {
      *
      * @param fileNameUniqueness the fileNameUniqueness
      */
-    public void setFileNameUniqueness(boolean fileNameUniqueness) {
+    public void setFileNameUniqueness(Boolean fileNameUniqueness) {
         this.fileNameUniqueness = fileNameUniqueness;
     }
 

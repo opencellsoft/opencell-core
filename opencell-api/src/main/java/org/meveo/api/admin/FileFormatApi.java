@@ -76,8 +76,10 @@ public class FileFormatApi extends BaseCrudApi<FileFormat, FileFormatDto> {
             fileFormat.setFileNamePattern(StringUtils.isEmpty(fileFormatDto.getFileNamePattern()) ? null : fileFormatDto.getFileNamePattern());
         }
 
-        fileFormat.setFileNameUniqueness(fileFormatDto.isFileNameUniqueness());
-
+        if (fileFormatDto.isFileNameUniqueness() != null) {
+            fileFormat.setFileNameUniqueness(fileFormatDto.isFileNameUniqueness());
+        }
+        
         if (fileFormatDto.getRecordName() != null) {
             fileFormat.setRecordName(StringUtils.isEmpty(fileFormatDto.getRecordName()) ? null : fileFormatDto.getRecordName());
         }
