@@ -18,17 +18,16 @@
 
 package org.meveo.api.dto.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.admin.FileType;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class FileFormatDto.
@@ -49,6 +48,11 @@ public class FileFormatDto extends BusinessEntityDto {
      * The file name pattern.
      */
     private String fileNamePattern;
+
+    /**
+     * Indicates if file name uniqueness is required.
+     */
+    private boolean fileNameUniqueness;
 
     /**
      * The file type codes.
@@ -99,8 +103,8 @@ public class FileFormatDto extends BusinessEntityDto {
 
     /**
      * Constructor
-     * 
-     * @param fileFormat File format entity to convert to DTO
+     *
+     * @param fileFormat           File format entity to convert to DTO
      * @param customFieldInstances Custom field values. Not applicable here.
      */
     public FileFormatDto(FileFormat fileFormat, CustomFieldsDto customFieldInstances) {
@@ -108,6 +112,7 @@ public class FileFormatDto extends BusinessEntityDto {
         this.archiveDirectory = fileFormat.getArchiveDirectory();
         this.configurationTemplate = fileFormat.getConfigurationTemplate();
         this.fileNamePattern = fileFormat.getFileNamePattern();
+        this.fileNameUniqueness = fileFormat.isFileNameUniqueness();
         this.inputDirectory = fileFormat.getInputDirectory();
         this.jobCode = fileFormat.getJobCode();
         this.outputDirectory = fileFormat.getOutputDirectory();
@@ -115,7 +120,7 @@ public class FileFormatDto extends BusinessEntityDto {
         this.rejectDirectory = fileFormat.getRejectDirectory();
 
         if (fileFormat.getFileTypes() != null && !fileFormat.getFileTypes().isEmpty()) {
-            this.fileTypes = new ArrayList<String>();
+            this.fileTypes = new ArrayList<>();
             for (FileType fileType : fileFormat.getFileTypes()) {
                 this.fileTypes.add(fileType.getCode());
             }
@@ -147,6 +152,24 @@ public class FileFormatDto extends BusinessEntityDto {
      */
     public void setFileNamePattern(String fileNamePattern) {
         this.fileNamePattern = fileNamePattern;
+    }
+
+    /**
+     * Gets the fileNameUniqueness
+     *
+     * @return the fileNameUniqueness
+     */
+    public boolean isFileNameUniqueness() {
+        return fileNameUniqueness;
+    }
+
+    /**
+     * Sets the fileNameUniqueness.
+     *
+     * @param fileNameUniqueness the fileNameUniqueness
+     */
+    public void setFileNameUniqueness(boolean fileNameUniqueness) {
+        this.fileNameUniqueness = fileNameUniqueness;
     }
 
     /**

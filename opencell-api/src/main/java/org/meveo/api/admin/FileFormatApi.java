@@ -18,13 +18,6 @@
 
 package org.meveo.api.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
@@ -38,6 +31,12 @@ import org.meveo.model.admin.FileType;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.admin.impl.FileTypeService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * File format API
@@ -76,6 +75,8 @@ public class FileFormatApi extends BaseCrudApi<FileFormat, FileFormatDto> {
         if (fileFormatDto.getFileNamePattern() != null) {
             fileFormat.setFileNamePattern(StringUtils.isEmpty(fileFormatDto.getFileNamePattern()) ? null : fileFormatDto.getFileNamePattern());
         }
+
+        fileFormat.setFileNameUniqueness(fileFormatDto.isFileNameUniqueness());
 
         if (fileFormatDto.getRecordName() != null) {
             fileFormat.setRecordName(StringUtils.isEmpty(fileFormatDto.getRecordName()) ? null : fileFormatDto.getRecordName());
