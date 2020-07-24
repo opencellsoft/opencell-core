@@ -67,7 +67,7 @@ public class FilteringJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-        nbRuns.setCode("nbRuns");
+        nbRuns.setCode(CF_NB_RUNS);
         nbRuns.setAppliesTo("JobInstance_FilteringJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
@@ -75,10 +75,10 @@ public class FilteringJob extends Job {
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("-1");
         nbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", nbRuns);
+        result.put(CF_NB_RUNS, nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-        waitingMillis.setCode("waitingMillis");
+        waitingMillis.setCode(Job.CF_WAITING_MILLIS);
         waitingMillis.setAppliesTo("JobInstance_FilteringJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
@@ -86,7 +86,7 @@ public class FilteringJob extends Job {
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", waitingMillis);
+        result.put(Job.CF_WAITING_MILLIS, waitingMillis);
 
         CustomFieldTemplate filter = new CustomFieldTemplate();
         filter.setCode("FilteringJob_filter");

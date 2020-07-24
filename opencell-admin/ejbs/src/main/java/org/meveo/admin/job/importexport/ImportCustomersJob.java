@@ -53,11 +53,11 @@ public class ImportCustomersJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
 
@@ -104,7 +104,7 @@ public class ImportCustomersJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setCode(CF_NB_RUNS);
         customFieldNbRuns.setAppliesTo("JobInstance_ImportCustomersJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
@@ -112,10 +112,10 @@ public class ImportCustomersJob extends Job {
         customFieldNbRuns.setDefaultValue("-1");
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", customFieldNbRuns);
+        result.put(CF_NB_RUNS, customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
         customFieldNbWaiting.setAppliesTo("JobInstance_ImportCustomersJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
@@ -123,7 +123,7 @@ public class ImportCustomersJob extends Job {
         customFieldNbWaiting.setDefaultValue("500");
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", customFieldNbWaiting);
+        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
 
         return result;
     }
