@@ -3304,5 +3304,11 @@ END $$;]]>
             <column name="reject_level_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#5408_20200724" author="AbdellatifBARI">
+        <addColumn tableName="adm_file_format">
+            <column name="file_name_uniqueness" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
