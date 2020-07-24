@@ -39,7 +39,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.util.view.LazyDataModelWSize;
-import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 @Named
@@ -60,7 +59,7 @@ public class CdrBean extends BaseBean<CDR> {
     
     private Map<String,CustomFieldTemplate> cfs;
 
-    protected LazyDataModel<CDR> cdrFileNames;
+    protected LazyDataModelWSize<CDR> cdrFileNames;
 
     public CdrBean() {
         super(CDR.class);
@@ -140,14 +139,14 @@ public class CdrBean extends BaseBean<CDR> {
     }
     
     @SuppressWarnings("rawtypes")
-    public LazyDataModel<CDR> getFilteredLazyDataModel() {
+    public LazyDataModelWSize<CDR> getFilteredLazyDataModel() {
         if (cdrFileNames == null) {
             cdrFileNames = new LazyDataModelWSize<CDR>() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
                     List<CDR> entities = cdrService.getCDRFileNames();
                     setRowCount(entities.size());
                     return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
@@ -165,6 +164,7 @@ public class CdrBean extends BaseBean<CDR> {
     public void backout() {
         log.debug("Backing-out CDR File : " + getEntity().getOriginBatch());
         cdrService.backout(getEntity().getOriginBatch());
+        cdrFileNames = null;
     }      
     
     @Override

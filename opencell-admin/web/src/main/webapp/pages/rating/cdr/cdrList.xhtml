@@ -129,6 +129,7 @@
 			</p:confirmDialog>
 			<p:commandButton id="backoutCdr"
 					value="#{messages['cdr.backout']}"
+					update=":cdrform:fileNamesList"
 					onclick="PF('fieldsConfirmBackoutCdr').show();">
 			</p:commandButton>
 			<p:confirmDialog 
@@ -138,20 +139,19 @@
 				appendTo="@(body)">
 					<p:panel styleClass="confirm-dialog-content">
 						<h:form id="cdrform">						
-							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="2" ajaxUpdateIds=":cdrform:fileNamesList">
+							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="3">
 								<hftl:searchField label="CDR File name" field="originBatch" />
 								<hftl:searchField label="Creation Date" field="created" />
 							</hftl:searchPanel>						
 							<br/>
 							<hftl:dataList  formId="fileNamesList" backingBean="#{cdrBean}" dataModel="#{cdrBean.filteredLazyDataModel}"
-								exportToXml="false" exportXlsxButton="false" disabledSelection="true"
-								sortBy="created" sortOrder="DESCENDING" selectionMode="single">						
+								exportToXml="false" exportXlsxButton="false" selectionMode="single" checkMany="false">						
 									<hftl:column label="CDR File Name" field="originBatch"/>
 									<hftl:column label="Creation Date" field="created"/>	
 									<p:column headerText="Back-out">
 					                    <p:commandButton id="backout" icon="ui-icon-circle-close"
 											title="back-out" action="#{cdrBean.backout()}"
-											process="@form">
+											process="@form" update=":cdrform:fileNamesList">
 											<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
 											<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
 										</p:commandButton>
