@@ -17,9 +17,11 @@
  */
 package org.meveo.model.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -31,11 +33,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * File format entity
@@ -47,7 +47,7 @@ import org.meveo.model.ExportIdentifier;
 @Cacheable
 @ExportIdentifier("code")
 @Table(name = "adm_file_format")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_file_format_seq"),})
 public class FileFormat extends BusinessEntity {
 
     private static final long serialVersionUID = 1932955932186440723L;
@@ -58,6 +58,13 @@ public class FileFormat extends BusinessEntity {
     @Column(name = "file_name_pattern", length = 255)
     @Size(max = 255)
     private String fileNamePattern;
+
+    /**
+     * Indicates if file name uniqueness is required.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "file_name_uniqueness")
+    private boolean fileNameUniqueness;
 
     /**
      * File type.
@@ -149,6 +156,24 @@ public class FileFormat extends BusinessEntity {
      */
     public void setFileNamePattern(String fileNamePattern) {
         this.fileNamePattern = fileNamePattern;
+    }
+
+    /**
+     * Gets the fileNameUniqueness
+     *
+     * @return the fileNameUniqueness
+     */
+    public boolean isFileNameUniqueness() {
+        return fileNameUniqueness;
+    }
+
+    /**
+     * Sets the fileNameUniqueness.
+     *
+     * @param fileNameUniqueness the fileNameUniqueness
+     */
+    public void setFileNameUniqueness(boolean fileNameUniqueness) {
+        this.fileNameUniqueness = fileNameUniqueness;
     }
 
     /**

@@ -66,7 +66,7 @@ public class XMLInvoiceGenerationJob extends Job {
         final String APPLIES_TO = "JobInstance_XMLInvoiceGenerationJob";
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setCode(CF_NB_RUNS);
         customFieldNbRuns.setAppliesTo(APPLIES_TO);
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
@@ -74,10 +74,10 @@ public class XMLInvoiceGenerationJob extends Job {
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
         customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", customFieldNbRuns);
+        result.put(CF_NB_RUNS, customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
         customFieldNbWaiting.setAppliesTo(APPLIES_TO);
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
@@ -85,7 +85,7 @@ public class XMLInvoiceGenerationJob extends Job {
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", customFieldNbWaiting);
+        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
         
         CustomFieldTemplate customFieldInvToProcess = new CustomFieldTemplate();
 		final String cfInvToProcessCode = "invoicesToProcess";

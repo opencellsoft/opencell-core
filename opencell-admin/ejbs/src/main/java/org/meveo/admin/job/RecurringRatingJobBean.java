@@ -46,6 +46,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 @Stateless
@@ -75,11 +76,11 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("start in running with parameter={}", jobInstance.getParametres());
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
             // Determine rateUntilDate in the following order: rateUntilDate CF value, rateUntilDateEL CF value, today
