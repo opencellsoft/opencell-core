@@ -417,6 +417,22 @@ public class ParamBean {
     }
 
     /**
+     * Get property value as boolean. Sets the property to a default value if value was not set previously.
+     * 
+     * @param key Property key
+     * @param defaultValue Default value
+     * @return Value of property, or a default value if it is not set yet
+     */
+    public boolean getPropertyAsBoolean(String key, boolean defaultValue) {
+        boolean value = defaultValue;
+        try {
+            value = Boolean.parseBoolean(getProperty(key, Boolean.toString(defaultValue)));
+        } catch (NumberFormatException e) {
+        }
+        return value;
+    }
+
+    /**
      * Get property value. Sets the property to a default value if value was not set previously.
      * 
      * @param key Property key
