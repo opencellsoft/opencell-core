@@ -697,6 +697,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public InvoiceStatusEnum getStatus() {
         return status;
     }
+    
+    public InvoiceStatusEnum getRealTimeStatus() {
+    	if(dueDate!=null && dueDate.before( new Date()) && (status==InvoiceStatusEnum.CREATED || status==InvoiceStatusEnum.GENERATED || status==InvoiceStatusEnum.SENT)) {
+    		return InvoiceStatusEnum.UNPAID;
+    	}
+        return status;
+    }
 
     public void setStatus(InvoiceStatusEnum status) {
         this.status = status;

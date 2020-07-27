@@ -33,6 +33,7 @@ import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.TaxInvoiceAggregateDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -72,6 +73,11 @@ public class InvoiceDto extends AuditableEntityDto {
     protected String subscriptionCode;
 
     /**
+     * Id of the subscription
+     */
+    protected Long subscriptionId;
+    
+	/**
      * Order number
      */
     protected String orderNumber;
@@ -191,16 +197,86 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     protected boolean sentByEmail;
     
+    /**
+     * list of related payment schedule instances 
+     * 
+     */
+    protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
     
     /**
+     * associated dunning creation date
+     * 
+     */
+    protected Date dunningEntryDate;
+	
+	/**
+     * associated dunning last update date
+     * 
+     */
+    protected Date dunningLastModification;
+	
+	/**
+     * associated dunning current status
+     * 
+     */
+    protected String dunningStatus;
+    
+    /** 
+     * The invoice real time status. 
+     */
+    private InvoiceStatusEnum realTimeStatus;
+    
+	/**
      * list of existing RTs to include, identified by id
      * This option is allowed only if invoiceMode=="DETAILLED"
      * 
      */
     protected List<Long> ratedTransactionsToLink;
-
-
+    /** paymentIncident
+     * 
+     */
+    protected String paymentIncident;
+    
+    /** sendPaymentDate
+     * 
+     */
+    protected Date sendPaymentDate;
+    
     /**
+     * sum off writeOff accountOperations amounts
+     */
+    protected BigDecimal writeOffAmount;
+    
+    /**
+     * last payment Date
+     */
+    protected Date paymentDate;
+
+    public String getPaymentIncident() {
+		return paymentIncident;
+	}
+
+	public void setPaymentIncident(String paymentIncident) {
+		this.paymentIncident = paymentIncident;
+	}
+
+	public BigDecimal getWriteOffAmount() {
+		return writeOffAmount;
+	}
+
+	public void setWriteOffAmount(BigDecimal writeOffAmount) {
+		this.writeOffAmount = writeOffAmount;
+	}
+
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	/**
      * Get the list of existing RTs to include.
      *
      * @return the ratedTransactionsTolink
@@ -778,4 +854,58 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setSentByEmail(boolean sentByEmail) {
         this.sentByEmail = sentByEmail;
     }
+    
+    public Long getSubscriptionId() {
+		return subscriptionId;
+	}
+
+	public void setSubscriptionId(Long subscriptionId) {
+		this.subscriptionId = subscriptionId;
+	}
+	
+    public Date getDunningEntryDate() {
+		return dunningEntryDate;
+	}
+
+	public void setDunningEntryDate(Date dunningEntryDate) {
+		this.dunningEntryDate = dunningEntryDate;
+	}
+
+	public Date getDunningLastModification() {
+		return dunningLastModification;
+	}
+
+	public void setDunningLastModification(Date dunningLastModification) {
+		this.dunningLastModification = dunningLastModification;
+	}
+
+	public String getDunningStatus() {
+		return dunningStatus;
+	}
+
+	public void setDunningStatus(String dunningStatus) {
+		this.dunningStatus = dunningStatus;
+	}
+
+	public PaymentScheduleInstancesDto getPaymentScheduleInstancesDto() {
+		return paymentScheduleInstancesDto;
+	}
+
+	public void setPaymentScheduleInstancesDto(PaymentScheduleInstancesDto paymentScheduleInstancesDto) {
+		this.paymentScheduleInstancesDto = paymentScheduleInstancesDto;
+	}
+
+	/**
+	 * @return the realTimeStatus
+	 */
+	public InvoiceStatusEnum getRealTimeStatus() {
+		return realTimeStatus;
+	}
+
+	/**
+	 * @param realTimeStatus the realTimeStatus to set
+	 */
+	public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
+		this.realTimeStatus = realTimeStatus;
+	}
 }
