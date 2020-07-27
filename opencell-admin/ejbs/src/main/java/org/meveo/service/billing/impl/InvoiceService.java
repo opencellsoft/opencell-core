@@ -761,8 +761,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             PaymentMethod paymentMethod = null;
 
             // Due balance are calculated on CA level and will be the same for all rated transactions
-            BigDecimal balanceDue = null;
-            BigDecimal totalInvoiceBalance = null;
+            BigDecimal balance = null;
             InvoiceType invoiceType = null;
 
             if (entityToInvoice instanceof Order) {
@@ -770,8 +769,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             } else {
                 paymentMethod = customerAccountService.getPreferredPaymentMethod(ba.getCustomerAccount().getId());
-                balanceDue = customerAccountService.customerAccountBalanceDue(ba.getCustomerAccount(), new Date());
-                totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(ba.getCustomerAccount());
+
+                // Calculate customer account balance
+                boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
+                boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
+                if (isBalanceLitigation) {
+                    balance = customerAccountService.customerAccountBalanceDue(null, ba.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                } else {
+                    balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, ba.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                }
+
                 invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
             }
 
@@ -791,7 +798,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             return createAggregatesAndInvoiceFromRTs(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType,
-                balanceDue, totalInvoiceBalance);
+                balance);
 
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
@@ -827,17 +834,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *        will be determined for each billing account occurrence.
      * @param defaultInvoiceType Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
      *        Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
-     * @param balanceDue Balance due. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
+     * @param balance Balance due. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
      *        determined for each billing account occurrence.
-     * @param totalInvoiceBalance Total invoice balance. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and
-     *        therefore will be determined for each billing account occurrence.
      * @return A list of invoices
      * @throws BusinessException General business exception
      */
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromRTs(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-            boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance)
-            throws BusinessException {
+            boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance) throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreRatedTransactionsExpected = true;
@@ -885,9 +889,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             if (defaultPaymentMethod == null) {
                                 paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
                             }
-                            // Due balance are calculated on CA level and will be the same for all rated transactions
-                            balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
-                            totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
+                            // Balance are calculated on CA level and will be the same for all rated transactions of same order
+                            boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+                            boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+                            if (isBalanceLitigation) {
+                                balance = customerAccountService.customerAccountBalanceDue(null, billingAccount.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                            } else {
+                                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, billingAccount.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                            }
                         }
                     }
 
@@ -901,7 +910,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate, isDraft, rtGroup.getBillingCycle(),
-                            paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balanceDue.add(totalInvoiceBalance));
+                            paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
                         invoiceList.add(invoiceAggregateProcessingInfo.invoice);
                     }
 
@@ -3272,16 +3281,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param expression  el expression
+     * @param expression el expression
      * @param userAccount user account
-     * @param wallet      wallet
-     * @param invoice     invoice
+     * @param wallet wallet
+     * @param invoice invoice
      * @param subCatTotal total of sub category
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal evaluateDiscountPercentExpression(String expression, BillingAccount billingAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal)
-            throws BusinessException {
+    private BigDecimal evaluateDiscountPercentExpression(String expression, BillingAccount billingAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -3299,7 +3307,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private Invoice instantiateInvoice(IBillableEntity entity, BillingAccount billingAccount, Seller seller, BillingRun billingRun, Date invoiceDate, boolean isDraft, BillingCycle billingCycle,
-            PaymentMethod paymentMethod, InvoiceType invoiceType, boolean isPrepaid, BigDecimal dueBalance) throws BusinessException {
+            PaymentMethod paymentMethod, InvoiceType invoiceType, boolean isPrepaid, BigDecimal balance) throws BusinessException {
 
         Invoice invoice = new Invoice();
 
@@ -3326,7 +3334,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Set due balance
-        invoice.setDueBalance(dueBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+        invoice.setDueBalance(balance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
 
         return invoice;
     }
@@ -3444,8 +3452,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (isDetailledInvoiceMode && !existingRtsTolinkMap.isEmpty() && subCategoryMap.containsKey(invoiceCategory)) {
                 List<InvoiceSubCategory> subCategories = subCategoryMap.get(invoiceCategory);
-                linkRtsAndSubCats(billingAccount, taxInvoiceAgregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode, auditable, isDetailledInvoiceMode, 
-                		existingRtsTolinkMap, invoice, userAccount, invoiceAgregateCat, subCategories);
+                linkRtsAndSubCats(billingAccount, taxInvoiceAgregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode, auditable, isDetailledInvoiceMode, existingRtsTolinkMap, invoice, userAccount,
+                    invoiceAgregateCat, subCategories);
             }
             getEntityManager().flush();
             addCategoryAmountsToInvoice(invoice, invoiceAgregateCat);
@@ -3458,10 +3466,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-	private void linkRtsAndSubCats(BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, int invoiceRounding,
-			RoundingModeEnum invoiceRoundingMode, Auditable auditable, boolean isDetailledInvoiceMode, Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap,
-			Invoice invoice, UserAccount userAccount, CategoryInvoiceAgregate invoiceAgregateCat, List<InvoiceSubCategory> subCategories) {
-    	for (InvoiceSubCategory invoiceSubCategory : subCategories) {
+    private void linkRtsAndSubCats(BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, Auditable auditable,
+            boolean isDetailledInvoiceMode, Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, Invoice invoice, UserAccount userAccount, CategoryInvoiceAgregate invoiceAgregateCat,
+            List<InvoiceSubCategory> subCategories) {
+        for (InvoiceSubCategory invoiceSubCategory : subCategories) {
             if (existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
                 List<RatedTransaction> rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
 
@@ -3473,7 +3481,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 saveInvoiceSubCatAndRts(invoice, invoiceAgregateSubcat, null, billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoiceRounding, invoiceRoundingMode, isDetailledInvoiceMode);
             }
         }
-	}
+    }
 
     private void linkExistingRTs(InvoiceDto invoiceDTO, Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, boolean isEnterprise, Invoice invoice, UserAccount userAccount,
             InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat, boolean isDetailledInvoiceMode) {
@@ -3500,13 +3508,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void linkRtsHavingCategoryOutOfInput(BillingAccount billingAccount, boolean isEnterprise, Auditable auditable, boolean isDetailledInvoiceMode,
-            Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap, Invoice invoice, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
+            Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap, Invoice invoice, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap,
+            int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
         if (isDetailledInvoiceMode && !subCategoryMap.isEmpty()) {
             for (InvoiceCategory invoiceCategory : subCategoryMap.keySet()) {
                 List<InvoiceSubCategory> subCategories = subCategoryMap.get(invoiceCategory);
                 UserAccount userAccount = billingAccount.getUsersAccounts().get(0);
                 CategoryInvoiceAgregate invoiceAgregateCat = initCategoryInvoiceAgregate(billingAccount, auditable, invoice, userAccount, invoiceCategory, subCategories.size(), invoiceCategory.getDescription());
-                linkRtsAndSubCats(billingAccount, taxInvoiceAgregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode, auditable, isDetailledInvoiceMode, existingRtsTolinkMap, invoice, userAccount, invoiceAgregateCat, subCategories);
+                linkRtsAndSubCats(billingAccount, taxInvoiceAgregateMap, isEnterprise, invoiceRounding, invoiceRoundingMode, auditable, isDetailledInvoiceMode, existingRtsTolinkMap, invoice, userAccount,
+                    invoiceAgregateCat, subCategories);
                 addCategoryAmountsToInvoice(invoice, invoiceAgregateCat);
             }
         }
@@ -3519,7 +3529,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         BigDecimal netToPay = invoice.getAmountWithTax();
         if (!isEnterprise && invoiceDTO.isIncludeBalance() != null && invoiceDTO.isIncludeBalance()) {
-            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
+            // Calculate customer account balance
+            boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
+            boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
+            BigDecimal balance = null;
+            if (isBalanceLitigation) {
+                balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), isBalanceDue ? invoice.getDueDate() : null);
+            } else {
+                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, invoice.getBillingAccount().getCustomerAccount().getCode(), isBalanceDue ? invoice.getDueDate() : null);
+            }
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
@@ -3553,16 +3571,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
             putTaxInvoiceAgregate(billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoice, invoiceAgregateSubcat, invoiceRounding, invoiceRoundingMode);
             ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
         } else {
-        	if(isEnterprise) {
-        		if (invAgrCatDTO.getAmountWithoutTax() == null || invAgrCatDTO.getAmountTax() == null) {
+            if (isEnterprise) {
+                if (invAgrCatDTO.getAmountWithoutTax() == null || invAgrCatDTO.getAmountTax() == null) {
                     throw new InvalidParameterException("For aggregated invoices, when provider is an entreprise, amount without tax and tax amount must be provided");
                 }
-        	}else {
-        		if (invAgrCatDTO.getAmountWithTax() == null || invAgrCatDTO.getAmountTax() == null) {
+            } else {
+                if (invAgrCatDTO.getAmountWithTax() == null || invAgrCatDTO.getAmountTax() == null) {
                     throw new InvalidParameterException("For aggregated invoices, when provider is not an entreprise, tax amount and amount with tax must be provided ");
                 }
-        	}
-            
+            }
+
             // we add subCatAmountWithoutTax, in the case if there any opened RT to include
             BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(invAgrCatDTO.getAmountWithoutTax(), invAgrCatDTO.getAmountWithTax(), invAgrCatDTO.getAmountTax(), isEnterprise, invoiceRounding,
                 invoiceRoundingMode.getRoundingMode());

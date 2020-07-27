@@ -246,9 +246,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * Compute balance due
      * 
      * @return due balance
-     * @throws BusinessException General business exception
      */
-    public BigDecimal getBalanceDue() throws BusinessException {
+    public BigDecimal getBalanceDue() {
         if (entity.getId() == null) {
             return new BigDecimal(0);
         } else {
@@ -260,13 +259,38 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * Compute balance exigible without litigation.
      * 
      * @return exigible balance without litigation
-     * @throws BusinessException General business exception
      */
-    public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
+    public BigDecimal getBalanceDueWithoutLitigation() {
         if (entity.getId() == null) {
             return new BigDecimal(0);
         } else {
-            return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
+            return customerAccountService.customerAccountBalanceDueWithoutLitigation(entity, new Date());
+        }
+    }
+
+    /**
+     * Compute a total balance
+     * 
+     * @return Total balance
+     */
+    public BigDecimal getBalanceTotal() {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else {
+            return customerAccountService.customerAccountBalanceDue(entity, null);
+        }
+    }
+
+    /**
+     * Compute a total balance without litigation
+     * 
+     * @return Total balance without litigation
+     */
+    public BigDecimal getBalanceTotalWithoutLitigation() {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else {
+            return customerAccountService.customerAccountBalanceDueWithoutLitigation(entity, null);
         }
     }
 
@@ -385,12 +409,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new WirePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             selectedPaymentMethod = new DDPaymentMethod();
-        }else if (newPaymentMethodType == PaymentMethodEnum.PAYPAL) {
+        } else if (newPaymentMethodType == PaymentMethodEnum.PAYPAL) {
             selectedPaymentMethod = new PaypalPaymentMethod();
-        }else if (newPaymentMethodType == PaymentMethodEnum.STRIPE) {
+        } else if (newPaymentMethodType == PaymentMethodEnum.STRIPE) {
             selectedPaymentMethod = new StripePaymentMethod();
         }
-        
+
     }
 
     public void editPaymentMethod(PaymentMethod paymentMethod) throws BusinessException {

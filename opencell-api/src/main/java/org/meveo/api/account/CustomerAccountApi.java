@@ -18,6 +18,15 @@
 
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -34,9 +43,9 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentMethodApi;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -53,21 +62,11 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -107,9 +106,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private AddressBookService addressBookService;
-
-    @Inject
-    private BillingAccountService billingAccountService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
@@ -183,7 +179,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         CustomerAccount customerAccount = new CustomerAccount();
         populate(postData, customerAccount);
-		customerAccount.setDateDunningLevel(postData.getDateDunningLevel()!=null?postData.getDateDunningLevel():new Date());
+        customerAccount.setDateDunningLevel(postData.getDateDunningLevel() != null ? postData.getDateDunningLevel() : new Date());
         customerAccount.setCustomer(customer);
         customerAccount.setTradingCurrency(tradingCurrency);
         customerAccount.setTradingLanguage(tradingLanguage);
@@ -277,8 +273,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (customer == null) {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
-                throw new InvalidParameterException(
-                        "Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
+                throw new InvalidParameterException("Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
             }
             customerAccount.setCustomer(customer);
         }
@@ -325,9 +320,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getDunningLevel())) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
-        
-        if(postData.getDateDunningLevel()!=null) {
-    		customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
+
+        if (postData.getDateDunningLevel() != null) {
+            customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
         }
 
         if (businessAccountModel != null) {
@@ -350,8 +345,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             PaymentMethodEnum defaultPaymentMethod = postData.getPaymentMethod();
 
             if (defaultPaymentMethod != null && !defaultPaymentMethod.isSimple()) {
-                throw new InvalidParameterException(
-                        "Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
+                throw new InvalidParameterException("Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
             } else if (defaultPaymentMethod == null) {
                 // End of compatibility with pre-4.6 versions
 
@@ -360,7 +354,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
-                        "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
+                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
             PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);
@@ -450,36 +444,14 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount, inheritCF);
-
-        if (calculateBalances) {
-            Date now = new Date();
-            BigDecimal creditBalance = customerAccountService.computeCreditBalance(customerAccount, false, now, false);
-            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, now);
-            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, now);
-            BigDecimal accountBalance = customerAccountService.customerAccountBalance(customerAccount, now);
-
-            if (balanceDue == null) {
-                throw new BusinessException("Balance due calculation failed.");
-            }
-
-            if (totalInvoiceBalance == null) {
-                throw new BusinessException("Total invoice balance calculation failed.");
-            }
-
-            customerAccountDto.setBalance(balanceDue);
-            customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
-            customerAccountDto.setCreditBalance(creditBalance);
-            customerAccountDto.setAccountBalance(accountBalance);
-        }
+        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount, inheritCF, calculateBalances);
 
         if (withAccountOperations != null && withAccountOperations) {
             List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
             if (accountOperations != null && !accountOperations.isEmpty()) {
                 List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
                 for (AccountOperation accountOperation : accountOperations) {
-                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation,
-                            entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                     accountOperationsDto.add(accountOperationDto);
                 }
                 customerAccountDto.setAccountOperations(accountOperationsDto);
@@ -746,12 +718,12 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
         handleMissingParameters();
 
-        customerAccountService.transferAccount(transferCustomerAccountDto.getFromCustomerAccountCode(), transferCustomerAccountDto.getToCustomerAccountCode(),
-                transferCustomerAccountDto.getAmount());
+        customerAccountService.transferAccount(transferCustomerAccountDto.getFromCustomerAccountCode(), transferCustomerAccountDto.getToCustomerAccountCode(), transferCustomerAccountDto.getAmount());
     }
 
     /**
      * Returns list of counters at a given date for a customer account.
+     * 
      * @param customerAccountCode the customer account code
      * @param date the selected date
      * @return a counter instance list
