@@ -37,7 +37,6 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
-import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.rest.IBaseRs;
@@ -326,35 +325,5 @@ public interface CatalogRs extends IBaseRs {
     @POST
     @Path("/productChargeTemplate/{code}/disable")
     Response disableProductChargeTemplate(@PathParam("code") String code);
-    
-    /**
-     * Create bundleTemplate
-     * 
-     * @param postData bundleTemplate information
-     * @return Response of the create bundleTemplate
-     */
-    @POST
-    @Path("/bundleTemplate")
-    public Response createBundleTemplate(BundleTemplateDto postData);
-
-    /**
-     * Update bundleTemplate
-     * 
-     * @param postData bundleTemplate information
-     * @return Response of the update bundleTemplate
-     */
-    @PUT
-    @Path("/bundleTemplate")
-    public Response updateBundleTemplate(BundleTemplateDto postData);
-   
-    /**
-     * Create or update bundleTemplate
-     * 
-     * @param postData bundleTemplate information
-     * @return Response of the create or update bundleTemplate
-     */
-    @POST
-    @Path("/bundleTemplate/createOrUpdate")
-    public Response createOrUpdateBundleTemplate(BundleTemplateDto postData);
     
 }
