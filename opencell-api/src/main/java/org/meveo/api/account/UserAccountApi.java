@@ -27,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -38,15 +37,14 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.EntityNotAllowedException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -57,7 +55,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -68,7 +65,6 @@ import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -109,9 +105,6 @@ public class UserAccountApi extends AccountEntityApi {
     @Inject
     private SellerService sellerService;
 
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -134,47 +127,10 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccount userAccount = new UserAccount();
-        populate(postData, userAccount);
 
-        userAccount.setBillingAccount(billingAccount);
-        if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
-            userAccount.setSubscriptionDate(postData.getSubscriptionDate());
-        }
-        userAccount.setExternalRef1(postData.getExternalRef1());
-        userAccount.setExternalRef2(postData.getExternalRef2());
+        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel);
 
-        if (businessAccountModel != null) {
-            userAccount.setBusinessAccountModel(businessAccountModel);
-        }
-        if (postData.getMinimumLabelEl() != null) {
-            userAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-            userAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
-            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
-            if (minimumChargeTemplate == null) {
-                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
-            } else {
-                userAccount.setMinimumChargeTemplate(minimumChargeTemplate);
-            }
-        }
-
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), userAccount, true, checkCustomFields);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        try {
-            userAccountService.createUserAccount(billingAccount, userAccount);
-        } catch (AccountAlreadyExistsException e) {
-            throw new EntityAlreadyExistsException(UserAccount.class, postData.getCode());
-        }
+        userAccountService.createUserAccount(userAccount.getBillingAccount(), userAccount);
 
         return userAccount;
     }
@@ -200,11 +156,30 @@ public class UserAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getCode());
         }
 
+        dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel);
+
+        userAccount = userAccountService.update(userAccount);
+
+        return userAccount;
+    }
+
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param userAccount Entity to populate
+     * @param postData DTO entity object to populate from
+     * @param checkCustomField Should a check be made if CF field is required
+     * @param businessAccountModel Business account model
+     **/
+    private void dtoToEntity(UserAccount userAccount, UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+
+        boolean isNew = userAccount.getId() == null;
+
         if (!StringUtils.isBlank(postData.getBillingAccount())) {
             BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
             if (billingAccount == null) {
                 throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
-            } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
+            } else if (!isNew && !userAccount.getBillingAccount().equals(billingAccount)) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
                 if (countNonTreatedWO > 0) {
@@ -218,30 +193,18 @@ public class UserAccountApi extends AccountEntityApi {
             userAccount.setBillingAccount(billingAccount);
         }
 
-        if (!StringUtils.isBlank(postData.getExternalRef1())) {
-            userAccount.setExternalRef1(postData.getExternalRef1());
-        }
-        if (!StringUtils.isBlank(postData.getExternalRef1())) {
-            userAccount.setExternalRef2(postData.getExternalRef2());
-        }
-
         updateAccount(userAccount, postData, checkCustomFields);
 
-        if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+        if (postData.getSubscriptionDate() != null) {
             userAccount.setSubscriptionDate(postData.getSubscriptionDate());
         }
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
-        if (postData.getMinimumAmountEl() != null) {
-            userAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-        }
-        if (postData.getMinimumLabelEl() != null) {
-            userAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
+
         // Validate and populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), userAccount, false, checkCustomFields);
+            populateCustomFields(postData.getCustomFields(), userAccount, isNew, checkCustomFields);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -249,13 +212,6 @@ public class UserAccountApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
-        try {
-            userAccount = userAccountService.update(userAccount);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
-        return userAccount;
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
@@ -438,8 +394,7 @@ public class UserAccountApi extends AccountEntityApi {
 
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
-            throw new EntityDoesNotExistsException(ProductTemplate.class,
-                    postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
+            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
         UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
@@ -470,8 +425,7 @@ public class UserAccountApi extends AccountEntityApi {
 
         List<WalletOperation> walletOperations = null;
 
-        ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-                postData.getDescription(), null, seller);
+        ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(), postData.getDescription(), null, seller);
 
         // Validate and populate customFields
         try {
