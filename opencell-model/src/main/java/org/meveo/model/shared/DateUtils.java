@@ -1068,8 +1068,6 @@ public class DateUtils {
                 }
             }           
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fromDate);
         return normalizeOverlapingDatePeriods(periods.toArray(new DatePeriodSplit[] {}));
     }
 
