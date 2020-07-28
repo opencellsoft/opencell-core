@@ -90,10 +90,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
             WalletOperationAggregationSettings aggregationSettings = null;
             if (aggregationSettingsWrapper != null) {
-                aggregationSettings = (walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()) == null
-                        || walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).isEmpty()) ?
-                        null :
-                        walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).get(0);
+                aggregationSettings = walletOperationAggregationSettingsService.findByCode(aggregationSettingsWrapper.getCode());
             }
             removeZeroWalletOperation();
             if (aggregationSettings != null) {

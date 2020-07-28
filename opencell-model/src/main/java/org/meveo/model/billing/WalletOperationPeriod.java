@@ -35,6 +35,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -61,16 +62,14 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
 /**
- * Group WO by continuous period
+ * Group WO by continuous period.
  *
  * @author Khalid HORRI
  * @lastModifiedVersion 10.0
  */
 @Entity
 @Immutable
-@Subselect("select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id, o.id) as period "
-        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id, o.id)) = DATE(o.start_date)) then 0 else 1 end) as flag "
-        + " FROM billing_wallet_operation o )  " + " o  WHERE  o.status='OPEN'")
+@Table(name = "billing_wallet_operation_period")
 public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
