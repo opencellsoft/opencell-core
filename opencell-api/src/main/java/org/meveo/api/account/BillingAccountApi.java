@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
@@ -44,11 +45,10 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.BeanUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -134,19 +134,19 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private UserAccountApi userAccountApi;
-    
+
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
     @Inject
     private EmailTemplateService emailTemplateService;
-    
+
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     private TaxCategoryService taxCategoryService;
-    
+
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -173,7 +173,7 @@ public class BillingAccountApi extends AccountEntityApi {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
             }
-            if (postData.getMailingType()!=null && StringUtils.isBlank(postData.getEmailTemplate())) {
+            if (postData.getMailingType() != null && StringUtils.isBlank(postData.getEmailTemplate())) {
                 missingParameters.add("emailTemplate");
             }
         }
@@ -184,145 +184,40 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityAlreadyExistsException(BillingAccount.class, postData.getCode());
         }
 
-        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
-        }
-
-        BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
-        if (billingCycle == null) {
-            throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
-        }
-
-        TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountry());
-        if (tradingCountry == null) {
-            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
-        }
-
-        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
-        if (tradingLanguage == null) {
-            throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
-        }
-        
-        MailingTypeEnum mailingType = null;
-        if (postData.getMailingType() != null) {
-            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
-        }
-
-        EmailTemplate emailTemplate = null;
-        if (postData.getEmailTemplate() != null) {
-            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
-            if (emailTemplate == null) {
-                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
-            }
-        }
-
         BillingAccount billingAccount = new BillingAccount();
-        
-        if(postData.getMinimumInvoiceSubCategory() != null) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
-            }
-            billingAccount.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
-        }
-        
-        if (!StringUtils.isBlank(postData.getPhone())) {
-        	postData.getContactInformation().setPhone(postData.getPhone());
-		}
 
-        if (!StringUtils.isBlank(postData.getEmail())) {
-        	postData.getContactInformation().setEmail(postData.getEmail());
-        }
-        populate(postData, billingAccount);
-
-        billingAccount.setCustomerAccount(customerAccount);
-        billingAccount.setBillingCycle(billingCycle);
-        billingAccount.setTradingCountry(tradingCountry);
-        billingAccount.setTradingLanguage(tradingLanguage);
-        billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
-        billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
-        billingAccount.setTerminationDate(postData.getTerminationDate());
-        billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-        billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
-
-        if (postData.getElectronicBilling() == null) {
-            billingAccount.setElectronicBilling(false);
-        } else {
-            billingAccount.setElectronicBilling(postData.getElectronicBilling());
-        }
-        billingAccount.setMailingType(mailingType);
-        billingAccount.setEmailTemplate(emailTemplate);
-        billingAccount.setCcedEmails(postData.getCcedEmails());
-        billingAccount.setExternalRef1(postData.getExternalRef1());
-        billingAccount.setExternalRef2(postData.getExternalRef2());
-
-        if (businessAccountModel != null) {
-            billingAccount.setBusinessAccountModel(businessAccountModel);
-        }
-        
-        if (!StringUtils.isBlank(postData.getTaxCategoryCode())) {
-            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
-            if (taxCategory == null) {
-                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
-            }
-            billingAccount.setTaxCategory(taxCategory);
-        }
-
-        // Update payment method information in a customer account.
-        // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
-        createOrUpdatePaymentMethodInCA(postData, billingAccount);
-
-        if (postData.getCheckThreshold() == null && postData.getInvoicingThreshold() != null) {
-            billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
-        } else {
-            billingAccount.setCheckThreshold(postData.getCheckThreshold());
-        }
-
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), billingAccount, true, checkCustomFields);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
 
         billingAccountService.createBillingAccount(billingAccount);
-        
-        // instantiate the discounts
-		if (postData.getDiscountPlansForInstantiation() != null) {
-			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
-				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
-				if (dp == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
-				}
-				
-				discountPlanService.detach(dp);
-				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
-				
-				// populate customFields
-	            try {
-	                populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
-	            } catch (MissingParameterException | InvalidParameterException e) {
-	                log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
-	                throw e;
-	            } catch (Exception e) {
-	                log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
-	                throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
-	            }
-				
-				discountPlans.add(dp);
-			}
 
-			billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
-		}
+        // instantiate the discounts
+        if (postData.getDiscountPlansForInstantiation() != null) {
+            List<DiscountPlan> discountPlans = new ArrayList<>();
+            for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+                DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                if (dp == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                }
+
+                discountPlanService.detach(dp);
+                dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                // populate customFields
+                try {
+                    populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
+                } catch (MissingParameterException | InvalidParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                }
+
+                discountPlans.add(dp);
+            }
+
+            billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
+        }
 
         return billingAccount;
     }
@@ -348,23 +243,106 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
         }
 
-        MailingTypeEnum mailingType = null;
-        if (postData.getMailingType() != null) {
-            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
-        }
-
-        EmailTemplate emailTemplate = null;
-        if (postData.getEmailTemplate() != null) {
-            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
-            if (emailTemplate == null) {
-                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+        if (!StringUtils.isBlank(postData.getUpdatedCode())) {
+            if (billingAccountService.findByCode(postData.getUpdatedCode()) != null) {
+                throw new EntityAlreadyExistsException(BillingAccount.class, postData.getUpdatedCode());
             }
         }
-        
-        if(postData.getMinimumInvoiceSubCategory() != null) {
+
+        dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
+
+        billingAccount = billingAccountService.update(billingAccount);
+
+        // terminate discounts
+        if (postData.getDiscountPlansForTermination() != null) {
+            List<DiscountPlanInstance> dpis = new ArrayList<>();
+            for (String dpiCode : postData.getDiscountPlansForTermination()) {
+                DiscountPlanInstance dpi = discountPlanInstanceService.findByBillingAccountAndCode(billingAccount, dpiCode);
+                if (dpi == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlanInstance.class, dpiCode);
+                }
+
+                dpis.add(dpi);
+            }
+
+            if (!dpis.isEmpty()) {
+                billingAccountService.terminateDiscountPlans(billingAccount, dpis);
+            }
+        }
+
+        // instantiate the discounts
+        if (postData.getDiscountPlansForInstantiation() != null) {
+            List<DiscountPlan> discountPlans = new ArrayList<>();
+            for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+                DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                if (dp == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                }
+
+                discountPlanService.detach(dp);
+                dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                // populate customFields
+                try {
+                    populateCustomFields(discountPlanDto.getCustomFields(), dp, false);
+                } catch (MissingParameterException | InvalidParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                }
+
+                discountPlans.add(dp);
+            }
+
+            billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
+        }
+        return billingAccount;
+    }
+
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param billingAccount Entity to populate
+     * @param postData DTO entity object to populate from
+     * @param checkCustomField Should a check be made if CF field is required
+     * @param businessAccountModel Business account model
+     **/
+    private void dtoToEntity(BillingAccount billingAccount, BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+
+        boolean isNew = billingAccount.getId() == null;
+
+        if (postData.getMailingType() != null) {
+            if (StringUtils.isBlank(postData.getMailingType())) {
+                billingAccount.setMailingType(null);
+            } else {
+                billingAccount.setMailingType(MailingTypeEnum.getByLabel(postData.getMailingType()));
+            }
+        }
+
+        if (postData.getEmailTemplate() != null) {
+            if (StringUtils.isBlank(postData.getEmailTemplate())) {
+                billingAccount.setEmailTemplate(null);
+            } else {
+                EmailTemplate emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+                if (emailTemplate == null) {
+                    throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+                } else {
+                    billingAccount.setEmailTemplate(emailTemplate);
+                }
+            }
+        }
+
+        if (postData.getMinimumInvoiceSubCategory() != null) {
+            if (StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
+                billingAccount.setMinimumInvoiceSubCategory(null);
+            }
             InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
             if (invoiceSubCategory == null) {
                 throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            } else {
+                billingAccount.setMinimumInvoiceSubCategory(invoiceSubCategory);
             }
         }
 
@@ -372,7 +350,8 @@ public class BillingAccountApi extends AccountEntityApi {
             CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
             if (customerAccount == null) {
                 throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
-            } else if (!billingAccount.getCustomerAccount().equals(customerAccount)) {
+
+            } else if (!isNew && !billingAccount.getCustomerAccount().equals(customerAccount)) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByBA(billingAccount);
                 if (countNonTreatedWO > 0) {
@@ -409,27 +388,12 @@ public class BillingAccountApi extends AccountEntityApi {
             }
             billingAccount.setTradingLanguage(tradingLanguage);
         }
-        
-        if(postData.getMinimumInvoiceSubCategory() != null) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
-            }
-            billingAccount.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
-        }
-
-        if (postData.getExternalRef1() != null) {
-            billingAccount.setExternalRef1(postData.getExternalRef1());
-        }
-        if (postData.getExternalRef2() != null) {
-            billingAccount.setExternalRef2(postData.getExternalRef2());
-        }
 
         if (!StringUtils.isBlank(postData.getPhone())) {
             postData.getContactInformation().setPhone(postData.getPhone());
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
-        	postData.getContactInformation().setEmail(postData.getEmail());
+            postData.getContactInformation().setEmail(postData.getEmail());
         }
 
         if (postData.getTaxCategoryCode() != null) {
@@ -447,6 +411,8 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (postData.getCheckThreshold() != null) {
             billingAccount.setCheckThreshold(postData.getCheckThreshold());
+        } else if (isNew && postData.getInvoicingThreshold() != null) {
+            billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         }
 
         updateAccount(billingAccount, postData, checkCustomFields);
@@ -463,15 +429,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
-        if (postData.getEmail() != null) {
-            billingAccount.getContactInformation().setEmail(postData.getEmail());
-        }
-        if (mailingType != null) {
-            billingAccount.setMailingType(mailingType);
-        }
-        if (emailTemplate != null) {
-            billingAccount.setEmailTemplate(emailTemplate);
-        }
         if (postData.getCcedEmails() != null) {
             billingAccount.setCcedEmails(postData.getCcedEmails());
         }
@@ -486,21 +443,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
-        if (postData.getPhone() != null) {
-            billingAccount.getContactInformation().setPhone(postData.getPhone());
-        }
-        if (postData.getMinimumAmountEl() != null) {
-            billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-        }
-        if (postData.getMinimumAmountElSpark() != null) {
-            billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        }
-        if (postData.getMinimumLabelEl() != null) {
-            billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-        if (postData.getMinimumLabelElSpark() != null) {
-            billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
-        }
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
@@ -512,7 +454,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         // Validate and populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), billingAccount, false, checkCustomFields);
+            populateCustomFields(postData.getCustomFields(), billingAccount, isNew, checkCustomFields);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -521,60 +463,6 @@ public class BillingAccountApi extends AccountEntityApi {
             throw e;
         }
 
-        try {
-            billingAccount = billingAccountService.update(billingAccount);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
-		
-		// terminate discounts
-		if (postData.getDiscountPlansForTermination() != null) {
-			List<DiscountPlanInstance> dpis = new ArrayList<>();
-			for (String dpiCode : postData.getDiscountPlansForTermination()) {
-				DiscountPlanInstance dpi = discountPlanInstanceService.findByBillingAccountAndCode(billingAccount,
-						dpiCode);
-				if (dpi == null) {
-					throw new EntityDoesNotExistsException(DiscountPlanInstance.class, dpiCode);
-				}
-
-				dpis.add(dpi);
-			}
-
-			if (!dpis.isEmpty()) {
-				billingAccountService.terminateDiscountPlans(billingAccount, dpis);
-			}
-		}
-
-		// instantiate the discounts
-		if (postData.getDiscountPlansForInstantiation() != null) {
-			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
-				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
-				if (dp == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
-				}
-				
-				discountPlanService.detach(dp);
-				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
-				
-				// populate customFields
-	            try {
-	                populateCustomFields(discountPlanDto.getCustomFields(), dp, false);
-	            } catch (MissingParameterException | InvalidParameterException e) {
-	                log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
-	                throw e;
-	            } catch (Exception e) {
-	                log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
-	                throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
-	            }
-				
-				discountPlans.add(dp);
-			}
-
-			billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
-		}
-
-        return billingAccount;
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
@@ -594,14 +482,12 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
-        
-		if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-			billingAccountDto.setDiscountPlanInstances(billingAccount.getDiscountPlanInstances().stream()
-					.map(p -> new DiscountPlanInstanceDto(p,
-							entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NONE)))
-					.collect(Collectors.toList()));
-		}
-        
+
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+            billingAccountDto.setDiscountPlanInstances(billingAccount.getDiscountPlanInstances().stream()
+                .map(p -> new DiscountPlanInstanceDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NONE))).collect(Collectors.toList()));
+        }
+
         return billingAccountDto;
     }
 
@@ -717,7 +603,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
-        if (StringUtils.isBlank(date)) {
+        if (date == null) {
             throw new MeveoApiException("date is null");
         }
 
@@ -758,16 +644,16 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
 
                 //
-                if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
+                if (postData.getNextInvoiceDate() != null) {
                     existedBillingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
                 }
-                if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+                if (postData.getSubscriptionDate() != null) {
                     existedBillingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
                 }
-                if (!StringUtils.isBlank(postData.getTerminationDate())) {
+                if (postData.getTerminationDate() != null) {
                     existedBillingAccountDto.setTerminationDate(postData.getTerminationDate());
                 }
-                if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+                if (postData.getElectronicBilling() != null) {
                     existedBillingAccountDto.setElectronicBilling(postData.getElectronicBilling());
                 }
                 if (!StringUtils.isBlank(postData.getEmail())) {

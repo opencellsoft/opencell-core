@@ -187,79 +187,13 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
         }
 
-        CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
-        if (customerCategory == null) {
-            throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
-        }
-
-        CustomerBrand customerBrand = null;
-        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-            customerBrand = customerBrandService.findByCode(postData.getCustomerBrand());
-            if (customerBrand == null) {
-                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
-            }
-        }
-
-        Seller seller = sellerService.findByCode(postData.getSeller());
-        if (seller == null) {
-            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-        }
-
         Customer customer = new Customer();
-        populate(postData, customer);
 
-        customer.setCustomerCategory(customerCategory);
-        customer.setCustomerBrand(customerBrand);
-        customer.setSeller(seller);
-        customer.setExternalRef1(postData.getExternalRef1());
-        customer.setExternalRef2(postData.getExternalRef2());
-        customer.setMinimumAmountEl(postData.getMinimumAmountEl());
-        customer.setMinimumLabelEl(postData.getMinimumLabelEl());
-
-        if (postData.getInvoicingThreshold() != null) {
-            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
-        }
-        if (postData.getCheckThreshold() != null) {
-            customer.setCheckThreshold(postData.getCheckThreshold());
-        }
-
-        if (businessAccountModel != null) {
-            customer.setBusinessAccountModel(businessAccountModel);
-        }
+        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel);
 
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-        if (postData.getInvoicingThreshold() != null) {
-            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
-        }
-        if (postData.getCheckThreshold() != null) {
-            customer.setCheckThreshold(postData.getCheckThreshold());
-        }
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        AddressBook addressBook = new AddressBook("C_" + customer.getCode());
-        addressBookService.create(addressBook);
-
-        AdditionalDetails additionalDetails = new AdditionalDetails();
-        if (postData.getAdditionalDetails() != null) {
-            additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
-            additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
-            additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
-        }
-        additionalDetailsService.create(additionalDetails);
-
-        customer.setAdditionalDetails(additionalDetails);
-        customer.setAddressbook(addressBook);
 
         customerService.create(customer);
 
@@ -277,7 +211,7 @@ public class CustomerApi extends AccountEntityApi {
     public Customer update(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
+            missingParameters.add("code");
         }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
@@ -291,9 +225,27 @@ public class CustomerApi extends AccountEntityApi {
         if (customer == null) {
             throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
         }
-        customer.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
-        if (!StringUtils.isBlank(postData.getCustomerCategory())) {
+        dtoToEntity(customer, postData, checkCustomFields, businessAccountModel);
+
+        customer = customerService.update(customer);
+
+        return customer;
+    }
+
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param billingAccount Entity to populate
+     * @param postData DTO entity object to populate from
+     * @param checkCustomField Should a check be made if CF field is required
+     * @param businessAccountModel Business account model
+     **/
+    private void dtoToEntity(Customer customer, CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+
+        boolean isNew = customer.getId() == null;
+
+        if (postData.getCustomerCategory() != null) {
             CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
             if (customerCategory == null) {
                 throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
@@ -301,15 +253,19 @@ public class CustomerApi extends AccountEntityApi {
             customer.setCustomerCategory(customerCategory);
         }
 
-        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-            CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand());
-            if (customerBrand == null) {
-                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+        if (postData.getCustomerBrand() != null) {
+            if (StringUtils.isBlank(postData.getCustomerBrand())) {
+                customer.setCustomerBrand(null);
+            } else {
+                CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand());
+                if (customerBrand == null) {
+                    throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+                }
+                customer.setCustomerBrand(customerBrand);
             }
-            customer.setCustomerBrand(customerBrand);
         }
 
-        if (!StringUtils.isBlank(postData.getSeller())) {
+        if (postData.getSeller() != null) {
             Seller seller = sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
@@ -319,39 +275,19 @@ public class CustomerApi extends AccountEntityApi {
 
         updateAccount(customer, postData, checkCustomFields);
 
-        if (!StringUtils.isBlank(postData.getExternalRef1())) {
-            customer.setExternalRef1(postData.getExternalRef1());
-        }
-        if (!StringUtils.isBlank(postData.getExternalRef2())) {
-            customer.setExternalRef2(postData.getExternalRef2());
-        }
-
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
         }
-        if (postData.getMinimumAmountEl() != null) {
-            customer.setMinimumAmountEl(postData.getMinimumAmountEl());
-        }
-        if (postData.getMinimumLabelEl() != null) {
-            customer.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-
-
         if (postData.getInvoicingThreshold() != null) {
             customer.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
         if (postData.getCheckThreshold() != null) {
             customer.setCheckThreshold(postData.getCheckThreshold());
         }
-        if (postData.getInvoicingThreshold() != null) {
-            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
-        }
-        if (postData.getCheckThreshold() != null) {
-            customer.setCheckThreshold(postData.getCheckThreshold());
-        }
+
         // Validate and populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);
+            populateCustomFields(postData.getCustomFields(), customer, isNew, checkCustomFields);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -380,10 +316,6 @@ public class CustomerApi extends AccountEntityApi {
             }
             customer.setAdditionalDetails(additionalDetails);
         }
-
-        customer = customerService.update(customer);
-
-        return customer;
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
@@ -613,12 +545,12 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
-        
-        if (postData.getTaxCategoryCode()!=null && StringUtils.isBlank(postData.getTaxCategoryCode()) && customerCategory.getTaxCategory()!=null) {
+
+        if (postData.getTaxCategoryCode() != null && StringUtils.isBlank(postData.getTaxCategoryCode()) && customerCategory.getTaxCategory() != null) {
             customerCategory.setTaxCategory(null);
             toUpdate = true;
-        
-        }else if (!StringUtils.isBlank(postData.getTaxCategoryCode()) && (customerCategory.getTaxCategory()==null || !customerCategory.getTaxCategory().getCode().equals(postData.getTaxCategoryCode())))  {
+
+        } else if (!StringUtils.isBlank(postData.getTaxCategoryCode()) && (customerCategory.getTaxCategory() == null || !customerCategory.getTaxCategory().getCode().equals(postData.getTaxCategoryCode()))) {
             TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
             if (taxCategory == null) {
                 throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
@@ -631,12 +563,11 @@ public class CustomerApi extends AccountEntityApi {
             customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
             toUpdate = true;
         }
-        
+
         if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
             customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
             toUpdate = true;
         }
-
 
         if (toUpdate) {
             customerCategoryService.update(customerCategory);
@@ -898,20 +829,20 @@ public class CustomerApi extends AccountEntityApi {
         gdprService.anonymize(entity);
     }
 
-    public  void updateCustomerNumberSequence(GenericSequenceDto postData) throws  BusinessException {
+    public void updateCustomerNumberSequence(GenericSequenceDto postData) throws BusinessException {
         if (postData.getSequenceSize() > 20) {
             throw new MeveoApiException("sequenceSize must be <= 20.");
-        }        
-        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence())); 
-             
+        }
+        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence()));
+
     }
 
-    public  GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
-        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();        
-        GenericSequence genericSequence = providerService.getNextCustomerNumber();      
+    public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+        GenericSequence genericSequence = providerService.getNextCustomerNumber();
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
         result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-        result.setValue(genericSequence.getPrefix() + sequenceNumber);       
+        result.setValue(genericSequence.getPrefix() + sequenceNumber);
         return result;
     }
 

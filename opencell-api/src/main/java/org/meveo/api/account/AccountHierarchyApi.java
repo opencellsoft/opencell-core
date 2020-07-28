@@ -193,7 +193,6 @@ public class AccountHierarchyApi extends BaseApi {
     @Inject
     private PaymentMethodApi paymentMethodApi;
 
-
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
@@ -207,7 +206,6 @@ public class AccountHierarchyApi extends BaseApi {
     public static final int CA = 2;
     public static final int BA = 4;
     public static final int UA = 8;
-
 
     /**
      * Creates the customer heirarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer
@@ -391,8 +389,7 @@ public class AccountHierarchyApi extends BaseApi {
             // Start compatibility with pre-4.6 versions
         } else if (postData.getPaymentMethod() != null) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
-            customerAccountDto.getPaymentMethods()
-                    .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+            customerAccountDto.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
         if (postData.getMinimumAmountEl() != null) {
@@ -556,7 +553,7 @@ public class AccountHierarchyApi extends BaseApi {
         sellerApi.createOrUpdate(sellerDto);
 
         CustomerDto customerDto = null;
-        String customerCode = customerCodeOrId; 
+        String customerCode = customerCodeOrId;
         if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
             customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         }
@@ -601,7 +598,7 @@ public class AccountHierarchyApi extends BaseApi {
         contactInformation.setEmail(postData.getEmail());
         contactInformation.setPhone(postData.getPhoneNumber());
 
-        NameDto name = customerDto.getName()!=null ? customerDto.getName() : new NameDto();
+        NameDto name = customerDto.getName() != null ? customerDto.getName() : new NameDto();
         if (!StringUtils.isBlank(postData.getTitleCode()) && !StringUtils.isBlank(titleService.findByCode(postData.getTitleCode()))) {
             name.setTitle(StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
         }
@@ -648,8 +645,7 @@ public class AccountHierarchyApi extends BaseApi {
             // Start compatibility with pre-4.6 versions
         } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
-            customerAccountDto.getPaymentMethods()
-                    .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+            customerAccountDto.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -671,8 +667,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setCustomerAccount(customerAccountCode);
         }
         if (!customerAccountCode.equalsIgnoreCase(billingAccountDto.getCustomerAccount())) {
-            throw new MeveoApiException(
-                    "BillingAccount's customerAccount " + billingAccountDto.getCustomerAccount() + " doesn't match with parent customerAccount " + customerAccountCode);
+            throw new MeveoApiException("BillingAccount's customerAccount " + billingAccountDto.getCustomerAccount() + " doesn't match with parent customerAccount " + customerAccountCode);
         }
 
         billingAccountDto.setEmail(postData.getEmail());
@@ -701,7 +696,6 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCcedEmails() != null) {
             billingAccountDto.setCcedEmails(postData.getCcedEmails());
         }
-
 
         if (postData.getCheckThreshold() != null) {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
@@ -733,8 +727,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     * @param postData          posted data
-     * @param calculateBalances true if needs  to calculate balances
+     * @param postData posted data
+     * @param calculateBalances true if needs to calculate balances
      * @return a wrapper of customer.
      * @throws MeveoApiException meveo api exception.
      */
@@ -882,8 +876,7 @@ public class AccountHierarchyApi extends BaseApi {
                                 continue;
                             }
                             if (!StringUtils.isBlank(customerAccountDto.getCustomer()) && !customerAccountDto.getCustomer().equalsIgnoreCase(customerDto.getCode())) {
-                                throw new MeveoApiException(
-                                        "CustomerAccount's customer " + customerAccountDto.getCustomer() + " doesn't match with parent Customer " + customerDto.getCode());
+                                throw new MeveoApiException("CustomerAccount's customer " + customerAccountDto.getCustomer() + " doesn't match with parent Customer " + customerDto.getCode());
                             } else {
                                 customerAccountDto.setCustomer(customerDto.getCode());
                             }
@@ -897,11 +890,9 @@ public class AccountHierarchyApi extends BaseApi {
                                         log.warn("code is null={}", billingAccountDto);
                                         continue;
                                     }
-                                    if (!StringUtils.isBlank(billingAccountDto.getCustomerAccount()) && !billingAccountDto.getCustomerAccount()
-                                            .equalsIgnoreCase(customerAccountDto.getCode())) {
+                                    if (!StringUtils.isBlank(billingAccountDto.getCustomerAccount()) && !billingAccountDto.getCustomerAccount().equalsIgnoreCase(customerAccountDto.getCode())) {
                                         throw new MeveoApiException(
-                                                "BillingAccount's customerAccount " + billingAccountDto.getCustomerAccount() + " doesn't match with parent customerAccount "
-                                                        + customerAccountDto.getCode());
+                                            "BillingAccount's customerAccount " + billingAccountDto.getCustomerAccount() + " doesn't match with parent customerAccount " + customerAccountDto.getCode());
                                     } else {
                                         billingAccountDto.setCustomerAccount(customerAccountDto.getCode());
                                     }
@@ -914,11 +905,9 @@ public class AccountHierarchyApi extends BaseApi {
                                                 log.warn("code is null={}", userAccountDto);
                                                 continue;
                                             }
-                                            if (!StringUtils.isBlank(userAccountDto.getBillingAccount()) && !userAccountDto.getBillingAccount()
-                                                    .equalsIgnoreCase(billingAccountDto.getCode())) {
+                                            if (!StringUtils.isBlank(userAccountDto.getBillingAccount()) && !userAccountDto.getBillingAccount().equalsIgnoreCase(billingAccountDto.getCode())) {
                                                 throw new MeveoApiException(
-                                                        "UserAccount's billingAccount " + userAccountDto.getBillingAccount() + " doesn't match with parent billingAccount "
-                                                                + billingAccountDto.getCode());
+                                                    "UserAccount's billingAccount " + userAccountDto.getBillingAccount() + " doesn't match with parent billingAccount " + billingAccountDto.getCode());
                                             } else {
                                                 userAccountDto.setBillingAccount(billingAccountDto.getCode());
                                             }
@@ -931,11 +920,9 @@ public class AccountHierarchyApi extends BaseApi {
                                                         log.warn("code is null={}", subscriptionDto);
                                                         throw new MeveoApiException("Subscription's code is null");
                                                     }
-                                                    if (!StringUtils.isBlank(subscriptionDto.getUserAccount()) && !subscriptionDto.getUserAccount()
-                                                            .equalsIgnoreCase(userAccountDto.getCode())) {
+                                                    if (!StringUtils.isBlank(subscriptionDto.getUserAccount()) && !subscriptionDto.getUserAccount().equalsIgnoreCase(userAccountDto.getCode())) {
                                                         throw new MeveoApiException(
-                                                                "Subscription's userAccount " + subscriptionDto.getUserAccount() + " doesn't match with parent userAccount "
-                                                                        + userAccountDto.getCode());
+                                                            "Subscription's userAccount " + subscriptionDto.getUserAccount() + " doesn't match with parent userAccount " + userAccountDto.getCode());
                                                     } else {
                                                         subscriptionDto.setUserAccount(userAccountDto.getCode());
                                                     }
@@ -1598,7 +1585,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
             customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         }
-        
+
         if (customerService.findByCode(customerCode) == null) {
             create(postData);
         } else {
@@ -1674,7 +1661,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * @param accountEntity account entity
-     * @param accountDto    account dto
+     * @param accountDto account dto
      * @throws MeveoApiException meveo api exception.
      */
     public void populateNameAddress(AccountDto accountEntity, AccountDto accountDto) throws MeveoApiException {
@@ -1732,7 +1719,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     * @param result      get account hierarchy response
+     * @param result get account hierarchy response
      * @param userAccount user account
      */
     private void addUserAccount(GetAccountHierarchyResponseDto result, UserAccount userAccount) {
@@ -1761,7 +1748,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     * @param result         get account hierarchy response
+     * @param result get account hierarchy response
      * @param billingAccount billing account.
      */
     private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {
@@ -1863,10 +1850,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
             dto.setCustomerAccounts(new CustomerAccountsDto());
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                CustomerAccountDto customerAccountDto = customerAccountToDto(ca, inheritCF);
-                if (calculateBalances == null || calculateBalances) {
-                    populateCustomerAccountBalance(ca, customerAccountDto);
-                }
+                CustomerAccountDto customerAccountDto = customerAccountToDto(ca, inheritCF, calculateBalances == null || calculateBalances);
                 dto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
             }
         }
@@ -1876,10 +1860,10 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca) {
-        return customerAccountToDto(ca, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return customerAccountToDto(ca, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
-    public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
+    public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF, boolean calculateBalances) {
         CustomerAccountDto dto = new CustomerAccountDto(ca);
         accountEntityToDto(dto, ca, inheritCF);
 
@@ -1890,24 +1874,36 @@ public class AccountHierarchyApi extends BaseApi {
                 dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF));
             }
         }
+
+        if (calculateBalances) {
+            populateCustomerAccountBalance(ca, dto);
+        }
         dto.setLoaded(true);
         return dto;
     }
 
-    private void populateCustomerAccountBalance(CustomerAccount ca, CustomerAccountDto dto) {
-        try {
-            Date now = new Date();
-            BigDecimal creditBalance = customerAccountService.computeCreditBalance(ca, false, now, false);
-            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(ca, now);
-            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(ca, now);
-            BigDecimal accountBalance = customerAccountService.customerAccountBalance(ca, now);
-            dto.setBalance(balanceDue);
-            dto.setCreditBalance(creditBalance);
-            dto.setTotalInvoiceBalance(totalInvoiceBalance);
-            dto.setAccountBalance(accountBalance);
-        } catch (BusinessException e) {
-            log.error("Failed to populateCustomerAccountBalance of customerAccount {}. {}", ca.getCode(), e);
-        }
+    /**
+     * Populate customer account balance fields
+     * 
+     * @param customerAccount CustomerAccount
+     * @param dto DTO to populate with balance information
+     */
+    private void populateCustomerAccountBalance(CustomerAccount customerAccount, CustomerAccountDto dto) {
+        Date now = new Date();
+        BigDecimal creditBalance = customerAccountService.computeCreditBalance(customerAccount, now, false, false);
+        BigDecimal balance = customerAccountService.customerAccountBalanceDue(customerAccount, now);
+        BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceDueWithoutLitigation(customerAccount, now);
+        BigDecimal accountBalance = customerAccountService.customerAccountBalance(customerAccount, now);
+        BigDecimal totalBalance = customerAccountService.customerAccountBalanceDue(customerAccount, null);
+        BigDecimal totalBalanceExigible = customerAccountService.customerAccountBalanceDueWithoutLitigation(customerAccount, null);
+
+        dto.setBalance(balance);
+        dto.setTotalInvoiceBalance(totalInvoiceBalance);
+        dto.setCreditBalance(creditBalance);
+        dto.setAccountBalance(accountBalance);
+        dto.setTotalBalance(totalBalance);
+        dto.setTotalBalanceExigible(totalBalanceExigible);
+
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba) {
