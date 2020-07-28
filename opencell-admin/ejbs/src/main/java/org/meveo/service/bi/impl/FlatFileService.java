@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,8 +90,15 @@ public class FlatFileService extends BusinessService<FlatFile> {
         update(flatFile);
     }
 
+    /**
+     * Find the flat file by its current directory and name.
+     *
+     * @param currentDirectory the current directory
+     * @param currentName      the current name
+     * @return the flat file
+     */
     public FlatFile find(String currentDirectory, String currentName) {
-        Query query = getEntityManager().createQuery("SELECT ff from FlatFile ff  where  ff.currentDirectory=:currentDirectory and ff.fileCurrentName=:currentName");
+        Query query = getEntityManager().createQuery("SELECT ff from FlatFile ff where ff.currentDirectory=:currentDirectory and ff.fileCurrentName=:currentName");
         query.setParameter("currentDirectory", currentDirectory);
         query.setParameter("currentName", currentName);
         try {
@@ -98,6 +106,18 @@ public class FlatFileService extends BusinessService<FlatFile> {
         } catch (NoResultException | NonUniqueResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Find the flat files list by their name.
+     *
+     * @param fileOriginalName the file original name
+     * @return the flat files list
+     */
+    public List<FlatFile> findByFileOriginalName(String fileOriginalName) {
+        Query query = getEntityManager().createQuery("SELECT ff from FlatFile ff where ff.fileOriginalName=:fileOriginalName");
+        query.setParameter("fileOriginalName", fileOriginalName);
+        return query.getResultList();
     }
 
     /**

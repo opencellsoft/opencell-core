@@ -49,7 +49,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Flat file validator
@@ -368,6 +372,23 @@ public class FlatFileValidator {
     }
 
     /**
+     * Validate if the flat file name uniqueness is required
+     *
+     * @param fileName   the file name
+     * @param fileFormat the file format
+     * @return false if the flat file name uniqueness is required and there is already another file with the same name.
+     */
+    private boolean validateFileNameUniqueness(String fileName, FileFormat fileFormat) {
+        if (fileFormat.isFileNameUniqueness()) {
+            List<FlatFile> flatFiles = flatFileService.findByFileOriginalName(fileName);
+            if (!flatFiles.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Validate the file by its format
      *
      * @param file           the file
@@ -378,6 +399,10 @@ public class FlatFileValidator {
      * @throws BusinessException
      */
     private StringBuilder validate(File file, String fileName, FileFormat fileFormat, String inputDirectory) throws BusinessException {
+
+        if (!validateFileNameUniqueness(fileName, fileFormat)) {
+            throw new BusinessException("There is already another file with the same name : " + fileName);
+        }
 
         if (!StringUtils.isBlank(inputDirectory)) {
             File[] files = new File(inputDirectory).listFiles();

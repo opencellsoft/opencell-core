@@ -47,10 +47,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -553,6 +550,5 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         return response;
     }
-    
     
 }
