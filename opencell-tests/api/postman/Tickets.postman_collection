@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c8b7b83-fa6d-4b04-94c6-b71aaa9f55a4",
+		"_postman_id": "8878e2c4-7a70-4f7d-a468-a49f7d78a768",
 		"name": "Opencell Tickets",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -53,7 +53,7 @@
 												{
 													"script": {
 														"type": "text/javascript",
-														"id": "434bc772-eaf4-4eeb-8c69-c201f35764c2",
+														"id": "5630c18d-c5f2-4439-9b44-10d271f28e8c",
 														"exec": [
 															""
 														]
@@ -124,7 +124,7 @@
 										{
 											"script": {
 												"type": "text/javascript",
-												"id": "add7583e-912f-4af0-adb4-2c11995a81ee",
+												"id": "f13195a6-8553-4bfb-82c6-3981cf05acf8",
 												"exec": [
 													""
 												]
@@ -134,7 +134,7 @@
 										{
 											"script": {
 												"type": "text/javascript",
-												"id": "543fb717-07a6-488c-9b5e-9e96c92cdefd",
+												"id": "fef900eb-7f7e-49c4-8b6a-492eb59f19e6",
 												"exec": [
 													""
 												]
@@ -158,7 +158,7 @@
 															"listen": "prerequest",
 															"script": {
 																"type": "text/javascript",
-																"id": "a0f408fa-36ff-4f8f-8b51-a74b664d357f",
+																"id": "bb87ddf4-0fbe-4bdf-8f08-09b253a3d698",
 																"exec": [
 																	""
 																]
@@ -200,7 +200,7 @@
 															"listen": "prerequest",
 															"script": {
 																"type": "text/javascript",
-																"id": "490f3417-f8e3-44ef-9b7d-5cf779ad4782",
+																"id": "6bcb3888-6a93-4eaf-b8dc-fe178fb9e5ba",
 																"exec": [
 																	""
 																]
@@ -243,7 +243,7 @@
 															"listen": "prerequest",
 															"script": {
 																"type": "text/javascript",
-																"id": "6cc5ab6c-f4d5-4bf2-8ad9-a01612dd737b",
+																"id": "0f8a90b5-331c-4543-835a-a7746b2e3808",
 																"exec": [
 																	""
 																]
@@ -293,7 +293,7 @@
 															"listen": "prerequest",
 															"script": {
 																"type": "text/javascript",
-																"id": "f54a4335-7e7f-4d52-9113-c2cf0e8b6d91",
+																"id": "7c53fb29-0cfd-4549-a064-4c9c2d3a1ed1",
 																"exec": [
 																	""
 																]
@@ -335,7 +335,7 @@
 															"listen": "prerequest",
 															"script": {
 																"type": "text/javascript",
-																"id": "c59f7045-d9cd-4d86-9d52-cbb8a10aa5dc",
+																"id": "1c13fec7-292c-4f2f-8aec-3fe5536cb631",
 																"exec": [
 																	""
 																]
@@ -383,7 +383,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "df48308b-5fa2-42ea-964a-c5d7cbd05cf4",
+																"id": "b2efe67a-ccbc-4a6a-abea-787832c69fae",
 																"exec": [
 																	""
 																]
@@ -425,7 +425,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "e345d190-1ae9-4669-9889-b2dcf251c361",
+																"id": "5181c4c5-9ba0-4cf8-911e-2e3ea3546081",
 																"exec": [
 																	""
 																]
@@ -467,7 +467,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "0457a966-61a9-4947-87e3-bfe5009b1671",
+																"id": "7537d736-eefe-45a7-a006-3dd688d1c9e4",
 																"exec": [
 																	""
 																]
@@ -516,7 +516,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "13ccbee3-0640-4de1-a0d6-500a2d4360c4",
+																"id": "35d640d2-a11c-4845-ab41-a516251075d2",
 																"exec": [
 																	""
 																]
@@ -557,7 +557,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "62bda280-0be2-4b91-a954-26e2ec9a011d",
+																"id": "55bc5791-4eca-487f-99ba-deffb9667eaa",
 																"exec": [
 																	""
 																]
@@ -598,7 +598,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "b057dc38-6d05-4bd9-8a75-a3f192110a44",
+																"id": "19ef0ba3-1348-45d7-976d-00404bee3c34",
 																"exec": [
 																	""
 																]
@@ -639,7 +639,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "35ed6d01-31ea-4c78-ae64-2fe20c0a4357",
+																"id": "257b1a91-7fea-4025-b741-9b619e5476b7",
 																"exec": [
 																	""
 																]
@@ -680,7 +680,7 @@
 														{
 															"script": {
 																"type": "text/javascript",
-																"id": "ea084421-38b6-4352-95b1-42ca77103d20",
+																"id": "4675e0fd-2f92-44e9-9ce4-fecfa00a9323",
 																"exec": [
 																	""
 																]
@@ -774,7 +774,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "90746797-20cc-4f5a-b437-6628e8a4ae3d",
+												"id": "05bfa8b0-23b6-4458-a348-22f72981abc6",
 												"exec": [
 													"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
 												],
@@ -941,7 +941,7 @@
 									"event": [
 										{
 											"script": {
-												"id": "ec87ecc6-aa66-44ca-a90f-d8a5d7239ff0",
+												"id": "30099f9d-8ffa-48ea-a1e4-055d9884185d",
 												"exec": [
 													""
 												],
@@ -1026,7 +1026,7 @@
 							"event": [
 								{
 									"script": {
-										"id": "ab7a788f-2b74-464d-907e-93ba4f78daea",
+										"id": "8f7c8aea-88ef-4aa1-84ad-ed3b5ff587bc",
 										"exec": [
 											"var parts = pm.variables.get(\"request.label\").split(\"|\");",
 											"var index = pm.globals.get(\"index\");",
@@ -1119,7 +1119,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "12721d3b-53b5-4f4b-a6c7-b8033c01d194",
+												"id": "859007cd-b305-4f5e-8a4e-4fdbbf481b99",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -1167,7 +1167,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "3de29eca-de4e-46ce-9e4c-ec052d19fd6d",
+												"id": "171163b6-6b89-4346-81de-81a276bf2925",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";",
@@ -1215,7 +1215,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f7e05065-bcfd-439f-9f91-b0e3c91080aa",
+												"id": "d2a0e459-ba66-46fd-abec-71c6c2f0fcff",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -1263,7 +1263,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "7f1686d7-ca35-4a4b-9ce3-fba21c00f86b",
+												"id": "df6fa189-7ef4-4b23-9728-4edea158b9ec",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";",
@@ -1371,7 +1371,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "6dd94feb-edbe-475e-972c-7dbaf4db6202",
+												"id": "d46f9d60-f274-4f7e-b671-bb16b19da493",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -1442,7 +1442,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "974d8170-9ac6-46c3-bf3e-e8c61096f364",
+												"id": "f65b20c2-c29a-492c-be49-b354ba738cec",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -1455,7 +1455,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "0918971b-785b-4d88-b29c-4248178f22f5",
+												"id": "de282db9-60cc-4eb4-a2cd-cf7267fd9305",
 												"exec": [
 													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
 												],
@@ -1525,7 +1525,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "e64e6429-5f47-4d96-928f-2b97d113f8d3",
+												"id": "7f7ebece-ee65-44e2-930b-414428288b6e",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -1551,7 +1551,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "ffc8f7d4-b314-48a1-ad3a-5b482f5c620b",
+												"id": "b7dbffd5-8e98-4674-beb7-1001fbc5b316",
 												"exec": [
 													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
 													""
@@ -1622,7 +1622,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "b2f3266d-4e86-4df4-addf-b035932ead6b",
+												"id": "052d9f9d-af18-4d77-89f9-3d6e58804fb0",
 												"exec": [
 													"\r",
 													"pm.test(\"check workflow\", function () {\r",
@@ -1688,7 +1688,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "096b0ca7-c64b-4a8b-9642-3ba31ef9b2a9",
+												"id": "36007f5d-ec64-45a7-90e3-e7d347c67953",
 												"exec": [
 													"\r",
 													"pm.test(\"check workflow\", function () {\r",
@@ -1753,7 +1753,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1e74e435-412d-475c-be42-0967523353d6",
+										"id": "115108bb-f64d-48aa-b0d4-f5241899ebaf",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -1763,7 +1763,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5454f693-8fd1-44b9-af11-5282f0b1f1e6",
+										"id": "93e0aeb4-dd92-4094-9fd2-35bd97d5a9b2",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -1843,7 +1843,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f50c22d0-5c6a-4df8-a815-212c9ec0be57",
+												"id": "8eafd83f-524b-4afd-b72a-211ade665ea5",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -1914,7 +1914,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "36d97cff-9cc0-4d73-872d-f38b888281ba",
+												"id": "4e77903d-68d6-4b52-8fd7-3d0284f3609c",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -1927,7 +1927,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "094ff0d6-2d83-4e16-801e-55bf6a3e7b25",
+												"id": "b6567464-d782-4085-af18-a1314787ac5f",
 												"exec": [
 													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
 												],
@@ -1997,7 +1997,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "55a67267-e238-41fb-8358-e8e7fae6a975",
+												"id": "9798cf0c-c7ee-46e8-838d-75e89b919afb",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -2023,7 +2023,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "36bce6e0-e8ed-41aa-a9f7-d7739e869479",
+												"id": "75a9ece3-9275-44dc-ad9f-d2384fa8739e",
 												"exec": [
 													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
 													""
@@ -2094,7 +2094,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d60e9bd3-17e2-439f-92af-cc2f6edd5250",
+												"id": "bb3303d9-085f-4573-b2be-9b13f91b7d6d",
 												"exec": [
 													"\r",
 													"pm.test(\"check workflow\", function () {\r",
@@ -2158,7 +2158,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "6d9d31db-ea29-48af-9e01-1abeb5e33e06",
+												"id": "a641eb60-161f-4504-bd07-b3320d91b254",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -2171,7 +2171,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "480881e6-56a8-43fd-a0b0-dcc1f73d6de7",
+												"id": "56b77470-21e0-4d8e-9aeb-a1385cfa5ca2",
 												"exec": [
 													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
 												],
@@ -2241,7 +2241,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "711a2b80-afb5-47c1-b79a-23b394a58efd",
+												"id": "111d7a27-4732-4649-8499-9b7d8b38a11d",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -2267,7 +2267,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "27a321ca-3205-4aa8-be70-d081afe080e1",
+												"id": "74b9c531-4e2b-4ee4-bc16-a2fce0bdf13b",
 												"exec": [
 													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
 													""
@@ -2338,7 +2338,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "749d292c-abbf-4596-8a9f-4584c530d607",
+												"id": "815ef384-97e5-4ae7-ac69-fc7a5ce8e2ea",
 												"exec": [
 													"\r",
 													"pm.test(\"check workflow\", function () {\r",
@@ -2462,7 +2462,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ef9de9c6-5eec-4d5a-9dc9-b19101b82e7f",
+												"id": "c98d3f56-8abd-492f-b58c-8e0d2ab37f95",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -2475,7 +2475,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "cdfdafcd-230b-4dc9-b1a2-9fbd8a0e184e",
+												"id": "f197805d-8091-4701-8687-c4e8b71484c8",
 												"exec": [
 													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
 												],
@@ -2545,7 +2545,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "4648bfe1-b0a1-4b1e-9211-8cdb28fb9253",
+												"id": "5c2643e5-90b1-4ac7-b1b7-e0ea0134e15f",
 												"exec": [
 													"var jsonData = JSON.parse(responseBody);",
 													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -2571,7 +2571,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "63d3747e-a408-4832-9a10-676d1a69d119",
+												"id": "7e3b98f2-d089-456d-a597-ea588c7e32e9",
 												"exec": [
 													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
 													""
@@ -2642,7 +2642,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "c3739b3f-68ba-419e-b524-33a85dd3069a",
+												"id": "f29710d3-0fe6-4795-8b76-36d4d1d26895",
 												"exec": [
 													"\r",
 													"pm.test(\"check workflow\", function () {\r",
@@ -2730,7 +2730,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "d94b2c97-8853-46fb-97b6-14999e45a1bb",
+						"id": "b1c5b796-f19f-41bb-b3d7-6d73c554c8f7",
 						"type": "text/javascript",
 						"exec": [
 							"var now = new Date();",
@@ -2757,7 +2757,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "ff2b1ca7-0956-4b33-baa7-a9761e1eb378",
+						"id": "5712a1ab-29fa-4629-8bea-d630c564d6a0",
 						"type": "text/javascript",
 						"exec": [
 							"var wait = pm.variables.get(\"wait\");",
@@ -2791,7 +2791,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5630a343-4cf2-4a1f-9a5b-8888849bb66f",
+								"id": "9815193f-8c74-4666-924d-ee17930e0edb",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -2865,7 +2865,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a0d79c31-a043-4475-bd58-5fc2029bf11b",
+								"id": "7f1dbdc8-b3e3-46d1-a1b9-71c5f5109afe",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -2933,7 +2933,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c71cb11c-a69e-4a61-b53a-a179fc7a8cb1",
+								"id": "c9f1250b-d06b-4568-b82a-60f771859b87",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3005,7 +3005,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "49940fa1-1281-471f-8cac-deed9b2f5e83",
+								"id": "da591519-b74b-4e06-9df5-6f01d00bea66",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3101,7 +3101,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7ac66c80-1684-4054-a091-302903d26b7a",
+								"id": "aa5abc10-969f-4032-a76f-26e6cbf194ea",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -3189,7 +3189,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "34be3e86-e508-44fd-bb2e-55b335b34850",
+								"id": "c533554f-23ef-4da5-9321-3e291d432653",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3263,7 +3263,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2792043e-a76f-46db-af13-7890b01c1e2d",
+								"id": "ae1dda75-caf8-433b-9fbf-61cacc8a6387",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3326,7 +3326,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "30c01921-d45c-4476-865e-4d40be68eca3",
+								"id": "fa5970a9-8fd3-44fa-9e6e-b3322435c145",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3389,7 +3389,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "313c7c63-a1a1-4953-a2c6-66d9b4ec9709",
+								"id": "6f8cb14c-7bbb-46c2-9a2b-9df277bad494",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(404);\r",
@@ -3464,7 +3464,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "704ed7e8-8e72-4422-bcdf-270dcc7a7135",
+								"id": "ef35f000-18df-47d0-b85b-fc28beb140a6",
 								"exec": [
 									"pm.test(request.name + \" - Check Code\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3536,7 +3536,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "490084a7-f25c-41b3-8b51-c78804cdd95f",
+								"id": "4b494517-0b87-47e4-a43e-c29b6034cfd5",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -3638,7 +3638,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "695e38f0-f7c8-4ea6-8127-a12eb1fd2510",
+								"id": "70af6a78-38a1-4df1-aed4-060e86996ac3",
 								"exec": [
 									"pm.test(\"Check total Number Of Records\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -3739,7 +3739,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b913398e-8976-48f7-a60e-6db0b0c4fba8",
+								"id": "86555899-53cb-446b-9426-d01c1c7933e3",
 								"exec": [
 									"pm.test(\"Check total Number Of Records\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -3802,7 +3802,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5c872e0a-5e19-4cfe-9897-2b0187f1f7ca",
+								"id": "dc004bb6-9a04-4529-b4fc-070be144a8fa",
 								"exec": [
 									"pm.test(\"Check total Number Of Records\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
@@ -3863,8 +3863,2088 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Ticket",
-			"item": [],
+			"name": "#5402 - BA update API",
+			"item": [
+				{
+					"name": "Setup",
+					"item": [
+						{
+							"name": "Create calendar for BC",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "859d05cc-3df5-4608-bdde-84a10946ade9",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"{{testCode}}_CAL_5402_BC\",\n  \"description\": \"Monthly (1st of the month)\",\n  \"calendarType\": \"YEARLY\",\n  \"days\": [\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JANUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"FEBRUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MARCH\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"APRIL\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MAY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JUNE\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JULY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"AUGUST\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"SEPTEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"OCTOBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"NOVEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"DECEMBER\"\n\t  }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create BillingCycle 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a55c0e62-a9c2-41e9-b833-f2860a8a644f",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{testCode}}_BC_5402_1\",\r\n\t\"description\": \"Monthly Invoice Cycle 1\",\r\n\t\"transactionDateDelay\": \"0\",\r\n\t\"invoiceDateProductionDelay\": \"0\",\r\n\t\"dueDateDelay\": \"0\",\r\n\t\"invoiceDateDelay\": \"0\",\r\n\t\"calendar\": \"{{testCode}}_CAL_5402_BC\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "985b846c-4eca-4526-9f0a-3ae066a58eaf",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "    {\r\n    \t\"code\": \"{{testCode}}_SELLER_5402\",\r\n    \t\"currencyCode\": \"EUR\",\r\n    \t\"languageCode\": \"FRA\"\r\n    }"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tax Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b8a909e0-6027-49fd-a97a-38127687ce2b",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\":\"{{testCode}}_taxCategory_5402\",\r\n\t\"description\":\"Tax category\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/taxCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"taxCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate Account Hierarchy 1 SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "24dc70ad-55a3-425a-bf1d-f99717f911e0",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"email\": \"test@test.com\",\r\n\t\"customerCode\": \"{{testCode}}_CH_5402_1\",\r\n\t\"sellerCode\": \"{{testCode}}_SELLER_5402\",\r\n\t\"customerBrandCode\": \"{{testCode}}_CB\",\r\n\t\"customerCategoryCode\": \"{{testCode}}_CC\",\r\n\t\"currencyCode\": \"USD\",\r\n\t\"countryCode\": \"US\",\r\n\t\"languageCode\": \"ENG\",\r\n\t\"billingCycleCode\": \"{{testCode}}_BC_5402_1\",\r\n\t\"titleCode\": \"MR\",\r\n\t\"firstName\": \"created\",\r\n\t\"lastName\": \"TEST\",\r\n\t\"phoneNumber\": \"+102354749\",\r\n\t\"address1\": \"Address1\",\r\n\t\"address2\": \"Address2\",\r\n\t\"zipCode\": \"4050\",\r\n\t\"city\": \"Los Banos\",\r\n\t\"taxCategoryCode\":\"{{testCode}}_taxCategory_5402\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"accountHierarchy",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Test",
+					"item": [
+						{
+							"name": "Check BA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2c01b9fb-d35c-4fb7-ac7f-82979e927197",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(\"MR\").is.to.equal(jsonData.billingAccount.name.title);\r",
+											"    pm.expect(\"created\").is.to.equal(jsonData.billingAccount.name.firstName);\r",
+											"    pm.expect(\"TEST\").is.to.equal(jsonData.billingAccount.name.lastName);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount?billingAccountCode=BA_{{testCode}}_CH_5402_1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									],
+									"query": [
+										{
+											"key": "billingAccountCode",
+											"value": "BA_{{testCode}}_CH_5402_1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update BA - last name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "251948dc-c846-4c6f-9b73-21e26252b6a8",
+										"exec": [
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(\"SUCCESS\").is.to.equal(jsonData.status);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"BA_{{testCode}}_CH_5402_1\",\n    \"name\": {\n        \"lastName\": \"Changed\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check BA after update - last name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "86446e56-9535-4371-84ac-b4aa758d8b46",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(\"MR\").is.to.equal(jsonData.billingAccount.name.title);\r",
+											"    pm.expect(\"created\").is.to.equal(jsonData.billingAccount.name.firstName);\r",
+											"    pm.expect(\"Changed\").is.to.equal(jsonData.billingAccount.name.lastName);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount?billingAccountCode=BA_{{testCode}}_CH_5402_1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									],
+									"query": [
+										{
+											"key": "billingAccountCode",
+											"value": "BA_{{testCode}}_CH_5402_1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update BA - title",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a674e601-b5e6-4515-914c-4ddd93bd5763",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(\"SUCCESS\").is.to.equal(jsonData.status);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"BA_{{testCode}}_CH_5402_1\",\n    \"name\": {\n    \t\"title\":\"\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check BA after update - title",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a8e1b754-4483-44d8-a6e6-fb969cc2f358",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(null).is.to.equal(jsonData.billingAccount.name.title);\r",
+											"    pm.expect(\"created\").is.to.equal(jsonData.billingAccount.name.firstName);\r",
+											"    pm.expect(\"Changed\").is.to.equal(jsonData.billingAccount.name.lastName);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount?billingAccountCode=BA_{{testCode}}_CH_5402_1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									],
+									"query": [
+										{
+											"key": "billingAccountCode",
+											"value": "BA_{{testCode}}_CH_5402_1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update BA - delete name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "16979328-1859-4971-acaa-ad2a6e0d94e2",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(\"SUCCESS\").is.to.equal(jsonData.status);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"BA_{{testCode}}_CH_5402_1\",\n    \"name\": {\n        \"title\": \"\",\n        \"firstName\": \"\",\n        \"lastName\": \"\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check BA after update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b872dde5-9af1-4487-954c-08a33d086413",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(undefined).is.to.equal(jsonData.billingAccount.name);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount?billingAccountCode=BA_{{testCode}}_CH_5402_1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount"
+									],
+									"query": [
+										{
+											"key": "billingAccountCode",
+											"value": "BA_{{testCode}}_CH_5402_1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "#5411 - Customer account balance",
+			"item": [
+				{
+					"name": "Setup",
+					"item": [
+						{
+							"name": "Create calendar for BC",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c7320dcc-9ead-46e7-bd3c-26d31d67248a",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"{{testCode}}_CAL_5411_BC\",\n  \"description\": \"Monthly (1st of the month)\",\n  \"calendarType\": \"YEARLY\",\n  \"days\": [\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JANUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"FEBRUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MARCH\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"APRIL\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MAY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JUNE\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JULY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"AUGUST\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"SEPTEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"OCTOBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"NOVEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"DECEMBER\"\n\t  }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create BillingCycle 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "750e34a3-4422-427b-bbcb-33e4f11e91c6",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{testCode}}_BC_5411_1\",\r\n\t\"description\": \"Monthly Invoice Cycle 1\",\r\n\t\"transactionDateDelay\": \"0\",\r\n\t\"invoiceDateProductionDelay\": \"0\",\r\n\t\"dueDateDelay\": \"0\",\r\n\t\"invoiceDateDelay\": \"0\",\r\n\t\"calendar\": \"{{testCode}}_CAL_5411_BC\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b885a9fc-7f12-4c0a-84d7-9102a56b30fa",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "    {\r\n    \t\"code\": \"{{testCode}}_SELLER_5411\",\r\n\t\t\"description\":\"Seller 5411\",\r\n    \t\"countryCode\": \"{{counrty_code}}\",\r\n    \t\"languageCode\": \"{{language}}\"\r\n    }"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tax Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "420a312b-82f6-4757-a7a1-af725ce8b64c",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\":\"{{testCode}}_taxCategory_5411\",\r\n\t\"description\":\"Tax category\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/taxCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"taxCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate Account Hierarchy 1 SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "18678403-3925-4185-a537-ee6cdbe64908",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"email\": \"{{test_email}}\",\r\n\t\"customerCode\": \"{{testCode}}_CH_5411_1\",\r\n\t\"sellerCode\": \"{{testCode}}_SELLER_5411\",\r\n\t\"customerBrandCode\": \"{{testCode}}_CB\",\r\n\t\"customerCategoryCode\": \"{{testCode}}_CC\",\r\n\t\"currencyCode\": \"{{currency}}\",\r\n\t\"countryCode\": \"{{counrty_code}}\",\r\n\t\"languageCode\": \"{{language}}\",\r\n\t\"billingCycleCode\": \"{{testCode}}_BC_5411_1\",\r\n\t\"titleCode\": \"MR\",\r\n\t\"firstName\": \"{{first_name}}\",\r\n\t\"lastName\": \"{{last_name}}\",\r\n\t\"phoneNumber\": \"{{phone}}\",\r\n\t\"address1\": \"{{address}}\",\r\n\t\"address2\": \"{{address}}\",\r\n\t\"zipCode\": \"{{zip_code}}\",\r\n\t\"city\": \"{{city}}\",\r\n\t\"taxCategoryCode\":\"{{testCode}}_taxCategory_5411\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"accountHierarchy",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create accounting code 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9e1ac203-084b-40f9-9da7-5e96c9dd896a",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"{{testCode}}_AccountingCode_1\",\n    \"description\": \"Accounting code 1\",\n    \"chartOfAccountTypeEnum\": \"EXPENSE\",\n    \"chartOfAccountViewTypeEnum\": \"REGULAR\",\n    \"reportingAccount\": \"sales\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/accountingCode",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"accountingCode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create accounting code 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "18972981-2877-4b41-b1e5-0323c9392b69",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"{{testCode}}_AccountingCode_2\",\n    \"description\": \"Accounting code 2\",\n    \"chartOfAccountTypeEnum\": \"EXPENSE\",\n    \"chartOfAccountViewTypeEnum\": \"REGULAR\",\n    \"reportingAccount\": \"sales\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/accountingCode",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"accountingCode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 1 - 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f9f46b27-4a19-4306-8783-c2581d733c00",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C1</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>1</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>1</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>{{testCode}}_AccountingCode_2</code>\n    <description>{{testCode}}_AccountingCode_2</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create debit account op 1 - 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "dbc371cd-4c7f-4528-9376-4a74a02d7a9a",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>DEBIT</transactionCategory>\n    <reference>D1</reference>\n    <accountCode>{{testCode}}_AccountingCode_1</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_1</accountCodeClientSide>\n    <amount>2</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>2</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>{{testCode}}_AccountingCode_1</code>\n    <description>Fact test</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 2 - 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "590ff381-13b9-497d-9fe3-9641631180be",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.environment.set('creditOP',jsonData.message);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C2</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>3</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>3</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>FOR_MATCH_20</code>\n    <description>FOR_MATCH_20</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create debit account op 2 - 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d1309a53-97d6-492b-bbdc-940b4746d005",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.environment.set('debitOP',jsonData.message);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>DEBIT</transactionCategory>\n    <reference>D2</reference>\n    <accountCode>{{testCode}}_AccountingCode_1</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_1</accountCodeClientSide>\n    <amount>3</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>3</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>{{testCode}}_AccountingCode_1</code>\n    <description>Fact test</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create debit account op 3 - 5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fdbd7a86-3800-4dc5-9148-badf8b883369",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>DEBIT</transactionCategory>\n    <reference>D3</reference>\n    <accountCode>{{testCode}}_AccountingCode_1</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_1</accountCodeClientSide>\n    <amount>5</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>5</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>{{testCode}}_AccountingCode_1</code>\n    <description>Fact test</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 4 - 10 Litigation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "abfa51a6-1cb3-443a-a60e-c9f3cf28dbcd",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>2017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>2017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C3</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>10</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>10</unMatchingAmount>\n    <matchingStatus>I</matchingStatus>\n    <code>LITIGATION1</code>\n    <description>LITIGATION1</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <excludedFromDunning>false</excludedFromDunning>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 5 - 15 future date",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01b80150-1635-46c3-82cf-d9cf4b0c9b99",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>3017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>3017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C3</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>15</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>15</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>FUTURE_DATE</code>\n    <description>Future Date</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <otherCreditAndCharge>\n        <operationDate>3017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 6 - 20  past date",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "09719b74-96c3-4997-887e-74167b7b99c0",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>1017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>1017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C3</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>20</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>20</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>PAST_DATE</code>\n    <description>Past Date</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <otherCreditAndCharge>\n        <operationDate>1017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create credit account op 7 - 25 future due date, past tx date",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e839e98b-fc32-4636-8cf0-fb942a440613",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<AccountOperation>\n    <dueDate>3017-10-31</dueDate>\n    <type>OCC</type>\n    <transactionDate>1017-10-13</transactionDate>\n    <transactionCategory>CREDIT</transactionCategory>\n    <reference>C3</reference>\n    <accountCode>{{testCode}}_AccountingCode_2</accountCode>\n    <accountCodeClientSide>{{testCode}}_AccountingCode_2</accountCodeClientSide>\n    <amount>25</amount>\n    <matchingAmount>0</matchingAmount>\n    <unMatchingAmount>25</unMatchingAmount>\n    <matchingStatus>O</matchingStatus>\n    <code>X1234</code>\n    <description>Future due date, past tx date</description>\n    <customerAccount>CA_{{testCode}}_CH_5411_1</customerAccount>\n    <otherCreditAndCharge>\n        <operationDate>2017-10-13</operationDate>\n    </otherCreditAndCharge>\n</AccountOperation>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Match operations debit and credit 2-3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3d828d05-5013-45f3-9a02-bc442ce9b2f2",
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<MatchOperationRequest>\n    <customerAccountCode>CA_{{testCode}}_CH_5411_1</customerAccountCode>\n    <accountOperations>\n        <accountOperation>\n            <id>{{creditOP}}</id>\n        </accountOperation>\n        <accountOperation>\n            <id>{{debitOP}}</id>\n        </accountOperation>\n    </accountOperations>\n</MatchOperationRequest>"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/accountOperation/matchOperations",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"accountOperation",
+										"matchOperations"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Test",
+					"item": [
+						{
+							"name": "Check CA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "560c253f-39e7-4c23-b43c-c8c1eba55f0d",
+										"exec": [
+											"\r",
+											"\r",
+											"var jsonData = pm.response.json(); \r",
+											"\r",
+											"// Compare results\r",
+											"pm.test(\"Results\", function () {\r",
+											"    pm.expect(-24).is.to.equal(jsonData.customerAccount.balance);\r",
+											"    pm.expect(-14).is.to.equal(jsonData.customerAccount.totalInvoiceBalance);\r",
+											"    pm.expect(-49).is.to.equal(jsonData.customerAccount.accountBalance);\r",
+											"    pm.expect(-56).is.to.equal(jsonData.customerAccount.creditBalance);\r",
+											"    pm.expect(-64).is.to.equal(jsonData.customerAccount.totalBalance);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/account/customerAccount?customerAccountCode=CA_{{testCode}}_CH_5411_1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customerAccount"
+									],
+									"query": [
+										{
+											"key": "customerAccountCode",
+											"value": "CA_{{testCode}}_CH_5411_1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
 			"protocolProfileBehavior": {}
 		}
 	],
@@ -3872,7 +5952,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "dc71b413-166c-432c-80ae-b30c3580a73b",
+				"id": "388d9e73-929f-42cd-9788-143510dfde8c",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3882,7 +5962,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "30f77b09-a1be-4241-acda-b9105573a053",
+				"id": "66cf0a60-b35c-4c8e-ac23-9bb0a5549566",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3892,34 +5972,94 @@
 	],
 	"variable": [
 		{
-			"id": "69e451a8-a987-47d6-9920-560f59589a33",
+			"id": "65f4ed87-a1a6-4573-9d6c-360db8925c57",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "4c9b8ce7-0ec2-4e98-a301-7ec3a8ab7efb",
+			"id": "3a31beb8-e89c-4bf3-85d8-7377343fbaf3",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "7e94257d-c419-4597-89b7-cb6e6119662e",
+			"id": "c050f1b7-6d27-48a0-81a5-f8744bc29230",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "935cb602-62c4-400d-9f5f-699b04d7ff6a",
+			"id": "4337e71e-16c4-452d-819b-7a0486d45ec6",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "4ec821ea-e71e-4c58-9fb3-9902afb80142",
+			"id": "a30fc458-5b27-4f35-94c9-0e7f40f8f79e",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "3c234e4d-ee07-4f13-a03d-6c8b8ef9b15b",
+			"id": "6e19f724-0db7-436c-a480-2020f5ce199b",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
+		},
+		{
+			"id": "98803cda-d708-479a-a0fa-938efd0d0921",
+			"key": "testCode",
+			"value": "TST_CODE"
+		},
+		{
+			"id": "dac013ef-b969-48aa-9215-036bc8e9b8fd",
+			"key": "currency",
+			"value": "EUR"
+		},
+		{
+			"id": "9be086bc-200b-4d3b-bd4f-1eb2d4ecc518",
+			"key": "language",
+			"value": "FRA"
+		},
+		{
+			"id": "72a6a529-d637-487f-bd61-972ac40d2fc1",
+			"key": "counrty_code",
+			"value": "FR"
+		},
+		{
+			"id": "db33014f-f074-4f08-8d11-5956484f8f1c",
+			"key": "test_email",
+			"value": "test@test.com"
+		},
+		{
+			"id": "77b9b5fc-0efe-4679-b115-cc569b5bd90a",
+			"key": "address",
+			"value": "14 Rue Crespin du Gast"
+		},
+		{
+			"id": "abdc58bc-a1fc-431e-b771-a9e8d1af3668",
+			"key": "first_name",
+			"value": "FNAME"
+		},
+		{
+			"id": "5bad39e0-238b-4146-9292-b00a5766ee40",
+			"key": "last_name",
+			"value": "LNAME"
+		},
+		{
+			"id": "e97afaf0-c7cd-416c-8703-6f9ae309e1be",
+			"key": "city",
+			"value": "PARIS"
+		},
+		{
+			"id": "4f8b033c-41a5-4cfe-978a-0bce42334af1",
+			"key": "zip_code",
+			"value": "75011"
+		},
+		{
+			"id": "8fd8a7a1-ba36-47ea-a92a-96e8d56e5e64",
+			"key": "state",
+			"value": "Paris Area"
+		},
+		{
+			"id": "0d84de9d-5372-450a-a9dc-a380ba8cfa12",
+			"key": "phone",
+			"value": "+212587654321"
 		}
 	],
 	"protocolProfileBehavior": {}
