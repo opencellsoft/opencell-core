@@ -3310,9 +3310,20 @@ END $$;]]>
             <column name="file_name_uniqueness" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5405_20190723" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReportExtractJob'</sql>
     </changeSet>
-    
+
+    <changeSet id="#5404_20200728" author="khalidHORRI">
+        <addColumn tableName="wo_aggregation_settings">
+            <column name="additional_order_by" type="varchar(255)"/>
+        </addColumn>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>
