@@ -18,6 +18,7 @@
 
 package org.meveo.service.billing.impl;
 
+import org.hibernate.annotations.Subselect;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -26,6 +27,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationActionEnum;
 import org.meveo.model.billing.WalletOperationAggregationLine;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -33,8 +35,14 @@ import org.meveo.service.filter.FilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generates the query use to group wallet operations with the given
@@ -81,7 +89,6 @@ public class WalletOperationAggregatorQueryBuilder {
 	}
 
 	private void prepareQuery() {
-
 		List<WalletOperationAggregationLine> aggregationLines = aggregationSettings.getAggregationLines();
 		for (WalletOperationAggregationLine aggregationLine : aggregationLines) {
 			select += getSelect(aggregationLine);
@@ -280,7 +287,7 @@ public class WalletOperationAggregatorQueryBuilder {
 		return "SELECT " //
 				+ "STRING_AGG(cast(op.id as string), ',') as id, " //
 				+ select //
-				+ getFrom() //
+				+ " FROM WalletOperationPeriod op" //
 				+ " WHERE (op.invoicingDate is NULL or op.invoicingDate<:invoicingDate) " + where //
 				+ " GROUP BY " + groupBy;
 	}
@@ -291,6 +298,7 @@ public class WalletOperationAggregatorQueryBuilder {
 		} else {
 			return " FROM WalletOperationPeriod op ";
 		}
+
 	}
 
 	public String getGroupBy() {

@@ -999,6 +999,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate, WalletOperationAggregationSettings aggregationSettings) {
 
+        updateWalletOperationPeriodView(aggregationSettings);
+
         WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings, customFieldTemplateService, filterService);
 
         String strQuery = woa.getGroupQuery();
@@ -1013,13 +1015,44 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
+    private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
+        String queryTemplate =
+                "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+                        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
+                        + " FROM billing_wallet_operation o ) o  WHERE  o.status='OPEN'";
+        Map<String, String> parameters = new HashMap<>();
+        if (aggregationSettings.isPeriodEndDateIncluded()) {
+            parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "+ interval '1' day");
+        } else {
+            parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "");
+        }
+        if (!StringUtils.isBlank(aggregationSettings.getAdditionalOrderBy())) {
+            String orderByClause = "";
+            String[] orderByFields = aggregationSettings.getAdditionalOrderBy().split(",");
+            for (String orderByField : orderByFields) {
+                orderByClause += ", o." + orderByField;
+            }
+            parameters.put("{{ADDITIONAL_ORDER_BY}}", orderByClause);
+        } else {
+            parameters.put("{{ADDITIONAL_ORDER_BY}}", "");
+        }
+
+        for (String key : parameters.keySet()) {
+            queryTemplate = queryTemplate.replace(key, parameters.get(key));
+        }
+        Query q = getEntityManager().createNativeQuery(queryTemplate);
+        q.executeUpdate();
+
+    }
+
     public List<WalletOperation> listByRatedTransactionId(Long ratedTransactionId) {
-        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId).getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId)
+                .getResultList();
     }
 
     /**
      * Return a list of open Wallet operation between two date.
-     * 
+     *
      * @param firstTransactionDate first operation date
      * @param lastTransactionDate last operation date
      * @param lastId a last id for pagination

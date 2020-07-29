@@ -66,6 +66,11 @@ public class WalletOperationAggregationSettings extends BusinessEntity {
     @Column(name = "aggregation_rounding_mode", nullable = false)
     @Enumerated(EnumType.STRING)
     private RoundingModeEnum aggregationRoundingMode;
+    /**
+     * Additional order by fields seperated by comma that can be used to create the billing_wallet_operation_period view.
+     */
+    @Column(name = "additional_order_by")
+    private String additionalOrderBy;
 
     /**
      * Apply an additional filter to WO.
@@ -131,5 +136,13 @@ public class WalletOperationAggregationSettings extends BusinessEntity {
 
     public void setAggregationRoundingMode(RoundingModeEnum aggregationRoundingMode) {
         this.aggregationRoundingMode = aggregationRoundingMode;
+    }
+
+    public String getAdditionalOrderBy() {
+        return additionalOrderBy;
+    }
+
+    public void setAdditionalOrderBy(String additionalOrderBy) {
+        this.additionalOrderBy = additionalOrderBy;
     }
 }
