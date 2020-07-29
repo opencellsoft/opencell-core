@@ -100,53 +100,76 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     @NotNull
     private InvoiceType advancePaymentInvoiceType;
 
-    /** The generate advance payment invoice. */
+    /**
+     * The generate advance payment invoice.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_generate_adv_pay_inv", nullable = false)
     @NotNull
     private boolean generateAdvancePaymentInvoice = true;
 
-    /** The advance payment invoice sub category. */
+    /**
+     * The advance payment invoice sub category.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adv_pay_sub_cat_id")
     @NotNull
     private InvoiceSubCategory advancePaymentInvoiceSubCategory;
 
-    /** The do payment. */
+    /**
+     * The do payment.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_do_payment", nullable = false)
     @NotNull
     private boolean doPayment;
 
-    /** The payment schedule instances. */
+    /**
+     * The payment schedule instances.
+     */
     @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)
     private List<PaymentScheduleInstance> paymentScheduleInstances;
 
-    /** The apply agreement. */
+    /**
+     * The apply agreement.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "apply_agreement")
     private boolean applyAgreement = false;
 
-    /** The script instance. */
+    /**
+     * The script instance.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
-    
-    /** The amount el. */
+
+    /**
+     * The amount el.
+     */
     @Column(name = "amount_el", length = 2000)
     @Size(max = 2000)
     private String amountEl;
-    
-    /** The filter el. */
+
+    /**
+     * The filter el.
+     */
     @Column(name = "filter_el", length = 2000)
     @Size(max = 2000)
     private String filterEl;
-    
-    /** The tax class. */
+
+    /**
+     * The tax class.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
-    
+    /**
+     * An expression to get the payment day.
+     */
+    @Column(name = "payment_day_in_month_el", length = 2000)
+    @Size(max = 2000)
+    private String paymentDayInMonthEl;
 
     /**
      * Gets the payment label.
@@ -402,23 +425,39 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
         this.filterEl = filterEl;
     }
 
-	/**
-	 * Gets the tax class.
-	 *
-	 * @return the tax class
-	 */
-	public TaxClass getTaxClass() {
-		return taxClass;
-	}
+    /**
+     * Gets the tax class.
+     *
+     * @return the tax class
+     */
+    public TaxClass getTaxClass() {
+        return taxClass;
+    }
 
-	/**
-	 * Sets the tax class.
-	 *
-	 * @param taxClass the new tax class
-	 */
-	public void setTaxClass(TaxClass taxClass) {
-		this.taxClass = taxClass;
-	}
-    
-    
+    /**
+     * Sets the tax class.
+     *
+     * @param taxClass the new tax class
+     */
+    public void setTaxClass(TaxClass taxClass) {
+        this.taxClass = taxClass;
+    }
+
+    /**
+     * Gets the payment day expression.
+     *
+     * @return the payment day expression.
+     */
+    public String getPaymentDayInMonthEl() {
+        return paymentDayInMonthEl;
+    }
+
+    /**
+     * Sets payment day expression.
+     *
+     * @param paymentDayInMonthEl
+     */
+    public void setPaymentDayInMonthEl(String paymentDayInMonthEl) {
+        this.paymentDayInMonthEl = paymentDayInMonthEl;
+    }
 }

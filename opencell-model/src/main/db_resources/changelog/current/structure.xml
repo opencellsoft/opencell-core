@@ -3325,5 +3325,10 @@ END $$;]]>
             FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
         </createView>
     </changeSet>
+    <changeSet id="#5400_23072020" author="KhalidHORRI">
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="payment_day_in_month_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

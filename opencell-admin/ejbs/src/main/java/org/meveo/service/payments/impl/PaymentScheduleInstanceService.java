@@ -177,10 +177,14 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
         amount = serviceInstance.getAmountPS() == null ? amount : serviceInstance.getAmountPS();
 
+        Integer dueDateDelay = serviceInstance.getPaymentDayInMonthPS() == null ? paymentScheduleTemplate.getPaymentDayInMonth() : serviceInstance.getPaymentDayInMonthPS();
+        Long result = paymentScheduleTemplateService.evaluatePaymentDayInMonthExpression(paymentScheduleTemplate.getPaymentDayInMonthEl(), serviceInstance);
+        if (result != null) {
+            dueDateDelay = Math.toIntExact(result);
+        }
         return instanciate(paymentScheduleTemplate, serviceInstance, amount,
-            serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS(), serviceInstance.getSubscriptionDate(),
-            serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate(),
-            serviceInstance.getPaymentDayInMonthPS() == null ? paymentScheduleTemplate.getPaymentDayInMonth() : serviceInstance.getPaymentDayInMonthPS());
+                serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS(), serviceInstance.getSubscriptionDate(),
+                serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate(), dueDateDelay);
 
     }
 

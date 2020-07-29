@@ -59,32 +59,55 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     /** The service template code. */
     private String serviceTemplateCode;
 
-    /** The advance payment invoice type code. */
+    /**
+     * The advance payment invoice type code.
+     */
     private String advancePaymentInvoiceTypeCode;
 
-    /** The generate advance payment invoice. */
+    /**
+     * The generate advance payment invoice.
+     */
     private Boolean generateAdvancePaymentInvoice;
 
-    /** The do payment. */
+    /**
+     * The do payment.
+     */
     private Boolean doPayment;
 
-    /** The advance payment invoice sub category code. */
+    /**
+     * The advance payment invoice sub category code.
+     */
     private String advancePaymentInvoiceSubCategoryCode;
 
-    /** The apply agreement. */
+    /**
+     * The apply agreement.
+     */
     private Boolean applyAgreement = false;
 
-    /** The amount el. */
+    /**
+     * The amount el.
+     */
     private String amountEl;
 
-    /** The filter el. */
+    /**
+     * The filter el.
+     */
     private String filterEl;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
-    
-    /** The tax class code. */
+
+    /**
+     * The tax class code.
+     */
     private String taxClassCode;
+
+    /**
+     * An expression to get the payment day.
+     */
+    private String paymentDayInMonthEl;
 
     /**
      * Instantiates a new payment schedule template dto.
@@ -119,6 +142,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.filterEl = paymentScheduleTemplate.getFilterEl();
         this.customFields = customFields;
         this.taxClassCode = paymentScheduleTemplate.getTaxClass() == null ? null : paymentScheduleTemplate.getTaxClass().getCode();
+        this.paymentDayInMonthEl = paymentScheduleTemplate.getPaymentDayInMonthEl();
     }
 
     /**
@@ -373,22 +397,40 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.filterEl = filterEl;
     }
 
-	/**
-	 * Gets the tax class code.
-	 *
-	 * @return the tax class code
-	 */
-	public String getTaxClassCode() {
-		return taxClassCode;
-	}
+    /**
+     * Gets the tax class code.
+     *
+     * @return the tax class code
+     */
+    public String getTaxClassCode() {
+        return taxClassCode;
+    }
 
-	/**
-	 * Sets the tax class code.
-	 *
-	 * @param taxClassCode the new tax class code
-	 */
-	public void setTaxClassCode(String taxClassCode) {
-		this.taxClassCode = taxClassCode;
-	}
+    /**
+     * Sets the tax class code.
+     *
+     * @param taxClassCode the new tax class code
+     */
+    public void setTaxClassCode(String taxClassCode) {
+        this.taxClassCode = taxClassCode;
+    }
+
+    /**
+     * Gets the payment day expression.
+     *
+     * @return the payment day expression.
+     */
+    public String getPaymentDayInMonthEl() {
+        return paymentDayInMonthEl;
+    }
+
+    /**
+     * Sets payment day expression.
+     *
+     * @param paymentDayInMonthEl
+     */
+    public void setPaymentDayInMonthEl(String paymentDayInMonthEl) {
+        this.paymentDayInMonthEl = paymentDayInMonthEl;
+    }
 
 }
