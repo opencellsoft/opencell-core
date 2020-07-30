@@ -48,6 +48,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -57,6 +58,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.tax.TaxClassService;
 import org.primefaces.model.SortOrder;
 
@@ -70,40 +72,59 @@ import org.primefaces.model.SortOrder;
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentScheduleApi extends BaseApi {
 
-    /** The calendar service. */
+    /**
+     * The calendar service.
+     */
     @Inject
     private CalendarService calendarService;
 
-    /** The invoice type service. */
+    /**
+     * The invoice type service.
+     */
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
-    /** The invoice sub category service. */
+    /**
+     * The invoice sub category service.
+     */
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
-    /** The service template service. */
+    /**
+     * The service template service.
+     */
     @Inject
     private ServiceTemplateService serviceTemplateService;
 
-    /** The payment schedule template service. */
+    /**
+     * The payment schedule template service.
+     */
     @Inject
     private PaymentScheduleTemplateService paymentScheduleTemplateService;
 
-    /** The payment schedule instance service. */
+    /**
+     * The payment schedule instance service.
+     */
     @Inject
     private PaymentScheduleInstanceService paymentScheduleInstanceService;
 
-    /** The payment schedule instance item service. */
+    /**
+     * The payment schedule instance item service.
+     */
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
-    /** The entity to dto converter. */
+    /**
+     * The entity to dto converter.
+     */
     @Inject
     private EntityToDtoConverter entityToDtoConverter;
-    
+
     @Inject
     private TaxClassService taxClassService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Creates the payment schedule template.
@@ -169,18 +190,25 @@ public class PaymentScheduleApi extends BaseApi {
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceSubCategoryCode());
         }
-        
-		TaxClass taxClass = null;
-		if (!StringUtils.isBlank(paymentScheduleTemplateDto.getTaxClassCode())) {
-			taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
-			if (taxClass == null) {
-				throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
-			}
-		}
-		InvoiceType invoiceType = invoiceTypeService.findByCode(paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
-		}
+
+        TaxClass taxClass = null;
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getTaxClassCode())) {
+            taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
+            if (taxClass == null) {
+                throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
+            }
+        }
+        InvoiceType invoiceType = invoiceTypeService.findByCode(paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
+        if (invoiceType == null) {
+            throw new EntityDoesNotExistsException(InvoiceType.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
+        }
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(paymentScheduleTemplateDto.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, paymentScheduleTemplateDto.getScriptInstanceCode());
+            }
+        }
         PaymentScheduleTemplate paymentScheduleTemplate = new PaymentScheduleTemplate();
         paymentScheduleTemplate.setCode(paymentScheduleTemplateDto.getCode());
         paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());
@@ -197,6 +225,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setFilterEl(paymentScheduleTemplateDto.getFilterEl());
         paymentScheduleTemplate.setTaxClass(taxClass);
         paymentScheduleTemplate.setPaymentDayInMonthEl(paymentScheduleTemplateDto.getPaymentDayInMonthEl());
+        paymentScheduleTemplate.setScriptInstance(scriptInstance);
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
@@ -264,17 +293,25 @@ public class PaymentScheduleApi extends BaseApi {
                 throw new EntityDoesNotExistsException(InvoiceType.class, paymentScheduleTemplateDto.getAdvancePaymentInvoiceTypeCode());
             }
         }
-        
-		TaxClass taxClass = null;
-		if (!StringUtils.isBlank(paymentScheduleTemplateDto.getTaxClassCode())) {
-			taxClass = taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
-			if (taxClass == null) {
-				throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
-			}
-		}
+
+        TaxClass taxClass = null;
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getTaxClassCode())) {
+            taxClass = taxClassService.findByCode(paymentScheduleTemplateDto.getTaxClassCode());
+            if (taxClass == null) {
+                throw new EntityDoesNotExistsException(TaxClass.class, paymentScheduleTemplateDto.getTaxClassCode());
+            }
+        }
+
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(paymentScheduleTemplateDto.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, paymentScheduleTemplateDto.getScriptInstanceCode());
+            }
+        }
 
         paymentScheduleTemplate
-            .setCode(StringUtils.isBlank(paymentScheduleTemplateDto.getUpdatedCode()) ? paymentScheduleTemplateDto.getCode() : paymentScheduleTemplateDto.getUpdatedCode());
+                .setCode(StringUtils.isBlank(paymentScheduleTemplateDto.getUpdatedCode()) ? paymentScheduleTemplateDto.getCode() : paymentScheduleTemplateDto.getUpdatedCode());
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getDescription())) {
             paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());
         }
@@ -315,6 +352,9 @@ public class PaymentScheduleApi extends BaseApi {
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonthEl())) {
             paymentScheduleTemplate.setPaymentDayInMonthEl(paymentScheduleTemplateDto.getPaymentDayInMonthEl());
+        }
+        if (scriptInstance != null) {
+            paymentScheduleTemplate.setScriptInstance(scriptInstance);
         }
 
         // populate customFields
