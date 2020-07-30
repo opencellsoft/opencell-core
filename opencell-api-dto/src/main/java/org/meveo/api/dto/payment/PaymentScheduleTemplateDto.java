@@ -110,6 +110,11 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     private String paymentDayInMonthEl;
 
     /**
+     * Script instance code.
+     */
+    private String scriptInstanceCode;
+
+    /**
      * Instantiates a new payment schedule template dto.
      */
     public PaymentScheduleTemplateDto() {
@@ -143,6 +148,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.customFields = customFields;
         this.taxClassCode = paymentScheduleTemplate.getTaxClass() == null ? null : paymentScheduleTemplate.getTaxClass().getCode();
         this.paymentDayInMonthEl = paymentScheduleTemplate.getPaymentDayInMonthEl();
+        this.scriptInstanceCode = (paymentScheduleTemplate.getScriptInstance() != null) ? paymentScheduleTemplate.getScriptInstance().getCode() : null;
     }
 
     /**
@@ -433,4 +439,21 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.paymentDayInMonthEl = paymentDayInMonthEl;
     }
 
+    /**
+     * Gets the script instance code.
+     *
+     * @return the script instance code
+     */
+    public String getScriptInstanceCode() {
+        return scriptInstanceCode;
+    }
+
+    /**
+     * Sets the script Instance code.
+     *
+     * @param scriptInstanceCode
+     */
+    public void setScriptInstanceCode(String scriptInstanceCode) {
+        this.scriptInstanceCode = scriptInstanceCode;
+    }
 }
