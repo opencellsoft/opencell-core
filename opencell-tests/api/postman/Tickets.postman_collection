@@ -3630,7 +3630,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "#CORE-5291 - [API] Missing List APIs",
+			"name": "#5291 - [API] Missing List APIs",
 			"item": [
 				{
 					"name": "Filter on UsageChargeTemplate",
@@ -4678,6 +4678,35 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e31e30f3-78af-4f1d-855c-02256ddb08f1",
+						"type": "text/javascript",
+						"exec": [
+							"pm.globals.set(\"timestamp.iso\", (new Date()).toISOString());",
+							"pm.globals.set(\"request.label\", pm.info.requestName);",
+							"",
+							"var parts = pm.info.requestName.split(\"|\");",
+							"",
+							"for(let i=0; i<parts.length; i++) {",
+							"    pm.globals.set(\"request.label.\"+i, parts[i]);",
+							"}"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "52725c5e-3543-4b73-b1ae-bafbff2e43e1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -8379,6 +8408,36 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "87b2a3dc-668f-46b3-b511-6fdd5a39fef2",
+						"type": "text/javascript",
+						"exec": [
+							"pm.globals.set(\"timestamp.iso\", (new Date()).toISOString());",
+							"pm.globals.set(\"request.label\", pm.info.requestName);",
+							"",
+							"var parts = pm.info.requestName.split(\"|\");",
+							"",
+							"for(let i=0; i<parts.length; i++) {",
+							"    pm.globals.set(\"request.label.\"+i, parts[i]);",
+							"}",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "cbc63dfb-befc-4cdb-a9f2-4d8773835f98",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -15349,107 +15408,107 @@
 	],
 	"variable": [
 		{
-			"id": "b70e78da-170c-486b-b019-808175a18ac2",
+			"id": "67b79366-d2ff-4b00-a31f-9f9809bd0933",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "4522f233-de47-46c5-8306-c07a3303090b",
+			"id": "dcf72ab6-8b00-46d9-a594-b835d68592bc",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "161979aa-572b-4893-ba62-24191fd45f9c",
+			"id": "2b77d977-ca5c-47fe-b839-74c2f0c75c7b",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "42a4078d-a0c5-4d49-9866-e5e334388952",
+			"id": "a5d8354c-78f1-4002-92e3-53da195d9c3e",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "d1ed21bd-4a73-4e37-b484-97c55260ccd7",
+			"id": "f2fa4fde-c85e-4beb-9743-5f5827621d4f",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "4751138b-4594-4792-b406-c101dbc99fb7",
+			"id": "dafbc213-0a34-4a1d-a5a1-49798b6e329e",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "ee55f35d-a82b-4235-9a96-b47a4a39dce2",
+			"id": "b55d7724-fba4-4e5e-8493-38d625d71a5e",
 			"key": "testCode",
 			"value": "TST_CODE"
 		},
 		{
-			"id": "c95fe913-5993-441c-aa8b-2efb7a157a20",
+			"id": "83e7945e-84c7-450a-ab66-4de8e9e755cd",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "37b24e6b-b917-4dad-bdaf-9f11a132c6e7",
+			"id": "c55137be-ad96-4df3-a3c5-74ba540f0603",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "e3e2fdfc-6b34-4554-a9e3-788f0bc869d3",
+			"id": "1dbeebcf-957a-44d4-8c56-da3cac1656e6",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "507c67d2-1ad4-499c-8e5a-1baaead046eb",
+			"id": "1bb3002f-a36a-45cf-beab-9fb30aece639",
 			"key": "test_email",
 			"value": "test@test.com"
 		},
 		{
-			"id": "49bf6f27-7b8b-4382-9d79-d5fd3a29b7d1",
+			"id": "c2c2538d-fb75-4273-86fb-e42b37441f00",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "d946fcdc-2e6e-43a4-a179-fedaf1521ca2",
+			"id": "902bb1a5-5761-445c-a120-d28c60f1f111",
 			"key": "first_name",
 			"value": "FNAME"
 		},
 		{
-			"id": "babfa635-b683-40e1-8661-d28164beb4e6",
+			"id": "9d54b61d-4a39-49fa-a0b9-ce9865d4ec11",
 			"key": "last_name",
 			"value": "LNAME"
 		},
 		{
-			"id": "9595fd65-439d-4680-8dac-5d735fb11b41",
+			"id": "93181f7d-3b49-450b-a34c-e7ad72cab31c",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "d0487135-e393-488b-9dcf-97672b1f14d5",
+			"id": "6060e1bf-aefb-4c9c-a0a5-9028a6917be9",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "425238b3-10e4-400e-bc3f-df75c6251816",
+			"id": "0d4711c5-08f0-4e41-ae28-e0bf0222eaa8",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "a67d29c8-7262-42db-990d-ceb48be80d6c",
+			"id": "bb5fc399-84ae-415b-b5bf-e535c8dbf096",
 			"key": "phone",
 			"value": "+212587654321"
 		},
 		{
-			"id": "91fadb85-ba92-4574-a8f3-62b6413f14a2",
+			"id": "1d1fafcf-e4f1-4ed2-9260-8d1349bb1328",
 			"key": "storage",
 			"value": "List of values"
 		},
 		{
-			"id": "fa5ba38e-2733-4386-92f3-314ee3f1fc00",
+			"id": "8bc450d0-c512-4c00-9246-51ec0b8b9b00",
 			"key": "type",
 			"value": "String"
 		},
 		{
-			"id": "f403ab40-c83e-4b51-9855-596cddb6e20d",
+			"id": "f3bedd0b-5672-42d6-92cd-86510ebb008a",
 			"key": "target",
 			"value": ""
 		}
