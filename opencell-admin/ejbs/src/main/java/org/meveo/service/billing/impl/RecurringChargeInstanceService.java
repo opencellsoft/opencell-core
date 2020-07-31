@@ -35,7 +35,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
@@ -44,7 +43,6 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -58,7 +56,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 /**
@@ -80,9 +77,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     @Inject
     private RevenueRecognitionScriptService revenueRecognitionScriptService;
-
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     @Rejected
@@ -342,7 +336,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
-                List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, false, null, null, isVirtual);
+                List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, isVirtual);
                 walletOperations.addAll(wos);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
@@ -366,7 +360,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     while (nextChargeToDate != null && nextChargeToDate.getTime() <= endContractDate.getTime()) {
                         log.debug("Schedule applicationDate={}", nextChargeToDate);
                         nextChargeToDate = DateUtils.setTimeToZero(nextChargeToDate);
-                        walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, true, false, null, null, false);
+                        walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, true, null, null, false);
 
                         log.debug("chargeDate {},nextChargeDate {}", recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate());
                         nextChargeToDate = recurringChargeInstance.getNextChargeDate();
@@ -432,12 +426,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstance Recurring charge instance
      * @param orderNumber Order number
-     * @param overrideProrata Specific prorata instruction
      * @return Updated Recurring charge instance
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
+    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -454,19 +447,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeWasUpdated = true;
         }
 
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
+        log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getTerminationDate(), chargeInstance.getChargedToDate());
 
-        // Take care of the first charge period that termination date falls into
-        boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
-            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), null, null, chargeInstance);
-        }
-        isTerminationProrata = overrideProrata.isToProrate(isTerminationProrata);
-
-        log.debug("Will apply reimbursment for charge {} for period {} - {}, will {} prorate ", chargeInstance.getId(), chargeInstance.getTerminationDate(), chargeInstance.getChargedToDate(),
-            isTerminationProrata ? "" : "NOT");
-
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, isTerminationProrata, null, null, false);
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
         if (chargeWasUpdated || !wos.isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
@@ -484,7 +467,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
+    public RecurringChargeInstance applyRecuringChargeToEndAgreementDate(RecurringChargeInstance chargeInstance, Date endAgreementDate) throws BusinessException, RatingException {
 
         boolean chargeWasUpdated = true;
 
@@ -497,19 +480,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeWasUpdated = true;
         }
 
-        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
+        log.debug("Will apply recurring charge {} to supplement charge agreement for {} - {}", chargeInstance.getId(), chargeInstance.getChargedToDate(), endAgreementDate);
 
-        // Take care of the last charge period that termination date falls into
-        boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
-            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), null, null, chargeInstance);
-        }
-        isTerminationProrata = overrideProrata.isToProrate(isTerminationProrata);
-
-        log.debug("Will apply recurring charge {} to supplement charge agreement for {} - {}, will {} prorate", chargeInstance.getId(), chargeInstance.getChargedToDate(), endAgreementDate,
-            isTerminationProrata ? "" : "NOT");
-
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, isTerminationProrata, endAgreementDate, null, false);
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.AGREEMENT, false, endAgreementDate, null, false);
 
         if (chargeWasUpdated || !wos.isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);

@@ -86,7 +86,7 @@ public class RecurringChargeInstanceServiceTest {
 
         when(walletOperationService.getRecurringPeriod(any(), any())).thenCallRealMethod();
         when(walletOperationService.isApplyInAdvance(any())).thenCallRealMethod();
-        when(walletOperationService.applyReccuringCharge(any(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean())).thenAnswer(new Answer<List<WalletOperation>>() {
+        when(walletOperationService.applyReccuringCharge(any(), any(), anyBoolean(), any(), any(), anyBoolean())).thenAnswer(new Answer<List<WalletOperation>>() {
             @SuppressWarnings("deprecation")
             public List<WalletOperation> answer(InvocationOnMock invocation) throws Throwable {
 
@@ -138,7 +138,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 4, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(),  any(), any(), anyBoolean());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 4, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(),  any(), any(), anyBoolean());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(),  any(), any(), anyBoolean());
     }
 
     @Test
@@ -168,7 +168,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -178,7 +178,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -188,7 +188,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 5, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(0)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -208,7 +208,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -218,7 +218,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -228,7 +228,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     // -- TEST existing subscriptions
@@ -242,7 +242,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -254,7 +254,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -266,7 +266,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(3)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -290,7 +290,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(1)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -302,7 +302,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 1, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -314,7 +314,7 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), false, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -326,6 +326,6 @@ public class RecurringChargeInstanceServiceTest {
 
         recurringChargeInstanceService.applyRecurringCharge(chargeInstance, DateUtils.newDate(2019, 7, 16, 0, 0, 0), true, false);
 
-        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), anyBoolean(), any(), any(), anyBoolean());
+        verify(walletOperationService, times(2)).applyReccuringCharge(rciCaptor.capture(), any(), anyBoolean(), any(), any(), anyBoolean());
     }
 }
