@@ -27,10 +27,7 @@ import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
-import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
-import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
-import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.billing.*;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
@@ -176,6 +173,28 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
                 return subscriptionApi.list(pagingAndFiltering, inheritCF);
             } else {
                 return subscriptionApi.list(mergedCF, pagingAndFiltering);
+            }
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public CustomSubscriptionsListResponseDto listSubscription(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy,
+                                                               SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
+
+        CustomSubscriptionsListResponseDto result = new CustomSubscriptionsListResponseDto();
+
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, null, offset, limit, sortBy,
+                sortOrder);
+
+        try {
+            if (inheritCF != null) {
+                return subscriptionApi.minlist(pagingAndFiltering, inheritCF);
+            } else {
+                return subscriptionApi.minlist(mergedCF, pagingAndFiltering);
             }
         } catch (Exception e) {
             processException(e, result.getActionStatus());

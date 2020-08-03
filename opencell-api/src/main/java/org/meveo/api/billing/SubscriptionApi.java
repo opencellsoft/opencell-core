@@ -1,10 +1,12 @@
 package org.meveo.api.billing;
 
+import static java.util.stream.Collectors.toList;
+import static org.primefaces.model.SortOrder.ASCENDING;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -26,36 +28,14 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
-import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
-import org.meveo.api.dto.billing.DueDateDelayDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.ProductDto;
-import org.meveo.api.dto.billing.ProductInstanceDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.ServiceInstanceDto;
-import org.meveo.api.dto.billing.ServiceToActivateDto;
-import org.meveo.api.dto.billing.ServiceToInstantiateDto;
-import org.meveo.api.dto.billing.ServiceToUpdateDto;
-import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.billing.CustomSubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.EntityNotAllowedException;
@@ -1111,7 +1091,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionsDto result = new SubscriptionsDto();
         List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-            sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
+            sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, CustomFieldInheritanceEnum.getInheritCF(true, mergedCF)));
@@ -1145,7 +1125,8 @@ public class SubscriptionApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, ASCENDING,
+                null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
 
@@ -1162,9 +1143,44 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
-
         return result;
+    }
 
+    public CustomSubscriptionsListResponseDto minlist(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        boolean merge = mergedCF != null && mergedCF;
+        return minlist(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
+    }
+
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
+            @FilterProperty(property = "userAccount", entityClass = UserAccount.class)})
+    public CustomSubscriptionsListResponseDto minlist(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+
+        PaginationConfiguration paginationConfiguration =
+                toPaginationConfiguration(sortBy, ASCENDING, null, pagingAndFiltering, Subscription.class);
+
+        Long totalCount = subscriptionService.count(paginationConfiguration);
+
+        CustomSubscriptionsListResponseDto result = new CustomSubscriptionsListResponseDto();
+
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
+            if (subscriptions != null) {
+                result.getSubscriptions()
+                        .setSubscription(subscriptions.stream()
+                        .map(this::subscriptionMinToDto)
+                        .collect(toList()));
+            }
+        }
+        return result;
     }
 
     /**
@@ -1274,11 +1290,23 @@ public class SubscriptionApi extends BaseApi {
             dto.setDiscountPlanInstances(subscription.getDiscountPlanInstances().stream()
                     .map(discountPlanInstance -> new DiscountPlanInstanceDto(discountPlanInstance,
                             entityToDtoConverter.getCustomFieldsDTO(discountPlanInstance, CustomFieldInheritanceEnum.INHERIT_NONE)))
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         }
 
         dto.setAutoEndOfEngagement(subscription.getAutoEndOfEngagement());
         setAuditableFieldsDto(subscription, dto);
+        return dto;
+    }
+
+    public CustomSubscriptionDto subscriptionMinToDto(Subscription subscription) {
+        CustomSubscriptionDto dto = new CustomSubscriptionDto(subscription);
+
+        if (subscription.getServiceInstances() != null) {
+            dto.getServices().setServiceInstance(subscription.getServiceInstances()
+                    .stream()
+                    .map(this::serviceInstanceMinToDto)
+                    .collect(toList()));
+        }
         return dto;
     }
 
@@ -1293,6 +1321,10 @@ public class SubscriptionApi extends BaseApi {
         ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
         setAuditableFieldsDto(serviceInstance, serviceInstanceDto);
         return serviceInstanceDto;
+    }
+    private CustomServiceInstanceDto serviceInstanceMinToDto(ServiceInstance serviceInstance) {
+        CustomServiceInstanceDto minDto = new CustomServiceInstanceDto(serviceInstance);
+        return minDto;
     }
 
     public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
@@ -1954,7 +1986,7 @@ public class SubscriptionApi extends BaseApi {
         List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
             result = serviceInstances.stream().map(p -> serviceInstanceToDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)))
-                .collect(Collectors.toList());
+                .collect(toList());
         }
 
         return result;
