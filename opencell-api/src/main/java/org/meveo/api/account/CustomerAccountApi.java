@@ -196,12 +196,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getCurrency())) {
-            missingParameters.add("currency");
-        }
-        if (StringUtils.isBlank(postData.getLanguage())) {
-            missingParameters.add("language");
-        }
+
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
