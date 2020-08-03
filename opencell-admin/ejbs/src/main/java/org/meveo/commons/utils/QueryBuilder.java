@@ -36,8 +36,10 @@ import javax.persistence.TypedQuery;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -74,6 +76,8 @@ public class QueryBuilder {
     private String paginationSortAlias;
 
     private Class<?> clazz;
+    
+    static final String FROM = "from ";
 
     public enum QueryLikeStyleEnum {
         /**
@@ -1067,9 +1071,8 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-
-        String from = "from ";
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(from)));
+        em.getProperties();
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(addCurrentSchema(q.toString().substring(q.indexOf(FROM))));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1079,7 +1082,20 @@ public class QueryBuilder {
         }
         return result;
     }
-
+    
+	public String addCurrentSchema(String query) {
+		CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
+		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		if (currentproviderCode != null) {
+			EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
+			String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+			if (!query.startsWith(FROM + schema)) {
+				return query.replace(FROM, FROM+schema);
+			}
+		}
+		return query;
+	}
+	
     /**
      * Convert to a query to count number of entities matched: "select .. from" is changed to "select count(*) from"
      * 
@@ -1087,9 +1103,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-        String from = "from ";
-
-        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+        String countSql = "select count(*) " + addCurrentSchema(q.toString().substring(q.indexOf(FROM)));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
@@ -1110,6 +1124,7 @@ public class QueryBuilder {
         // log.trace("Count query is {}", countSql);
 
         Query result = em.createQuery(countSql);
+        
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
         }
@@ -1124,10 +1139,8 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getNativeCountQuery(EntityManager em) {
-        String from = "from ";
 
-        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
-
+        String countSql = "select count(*) " + addCurrentSchema(q.toString().substring(q.indexOf(FROM)));
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.trace("Count query is {}", countSql);
 
@@ -1240,7 +1253,6 @@ public class QueryBuilder {
         if (paginationConfiguration == null) {
             return;
         }
-
         applyPagination(query, paginationConfiguration.getFirstRow(), paginationConfiguration.getNumberOfRows());
     }
 
