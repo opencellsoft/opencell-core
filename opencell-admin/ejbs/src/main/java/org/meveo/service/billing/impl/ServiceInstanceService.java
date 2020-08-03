@@ -447,7 +447,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             try {
                 recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
-                    serviceInstance.getRateUntilDate() == null, false);
+                    serviceInstance.getRateUntilDate() == null, false, null);
 
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

@@ -278,10 +278,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @param maxDate Date to rate until. Only full periods will be considered.
      * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
+     * @param applicationMode Charge application mode. Optional. Defaults to Subscription if not specified.
      * @return A list of wallet operations created
      * @throws BusinessException General business exception
      */
-    public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
+            throws BusinessException {
+
+        if (applicationMode == null) {
+            applicationMode = ChargeApplicationModeEnum.SUBSCRIPTION;
+        }
 
         List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
         boolean chargeWasUpdated = false;
@@ -336,7 +342,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
-                List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, null, null, isVirtual);
+                List<WalletOperation> wos = walletOperationService.applyReccuringCharge(recurringChargeInstance, applicationMode, false, null, null, isVirtual);
                 walletOperations.addAll(wos);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
@@ -396,7 +402,29 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive) throws BusinessException {
 
         RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false);
+        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false, null);
+
+        RatingStatus ratingStatus = new RatingStatus();
+        if (!wos.isEmpty()) {
+            ratingStatus.setNbRating(ratingStatus.getNbRating() + 1);
+        }
+        return ratingStatus;
+    }
+
+    /**
+     * Rate recurring charge up to a given date
+     * 
+     * @param chargeInstanceId Recurring charge instance id
+     * @param maxDate Date to rate until. Only full periods will be considered.
+     * @param isMaxDateInclusive If true, <maxDate check is applied for iteration. If false <=maxDate is applied
+     * @param applicationMode Charge application mode. Optional. Defaults to Subscription if not specified.
+     * @return Rating status summary
+     * @throws BusinessException General business exception
+     */
+    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
+
+        RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
+        List<WalletOperation> wos = applyRecurringCharge(chargeInstance, maxDate, isMaxDateInclusive, false, applicationMode);
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
@@ -416,9 +444,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public RatingStatus applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive) throws BusinessException {
+    public RatingStatus applyRecurringChargeInNewTx(Long chargeInstanceId, Date maxDate, boolean isMaxDateInclusive, ChargeApplicationModeEnum applicationMode) throws BusinessException {
 
-        return applyRecurringCharge(chargeInstanceId, maxDate, isMaxDateInclusive);
+        return applyRecurringCharge(chargeInstanceId, maxDate, isMaxDateInclusive, applicationMode);
     }
 
     /**
@@ -543,7 +571,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
-     * @param toDate Date to rate until. Only full periods will be considered
+     * @param toDate Date to rate until. Partial periods might be considered if charge was terminated and rerating up to termination date.
      * @throws BusinessException General business exception
      */
     @TransactionAttribute(TransactionAttributeType.NEVER) // This is set to NEVER, so two inner methods are executed in new transactions
@@ -552,7 +580,18 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate);
 
         if (nrWOCanceled > 0) {
-            recurringChargeInstanceServiceNewTx.applyRecurringChargeInNewTx(chargeInstanceId, toDate, false);
+            RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
+            Date terminationDate = chargeInstance.getEffectiveTerminationDate();
+
+            // Reimbursement is applied directly as application end date is fixed and can not be changed
+            if (terminationDate != null && terminationDate.before(chargeInstance.getChargedToDate())) {
+                walletOperationService.applyReccuringChargeInNewTx(chargeInstanceId, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
+
+                // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period
+                // indicator
+            } else {
+                recurringChargeInstanceServiceNewTx.applyRecurringChargeInNewTx(chargeInstanceId, toDate, false, ChargeApplicationModeEnum.RERATING);
+            }
         }
     }
 
@@ -562,7 +601,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
-     * @param toDate Date to rate until. Only full periods will be considered
+     * @param toDate Date to rate until. Partial periods might be considered if charge was terminated and rerating up to termination date.
      * @throws BusinessException General business exception
      */
     public void rerateRecurringCharge(Long chargeInstanceId, Date fromDate, Date toDate) {
@@ -570,7 +609,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         int nrWOCanceled = resetRecurringCharge(chargeInstanceId, fromDate);
 
         if (nrWOCanceled > 0) {
-            applyRecurringCharge(chargeInstanceId, toDate, false);
+
+            RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
+            Date terminationDate = chargeInstance.getEffectiveTerminationDate();
+
+            // Reimbursement is applied directly as application end date is fixed and can not be changed
+            if (terminationDate != null && terminationDate.before(chargeInstance.getChargedToDate())) {
+                walletOperationService.applyReccuringCharge(findById(chargeInstanceId), ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
+
+                // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period
+                // indicator
+            } else {
+                applyRecurringCharge(chargeInstanceId, toDate, false, ChargeApplicationModeEnum.RERATING);
+            }
         }
     }
 }

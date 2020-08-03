@@ -17,10 +17,48 @@
  */
 package org.meveo.model.billing;
 
+/**
+ * Recurring charge application mode
+ * 
+ * @author Andrius Karpavicius
+ */
 public enum ChargeApplicationModeEnum {
-    SUBSCRIPTION, AGREEMENT, REIMBURSMENT;
+
+    /**
+     * A regular periodic charge application
+     */
+    SUBSCRIPTION,
+
+    /**
+     * Apply charges to reach Service's agreement end date
+     */
+    AGREEMENT,
+
+    /**
+     * Reimburse charges from termination date to the last Wallet operation of that charge
+     */
+    REIMBURSMENT,
+
+    /**
+     * Rerating of existing charges
+     */
+    RERATING,
+
+    /**
+     * Rerating of reimbursement charges
+     */
+    RERATING_REIMBURSEMENT;
 
     public String toString() {
         return this.getClass().getSimpleName() + "." + this.name();
+    }
+
+    /**
+     * Is this a reimbursement related mode
+     * 
+     * @return True if its reimbursement or rerating reimbursement
+     */
+    public boolean isReimbursement() {
+        return this == REIMBURSMENT || this == RERATING_REIMBURSEMENT;
     }
 }

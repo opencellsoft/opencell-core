@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -151,6 +152,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private FilterService filterService;
+
+    @EJB
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
     public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
             String orderNumberOverride) throws BusinessException, RatingException {
@@ -307,6 +311,26 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Apply a recurring charge.<br>
+     * Identical to applyRecurringCharge() but occurs in a new transaction
+     * 
+     * @param chargeInstanceId Recurring charge instance id
+     * @param chargeMode Charge application mode
+     * @param forSchedule Is this a scheduled charge
+     * @param chargeToDate An explicit date to charge to. Assumption - to reach end agreement date. Optional. If provided, will charge up to a given date, pro-rating, if needed,
+     *        the last period.
+     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
+     * @param orderNumberToOverride Order number to assign to Wallet operation. Optional. If provided, will override a value from chargeInstance.
+     * @return List of created wallet operations
+     * @throws BusinessException General business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    public List<WalletOperation> applyReccuringChargeInNewTx(Long chargeInstanceId, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date chargeToDate, String orderNumberToOverride, boolean isVirtual)
+            throws BusinessException, RatingException {
+        return applyReccuringCharge(recurringChargeInstanceService.findById(chargeInstanceId), chargeMode, forSchedule, chargeToDate, orderNumberToOverride, isVirtual);
+    }
+
+    /**
+     * Apply a recurring charge.<br>
      * Quantity might be prorated for first time charge (identified by chargeInstance.chargeDate=null) if subscription prorata is enabled on charge template. Will update charge
      * instance with a new charge and next charge dates. <br>
      * <br>
@@ -382,6 +406,34 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 prorateFirstPeriodFromDate = null;
             }
 
+            // For rerating reimbursement need to reimburse earlier applied recurring charges starting from chargedToDate to the last date charged.
+            // This might span multiple calendar periods and might require a first period proration
+        } else if (chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT) {
+
+            if (chargeInstance.getChargedToDate() == null) {
+                // Trying to reimburse something that was not charged yet
+                log.error("Trying to reimburse a charge {} that was not charged yet. Will skip.", chargeInstance.getId());
+                return new ArrayList<>();
+            }
+
+            applyChargeFromDate = chargeInstance.getChargedToDate();
+
+            DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
+            applyChargeToDate = period.getTo();
+
+            // Take care of the first charge period that termination date falls into
+            // Determine if first period proration is needed and is requested
+            if (period.getFrom().before(applyChargeFromDate)) {
+                prorateFirstPeriod = prorateTerminationCharges(chargeInstance);
+                prorateFirstPeriodFromDate = period.getFrom();
+
+            } else {
+                prorateFirstPeriod = false;
+                prorateFirstPeriodFromDate = null;
+            }
+
+            applyChargeToDate = chargeToDate != null ? chargeToDate : applyChargeToDate;
+
             // For non-reimbursement it will cover only one calendar period cycle unless an explicit chargeToDate is specified.
             // In such case this might span multiple calendar periods and might require a last period proration
             // Initialize charge and determine prorata ratio if applying a charge for the first time
@@ -422,7 +474,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     firstChargeCounterPeriod = counterPeriod;
                 }
 
-                // Determine is subscription charge should be prorated
+                // Determine if subscription charge should be prorated
                 prorateFirstPeriodFromDate = period.getFrom();
                 if (prorateFirstPeriodFromDate.before(applyChargeFromDate)) {
 
@@ -447,8 +499,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             throw new IncorrectChargeInstanceException("nextChargeDate is null.");
         }
 
-        log.debug("Will apply {} recuring charges for charge {} for period(s) {} - {}.", chargeMode == ChargeApplicationModeEnum.REIMBURSMENT ? "reimbursement" : "", chargeInstance.getId(), applyChargeFromDate,
-            applyChargeToDate);
+        log.debug("Will apply {} recuring charges for charge {} for period(s) {} - {}.",
+            chargeMode == ChargeApplicationModeEnum.REIMBURSMENT || chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT ? "reimbursement" : "", chargeInstance.getId(), applyChargeFromDate, applyChargeToDate);
 
         // -- Divide a period to charge into periods (or partial periods) and create WOs
 
@@ -475,18 +527,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             if (chargeToDate != null && currentPeriodToDate.after(chargeToDate)) {
                 effectiveChargeToDate = chargeToDate;
 
-                if (chargeMode == ChargeApplicationModeEnum.AGREEMENT) {
+                if (chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                     prorate = prorate || prorateTerminationCharges(chargeInstance);
                 }
             }
 
             // Handle a case of re-rating of recurring charge - existing WOs have been canceled and new ones are re-generated up to termination date only if it falls within the
-            // rating period. If things work correctly chargeToDate should be matching termination or end agreement date already.
-            if (chargeMode != ChargeApplicationModeEnum.REIMBURSMENT && chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+            // rating period. chargeToDate is not passed in rerating cases.
+            if ((chargeMode == ChargeApplicationModeEnum.RERATING || chargeMode == ChargeApplicationModeEnum.AGREEMENT) && chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                 Date terminationOrEndAggreementDate = chargeInstance.getEffectiveTerminationDate();
-//                 if (terminationDate != null && terminationDate.compareTo(currentPeriodFromDate) >= 0 && terminationDate.before(currentPeriodToDate)) {
                 // Termination date is not charged, its like TO value in a range of dates - e.g. if termination date is on friday, friday will not be charged.
-                if (terminationOrEndAggreementDate != null && terminationOrEndAggreementDate.compareTo(currentPeriodFromDate) > 0 && terminationOrEndAggreementDate.compareTo(currentPeriodToDate) <= 0) {
+                if (terminationOrEndAggreementDate != null && currentPeriodFromDate.compareTo(terminationOrEndAggreementDate) < 0 && terminationOrEndAggreementDate.compareTo(currentPeriodToDate) <= 0) {
                     effectiveChargeToDate = effectiveChargeToDate.before(terminationOrEndAggreementDate) ? effectiveChargeToDate : terminationOrEndAggreementDate;
 
                     if (terminationOrEndAggreementDate.compareTo(currentPeriodToDate) < 0) {
@@ -503,7 +554,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             } else {
 
-                BigDecimal inputQuantity = chargeMode == ChargeApplicationModeEnum.REIMBURSMENT ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
+                BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
                 // Apply prorating if needed
                 if (prorate) {
@@ -516,9 +567,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     inputQuantity = inputQuantity.multiply(prorata);
                 }
 
-                log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}",
-                    chargeMode == ChargeApplicationModeEnum.REIMBURSMENT ? "reimbursement" : isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate,
-                    inputQuantity);
+                log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}", chargeMode.isReimbursement() ? "reimbursement" : isApplyInAdvance ? "start of period" : "end of period",
+                    chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate, inputQuantity);
 
                 if (recurringChargeTemplate.isProrataOnPriceChange()) {
                     walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
@@ -549,7 +599,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         walletOperations.addAll(operations);
                     }
                 }
-                if (!isVirtual && chargeMode != ChargeApplicationModeEnum.REIMBURSMENT) {
+                if (!isVirtual && !chargeMode.isReimbursement()) {
                     applyAccumulatorCounter(chargeInstance, walletOperations, false);
                 }
             }
@@ -1063,10 +1113,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
-        String queryTemplate =
-                "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
-                        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
-                        + " FROM billing_wallet_operation o ) o  WHERE  o.status='OPEN'";
+        String queryTemplate = "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+                + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
+                + " FROM billing_wallet_operation o ) o  WHERE  o.status='OPEN'";
         Map<String, String> parameters = new HashMap<>();
         if (aggregationSettings.isPeriodEndDateIncluded()) {
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "+ interval '1' day");
@@ -1093,8 +1142,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public List<WalletOperation> listByRatedTransactionId(Long ratedTransactionId) {
-        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId)
-                .getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId).getResultList();
     }
 
     /**
