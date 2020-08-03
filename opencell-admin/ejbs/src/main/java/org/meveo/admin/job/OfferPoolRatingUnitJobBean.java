@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -143,11 +144,11 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setPriceplan(overPricePlanList.get(0));
 
         // WO's amounts
-        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), RoundingMode.HALF_EVEN);
+        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), BaseEntity.NB_DECIMALS, RoundingMode.HALF_EVEN);
         BigDecimal taxPercent = wo.getTaxPercent();
 
         BigDecimal unitAmountWithoutTax = BigDecimal.valueOf(overagePrice);
-        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN);
+        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), BaseEntity.NB_DECIMALS, RoundingMode.HALF_EVEN);
         BigDecimal unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
         BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal amountTax = unitAmountTax.multiply(quantity);
