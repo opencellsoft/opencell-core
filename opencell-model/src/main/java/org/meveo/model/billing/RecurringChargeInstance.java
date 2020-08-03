@@ -276,4 +276,24 @@ public class RecurringChargeInstance extends ChargeInstance {
     public ChargeMainTypeEnum getChargeMainType() {
         return ChargeMainTypeEnum.RECURRING;
     }
+
+    /**
+     * Get an effective date that charge should be applied to. In case of termination reason implies to apply a endAgreement, effective date will be endAgreement date (if it was
+     * provided on service), otherwise a termination date.
+     * 
+     * @return Termination date or end agreement date depending on termination reason
+     */
+    public Date getEffectiveTerminationDate() {
+
+        if (status != InstanceStatusEnum.TERMINATED) {
+            return null;
+        }
+
+        SubscriptionTerminationReason terminationReason = getServiceInstance().getSubscriptionTerminationReason();
+        if (terminationReason.isApplyAgreement() && getServiceInstance().getEndAgreementDate() != null) {
+            return getServiceInstance().getEndAgreementDate();
+        } else {
+            return terminationDate;
+        }
+    }
 }
