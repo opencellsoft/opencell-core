@@ -29,6 +29,10 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+
+/**
+ * Inbound request was received event
+ */
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)

@@ -325,4 +325,5 @@ public interface CatalogRs extends IBaseRs {
     @POST
     @Path("/productChargeTemplate/{code}/disable")
     Response disableProductChargeTemplate(@PathParam("code") String code);
+    
 }

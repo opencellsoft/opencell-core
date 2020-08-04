@@ -29,17 +29,17 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.account.AccountEntityApi;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.contact.Contact;
@@ -63,388 +63,339 @@ import org.primefaces.model.SortOrder;
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ContactApi extends AccountEntityApi {
 
-	@Inject
-	ContactService contactService;
-	
-	@Inject
-	SellerService sellerService;
+    @Inject
+    ContactService contactService;
 
-	@Inject
-	TitleService titleService;
+    @Inject
+    SellerService sellerService;
 
-	@Inject
-	AddressBookService addressBookService;
-	
-	@Inject
-	AdditionalDetailsService additionalDetailsService;
-	
-	@Inject
-	CustomerService customerService;
-	
-	@Inject
-	CustomerBrandService customerBrandService;
-	
-	@Inject
-	CustomerCategoryService customerCategoryService;
+    @Inject
+    TitleService titleService;
 
+    @Inject
+    AddressBookService addressBookService;
 
-	public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
+    @Inject
+    AdditionalDetailsService additionalDetailsService;
 
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
-		}
+    @Inject
+    CustomerService customerService;
 
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("email");
-			//missingParameters.add("code");
-		}
-		else if(StringUtils.isBlank(postData.getEmail())) {
-			missingParameters.add("email");
-		}
+    @Inject
+    CustomerBrandService customerBrandService;
 
-		handleMissingParameters();
+    @Inject
+    CustomerCategoryService customerCategoryService;
 
-		Contact contact = new Contact();
-		populate(postData, contact);
+    public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
-		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {	
-			contact.setCode(postData.getEmail());
-			contact.setEmail(postData.getEmail());
-		} else {
-			contact.setCode(postData.getCode());
-			contact.setEmail(postData.getEmail());
-		}
+        if (postData.getName() == null) {
+            missingParameters.add("name");
+        } else {
+            if (StringUtils.isBlank(postData.getName().getFirstName())) {
+                missingParameters.add("firstName");
+            }
 
-		contact.setCompany(postData.getCompany());
-		contact.setDescription(postData.getDescription());
-		contact.setMobile(postData.getMobile());
-		contact.setPhone(postData.getPhone());
-		contact.setAssistantName(postData.getAssistantName());
-		contact.setAssistantPhone(postData.getAssistantPhone());
-		contact.setPosition(postData.getPosition());
-		contact.setSocialIdentifier(postData.getSocialIdentifier());
-		contact.setWebsiteUrl(postData.getWebsiteUrl());
-		contact.setVip(postData.isVip());
-		contact.setProspect(postData.isProspect());
-		contact.setAgreedToUA(postData.isAgreedToUA());
-		contact.setTags(postData.getTags()	);
-		
-		Customer customer = null;
-		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
-			customer = customerService.findByCompanyName("UNASSIGNED");
-			if(customer == null) customer = contactService.createUnassignedCustomer();
-			contact.setAddressBook(customer.getAddressbook());
-		}
-		else {
-			customer = customerService.findByCompanyName(contact.getCompany());
-			if(customer != null) {
-				contact.setAddressBook(customer.getAddressbook());
-			}
-			else {
-				customer = contactService.createCustomerFromContact(contact);
-			}
-		}
-			
-		contactService.create(contact);
+            if (StringUtils.isBlank(postData.getName().getLastName())) {
+                missingParameters.add("lastName");
+            }
+        }
 
-		return contact;
-	}
+        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("email");
+            // missingParameters.add("code");
+        } else if (StringUtils.isBlank(postData.getEmail())) {
+            missingParameters.add("email");
+        }
 
-	private void checkAndHandleMissingParameters(ContactDto postData) throws MissingParameterException {
-		if (postData.getName() == null) {
-			missingParameters.add("name");
-		}else {
-			if (StringUtils.isBlank(postData.getName().getFirstName())) {
-				missingParameters.add("firstName");
-			}
+        handleMissingParameters();
 
-			if (StringUtils.isBlank(postData.getName().getLastName())) {
-				missingParameters.add("lastName");
-			}
-		}
+        String code = null;
+        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getEmail();
+        } else {
+            code = postData.getCode();
+        }
 
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("email");
-			missingParameters.add("code");
-		}
-		else if(StringUtils.isBlank(postData.getEmail())) {
-			missingParameters.add("email");
-		}
+        Contact contact = contactService.findByCode(code);
+        if (contact != null) {
+            throw new EntityAlreadyExistsException(Contact.class, code, "code");
+        }
+        
+        contact = new Contact();
 
-		handleMissingParameters();
-	}
+        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(postData.getEmail());
+            postData.setEmail(postData.getEmail());
+        }
 
-	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
-		checkAndHandleMissingParameters(postData);
-		
-		String code = null;
-		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			code = postData.getEmail();
-		}
-		else {
-			code = postData.getCode();
-		}
-		
-		Contact contact = contactService.findByCode(code);
+        dtoToEntity(contact, postData);
 
-		if (contact == null) {
-			throw new EntityDoesNotExistsException(Contact.class, code, "code");
-		}
+        contactService.create(contact);
 
-		updateAccount(contact, postData);
-		contact.setCode(code);
-		
-		if (!StringUtils.isBlank(postData.getEmail())) {
-			contact.setEmail(postData.getEmail());
-		}
+        return contact;
+    }
 
-		if (!StringUtils.isBlank(postData.getDescription())) {
-			contact.setDescription(postData.getDescription());
-		}
+    public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 
-		if (!StringUtils.isBlank(postData.getMobile())) {
-			contact.setMobile(postData.getMobile());
-		}
+        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("email or code");
+        }
 
-		if (!StringUtils.isBlank(postData.getPhone())) {
-			contact.setPhone(postData.getPhone());
-		}
+        handleMissingParameters();
 
-		if (!StringUtils.isBlank(postData.getAssistantName())) {
-			contact.setAssistantName(postData.getAssistantName());
-		}
+        String code = null;
+        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getEmail();
+        } else {
+            code = postData.getCode();
+        }
 
-		if (!StringUtils.isBlank(postData.getAssistantPhone())) {
-			contact.setAssistantPhone(postData.getAssistantPhone());
-		}
+        Contact contact = contactService.findByCode(code);
+        if (contact == null) {
+            throw new EntityDoesNotExistsException(Contact.class, code, "code");
+        }
 
-		if (!StringUtils.isBlank(postData.getPosition())) {
-			contact.setPosition(postData.getPosition());
-		}
+        dtoToEntity(contact, postData);
 
-		if (!StringUtils.isBlank(postData.getSocialIdentifier())) {
-			contact.setSocialIdentifier(postData.getSocialIdentifier());
-		}
+        contact = contactService.update(contact);
+        return contact;
+    }
 
-		if (!StringUtils.isBlank(postData.getWebsiteUrl())) {
-			contact.setWebsiteUrl(postData.getWebsiteUrl());
-		}
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param contact Entity to populate
+     * @param postData DTO entity object to populate from
+     **/
+    private void dtoToEntity(Contact contact, ContactDto postData) {
 
-		if (!StringUtils.isBlank(postData.isVip())) {
-			contact.setVip(postData.isVip());
-		}
+        boolean isNew = contact.getId() == null;
 
-		if (!StringUtils.isBlank(postData.isProspect())) {
-			contact.setProspect(postData.isProspect());
-		}
+        updateAccount(contact, postData);
 
-		if (!StringUtils.isBlank(postData.isAgreedToUA())) {
-			contact.setAgreedToUA(postData.isAgreedToUA());
-		}
-		
-		if (!StringUtils.isBlank(postData.getTags())) {
-			contact.setTags(postData.getTags());
-		}
+        if (postData.getEmail() != null) {
+            contact.setEmail(StringUtils.isBlank(postData.getEmail()) ? null : postData.getEmail());
+        }
+        if (postData.getMobile() != null) {
+            contact.setMobile(StringUtils.isBlank(postData.getMobile()) ? null : postData.getMobile());
+        }
+        if (postData.getPhone() != null) {
+            contact.setPhone(StringUtils.isBlank(postData.getPhone()) ? null : postData.getPhone());
+        }
+        if (postData.getAssistantName() != null) {
+            contact.setAssistantName(StringUtils.isBlank(postData.getAssistantName()) ? null : postData.getAssistantName());
+        }
+        if (postData.getAssistantPhone() != null) {
+            contact.setAssistantPhone(StringUtils.isBlank(postData.getAssistantPhone()) ? null : postData.getAssistantPhone());
+        }
+        if (postData.getPosition() != null) {
+            contact.setPosition(StringUtils.isBlank(postData.getPosition()) ? null : postData.getPosition());
+        }
+        if (postData.getSocialIdentifier() != null) {
+            contact.setSocialIdentifier(StringUtils.isBlank(postData.getSocialIdentifier()) ? null : postData.getSocialIdentifier());
+        }
+        if (postData.getWebsiteUrl() != null) {
+            contact.setWebsiteUrl(StringUtils.isBlank(postData.getWebsiteUrl()) ? null : postData.getWebsiteUrl());
+        }
+        if (postData.isVip() != null) {
+            contact.setVip(postData.isVip());
+        }
+        if (postData.isProspect() != null) {
+            contact.setProspect(postData.isProspect());
+        }
+        if (postData.isAgreedToUA() != null) {
+            contact.setAgreedToUA(postData.isAgreedToUA());
+        }
 
-		if(contact.getCompany() != null && contact.getCompany().equals(postData.getCompany())) {
-			contact.setCompany(postData.getCompany());
-			Customer customer = null;
-			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
-				customer = customerService.findByCompanyName("UNASSIGNED");
-				if(customer == null) customer = contactService.createUnassignedCustomer();
-				contact.setAddressBook(customer.getAddressbook());
-			}
-			else {
-				customer = customerService.findByCompanyName(contact.getCompany());
-				if(customer != null) {
-					contact.setAddressBook(customer.getAddressbook());
-				}
-				else {
-					customer = contactService.createCustomerFromContact(contact);
-				}
-			}
-		}
-		
-		
-		contact = contactService.update(contact);
-		return contact;
-	}
+        if (postData.getTags() != null) {
+            contact.setTags(postData.getTags());
+        }
 
-	public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
+        if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
+            contact.setCompany(postData.getCompany());
+            Customer customer = null;
+            if (contact.getCompany() == null || contact.getCompany().isEmpty()) {
+                customer = customerService.findByCompanyName("UNASSIGNED");
+                if (customer == null)
+                    customer = contactService.createUnassignedCustomer();
+                contact.setAddressBook(customer.getAddressbook());
+            } else {
+                customer = customerService.findByCompanyName(contact.getCompany());
+                if (customer != null) {
+                    contact.setAddressBook(customer.getAddressbook());
+                } else {
+                    customer = contactService.createCustomerFromContact(contact);
+                }
+            }
+        }
+    }
 
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
-		}
+    public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getName().getFirstName())) {
+            missingParameters.add("firstName");
+        }
 
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("email");
-			//missingParameters.add("code");
-		}
+        if (StringUtils.isBlank(postData.getName().getLastName())) {
+            missingParameters.add("lastName");
+        }
 
-		handleMissingParameters();
+        if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("email");
+            // missingParameters.add("code");
+        }
 
-		String code = null;
-		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			code = postData.getEmail();
-		}
-		else {
-			code = postData.getCode();
-		}
-		
-		Contact contact = contactService.findByCode(code);
+        handleMissingParameters();
 
-		if (contact == null) {
-			return create(postData);
-		} else {
-			return update(postData);
-		}
-	}
+        String code = null;
+        if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+            code = postData.getEmail();
+        } else {
+            code = postData.getCode();
+        }
 
-	public void remove(String code) throws BusinessException, EntityDoesNotExistsException {
-		Contact contact = contactService.findByCode(code);
+        Contact contact = contactService.findByCode(code);
 
-		if (contact == null) {
-			throw new EntityDoesNotExistsException(Contact.class, code, "code");
-		}
+        if (contact == null) {
+            return create(postData);
+        } else {
+            return update(postData);
+        }
+    }
 
-		contactService.remove(contact);
-	}
+    public void remove(String code) throws BusinessException, EntityDoesNotExistsException {
+        Contact contact = contactService.findByCode(code);
 
-	public ContactDto findByCode(String code) throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("code");
-		}
+        if (contact == null) {
+            throw new EntityDoesNotExistsException(Contact.class, code, "code");
+        }
 
-		handleMissingParameters();
+        contactService.remove(contact);
+    }
 
-		ContactDto contactDto = null;
-		Contact contact = contactService.findByCode(code);
+    public ContactDto findByCode(String code) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
 
-		if (contact == null) {
-			throw new EntityDoesNotExistsException(Contact.class, code, "code");
-		}
+        handleMissingParameters();
 
-		contactDto = new ContactDto(contact);
+        ContactDto contactDto = null;
+        Contact contact = contactService.findByCode(code);
 
-		return contactDto;
-	}
+        if (contact == null) {
+            throw new EntityDoesNotExistsException(Contact.class, code, "code");
+        }
 
-	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
-	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering)
-			throws MeveoApiException {
-		return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
-	}
+        contactDto = new ContactDto(contact);
 
-	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
-	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering,
-			CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+        return contactDto;
+    }
 
-		if (pagingAndFiltering == null) {
-			pagingAndFiltering = new PagingAndFiltering();
-		}
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
+    public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
 
-		if (postData != null) {
-			pagingAndFiltering.addFilter("code", postData.getCode());
-		}
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
+    public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
-		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null,
-				pagingAndFiltering, Contact.class);
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
 
-		Long totalCount = contactService.count(paginationConfig);
+        if (postData != null) {
+            pagingAndFiltering.addFilter("code", postData.getCode());
+        }
 
-		ContactsDto contactsDto = new ContactsDto();
-		ContactsResponseDto result = new ContactsResponseDto();
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, Contact.class);
 
-		result.setPaging(pagingAndFiltering);
-		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-		contactsDto.setTotalNumberOfRecords(totalCount);
+        Long totalCount = contactService.count(paginationConfig);
 
-		if (totalCount > 0) {
-			List<Contact> contacts = contactService.list(paginationConfig);
-			for (Contact c : contacts) {
-				contactsDto.getContact().add(new ContactDto(c));
-			}
-		}
-		result.setContacts(contactsDto);
-		return result;
-	}
+        ContactsDto contactsDto = new ContactsDto();
+        ContactsResponseDto result = new ContactsResponseDto();
 
-	public ContactsDto importCSVText(String context) throws IOException {
-		List<Contact> failedToPersist = new ArrayList<Contact>();
-		List<Contact> contacts = null;
-		List<String> failedToPersistLog = new ArrayList<String>();
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        contactsDto.setTotalNumberOfRecords(totalCount);
 
-		contacts = contactService.parseCSVText(context);
-		
-		for(Contact contact : contacts) {
-			if(StringUtils.isBlank(contact.getName().getFirstName())) {
-				missingParameters.add("firstName");
-			}
-			if(StringUtils.isBlank(contact.getName().getLastName())) {
-				missingParameters.add("lastName");
-			}
-			if(StringUtils.isBlank(contact.getEmail()) && StringUtils.isBlank(contact.getCode())) {
-				missingParameters.add("email");
-				missingParameters.add("code");
-			}
-			
-			try {
-				handleMissingParameters();
-				
-				Contact c = contactService.findByCode(contact.getCode());
-				if (c == null) {
-					contactService.create(contact);
-				}
-				else {
-					update(new ContactDto(contact));
-				}
-				
-			} catch (MeveoApiException | BusinessException e) {
-				failedToPersist.add(contact);
-				failedToPersistLog.add(contact.toString() + " | " +  e.getMessage());
-			}
-		}
-		
-		ContactsDto contactsDto = new ContactsDto();
-		for(Contact contact : failedToPersist) {
-			contactsDto.getContact().add(new ContactDto(contact));
-		}
-		
-		contactService.logContactError(failedToPersistLog);
-		
-		return contactsDto;
-	}
+        if (totalCount > 0) {
+            List<Contact> contacts = contactService.list(paginationConfig);
+            for (Contact c : contacts) {
+                contactsDto.getContact().add(new ContactDto(c));
+            }
+        }
+        result.setContacts(contactsDto);
+        return result;
+    }
 
-	public void addTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
-		Contact contact = contactService.findByCode(code);
-		if(contact != null) {
-			if(!contact.getTags().contains(tag)) {
-				contact.getTags().add(tag);
-			}
-			else throw new BusinessException("Contact code: " + code + " already has tag: " + tag);
-		}
-		else throw new EntityDoesNotExistsException(Contact.class, code, "code");
-	}
+    public ContactsDto importCSVText(String context) throws IOException {
+        List<Contact> failedToPersist = new ArrayList<Contact>();
+        List<Contact> contacts = null;
+        List<String> failedToPersistLog = new ArrayList<String>();
 
-	public void removeTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
-		Contact contact = contactService.findByCode(code);
-		if(contact != null) {
-			if(contact.getTags().contains(tag)) {
-				contact.getTags().remove(tag);
-			}
-			else throw new BusinessException("Contact code: " + code + " do not contain tag: " + tag);
-		}
-		else throw new EntityDoesNotExistsException(Contact.class, code, "code");
-	}
+        contacts = contactService.parseCSVText(context);
+
+        for (Contact contact : contacts) {
+            if (StringUtils.isBlank(contact.getName().getFirstName())) {
+                missingParameters.add("firstName");
+            }
+            if (StringUtils.isBlank(contact.getName().getLastName())) {
+                missingParameters.add("lastName");
+            }
+            if (StringUtils.isBlank(contact.getEmail()) && StringUtils.isBlank(contact.getCode())) {
+                missingParameters.add("email");
+                missingParameters.add("code");
+            }
+
+            try {
+                handleMissingParameters();
+
+                Contact c = contactService.findByCode(contact.getCode());
+                if (c == null) {
+                    contactService.create(contact);
+                } else {
+                    update(new ContactDto(contact));
+                }
+
+            } catch (MeveoApiException | BusinessException e) {
+                failedToPersist.add(contact);
+                failedToPersistLog.add(contact.toString() + " | " + e.getMessage());
+            }
+        }
+
+        ContactsDto contactsDto = new ContactsDto();
+        for (Contact contact : failedToPersist) {
+            contactsDto.getContact().add(new ContactDto(contact));
+        }
+
+        contactService.logContactError(failedToPersistLog);
+
+        return contactsDto;
+    }
+
+    public void addTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
+        Contact contact = contactService.findByCode(code);
+        if (contact != null) {
+            if (!contact.getTags().contains(tag)) {
+                contact.getTags().add(tag);
+            } else
+                throw new BusinessException("Contact code: " + code + " already has tag: " + tag);
+        } else
+            throw new EntityDoesNotExistsException(Contact.class, code, "code");
+    }
+
+    public void removeTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
+        Contact contact = contactService.findByCode(code);
+        if (contact != null) {
+            if (contact.getTags().contains(tag)) {
+                contact.getTags().remove(tag);
+            } else
+                throw new BusinessException("Contact code: " + code + " do not contain tag: " + tag);
+        } else
+            throw new EntityDoesNotExistsException(Contact.class, code, "code");
+    }
 
 }

@@ -44,6 +44,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -59,13 +60,13 @@ import org.slf4j.Logger;
  * 
  */
 @Stateless
-public class WalletCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
+public class WalletCacheContainerProvider implements Serializable { 
 
     private static final long serialVersionUID = -4969288143287203121L;
 
     @Inject
     protected Logger log;
-
+    
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
@@ -184,8 +185,13 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         Map<Long, BigDecimal> walletLimits = new HashMap<>();
 
         for (WalletInstance wallet : chargeInstance.getWalletInstances()) {
-            if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                walletLimits.put(wallet.getId(), wallet.getRejectLevel());
+            WalletTemplate walletTemplate = wallet.getWalletTemplate();
+			if (walletTemplate != null && walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                BigDecimal rejectLevel = wallet.getRejectLevel();
+                if(walletTemplate!=null && walletTemplate.getRejectLevelEl()!=null) {
+					rejectLevel = walletService.evaluateElExpressionValue(walletTemplate.getRejectLevelEl(), wallet, chargeInstance);
+    			}
+				walletLimits.put(wallet.getId(), rejectLevel);
             }
         }
 
@@ -215,8 +221,14 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         String currentProvider = currentUser.getProviderCode();
 
         for (WalletInstance wallet : usageChargeInstance.getWalletInstances()) {
-            if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                walletLimits.put(wallet.getId(), wallet.getRejectLevel());
+        	WalletTemplate walletTemplate = wallet.getWalletTemplate();
+			if (walletTemplate != null && walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                BigDecimal rejectLevel = wallet.getRejectLevel();
+                if(walletTemplate!=null && walletTemplate.getRejectLevelEl()!=null) {
+					rejectLevel = walletService.evaluateElExpressionValue(walletTemplate.getRejectLevelEl(), wallet, usageChargeInstance);
+					
+                }
+				walletLimits.put(wallet.getId(), rejectLevel);
                 if (!balanceCache.containsKey(new CacheKeyLong(currentProvider, wallet.getId()))) {
                     initializeBalanceCachesForWallet(wallet.getId());
                 }
@@ -283,11 +295,12 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         BigDecimal oldValue = null;
         BigDecimal newValue = null;
 
-        CacheKeyLong cacheKey = new CacheKeyLong(currentUser.getProviderCode(), op.getWallet().getId());
+        WalletInstance wallet = op.getWallet();
+		CacheKeyLong cacheKey = new CacheKeyLong(currentUser.getProviderCode(), wallet.getId());
 
         // Either of caches is not initialized. By doing so, last operation will be included, no need to update it separatelly
         if (!reservedBalanceCache.containsKey(cacheKey) || !balanceCache.containsKey(cacheKey)) {
-            initializeBalanceCachesForWallet(op.getWallet().getId());
+            initializeBalanceCachesForWallet(wallet.getId());
             return;
         }
 
@@ -301,7 +314,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
                 newValue = oldValue.add(op.getAmountWithTax());
             }
 
-            log.debug("Update reservedBalance Cache for wallet {} {}->{}", op.getWallet().getId(), oldValue, newValue);
+            log.debug("Update reservedBalance Cache for wallet {} {}->{}", wallet.getId(), oldValue, newValue);
 
             reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, newValue);
         }
@@ -311,19 +324,24 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             oldValue = balanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
             newValue = oldValue.add(op.getAmountWithTax());
 
-            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{} rejectLevel: {}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel(), op.getWallet().getRejectLevel());
+            BigDecimal lowBalanceLevel = wallet.getLowBalanceLevel();
+            WalletTemplate walletTemplate = wallet.getWalletTemplate();
+			if(walletTemplate!=null && walletTemplate.getLowBalanceLevelEl()!=null) {
+				lowBalanceLevel = walletService.evaluateElExpressionValue(walletTemplate.getLowBalanceLevelEl(), wallet, op.getChargeInstance());
+			}
+			log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{} rejectLevel: {}", wallet.getId(), oldValue, newValue, lowBalanceLevel, wallet.getRejectLevel());
 
             balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, newValue);
 
-            if (op.getWallet().getLowBalanceLevel() != null) {
-                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) <= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) > 0) {
-                    lowBalanceEventProducer.fire(op.getWallet());
+            if ( lowBalanceLevel != null) {
+                if (lowBalanceLevel.compareTo(newValue) <= 0 && lowBalanceLevel.compareTo(oldValue) > 0) {
+                    lowBalanceEventProducer.fire(wallet);
                 }
             }
 
         }
     }
-
+    
     /**
      * Get cached balance for a given wallet id
      * 

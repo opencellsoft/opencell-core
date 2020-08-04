@@ -18,7 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,17 +27,16 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.UsageRatingAsync;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 @Stateless
@@ -59,10 +57,6 @@ public class UsageRatingJobBean extends BaseJobBean {
     private UsageRatingAsync usageRatingAsync;
 
     @Inject
-    @Rejected
-    private Event<Serializable> rejectededEdrProducer;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -70,11 +64,11 @@ public class UsageRatingJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
             Date rateUntilDate = null;

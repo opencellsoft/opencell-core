@@ -51,11 +51,11 @@ public class ContactDto extends AccountDto {
 	
 	private String socialIdentifier;
 
-	private boolean isVip;
+	private Boolean isVip;
 
-	private boolean isProspect;
+	private Boolean isProspect;
 
-	private boolean agreedToUA;
+	private Boolean agreedToUA;
 
 	private CommunicationPolicy contactPolicy;
 
@@ -171,27 +171,27 @@ public class ContactDto extends AccountDto {
 		this.importedBy = importedBy;
 	}
 
-	public boolean isVip() {
+	public Boolean isVip() {
 		return isVip;
 	}
 
-	public void setVip(boolean isVip) {
+	public void setVip(Boolean isVip) {
 		this.isVip = isVip;
 	}
 
-	public boolean isProspect() {
+	public Boolean isProspect() {
 		return isProspect;
 	}
 
-	public void setProspect(boolean isProspect) {
+	public void setProspect(Boolean isProspect) {
 		this.isProspect = isProspect;
 	}
 
-	public boolean isAgreedToUA() {
+	public Boolean isAgreedToUA() {
 		return agreedToUA;
 	}
 
-	public void setAgreedToUA(boolean agreedToUA) {
+	public void setAgreedToUA(Boolean agreedToUA) {
 		this.agreedToUA = agreedToUA;
 	}
 

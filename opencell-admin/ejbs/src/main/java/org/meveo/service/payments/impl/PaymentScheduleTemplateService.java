@@ -125,4 +125,44 @@ public class PaymentScheduleTemplateService extends BusinessService<PaymentSched
         }
         return result;
     }
+
+    /**
+     * Evaluate payment day in month expression.
+     *
+     * @param expression      the expression
+     * @param serviceInstance the service instance
+     * @return the big decimal
+     */
+    public Long evaluatePaymentDayInMonthExpression(String expression, ServiceInstance serviceInstance) {
+        Long result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
+
+        Object res = null;
+        try {
+            res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+
+            if (res != null) {
+                if (res instanceof Long) {
+                    result = (Long) res;
+                } else if (res instanceof Number) {
+                    result = new Long(((Number) res).longValue());
+                } else if (res instanceof String) {
+                    result = Long.valueOf(res.toString());
+                } else {
+                    log.error("PaymentDayInMonth Expression " + expression + " do not evaluate to number but " + res);
+                }
+            }
+        } catch (BusinessException e1) {
+            log.error("PaymentDayInMonth Expression {} error", expression, e1);
+
+        } catch (Exception e) {
+            log.error("Error PaymentDayInMonth Expression " + expression, e);
+        }
+        return result;
+    }
 }

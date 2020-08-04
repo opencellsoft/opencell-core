@@ -28,6 +28,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -92,6 +93,20 @@ public class WalletTemplate extends BusinessEntity {
     private BigDecimal rejectLevel;
 
     /**
+     * Expression to determine low Balance Level
+     */
+    @Column(name = "low_balance_level_el", length = 2000)
+    @Size(max = 2000)
+    private String lowBalanceLevelEl;
+    
+	/**
+     * Expression to determine reject Level
+     */
+    @Column(name = "reject_level_el", length = 2000)
+    @Size(max = 2000)
+    private String rejectLevelEl;
+    
+    /**
      * @return Wallet type
      */
     public BillingWalletTypeEnum getWalletType() {
@@ -148,4 +163,33 @@ public class WalletTemplate extends BusinessEntity {
     public void setRejectLevel(BigDecimal rejectLevel) {
         this.rejectLevel = rejectLevel;
     }
+    
+    /**
+     * @return lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+    public String getLowBalanceLevelEl() {
+		return lowBalanceLevelEl;
+	}
+
+    /**
+     * @param lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+	public void setLowBalanceLevelEl(String lowBalanceLevelEl) {
+		this.lowBalanceLevelEl = lowBalanceLevelEl;
+	}
+
+	/**
+     * @return RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public String getRejectLevelEl() {
+		return rejectLevelEl;
+	}
+
+	/**
+     * @param RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public void setRejectLevelEl(String rejectLevelEl) {
+		this.rejectLevelEl = rejectLevelEl;
+	}
+
 }

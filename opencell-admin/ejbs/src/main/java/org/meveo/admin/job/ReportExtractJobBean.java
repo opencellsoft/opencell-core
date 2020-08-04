@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -35,11 +36,13 @@ import org.meveo.admin.async.ReportExtractAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.finance.ReportExtractService;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 /**
@@ -74,11 +77,11 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("start in running with parameter={}", jobInstance.getParametres());
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
             Date startDate = null, endDate = null;
@@ -89,14 +92,22 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
 
-            List<Long> reportExtractIds = reportExtractService.listIds();
-            log.debug("Report to execute={}" + (reportExtractIds == null ? null : reportExtractIds.size()));
+            // Resolve report extracts from CF value
+            List<Long> reportExtractIds = null;
+            List<EntityReferenceWrapper> reportExtractReferences = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReportExtractJob.CF_REPORTS);
+            if (reportExtractReferences != null && !reportExtractReferences.isEmpty()) {
+                reportExtractIds = reportExtractService.findByCodes(reportExtractReferences.stream().map(er -> er.getCode()).collect(Collectors.toList())).stream().map(re -> re.getId()).collect(Collectors.toList());
+
+                // Or use all reports
+            } else {
+                reportExtractIds = reportExtractService.listIds();
+            }
+
+            log.debug("Reports to execute={}" + (reportExtractIds == null ? null : reportExtractIds.size()));
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(reportExtractIds, nbRuns.intValue());
 
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
                 futures.add(reportExtractAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, startDate, endDate, lastCurrentUser));
@@ -130,5 +141,4 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
         }
         log.debug("end running RecurringRatingJobBean!");
     }
-
 }

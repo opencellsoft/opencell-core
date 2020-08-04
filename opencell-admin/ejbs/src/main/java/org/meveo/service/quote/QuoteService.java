@@ -198,7 +198,7 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true);
+                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
                                 if (walletOps != null && !walletOps.isEmpty()) {
                                     walletOperations.addAll(walletOps);
                                 }

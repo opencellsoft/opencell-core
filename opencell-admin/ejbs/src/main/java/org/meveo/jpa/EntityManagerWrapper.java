@@ -18,10 +18,9 @@
 
 package org.meveo.jpa;
 
-import org.hibernate.Session;
+import java.io.Serializable;
 
 import javax.persistence.EntityManager;
-import java.io.Serializable;
 
 /**
  * A wrapper for Entity manager injection and its manipulation in application manager persistence context. Only one level of depth is supported. That is, can not nest two

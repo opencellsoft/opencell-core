@@ -79,11 +79,11 @@ public class MediationJob extends Job {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         
 //        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
@@ -189,7 +189,7 @@ public class MediationJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-        nbRuns.setCode("nbRuns");
+        nbRuns.setCode(CF_NB_RUNS);
         nbRuns.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
@@ -197,10 +197,10 @@ public class MediationJob extends Job {
         nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
         nbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", nbRuns);
+        result.put(CF_NB_RUNS, nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-        waitingMillis.setCode("waitingMillis");
+        waitingMillis.setCode(Job.CF_WAITING_MILLIS);
         waitingMillis.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
@@ -208,7 +208,7 @@ public class MediationJob extends Job {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", waitingMillis);
+        result.put(Job.CF_WAITING_MILLIS, waitingMillis);
 
         CustomFieldTemplate oneFilePerJob = new CustomFieldTemplate();
         oneFilePerJob.setCode("oneFilePerJob");

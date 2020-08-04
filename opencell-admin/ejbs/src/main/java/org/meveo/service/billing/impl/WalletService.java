@@ -34,12 +34,17 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
  * Wallet service implementation.
@@ -50,7 +55,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
-
+	
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
 
@@ -275,12 +280,33 @@ public class WalletService extends PersistenceService<WalletInstance> {
             Map<Long, BigDecimal> walletLimits = new HashMap<>();
 
             for (WalletInstance wallet : chargeInstance.getWalletInstances()) {
-                if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    walletLimits.put(wallet.getId(), wallet.getRejectLevel());
+            	WalletTemplate walletTemplate = wallet.getWalletTemplate();
+                if (walletTemplate != null && walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
+    				walletLimits.put(wallet.getId(), evaluateRejectLevel(chargeInstance, wallet, walletTemplate));
                 }
             }
 
             return walletLimits;
         }
+    }
+
+	private BigDecimal evaluateRejectLevel(ChargeInstance chargeInstance, WalletInstance wallet, WalletTemplate walletTemplate) {
+		BigDecimal rejectLevel = wallet.getRejectLevel();
+		if(walletTemplate!=null && walletTemplate.getRejectLevelEl()!=null) {
+			rejectLevel = evaluateElExpressionValue(walletTemplate.getRejectLevelEl(), wallet, chargeInstance);
+		}
+		return rejectLevel;
+	}
+    
+    public BigDecimal evaluateElExpressionValue(String expression, WalletInstance walletInstance, ChargeInstance chargeInstance) {
+    	if(expression == null){
+            return null;
+        }
+    	Map<Object, Object> initialContext = new HashMap<Object, Object>(); 
+        if (expression.indexOf(ValueExpressionWrapper.VAR_WALLET_INSTANCE) >= 0) {
+        	initialContext.put(ValueExpressionWrapper.VAR_WALLET_INSTANCE, walletInstance);
+        }
+        Map<Object, Object> context = ValueExpressionWrapper.completeContext(expression, initialContext, chargeInstance);
+		return ValueExpressionWrapper.evaluateExpression(expression, context, BigDecimal.class);
     }
 }

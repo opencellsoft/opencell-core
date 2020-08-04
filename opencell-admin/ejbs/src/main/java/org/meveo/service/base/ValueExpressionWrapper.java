@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.el.ArrayELResolver;
@@ -238,7 +239,12 @@ public class ValueExpressionWrapper {
      * EL expression variable - amount - 'amount'
      */
     public static final String VAR_AMOUNT = "amount";
-
+    
+    /**
+     * EL expression variable - wallet instance - 'wallet'
+     */
+    public static final String VAR_WALLET_INSTANCE = "wallet";
+    
     /**
      * Variables in EL expression
      * 
@@ -553,8 +559,18 @@ public class ValueExpressionWrapper {
      * @return A variable map for use as EL context
      */
     public static Map<Object, Object> populateContext(String el, Object... parameters) {
-
-        Map<Object, Object> contextMap = new HashMap<>();
+    	return completeContext(el, new HashMap<>(), parameters);
+    }
+    
+    /**
+     * complete context with variables by examining parameter classes, with an initial contextMap
+     * 
+     * @param el EL to construct the context for
+     * @param contextMap initial context map that will be completed by needed variables 
+     * @param parameters Available parameters
+     * @return A variable map for use as EL context
+     */
+    public static Map<Object, Object> completeContext(String el, Map<Object, Object> contextMap, Object... parameters) {
 
         ChargeInstance chargeInstance = null;
         ServiceInstance serviceInstance = null;
@@ -564,6 +580,7 @@ public class ValueExpressionWrapper {
         CustomerAccount customerAccount = null;
         Customer customer = null;
         Invoice invoice = null;
+        List<Access> accessPoints=null;
 
         // Recognize passed parameters
         for (Object parameter : parameters) {
@@ -604,11 +621,20 @@ public class ValueExpressionWrapper {
             if (parameter instanceof Invoice) {
                 invoice = (Invoice) parameter;
             }
+            if (parameter instanceof List) {
+            	List list = (List) parameter;
+            	if(list!=null && !list.isEmpty()) {
+            		if(list.get(0) instanceof Access) {
+            			accessPoints=list;
+            		}
+            	}
+            }
         }
 
         // Append any derived parameters
         if (el.contains(VAR_SERVICE_INSTANCE) && !contextMap.containsKey(VAR_SERVICE_INSTANCE) && chargeInstance != null) {
-            contextMap.put(VAR_SERVICE_INSTANCE, chargeInstance.getServiceInstance());
+        	serviceInstance = chargeInstance.getServiceInstance();
+            contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
         }
         if (el.contains(VAR_SERVICE_TEMPLATE) && !contextMap.containsKey(VAR_SERVICE_TEMPLATE)) {
             if (serviceInstance != null) {
@@ -619,79 +645,99 @@ public class ValueExpressionWrapper {
         }
         if (el.contains(VAR_SUBSCRIPTION) && !contextMap.containsKey(VAR_SUBSCRIPTION)) {
             if (serviceInstance != null) {
-                contextMap.put(VAR_SUBSCRIPTION, serviceInstance.getSubscription());
+            	subscription = serviceInstance.getSubscription();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                contextMap.put(VAR_SUBSCRIPTION, chargeInstance.getSubscription());
+            	subscription = chargeInstance.getSubscription();
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
-                contextMap.put(VAR_SUBSCRIPTION, chargeInstance.getServiceInstance().getSubscription());
+            	subscription = chargeInstance.getServiceInstance().getSubscription();
             } else if (invoice != null && invoice.getSubscription() != null) {
-                contextMap.put(VAR_SUBSCRIPTION, invoice.getSubscription());
+            	subscription = invoice.getSubscription();
             }
+            contextMap.put(VAR_SUBSCRIPTION, subscription);
+        }
+        
+        if (el.contains(VAR_ACCESS) && !contextMap.containsKey(VAR_ACCESS)) {
+        	if (subscription != null) {
+        		accessPoints = subscription.getAccessPoints();
+        	} else if (serviceInstance != null && serviceInstance.getSubscription()!=null && serviceInstance.getSubscription().getAccessPoints()!=null) {
+        		accessPoints = serviceInstance.getSubscription().getAccessPoints();
+            } else if (chargeInstance != null && chargeInstance.getSubscription() != null&& serviceInstance.getSubscription().getAccessPoints()!=null) {
+            	accessPoints = chargeInstance.getSubscription().getAccessPoints();
+            } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null && chargeInstance.getServiceInstance().getSubscription().getAccessPoints()!=null) {
+            	accessPoints = chargeInstance.getServiceInstance().getSubscription().getAccessPoints();
+            } else if (invoice != null && invoice.getSubscription() != null) {
+            	accessPoints = invoice.getSubscription().getAccessPoints();
+            }
+        	contextMap.put(VAR_ACCESS, accessPoints);
         }
         if (el.contains(VAR_USER_ACCOUNT) && !contextMap.containsKey(VAR_USER_ACCOUNT)) {
             if (subscription != null) {
-                contextMap.put(VAR_USER_ACCOUNT, subscription.getUserAccount());
+                userAccount= subscription.getUserAccount();
             } else if (serviceInstance != null) {
-                contextMap.put(VAR_USER_ACCOUNT, serviceInstance.getSubscription().getUserAccount());
+            	userAccount = serviceInstance.getSubscription().getUserAccount();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                contextMap.put(VAR_USER_ACCOUNT, chargeInstance.getSubscription().getUserAccount());
+            	userAccount = chargeInstance.getSubscription().getUserAccount();
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
-                contextMap.put(VAR_USER_ACCOUNT, chargeInstance.getServiceInstance().getSubscription().getUserAccount());
+            	userAccount = chargeInstance.getServiceInstance().getSubscription().getUserAccount();
             }
+            contextMap.put(VAR_USER_ACCOUNT, userAccount);
         }
 
         if (el.contains(VAR_BILLING_ACCOUNT) && !contextMap.containsKey(VAR_BILLING_ACCOUNT)) {
             if (userAccount != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, userAccount.getBillingAccount());
+            	billingAccount = userAccount.getBillingAccount();
             } else if (subscription != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, subscription.getUserAccount().getBillingAccount());
+            	billingAccount = subscription.getUserAccount().getBillingAccount();
             } else if (serviceInstance != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, serviceInstance.getSubscription().getUserAccount().getBillingAccount());
+            	billingAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+            	billingAccount = chargeInstance.getSubscription().getUserAccount().getBillingAccount();
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount());
+            	billingAccount = chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount();
             } else if (invoice != null) {
-                contextMap.put(VAR_BILLING_ACCOUNT, invoice.getBillingAccount());
+            	billingAccount = invoice.getBillingAccount();
             }
+            contextMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }
 
         if (el.contains(VAR_CUSTOMER_ACCOUNT) && !contextMap.containsKey(VAR_CUSTOMER_ACCOUNT)) {
             if (billingAccount != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+            	customerAccount = billingAccount.getCustomerAccount();
             } else if (userAccount != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, userAccount.getBillingAccount().getCustomerAccount());
+            	customerAccount = userAccount.getBillingAccount().getCustomerAccount();
             } else if (subscription != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, subscription.getUserAccount().getBillingAccount().getCustomerAccount());
+            	customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
             } else if (serviceInstance != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
+            	customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
+            	customerAccount = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount();
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
+            	customerAccount = chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount();
             } else if (invoice != null) {
-                contextMap.put(VAR_CUSTOMER_ACCOUNT, invoice.getBillingAccount().getCustomerAccount());
+            	customerAccount = invoice.getBillingAccount().getCustomerAccount();
             }
+            contextMap.put(VAR_CUSTOMER_ACCOUNT, customerAccount);
         }
 
         if (el.contains(VAR_CUSTOMER) && !contextMap.containsKey(VAR_CUSTOMER)) {
             if (customerAccount != null) {
-                contextMap.put(VAR_CUSTOMER, customerAccount.getCustomer());
+            	customer = customerAccount.getCustomer();
             } else if (billingAccount != null) {
-                contextMap.put(VAR_CUSTOMER, billingAccount.getCustomerAccount().getCustomer());
+            	customer = billingAccount.getCustomerAccount().getCustomer();
             } else if (userAccount != null) {
-                contextMap.put(VAR_CUSTOMER, userAccount.getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = userAccount.getBillingAccount().getCustomerAccount().getCustomer();
             } else if (subscription != null) {
-                contextMap.put(VAR_CUSTOMER, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
             } else if (serviceInstance != null) {
-                contextMap.put(VAR_CUSTOMER, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
             } else if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-                contextMap.put(VAR_CUSTOMER, chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
             } else if (chargeInstance != null && chargeInstance.getServiceInstance() != null) {
-                contextMap.put(VAR_CUSTOMER, chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
             } else if (invoice != null) {
-                contextMap.put(VAR_CUSTOMER, invoice.getBillingAccount().getCustomerAccount().getCustomer());
+            	customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
             }
+            contextMap.put(VAR_CUSTOMER, customer);
         }
 
         if (el.contains(VAR_SELLER) && !contextMap.containsKey(VAR_SELLER)) {
@@ -731,7 +777,7 @@ public class ValueExpressionWrapper {
                 contextMap.put(VAR_BILLING_RUN, invoice.getBillingRun());
             }
         }
-
+        
         return contextMap;
     }
 }

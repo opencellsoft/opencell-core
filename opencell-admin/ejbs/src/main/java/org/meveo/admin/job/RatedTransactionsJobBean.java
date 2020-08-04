@@ -45,6 +45,7 @@ import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 /**
@@ -79,21 +80,18 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
 
             EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
             WalletOperationAggregationSettings aggregationSettings = null;
             if (aggregationSettingsWrapper != null) {
-                aggregationSettings = (walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()) == null
-                        || walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).isEmpty()) ?
-                        null :
-                        walletOperationAggregationSettingsService.findByCodeLike(aggregationSettingsWrapper.getCode()).get(0);
+                aggregationSettings = walletOperationAggregationSettingsService.findByCode(aggregationSettingsWrapper.getCode());
             }
             removeZeroWalletOperation();
             if (aggregationSettings != null) {

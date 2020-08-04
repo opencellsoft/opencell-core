@@ -522,6 +522,17 @@ public class DateUtils {
         return result;
     }
 
+    /**
+     * Instantiate a new date
+     * 
+     * @param year Year
+     * @param month Month - a 0 based. Use 0 for January, 11 for December
+     * @param day Day of month
+     * @param hour Hour
+     * @param minute Minute
+     * @param second Second
+     * @return A date instance
+     */
     public static Date newDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute, second);

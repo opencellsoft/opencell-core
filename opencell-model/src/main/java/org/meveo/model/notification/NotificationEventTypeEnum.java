@@ -24,8 +24,120 @@ package org.meveo.model.notification;
  */
 
 public enum NotificationEventTypeEnum {
-    CREATED, UPDATED, REMOVED, TERMINATED, DISABLED, PROCESSED, REJECTED, REJECTED_CDR, LOGGED_IN, INBOUND_REQ, ENABLED,
-    LOW_BALANCE, FILE_UPLOAD, FILE_DOWNLOAD, FILE_RENAME, FILE_DELETE, COUNTER_DEDUCED, END_OF_TERM, STATUS_UPDATED, RENEWAL_UPDATED;
+    /**
+     * Entity was created
+     */
+    CREATED,
+
+    /**
+     * Entity was updated
+     */
+    UPDATED,
+
+    /**
+     * Entity was deleted
+     */
+    REMOVED,
+
+    /**
+     * Entity was terminated
+     */
+    TERMINATED,
+
+    /**
+     * Entity was enabled
+     */
+    ENABLED,
+
+    /**
+     * Entity was disabled
+     */
+    DISABLED,
+
+    /**
+     * Job execution has completed
+     */
+    PROCESSED,
+
+    /**
+     * Failed to rate EDR or a recurring charge
+     */
+    REJECTED,
+
+    /**
+     * Failed to process CDR
+     */
+    REJECTED_CDR,
+
+    /**
+     * User has logged in
+     */
+    LOGGED_IN,
+
+    /**
+     * Received inbound request
+     */
+    INBOUND_REQ,
+
+    /**
+     * Reached low balance on prepaid wallet instance
+     */
+    LOW_BALANCE,
+
+    /**
+     * File was uploaded via FTP
+     */
+    FILE_UPLOAD,
+
+    /**
+     * File was downloaded via FTP
+     */
+    FILE_DOWNLOAD,
+
+    /**
+     * File was renamed via FTP
+     */
+    FILE_RENAME,
+
+    /**
+     * File was deleted via FTP
+     */
+    FILE_DELETE,
+
+    /**
+     * Counter has reached the value to alert on
+     */
+    COUNTER_DEDUCED,
+
+    /**
+     * Subscription or service renewal period is approaching
+     */
+    END_OF_TERM,
+
+    /**
+     * Subscription or service status was updated
+     */
+    STATUS_UPDATED,
+
+    /**
+     * Subscription or service renewal condition was updated
+     */
+    RENEWAL_UPDATED,
+
+    /**
+     * Generated XML for the invoice
+     */
+    XML_GENERATED,
+
+    /**
+     * Generated PDF for the invoice
+     */
+    PDF_GENERATED,
+
+    /**
+     * Invoice number assigned
+     */
+    INVOICE_NUMBER_ASSIGNED;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
