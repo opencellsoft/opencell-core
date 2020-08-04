@@ -28,15 +28,12 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import org.hibernate.Session;
 import org.meveo.jpa.EntityManagerProvider;
-import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 
 import liquibase.Contexts;
@@ -63,6 +60,8 @@ import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.statement.SequenceNextValueFunction;
 
@@ -72,15 +71,11 @@ public class CustomTableCreatorService implements Serializable {
 
     private static final long serialVersionUID = -5858023657669249422L;
 
-    @PersistenceUnit(unitName = "MeveoAdmin")
-    private EntityManagerFactory emf;
-
-    @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
-
     @Inject
     private EntityManagerProvider entityManagerProvider;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @Inject
     private Logger log;
@@ -139,30 +134,24 @@ public class CustomTableCreatorService implements Serializable {
         dbLog.addChangeSet(mysqlChangeSet);
 
         EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
-
+        
         Session hibernateSession = em.unwrap(Session.class);
-
+        
+        
         hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to create a custom table {}", dbTableName, e);
                     throw new SQLException(e);
                 }
-                
             }
         });
     }
-
+    
     /**
      * Add a field to a db table. Creates a liquibase changeset to add a field to a table and executes it
      *
@@ -374,14 +363,8 @@ public class CustomTableCreatorService implements Serializable {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a field {} to a custom table {}", dbTableName, dbFieldname, e);
                     throw new SQLException(e);
@@ -430,13 +413,8 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
 
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to drop a custom table {}", dbTableName, e);
                     throw new SQLException(e);
@@ -478,12 +456,8 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
 
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -524,13 +498,8 @@ public class CustomTableCreatorService implements Serializable {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to add a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -543,5 +512,17 @@ public class CustomTableCreatorService implements Serializable {
 	public String extractConstraintName(String dbTableName) {
 		String constraintName = "CT_UniqueConstraint_"+dbTableName;
 		return constraintName;
+	}
+	
+    private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
+		Database database;
+		database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		if(currentproviderCode!=null) {
+			database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
+		}
+		
+		Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
+		liquibase.update(new Contexts(), new LabelExpression());
 	}
 }
