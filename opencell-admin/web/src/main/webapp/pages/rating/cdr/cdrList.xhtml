@@ -23,7 +23,7 @@
 		</h:form>
 
 		<hftl:searchPanel label="#{messages['commons.search']}"
-			backingBean="#{cdrListBean}" renderNewButton="false">
+			backingBean="#{cdrBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['cdr.accessCode']}"
 				field="accessCode" />
 			<hftl:searchField label="#{messages['commons.status']}"
@@ -37,7 +37,7 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList id="cdrList" checkMany="true" noClose="false"
-			backingBean="#{cdrListBean}" scrollable="true">
+			backingBean="#{cdrBean}" scrollable="true">
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right"
 					icon="ui-icon-calculator" />
@@ -138,13 +138,13 @@
 				severity="alert" widgetVar="fieldsConfirmBackoutCdr"
 				appendTo="@(body)">
 					<p:panel styleClass="confirm-dialog-content">
-						<h:form id="cdrform">						
-							<hftl:searchPanel backingBean="#{cdrBean}" renderNewButton="false" columns="3">
+						<h:form id="cdrform">	
+							<hftl:searchPanel  ajaxUpdateIds=":cdrform:fileNamesList" backingBean="#{cdrListBean}" renderNewButton="false" columns="3" update=":cdrform:fileNamesList">
 								<hftl:searchField label="CDR File name" field="originBatch" />
 								<hftl:searchField label="Creation Date" field="created" />
-							</hftl:searchPanel>						
+							</hftl:searchPanel>																	
 							<br/>
-							<hftl:dataList  formId="fileNamesList" backingBean="#{cdrBean}" dataModel="#{cdrBean.filteredLazyDataModel}"
+							<hftl:dataList  formId="fileNamesList" backingBean="#{cdrListBean}" dataModel="#{cdrListBean.filteredLazyDataModel}"
 								exportToXml="false" exportXlsxButton="false" selectionMode="single" checkMany="false">						
 									<hftl:column label="CDR File Name" field="originBatch"/>
 									<hftl:column label="Creation Date" field="created"/>	

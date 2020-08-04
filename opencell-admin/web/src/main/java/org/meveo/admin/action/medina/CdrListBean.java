@@ -18,16 +18,68 @@
 
 package org.meveo.admin.action.medina;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.meveo.model.rating.CDR;
+import org.meveo.service.medina.impl.CDRService;
+import org.meveo.util.view.LazyDataModelWSize;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 @Named
 @ConversationScoped
 public class CdrListBean extends CdrBean {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6872704581103186463L;
+
+    protected LazyDataModel<CDR> cdrFileNames;
+
+    @Inject
+    private CDRService cdrService;
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel<CDR> getFilteredLazyDataModel() {
+        log.warn("filters : " + filters);
+        if(filters != null && !filters.isEmpty() && filters.size() > 0) {
+            log.warn("getLazyDataModel()");
+            return getLazyDataModel();
+        }
+        log.warn("cdrFileNames is null : " + (cdrFileNames == null));    
+        if (cdrFileNames == null) {
+            cdrFileNames = new LazyDataModelWSize<CDR>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
+                    List<CDR> entities = cdrService.getCDRFileNames();
+                    setRowCount(entities.size());
+                    log.warn("mapFilters : " + mapfilters);
+                    log.warn("entities size : " + entities.size() + " first : " + first + " , pageSize: " + pageSize);
+                    if (getRowCount() > 0) {
+                        return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+                    } else {
+                        return new ArrayList<CDR>();
+                    }
+
+                }
+                @Override
+                public Object getRowKey(CDR cdr) {
+                    log.warn("getRowKey : " + cdr.getId());
+                    return cdr.getId();
+                }
+                
+            };
+        } 
+        log.warn("returning current cdrFileNames");
+        return cdrFileNames; 
+    }
 
 }
