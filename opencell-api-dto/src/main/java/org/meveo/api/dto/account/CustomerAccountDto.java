@@ -129,7 +129,7 @@ public class CustomerAccountDto extends AccountDto {
     private List<PaymentMethodDto> paymentMethods;
 
     /** The excluded from payment. */
-    private boolean excludedFromPayment;
+    private Boolean excludedFromPayment;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead.
@@ -531,7 +531,7 @@ public class CustomerAccountDto extends AccountDto {
      *
      * @return the excludedFromPayment
      */
-    public boolean isExcludedFromPayment() {
+    public Boolean isExcludedFromPayment() {
         return excludedFromPayment;
     }
 
@@ -540,7 +540,7 @@ public class CustomerAccountDto extends AccountDto {
      *
      * @param excludedFromPayment the excludedFromPayment to set
      */
-    public void setExcludedFromPayment(boolean excludedFromPayment) {
+    public void setExcludedFromPayment(Boolean excludedFromPayment) {
         this.excludedFromPayment = excludedFromPayment;
     }
 

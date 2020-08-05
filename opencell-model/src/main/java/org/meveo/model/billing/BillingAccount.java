@@ -108,7 +108,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
-    private Boolean electronicBilling = false;
+    private boolean electronicBilling;
 
     /**
      * Next invoice date
@@ -398,11 +398,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
         this.statusDate = statusDate;
     }
 
-    public Boolean getElectronicBilling() {
+    public boolean getElectronicBilling() {
         return electronicBilling;
     }
 
-    public void setElectronicBilling(Boolean electronicBilling) {
+    public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
     }
 

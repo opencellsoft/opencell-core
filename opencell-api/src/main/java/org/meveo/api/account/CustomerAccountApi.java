@@ -147,20 +147,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw new EntityAlreadyExistsException(CustomerAccount.class, postData.getCode());
         }
 
-        Customer customer = customerService.findByCode(postData.getCustomer());
-        if (customer == null) {
-            throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
-        }
-
-        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency());
-        if (tradingCurrency == null) {
-            throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
-        }
-
-        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
-        if (tradingLanguage == null) {
-            throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
-        }
         // Start compatibility with pre-4.6 versions
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
             postData.setPaymentMethods(new ArrayList<>());
@@ -178,58 +164,19 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
-        populate(postData, customerAccount);
-        customerAccount.setDateDunningLevel(postData.getDateDunningLevel() != null ? postData.getDateDunningLevel() : new Date());
-        customerAccount.setCustomer(customer);
-        customerAccount.setTradingCurrency(tradingCurrency);
-        customerAccount.setTradingLanguage(tradingLanguage);
-        if (!StringUtils.isBlank(postData.getCreditCategory())) {
-            customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
-        }
-        customerAccount.setExternalRef1(postData.getExternalRef1());
-        customerAccount.setExternalRef2(postData.getExternalRef2());
-        customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
-        customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
+
+        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel);
 
         if (StringUtils.isBlank(postData.getCode())) {
             customerAccount.setCode(customGenericEntityCodeService.getGenericEntityCode(customerAccount));
         }
 
-        if (postData.getPaymentMethods() != null) {
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                paymentMethodApi.validate(paymentMethodDto, false);
-                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
-            }
-        }
-
-        if (businessAccountModel != null) {
-            customerAccount.setBusinessAccountModel(businessAccountModel);
-        }
-        customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
-        customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-        customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        if (postData.getInvoicingThreshold() != null) {
-            customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-        }
-        if (postData.getCheckThreshold() != null) {
-            customerAccount.setCheckThreshold(postData.getCheckThreshold());
-        }
-
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
-        addressBookService.create(addressBook);
-
-        customerAccount.setAddressbook(addressBook);
+//        if (postData.getPaymentMethods() != null) {
+//            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+//                paymentMethodApi.validate(paymentMethodDto, false);
+//                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
+//            }
+//        }
 
         customerAccountService.create(customerAccount);
 
@@ -249,12 +196,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getCurrency())) {
-            missingParameters.add("currency");
-        }
-        if (StringUtils.isBlank(postData.getLanguage())) {
-            missingParameters.add("language");
-        }
+
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
@@ -266,13 +208,31 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
         }
-        customerAccount.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+
+        dtoToEntity(customerAccount, postData, checkCustomFields, businessAccountModel);
+
+        customerAccount = customerAccountService.update(customerAccount);
+
+        return customerAccount;
+    }
+
+    /**
+     * Populate entity with fields from DTO entity
+     * 
+     * @param userAccount Entity to populate
+     * @param postData DTO entity object to populate from
+     * @param checkCustomField Should a check be made if CF field is required
+     * @param businessAccountModel Business account model
+     **/
+    private void dtoToEntity(CustomerAccount customerAccount, CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) {
+
+        boolean isNew = customerAccount.getId() == null;
 
         if (!StringUtils.isBlank(postData.getCustomer())) {
             Customer customer = customerService.findByCode(postData.getCustomer());
             if (customer == null) {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
-            } else if (!customerAccount.getCustomer().equals(customer)) {
+            } else if (!isNew && !customerAccount.getCustomer().equals(customer)) {
                 throw new InvalidParameterException("Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
             }
             customerAccount.setCustomer(customer);
@@ -296,33 +256,38 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         updateAccount(customerAccount, postData, checkCustomFields);
 
-        if (!StringUtils.isBlank(postData.getCreditCategory())) {
-            customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
+        if (postData.getCreditCategory() != null) {
+            if (StringUtils.isBlank(postData.getCreditCategory())) {
+                customerAccount.setCreditCategory(null);
+            } else {
+                CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCreditCategory());
+                if (creditCategory == null) {
+                    throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCreditCategory());
+                } else {
+                    customerAccount.setCreditCategory(creditCategory);
+                }
+            }
         }
 
-        if (!StringUtils.isBlank(postData.getExternalRef1())) {
-            customerAccount.setExternalRef1(postData.getExternalRef1());
-        }
-        if (!StringUtils.isBlank(postData.getExternalRef2())) {
-            customerAccount.setExternalRef2(postData.getExternalRef2());
-        }
         if (postData.getDueDateDelayEL() != null) {
-            customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
+            customerAccount.setDueDateDelayEL(StringUtils.isBlank(postData.getDueDateDelayEL()) ? null : postData.getDueDateDelayEL());
         }
         if (postData.getDueDateDelayELSpark() != null) {
-            customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
+            customerAccount.setDueDateDelayELSpark(StringUtils.isBlank(postData.getDueDateDelayELSpark()) ? null : postData.getDueDateDelayELSpark());
         }
 
-        if (!StringUtils.isBlank(postData.isExcludedFromPayment())) {
+        if (postData.isExcludedFromPayment() != null) {
             customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         }
 
-        if (!StringUtils.isBlank(postData.getDunningLevel())) {
+        if (postData.getDunningLevel() != null) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
 
         if (postData.getDateDunningLevel() != null) {
             customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
+        } else if (isNew) {
+            customerAccount.setDateDunningLevel(new Date());
         }
 
         if (businessAccountModel != null) {
@@ -361,16 +326,9 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.addPaymentMethod(paymentMethodFromDto);
         }
 
-        if (postData.getMinimumAmountEl() != null) {
-            customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
-        }
-        if (postData.getMinimumLabelEl() != null) {
-            customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
-
         // Validate and populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), customerAccount, false, checkCustomFields);
+            populateCustomFields(postData.getCustomFields(), customerAccount, isNew, checkCustomFields);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -385,13 +343,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setAddressbook(addressBook);
         }
 
-        try {
-            customerAccount = customerAccountService.update(customerAccount);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
-
-        return customerAccount;
     }
 
     private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
