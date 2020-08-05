@@ -17,12 +17,18 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -43,4 +49,77 @@ public class CDRService extends PersistenceService<CDR> {
 		cdr.setUpdated(new Date());
 		return super.update(cdr);
 	}
+
+    public void reprocess(List<Long> ids) throws BusinessException {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to reprocess CDR");
+        }
+        CDR cdr;
+        for(Long id : ids) {
+           cdr = findById(id);
+           if(cdr == null) {
+               throw new BusinessException("CDR not found with id: " + id);
+           }
+           cdr.setStatus(CDRStatusEnum.TO_REPROCESS);
+           update(cdr);
+        }
+    }
+    
+    public void writeOff(List<Long> ids, String writeOffReason) throws BusinessException {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+        CDR cdr;
+        for(Long id : ids) {
+           cdr = findById(id);
+           if(cdr == null) {
+               throw new BusinessException("CDR not found with id: " + id);
+           }
+           cdr.setStatus(CDRStatusEnum.DISCARDED);
+           cdr.setRejectReason(writeOffReason);
+           update(cdr);
+        }
+    }
+    
+    public List<CDR> getCDRFileNames() {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+        List<CDR> cdrs = new ArrayList<>();
+        String query =  "select distinct origin_batch, first_value (created) over (partition by origin_batch order by id) as created_date from rating_cdr order by created_date desc";
+        List<Map<String,Object>> result = executeNativeSelectQuery(query, null);
+        result.stream().forEach(record-> {
+            CDR cdr = new CDR();
+            cdr.setOriginBatch((String)record.get("origin_batch"));
+            cdr.setCreated((Date)record.get("created_date"));
+            if(StringUtils.isNotBlank(cdr.getOriginBatch())) {
+                cdrs.add(cdr);
+            }          
+        });
+        return cdrs;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void backout(String fileName) {
+        if (!currentUser.hasRole("cdrManager")) {
+            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
+        }
+
+        String query = "select id from EDR where originBatch=:fileName";
+        List<Long> edrs = (List<Long>) executeSelectQuery(query, Map.of("fileName", fileName));
+        
+        if(edrs != null && !edrs.isEmpty()) {
+            query = "delete from RatedTransaction where edr.id in (:edrs)";
+            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
+            
+            query = "delete from WalletOperation where edr.id in (:edrs)";
+            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
+        }
+        
+        query = "delete from EDR where originBatch=:fileName";
+        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
+
+        query = "delete from CDR where originBatch=:fileName";
+        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
+    }
 }
