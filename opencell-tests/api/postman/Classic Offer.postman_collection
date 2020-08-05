@@ -1894,7 +1894,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"code\" : \"Asia\",  \r\n  \"description\" : \"Asia\",\r\n   \"parentLevel\" : \"world\",\r\n  \"orderLevel\" : 2\r\n \r\n  \r\n    }\r\n  ",
+									"raw": "{\r\n \"code\" : \"TST_Asia\",  \r\n  \"description\" : \"Asia\",\r\n   \"parentLevel\" : \"world\",\r\n  \"orderLevel\" : 2\r\n \r\n  \r\n    }\r\n  ",
 									"options": {
 										"raw": {}
 									}
@@ -2609,14 +2609,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/customerAccount/creditCategory",
+									"raw": "{{opencell.url}}/account/customerAccount/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
 										"customerAccount",
-										"creditCategory"
+										"createOrUpdate"
 									]
 								}
 							},
@@ -3665,7 +3665,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_ZERO\",\r\n\"taxCode\":\"TAX_{{templateCode}}_ZERO\"\r\n}",
+									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_ZERO\",\r\n\"taxCode\":\"TAX_{{templateCode}}_ZERO\",\r\n\"validFrom\":\"{{valid_from}}\",\r\n\"validTo\":\"{{valid_to}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -3706,7 +3706,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_LOW\",\r\n\"taxCode\":\"TAX_{{templateCode}}_LOW\"\r\n}",
+									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_LOW\",\r\n\"taxCode\":\"TAX_{{templateCode}}_LOW\",\r\n\"validFrom\":\"{{valid_from}}\",\r\n\"validTo\":\"{{valid_to}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -3747,7 +3747,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_HIGH\",\r\n\"taxCode\":\"TAX_{{templateCode}}_HIGH\"\r\n}",
+									"raw": "{\r\n\"accountTaxCategoryCode\":\"Tax category\",\r\n\"chargeTaxClassCode\":\"TAX_CLASS_{{templateCode}}_HIGH\",\r\n\"taxCode\":\"TAX_{{templateCode}}_HIGH\",\r\n\"validFrom\":\"{{valid_from}}\",\r\n\"validTo\":\"{{valid_to}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -5992,7 +5992,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\" : \"DEFAULT\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Default segment\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n",
+									"raw": "{\r\n  \"code\" : \"{{$randomInt}}\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Default segment\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -6034,7 +6034,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\" : \"INDIV\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Individual\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n",
+									"raw": "{\r\n  \"code\" : \"{{$randomInt}}\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Individual\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -6076,7 +6076,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\" : \"SOHO\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Small office/Home office\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n ",
+									"raw": "{\r\n  \"code\" : \"{{$randomInt}}\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Small office/Home office\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n ",
 									"options": {
 										"raw": {}
 									}
@@ -6118,7 +6118,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\" : \"COMPANY\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Company\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n    \r\n          \r\n       ",
+									"raw": "{\r\n  \"code\" : \"{{$randomInt}}\",\r\n  \"license\" : \"GPL\",\r\n  \"description\" : \"Company\",\r\n  \"hierarchyType\" : \"C_UA\"\r\n}\r\n  \r\n\r\n    \r\n          \r\n       ",
 									"options": {
 										"raw": {}
 									}
@@ -11686,7 +11686,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_COMMISSION\",\r\n  \"description\": \"Super Commission for  {{templateLabel}}\",\r\n  \"name\": \"Super Commission for  {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_SUPER_COMMISSION\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_COMMISSION\",\r\n      \"description\": \"Commissioning service\",\r\n      \"mandatory\": true\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_COMMISSION\",\r\n  \"description\": \"Super Commission for  {{templateLabel}}\",\r\n  \"name\": \"Super Commission for  {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_SUPER_COMMISSION{{$randomInt}}\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_COMMISSION\",\r\n      \"description\": \"Commissioning service\",\r\n      \"mandatory\": true\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -11829,7 +11829,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_TEMPLATE\",\r\n  \"description\": \"Super {{templateLabel}} (subscription fee, recurring, usage)\",\r\n  \"name\": \"Super {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_MAIN\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_REC_FLAT\",\r\n      \"description\": \"Recurring fee\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_REC\",\r\n          \"doubleValue\": \"19.90\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"yes\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_USG_UNIT\",\r\n      \"description\": \"Usage service\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_USG\",\r\n          \"doubleValue\":\"0.1\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"no\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_OSS_UNIT\",\r\n      \"description\": \"Subscription fee\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_OS\",\r\n          \"doubleValue\": \"60\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"yes\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_REC_FLAT_REBATE\",\r\n      \"description\": \"Recurring rebate\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_REBATE_PRICE_REC\",\r\n          \"doubleValue\": \"10\"\r\n        }\r\n      ],\r\n      \"mandatory\": false\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_TEMPLATE\",\r\n  \"description\": \"Super {{templateLabel}} (subscription fee, recurring, usage)\",\r\n  \"name\": \"Super {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_MAIN{{$randomInt}}\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_REC_FLAT\",\r\n      \"description\": \"Recurring fee\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_REC\",\r\n          \"doubleValue\": \"19.90\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"yes\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_USG_UNIT\",\r\n      \"description\": \"Usage service\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_USG\",\r\n          \"doubleValue\":\"0.1\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"no\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_OSS_UNIT\",\r\n      \"description\": \"Subscription fee\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_OS\",\r\n          \"doubleValue\": \"60\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"yes\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    },\r\n    {\r\n      \"code\": \"SE_REC_FLAT_REBATE\",\r\n      \"description\": \"Recurring rebate\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_REBATE_PRICE_REC\",\r\n          \"doubleValue\": \"10\"\r\n        }\r\n      ],\r\n      \"mandatory\": false\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -11882,7 +11882,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_TEMPLATE\",\r\n  \"description\": \" Monthly {{templateLabel}} (recurring fee only)\",\r\n  \"name\": \"Monthly {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_REC\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_REC_NO_PRORATA\",\r\n      \"description\": \"Unique monthly fee, no prorata\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_REC\",\r\n          \"doubleValue\": \"15\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"no\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    }\r\n  ]\r\n}",
+									"raw": "{\r\n  \"bomCode\": \"BOM_{{templateCode}}_TEMPLATE\",\r\n  \"description\": \" Monthly {{templateLabel}} (recurring fee only)\",\r\n  \"name\": \"Monthly {{templateLabel}}\",\r\n  \"code\": \"OF_{{templateCode}}_REC{{$randomInt}}\",\r\n  \"serviceToActivate\": [\r\n    {\r\n      \"code\": \"SE_{{templateCode}}_REC_NO_PRORATA\",\r\n      \"description\": \"Unique monthly fee, no prorata\",\r\n      \"parameter\": [\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_PRICE_REC\",\r\n          \"doubleValue\": \"15\"\r\n        },\r\n        {\r\n          \"code\": \"CF_{{templateCode}}_SELECTOR_TRIGGER_COMMISSION\",\r\n          \"stringValue\": \"no\"\r\n        }\r\n      ],\r\n      \"mandatory\": true\r\n    }\r\n  ]\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -11959,7 +11959,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  { \r\n  \t\r\n  \t\"name\" :\"selfcareDefault\",\r\n  \t\"description\" :\"selfcareDefault \",\r\n  \t\"permission\" : [ {\r\n    \"permission\" : \"apiAccess\",\r\n    \"name\" : \"API User\"\r\n   \r\n  },\r\n{\r\n    \"permission\" : \"administrationVisualization\",\r\n    \"name\" : \"Administration visualization\"\r\n \r\n  }\r\n  ]\r\n }\r\n  ",
+									"raw": "  { \r\n  \t\r\n  \t\"name\" :\"selfcareDefault\",\r\n  \t\"description\" :\"default self care\",\r\n  \t\"permission\" : [ {\r\n    \"permission\" : \"apiAccess\",\r\n    \"name\" : \"API User\"\r\n   \r\n  },\r\n{\r\n    \"permission\" : \"administrationVisualization\",\r\n    \"name\" : \"Administration visualization\"\r\n \r\n  }\r\n  ]\r\n }\r\n  ",
 									"options": {
 										"raw": {}
 									}
@@ -12128,36 +12128,6 @@
 					"name": "Create SelfCare BAM",
 					"item": [
 						{
-							"name": "Remove BAM",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "9d07f663-0a15-41b4-896a-e73eeffac39f",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/module/Client",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"module",
-										"Client"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "BAM Script",
 							"event": [
 								{
@@ -12233,7 +12203,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\" : \"Client\",\r\n  \"license\":\"GPL\" ,\r\n  \"description\" : \"Individual customer\",\r\n\r\n \"moduleItems\" : [\r\n \t{\r\n \t\"emailNotif\" : {\r\n \t\t\"code\"  :\"AccountCreationNotif\",\r\n \t\t \"classNameFilter\" : \"org.meveo.model.admin.User\",\r\n \t\t \"eventTypeFilter\" :\"CREATED\",\r\n \t\t \"emailFrom\":\"bot@opencellsoft.com\",\r\n          \"subject\" : \"Account creation confirmation\",\r\n          \"emailToEl\" : \"#{event.email}\",\r\n          \"body\" : \"Hello,\\r\\n                Your login has been created:\\r\\n                user name :  #{event.userName}\\r\\n                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html\\r\\n\\t\"\r\n \t}\r\n \t}, \r\n \t{\r\n \t  \"notification\" :{\r\n    \t\"code\": \"SelfcareRegistration\",\r\n    \t \"classNameFilter\" : \"org.meveo.model.notification.InboundRequest\",\r\n    \t   \"eventTypeFilter\" : \"INBOUND_REQ\",\r\n          \"elFilter\" : \"#{event.pathInfo.startsWith(\\\"\\/{{provider}}\\/registration\\\")}\",\r\n  \r\n    \r\n             \"scriptInstanceCode\" : \"org.meveo.service.script.selfcare.RegisterHierarchy\",\r\n             \r\n            \"scriptParams\" : {\r\n                             \"key\" : \"body\",\r\n                             \"value\" : \"#{event.getBody()}\"\r\n                                }\r\n                     \r\n              }  },\r\n              {\r\n                \"script\" : {\r\n    \r\n    \r\n    \"code\" : \"org.meveo.service.script.selfcare.RegisterHierarchy\",\r\n  \r\n     \"description\" : \"Register crm hierarchy\",\r\n \r\n     \"type\" : \"JAVA\",\r\n      \"script\" : \"package org.meveo.service.script.selfcare;\\r\\n\\r\\nimport java.util.Map;\\r\\n\\r\\nimport org.meveo.admin.exception.BusinessException;\\r\\nimport org.meveo.api.account.AccountHierarchyApi;\\r\\nimport org.meveo.api.dto.account.CRMAccountHierarchyDto;\\r\\nimport org.meveo.api.exception.MeveoApiException;\\r\\nimport org.meveo.commons.utils.JsonUtils;\\r\\nimport org.meveo.model.admin.User;\\r\\nimport org.slf4j.Logger;\\r\\nimport org.slf4j.LoggerFactory;\\r\\n\\r\\npublic class RegisterHierarchy extends org.meveo.service.script.Script {\\t\\r\\n\\tprivate static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);\\t\\t\\t\\r\\n\\tpublic void execute(Map<String, Object> initContext) throws BusinessException {\\t\\t\\r\\n\\t\\tlog.info(\\\"Execute...\\\");\\r\\n\\t\\tAccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface(\\\"AccountHierarchyApi\\\");\\r\\n\\t\\tString body = (String) initContext.get(\\\"body\\\");\\r\\n\\t\\tlog.info(\\\"body:\\\"+body);\\r\\n\\t\\tCRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);\\r\\n\\t\\tlog.info(\\\"crmAccountHierarchyDto\\\"+crmAccountHierarchyDto);\\t\\t\\r\\n\\t\\ttry {\\r\\n\\t\\t\\taccountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);\\r\\n\\t\\t} catch (MeveoApiException e) {\\t\\t\\t\\r\\n\\t\\t\\te.printStackTrace();\\r\\n\\t\\t}\\t\\r\\n\\t}\\r\\n}\"\r\n               \r\n \t\r\n \t\r\n }\r\n \t\r\n \t\r\n }\r\n \t],\r\n \t\"script\" : {    \r\n    \"code\" : \"org.meveo.service.script.SelfcareAccountScript\",\r\n  \r\n     \"description\" : \"Script BAM for selfcare accounts\",\r\n \r\n     \"type\" : \"JAVA\",\r\n      \"script\" :\"package org.meveo.service.script;\\r\\nimport java.math.BigDecimal;\\r\\nimport java.nio.charset.Charset;\\r\\nimport java.security.MessageDigest;\\r\\nimport java.security.NoSuchAlgorithmException; \\r\\nimport java.util.List;\\r\\nimport java.util.HashSet;\\r\\nimport java.util.Map;\\r\\nimport org.meveo.admin.exception.BusinessException;\\r\\nimport org.meveo.api.dto.account.CRMAccountHierarchyDto;   \\r\\nimport org.meveo.api.dto.UserDto; \\r\\nimport org.meveo.api.exception.MeveoApiException;\\r\\nimport org.meveo.commons.utils.StringUtils;\\r\\nimport org.meveo.model.admin.User;    \\r\\nimport org.meveo.service.script.account.AccountScript;\\r\\nimport org.meveo.model.AccountEntity;\\r\\nimport org.slf4j.Logger;\\r\\nimport java.util.Set;\\r\\nimport java.util.ArrayList;\\r\\nimport org.meveo.model.security.Role;\\r\\nimport org.meveo.service.crm.impl.CustomerService;\\r\\nimport org.slf4j.LoggerFactory;\\r\\nimport org.meveo.model.crm.Customer;\\r\\nimport org.meveo.service.crm.impl.CustomFieldInstanceService;\\r\\nimport org.meveo.api.UserApi;\\r\\n\\r\\npublic class SelfcareAccountScript extends AccountScript {\\r\\n\\r\\n\\tprivate static final Logger log = LoggerFactory.getLogger(SelfcareAccountScript.class);\\r\\n\\tprivate Map<String, Object> initContext = null;\\r\\n\\r\\n\\tstatic MessageDigest messageDigest = null;\\r\\n\\tstatic {\\r\\n\\t\\ttry {\\r\\n\\t\\t\\tmessageDigest = MessageDigest.getInstance(\\\"MD5\\\");\\r\\n\\t\\t} \\r\\n\\t\\tcatch (NoSuchAlgorithmException e) {\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\tCustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(\\\"CustomFieldInstanceService\\\");\\r\\n\\tCustomerService customerService = (CustomerService) getServiceInterface(\\\"CustomerService\\\");\\r\\n\\tUserApi userApi = (UserApi) getServiceInterface(\\\"UserApi\\\");\\r\\n\\r\\n\\t@Override\\r\\n\\tpublic void createAccount(Map<String, Object> methodContext) throws BusinessException { \\r\\n\\t\\tAccountEntity account = (AccountEntity) methodContext.get(Script.CONTEXT_ENTITY);\\r\\n\\t\\tUserDto user = new UserDto();\\r\\n\\t\\tCRMAccountHierarchyDto accountDto = (CRMAccountHierarchyDto) methodContext.get(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO);\\r\\n\\t\\tCustomer customer = customerService.findByCode(accountDto.getCode());\\r\\n\\r\\n\\t\\tlog.debug(\\\"accountCode : \\\"+accountDto.getCode(), \\\" crmAccountType :\\\"+accountDto.getCrmAccountType());\\r\\n\\t\\t  \\r\\n\\t\\tString email = accountDto.getContactInformation().getEmail(); \\r\\n\\t\\tuser.setEmail(email);\\r\\n\\t\\tif(accountDto.getName()!=null){\\r\\n\\t\\t\\tuser.setFirstName(accountDto.getName().getFirstName());\\r\\n\\t\\t\\tuser.setLastName(accountDto.getName().getLastName());\\r\\n\\t\\t}\\r\\n\\t\\tuser.setUsername(accountDto.getCode());\\r\\n\\r\\n\\t\\t/*\\r\\n\\t\\tString password =(String) customFieldInstanceService.getCFValue(customer, \\\"password\\\");\\r\\n\\t\\tif( password != null )\\r\\n\\t\\t{\\r\\n\\t\\t\\tuser.setPassword(password);\\r\\n\\t\\t}\\r\\n\\t\\telse\\r\\n\\t\\t{\\r\\n\\t\\t\\tlog.warn(\\\"password CF is null, using username\\\");\\r\\n\\t\\t\\tuser.setPassword(user.getUsername());\\r\\n\\t\\t}\\r\\n\\t\\t*/    \\r\\n\\r\\n\\t\\tList<String> roles = new ArrayList<String>();\\r\\n\\t\\troles.add(\\\"selfcareDefault\\\");\\r\\n\\t\\tuser.setRoles(roles);\\r\\n\\t\\tlog.debug(\\\"lastName :\\\"+user.getLastName() + \\\" firstName : \\\"+user.getFirstName() + \\\" email : \\\"+user.getEmail());\\r\\n\\t\\ttry{\\r\\n\\t\\t\\tuserApi.createOrUpdate(user);\\r\\n\\t\\t}\\r\\n\\t\\tcatch(MeveoApiException e){\\r\\n\\t\\t\\tlog.error(\\\"failed to create user \\\",e); \\r\\n\\t\\t\\te.printStackTrace();\\r\\n\\t\\t}\\r\\n\\t}\\r\\n}\"\r\n \t\t\r\n \t\t\r\n \t},\r\n\t\t\r\n   \"hierarchyType\" :\"C_UA\"\r\n     \r\n}\r\n      \r\n       ",
+									"raw": "{\r\n  \"code\" : \"Client{{$randomInt}}\",\r\n  \"license\":\"GPL\" ,\r\n  \"description\" : \"Individual customer\",\r\n\r\n \"moduleItems\" : [\r\n \t{\r\n \t\"emailNotif\" : {\r\n \t\t\"code\"  :\"AccountCreationNotif\",\r\n \t\t \"classNameFilter\" : \"org.meveo.model.admin.User\",\r\n \t\t \"eventTypeFilter\" :\"CREATED\",\r\n \t\t \"emailFrom\":\"bot@opencellsoft.com\",\r\n          \"subject\" : \"Account creation confirmation\",\r\n          \"emailToEl\" : \"#{event.email}\",\r\n          \"body\" : \"Hello,\\r\\n                Your login has been created:\\r\\n                user name :  #{event.userName}\\r\\n                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html\\r\\n\\t\"\r\n \t}\r\n \t}, \r\n \t{\r\n \t  \"notification\" :{\r\n    \t\"code\": \"SelfcareRegistration\",\r\n    \t \"classNameFilter\" : \"org.meveo.model.notification.InboundRequest\",\r\n    \t   \"eventTypeFilter\" : \"INBOUND_REQ\",\r\n          \"elFilter\" : \"#{event.pathInfo.startsWith(\\\"\\/{{provider}}\\/registration\\\")}\",\r\n  \r\n    \r\n             \"scriptInstanceCode\" : \"org.meveo.service.script.selfcare.RegisterHierarchy\",\r\n             \r\n            \"scriptParams\" : {\r\n                             \"key\" : \"body\",\r\n                             \"value\" : \"#{event.getBody()}\"\r\n                                }\r\n                     \r\n              }  },\r\n              {\r\n                \"script\" : {\r\n    \r\n    \r\n    \"code\" : \"org.meveo.service.script.selfcare.RegisterHierarchy\",\r\n  \r\n     \"description\" : \"Register crm hierarchy\",\r\n \r\n     \"type\" : \"JAVA\",\r\n      \"script\" : \"package org.meveo.service.script.selfcare;\\r\\n\\r\\nimport java.util.Map;\\r\\n\\r\\nimport org.meveo.admin.exception.BusinessException;\\r\\nimport org.meveo.api.account.AccountHierarchyApi;\\r\\nimport org.meveo.api.dto.account.CRMAccountHierarchyDto;\\r\\nimport org.meveo.api.exception.MeveoApiException;\\r\\nimport org.meveo.commons.utils.JsonUtils;\\r\\nimport org.meveo.model.admin.User;\\r\\nimport org.slf4j.Logger;\\r\\nimport org.slf4j.LoggerFactory;\\r\\n\\r\\npublic class RegisterHierarchy extends org.meveo.service.script.Script {\\t\\r\\n\\tprivate static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);\\t\\t\\t\\r\\n\\tpublic void execute(Map<String, Object> initContext) throws BusinessException {\\t\\t\\r\\n\\t\\tlog.info(\\\"Execute...\\\");\\r\\n\\t\\tAccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface(\\\"AccountHierarchyApi\\\");\\r\\n\\t\\tString body = (String) initContext.get(\\\"body\\\");\\r\\n\\t\\tlog.info(\\\"body:\\\"+body);\\r\\n\\t\\tCRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);\\r\\n\\t\\tlog.info(\\\"crmAccountHierarchyDto\\\"+crmAccountHierarchyDto);\\t\\t\\r\\n\\t\\ttry {\\r\\n\\t\\t\\taccountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);\\r\\n\\t\\t} catch (MeveoApiException e) {\\t\\t\\t\\r\\n\\t\\t\\te.printStackTrace();\\r\\n\\t\\t}\\t\\r\\n\\t}\\r\\n}\"\r\n               \r\n \t\r\n \t\r\n }\r\n \t\r\n \t\r\n }\r\n \t],\r\n \t\"script\" : {    \r\n    \"code\" : \"org.meveo.service.script.SelfcareAccountScript\",\r\n  \r\n     \"description\" : \"Script BAM for selfcare accounts\",\r\n \r\n     \"type\" : \"JAVA\",\r\n      \"script\" :\"package org.meveo.service.script;\\r\\nimport java.math.BigDecimal;\\r\\nimport java.nio.charset.Charset;\\r\\nimport java.security.MessageDigest;\\r\\nimport java.security.NoSuchAlgorithmException; \\r\\nimport java.util.List;\\r\\nimport java.util.HashSet;\\r\\nimport java.util.Map;\\r\\nimport org.meveo.admin.exception.BusinessException;\\r\\nimport org.meveo.api.dto.account.CRMAccountHierarchyDto;   \\r\\nimport org.meveo.api.dto.UserDto; \\r\\nimport org.meveo.api.exception.MeveoApiException;\\r\\nimport org.meveo.commons.utils.StringUtils;\\r\\nimport org.meveo.model.admin.User;    \\r\\nimport org.meveo.service.script.account.AccountScript;\\r\\nimport org.meveo.model.AccountEntity;\\r\\nimport org.slf4j.Logger;\\r\\nimport java.util.Set;\\r\\nimport java.util.ArrayList;\\r\\nimport org.meveo.model.security.Role;\\r\\nimport org.meveo.service.crm.impl.CustomerService;\\r\\nimport org.slf4j.LoggerFactory;\\r\\nimport org.meveo.model.crm.Customer;\\r\\nimport org.meveo.service.crm.impl.CustomFieldInstanceService;\\r\\nimport org.meveo.api.UserApi;\\r\\n\\r\\npublic class SelfcareAccountScript extends AccountScript {\\r\\n\\r\\n\\tprivate static final Logger log = LoggerFactory.getLogger(SelfcareAccountScript.class);\\r\\n\\tprivate Map<String, Object> initContext = null;\\r\\n\\r\\n\\tstatic MessageDigest messageDigest = null;\\r\\n\\tstatic {\\r\\n\\t\\ttry {\\r\\n\\t\\t\\tmessageDigest = MessageDigest.getInstance(\\\"MD5\\\");\\r\\n\\t\\t} \\r\\n\\t\\tcatch (NoSuchAlgorithmException e) {\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\tCustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(\\\"CustomFieldInstanceService\\\");\\r\\n\\tCustomerService customerService = (CustomerService) getServiceInterface(\\\"CustomerService\\\");\\r\\n\\tUserApi userApi = (UserApi) getServiceInterface(\\\"UserApi\\\");\\r\\n\\r\\n\\t@Override\\r\\n\\tpublic void createAccount(Map<String, Object> methodContext) throws BusinessException { \\r\\n\\t\\tAccountEntity account = (AccountEntity) methodContext.get(Script.CONTEXT_ENTITY);\\r\\n\\t\\tUserDto user = new UserDto();\\r\\n\\t\\tCRMAccountHierarchyDto accountDto = (CRMAccountHierarchyDto) methodContext.get(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO);\\r\\n\\t\\tCustomer customer = customerService.findByCode(accountDto.getCode());\\r\\n\\r\\n\\t\\tlog.debug(\\\"accountCode : \\\"+accountDto.getCode(), \\\" crmAccountType :\\\"+accountDto.getCrmAccountType());\\r\\n\\t\\t  \\r\\n\\t\\tString email = accountDto.getContactInformation().getEmail(); \\r\\n\\t\\tuser.setEmail(email);\\r\\n\\t\\tif(accountDto.getName()!=null){\\r\\n\\t\\t\\tuser.setFirstName(accountDto.getName().getFirstName());\\r\\n\\t\\t\\tuser.setLastName(accountDto.getName().getLastName());\\r\\n\\t\\t}\\r\\n\\t\\tuser.setUsername(accountDto.getCode());\\r\\n\\r\\n\\t\\t/*\\r\\n\\t\\tString password =(String) customFieldInstanceService.getCFValue(customer, \\\"password\\\");\\r\\n\\t\\tif( password != null )\\r\\n\\t\\t{\\r\\n\\t\\t\\tuser.setPassword(password);\\r\\n\\t\\t}\\r\\n\\t\\telse\\r\\n\\t\\t{\\r\\n\\t\\t\\tlog.warn(\\\"password CF is null, using username\\\");\\r\\n\\t\\t\\tuser.setPassword(user.getUsername());\\r\\n\\t\\t}\\r\\n\\t\\t*/    \\r\\n\\r\\n\\t\\tList<String> roles = new ArrayList<String>();\\r\\n\\t\\troles.add(\\\"selfcareDefault\\\");\\r\\n\\t\\tuser.setRoles(roles);\\r\\n\\t\\tlog.debug(\\\"lastName :\\\"+user.getLastName() + \\\" firstName : \\\"+user.getFirstName() + \\\" email : \\\"+user.getEmail());\\r\\n\\t\\ttry{\\r\\n\\t\\t\\tuserApi.createOrUpdate(user);\\r\\n\\t\\t}\\r\\n\\t\\tcatch(MeveoApiException e){\\r\\n\\t\\t\\tlog.error(\\\"failed to create user \\\",e); \\r\\n\\t\\t\\te.printStackTrace();\\r\\n\\t\\t}\\r\\n\\t}\\r\\n}\"\r\n \t\t\r\n \t\t\r\n \t},\r\n\t\t\r\n   \"hierarchyType\" :\"C_UA\"\r\n     \r\n}\r\n      \r\n       ",
 									"options": {
 										"raw": {}
 									}
@@ -12893,13 +12863,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription",
+									"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"billing",
-										"subscription"
+										"subscription",
+										"createOrUpdate"
 									]
 								}
 							},
@@ -25583,8 +25554,8 @@
 				"exec": [
 					"pm.variables.set(\"code\", 200);",
 					"pm.variables.set(\"status\", \"SUCCESS\");",
-					"pm.variables.set(\"errorCode\", );",
 					"pm.variables.set(\"message\", \"\");",
+					"pm.variables.set(\"errorCode\", );",
 					"pm.variables.set(\"messageEql\", true);"
 				]
 			}
@@ -25610,6 +25581,12 @@
 					"});",
 					"",
 					"pm.test(request.name + \" - Check Message\", function () {",
+					"    /*",
+					"    if(pm.expect(pm.response.json().status).to.eql(pm.variables.get(\"message\"))){",
+					"        ",
+					"    }",
+					"    */",
+					"",
 					"    if(pm.variables.get(\"messageEql\")){",
 					"        pm.expect((jsonData.actionStatus ? jsonData.actionStatus.message : jsonData.message)).to.eql(pm.variables.get(\"message\"));",
 					"    }",
@@ -25625,219 +25602,239 @@
 	],
 	"variable": [
 		{
-			"id": "c499ed40-aac2-41d6-8492-3a7f6e686400",
+			"id": "c09bc915-8576-47c9-a3cc-939fef47d1d5",
+			"key": "opencell.base",
+			"value": "https://vnn.d2.opencell.work/opencell"
+		},
+		{
+			"id": "345c5f87-a289-41b6-b936-cfa71f4a242c",
+			"key": "opencell.url",
+			"value": "{{opencell.base}}/api/rest"
+		},
+		{
+			"id": "fce9fab5-4e64-43f2-a730-63e87bee576f",
 			"key": "adminUsername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "86f5d122-1860-434c-a414-a411c59d683c",
+			"id": "57fca85c-11e7-4eba-844b-ff314bc3e5dc",
 			"key": "adminPassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "ce5b350c-b8b4-4167-8cdf-c0422b96c69c",
+			"id": "ac18302f-c597-4918-80df-1c66d7a92fdf",
 			"key": "provideraddrName",
 			"value": "opencell"
 		},
 		{
-			"id": "aed640bb-876a-463c-8034-0edf4477cbeb",
+			"id": "d6d2ab72-bcf1-4d70-a7fd-8753e689356a",
 			"key": "MMUsername",
 			"value": "opencell.marketingmanager"
 		},
 		{
-			"id": "f1ee7f38-9969-464a-9398-b009ad44b734",
+			"id": "a80d1a9b-2653-49c8-8bf1-27355e74bb6f",
 			"key": "MMPassword",
 			"value": "opencell.marketingmanager"
 		},
 		{
-			"id": "769500a8-b1dc-4274-9d02-84226cb56549",
+			"id": "d59d8e3d-99f7-441d-820f-ad6824dd09af",
 			"key": "provider",
 			"value": "DEMO"
 		},
 		{
-			"id": "2198c4a7-b0c4-4304-b852-0abce8509610",
+			"id": "f18caefa-90ca-4b34-a421-16362bacf841",
 			"key": "providerAddrLine1",
 			"value": "14 rue Crespin du Gast"
 		},
 		{
-			"id": "49f107c0-cc96-45b1-9785-b5b904de4cee",
+			"id": "7234bd29-b9b3-438c-9546-c4d08649b50b",
 			"key": "providerAddrLine2",
 			"value": "3rd floor"
 		},
 		{
-			"id": "2587b6bc-0f45-4f42-8243-b7faa6cdb3f4",
+			"id": "70b0d8a3-101a-4991-b4e6-426fd231b0d9",
 			"key": "providerAddrZip",
 			"value": "75011"
 		},
 		{
-			"id": "c6fc4554-0e1c-44fa-adde-7d331e8fe8ec",
+			"id": "c767c77e-2abe-42a5-930d-15d7b48c5782",
 			"key": "providerAddrCity",
 			"value": "Paris"
 		},
 		{
-			"id": "aa4ef0d3-e2e8-4efc-b4b5-e8bd98857027",
+			"id": "b08f70ea-d9b1-46b7-9646-af2283f25a02",
 			"key": "providerAddrPhone",
 			"value": "+00 123 456 798"
 		},
 		{
-			"id": "ff79611b-ca68-4c32-b05f-637d1fff343e",
+			"id": "9176b26d-75e1-402c-99ea-8bc9a1b2a2df",
 			"key": "providerAddrEmail",
 			"value": "contact@opencellsoft.com"
 		},
 		{
-			"id": "380dc616-b34d-494f-a6a4-b7e47f33198f",
+			"id": "c8edded9-4837-42fb-b798-871b937d7e95",
 			"key": "CCUsername",
 			"value": "opencell.customercare"
 		},
 		{
-			"id": "45081136-0811-490e-9791-0e9caa239aeb",
+			"id": "9e8fa17b-70ee-4a16-8990-5a9478742bb0",
 			"key": "CCPassword",
 			"value": "opencell.customercare"
 		},
 		{
-			"id": "17e94d12-6703-49aa-9353-00095e8b6898",
+			"id": "c29f5e42-8a00-4c7e-9d4a-06005a3b1b03",
 			"key": "SCUsername",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "2025f250-fd3b-403e-b550-948065d5e6de",
+			"id": "8cd5f2b9-69e7-465d-bafc-0130cca216aa",
 			"key": "SCPassword",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "a51ca676-ecfb-44a2-8c1a-94e0a8ec7c1d",
+			"id": "3fe8a8cd-ac6a-4402-9c0e-aeb33a598190",
 			"key": "CCLastname",
 			"value": "Doe"
 		},
 		{
-			"id": "f06f6c77-3bca-49c3-b8ea-5ea6329c19cf",
+			"id": "c5cde163-89a8-4413-bd74-485c76d115d2",
 			"key": "CCFirstname",
 			"value": "Jeanette"
 		},
 		{
-			"id": "a8b39629-96ef-4339-9292-73a4463eacfc",
+			"id": "616f9c27-14c9-47cb-863c-d146dc48b141",
 			"key": "SCLastname",
 			"value": "Clive"
 		},
 		{
-			"id": "82ff53ee-864e-4681-b4b6-e7d54404da09",
+			"id": "73231481-6ff5-4ebe-99d4-347275b56643",
 			"key": "SCFirstname",
 			"value": "Gildarts"
 		},
 		{
-			"id": "0bfb3be1-1ae8-4af0-8dac-73a5e4ced1da",
+			"id": "4fdf8707-0f6e-45b2-b342-9f0d78b29f6a",
 			"key": "reseller1",
 			"value": "Reseller1"
 		},
 		{
-			"id": "57ef1be9-5b96-4075-886f-57cb3fa11b8d",
+			"id": "50d9a496-d710-417a-8fe9-f3b23a659d43",
 			"key": "reseller2",
 			"value": "Reseller2"
 		},
 		{
-			"id": "d9c524e9-cf45-4dd2-8dc6-337fa231e038",
+			"id": "ddb999a1-758a-4918-9120-577e9f5fe458",
 			"key": "ingenico.merchantId",
 			"value": "XCSmoovetest003"
 		},
 		{
-			"id": "9938642a-3fb2-4933-8864-e68115236e49",
+			"id": "02447b26-1250-499c-a7f5-eac083dd7b02",
 			"key": "ingenico.SecretApiKey",
 			"value": "+bEfYyY1YVUP2J/80yZOxD4Jj+/N/j2s/GcoY7F5rAg="
 		},
 		{
-			"id": "7cada6a3-fee0-4922-b8ec-835381c63536",
+			"id": "e53d572e-ed40-4a96-84fa-56e0916376dd",
 			"key": "ingenico.ApiKeyId",
 			"value": "85c81e73917d806c"
 		},
 		{
-			"id": "f47165a6-f246-4500-b079-e7b187a255b1",
+			"id": "1a23d475-684b-4638-89d3-b2e268217b82",
 			"key": "slimPay.userId",
 			"value": "opencelldev"
 		},
 		{
-			"id": "00255338-07f7-48cb-b6cf-7b089fa17fed",
+			"id": "d71f6b05-147e-4ab5-a001-e42bad22c2f4",
 			"key": "slimPay.secretKey",
 			"value": "OSpPCH4jYWfg7SRT53d5OTNCIcodepvfpfKHULQi"
 		},
 		{
-			"id": "3ddf2eed-3092-47e3-bde8-dcbf863a6c79",
+			"id": "b4f163fd-4b4e-46ad-a571-e953b20b7caa",
 			"key": "templateCode",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "47ae5b5f-a9a1-479c-bca3-61b3ffbbc27f",
+			"id": "9f484c26-1d5a-4b27-9305-e088ed5a6a6e",
 			"key": "templateLabel",
 			"value": "Generic"
 		},
 		{
-			"id": "5e302d76-9198-4a91-b2b2-57c8edd207f0",
+			"id": "7c3ad89b-d464-46a6-b9a5-8e1a587ac563",
 			"key": "partnerOfferId",
 			"value": "4"
 		},
 		{
-			"id": "90498467-42c4-44f6-b488-8f1451075032",
+			"id": "a599ac86-9ade-406a-a999-1722135cd079",
 			"key": "recOfferId",
 			"value": "6"
 		},
 		{
-			"id": "096830a0-1781-4fb0-a305-c13865504416",
+			"id": "bc385d2a-90b9-4025-a506-4eb0902157d6",
 			"key": "billingCycle",
 			"value": "BC_{{templateCode}}_MONTHLY_1ST"
 		},
 		{
-			"id": "372233d9-8ea0-48a7-8f3d-ec9616c74cc9",
+			"id": "31d17421-0362-41c1-a695-9148b4b9022d",
 			"key": "offerCode",
 			"value": "OF_{{templateCode}}_REC"
 		},
 		{
-			"id": "003447e2-ce4a-4c68-8607-af2282979458",
+			"id": "9a5b61a6-8ec5-4bb5-a93f-d661829ac5f9",
 			"key": "serviceCode",
 			"value": "{{recOfferId}_SE_{{templateCode}_REC_NO_PRORATA"
 		},
 		{
-			"id": "6e19c2eb-319e-4071-816d-64aa6f462240",
+			"id": "81ddec2e-3063-4686-805b-88a2e11d6948",
 			"key": "CUST",
 			"value": "{{provider}}.partner.{{templateCode}"
 		},
 		{
-			"id": "8bf0b5eb-7568-4a6a-8b52-c39231517fd2",
+			"id": "86f3689e-c7c7-4f38-9575-84cfec3914f1",
 			"key": "invoiceNumber1",
 			"value": "INV-CLASSIC-000000003"
 		},
 		{
-			"id": "40d490bc-9459-4418-b231-d9c2e29013df",
+			"id": "a16e804e-a923-4650-8c63-43f49d09ea47",
 			"key": "invoiceNumber2",
 			"value": "INV-CLASSIC-000000004"
 		},
 		{
-			"id": "0f30e2c2-468a-4a33-be2d-fad5dcbc591a",
+			"id": "82c2c4a1-b0b9-4e84-9cba-14779ea01e27",
 			"key": "unduePaymentID",
 			"value": ""
 		},
 		{
-			"id": "094c1a06-786d-40a0-9220-a9060ac89005",
+			"id": "1c7aef30-2121-4816-a326-40f395def72c",
 			"key": "refundPaymentID",
 			"value": ""
 		},
 		{
-			"id": "943c5130-5710-46e1-8df6-3713f2eb8af1",
+			"id": "1f469c83-c871-4cd8-9d6f-b3ab1b4b9b77",
 			"key": "mainOfferId",
 			"value": ""
 		},
 		{
-			"id": "42787a1d-6e7a-4533-af98-f9697eebd734",
+			"id": "0032ed36-9ec5-4881-bd3e-dfbc2e829266",
 			"key": "invoiceNumberSC",
 			"value": ""
 		},
 		{
-			"id": "81fa01ad-e23f-4a0e-9544-177d6fe046b8",
+			"id": "c94db76f-89c2-4cfc-b93d-af4c08c7b28e",
 			"key": "pdfFilename",
 			"value": ""
 		},
 		{
-			"id": "73efdb9b-0740-4d61-a7b9-2288f86749fa",
+			"id": "db366ea5-2a3b-4442-9c77-9545932e4cd5",
 			"key": "xmlFilename",
 			"value": ""
+		},
+		{
+			"id": "5c85d671-7520-4ace-afc0-01c8e1f21be7",
+			"key": "valid_from",
+			"value": "2020-01-01"
+		},
+		{
+			"id": "3af1df90-120a-4c01-8b72-52b2e08cea13",
+			"key": "valid_to",
+			"value": "2020-12-01"
 		}
 	],
 	"protocolProfileBehavior": {}
