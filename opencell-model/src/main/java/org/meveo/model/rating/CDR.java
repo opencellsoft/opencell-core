@@ -27,6 +27,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,7 +53,14 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Table(name = "rating_cdr")
 @CustomFieldEntity(cftCodePrefix = "CDR")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "rating_cdr_seq"), })
+		@Parameter(name = "sequence_name", value = "rating_cdr_seq") })
+@NamedQueries({
+    @NamedQuery(name = "CDR.listEDRsByFilename", query = "select id from EDR where originBatch=:fileName"),
+    @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction where edr.id in (:edrs)"),
+    @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation where edr.id in (:edrs)"),
+    @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"),
+    @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
+})
 public class CDR extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1278336601263933734L;

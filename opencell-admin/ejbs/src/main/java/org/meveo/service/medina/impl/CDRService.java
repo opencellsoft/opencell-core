@@ -105,21 +105,15 @@ public class CDRService extends PersistenceService<CDR> {
             throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
         }
 
-        String query = "select id from EDR where originBatch=:fileName";
-        List<Long> edrs = (List<Long>) executeSelectQuery(query, Map.of("fileName", fileName));
+        List<Long> edrs = (List<Long>) getEntityManager().createNamedQuery("CDR.listEDRsByFilename")
+                .setParameter("fileName", fileName)
+                .getResultList();
         
         if(edrs != null && !edrs.isEmpty()) {
-            query = "delete from RatedTransaction where edr.id in (:edrs)";
-            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
-            
-            query = "delete from WalletOperation where edr.id in (:edrs)";
-            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
+            getEntityManager().createNamedQuery("CDR.deleteRTs").setParameter("edrs", edrs).executeUpdate();            
+            getEntityManager().createNamedQuery("CDR.deleteWOs").setParameter("edrs", edrs).executeUpdate();
         }
-        
-        query = "delete from EDR where originBatch=:fileName";
-        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
-
-        query = "delete from CDR where originBatch=:fileName";
-        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
+        getEntityManager().createNamedQuery("CDR.deleteEDRs").setParameter("fileName", fileName).executeUpdate();
+        getEntityManager().createNamedQuery("CDR.deleteCDRs").setParameter("fileName", fileName).executeUpdate();
     }
 }

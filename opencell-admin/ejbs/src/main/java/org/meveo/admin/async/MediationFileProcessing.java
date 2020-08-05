@@ -33,6 +33,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
@@ -134,6 +135,9 @@ public class MediationFileProcessing {
 				result.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
 	            cdr.setStatus(CDRStatusEnum.ERROR);
 	            cdr.setRejectReason(e.getMessage());
+                if(StringUtils.isNotBlank(cdr.getLine()) && cdr.getLine().split(",").length > 1) {
+                    cdr.setAccessCode(cdr.getLine().split(",")[1]);
+                }
 	            cdrService.update(cdr);
 				break;
 
@@ -152,6 +156,9 @@ public class MediationFileProcessing {
 				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setRejectReason(e.getMessage());
+                if(StringUtils.isNotBlank(cdr.getLine()) && cdr.getLine().split(",").length > 1) {
+                    cdr.setAccessCode(cdr.getLine().split(",")[1]);
+                }
                 cdrService.update(cdr);
 			}
 		}

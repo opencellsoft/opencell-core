@@ -32,7 +32,7 @@
 				field="eventDate" />
 			<c:forEach items="#{cdrBean.params}" var="param">
 				<hftl:searchField label="#{cdrBean.getParamLabel(param)}"
-					field="#{param}" isDate="#{cdrBean.isDate(param)}" />
+					field="#{param}" isDate="#{cdrBean.isDate(param)}" time="true"/>
 			</c:forEach>
 		</hftl:searchPanel>
 
@@ -56,7 +56,7 @@
 				field="timesTried"/>								
 			<c:forEach items="#{cdrBean.params}" var="param">
 				<hftl:column label="#{cdrBean.getParamLabel(param)}"
-					field="#{param}"/>
+					field="#{param}" isDate="#{cdrBean.isDate(param)}" time="true"/>
 			</c:forEach>
 			<p:column width="100">
 				<f:facet name="header">
