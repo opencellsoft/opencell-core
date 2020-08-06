@@ -421,13 +421,17 @@ public class PaymentApi extends BaseApi {
 		return result;
 	}
 
+	public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
+		return fromEntity(paymentHistory, true);
+	}
+
 	/**
 	 * Build paymentHistory dto from entity
 	 * 
 	 * @param paymentHistory payment History
 	 * @return PaymentHistoryDto
 	 */
-	public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
+	public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory, boolean isIncludedAoToPay) {
 		PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
 		paymentHistoryDto.setAuditable(paymentHistory);
 		paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
@@ -456,19 +460,21 @@ public class PaymentApi extends BaseApi {
 		paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
 		paymentHistoryDto.setStatus(paymentHistory.getStatus());
 		paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
+		if (isIncludedAoToPay) {
+			AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
+			// Backward compatibility
+			if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+				accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
 
-		AccountOperationsDto accountOperationsDto = new AccountOperationsDto();		
-        //Backward compatibility
-		if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
-			accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
-			
-		} else {
-			for (AccountOperation ao : paymentHistory.getListAoPaid()) {
-				accountOperationsDto.getAccountOperation()
-						.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+			} else {
+				for (AccountOperation ao : paymentHistory.getListAoPaid()) {
+					accountOperationsDto.getAccountOperation()
+							.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+				}
 			}
+			paymentHistoryDto.setListAoPaid(accountOperationsDto);
 		}
-		paymentHistoryDto.setListAoPaid(accountOperationsDto);
+
 		return paymentHistoryDto;
 
 	}

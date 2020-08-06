@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -128,9 +127,10 @@ public class PaymentHistory extends AuditableEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "refund_id")
 	private Refund refund;
-
-	@OneToMany(mappedBy = "paymentHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<AccountOperation> listAoPaid;
+	
+	
+	@ManyToMany(mappedBy = "paymentHistories")
+	List<AccountOperation> listAoPaid;
 
 	/**
 	 * @return the sellerCode

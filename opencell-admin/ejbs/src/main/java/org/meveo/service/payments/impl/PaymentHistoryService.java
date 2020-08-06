@@ -97,10 +97,19 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
             paymentHistory.setPaymentMethodName(pmVal);
         }
         
-        for(AccountOperation ao : aoToPay) {
-        	ao.setPaymentHistory(paymentHistory);
-        	paymentHistory.getListAoPaid().add(ao);
-        }
+       
+        
+      for(AccountOperation ao : aoToPay) {
+    	ao.getPaymentHistories().add(paymentHistory);
+    	
+    }
+      paymentHistory.setListAoPaid(aoToPay);
+        
+        
+//        for(AccountOperation ao : aoToPay) {
+//        	ao.setPaymentHistory(paymentHistory);
+//        	paymentHistory.getListAoPaid().add(ao);
+//        }
         
         super.create(paymentHistory);
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -64,6 +65,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -136,6 +139,12 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
+	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());
+	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
+	
+	
+	
+	
 
 	@Override
 	public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
@@ -452,7 +461,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @throws Exception the exception
 	 */
 	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
-		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
+		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
+		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
 		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
@@ -674,5 +684,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			return appProvider.getBankCoordinates();
 		}
 	}
+	
+	 protected Object getServiceInterface(String serviceInterfaceName) {
+	        return EjbUtils.getServiceInterface(serviceInterfaceName);
+	    }
 
 }

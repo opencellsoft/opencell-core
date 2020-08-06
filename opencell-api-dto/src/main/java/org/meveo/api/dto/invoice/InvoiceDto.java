@@ -2,7 +2,6 @@ package org.meveo.api.dto.invoice;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -17,12 +16,8 @@ import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
