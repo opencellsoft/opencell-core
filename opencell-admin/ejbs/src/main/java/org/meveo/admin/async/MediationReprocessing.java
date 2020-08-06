@@ -107,6 +107,8 @@ public class MediationReprocessing {
 				if (cdr == null) {
                     break;
                 }
+				cdr.setRejectReason(null);
+			
 	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
 	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
 				log.debug("Processing cdr id:{}", cdr.getId());
