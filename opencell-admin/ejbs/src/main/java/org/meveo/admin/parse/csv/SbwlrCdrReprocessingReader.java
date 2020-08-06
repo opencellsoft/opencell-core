@@ -61,6 +61,7 @@ public class SbwlrCdrReprocessingReader implements ICdrReader {
             return null;
         }
         CDR cdr = cdrReader.next();
+        cdr = cdrParser.parse(cdr.getLine());
         cdr.setOriginBatch(batchName);
         return cdr;
     }

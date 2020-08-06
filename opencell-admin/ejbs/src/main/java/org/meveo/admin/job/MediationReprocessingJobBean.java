@@ -29,14 +29,14 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.MediationReprocessing;
+import org.meveo.admin.parse.csv.MEVEOCdrParser;
+import org.meveo.admin.parse.csv.MEVEOCdrReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
-import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 
 /**
@@ -56,10 +56,13 @@ public class MediationReprocessingJobBean {
     private Logger log;
     
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private MediationReprocessing mediationReprocessing;
 
     @Inject
-    private MediationReprocessing mediationReprocessing;
+    private MEVEOCdrReader meveoCdrReader;
+
+    @Inject
+    private MEVEOCdrParser meveoCdrParser;
 
     @Inject
     @CurrentUser
@@ -86,9 +89,16 @@ public class MediationReprocessingJobBean {
 
         try {
             cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
+            if(cdrReader == null) {
+                cdrReader = meveoCdrReader;
+            }
             cdrReader.init("DB");
 
             cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
+            if(cdrParser == null) {
+                cdrParser = meveoCdrParser;
+            }
+
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();

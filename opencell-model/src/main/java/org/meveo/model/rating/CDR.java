@@ -280,7 +280,7 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Size(max = 255)
     private String type;
 
-	@Transient
+    @Column(name = "line", columnDefinition = "text")
 	private String line;
 
 	@Transient
