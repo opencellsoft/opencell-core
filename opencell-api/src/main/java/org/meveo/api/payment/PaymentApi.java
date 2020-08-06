@@ -53,6 +53,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
@@ -60,6 +61,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
@@ -68,7 +70,9 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -190,6 +194,11 @@ public class PaymentApi extends BaseApi {
 
         if (paymentDto.isToMatching()) {
             matchPayment(paymentDto, customerAccount, payment);
+            paymentHistoryService.addHistory(customerAccount,
+            		payment,
+    				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
+    				PaymentStatusEnum.ACCEPTED, null, null, null, null,
+    				null,null,paymentDto.getListAoIdsForMatching());
         } else {
             log.info("no matching created ");
         }
@@ -218,277 +227,287 @@ public class PaymentApi extends BaseApi {
 		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
 	}
 
-    /**
-     * Get payment list by customer account code
-     * 
-     * @param customerAccountCode customer account code
-     * @param pagingAndFiltering
-     * @return list of payment dto
-     * @throws Exception exception.
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */
-    public CustomerPaymentsResponse getPaymentList(String customerAccountCode, PagingAndFiltering pagingAndFiltering) throws Exception {
 
-        CustomerPaymentsResponse result = new CustomerPaymentsResponse();
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+	/**
+	 * Get payment list by customer account code
+	 * 
+	 * @param customerAccountCode customer account code
+	 * @param pagingAndFiltering
+	 * @return list of payment dto
+	 * @throws Exception exception.
+	 * @author akadid abdelmounaim
+	 * @lastModifiedVersion 5.0
+	 */
+	public CustomerPaymentsResponse getPaymentList(String customerAccountCode, PagingAndFiltering pagingAndFiltering) throws Exception {
 
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-        }
+		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
-        if (pagingAndFiltering == null) {
-            pagingAndFiltering = new PagingAndFiltering();
-        }
-        PaginationConfiguration paginationConfiguration = preparePaginationConfiguration(pagingAndFiltering, customerAccount);
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+		}
 
-        List<AccountOperation> ops = accountOperationService.list(paginationConfiguration);
-        Long total = accountOperationService.count(paginationConfiguration);
+		if (pagingAndFiltering == null) {
+			pagingAndFiltering = new PagingAndFiltering();
+		}
+		PaginationConfiguration paginationConfiguration = preparePaginationConfiguration(pagingAndFiltering, customerAccount);
 
-        // Remove the filters added by preparePaginationConfiguration function
-        pagingAndFiltering.getFilters().remove("type_class");
-        pagingAndFiltering.getFilters().remove("customerAccount");
-        
-        pagingAndFiltering.setTotalNumberOfRecords(total.intValue());
-        result.setPaging(pagingAndFiltering);
+		List<AccountOperation> ops = accountOperationService.list(paginationConfiguration);
+		Long total = accountOperationService.count(paginationConfiguration);
 
-        for (AccountOperation op : ops) {
-            if (op instanceof Payment) {
-                Payment p = (Payment) op;
-                PaymentDto paymentDto = new PaymentDto();
-                paymentDto.setType(p.getType());
-                paymentDto.setAmount(p.getAmount());
-                paymentDto.setDueDate(p.getDueDate());
-                paymentDto.setOccTemplateCode(p.getCode());
-                paymentDto.setPaymentMethod(p.getPaymentMethod());
-                paymentDto.setReference(p.getReference());
-                paymentDto.setTransactionDate(p.getTransactionDate());
-                paymentDto.setPaymentOrder(p.getPaymentOrder());
-                paymentDto.setFees(p.getFees());
-                paymentDto.setComment(p.getComment());
-                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-                if (p instanceof AutomatedPayment) {
-                    AutomatedPayment ap = (AutomatedPayment) p;
-                    paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
-                    paymentDto.setBankLot(ap.getBankLot());
-                    paymentDto.setDepositDate(ap.getDepositDate());
-                }
-                result.addPaymentDto(paymentDto);
-            } else if (op instanceof OtherCreditAndCharge) {
-                OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
-                PaymentDto paymentDto = new PaymentDto();
-                paymentDto.setType(occ.getType());
-                paymentDto.setDescription(op.getDescription());
-                paymentDto.setAmount(occ.getAmount());
-                paymentDto.setDueDate(occ.getDueDate());
-                paymentDto.setOccTemplateCode(occ.getCode());
-                paymentDto.setReference(occ.getReference());
-                paymentDto.setTransactionDate(occ.getTransactionDate());
-                result.addPaymentDto(paymentDto);
-            }
-        }
-        return result;
-    }
-    
-    /**
-     * Prepare paginationConfiguration to get only Payment and OtherCreditAndCharge operations related to the customerAccount
-     * 
-     * @param pagingAndFiltering
-     * @param customerAccount
-     * @return
-     * @throws Exception
-     */
-    private PaginationConfiguration preparePaginationConfiguration(PagingAndFiltering pagingAndFiltering, CustomerAccount customerAccount) throws Exception {
+		// Remove the filters added by preparePaginationConfiguration function
+		pagingAndFiltering.getFilters().remove("type_class");
+		pagingAndFiltering.getFilters().remove("customerAccount");
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(DEFAULT_SORT_ORDER_ID, SortOrder.ASCENDING, null, pagingAndFiltering, AccountOperation.class);
+		pagingAndFiltering.setTotalNumberOfRecords(total.intValue());
+		result.setPaging(pagingAndFiltering);
 
-        List<String> classFilter = Arrays.asList("org.meveo.model.payments.Payment", "org.meveo.model.payments.AutomatedPayment", "org.meveo.model.payments.OtherCreditAndCharge");
-        pagingAndFiltering.addFilter("customerAccount", customerAccount);
-        pagingAndFiltering.addFilter("type_class", classFilter);
-
-        return paginationConfiguration;
-    }
-
-    /**
-     * @param customerAccountCode customer account code
-     * @return balance for customer account
-     * @throws BusinessException business exception
-     */
-    public double getBalance(String customerAccountCode) throws BusinessException {
-
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-
-        return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
-    }
-
-    /**
-     * @param cardPaymentRequestDto card payment request
-     * @return payment by card response
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException no all operation matched exception
-     * @throws UnbalanceAmountException balance exception
-     * @throws MeveoApiException opencell's api exception
-     */
-    public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
-
-        if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
-            missingParameters.add("ctsAmount");
-        }
-
-        if (StringUtils.isBlank(cardPaymentRequestDto.getCustomerAccountCode())) {
-            missingParameters.add("customerAccountCode");
-        }
-        boolean useCard = false;
-
-        // case card payment
-        if (!StringUtils.isBlank(cardPaymentRequestDto.getCardNumber())) {
-            useCard = true;
-            if (StringUtils.isBlank(cardPaymentRequestDto.getCvv())) {
-                missingParameters.add("cvv");
-            }
-            if (StringUtils.isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
-                    || !org.apache.commons.lang3.StringUtils.isNumeric(cardPaymentRequestDto.getExpiryDate())) {
-
-                missingParameters.add("expiryDate");
-            }
-            if (StringUtils.isBlank(cardPaymentRequestDto.getOwnerName())) {
-                missingParameters.add("ownerName");
-            }
-            if (StringUtils.isBlank(cardPaymentRequestDto.getCardType())) {
-                missingParameters.add("cardType");
-            }
-        }
-        if (cardPaymentRequestDto.isToMatch()) {
-            if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
-                missingParameters.add("aoToPay");
-            }
-        }
-
-        handleMissingParameters();
-
-        CustomerAccount customerAccount = customerAccountService.findByCode(cardPaymentRequestDto.getCustomerAccountCode());
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, cardPaymentRequestDto.getCustomerAccountCode());
-        }
-
-        PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
-        if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
-            throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
-        }
-
-        PaymentResponseDto doPaymentResponseDto = null;
-        if (useCard) {
-
-            doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
-                cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
-                cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
-        } else {
-            doPaymentResponseDto = paymentService.payByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
-                cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
-        }
-
-        return doPaymentResponseDto;
-    }
-
-    /**
-     * List payment histories matching filtering and query criteria
-     * 
-     * @param pagingAndFiltering Paging and filtering criteria.
-     * @return A list of payment history
-     * @throws InvalidParameterException invalid parameter exception
-     */
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "paymentHistories", itemPropertiesToFilter = {
-            @FilterProperty(property = "sellerCode", entityClass = Seller.class, allowAccessIfNull = false),
-            @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class, allowAccessIfNull = false),
-            @FilterProperty(property = "customerCode", entityClass = Customer.class, allowAccessIfNull = false) })
-    public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering,
-            PaymentHistory.class);
-        Long totalCount = paymentHistoryService.count(paginationConfig);
-        PaymentHistoriesDto paymentHistoriesDto = new PaymentHistoriesDto();
-        paymentHistoriesDto.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
-        paymentHistoriesDto.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-
-        if (totalCount > 0) {
-            List<PaymentHistory> paymentHistories = paymentHistoryService.list(paginationConfig);
-            for (PaymentHistory paymentHistory : paymentHistories) {
-                paymentHistoriesDto.getPaymentHistories().add(fromEntity(paymentHistory));
-            }
-        }
-        return paymentHistoriesDto;
-    }
-
-    /**
-     * Return list AO matched with a payment or refund
-     * 
-     * @param paymentOrRefund
-     * @return list AO matched
-     */
-    private List<AccountOperationDto> getAosPaidByPayment(AccountOperation paymentOrRefund) {
-        List<AccountOperationDto> result = new ArrayList<AccountOperationDto>();
-        if (paymentOrRefund == null) {
-            return result;
-        }
-        if (paymentOrRefund.getMatchingAmounts() != null && !paymentOrRefund.getMatchingAmounts().isEmpty()) {
-            for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
-                if (ma.getAccountOperation().getTransactionCategory() != paymentOrRefund.getTransactionCategory()) {
-                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Build paymentHistory dto from entity
-     * 
-     * @param paymentHistory payment History
-     * @return PaymentHistoryDto
-     */
-    public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
-        PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
-        paymentHistoryDto.setAuditable(paymentHistory);
-        paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
-        paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
-        paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());
-        paymentHistoryDto.setCustomerCode(paymentHistory.getCustomerCode());
-        paymentHistoryDto.setAmountCts(paymentHistory.getAmountCts());
-        paymentHistoryDto.setAsyncStatus(paymentHistory.getAsyncStatus());
-        paymentHistoryDto.setErrorCode(paymentHistory.getErrorCode());
-        paymentHistoryDto.setErrorMessage(paymentHistory.getErrorMessage());
-        paymentHistoryDto.setErrorType(paymentHistory.getErrorType());
-        paymentHistoryDto.setExternalPaymentId(paymentHistory.getExternalPaymentId());
-        paymentHistoryDto.setOperationCategory(paymentHistory.getOperationCategory());
-        paymentHistoryDto.setOperationDate(paymentHistory.getOperationDate());
-        paymentHistoryDto.setPaymentGatewayCode(paymentHistory.getPaymentGatewayCode());
-        paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
-        paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
-        if (paymentHistory.getRefund() != null) {
-            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
-        }
-        if (paymentHistory.getPayment() != null) {
-            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
-        }
-        paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
-        paymentHistoryDto.setStatus(paymentHistory.getStatus());
-        paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
-        
-        AccountOperationsDto accountOperationsDto = new AccountOperationsDto();		
-        //Backward compatibility
-		if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
-			accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
-			
-		} else {
-			for (AccountOperation ao : paymentHistory.getListAoPaid()) {
-				accountOperationsDto.getAccountOperation()
-						.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+		for (AccountOperation op : ops) {
+			if (op instanceof Payment) {
+				Payment p = (Payment) op;
+				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setType(p.getType());
+				paymentDto.setAmount(p.getAmount());
+				paymentDto.setDueDate(p.getDueDate());
+				paymentDto.setOccTemplateCode(p.getCode());
+				paymentDto.setPaymentMethod(p.getPaymentMethod());
+				paymentDto.setReference(p.getReference());
+				paymentDto.setTransactionDate(p.getTransactionDate());
+				paymentDto.setPaymentOrder(p.getPaymentOrder());
+				paymentDto.setFees(p.getFees());
+				paymentDto.setComment(p.getComment());
+				paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+				if (p instanceof AutomatedPayment) {
+					AutomatedPayment ap = (AutomatedPayment) p;
+					paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
+					paymentDto.setBankLot(ap.getBankLot());
+					paymentDto.setDepositDate(ap.getDepositDate());
+				}
+				result.addPaymentDto(paymentDto);
+			} else if (op instanceof OtherCreditAndCharge) {
+				OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
+				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setType(occ.getType());
+				paymentDto.setDescription(op.getDescription());
+				paymentDto.setAmount(occ.getAmount());
+				paymentDto.setDueDate(occ.getDueDate());
+				paymentDto.setOccTemplateCode(occ.getCode());
+				paymentDto.setReference(occ.getReference());
+				paymentDto.setTransactionDate(occ.getTransactionDate());
+				result.addPaymentDto(paymentDto);
 			}
 		}
-        paymentHistoryDto.setListAoPaid(accountOperationsDto);
-        return paymentHistoryDto;
+		return result;
+	}
 
+	/**
+	 * Prepare paginationConfiguration to get only Payment and OtherCreditAndCharge
+	 * operations related to the customerAccount
+	 * 
+	 * @param pagingAndFiltering
+	 * @param customerAccount
+	 * @return
+	 * @throws Exception
+	 */
+	private PaginationConfiguration preparePaginationConfiguration(PagingAndFiltering pagingAndFiltering, CustomerAccount customerAccount) throws Exception {
+
+		PaginationConfiguration paginationConfiguration = toPaginationConfiguration(DEFAULT_SORT_ORDER_ID, SortOrder.ASCENDING, null, pagingAndFiltering, AccountOperation.class);
+
+		List<String> classFilter = Arrays.asList("org.meveo.model.payments.Payment", "org.meveo.model.payments.AutomatedPayment", "org.meveo.model.payments.OtherCreditAndCharge");
+		pagingAndFiltering.addFilter("customerAccount", customerAccount);
+		pagingAndFiltering.addFilter("type_class", classFilter);
+
+		return paginationConfiguration;
+	}
+
+	/**
+	 * @param customerAccountCode customer account code
+	 * @return balance for customer account
+	 * @throws BusinessException business exception
+	 */
+	public double getBalance(String customerAccountCode) throws BusinessException {
+
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+
+		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
+	}
+
+	/**
+	 * @param cardPaymentRequestDto card payment request
+	 * @return payment by card response
+	 * @throws BusinessException                business exception
+	 * @throws NoAllOperationUnmatchedException no all operation matched exception
+	 * @throws UnbalanceAmountException         balance exception
+	 * @throws MeveoApiException                opencell's api exception
+	 */
+	public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
+
+		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
+			missingParameters.add("ctsAmount");
+		}
+
+		if (StringUtils.isBlank(cardPaymentRequestDto.getCustomerAccountCode())) {
+			missingParameters.add("customerAccountCode");
+		}
+		boolean useCard = false;
+
+		// case card payment
+		if (!StringUtils.isBlank(cardPaymentRequestDto.getCardNumber())) {
+			useCard = true;
+			if (StringUtils.isBlank(cardPaymentRequestDto.getCvv())) {
+				missingParameters.add("cvv");
+			}
+			if (StringUtils.isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
+					|| !org.apache.commons.lang3.StringUtils.isNumeric(cardPaymentRequestDto.getExpiryDate())) {
+
+				missingParameters.add("expiryDate");
+			}
+			if (StringUtils.isBlank(cardPaymentRequestDto.getOwnerName())) {
+				missingParameters.add("ownerName");
+			}
+			if (StringUtils.isBlank(cardPaymentRequestDto.getCardType())) {
+				missingParameters.add("cardType");
+			}
+		}
+		if (cardPaymentRequestDto.isToMatch()) {
+			if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
+				missingParameters.add("aoToPay");
+			}
+		}
+
+		handleMissingParameters();
+
+		CustomerAccount customerAccount = customerAccountService.findByCode(cardPaymentRequestDto.getCustomerAccountCode());
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class, cardPaymentRequestDto.getCustomerAccountCode());
+		}
+
+		PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
+		if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
+			throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
+		}
+
+		PaymentResponseDto doPaymentResponseDto = null;
+		if (useCard) {
+
+			doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
+					cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
+					cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
+		} else {
+			doPaymentResponseDto = paymentService.payByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
+					cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
+		}
+
+		return doPaymentResponseDto;
+	}
+
+	/**
+	 * List payment histories matching filtering and query criteria
+	 * 
+	 * @param pagingAndFiltering Paging and filtering criteria.
+	 * @return A list of payment history
+	 * @throws InvalidParameterException invalid parameter exception
+	 */
+	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+	@FilterResults(propertyToFilter = "paymentHistories", itemPropertiesToFilter = {
+			@FilterProperty(property = "sellerCode", entityClass = Seller.class, allowAccessIfNull = false),
+			@FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class, allowAccessIfNull = false),
+			@FilterProperty(property = "customerCode", entityClass = Customer.class, allowAccessIfNull = false) })
+	public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+		PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering,
+				PaymentHistory.class);
+		Long totalCount = paymentHistoryService.count(paginationConfig);
+		PaymentHistoriesDto paymentHistoriesDto = new PaymentHistoriesDto();
+		paymentHistoriesDto.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		paymentHistoriesDto.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		if (totalCount > 0) {
+			List<PaymentHistory> paymentHistories = paymentHistoryService.list(paginationConfig);
+			for (PaymentHistory paymentHistory : paymentHistories) {
+				paymentHistoriesDto.getPaymentHistories().add(fromEntity(paymentHistory));
+			}
+		}
+		return paymentHistoriesDto;
+	}
+
+	/**
+	 * Return list AO matched with a payment or refund
+	 * 
+	 * @param paymentOrRefund
+	 * @return list AO matched
+	 */
+	private List<AccountOperationDto> getAosPaidByPayment(AccountOperation paymentOrRefund) {
+		List<AccountOperationDto> result = new ArrayList<AccountOperationDto>();
+		if (paymentOrRefund == null) {
+			return result;
+		}
+		if (paymentOrRefund.getMatchingAmounts() != null && !paymentOrRefund.getMatchingAmounts().isEmpty()) {
+			for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
+				if (ma.getAccountOperation().getTransactionCategory() != paymentOrRefund.getTransactionCategory()) {
+					result.add(new AccountOperationDto(ma.getAccountOperation(),
+							entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+				}
+			}
+		}
+		return result;
+	}
+
+	public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
+		return fromEntity(paymentHistory, true);
+	}
+
+	/**
+	 * Build paymentHistory dto from entity
+	 * 
+	 * @param paymentHistory payment History
+	 * @return PaymentHistoryDto
+	 */
+	public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory, boolean isIncludedAoToPay) {
+		PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
+		paymentHistoryDto.setAuditable(paymentHistory);
+		paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
+		paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
+		paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());
+		paymentHistoryDto.setCustomerCode(paymentHistory.getCustomerCode());
+		paymentHistoryDto.setAmountCts(paymentHistory.getAmountCts());
+		paymentHistoryDto.setAsyncStatus(paymentHistory.getAsyncStatus());
+		paymentHistoryDto.setErrorCode(paymentHistory.getErrorCode());
+		paymentHistoryDto.setErrorMessage(paymentHistory.getErrorMessage());
+		paymentHistoryDto.setErrorType(paymentHistory.getErrorType());
+		paymentHistoryDto.setExternalPaymentId(paymentHistory.getExternalPaymentId());
+		paymentHistoryDto.setOperationCategory(paymentHistory.getOperationCategory());
+		paymentHistoryDto.setOperationDate(paymentHistory.getOperationDate());
+		paymentHistoryDto.setPaymentGatewayCode(paymentHistory.getPaymentGatewayCode());
+		paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
+		paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
+		if (paymentHistory.getRefund() != null) {
+			paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(),
+					entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+		}
+		if (paymentHistory.getPayment() != null) {
+			paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(),
+					entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+		}
+		paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
+		paymentHistoryDto.setStatus(paymentHistory.getStatus());
+		paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
+		if (isIncludedAoToPay) {
+			AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
+			// Backward compatibility
+			if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+				accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
+
+			} else {
+				for (AccountOperation ao : paymentHistory.getListAoPaid()) {
+					accountOperationsDto.getAccountOperation()
+							.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+				}
+			}
+			paymentHistoryDto.setListAoPaid(accountOperationsDto);
+		}
+
+		return paymentHistoryDto;
     }
     
     /**

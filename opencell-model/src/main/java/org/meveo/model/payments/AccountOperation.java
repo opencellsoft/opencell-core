@@ -33,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -358,10 +359,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
     
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_history_id")
-    private PaymentHistory paymentHistory;
-
+    @ManyToMany
+    @JoinTable(
+      name = "ar_ao_payment_histories", 
+      joinColumns = @JoinColumn(name = "ao_id"), 
+      inverseJoinColumns = @JoinColumn(name = "history_id"))
+    private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
 
     public Date getDueDate() {
         return dueDate;
@@ -830,12 +833,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.subscription = subscription;
     }
 
-	public PaymentHistory getPaymentHistory() {
-		return paymentHistory;
+	public List<PaymentHistory> getPaymentHistories() {
+		return paymentHistories;
 	}
 
-	public void setPaymentHistory(PaymentHistory paymentHistory) {
-		this.paymentHistory = paymentHistory;
+	public void setPaymentHistories(List<PaymentHistory> paymentHistories) {
+		this.paymentHistories = paymentHistories;
 	}
     
 }

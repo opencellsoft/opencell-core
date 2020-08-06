@@ -110,26 +110,7 @@ public class PaymentService extends PersistenceService<Payment> {
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
-        super.create(entity);
-        if (entity.getId() != null && entity.getPaymentMethod().isSimple()) {
-            PaymentMethod paymentMethod  = getPaymentMethod(entity);
-            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(), PaymentStatusEnum.ACCEPTED, null, null, null, OperationCategoryEnum.CREDIT, null, paymentMethod,null);
-        }
-    }
-
-    /**
-     * Return the a Method payment corresponds to method payment type
-     * @param payment the payment
-     * @return A method payment.
-     */
-    private PaymentMethod getPaymentMethod(Payment payment) {
-        if (payment == null || payment.getCustomerAccount() == null || payment.getCustomerAccount().getPaymentMethods() == null ) {
-            return null;
-        }
-        List<PaymentMethod> paymentMethods = payment.getCustomerAccount().getPaymentMethods().stream().filter(paymentMethod -> {
-            return paymentMethod.getPaymentType().equals(payment.getPaymentMethod());
-        }).collect(Collectors.toList());
-        return (paymentMethods != null && !paymentMethods.isEmpty()) ? paymentMethods.get(0) : null;
+        super.create(entity);     
     }
 
     /**

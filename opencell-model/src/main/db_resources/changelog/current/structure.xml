@@ -3459,6 +3459,7 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+
     <changeSet id="#CORE-5457_20200825" author="AbdelkaderBouazza">
         <addColumn tableName="ar_payment_token">
             <column name="document_id"  type="bigint"/>
@@ -3467,4 +3468,27 @@ END $$;]]>
                                  constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+   <changeSet id="#5416_20120809" author="anasseh">
+		<createTable tableName="ar_ao_payment_histories">
+			<column name="ao_id" type="bigint" />
+			<column name="history_id" type="bigint" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="ar_account_operation" />
+		<addForeignKeyConstraint
+			baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_histo_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="ar_payment_history" />
+
+        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
+	    <dropColumn tableName="ar_account_operation">
+            <column name="payment_history_id"></column>
+        </dropColumn>
+	</changeSet>    
+
 </databaseChangeLog>

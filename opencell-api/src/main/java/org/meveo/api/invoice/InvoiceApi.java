@@ -54,6 +54,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
+import org.meveo.api.payment.PaymentApi;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -78,6 +79,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentHistory;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -143,6 +145,10 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private PaymentApi paymentApi;
+
 
     @Inject
     @MeveoParamBean
@@ -1071,6 +1077,13 @@ public class InvoiceApi extends BaseApi {
         if (invoice.getRecordedInvoice() != null) {
             RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
             dto.setRecordedInvoiceDto(recordedInvoiceDto);
+            
+            if(invoice.getRecordedInvoice().getPaymentHistories() != null && !invoice.getRecordedInvoice().getPaymentHistories().isEmpty()) {
+            	for(PaymentHistory ph : invoice.getRecordedInvoice().getPaymentHistories() ) {
+            		recordedInvoiceDto.getPaymentHistories().add(paymentApi.fromEntity(ph,false));
+            	}
+            }
+            
         }
 
         dto.setNetToPay(invoice.getNetToPay());

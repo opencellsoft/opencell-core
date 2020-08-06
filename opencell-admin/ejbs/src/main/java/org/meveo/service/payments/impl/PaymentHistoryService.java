@@ -16,9 +16,6 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-/**
- * 
- */
 package org.meveo.service.payments.impl;
 
 import java.util.ArrayList;
@@ -69,60 +66,60 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     	}
     	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void addHistoryAOs(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
-            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<AccountOperation> aoToPay) throws BusinessException {
-        PaymentHistory paymentHistory = new PaymentHistory();
-        paymentHistory.setCustomerAccountCode(customerAccount.getCode());
-        paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
-        if(customerAccount.getCustomer().getSeller() != null) {
-            paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
-        }
-        paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
-        paymentHistory.setPayment(payment);
-        paymentHistory.setRefund(refund);
-        paymentHistory.setOperationDate(new Date());
-        paymentHistory.setAmountCts(amountCts);
-        paymentHistory.setErrorCode(errorCode);
-        paymentHistory.setErrorMessage(errorMessage);
-        paymentHistory.setErrorType(errorType);
-        paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
-        paymentHistory.setOperationCategory(operationCategory);
-        paymentHistory.setSyncStatus(status);
-        paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
-        paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
-        if (payment != null) {
-            if (payment.getPaymentMethod() != null && payment.getPaymentMethod().isSimple()) {
-                paymentHistory.setPaymentMethodType(payment.getPaymentMethod());
-                paymentHistory.setPaymentMethodName(payment.getPaymentInfo());
-            }
-        } else  if (refund != null) {
-            if (refund.getPaymentMethod() != null && refund.getPaymentMethod().isSimple()) {
-                paymentHistory.setPaymentMethodType(refund.getPaymentMethod());
-                paymentHistory.setPaymentMethodName(refund.getPaymentInfo());
-            }
-        }
-        if (paymentMethod != null) {
-            paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
-            String pmVal = null;
-            if (paymentMethod instanceof DDPaymentMethod) {
-                pmVal = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
-            }
-            if (paymentMethod instanceof CardPaymentMethod) {
-                pmVal = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
-            }
-            paymentHistory.setPaymentMethodName(pmVal);
-        }
-        
-        for(AccountOperation ao : aoToPay) {
-        	ao.setPaymentHistory(paymentHistory);
-        	paymentHistory.getListAoPaid().add(ao);
-        }
-        
-        super.create(paymentHistory);
+    
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
+			PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
+			throws BusinessException {
+		PaymentHistory paymentHistory = new PaymentHistory();
+		paymentHistory.setCustomerAccountCode(customerAccount.getCode());
+		paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
+		if (customerAccount.getCustomer().getSeller() != null) {
+			paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+		}
+		paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
+		paymentHistory.setPayment(payment);
+		paymentHistory.setRefund(refund);
+		paymentHistory.setOperationDate(new Date());
+		paymentHistory.setAmountCts(amountCts);
+		paymentHistory.setErrorCode(errorCode);
+		paymentHistory.setErrorMessage(errorMessage);
+		paymentHistory.setErrorType(errorType);
+		paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
+		paymentHistory.setOperationCategory(payment != null ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT );
+		paymentHistory.setSyncStatus(status);
+		paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
+		paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
+		if (payment != null) {
+			if (payment.getPaymentMethod() != null && payment.getPaymentMethod().isSimple()) {
+				paymentHistory.setPaymentMethodType(payment.getPaymentMethod());
+				paymentHistory.setPaymentMethodName(payment.getPaymentInfo());
+			}
+		} else if (refund != null) {
+			if (refund.getPaymentMethod() != null && refund.getPaymentMethod().isSimple()) {
+				paymentHistory.setPaymentMethodType(refund.getPaymentMethod());
+				paymentHistory.setPaymentMethodName(refund.getPaymentInfo());
+			}
+		}
+		if (paymentMethod != null) {
+			paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
+			String pmVal = null;
+			if (paymentMethod instanceof DDPaymentMethod) {
+				pmVal = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
+			}
+			if (paymentMethod instanceof CardPaymentMethod) {
+				pmVal = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
+			}
+			paymentHistory.setPaymentMethodName(pmVal);
+		}
 
-    }
+		for (AccountOperation ao : aoToPay) {
+			ao.getPaymentHistories().add(paymentHistory);
+			paymentHistory.getListAoPaid().add(ao);
+		}
+		super.create(paymentHistory);
+	}
     
     public PaymentHistory findHistoryByPaymentId(String paymentId) {
         try {
