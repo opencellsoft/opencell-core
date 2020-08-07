@@ -2455,7 +2455,21 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
         <to-view-id>/pages/admin/taxes/taxMappingDetail.xhtml</to-view-id>
         <redirect include-view-params="true" />
     </navigation-case>
-	
+	<navigation-case>
+		<from-outcome>cdr</from-outcome>
+		<to-view-id>/pages/rating/cdr/cdrList.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>cdrDetail</from-outcome>
+		<to-view-id>/pages/rating/cdr/cdrDetail.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>cDRs</from-outcome>
+		<to-view-id>/pages/rating/cdr/cdrList.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
 </navigation-rule>
 
 </faces-config>

@@ -36,18 +36,23 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Charging Data Record - CDR - information
  * 
  * @author anasseh
+ * @author Mohammed Amine TAZI
  * @since 9.1
  */
 @Entity
 @Table(name = "rating_cdr")
+@CustomFieldEntity(cftCodePrefix = "CDR")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "rating_cdr_seq"), })
-public class CDR extends BaseEntity {
+public class CDR extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1278336601263933734L;
 
@@ -256,12 +261,30 @@ public class CDR extends BaseEntity {
 	 */
 	@Column(name = "reject_reason", columnDefinition = "text")
 	private String rejectReason;
+	
+	/** The times tried. */
+	@Column(name = "times_tried")
+	private Integer timesTried;
+	
+	/** The type. */
+	@Column(name = "type", length = 255)
+    @Size(max = 255)
+    private String type;
 
 	@Transient
 	private String line;
 
 	@Transient
 	private Exception rejectReasonException = null;
+
+	@Transient
+    private CustomFieldValues cfValues;
+
+	@Transient
+    private CustomFieldValues cfAccumulatedValues;
+
+	@Transient
+    private String uuid;
 
 	public String getLine() {
 		return line;
@@ -575,8 +598,34 @@ public class CDR extends BaseEntity {
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
 	}
-
+	
 	/**
+	 * Gets the times tried.
+	 *
+	 * @return the times tried
+	 */
+	public Integer getTimesTried() {
+        return timesTried;
+    }
+
+    /**
+     * Sets the times tried.
+     *
+     * @param timesTried the new times tried
+     */
+    public void setTimesTried(Integer timesTried) {
+        this.timesTried = timesTried;
+    }
+    
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
 	 * Convert to a CSV-like line with ";" as field separator
 	 * 
 	 * @return CSV-line line string
@@ -600,4 +649,39 @@ public class CDR extends BaseEntity {
 		}
 		return result;
 	}
+
+    @Override
+    public String getUuid() {
+        return null;
+    }
+
+    @Override
+    public String clearUuid() {
+        return null;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
 }
