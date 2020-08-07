@@ -3304,6 +3304,82 @@ END $$;]]>
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
+
+    <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
+        <createTable tableName="document" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name"  type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="tags"  type="varchar(255)"/>
+            <column name="linked_account_entity_id" type="bigint" />
+            <column name="document_category_id" type="bigint" />
+            <column name="document_status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+
+        <createTable tableName="document_category" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_category_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="relative_path"  type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+        <createTable tableName="document_tags">
+            <column name="document_id"  type="bigint"/>
+            <column name="tags"  type="varchar(60)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
+                                 constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="document_category_id"
+                                 constraintName="document_category_id_fk" referencedTableName="document_category"
+                                 referencedColumnNames="id"/>
+
+        <createSequence sequenceName="document_seq" startValue="1"/>
+        <createSequence sequenceName="document_category_seq" startValue="1"/>
+    </changeSet>
     
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
