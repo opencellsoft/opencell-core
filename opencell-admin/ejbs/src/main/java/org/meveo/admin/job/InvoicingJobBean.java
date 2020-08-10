@@ -38,6 +38,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -61,11 +62,11 @@ public class InvoicingJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
             List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));

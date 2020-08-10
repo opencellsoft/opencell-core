@@ -148,7 +148,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
                 entity.setInvoiceDate(entity.getProcessDate());
             }
             if (billingCycle.getLastTransactionDateEL() != null) {
-                entity.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateDelayEL(), entity));
+                entity.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), entity));
 
             } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
                 entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), entity)));

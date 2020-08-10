@@ -49,7 +49,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Flat file validator
@@ -150,7 +155,9 @@ public class FlatFileValidator {
             StringBuilder errorMessage = new StringBuilder();
             StringBuilder successMessage = new StringBuilder();
 
+            List<String> filesNames = new ArrayList<>();
             for (File file : files) {
+                filesNames.add(file.getName());
                 FlatFile flatFile = validateAndLogFile(file, fileFormat, file.getName(), inputDirectory, rejectDirectory);
                 if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED) {
                     successMessage.append(" ").append(file.getName()).append(" ");
@@ -162,7 +169,7 @@ public class FlatFileValidator {
 
             if (successMessage.length() > 0) {
                 messages.put("success", "the files " + successMessage.toString() + " are uploaded to " + inputDirectory);
-                executeJob(fileFormat.getJobCode());
+                executeJob(fileFormat.getJobCode(), filesNames);
             }
             if (errorMessage.length() > 0) {
                 messages.put("error", "the files " + successMessage.toString() + " are uploaded to " + rejectDirectory);
@@ -368,6 +375,23 @@ public class FlatFileValidator {
     }
 
     /**
+     * Validate if the flat file name uniqueness is required
+     *
+     * @param fileName   the file name
+     * @param fileFormat the file format
+     * @return false if the flat file name uniqueness is required and there is already another file with the same name.
+     */
+    private boolean validateFileNameUniqueness(String fileName, FileFormat fileFormat) {
+        if (fileFormat.isFileNameUniqueness()) {
+            List<FlatFile> flatFiles = flatFileService.findByFileOriginalName(fileName);
+            if (!flatFiles.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Validate the file by its format
      *
      * @param file           the file
@@ -378,6 +402,10 @@ public class FlatFileValidator {
      * @throws BusinessException
      */
     private StringBuilder validate(File file, String fileName, FileFormat fileFormat, String inputDirectory) throws BusinessException {
+
+        if (!validateFileNameUniqueness(fileName, fileFormat)) {
+            throw new BusinessException("There is already another file with the same name : " + fileName);
+        }
 
         if (!StringUtils.isBlank(inputDirectory)) {
             File[] files = new File(inputDirectory).listFiles();
@@ -497,14 +525,45 @@ public class FlatFileValidator {
     /**
      * Execute job
      *
-     * @param jobCode the job code
+     * @param jobCode        the job code
+     * @param flatFilesNames the flat files names.
      * @throws BusinessException the business exception
      */
-    private void executeJob(String jobCode) throws BusinessException {
+    private void executeJob(String jobCode, List<String> flatFilesNames) throws BusinessException {
         JobInstance jobInstance = jobInstanceService.findByCode(jobCode);
         if (jobInstance != null && isAllowedToExecute(jobInstance)) {
             try {
-                jobExecutionService.manualExecute(jobInstance);
+
+                if (flatFilesNames == null || flatFilesNames.isEmpty()) {
+                    log.error("No file found");
+                    return;
+                }
+
+                // We will wait until at least one flat     file is created then launch the associate job
+                long start = System.currentTimeMillis();
+                boolean flatFileExist = false;
+                try {
+                    while (!flatFileExist) {
+                        Thread.sleep(100);
+                        for (String flatFileName : flatFilesNames) {
+                            if (flatFileService.getFlatFileByFileName(flatFileName) != null) {
+                                flatFileExist = true;
+                                break;
+                            }
+                        }
+                        if (System.currentTimeMillis() - start > 2000 && !flatFileExist) {
+                            //throw new BusinessException("No file is not found or is not uploaded and validated by file format");
+                            log.error("No file found");
+                            return;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    log.warn("Warning on thread sleep = {}", e.getMessage(), e);
+                }
+
+                if (flatFileExist) {
+                    jobExecutionService.manualExecute(jobInstance);
+                }
             } catch (Exception e) {
                 log.error("execute flat file job fail", e);
                 throw new BusinessException(e.getMessage(), e);
@@ -521,7 +580,7 @@ public class FlatFileValidator {
     private void processFile(FlatFile flatFile) throws BusinessException {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null) {
-            executeJob(fileFormat.getJobCode());
+            executeJob(fileFormat.getJobCode(), new ArrayList<>(Arrays.asList(flatFile.getFileOriginalName())));
         }
     }
 

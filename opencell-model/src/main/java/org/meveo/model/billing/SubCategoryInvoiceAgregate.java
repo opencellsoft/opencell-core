@@ -234,23 +234,23 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param ratedTransaction Rated transaction to associate
      * @param isEnterprise Is it enterprise/b2b installation - interested to track
      */
-    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise) {
-        if (this.itemNumber == null) {
+    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean addAmounts) {
+        
+    	if (this.itemNumber == null) {
             this.itemNumber = 0;
         }
         this.itemNumber++;
         this.ratedtransactionsToAssociate.add(ratedTransaction);
-
-        BigDecimal amount = null;
-        if (isEnterprise) {
-            amount = ratedTransaction.getAmountWithoutTax();
-            addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
-        } else {
-            amount = ratedTransaction.getAmountWithTax();
-            addAmountWithTax(ratedTransaction.getAmountWithTax());
+        
+        BigDecimal amount = isEnterprise?ratedTransaction.getAmountWithoutTax():ratedTransaction.getAmountWithTax();
+        if(addAmounts) {
+	        if (isEnterprise) {
+	            addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+	        } else {
+	            addAmountWithTax(ratedTransaction.getAmountWithTax());
+	        }
+	        addAmountTax(ratedTransaction.getAmountTax());
         }
-        addAmountTax(ratedTransaction.getAmountTax());
-
         if (amountsByTax == null) {
             amountsByTax = new HashMap<>();
         }

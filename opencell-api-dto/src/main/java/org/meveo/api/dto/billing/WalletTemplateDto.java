@@ -44,10 +44,10 @@ public class WalletTemplateDto extends BusinessEntityDto {
     private BillingWalletTypeEnum walletType;
 
     /** The consumption alert set. */
-    private boolean consumptionAlertSet;
+    private Boolean consumptionAlertSet;
 
     /** The fast rating level. */
-    private int fastRatingLevel;
+    private Integer fastRatingLevel;
 
     /** The low balance level. */
     private BigDecimal lowBalanceLevel;
@@ -56,6 +56,16 @@ public class WalletTemplateDto extends BusinessEntityDto {
      * Balance level at which further consumption should be rejected
      */
     private BigDecimal rejectLevel;
+
+	/**
+     * Expression to determine reject Level
+     */
+	private String rejectLevelEl;
+
+    /**
+     * Expression to determine low Balance Level
+     */
+	private String lowBalanceLevelEl;
 
     /**
      * Instantiates a new wallet template dto.
@@ -75,6 +85,8 @@ public class WalletTemplateDto extends BusinessEntityDto {
         fastRatingLevel = walletTemplate.getFastRatingLevel();
         lowBalanceLevel = walletTemplate.getLowBalanceLevel();
         rejectLevel = walletTemplate.getRejectLevel();
+		lowBalanceLevelEl = walletTemplate.getLowBalanceLevelEl();
+		rejectLevelEl = walletTemplate.getRejectLevelEl();
     }
 
     /**
@@ -118,7 +130,7 @@ public class WalletTemplateDto extends BusinessEntityDto {
      *
      * @return the fast rating level
      */
-    public int getFastRatingLevel() {
+    public Integer getFastRatingLevel() {
         return fastRatingLevel;
     }
 
@@ -127,7 +139,7 @@ public class WalletTemplateDto extends BusinessEntityDto {
      *
      * @param fastRatingLevel the new fast rating level
      */
-    public void setFastRatingLevel(int fastRatingLevel) {
+    public void setFastRatingLevel(Integer fastRatingLevel) {
         this.fastRatingLevel = fastRatingLevel;
     }
 
@@ -158,10 +170,75 @@ public class WalletTemplateDto extends BusinessEntityDto {
     public void setRejectLevel(BigDecimal rejectLevel) {
         this.rejectLevel = rejectLevel;
     }
+    
+    
+    
+    /**
+     * @return lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+    public String getLowBalanceLevelEl() {
+		return lowBalanceLevelEl;
+	}
+
+    /**
+     * @param lowBalanceLevelEl expression language to calculate lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
+	public void setLowBalanceLevelEl(String lowBalanceLevelEl) {
+		this.lowBalanceLevelEl = lowBalanceLevelEl;
+	}
+
+	/**
+     * @return RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public String getRejectLevelEl() {
+		return rejectLevelEl;
+	}
+
+	/**
+     * @param RejectLevelEl Balance level el to calculate RejectLevel at which further consumption should be rejected
+     */
+	public void setRejectLevelEl(String rejectLevelEl) {
+		this.rejectLevelEl = rejectLevelEl;
+	}
 
     @Override
     public String toString() {
         return "WalletTemplateDto [code=" + code + ", description=" + description + ", walletType=" + walletType + ", consumptionAlertSet=" + consumptionAlertSet
                 + ", fastRatingLevel=" + fastRatingLevel + ", lowBalanceLevel=" + lowBalanceLevel + ", rejectLevel=" + rejectLevel + "]";
     }
+
+	/**
+	 * @param wt
+	 * @param code
+	 */
+	public void mapToEntity(WalletTemplate wt, String code) {
+		boolean isNew = code !=null;
+		if(isNew) {
+			wt.setCode(code);
+		}
+		if (this.description != null) {
+			wt.setDescription(this.description);
+		}
+		if (this.walletType != null) {
+			wt.setWalletType(this.walletType);
+		}
+		if (this.consumptionAlertSet != null) {
+			wt.setConsumptionAlertSet(this.consumptionAlertSet);
+		}
+		if (this.fastRatingLevel != null) {
+			wt.setFastRatingLevel(this.fastRatingLevel);
+		}
+		if (this.lowBalanceLevel != null) {
+			wt.setLowBalanceLevel(this.lowBalanceLevel);
+		}
+		if (this.rejectLevel != null) {
+			wt.setRejectLevel(this.rejectLevel);
+		}
+		if (this.lowBalanceLevelEl != null) {
+			wt.setLowBalanceLevelEl(this.lowBalanceLevelEl);
+		}
+		if (this.rejectLevelEl != null) {
+			wt.setRejectLevelEl(this.rejectLevelEl);
+		}
+	}
 }

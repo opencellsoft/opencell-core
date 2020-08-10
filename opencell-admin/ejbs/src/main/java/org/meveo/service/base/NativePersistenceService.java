@@ -52,9 +52,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CustomTableEvent;
@@ -66,6 +68,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
@@ -119,6 +122,9 @@ public class NativePersistenceService extends BaseService {
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
+    @Inject
+	private EntityManagerProvider entityManagerProvider;
+
     /**
      * Find record by its identifier
      *
@@ -128,7 +134,7 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
-
+    	tableName = addCurrentSchema(tableName);
         try {
             Session session = getEntityManager().unwrap(Session.class);
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
@@ -164,7 +170,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         Long id = create(tableName, values, true, true);
 
         return id;
@@ -182,7 +188,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         if (values == null || values.isEmpty()) {
             return;
         }
@@ -280,6 +286,7 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map<String, Object> getFields(String tableName) {
+    	tableName = addCurrentSchema(tableName);
         Map<String, Object> fields = new HashedMap();
         Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
         for (String key : customFieldTemplateMap.keySet()) {
@@ -322,7 +329,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     protected Long create(String tableName, Map<String, Object> values, boolean returnId, boolean fireNotifications) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         StringBuffer sql = new StringBuffer();
         try {
 
@@ -417,6 +424,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
+    	tableName = addCurrentSchema(tableName);
         StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
         if (StringUtils.isNotEmpty(findIdFields)) {
             requestConstruction.append(" where " + findIdFields);
@@ -434,7 +442,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         Number id = ((Number) value.get(FIELD_ID));
         if (id == null) {
             throw new BusinessException("'id' field value not provided to update values in native table");
@@ -489,7 +497,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(fieldName).append(value == null ? "= null" : "= :" + fieldName).append(" where id= :id");
         try {
             if (value == null) {
@@ -512,6 +520,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
         entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
     }
@@ -524,6 +533,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
@@ -535,6 +545,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
         entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.ENABLED));
     }
@@ -547,7 +558,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(FIELD_DISABLED).append("=0 where id in :ids");
         getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
     }
@@ -561,6 +572,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Long id) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         this.deletionService.checkTableNotreferenced(tableName, id);
         Map<String, Object> values = findById(tableName, id);
         if (values == null) {
@@ -582,6 +594,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Set<Long> ids) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         int nrDeleted = 0;
         for (Long id : ids) {
             nrDeleted = nrDeleted + remove(tableName, id);
@@ -601,6 +614,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName) throws BusinessException {
+    	tableName = addCurrentSchema(tableName);
         StringBuilder deleteQuery = new StringBuilder("delete from ").append(tableName);
         return getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
     }
@@ -612,7 +626,7 @@ public class NativePersistenceService extends BaseService {
      * @return A list of map of values with field name as map's key and field value as map's value
      */
     public List<Map<String, Object>> list(String tableName) {
-
+    	tableName = addCurrentSchema(tableName);
         return list(tableName, null);
     }
 
@@ -623,7 +637,7 @@ public class NativePersistenceService extends BaseService {
      * @return A list of map of values with field name as map's key and field value as map's value
      */
     public List<Map<String, Object>> listActive(String tableName) {
-
+    	tableName = addCurrentSchema(tableName);
         Map<String, Object> filters = new HashMap<>();
         filters.put(FIELD_DISABLED, 0);
         return list(tableName, new PaginationConfiguration(filters));
@@ -727,6 +741,7 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
+    	tableName = addCurrentSchema(tableName);
         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
         QueryBuilder queryBuilder = new QueryBuilder("select " + fieldsToRetrieve + " from " + tableName + " a ", "a");
         if (config == null) {
@@ -869,7 +884,7 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
-
+    	tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return query.list();
@@ -885,7 +900,7 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
     public List listAsObjects(String tableName, PaginationConfiguration config) {
-
+    	tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
         return query.list();
@@ -899,6 +914,7 @@ public class NativePersistenceService extends BaseService {
      * @return Number of entities.
      */
     public long count(String tableName, PaginationConfiguration config) {
+    	tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         Query query = queryBuilder.getNativeCountQuery(getEntityManager());
         Object count = query.getSingleResult();
@@ -921,7 +937,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void createOrUpdate(String tableName, List<Map<String, Object>> values) throws BusinessException {
-
+    	tableName = addCurrentSchema(tableName);
         for (Map<String, Object> value : values) {
 
             // New record
@@ -941,7 +957,7 @@ public class NativePersistenceService extends BaseService {
      * @return Entity manager
      */
     public EntityManager getEntityManager() {
-        return emWrapper.getEntityManager();
+        return entityManagerProvider.getEntityManager().getEntityManager();
     }
 
     /**
@@ -1198,6 +1214,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     public boolean validateRecordExistanceByTableName(String tableName, Long id) {
+    	tableName = addCurrentSchema(tableName);
         Session session = getEntityManager().unwrap(Session.class);
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append("=:id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
@@ -1207,10 +1224,24 @@ public class NativePersistenceService extends BaseService {
 
     @SuppressWarnings("unchecked")
     public List<BigInteger> filterExistingRecordsOnTable(String tableName, List<Long> ids) {
+    	tableName = addCurrentSchema(tableName);
         Session session = getEntityManager().unwrap(Session.class);
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append(" in (:ids)");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameterList("ids", ids);
         return (List<BigInteger>) query.list();
     }
+    
+	public String addCurrentSchema(String tableName) {
+		CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
+		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		if (currentproviderCode != null && tableName != null) {
+			EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
+			String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+			if (!tableName.contains(schema)) {
+				return schema + tableName;
+			}
+		}
+		return tableName;
+	}
 }

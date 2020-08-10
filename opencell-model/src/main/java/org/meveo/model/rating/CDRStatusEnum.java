@@ -20,7 +20,7 @@ package org.meveo.model.rating;
 
 public enum CDRStatusEnum {
 
-	 OPEN(1, "cdrStatus.open"), PROCESSED(2, "cdrStatus.processed"), CLOSED(3, "cdrStatus.closed"), DISCARDED(4, "cdrStatus.discarded"), ERROR(5, "cdrStatus.error");
+	 OPEN(1, "cdrStatus.open"), PROCESSED(2, "cdrStatus.processed"), CLOSED(3, "cdrStatus.closed"), DISCARDED(4, "cdrStatus.discarded"), ERROR(5, "cdrStatus.error"),TO_REPROCESS(6, "cdrStatus.toReprocess");
 
     private Integer id;
     private String label;

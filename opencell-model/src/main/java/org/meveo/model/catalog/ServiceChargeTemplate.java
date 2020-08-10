@@ -22,11 +22,8 @@ import java.util.List;
 
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 
 import org.meveo.model.BaseEntity;

@@ -28,7 +28,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -46,6 +48,11 @@ import org.meveo.service.job.Job;
  */
 @Stateless
 public class ReportExtractJob extends Job {
+
+    /**
+     * A custom field for Report extracts to execute
+     */
+    public static final String CF_REPORTS = "reports";
 
     @Inject
     private ReportExtractJobBean reportingJobBean;
@@ -66,7 +73,7 @@ public class ReportExtractJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setCode(CF_NB_RUNS);
         customFieldNbRuns.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
@@ -74,10 +81,10 @@ public class ReportExtractJob extends Job {
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
         customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", customFieldNbRuns);
+        result.put(CF_NB_RUNS, customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
         customFieldNbWaiting.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
@@ -85,7 +92,7 @@ public class ReportExtractJob extends Job {
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", customFieldNbWaiting);
+        result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
 
         CustomFieldTemplate customFieldStartDate = new CustomFieldTemplate();
         customFieldStartDate.setCode("startDate");
@@ -106,6 +113,18 @@ public class ReportExtractJob extends Job {
         customFieldEndDate.setValueRequired(false);
         customFieldEndDate.setGuiPosition("tab:Configuration:0;field:3");
         result.put("endDate", customFieldEndDate);
+
+        CustomFieldTemplate customFieldReport = new CustomFieldTemplate();
+        customFieldReport.setCode(CF_REPORTS);
+        customFieldReport.setAppliesTo("JobInstance_ReportExtractJob");
+        customFieldReport.setActive(true);
+        customFieldReport.setDescription(resourceMessages.getString("jobExecution.reportExtractJob.reports"));
+        customFieldReport.setFieldType(CustomFieldTypeEnum.ENTITY);
+        customFieldReport.setEntityClazz(ReportExtract.class.getName());
+        customFieldReport.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        customFieldReport.setValueRequired(false);
+        customFieldReport.setGuiPosition("tab:Configuration:0;field:4");
+        result.put(CF_REPORTS, customFieldReport);
 
         return result;
     }

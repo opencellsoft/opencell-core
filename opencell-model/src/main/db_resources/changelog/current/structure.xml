@@ -3231,6 +3231,13 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
         <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
+    
+    <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="times_tried" type="int4"/>
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#5241_20200622" author="khalidHORRI">
         <createTable tableName="wo_aggregation_line">
@@ -3284,6 +3291,126 @@ END $$;]]>
             <column name="cf_values_accum" type="${type.json}"/>
             <column name="cf_values" type="${type.json}"/>
             <column name="uuid" type="varchar(60)"/>
+        </addColumn>
+    </changeSet>
+
+     <changeSet id="#5241_20200721" author="khalidHORRI">
+        <addColumn tableName="wo_aggregation_settings">
+            <column name="aggregation_rounding" type="int4" defaultValueNumeric="2"/>
+            <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
+        </addColumn>     
+     </changeSet>
+ 
+    <changeSet id="#5388_20200715" author="AndriusKarpavicius">
+        <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
+    </changeSet>
+
+    <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
+        <createTable tableName="document" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name"  type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="tags"  type="varchar(255)"/>
+            <column name="linked_account_entity_id" type="bigint" />
+            <column name="document_category_id" type="bigint" />
+            <column name="document_status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+
+        <createTable tableName="document_category" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_category_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="relative_path"  type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+        <createTable tableName="document_tags">
+            <column name="document_id"  type="bigint"/>
+            <column name="tags"  type="varchar(60)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
+                                 constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="document_category_id"
+                                 constraintName="document_category_id_fk" referencedTableName="document_category"
+                                 referencedColumnNames="id"/>
+
+        <createSequence sequenceName="document_seq" startValue="1"/>
+        <createSequence sequenceName="document_category_seq" startValue="1"/>
+    </changeSet>
+    
+    <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
+        <addColumn tableName="cat_wallet_template">
+            <column name="low_balance_level_el" type="varchar(2000)"/>
+            <column name="reject_level_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5408_20200724" author="AbdellatifBARI">
+        <addColumn tableName="adm_file_format">
+            <column name="file_name_uniqueness" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5405_20190723" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReportExtractJob'</sql>
+    </changeSet>
+
+    <changeSet id="#5404_20200728" author="khalidHORRI">
+        <addColumn tableName="wo_aggregation_settings">
+            <column name="additional_order_by" type="varchar(255)"/>
+        </addColumn>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
+    <changeSet id="#5400_23072020" author="KhalidHORRI">
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
 

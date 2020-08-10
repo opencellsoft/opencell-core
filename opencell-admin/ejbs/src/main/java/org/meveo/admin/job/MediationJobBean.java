@@ -31,13 +31,15 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.MediationFileProcessing;
+import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
 
 /**
@@ -45,7 +47,8 @@ import org.slf4j.Logger;
  *
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Houssine ZNIBAR
+ * @lastModifiedVersion 10.0
  * 
  */
 @Stateless
@@ -92,7 +95,7 @@ public class MediationJobBean {
     String report;
 
     /**
-     * Process a single file
+     * Process a single file.
      *
      * @param result Job execution result
      * @param inputDir Input directory
@@ -100,12 +103,17 @@ public class MediationJobBean {
      * @param archiveDir Directory to store a copy of a processed file
      * @param rejectDir Directory to store a failed records
      * @param file File to process
+     * @param parameter the parameter
      * @param nbRuns Number of parallel executions
-     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
+     * @param waitingMillis the waiting millis
+     * @param readerCode the reader code
+     * @param parserCode the parser code
+     * @param mappingConf the mapping conf
+     * @param recordVariableName the record variable name
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String parameter, Long nbRuns,
-            Long waitingMillis) {
+            Long waitingMillis, String readerCode, String parserCode, String mappingConf, String recordVariableName) {
 
         log.debug("Processing mediation file  in inputDir={}, file={}", inputDir, file.getAbsolutePath());
 
@@ -116,7 +124,8 @@ public class MediationJobBean {
         PrintWriter outputFileWriter = null;
 
         File currentFile = null;
-        CSVCDRParser cdrParser = null;
+        ICdrReader cdrReader = null;
+        ICdrParser cdrParser = null;
 
         try {
 
@@ -128,14 +137,23 @@ public class MediationJobBean {
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
-            cdrParser = cdrParserService.getCDRParser(currentFile);
+            cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
+            
+            cdrParser = cdrParserService.getCDRParser(parserCode);
+            
+            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
+                ((MEVEOCdrFlatFileReader) cdrReader).setDataFile(currentFile);
+                ((MEVEOCdrFlatFileReader) cdrReader).setMappingDescriptor(mappingConf);
+                ((MEVEOCdrFlatFileReader) cdrReader).setDataName(recordVariableName);
+                ((MEVEOCdrFlatFileReader) cdrReader).parsing();
+            }
 
             // Launch parallel processing of a file
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
             for (long i = 0; i < nbRuns; i++) {
 
-                futures.add(mediationFileProcessing.processFileAsync(cdrParser, result, fileName, rejectFileWriter, outputFileWriter, lastCurrentUser));
+                futures.add(mediationFileProcessing.processFileAsync(cdrReader, cdrParser, result, fileName, rejectFileWriter, outputFileWriter, lastCurrentUser));
 
                 if (waitingMillis > 0) {
                     try {
@@ -177,8 +195,8 @@ public class MediationJobBean {
 
         } finally {
             try {
-                if (cdrParser != null) {
-                    cdrParser.close();
+                if (cdrReader != null) {
+                    cdrReader.close();
                 }
             } catch (Exception e) {
                 log.error("Failed to close file parser");

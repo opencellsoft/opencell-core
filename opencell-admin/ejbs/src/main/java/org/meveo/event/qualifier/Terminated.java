@@ -29,6 +29,9 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+/**
+ * Entity was terminated event
+ */
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)

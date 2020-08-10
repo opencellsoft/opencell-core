@@ -32,12 +32,15 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.admin.FileFormat;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
 /**
@@ -51,41 +54,81 @@ import org.meveo.service.job.Job;
 @Stateless
 public class MediationJob extends Job {
 
+    private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationJob";
+
+    private static final String MEDIATION_JOB_PARSER = "MediationJob_parser";
+
+    private static final String MEDIATION_JOB_READER = "MediationJob_reader";
+
+    private static final String MEDIATION_JOB_FILE_FORMAT = "MediationJob_fileFormat";
+    
+    private static final String EMPTY_STRING = "";
+
+    private static final String TWO_POINTS_PARENT_DIR = "\\..";
+
     @Inject
     private MediationJobBean mediationJobBean;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
+    
+    @Inject
+    FileFormatService fileFormatService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
-        try {
-
-            ParamBean parambean = paramBeanFactory.getInstance();
-            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
-
-            String inputDir = meteringDir + "input";
-            String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
-            ArrayList<String> cdrExtensions = new ArrayList<String>();
-            cdrExtensions.add(cdrExtension);
-
+        
+//        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
+//        String readerCode = reader != null ? reader.getCode() : null;
+//        
+//        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
+//        String parserCode = parser != null ? parser.getCode() : null;
+        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
+        
+        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
+        ParamBean parambean = paramBeanFactory.getInstance();
+        String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
+        ArrayList<String> cdrExtensions = new ArrayList<String>();
+        cdrExtensions.add(cdrExtension);
+        try {            
+            String inputDir = null;
+            String outputDir = null;
+            String rejectDir = null;
+            String archiveDir = null;
+            String mappingConf = null;
+            String recordName = null;
+            EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
+            FileFormat fileFormat = null;
+            if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
+                fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
+            } 
+            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator;
+            if( fileFormat != null) {
+                inputDir = meteringDir + fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                outputDir = meteringDir + fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                rejectDir = meteringDir + fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                archiveDir = meteringDir + fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                mappingConf = fileFormat.getConfigurationTemplate();
+                recordName = fileFormat.getRecordName();
+            } else {                
+                meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
+                inputDir = meteringDir + "input";
+                outputDir = meteringDir + "output";
+                rejectDir = meteringDir + "reject";
+                archiveDir = meteringDir + "archive";
+            }
             File f = new File(inputDir);
             if (!f.exists()) {
                 f.mkdirs();
-            }
-
-            String outputDir = meteringDir + "output";
-            String rejectDir = meteringDir + "reject";
-            String archiveDir = meteringDir + "archive";
-
+            }                                          
             f = new File(outputDir);
             if (!f.exists()) {
                 log.debug("outputDir {} not exist", outputDir);
@@ -117,8 +160,8 @@ public class MediationJob extends Job {
                 }
 
                 String fileName = file.getName();
-                mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis);
-
+                mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf,recordName);
+                
                 result.addReport("Processed file: " + fileName);
                 if (oneFilePerJob) {
                     break;
@@ -146,30 +189,30 @@ public class MediationJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-        nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JobInstance_MediationJob");
+        nbRuns.setCode(CF_NB_RUNS);
+        nbRuns.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
         nbRuns.setGuiPosition("tab:Configuration:0;field:0");
-        result.put("nbRuns", nbRuns);
+        result.put(CF_NB_RUNS, nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-        waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JobInstance_MediationJob");
+        waitingMillis.setCode(Job.CF_WAITING_MILLIS);
+        waitingMillis.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
-        result.put("waitingMillis", waitingMillis);
+        result.put(Job.CF_WAITING_MILLIS, waitingMillis);
 
         CustomFieldTemplate oneFilePerJob = new CustomFieldTemplate();
         oneFilePerJob.setCode("oneFilePerJob");
-        oneFilePerJob.setAppliesTo("JobInstance_MediationJob");
+        oneFilePerJob.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
         oneFilePerJob.setActive(true);
         oneFilePerJob.setDescription(resourceMessages.getString("jobExecution.oneFilePerJob"));
         oneFilePerJob.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -177,6 +220,47 @@ public class MediationJob extends Job {
         oneFilePerJob.setValueRequired(false);
         oneFilePerJob.setGuiPosition("tab:Configuration:0;field:2");
         result.put("oneFilePerJob", oneFilePerJob);
+        
+        CustomFieldTemplate fileFormatCF = new CustomFieldTemplate();
+        fileFormatCF.setCode(MEDIATION_JOB_FILE_FORMAT);
+        fileFormatCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        fileFormatCF.setActive(true);
+        fileFormatCF.setDescription(resourceMessages.getString("mediationJob.fileFormat"));
+        fileFormatCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        fileFormatCF.setEntityClazz(FileFormat.class.getName());
+        fileFormatCF.setDefaultValue(null);
+        fileFormatCF.setValueRequired(false);
+        fileFormatCF.setMaxValue(256L);
+        fileFormatCF.setGuiPosition("tab:Configuration:0;field:3");
+        result.put(MEDIATION_JOB_FILE_FORMAT, fileFormatCF);
+        
+        CustomFieldTemplate parserCF = new CustomFieldTemplate();
+        parserCF.setCode(MEDIATION_JOB_PARSER);
+        parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        parserCF.setActive(true);
+        parserCF.setDescription(resourceMessages.getString("mediationJob.parser"));
+        parserCF.setFieldType(CustomFieldTypeEnum.STRING);
+//        parserCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+//        parserCF.setEntityClazz(ScriptInstance.class.getName());
+        parserCF.setDefaultValue(null);
+        parserCF.setValueRequired(false);
+        parserCF.setMaxValue(256L);
+        parserCF.setGuiPosition("tab:Configuration:0;field:4");
+        result.put(MEDIATION_JOB_PARSER, parserCF);
+        
+        CustomFieldTemplate readerCF = new CustomFieldTemplate();
+        readerCF.setCode(MEDIATION_JOB_READER);
+        readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        readerCF.setActive(true);
+        readerCF.setDescription(resourceMessages.getString("mediationJob.reader"));
+        readerCF.setFieldType(CustomFieldTypeEnum.STRING);
+//        readerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+//        readerCF.setEntityClazz(ScriptInstance.class.getName());
+        readerCF.setDefaultValue(null);
+        readerCF.setValueRequired(false);
+        readerCF.setMaxValue(256L);
+        readerCF.setGuiPosition("tab:Configuration:0;field:5");
+        result.put(MEDIATION_JOB_READER, readerCF);
 
         return result;
     }

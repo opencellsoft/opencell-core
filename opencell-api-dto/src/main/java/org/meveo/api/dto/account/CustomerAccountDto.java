@@ -18,6 +18,17 @@
 
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -27,18 +38,9 @@ import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Customer Account DTO.
+ * 
  * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.2
@@ -88,16 +90,22 @@ public class CustomerAccountDto extends AccountDto {
     @Deprecated
     private Date mandateDate;
 
-    /** balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance. */
+    /** Due balance up to today including litigation (status=O, P, I; useDueDate=true) */
     private BigDecimal balance = BigDecimal.ZERO;
 
-    /** exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true. */
+    /** Due balance including litigation, irrelevant of due date (status=O, P, I; ) */
+    private BigDecimal totalBalance = BigDecimal.ZERO;
+
+    /** Due balance excluding litigation, irrelevant of due date (status=O, P; ) */
+    private BigDecimal totalBalanceExigible = BigDecimal.ZERO;
+
+    /** Due balance up to today without litigation (status=O, P; useDueDate=true) */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
 
-    /** totalInvoiceBalance - creditBalance. */
+    /** Account balance by transaction date up to today (status=O, P, I; useDueDate=false) */
     private BigDecimal accountBalance = BigDecimal.ZERO;
     /**
-     * Balance. status=O, P, I; isDue=false; dunning=false; category=CREDIT.
+     * Credit balance (status=O, P, I; useDueDate=false; category=CREDIT)
      */
     private BigDecimal creditBalance = BigDecimal.ZERO;
 
@@ -121,7 +129,7 @@ public class CustomerAccountDto extends AccountDto {
     private List<PaymentMethodDto> paymentMethods;
 
     /** The excluded from payment. */
-    private boolean excludedFromPayment;
+    private Boolean excludedFromPayment;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead.
@@ -399,36 +407,56 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the balance.
-     *
-     * @return the balance
+     * @return Due balance up to today including litigation
      */
     public BigDecimal getBalance() {
         return balance;
     }
 
     /**
-     * Sets the balance.
-     *
-     * @param balance the balance to set
+     * @param balance Due balance up to today including litigation
      */
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
     /**
-     * Gets the total invoice balance.
-     *
-     * @return the totalInvoiceBalance
+     * @return Due balance including litigation, irrelevant of due date
+     */
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    /**
+     * @param totalBalance Due balance including litigation, irrelevant of due date
+     */
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
+    /**
+     * @return Due balance excluding litigation, irrelevant of due date
+     */
+    public BigDecimal getTotalBalanceExigible() {
+        return totalBalanceExigible;
+    }
+
+    /**
+     * @param totalBalanceExigible Due balance excluding litigation, irrelevant of due date
+     */
+    public void setTotalBalanceExigible(BigDecimal totalBalanceExigible) {
+        this.totalBalanceExigible = totalBalanceExigible;
+    }
+
+    /**
+     * @return Due balance up to today without litigation
      */
     public BigDecimal getTotalInvoiceBalance() {
         return totalInvoiceBalance;
     }
 
     /**
-     * Sets the total invoice balance.
-     *
-     * @param totalInvoiceBalance the totalInvoiceBalance to set
+     * @param totalInvoiceBalance Due balance up to today without litigation
      */
     public void setTotalInvoiceBalance(BigDecimal totalInvoiceBalance) {
         this.totalInvoiceBalance = totalInvoiceBalance;
@@ -503,7 +531,7 @@ public class CustomerAccountDto extends AccountDto {
      *
      * @return the excludedFromPayment
      */
-    public boolean isExcludedFromPayment() {
+    public Boolean isExcludedFromPayment() {
         return excludedFromPayment;
     }
 
@@ -512,7 +540,7 @@ public class CustomerAccountDto extends AccountDto {
      *
      * @param excludedFromPayment the excludedFromPayment to set
      */
-    public void setExcludedFromPayment(boolean excludedFromPayment) {
+    public void setExcludedFromPayment(Boolean excludedFromPayment) {
         this.excludedFromPayment = excludedFromPayment;
     }
 
@@ -553,18 +581,14 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the account balance.
-     *
-     * @return the account balance
+     * @return Account balance by transaction date up to today
      */
     public BigDecimal getAccountBalance() {
         return accountBalance;
     }
 
     /**
-     * Sets the account balance.
-     *
-     * @param accountBalance the new account balance
+     * @param accountBalance Account balance by transaction date up to today
      */
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
@@ -590,9 +614,9 @@ public class CustomerAccountDto extends AccountDto {
 
     @Override
     public String toString() {
-        return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory="
-                + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + getContactInformation() + ", dunningLevel="
-                + dunningLevel + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
+        return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory + ", dateStatus="
+                + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + getContactInformation() + ", dunningLevel=" + dunningLevel + ",  balance=" + balance + ", terminationDate="
+                + terminationDate + ", billingAccounts=" + billingAccounts + "]";
     }
 
     public List<AccountOperationDto> getAccountOperations() {
@@ -605,7 +629,6 @@ public class CustomerAccountDto extends AccountDto {
     public void setAccountOperations(List<AccountOperationDto> accountOperations) {
         this.accountOperations = accountOperations;
     }
-
 
     /**
      * @return the invoicingThreshold

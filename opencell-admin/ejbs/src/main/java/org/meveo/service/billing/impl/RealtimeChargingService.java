@@ -184,7 +184,7 @@ public class RealtimeChargingService {
         Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
         List<WalletOperation> ops;
         try {
-            ops = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, false, true);
+            ops = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, true, true, null);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());

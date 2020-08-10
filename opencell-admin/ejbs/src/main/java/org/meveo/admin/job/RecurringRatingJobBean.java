@@ -29,14 +29,12 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.RecurringChargeAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -48,6 +46,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 @Stateless
@@ -65,10 +64,6 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     private Logger log;
 
     @Inject
-    @Rejected
-    private Event<Serializable> rejectededChargeProducer;
-
-    @Inject
     private BillingCycleService billingCycleService;
 
     @Inject
@@ -81,11 +76,11 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("start in running with parameter={}", jobInstance.getParametres());
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
             // Determine rateUntilDate in the following order: rateUntilDate CF value, rateUntilDateEL CF value, today

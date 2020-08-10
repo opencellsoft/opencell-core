@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -641,14 +640,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
-        if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-            return subscriptionService.findSubscriptions(billingRun);
-        }
+        if (billingCycle != null) {
+            if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
+                return subscriptionService.findSubscriptions(billingRun);
 
-        if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
-            return orderService.findOrders(billingRun);
+            } else if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
+                return orderService.findOrders(billingRun);
+            }
         }
-
         return billingAccountService.findBillingAccounts(billingRun);
 
     }
@@ -1222,9 +1221,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
             startDate = DateUtils.setDateToEndOfDay(startDate);
             if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-            	endDate= DateUtils.setDateToEndOfDay(endDate);
+                endDate = DateUtils.setDateToEndOfDay(endDate);
             } else {
-            	endDate= DateUtils.setDateToStartOfDay(endDate);
+                endDate = DateUtils.setDateToStartOfDay(endDate);
             }
 
             query.setParameter("startDate", startDate);
@@ -1342,7 +1341,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public static Date resolveLastTransactionDate(String el, BillingRun billingRun) {
         return ValueExpressionWrapper.evaluateExpression(el, Date.class, billingRun);
     }
-
 
     /**
      * Re-rate transactions that were invoiced by a billing run, mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any

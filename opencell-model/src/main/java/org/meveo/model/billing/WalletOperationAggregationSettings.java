@@ -4,16 +4,20 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +53,24 @@ public class WalletOperationAggregationSettings extends BusinessEntity {
     @Column(name = "period_end_date_included")
     @Type(type = "numeric_boolean")
     private boolean periodEndDateIncluded;
+
+    /**
+     * The aggregation amount rounding.
+     */
+    @Column(name = "aggregation_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    private int aggregationRounding = 2;
+
+    /**
+     * The aggregation amount rounding mode.
+     */
+    @Column(name = "aggregation_rounding_mode", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum aggregationRoundingMode;
+    /**
+     * Additional order by fields seperated by comma that can be used to create the billing_wallet_operation_period view.
+     */
+    @Column(name = "additional_order_by")
+    private String additionalOrderBy;
 
     /**
      * Apply an additional filter to WO.
@@ -98,5 +120,29 @@ public class WalletOperationAggregationSettings extends BusinessEntity {
 
     public void setWalletOperationFilter(Filter walletOperationFilter) {
         this.walletOperationFilter = walletOperationFilter;
+    }
+
+    public int getAggregationRounding() {
+        return aggregationRounding;
+    }
+
+    public void setAggregationRounding(int aggregationRounding) {
+        this.aggregationRounding = aggregationRounding;
+    }
+
+    public RoundingModeEnum getAggregationRoundingMode() {
+        return aggregationRoundingMode;
+    }
+
+    public void setAggregationRoundingMode(RoundingModeEnum aggregationRoundingMode) {
+        this.aggregationRoundingMode = aggregationRoundingMode;
+    }
+
+    public String getAdditionalOrderBy() {
+        return additionalOrderBy;
+    }
+
+    public void setAdditionalOrderBy(String additionalOrderBy) {
+        this.additionalOrderBy = additionalOrderBy;
     }
 }
