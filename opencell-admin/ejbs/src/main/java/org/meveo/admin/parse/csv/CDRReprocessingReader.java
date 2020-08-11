@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
  * @author Mohammed Amine Tazi
  */
 @Stateless
-public class SbwlrCdrReprocessingReader implements ICdrReader {
+public class CDRReprocessingReader implements ICdrReader {
 
-    private static Logger log = LoggerFactory.getLogger(SbwlrCdrReprocessingReader.class);
+    private static Logger log = LoggerFactory.getLogger(CDRReprocessingReader.class);
     
     @Inject
     private CDRService cdrService;

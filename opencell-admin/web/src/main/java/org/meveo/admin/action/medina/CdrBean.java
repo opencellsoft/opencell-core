@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,7 +40,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
-@ConversationScoped
+@ViewScoped
 public class CdrBean extends BaseBean<CDR> {
 
     private static final long serialVersionUID = 7833532801870480214L;
