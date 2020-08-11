@@ -3418,6 +3418,7 @@ END $$;]]>
 		<addColumn tableName="meveo_filter">
 			<column name="polling_query" type="text"/>
 		</addColumn>
+		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
     </changeSet>
 
 </databaseChangeLog>
