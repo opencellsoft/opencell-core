@@ -19,7 +19,6 @@
 package org.meveo.admin.action.medina;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,12 +45,9 @@ public class CdrListBean extends CdrBean {
 
     @SuppressWarnings("rawtypes")
     public LazyDataModel<CDR> getFilteredLazyDataModel() {
-        log.warn("filters : " + filters);
         if(filters != null && !filters.isEmpty() && filters.size() > 0) {
-            log.warn("getLazyDataModel()");
             return getLazyDataModel();
         }
-        log.warn("cdrFileNames is null : " + (cdrFileNames == null));    
         if (cdrFileNames == null) {
             cdrFileNames = new LazyDataModelWSize<CDR>() {
 
@@ -61,8 +57,6 @@ public class CdrListBean extends CdrBean {
                 public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
                     List<CDR> entities = cdrService.getCDRFileNames();
                     setRowCount(entities.size());
-                    log.warn("mapFilters : " + mapfilters);
-                    log.warn("entities size : " + entities.size() + " first : " + first + " , pageSize: " + pageSize);
                     if (getRowCount() > 0) {
                         return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
                     } else {
@@ -72,13 +66,18 @@ public class CdrListBean extends CdrBean {
                 }
                 @Override
                 public Object getRowKey(CDR cdr) {
-                    log.warn("getRowKey : " + cdr.getId());
                     return cdr.getId();
                 }
-                
+                @Override
+                public CDR getRowData() {
+                    return null;
+                }
+                @Override
+                public CDR getRowData(String rowKey) {    
+                    return cdrService.findById(Long.getLong(rowKey));
+                }
             };
         } 
-        log.warn("returning current cdrFileNames");
         return cdrFileNames; 
     }
 
