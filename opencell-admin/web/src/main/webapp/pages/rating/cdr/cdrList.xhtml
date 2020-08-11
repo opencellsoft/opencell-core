@@ -28,8 +28,13 @@
 				field="accessCode" />
 			<hftl:searchField label="#{messages['commons.status']}"
 				field="status" />
+			<hftl:searchField label="#{messages['edr.rejectReason']}"
+				field="rejectReason" />
+			<hftl:searchField label="#{messages['cdr.timesTried']}"
+				field="timesTried" />
 			<hftl:searchField label="#{messages['cdr.callDate']}"
 				field="eventDate" />
+				
 			<c:forEach items="#{cdrBean.params}" var="param">
 				<hftl:searchField label="#{cdrBean.getParamLabel(param)}"
 					field="#{param}" isDate="#{cdrBean.isDate(param)}" time="true"/>
@@ -101,14 +106,14 @@
 		<p:panel styleClass="action-buttons">
 			<p:commandButton id="massReprocessCdr"
 				value="#{messages['cdr.mass.reprocessing']}" update="datatable_results"
-				action="#{cdrBean.massReprocessing()}">
+				action="#{cdrBean.massReprocessing()}" rendered="#{currentUser.hasRole('cdrManager')}">
 				<p:confirm header="#{messages['commons.confirmationHeader']}"
 					message="#{messages['message.confirm.cdr.mass.reprocess']}"
 					icon="ui-icon-alert" />
 			</p:commandButton>
 			<p:commandButton id="massWriteOffCdr"
 					value="#{messages['cdr.mass.writeOff']}"
-					onclick="PF('fieldsConfirmMassWritingOff').show();">
+					onclick="PF('fieldsConfirmMassWritingOff').show();"  rendered="#{currentUser.hasRole('cdrManager')}">
 			</p:commandButton>
 			<p:confirmDialog 
 				styleClass="confirm-dialog"
@@ -130,7 +135,7 @@
 			<p:commandButton id="backoutCdr"
 					value="#{messages['cdr.backout']}"
 					update=":cdrform:fileNamesList"
-					onclick="PF('fieldsConfirmBackoutCdr').show();">
+					onclick="PF('fieldsConfirmBackoutCdr').show();" rendered="#{currentUser.hasRole('cdrManager')}">
 			</p:commandButton>
 			<p:confirmDialog 
 				styleClass="confirm-dialog"

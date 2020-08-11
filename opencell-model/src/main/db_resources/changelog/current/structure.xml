@@ -3339,7 +3339,7 @@ END $$;]]>
     </changeSet>
     <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
         <addColumn tableName="rating_cdr">
-            <column name="line" type="varchar(1000)"/>
+            <column name="line" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

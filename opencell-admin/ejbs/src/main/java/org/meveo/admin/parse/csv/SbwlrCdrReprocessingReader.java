@@ -62,17 +62,15 @@ public class SbwlrCdrReprocessingReader implements ICdrReader {
         }
         CDR cdr = cdrReader.next();
         cdr = cdrParser.parse(cdr.getLine());
-        cdr.setOriginBatch(batchName);
+        cdr.setOriginBatch(batchName);  
         return cdr;
     }
-    
 
-    @SuppressWarnings("unchecked")
     @Override
     public void init(String originBatch) {
         batchName = originBatch;
         try {
-            List<CDR> cdrs = cdrService.getEntityManager().createQuery("from CDR where Status = 'TO_REPROCESS'").getResultList();
+            List<CDR> cdrs = cdrService.getCDRsToReprocess();
             cdrReader = cdrs.iterator();
         } catch(Exception ex) {
             log.error("Failed to read cdrs to reprocess from DB",ex);

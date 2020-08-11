@@ -135,9 +135,6 @@ public class MediationFileProcessing {
 				result.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
 	            cdr.setStatus(CDRStatusEnum.ERROR);
 	            cdr.setRejectReason(e.getMessage());
-                if(StringUtils.isNotBlank(cdr.getLine()) && cdr.getLine().split(",").length > 1) {
-                    cdr.setAccessCode(cdr.getLine().split(",")[1]);
-                }
 	            cdrService.update(cdr);
 				break;
 
@@ -156,9 +153,6 @@ public class MediationFileProcessing {
 				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setRejectReason(e.getMessage());
-                if(StringUtils.isNotBlank(cdr.getLine()) && cdr.getLine().split(",").length > 1) {
-                    cdr.setAccessCode(cdr.getLine().split(",")[1]);
-                }
                 cdrService.update(cdr);
 			}
 		}

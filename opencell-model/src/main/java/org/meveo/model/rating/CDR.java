@@ -55,11 +55,11 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "rating_cdr_seq") })
 @NamedQueries({
-    @NamedQuery(name = "CDR.listEDRsByFilename", query = "select id from EDR where originBatch=:fileName"),
-    @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction where edr.id in (:edrs)"),
-    @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation where edr.id in (:edrs)"),
+    @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction where edr.originBatch=:fileName"),
+    @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation where edr.originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
+    @NamedQuery(name="CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'")
 })
 public class CDR extends BaseEntity implements ICustomFieldEntity {
 
@@ -280,7 +280,8 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Size(max = 255)
     private String type;
 
-    @Column(name = "line", columnDefinition = "text")
+    @Column(name = "line",  length = 2000)
+    @Size(max = 2000)
 	private String line;
 
 	@Transient

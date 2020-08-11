@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,7 +40,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
-@ViewScoped
+@ConversationScoped
 public class CdrBean extends BaseBean<CDR> {
 
     private static final long serialVersionUID = 7833532801870480214L;
@@ -101,13 +101,13 @@ public class CdrBean extends BaseBean<CDR> {
     }
 
     public boolean canReprocess(CDR cdr) {
-        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
+        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
     }
     public boolean canWriteOff(CDR cdr) {
-        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
+        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
