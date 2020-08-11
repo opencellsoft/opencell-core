@@ -101,6 +101,8 @@
 			<hftl:searchField label="#{messages['ratedTransaction.param2']}" field="parameter2" />
 			<hftl:searchField label="#{messages['ratedTransaction.param3']}" field="parameter3" />
 			<hftl:searchField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" />
+            <hftl:searchField label="#{messages['ratedTransaction.startDate']}" field="startDate" />
+            <hftl:searchField label="#{messages['ratedTransaction.endDate']}" field="endDate" />
 
         </hftl:searchPanel>
         <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
@@ -115,6 +117,8 @@
 			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />			
 			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
+            <hftl:column label="#{messages['ratedTransaction.startDate']}" field="startDate" isDate="true" />
+            <hftl:column label="#{messages['ratedTransaction.endDate']}" field="endDate" isDate="true" />
 			<p:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['invoice.invoiceNumber']}" />
