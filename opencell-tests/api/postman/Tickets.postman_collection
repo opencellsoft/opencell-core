@@ -15382,6 +15382,54 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "#5398 - ServiceTemplate update API should not require any fields",
+			"item": [
+				{
+					"name": "Update service template",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\":\"4_SE_CLASSIC_COMMISSION\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/serviceTemplate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"serviceTemplate"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"event": [
@@ -15408,107 +15456,107 @@
 	],
 	"variable": [
 		{
-			"id": "67b79366-d2ff-4b00-a31f-9f9809bd0933",
+			"id": "6d3c62e0-1fd9-4d2d-91d5-13ea0036bb69",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "dcf72ab6-8b00-46d9-a594-b835d68592bc",
+			"id": "8fb5c42b-c560-4a37-bc20-595bdb9bcf52",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "2b77d977-ca5c-47fe-b839-74c2f0c75c7b",
+			"id": "c8546094-a157-469b-b6c4-c2b71d98b7cb",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "a5d8354c-78f1-4002-92e3-53da195d9c3e",
+			"id": "59f7b5e7-e5bc-4e2b-b468-f4e7cf53c5b4",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "f2fa4fde-c85e-4beb-9743-5f5827621d4f",
+			"id": "c55235b5-e878-4fed-948f-ca5f393bd4bb",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "dafbc213-0a34-4a1d-a5a1-49798b6e329e",
+			"id": "8e79ea6f-134d-402d-bf01-6e3008d8796d",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "b55d7724-fba4-4e5e-8493-38d625d71a5e",
+			"id": "cca96f27-2da1-4c62-88e1-bac669e58edc",
 			"key": "testCode",
 			"value": "TST_CODE"
 		},
 		{
-			"id": "83e7945e-84c7-450a-ab66-4de8e9e755cd",
+			"id": "9dae0c8e-3ea2-4d17-a383-4c4032d531df",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "c55137be-ad96-4df3-a3c5-74ba540f0603",
+			"id": "60fa3fcc-61de-453d-8791-0264b0eb55b9",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "1dbeebcf-957a-44d4-8c56-da3cac1656e6",
+			"id": "67a8d39e-65a0-4891-a82c-ecdfc1aa6f29",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "1bb3002f-a36a-45cf-beab-9fb30aece639",
+			"id": "d72e7cad-c77e-4ec5-91ab-3298bd9b4b6e",
 			"key": "test_email",
 			"value": "test@test.com"
 		},
 		{
-			"id": "c2c2538d-fb75-4273-86fb-e42b37441f00",
+			"id": "dec797dd-d1d2-42be-93ac-ca7e166188ca",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "902bb1a5-5761-445c-a120-d28c60f1f111",
+			"id": "b84a612f-bcb2-4b24-9b02-7b44d954417f",
 			"key": "first_name",
 			"value": "FNAME"
 		},
 		{
-			"id": "9d54b61d-4a39-49fa-a0b9-ce9865d4ec11",
+			"id": "def65b43-33fd-4e22-afc0-26da6cd49976",
 			"key": "last_name",
 			"value": "LNAME"
 		},
 		{
-			"id": "93181f7d-3b49-450b-a34c-e7ad72cab31c",
+			"id": "7843de98-b822-47f2-9c7c-57ba10406ee5",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "6060e1bf-aefb-4c9c-a0a5-9028a6917be9",
+			"id": "84ebb239-c9c0-41d4-8c50-45ce031afc0b",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "0d4711c5-08f0-4e41-ae28-e0bf0222eaa8",
+			"id": "0f6ba30e-7c53-468a-b1a3-c184047120a4",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "bb5fc399-84ae-415b-b5bf-e535c8dbf096",
+			"id": "d0dd99ae-e5aa-4cc9-8713-8fe50c013f8b",
 			"key": "phone",
 			"value": "+212587654321"
 		},
 		{
-			"id": "1d1fafcf-e4f1-4ed2-9260-8d1349bb1328",
+			"id": "878f7126-d404-4fcc-9f77-3a413a1c2f8b",
 			"key": "storage",
 			"value": "List of values"
 		},
 		{
-			"id": "8bc450d0-c512-4c00-9246-51ec0b8b9b00",
+			"id": "2e0036ee-cf6b-4494-b9b5-51818691280d",
 			"key": "type",
 			"value": "String"
 		},
 		{
-			"id": "f3bedd0b-5672-42d6-92cd-86510ebb008a",
+			"id": "4b45debf-b858-4f49-8d38-d82b189d2d75",
 			"key": "target",
 			"value": ""
 		}
