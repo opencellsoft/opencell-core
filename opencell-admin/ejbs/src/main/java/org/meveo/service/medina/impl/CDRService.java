@@ -82,9 +82,6 @@ public class CDRService extends PersistenceService<CDR> {
     }
     
     public List<CDR> getCDRFileNames() {
-        if (!currentUser.hasRole("cdrManager")) {
-            throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
-        }
         List<CDR> cdrs = new ArrayList<>();
         String query =  "select distinct origin_batch, first_value (created) over (partition by origin_batch order by id) as created_date from rating_cdr order by created_date desc";
         List<Map<String,Object>> result = executeNativeSelectQuery(query, null);
@@ -99,27 +96,19 @@ public class CDRService extends PersistenceService<CDR> {
         return cdrs;
     }
 
-    @SuppressWarnings("unchecked")
     public void backout(String fileName) {
         if (!currentUser.hasRole("cdrManager")) {
             throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
         }
-
-        String query = "select id from EDR where originBatch=:fileName";
-        List<Long> edrs = (List<Long>) executeSelectQuery(query, Map.of("fileName", fileName));
         
-        if(edrs != null && !edrs.isEmpty()) {
-            query = "delete from RatedTransaction where edr.id in (:edrs)";
-            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
-            
-            query = "delete from WalletOperation where edr.id in (:edrs)";
-            getEntityManager().createQuery(query).setParameter("edrs", edrs).executeUpdate();
-        }
-        
-        query = "delete from EDR where originBatch=:fileName";
-        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
-
-        query = "delete from CDR where originBatch=:fileName";
-        getEntityManager().createQuery(query).setParameter("fileName", fileName).executeUpdate();
+        getEntityManager().createNamedQuery("CDR.deleteRTs").setParameter("fileName", fileName).executeUpdate();            
+        getEntityManager().createNamedQuery("CDR.deleteWOs").setParameter("fileName", fileName).executeUpdate();        
+        getEntityManager().createNamedQuery("CDR.deleteEDRs").setParameter("fileName", fileName).executeUpdate();
+        getEntityManager().createNamedQuery("CDR.deleteCDRs").setParameter("fileName", fileName).executeUpdate();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<CDR> getCDRsToReprocess() { 
+        return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
     }
 }

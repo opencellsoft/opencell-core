@@ -43,6 +43,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -157,10 +158,10 @@ public class FlatFileValidator {
 
             List<String> filesNames = new ArrayList<>();
             for (File file : files) {
-                filesNames.add(file.getName());
                 FlatFile flatFile = validateAndLogFile(file, fileFormat, file.getName(), inputDirectory, rejectDirectory);
                 if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED) {
                     successMessage.append(" ").append(file.getName()).append(" ");
+                    filesNames.add(flatFile.getFileCurrentName());
                 }
                 if (flatFile != null && flatFile.getStatus() == FileStatusEnum.BAD_FORMED) {
                     errorMessage.append(" ").append(file.getName()).append(" ");
@@ -169,7 +170,7 @@ public class FlatFileValidator {
 
             if (successMessage.length() > 0) {
                 messages.put("success", "the files " + successMessage.toString() + " are uploaded to " + inputDirectory);
-                executeJob(fileFormat.getJobCode(), filesNames);
+                flatFileValidator.executeJob(fileFormat.getJobCode(), filesNames);
             }
             if (errorMessage.length() > 0) {
                 messages.put("error", "the files " + successMessage.toString() + " are uploaded to " + rejectDirectory);
@@ -529,17 +530,18 @@ public class FlatFileValidator {
      * @param flatFilesNames the flat files names.
      * @throws BusinessException the business exception
      */
-    private void executeJob(String jobCode, List<String> flatFilesNames) throws BusinessException {
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void executeJob(String jobCode, List<String> flatFilesNames) throws BusinessException {
         JobInstance jobInstance = jobInstanceService.findByCode(jobCode);
         if (jobInstance != null && isAllowedToExecute(jobInstance)) {
             try {
-
                 if (flatFilesNames == null || flatFilesNames.isEmpty()) {
                     log.error("No file found");
                     return;
                 }
 
-                // We will wait until at least one flat     file is created then launch the associate job
+                // We will wait until at least one flat file is created then launch the associate job
                 long start = System.currentTimeMillis();
                 boolean flatFileExist = false;
                 try {
@@ -551,8 +553,7 @@ public class FlatFileValidator {
                                 break;
                             }
                         }
-                        if (System.currentTimeMillis() - start > 2000 && !flatFileExist) {
-                            //throw new BusinessException("No file is not found or is not uploaded and validated by file format");
+                        if (System.currentTimeMillis() - start > 10000 && !flatFileExist) {
                             log.error("No file found");
                             return;
                         }
@@ -562,10 +563,11 @@ public class FlatFileValidator {
                 }
 
                 if (flatFileExist) {
-                    jobExecutionService.manualExecute(jobInstance);
+                    log.info("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
+                    jobExecutionService.executeJob(jobInstance, null);
                 }
             } catch (Exception e) {
-                log.error("execute flat file job fail", e);
+                log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
                 throw new BusinessException(e.getMessage(), e);
             }
         }
@@ -580,7 +582,7 @@ public class FlatFileValidator {
     private void processFile(FlatFile flatFile) throws BusinessException {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null) {
-            executeJob(fileFormat.getJobCode(), new ArrayList<>(Arrays.asList(flatFile.getFileOriginalName())));
+            flatFileValidator.executeJob(fileFormat.getJobCode(), new ArrayList<>(Arrays.asList(flatFile.getFileCurrentName())));
         }
     }
 

@@ -312,6 +312,13 @@
                                         </p:column>
                                         <p:column>
                                             <f:facet name="header">
+                                                <h:outputText value="#{messages['walletOperation.startDate']}" />
+                                            </f:facet>
+                                            <c:set var="converter2" value="#{getConverter.forType(e[startDate], 'date')}"></c:set>
+                                            <h:outputText value="#{e.startDate}" converter="#{converter2}" />
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
                                                 <h:outputText value="#{messages['walletOperation.endDate']}" />
                                             </f:facet>
                                             <c:set var="converter2" value="#{getConverter.forType(e[endDate], 'date')}"></c:set>

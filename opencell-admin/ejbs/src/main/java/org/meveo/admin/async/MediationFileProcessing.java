@@ -33,6 +33,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;

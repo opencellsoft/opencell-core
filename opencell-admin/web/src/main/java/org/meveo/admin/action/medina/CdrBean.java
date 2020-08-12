@@ -101,13 +101,13 @@ public class CdrBean extends BaseBean<CDR> {
     }
 
     public boolean canReprocess(CDR cdr) {
-        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
+        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
     }
     public boolean canWriteOff(CDR cdr) {
-        if(CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()) ) {
+        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
