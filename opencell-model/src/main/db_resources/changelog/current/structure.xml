@@ -3231,6 +3231,13 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
         <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
+    
+    <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="times_tried" type="int4"/>
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#5241_20200622" author="khalidHORRI">
         <createTable tableName="wo_aggregation_line">
@@ -3297,6 +3304,82 @@ END $$;]]>
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
+
+    <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
+        <createTable tableName="document" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name"  type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="tags"  type="varchar(255)"/>
+            <column name="linked_account_entity_id" type="bigint" />
+            <column name="document_category_id" type="bigint" />
+            <column name="document_status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+
+        <createTable tableName="document_category" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_category_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="relative_path"  type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+        <createTable tableName="document_tags">
+            <column name="document_id"  type="bigint"/>
+            <column name="tags"  type="varchar(60)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
+                                 constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="document_category_id"
+                                 constraintName="document_category_id_fk" referencedTableName="document_category"
+                                 referencedColumnNames="id"/>
+
+        <createSequence sequenceName="document_seq" startValue="1"/>
+        <createSequence sequenceName="document_category_seq" startValue="1"/>
+    </changeSet>
     
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
@@ -3330,6 +3413,14 @@ END $$;]]>
             <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_filter">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
+    </changeSet>
+
     <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
         <addColumn tableName="rating_cdr">
             <column name="line" type="varchar(2000)"/>
