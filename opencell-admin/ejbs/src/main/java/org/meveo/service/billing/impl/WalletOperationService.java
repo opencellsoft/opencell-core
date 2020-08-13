@@ -447,6 +447,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             if (applyChargeFromDate == null) {
                 applyChargeFromDate = chargeInstance.getSubscriptionDate();
                 isFirstCharge = true;
+            } else {
+                isFirstCharge = applyChargeFromDate.equals(chargeInstance.getSubscriptionDate());
             }
 
             DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
