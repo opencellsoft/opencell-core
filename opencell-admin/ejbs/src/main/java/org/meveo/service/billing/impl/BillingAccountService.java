@@ -58,7 +58,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author anasseh
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -354,7 +355,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
             }
-
+            qb.addOrderCriterionAsIs("id", true);
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);

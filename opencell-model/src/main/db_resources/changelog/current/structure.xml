@@ -3413,5 +3413,17 @@ END $$;]]>
             <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_filter">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
+    </changeSet>
 
+    <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
+        <addColumn tableName="rating_cdr">
+            <column name="line" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
