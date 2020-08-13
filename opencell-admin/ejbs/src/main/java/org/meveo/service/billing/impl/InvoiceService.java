@@ -276,6 +276,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     @Inject
     @PDFGenerated
@@ -2298,7 +2301,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingAccount Billing account
      * @return Reference date
      */
-    private Date getReferenceDateForNextInvoiceDateCalculation(BillingRun billingRun, BillingAccount billingAccount) {
+    private Date getReferenceDate(BillingRun billingRun, BillingAccount billingAccount) {
         Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
 
@@ -2332,7 +2335,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Assign invoice number and increment BA invoice date.
+     * Assign invoice number .
      *
      * @param invoiceId invoice id
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
@@ -2340,36 +2343,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
+    public void assignInvoiceNumber(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
         Invoice invoice = findById(invoiceId);
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
-
-        BillingAccount billingAccount = invoice.getBillingAccount();
-
-        billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
-    }
-
-    /**
-     * Increment BA invoice date.
-     * 
-     * @param billingRun
-     * @param billingAccount Billing account
-     * 
-     * @throws BusinessException business exception
-     */
-    private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
-
-        Date initCalendarDate = billingAccount.getSubscriptionDate() != null ? billingAccount.getSubscriptionDate() : billingAccount.getAuditable().getCreated();
-        Calendar bcCalendar = CalendarService.initializeCalendar(billingAccount.getBillingCycle().getCalendar(), initCalendarDate, billingAccount, billingRun);
-
-        Date nextInvoiceDate = bcCalendar.nextCalendarDate(getReferenceDateForNextInvoiceDateCalculation(billingRun, billingAccount));
-        if (nextInvoiceDate != null) {
-            billingAccount.setNextInvoiceDate(nextInvoiceDate);
-            billingAccount = billingAccountService.update(billingAccount);
-        }
-        return billingAccount;
     }
 
     /**
@@ -2382,10 +2360,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementBAInvoiceDateInNewTx(BillingRun billingRun, Long billingAccountId) throws BusinessException {
-
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        incrementBAInvoiceDate(billingRun, billingAccount);
+    public void incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    	
+        BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
+		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDate(billingRun, billingAccount));
+		if(nextCalendarDate!=null && (billingAccount.getNextInvoiceDate()==null || nextCalendarDate.compareTo(billingAccount.getNextInvoiceDate())!=0)) {
+			billingAccount.setNextInvoiceDate(nextCalendarDate);
+	        billingAccount.updateAudit(currentUser);
+	        billingAccountService.update(billingAccount);
+		}
+    }
+    
+    /**
+     * Increment BA invoice date by ID.
+     * 
+     * @param billingRun
+     * @param billingAccount
+     * 
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void incrementBAInvoiceDate(BillingRun billingRun, Long billingAccountId) throws BusinessException {
+    	BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+    	incrementBAInvoiceDate(billingRun, billingAccount);
     }
 
     /**
@@ -2460,6 +2458,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
+            .setParameter("invoiceDate", invoiceDate).getResultList();
+    }
+    
+    /**
+     * Retrieve billingAccount ids matching billing run, invoice type, seller and invoice date combination.
+     *
+     * @param billingRunId Billing run id
+     * @param invoiceTypeId Invoice type id
+     * @param sellerId Seller id
+     * @param invoiceDate Invoice date
+     * @return A list of billingAccount identifiers
+     */
+    public List<Long> getBillingAccountIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
+        return getEntityManager().createNamedQuery("Invoice.billingAccountIdByBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
             .setParameter("invoiceDate", invoiceDate).getResultList();
     }
 

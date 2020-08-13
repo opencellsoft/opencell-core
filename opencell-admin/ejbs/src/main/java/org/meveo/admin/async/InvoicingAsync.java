@@ -188,7 +188,7 @@ public class InvoicingAsync {
     }
 
     /**
-     * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
+     * Assign invoice number async. One invoice at a time in a separate transaction.
      *
      * @param billingRun the billing run to process
      * @param invoiceIds the invoice ids
@@ -201,8 +201,8 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId, JobExecutionResultImpl result,
-            MeveoUser lastCurrentUser) {
+    public Future<String> assignInvoiceNumberAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -213,11 +213,9 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
+                invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
 
             } catch (Exception e) {
-                log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
-
                 if (result != null) {
                     result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
                 }
@@ -225,7 +223,42 @@ public class InvoicingAsync {
         }
         return new AsyncResult<String>("OK");
     }
+    
+    /**
+     * Increment BA invoice dates async. One BA at a time in a separate transaction.
+     *
+     * @param billingRun the billing run to process
+     * @param invoiceIds the invoice ids
+     * @param invoicesToNumberInfo the invoices to number info
+     * @param jobInstanceId the job instance id
+     * @param result the Job execution result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> incrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> baIds, 
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        int i = 0;
+        for (Long ibaId : baIds) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.incrementBAInvoiceDate(billingRun, ibaId);
+
+            } catch (Exception e) {
+                log.error("Failed to increment invoice date for invoice {}", ibaId, e);
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
+    
     /**
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
@@ -252,7 +285,7 @@ public class InvoicingAsync {
                 // TODO this way of finding reason is not very good, as nextInvoiceDate will be null only of the first run.
                 BillingAccount ba = billingAccountService.findById(baId);
                 String reason = ba.getNextInvoiceDate() == null ? "Next Invoicing Date is null" : "No billable transaction";
-                invoiceService.incrementBAInvoiceDateInNewTx(billingRun, baId);
+                invoiceService.incrementBAInvoiceDate(billingRun, baId);
                 
                 ba = billingAccountService.findById(baId);
                 rejectedBillingAccountService.create(ba, billingRun, reason);
