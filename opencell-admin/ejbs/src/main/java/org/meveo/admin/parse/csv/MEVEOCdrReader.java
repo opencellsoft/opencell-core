@@ -27,7 +27,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -108,6 +110,18 @@ public class MEVEOCdrReader implements ICdrCsvReader {
         cdr.setOriginBatch(batchName);
         cdr.setOriginRecord(getOriginRecord(line));
         return cdr;
+    }
+    
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        List<CDR> cdrs = new ArrayList<CDR>();
+        for (String line : cdrLines) {
+            CDR cdr = cdrParser.parse(line);
+            cdr.setOriginBatch(batchName);
+            cdr.setOriginRecord(getOriginRecord(line));
+            cdrs.add(cdr);
+        }
+        return cdrs;
     }
     
     @Override

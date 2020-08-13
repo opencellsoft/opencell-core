@@ -3,6 +3,7 @@ package org.meveo.admin.parse.csv;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -81,5 +82,16 @@ public class CDRReprocessingReader implements ICdrReader {
     @Override
     public void close() throws IOException {
         
+    }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        List<CDR> cdrs = new ArrayList<CDR>();
+        for (String line : cdrLines) {
+            CDR cdr = cdrParser.parse(line);
+            cdr.setOriginBatch(batchName);
+            cdrs.add(cdr);
+        }
+        return cdrs;
     }    
 }

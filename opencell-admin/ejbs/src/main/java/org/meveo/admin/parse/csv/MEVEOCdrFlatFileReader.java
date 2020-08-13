@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -140,5 +142,17 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     @Override
     public void init(String originBatch) {
         batchName = originBatch;
+    }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        List<CDR> cdrs = new ArrayList<CDR>();
+        for (String line : cdrLines) {
+            CDR cdr = cdrParser.parse(line);
+            cdr.setOriginBatch(batchName);
+            cdr.setOriginRecord(getOriginRecord(line));
+            cdrs.add(cdr);
+        }
+        return cdrs;
     }    
 }

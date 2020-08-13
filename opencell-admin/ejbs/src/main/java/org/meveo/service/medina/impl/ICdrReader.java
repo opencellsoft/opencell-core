@@ -1,6 +1,7 @@
 package org.meveo.service.medina.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.meveo.model.rating.CDR;
 
@@ -32,4 +33,13 @@ public interface ICdrReader {
      * @throws IOException IO exception
      */
     void close() throws IOException;
+
+    /**
+     * Get all record from list of cdr lines
+     *
+     * @param cdrParser the cdr parser
+     * @param cdrLines list of cdr lines
+     * @return List<CDR> records
+     */
+    List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines);
 }

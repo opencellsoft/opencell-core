@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -59,6 +60,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.notification.DefaultObserver;
 
@@ -110,22 +112,27 @@ public class MediationApi extends BaseApi {
         }
 
         handleMissingParameters();
-
+        
+        ICdrCsvReader cdrReader = cdrParsingService.getCDRReader(currentUser.getUserName(), postData.getIpAddress());
         ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
 
+        CDR cdr = null;
         try {
-            for (String line : cdrLines) {
-                CDR cdr = cdrParser.parse(line);
-                if(cdr == null) {
-                    return;
-                }
+            List<CDR> cdrs = cdrReader.getRecords(cdrParser, cdrLines);
+            ListIterator<CDR> cdrIterator = cdrs.listIterator();
+            while (cdrIterator.hasNext()) {
+                cdr = cdrIterator.next();
                 List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);
+                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
                 cdrParsingService.createEdrs(edrs,cdr);
             }
-        } catch (CDRParsingException e) {
-            log.error("Error parsing cdr={}", e);
-            throw new MeveoApiException(e.getMessage());
+        } catch (Exception e) {
+            String errorReason = e.getMessage();
+            if (e instanceof CDRParsingException) {
+                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason);
+            } else {
+                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
+            }
         }
     }
 
