@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.meveo.service.script.payment.AccountOperationFilterScript.DD_REQ_OP;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -33,6 +32,7 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -311,9 +311,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	private List<AccountOperation> filterAoToPayOrRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
-			Map<String, Object> methodContext = new HashMap<>();
-			// TODO : no need for this, but add some context info: builder,lot,op			
-			 methodContext.put(DD_REQ_OP, ddRequestLotOp);
+			Map<String, Object> methodContext = new HashMap<>();				
+			 methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, ddRequestLotOp.getFromDueDate());
+			 methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, ddRequestLotOp.getToDueDate());
+			 methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, PaymentMethodEnum.DIRECTDEBIT);
+			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess());
 
 			return aoFilterScript.filterAoToPay(methodContext);
 		}

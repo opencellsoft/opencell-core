@@ -165,7 +165,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
+    public List<AccountOperation> getAOsToPayOrRefundByCA(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
             Long customerAccountId) {
         try {
             return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefund").setParameter("paymentMethodIN", paymentMethodEnum)

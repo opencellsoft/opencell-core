@@ -41,7 +41,7 @@ public class UnitPaymentJobBean {
     private PaymentService paymentService;
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)// TODO : nbr of method arguments is disturbing , refactor it by using a dedicated bean/dto
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long customerAccountId, List<Long> listAOids, Long amountToPay, boolean createAO, boolean matchingAO,
             OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethodEnum paymentMethodType, AccountOperationFilterScript aoFilterScript) {
         
@@ -71,8 +71,7 @@ public class UnitPaymentJobBean {
                 result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
             } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
-                result.registerSucces();
-                result.registerSucces();
+                result.registerSucces();               
             }            
 
         } catch (Exception e) {
