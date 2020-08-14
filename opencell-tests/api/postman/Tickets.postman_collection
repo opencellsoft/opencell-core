@@ -15430,6 +15430,75 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "#5315 - [API] POST /invoice ratedTransactionsToLink",
+			"item": [
+				{
+					"name": "ratedTransactionsToLink   ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c6919298-b4e0-499f-a290-fe31e687af5d",
+								"exec": [
+									"pm.test(\"Check that the  API response is  200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code name has string\", function () {\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ratedTransactionsToLink\": [168],\r\n    \"returnXml\": true,\r\n    \"invoiceType\": \"ADJ\",\r\n    \"billingAccountCode\": \"DEMO.CLASSIC\",\r\n    \"dueDate\": \"2020-10-13\",\r\n    \"invoiceDate\": \"2020-10-13\",\r\n    \"invoiceMode\": \"DETAILLED\",\r\n    \"categoryInvoiceAgregate\": [\r\n        {\r\n            \"categoryInvoiceCode\": \"SUBSCRIPTION\",\r\n            \"description\": \"SUBSCRIPTION\",\r\n            \"subCategoryInvoiceAgregateDto\": [\r\n                {\r\n                    \"description\": \"SUB_DATA\",\r\n                    \"invoiceSubCategoryCode\": \"SUB_DATA\",\r\n                    \"amountWithoutTax\": \"100\",\r\n                    \"amountTax\": \"20\",\r\n                    \"amountWithTax\": \"120\",\r\n                    \"ratedTransaction\": [\r\n                        {\r\n                            \"code\": \"WS_BASE_OS_OTHER\",\r\n                            \"unitAmountWithoutTax\": \"100\",\r\n                            \"amountWithoutTax\": \"100\",\r\n                            \"quantity\": \"1\",\r\n                            \"description\": \"API\",\r\n                            \"usageDate\": \"2020-10-13\",\r\n                            \"taxCode\": \"TAX_00\"\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/invoice",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"invoice"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"event": [
@@ -15456,107 +15525,107 @@
 	],
 	"variable": [
 		{
-			"id": "6d3c62e0-1fd9-4d2d-91d5-13ea0036bb69",
+			"id": "d88dd6a5-ed96-4d36-ac08-0406b834d687",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "8fb5c42b-c560-4a37-bc20-595bdb9bcf52",
+			"id": "3fb0c526-b9d7-4dcf-aa02-69cbcab70d6b",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "c8546094-a157-469b-b6c4-c2b71d98b7cb",
+			"id": "74e4d73d-f40d-438e-a348-c4668aa5cd96",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "59f7b5e7-e5bc-4e2b-b468-f4e7cf53c5b4",
+			"id": "2b758400-a1aa-4e11-bf72-3e3d077f03a5",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c55235b5-e878-4fed-948f-ca5f393bd4bb",
+			"id": "2f7e3ceb-2828-4193-b3a4-0867ef6dbf13",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "8e79ea6f-134d-402d-bf01-6e3008d8796d",
+			"id": "358dca2e-5e6f-474a-a003-311c35c53e3d",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "cca96f27-2da1-4c62-88e1-bac669e58edc",
+			"id": "2825a09f-6852-4330-8d68-a375f69036f2",
 			"key": "testCode",
 			"value": "TST_CODE"
 		},
 		{
-			"id": "9dae0c8e-3ea2-4d17-a383-4c4032d531df",
+			"id": "193cb290-ebd8-4ee6-b41b-2ee5a2008282",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "60fa3fcc-61de-453d-8791-0264b0eb55b9",
+			"id": "0bfc6190-5594-405e-8ac7-21b359048a86",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "67a8d39e-65a0-4891-a82c-ecdfc1aa6f29",
+			"id": "5b36d324-1d1c-487f-9697-d8ef873b48ca",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "d72e7cad-c77e-4ec5-91ab-3298bd9b4b6e",
+			"id": "934e05df-ab80-4955-8c9d-a4bc728b4750",
 			"key": "test_email",
 			"value": "test@test.com"
 		},
 		{
-			"id": "dec797dd-d1d2-42be-93ac-ca7e166188ca",
+			"id": "ec22bcf1-08e0-4c71-b63c-b32080b2f276",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "b84a612f-bcb2-4b24-9b02-7b44d954417f",
+			"id": "284abfa6-c044-4125-a0ef-e4b22b45fd00",
 			"key": "first_name",
 			"value": "FNAME"
 		},
 		{
-			"id": "def65b43-33fd-4e22-afc0-26da6cd49976",
+			"id": "8bf399e9-3b53-4246-a2c2-d7c4ca2c4526",
 			"key": "last_name",
 			"value": "LNAME"
 		},
 		{
-			"id": "7843de98-b822-47f2-9c7c-57ba10406ee5",
+			"id": "a407740c-70d1-4801-9b8b-23b5a8e30057",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "84ebb239-c9c0-41d4-8c50-45ce031afc0b",
+			"id": "a16c3986-a323-4299-b970-e1ed0d336717",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "0f6ba30e-7c53-468a-b1a3-c184047120a4",
+			"id": "ba0fed43-26f2-4717-9564-d30d512b4d4b",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "d0dd99ae-e5aa-4cc9-8713-8fe50c013f8b",
+			"id": "6b3c7694-4da9-4e80-9d6e-a5be121996b3",
 			"key": "phone",
 			"value": "+212587654321"
 		},
 		{
-			"id": "878f7126-d404-4fcc-9f77-3a413a1c2f8b",
+			"id": "b0622919-b3b7-4d33-a745-084c7227b651",
 			"key": "storage",
 			"value": "List of values"
 		},
 		{
-			"id": "2e0036ee-cf6b-4494-b9b5-51818691280d",
+			"id": "eea6a9f1-b103-45ad-89ef-0d894eac5a7f",
 			"key": "type",
 			"value": "String"
 		},
 		{
-			"id": "4b45debf-b858-4f49-8d38-d82b189d2d75",
+			"id": "b6a50a38-e787-4611-bec4-1a50706799b2",
 			"key": "target",
 			"value": ""
 		}
