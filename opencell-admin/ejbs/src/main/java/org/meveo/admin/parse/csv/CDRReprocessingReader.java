@@ -62,7 +62,11 @@ public class CDRReprocessingReader implements ICdrReader {
             return null;
         }
         CDR cdr = cdrReader.next();
+        String originRecord = cdr.getOriginRecord();
+        String line = cdr.getLine();
         cdr = cdrParser.parse(cdr.getLine());
+        cdr.setLine(line);
+        cdr.setOriginRecord(originRecord);
         cdr.setOriginBatch(batchName);  
         return cdr;
     }
