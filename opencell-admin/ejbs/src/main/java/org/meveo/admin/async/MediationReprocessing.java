@@ -42,6 +42,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
@@ -69,6 +70,9 @@ public class MediationReprocessing {
 	@Inject
 	private CDRParsingService cdrParserService;
 
+	@Inject 
+	private CDRService cdrService;
+	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
 	 * NO transaction - each line will be processed in a separate transaction, one
@@ -115,6 +119,7 @@ public class MediationReprocessing {
 
 				cdrParserService.createEdrs(edrs,cdr);
 
+				cdrParserService.cleanReprocessedCDR(cdr);
 				result.registerSucces();
 
 			} catch (IOException e) {
@@ -130,10 +135,10 @@ public class MediationReprocessing {
 				} else {
 					log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
 				}
-
 				result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
 			}
 		}
 		return new AsyncResult<String>("OK");
 	}
+
 }

@@ -411,4 +411,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
             return meveoCdrReader;
         }
     }
+    public void cleanReprocessedCDR(CDR cdr) {
+        getEntityManager().createNamedQuery("CDR.cleanReprocessedCDR").setParameter("originRecord", cdr.getOriginRecord()).executeUpdate();                    
+    }
 }
