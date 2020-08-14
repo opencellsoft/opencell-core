@@ -82,16 +82,5 @@ public class CDRReprocessingReader implements ICdrReader {
     @Override
     public void close() throws IOException {
         
-    }
-
-    @Override
-    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
-        List<CDR> cdrs = new ArrayList<CDR>();
-        for (String line : cdrLines) {
-            CDR cdr = cdrParser.parse(line);
-            cdr.setOriginBatch(batchName);
-            cdrs.add(cdr);
-        }
-        return cdrs;
-    }    
+    }   
 }
