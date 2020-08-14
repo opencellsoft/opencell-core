@@ -60,7 +60,6 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
-import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.notification.DefaultObserver;
 
@@ -112,16 +111,12 @@ public class MediationApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
-        ICdrCsvReader cdrReader = cdrParsingService.getCDRReader(currentUser.getUserName(), postData.getIpAddress());
         ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
-
-        CDR cdr = null;
+        CDR cdr = null;        
         try {
-            List<CDR> cdrs = cdrReader.getRecords(cdrParser, cdrLines);
-            ListIterator<CDR> cdrIterator = cdrs.listIterator();
+            ListIterator<String> cdrIterator = cdrLines.listIterator();
             while (cdrIterator.hasNext()) {
-                cdr = cdrIterator.next();
+                cdr = cdrParser.parseByApi(cdrIterator.next(), currentUser.getUserName(), postData.getIpAddress());
                 List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
                 List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
                 cdrParsingService.createEdrs(edrs,cdr);
@@ -153,7 +148,7 @@ public class MediationApi extends BaseApi {
         boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
         CDR cdr = null;
         try {
-            cdr = cdrParser.parse(cdrLine);
+            cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), chargeCDRDto.getIp());
             if(cdr == null) {
                 return null;
             }
@@ -244,7 +239,7 @@ public class MediationApi extends BaseApi {
         CDR cdr = null;
         List<EDR> edrs;
         try {           
-            cdr = cdrParser.parse(cdrLine); 
+            cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), ip); 
             List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
             edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);
             for (EDR edr : edrs) {
