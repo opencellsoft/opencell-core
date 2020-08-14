@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
@@ -111,15 +112,17 @@ public class MediationReprocessing {
 				if (cdr == null) {
                     break;
                 }
-				cdr.setRejectReason(null);
-			
-	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
-				log.debug("Processing cdr id:{}", cdr.getId());
+				if (StringUtils.isBlank(cdr.getRejectReason())) {
 
-				cdrParserService.createEdrs(edrs,cdr);
-
-				cdrParserService.cleanReprocessedCDR(cdr);
+    	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+    	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
+    				log.debug("Processing cdr id:{}", cdr.getId());
+    
+    				cdrParserService.createEdrs(edrs,cdr);    
+    				cdrParserService.cleanReprocessedCDR(cdr);
+				} else {
+				    cdrService.updateTimesTried(cdr);
+				}
 				result.registerSucces();
 
 			} catch (IOException e) {

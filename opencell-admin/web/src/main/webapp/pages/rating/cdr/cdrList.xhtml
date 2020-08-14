@@ -108,7 +108,7 @@
 		<p:panel styleClass="action-buttons">
 			<p:commandButton id="massReprocessCdr"
 				value="#{messages['cdr.mass.reprocessing']}" update="datatable_results"
-				action="#{cdrBean.massReprocessing()}" rendered="#{currentUser.hasRole('cdrManager')}">
+				action="#{cdrBean.massReprocessing()}" rendered="#{currentUser.hasRole('cdrRateManager')}">
 				<p:confirm header="#{messages['commons.confirmationHeader']}"
 					message="#{messages['message.confirm.cdr.mass.reprocess']}"
 					icon="ui-icon-alert" />

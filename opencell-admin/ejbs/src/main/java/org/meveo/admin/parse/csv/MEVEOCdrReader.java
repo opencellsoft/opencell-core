@@ -153,4 +153,16 @@ public class MEVEOCdrReader implements ICdrCsvReader {
 
         return null;
     }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        List<CDR> cdrs = new ArrayList<CDR>();
+        for (String line : cdrLines) {
+            CDR cdr = cdrParser.parse(line);
+            cdr.setOriginBatch(batchName);
+            cdr.setOriginRecord(getOriginRecord(line));
+            cdrs.add(cdr);
+        }
+        return cdrs;
+    }
 }
