@@ -1161,6 +1161,10 @@ public class ElasticClient {
      */
     private void populateAll(ReindexingStatistics statistics, String classname, CustomEntityTemplate cet) {
 
+        if (cet != null && !cet.isStoreInES()) {
+            return;
+        }
+
         log.info("Started to repopulate Elastic Search for {}/{}", classname, cet != null ? cet.getCode() : null);
 
         try {
@@ -1226,6 +1230,10 @@ public class ElasticClient {
             return;
         }
 
+        if (!cet.isStoreInES()) {
+            return;
+        }
+
         esPopulationService.createCETIndex(cet);
     }
 
@@ -1242,6 +1250,21 @@ public class ElasticClient {
         }
 
         esPopulationService.removeCETIndex(cet);
+    }
+
+    /**
+     * Update Elastic Search model with custom entity template definition or remove it based on CustomEntityTemplate.storeInES field value
+     *
+     * @param cet Custom entity template
+     * @throws BusinessException business exception
+     */
+    public void createOrRemoveCETMapping(CustomEntityTemplate cet) throws BusinessException {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        esPopulationService.createOrRemoveCETIndex(cet);
     }
 
     /**

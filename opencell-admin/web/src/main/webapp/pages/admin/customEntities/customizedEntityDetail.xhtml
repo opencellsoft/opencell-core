@@ -37,6 +37,7 @@
                 <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true" />
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
                 <hftl:formField label="#{messages['customizedEntities.storeAsTable']}" field="storeAsTable" allowEdit="false" />
+                <hftl:formField label="#{messages['customizedEntities.storeInES']}" field="storeInES"/>
                 <hftl:decorateFormField label="#{messages['customizedEntities.dbTablename']}" rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.entity.storeAsTable}">
                     <h:outputText value="#{customEntityTemplateBean.entity.dbTablename}" styleClass="field-value" />
                 </hftl:decorateFormField>

@@ -48,8 +48,7 @@ import org.meveo.model.ModuleItem;
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "cust_cet", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cust_cet_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "cust_cet_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomEntityTemplate.getCETForCache", query = "SELECT cet from CustomEntityTemplate cet where cet.disabled=false order by cet.name ") })
 public class CustomEntityTemplate extends EnableBusinessEntity implements Comparable<CustomEntityTemplate> {
 
@@ -73,11 +72,17 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     @NotNull
     private boolean storeAsTable;
 
-
     @Column(name = "unique_constraint_name", length = 120)
     @Size(max = 120)
     private String uniqueContraintName;
 
+    /**
+     * Should data be stored in Elastic search
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "store_in_es", nullable = false)
+    @NotNull
+    private boolean storeInES;
 
     /**
      * A database table name derived from a code value
@@ -122,12 +127,32 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
         return "CE_" + code + "-modify";
     }
 
+    /**
+     * @return Should data be stored in a separate table
+     */
     public boolean isStoreAsTable() {
         return storeAsTable;
     }
 
+    /**
+     * @param storeAsTable Should data be stored in a separate table
+     */
     public void setStoreAsTable(boolean storeAsTable) {
         this.storeAsTable = storeAsTable;
+    }
+
+    /**
+     * @return Should data be stored in Elastic search
+     */
+    public boolean isStoreInES() {
+        return storeInES;
+    }
+
+    /**
+     * @param storeInES Should data be stored in Elastic search
+     */
+    public void setStoreInES(boolean storeInES) {
+        this.storeInES = storeInES;
     }
 
     /**
