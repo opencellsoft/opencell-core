@@ -88,5 +88,11 @@ public class CDRReprocessingReader implements ICdrReader {
     @Override
     public void close() throws IOException {
         
+    }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        // TODO Auto-generated method stub
+        return null;
     }   
 }

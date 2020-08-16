@@ -83,7 +83,6 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountAndIDs", query = "SELECT r FROM RatedTransaction r where r.billingAccount.id=:billingAccountId AND r.status='OPEN' AND id in (:listOfIds) "),
 
-        
         @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r where r.subscription=:subscription AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
         @NamedQuery(name = "RatedTransaction.listOrdersByBillingAccount", query = "SELECT distinct r.orderNumber FROM RatedTransaction r where r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
 
@@ -157,9 +156,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.amountWithoutTax<>0 and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.invoiceAgregateF=:invoiceAgregateF and r.status='BILLED' order by r.usageDate"),
 
-        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
-                "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
-                        + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
+                + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now , r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice.id IN (:invoicesIds)") })
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
@@ -925,13 +923,15 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      */
     public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingModeEnum roundingMode) {
 
-        // Unit amount calculation is left with higher precision
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        unitAmountWithoutTax = amounts[0];
-        unitAmountWithTax = amounts[1];
-        unitAmountTax = amounts[2];
+        if ((isEnterprise && unitAmountWithoutTax != null) || (!isEnterprise && unitAmountWithTax != null)) {
+            // Unit amount calculation is left with higher precision
+            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+            unitAmountWithoutTax = amounts[0];
+            unitAmountWithTax = amounts[1];
+            unitAmountTax = amounts[2];
+        }
 
-        amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
         amountWithoutTax = amounts[0];
         amountWithTax = amounts[1];
         amountTax = amounts[2];

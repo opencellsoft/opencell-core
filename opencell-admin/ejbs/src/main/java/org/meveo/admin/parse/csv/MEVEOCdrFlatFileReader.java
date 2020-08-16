@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -140,5 +141,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     @Override
     public void init(String originBatch) {
         batchName = originBatch;
+    }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        // TODO Auto-generated method stub
+        return null;
     }     
 }
