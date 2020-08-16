@@ -105,12 +105,12 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceledById", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now WHERE (o.status<>'CANCELED' and o.status<>'RERATED') and o.id IN :woIds"),
         @NamedQuery(name = "WalletOperation.setStatusToOpenForWosThatAreRelatedByRTsById", query = "UPDATE WalletOperation o SET o.status='OPEN', o.updated = :now "
-                + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.ratedTransaction is not null and o1.id IN :woIds)"),       
-        
+                + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.ratedTransaction is not null and o1.id IN :woIds)"),
+
         @NamedQuery(name = "WalletOperation.setStatusOfNotTreatedToCanceledByCharge", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
 
         @NamedQuery(name = "WalletOperation.setStatusToTreatedWithRT", query = "UPDATE WalletOperation o SET o.status='TREATED', o.updated = :now, o.ratedTransaction=:rt where o.id=:id"),
-        
+
         @NamedQuery(name = "WalletOperation.changeStatus", query = "UPDATE WalletOperation o SET o.status=:status, o.updated = :now where o.id=:id"),
 
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
@@ -538,8 +538,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param accountingCode Accounting code
      * @param invoicingDate Date from which operation can be included in an invoice
      */
-    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2,
-            String criteria3, String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode, Date invoicingDate) {
+    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
+            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode, Date invoicingDate) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
@@ -1127,13 +1127,15 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingModeEnum roundingMode) {
 
-        // Unit amount calculation is left with higher precision
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        unitAmountWithoutTax = amounts[0];
-        unitAmountWithTax = amounts[1];
-        unitAmountTax = amounts[2];
+        if ((isEnterprise && unitAmountWithoutTax != null) || (!isEnterprise && unitAmountWithTax != null)) {
+            // Unit amount calculation is left with higher precision
+            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+            unitAmountWithoutTax = amounts[0];
+            unitAmountWithTax = amounts[1];
+            unitAmountTax = amounts[2];
+        }
 
-        amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
         amountWithoutTax = amounts[0];
         amountWithTax = amounts[1];
         amountTax = amounts[2];
