@@ -63,6 +63,7 @@ import com.slimpay.hapiclient.util.EntityConverter;
  *
  * @author anasseh
  * @author Mounir Bahije
+ * @author Mbarek Ait-yaazza
  * @lastModifiedVersion 5.2
  *
  */
@@ -419,4 +420,9 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 		return null;
 	}
 
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		throw new UnsupportedOperationException(); 
+	} 
 }

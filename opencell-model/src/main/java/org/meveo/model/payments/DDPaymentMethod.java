@@ -76,7 +76,7 @@ public class DDPaymentMethod extends PaymentMethod {
 	public DDPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, boolean preferred,
 			Date mandateDate, String mandateIdentification, BankCoordinates bankCoordinates) {
 		super();
-		setPaymentType(PaymentMethodEnum.CARD);
+		setPaymentType(PaymentMethodEnum.DIRECTDEBIT);
 		setAlias(alias);
 		setDisabled(isDisabled);
 		setPreferred(preferred);
