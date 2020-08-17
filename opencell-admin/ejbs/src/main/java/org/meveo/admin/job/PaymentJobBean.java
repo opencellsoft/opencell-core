@@ -144,9 +144,9 @@ public class PaymentJobBean extends BaseJobBean {
 				methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, fromDueDate);
 				methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, toDueDate);
 				methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, paymentMethodType);
-				methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, paymentOrRefundEnum.getOperationCategoryToProcess());
-
-				aos = aoFilterScript.filterAoToPay(methodContext);
+				methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, paymentOrRefundEnum.getOperationCategoryToProcess());				
+				
+				aos = aoFilterScript.filterAoToPay(methodContext);				
 			}
 
 			log.debug("nb aos for payment/refund:" + aos.size());
