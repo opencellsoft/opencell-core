@@ -3426,4 +3426,17 @@ END $$;]]>
             <column name="line" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#5372_20190813" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}billing_billing_run set last_transaction_date = process_date where last_transaction_date is null</sql>
+        <addNotNullConstraint tableName="billing_billing_run" columnName="last_transaction_date"/>
+    </changeSet>
+    
+    <changeSet id="#5442_CET_ES" author="AndriusKarpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_in_es" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+        <addNotNullConstraint tableName="cust_cet" columnName="store_in_es"/>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -1725,6 +1725,18 @@ public class ValidateBRScript extends Script {
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-120"></column>
         </insert>    
+	</changeSet>   
+	 
+ 	<changeSet id="#5303_20200814 - CDR and Mediation" author="AmineTazi">
+		<insert tableName="adm_permission">
+            <column name="id" valueNumeric="-121" />
+            <column name="name" value="CDR Rate Manager" />
+            <column name="permission" value="cdrRateManager" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" value="-1"></column>
+            <column name="permission_id" value="-121"></column>
+        </insert>    
 	</changeSet>    
     
 </databaseChangeLog>

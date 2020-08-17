@@ -609,7 +609,8 @@
                                 <hftl:column label="#{messages['businessEntity.description']}" field="description" isMessage="false" />
                                 <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="usageChargeTemplateDetail"
                                     valueIdField="chargeTemplate.id" />
-                                <hftl:column label="#{messages['serviceInstance.status']}" field="status" />
+                                <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
+                                <hftl:column label="#{messages['walletOperation.statusRT']}" field="ratedTransaction.status.label" isMessage="true" />
                                 <hftl:column label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
                                 <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}" />
                                 <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}">
@@ -865,6 +866,12 @@
                                     <h:outputText value="#{messages['walletOperation.status']}" />
                                 </f:facet>
                                 <h:outputText value="#{messages[shotApplication.status.label]}" />
+                            </p:column>
+                            <p:column width="44px" sortBy="#{shotApplication.ratedTransaction.status}">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['walletOperation.statusRT']}" />
+                                </f:facet>
+                                <h:outputText value="#{messages[shotApplication.ratedTransaction.status.label]}" />
                             </p:column>
                         </p:dataTable>
                     </h:form>

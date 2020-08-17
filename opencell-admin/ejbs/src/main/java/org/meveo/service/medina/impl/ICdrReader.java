@@ -32,14 +32,13 @@ public interface ICdrReader {
      * 
      * @throws IOException IO exception
      */
-    void close() throws IOException;
-
+    void close() throws IOException;    
+    
     /**
-     * Get all record from list of cdr lines
-     *
-     * @param cdrParser the cdr parser
-     * @param cdrLines list of cdr lines
-     * @return List<CDR> records
+     * Get CDR Records
+     * @param cdrParser CDR Parser
+     * @param cdrLines CDR Lines
+     * @return List of CDRs
      */
-    List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines);
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines); 
 }

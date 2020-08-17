@@ -155,7 +155,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * Check if Billing account has any not yet billed Rated transactions
      *
      * @param billingAccount       billing account
-     * @param firstTransactionDate date of first transaction
+     * @param firstTransactionDate date of first transaction. Optional
      * @param lastTransactionDate  date of last transaction
      * @return true/false
      */

@@ -18,11 +18,12 @@
             </p:breadCrumb>
         </h:form>
 
-        <hftl:formPanel formId="walletOperationFormId" edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
+        <hftl:formPanel formId="walletOperationFormId" edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false"
+            showFormButtons="false">
 
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
-            <hftl:formField label="#{messages['seller.title']}" field="seller" valueLabelField="descriptionOrCode" />
+            <hftl:formField label="#{messages['seller']}" field="seller" valueLabelField="descriptionOrCode" />
             <hftl:formField label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" valueLabelField="code" />
             <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="code" />
             <hftl:formField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" valueLabelField="code" />
@@ -56,6 +57,9 @@
             <hftl:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
             <hftl:formField label="#{messages['walletOperation.invoicingDate']}" field="invoicingDate" />
             <hftl:formField label="#{messages['walletOperation.status']}" field="status" />
+
+            <hftl:formField label="#{messages['walletOperation.statusRT.long']}" field="ratedTransaction" childField="status" edit="false"
+                rendered="#{walletOperationBean.entity.status=='TREATED'}" />
             <hftl:decorateFormField fieldId="rerated" label="#{messages['walletOperationStatus.rerated']}" rendered="#{walletOperationBean.entity.reratedWalletOperation!=null}">
                 <h:link id="rerated" outcome="walletOperationDetail">
                     <f:param name="objectId" value="#{walletOperationBean.entity.reratedWalletOperation.id}" />
@@ -67,7 +71,9 @@
                     <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}" />
                 </h:link>
             </hftl:decorateFormField>
+
             <hftl:customFields backingBean="#{walletOperationBean}" messagesId=":walletOperationFormId:messages" />
+
             <ui:param name="buttons" value="true">
                 <ui:define name="buttons">
                     <p:button id="back" value="#{messages['action.back']}" outcome="#{walletOperationBean.back()}" includeViewParams="true" />
