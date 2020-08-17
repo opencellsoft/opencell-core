@@ -30,6 +30,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -96,12 +97,15 @@ public class CdrBean extends BaseBean<CDR> {
     }
     
     public void writeOff() {
+        if(StringUtils.isBlank(writeOffReason)) {
+            return;
+        }
         cdrService.writeOff(Arrays.asList(getEntity().getId()), writeOffReason);
         writeOffReason = "";
     }
 
     public boolean canReprocess(CDR cdr) {
-        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
+        if(currentUser.hasRole("cdrRateManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;

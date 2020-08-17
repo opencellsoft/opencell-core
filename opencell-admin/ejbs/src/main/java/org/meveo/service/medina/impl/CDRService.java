@@ -51,8 +51,8 @@ public class CDRService extends PersistenceService<CDR> {
 	}
 
     public void reprocess(List<Long> ids) throws BusinessException {
-        if (!currentUser.hasRole("cdrManager")) {
-            throw new AccessDeniedException("CDR Manager permission is required to reprocess CDR");
+        if (!currentUser.hasRole("cdrRateManager")) {
+            throw new AccessDeniedException("CDR Rate Manager permission is required to reprocess CDR");
         }
         CDR cdr;
         for(Long id : ids) {
@@ -110,5 +110,13 @@ public class CDRService extends PersistenceService<CDR> {
     @SuppressWarnings("unchecked")
     public List<CDR> getCDRsToReprocess() { 
         return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
+    }
+
+    public void updateTimesTried(CDR cdr) {
+        getEntityManager().createNamedQuery("CDR.updateTimesTried")
+            .setParameter("timesTried", cdr.getTimesTried())
+            .setParameter("originRecord", cdr.getOriginRecord())
+            .executeUpdate();                    
+       
     }
 }

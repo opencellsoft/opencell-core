@@ -85,7 +85,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             customTableCreatorService.createTable(cet.getDbTablename());
         }
 
-        elasticClient.createCETMapping(cet);
+        if (cet.isStoreInES()) {
+            elasticClient.createCETMapping(cet);
+        }
 
         try {
             permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
@@ -100,6 +102,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
         ParamBean paramBean = paramBeanFactory.getInstance();
         CustomEntityTemplate cetUpdated = super.update(cet);
+
+        elasticClient.createOrRemoveCETMapping(cet);
 
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 

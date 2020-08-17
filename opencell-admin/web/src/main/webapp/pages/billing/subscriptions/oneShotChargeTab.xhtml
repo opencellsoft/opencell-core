@@ -19,7 +19,7 @@
                     <hftl:column label="#{messages['chargeInstance.description']}" field="description" />
                     <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="oneShotChargeTemplateDetail"
                         valueIdField="chargeTemplate.id" />
-                    <hftl:column label="#{messages['chargeApplication.status']}" field="status" width="7%" />
+                    <hftl:column label="#{messages['chargeApplication.status']}" field="status.label" width="7%"  isMessage="true" />
                     <hftl:column label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" isDate="true" width="12%" />
                     <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
                     <hftl:column label="#{messages['oneShotChargeInstance.amountWithoutTaxShort']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}" />
@@ -107,9 +107,10 @@
                     styleClass="custom-grid" rendered="#{!subscriptionBean.oneShotChargeInstance.transient and not empty(subscriptionBean.oneShotWalletOperations)}">
                     <hftl:column label="#{messages['walletOperation.operationDate']}" entity="#{shotApplication}" field="operationDate" isDate="true" width="15%" />
                     <hftl:column label="#{messages['walletOperation.quantity']}" entity="#{shotApplication}" field="quantity" width="10%" />
-                    <hftl:column label="#{messages['walletOperation.amountWithoutTax']}" entity="#{shotApplication}" field="amountWithoutTax" converterParam="12digits" width="10%" />
-                    <hftl:column label="#{messages['walletOperation.amountWithTax']}" entity="#{shotApplication}" field="amountWithTax" width="10%" />
+                    <hftl:column label="#{messages['walletOperation.amountWithoutTax']}" entity="#{shotApplication}" field="amountWithoutTax" converterParam="12digits" width="15%" />
+                    <hftl:column label="#{messages['walletOperation.amountWithTax']}" entity="#{shotApplication}" field="amountWithTax" width="15%" />
                     <hftl:column label="#{messages['walletOperation.status']}" entity="#{shotApplication}" field="status.label" isMessage="true" width="10%" />
+                    <hftl:column label="#{messages['walletOperation.statusRT']}" entity="#{shotApplication}" field="ratedTransaction.status.label" isMessage="true" width="15%" />
                 </p:dataTable>
 
                 <ui:param name="buttons" value="true" />

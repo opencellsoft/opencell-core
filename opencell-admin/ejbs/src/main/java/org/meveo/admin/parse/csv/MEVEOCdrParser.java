@@ -255,6 +255,14 @@ public class MEVEOCdrParser implements ICdrParser {
         
         return cdr;
     }
+    
+    @Override
+    public CDR parseByApi(String line, String userName, String ipAddress) {
+        CDR cdr = parse(line);
+        cdr.setOriginBatch("API_" + ipAddress);
+        cdr.setOriginRecord(userName + "_" + new Date().getTime());
+        return cdr;
+    }
         
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
@@ -368,5 +376,5 @@ public class MEVEOCdrParser implements ICdrParser {
     public boolean isApplicable(String type) {
         //TODO Add implementation of this method
         return false;
-    }  
+    }      
 }

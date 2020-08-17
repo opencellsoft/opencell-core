@@ -259,11 +259,11 @@ public class RatingService extends PersistenceService<WalletOperation> {
         }
 
         WalletOperation walletOperation = null;
-        
-        if(quantityInChargeUnits==null) {
+
+        if (quantityInChargeUnits == null) {
             quantityInChargeUnits = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), inputQuantity);
         }
-        
+
         Date invoicingDate = null;
         if (chargeInstance.getInvoicingCalendar() != null) {
 

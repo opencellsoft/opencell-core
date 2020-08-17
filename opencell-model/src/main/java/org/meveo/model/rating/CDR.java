@@ -59,7 +59,10 @@ import org.meveo.model.crm.custom.CustomFieldValues;
     @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation where edr.originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
-    @NamedQuery(name="CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'")
+    @NamedQuery(name="CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'"),
+    @NamedQuery(name="CDR.cleanReprocessedCDR", query = "delete from CDR where Status = 'TO_REPROCESS' and originRecord =:originRecord"),
+    @NamedQuery(name="CDR.updateTimesTried", query = "update CDR set timesTried=:timesTried where status = 'TO_REPROCESS' and originRecord =:originRecord")
+
 })
 public class CDR extends BaseEntity implements ICustomFieldEntity {
 

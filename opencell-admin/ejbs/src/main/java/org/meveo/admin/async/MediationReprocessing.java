@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
@@ -42,6 +43,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
@@ -69,6 +71,9 @@ public class MediationReprocessing {
 	@Inject
 	private CDRParsingService cdrParserService;
 
+	@Inject 
+	private CDRService cdrService;
+	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
 	 * NO transaction - each line will be processed in a separate transaction, one
@@ -107,14 +112,17 @@ public class MediationReprocessing {
 				if (cdr == null) {
                     break;
                 }
-				cdr.setRejectReason(null);
-			
-	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
-				log.debug("Processing cdr id:{}", cdr.getId());
+				if (StringUtils.isBlank(cdr.getRejectReason())) {
 
-				cdrParserService.createEdrs(edrs,cdr);
-
+    	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+    	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
+    				log.debug("Processing cdr id:{}", cdr.getId());
+    
+    				cdrParserService.createEdrs(edrs,cdr);    
+    				cdrParserService.cleanReprocessedCDR(cdr);
+				} else {
+				    cdrService.updateTimesTried(cdr);
+				}
 				result.registerSucces();
 
 			} catch (IOException e) {
@@ -130,10 +138,10 @@ public class MediationReprocessing {
 				} else {
 					log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
 				}
-
 				result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
 			}
 		}
 		return new AsyncResult<String>("OK");
 	}
+
 }

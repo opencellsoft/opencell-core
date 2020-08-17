@@ -37,6 +37,16 @@ public interface ICdrParser {
      * @return the cdr
      */
     CDR parse(Object source);
+    
+    /**
+     * Parses the Cdr by api.
+     *
+     * @param line the line
+     * @param userName the user name
+     * @param ipAddress the ip address
+     * @return the cdr
+     */
+    CDR parseByApi(String line, String userName, String ipAddress);
 
     /**
      * Get a list of Access points CDR corresponds to
@@ -71,5 +81,4 @@ public interface ICdrParser {
      * @return
      */
     boolean isApplicable(String type);
-
 }
