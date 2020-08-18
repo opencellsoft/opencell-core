@@ -6006,22 +6006,21 @@
 									"script": {
 										"id": "b4698cc8-43ae-462a-9c5e-dd1ec086cd9a",
 										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"\");",
 											"});"
 										],
@@ -6060,7 +6059,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_BUNDLE1\",\r\n    \"description\": \"Bundle 1\",\r\n    \"productChargeTemplates\": {\r\n        \"productChargeTemplate\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_PC2\"\r\n            }\r\n        ]\r\n    },\r\n    \"bundleProducts\": {\r\n        \"bundleProduct\": {\r\n            \"productTemplate\": [\r\n                {\r\n                    \"code\": \"{{baseEntityPrefix}}_PRODUCT1\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_BUNDLE1\",\r\n    \"description\": \"Bundle 1\",\r\n        \"productChargeTemplate\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_PC2\"\r\n            }\r\n        ]\r\n    ,\r\n        \"bundleProduct\": [{\r\n            \"productTemplate\": \r\n                {\r\n                    \"code\": \"{{baseEntityPrefix}}_PRODUCT1\"\r\n                }\r\n            \r\n        }]\r\n    }\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -18119,29 +18118,25 @@
 									"script": {
 										"id": "e8ab0ebe-8dce-4930-9a5a-b38f58f9ac8f",
 										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
 											"});",
-											"",
 											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    var jsonBody = JSON.parse(pm.request.body);",
-											"",
 											"    pm.expect(jsonData).to.deep.equal(jsonBody);",
 											"",
 											"});"
@@ -24818,24 +24813,33 @@
 									"script": {
 										"id": "5c92cac9-1fa6-4a69-92bc-a6f42f79aedf",
 										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
 											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "62a481f5-4e44-4c54-83d5-3af0ad839218",
+										"exec": [
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -33620,23 +33624,22 @@
 									"script": {
 										"id": "5df98b22-433c-473e-9023-36cc34fcfcfe",
 										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(401);",
+											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql(\"AUTHENTICATION_AUTHORIZATION_EXCEPTION\");",
+											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql(\"Access to entity details is not allowed.\");",
+											"    pm.expect(jsonData.actionStatus.message).to.eql();",
 											"});"
 										],
 										"type": "text/javascript"
@@ -33708,28 +33711,26 @@
 									"script": {
 										"id": "35f6fa32-96ae-440b-956c-02f48a093028",
 										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.actionStatus.message).to.eql();",
 											"});",
 											"",
 											"",
 											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    var jsonBody = JSON.parse(pm.request.body);",
 											"",
 											"    pm.expect(jsonData.customers.totalNumberOfRecords).to.eql(0);",
@@ -61817,77 +61818,77 @@
 	],
 	"variable": [
 		{
-			"id": "6f910177-c944-4fb8-a1c8-07f5d5e2e72b",
+			"id": "40eb5919-014d-42d1-93b1-93ee2e3a6836",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "e042fe30-03ef-4757-92de-a8d9c9adf15b",
+			"id": "dc64344b-2126-4da1-834e-e9f68ece71d1",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "608d38ec-fb59-40ad-b3f1-bf23ba5bf0d3",
+			"id": "422f2977-b5af-4f78-bbf6-39d58053210a",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "16aef48d-3662-4f87-bac7-1b9f43597b49",
+			"id": "f638cbae-70d9-4753-a0c6-8aae034fa598",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "2d78a771-8fef-4194-bd83-69e0f515545e",
+			"id": "eea13445-4d78-422b-9224-c5f58fe58e0b",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "ada69ab6-feb5-4450-b9c4-f547ded412b9",
+			"id": "34c99400-2056-4e3e-ae28-cd0b9f1128b2",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "7ca80f1c-d463-473a-b0f7-4a61762d9c3d",
+			"id": "13c72f4c-1303-4639-997f-e28590597fc1",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "82b41069-4973-49d3-854a-c94414c5d608",
+			"id": "507c1b5a-d5b0-41d3-8e7c-2db009cb541d",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "ed449df5-c84f-4de4-889b-d37581e9c080",
+			"id": "7062997e-7548-4a01-b7f3-ca16b1624425",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "9dad5f32-6864-45ff-81ad-0f92376673dd",
+			"id": "cdb915fd-6845-4291-9e78-2132678eaf6c",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "208513cd-d785-481a-8fca-4a861d49c25a",
+			"id": "d4243c10-896b-400e-97a7-5d2a52784c38",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "a6667e76-8bef-457d-bc4c-26fb130b62ff",
+			"id": "fe1f1980-4a15-4942-9343-1adf0ae1d564",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "b5edd685-9e6a-4a9a-8ac3-419fcccd0718",
+			"id": "19e4e4f4-7ea2-41a8-b4b6-035c62819fe7",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "2f18356b-c532-4e67-9217-afc261e305ae",
+			"id": "e1e176bf-72cb-4f09-b266-cd8325c6bacc",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "a67221d8-d5cb-4e92-91f1-294f248e01d3",
+			"id": "7fe453d2-bc58-4dd3-b2af-2f26b695522c",
 			"key": "project.version",
 			"value": "9.2+"
 		}

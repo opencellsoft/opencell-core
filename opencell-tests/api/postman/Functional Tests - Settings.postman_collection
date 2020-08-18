@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "1d1de78f-3777-44f9-9fec-6b318897ca68",
-		"name": "Opencell Functional Tests",
+		"name": "Functional Tests - Settings",
 		"description": "# Portal APIs\r\n\r\nHere are all portal APIs. Are tested the CRUD processes when available as well as exceptions that might occure, to assure that everything works as intended.\r\n\r\n### Typical execution\r\n\r\nThe typical test consists of:\r\n1. A successful createOrUpdate(POST) - remplace with create when createOrUpdateis unavailable\r\n2. A successful read (GET) - check if entity created in point 1 is retreived\r\n3. A failed Create (POST) - due to entity already created\r\n4. A failed update (PUT) - due to a non existant entity\r\n5. A succesfull update (PUT) - update entity created in point 1\r\n6. A succesfull createOrUpdate(POST) - update entity created in point 1 - skip this if createOrUpdateis unavailable\r\n7. A successful read (GET) - check if updated entity from point 5 and 6 have been correctly updated\r\n8. Any extra failed tests such as MISSING_PARAMETER or INVALID_PARAMETER\r\n\r\nPlease ensure that tests are correctly asserted in the Tests tab.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
