@@ -859,5 +859,30 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 		}
 
 		return result;
+	} 
+	@Override
+	public ActionStatus createMandate(PaymentMethodDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+           paymentMethodApi.createMandate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus approveSepaDDMandate(PaymentMethodDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+           paymentMethodApi.approveSepaDDMandate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
 	}
 }

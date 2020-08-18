@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *  @author anasseh
  *  @author Mounir Bahije
  *  @author Mbarek Ait-yaazza
- *  @lastModifiedVersion 5.2
+ *  @lastModifiedVersion 10.0.0
  */
 
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
@@ -318,6 +318,18 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 			String iban) throws BusinessException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, String signatureDate) throws BusinessException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

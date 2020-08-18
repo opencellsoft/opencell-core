@@ -38,7 +38,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @author anasseh
  * @author Mounir Bahije
  * @author Mbarek Ait-yaazza
- * @lastModifiedVersion 9.2
+ * @lastModifiedVersion 10.0.0
  *
  */
 public interface GatewayPaymentInterface {
@@ -216,4 +216,22 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException business exception
      */
     public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException;
+    
+    /**
+     * Creates a mandate to be used in a SEPA Direct Debit payment.
+     * 
+     * @param customerAccount customer account. 
+     * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
+     * @throws BusinessException business exception
+     */
+    public void createMandate(CustomerAccount customerAccount,String iban) throws BusinessException;
+    
+    /**
+     * approve a mandate to be used in a SEPA Direct Debit payment.
+     * 
+     * @param token 
+     * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
+     * @throws BusinessException business exception
+     */
+    public void approveSepaDDMandate(String token,String signatureDate) throws BusinessException;
 }
