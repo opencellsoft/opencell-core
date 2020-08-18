@@ -610,7 +610,6 @@
                                 <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="usageChargeTemplateDetail"
                                     valueIdField="chargeTemplate.id" />
                                 <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
-                                <hftl:column label="#{messages['walletOperation.statusRT']}" field="ratedTransaction.status.label" isMessage="true" />
                                 <hftl:column label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
                                 <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}" />
                                 <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}">
