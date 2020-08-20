@@ -3434,4 +3434,14 @@ END $$;]]>
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
+    <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="payment_method_id"  type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_subscription"
+                                 constraintName="fk_subscription_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>
 </databaseChangeLog>
