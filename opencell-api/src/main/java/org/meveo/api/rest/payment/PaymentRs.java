@@ -700,4 +700,16 @@ public interface PaymentRs extends IBaseRs {
     @PUT
     @Path("/paymentScheduleInstance/cancel")
     public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    
+    @POST
+    @Path("/createMandate")
+    public ActionStatus createMandate(PaymentMethodDto paymentMethodDto);
+    
+    
+    @POST
+    @Path("/approveSepaDDMandate")
+    public ActionStatus approveSepaDDMandate(PaymentMethodDto paymentMethodDto);
+    
+    
 }

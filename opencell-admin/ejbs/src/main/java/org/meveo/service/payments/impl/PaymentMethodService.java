@@ -84,6 +84,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }else if (paymentMethod instanceof DDPaymentMethod) {
         	DDPaymentMethod ddPayment = (DDPaymentMethod) paymentMethod; 
             obtainAndSetSepaToken(ddPayment, ddPayment.getCustomerAccount());
+            createMandate(ddPayment);
         } 
         super.create(paymentMethod);
 
@@ -116,7 +117,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     		}
     	}
     	if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban)) {
-    		gatewayPaymentInterface.createMandate(customerAccount, iban);
+    		gatewayPaymentInterface.createMandate(customerAccount, iban,ddpaymentMethod.getMandateIdentification());
     	} 
     }
     

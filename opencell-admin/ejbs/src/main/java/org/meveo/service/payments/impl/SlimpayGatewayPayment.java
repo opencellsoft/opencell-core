@@ -420,14 +420,10 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 		return null;
 	}
 
-	@Override
-	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
-			String iban) throws BusinessException {
-		throw new UnsupportedOperationException(); 
-	}
+ 
 
 	@Override
-	public void createMandate(CustomerAccount customerAccount, String iban) throws BusinessException { 
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException { 
 	        throw new UnsupportedOperationException();
 		
 	}
@@ -436,5 +432,12 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 	public void approveSepaDDMandate(String token, String signatureDate) throws BusinessException {
 		throw new UnsupportedOperationException();
 		
+	}
+
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
 	} 
 }

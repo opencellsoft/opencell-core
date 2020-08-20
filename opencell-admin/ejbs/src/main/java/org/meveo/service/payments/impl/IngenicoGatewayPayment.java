@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingenico.connect.gateway.sdk.java.ApiException;
 import com.ingenico.connect.gateway.sdk.java.Client;
 import com.ingenico.connect.gateway.sdk.java.CommunicatorConfiguration;
@@ -98,6 +100,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNa
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaDirectDebitWithoutCreditor;
+import com.ingenico.connect.gateway.sdk.java.merchant.tokens.TokensClient;
 
 /**
  * The Class IngenicoGatewayPayment.
@@ -281,8 +284,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             tokenSepaDDWithoutCreditor.setCustomer(customerTokenWithDetail);  
             tokenSepaDDWithoutCreditor.setAlias(alias);
             CreateTokenRequest body = new CreateTokenRequest();
+            body.setPaymentProductId(770);
             body.setSepaDirectDebit(tokenSepaDDWithoutCreditor);    
-          
+            
+            ObjectMapper mapper = new ObjectMapper(); 
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+            log.info("Body :"+jsonString);
+            
             CreateTokenResponse response = getClient().merchant(paymentGateway.getMarchandId()).tokens().create(body);
             if (!response.getIsNewToken()) {
                 throw new BusinessException("A token already exist for sepa:" + tokenSepaDDWithoutCreditor.getAlias());
@@ -297,7 +305,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     }
     @Override
-    public void createMandate(CustomerAccount customerAccount,String iban) throws BusinessException {
+    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
     	try {
     		BankAccountIban bankAccountIban=new BankAccountIban(); 
     		bankAccountIban.setIban(iban);
@@ -331,6 +339,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     		
     		CreateMandateRequest body = new CreateMandateRequest();
+    		body.setUniqueMandateReference(mandateReference);
     		body.setCustomer(customer);
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");

@@ -222,9 +222,10 @@ public interface GatewayPaymentInterface {
      * 
      * @param customerAccount customer account. 
      * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
+     * @param mandateReference. 
      * @throws BusinessException business exception
      */
-    public void createMandate(CustomerAccount customerAccount,String iban) throws BusinessException;
+    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException;
     
     /**
      * approve a mandate to be used in a SEPA Direct Debit payment.

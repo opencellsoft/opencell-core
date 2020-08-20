@@ -321,7 +321,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public void createMandate(CustomerAccount customerAccount, String iban) throws BusinessException {
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}
