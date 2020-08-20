@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -222,7 +223,7 @@ public interface GatewayPaymentInterface {
      * 
      * @param customerAccount customer account. 
      * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
-     * @param mandateReference. 
+     * @param mandateReference mandate reference.
      * @throws BusinessException business exception
      */
     public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException;
@@ -234,5 +235,5 @@ public interface GatewayPaymentInterface {
      * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
      * @throws BusinessException business exception
      */
-    public void approveSepaDDMandate(String token,String signatureDate) throws BusinessException;
+    public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException;
 }

@@ -30,6 +30,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -359,10 +360,21 @@ public class PaymentMethodApi extends BaseApi {
 
     	DDPaymentMethod paymentMethod = (DDPaymentMethod)paymentMethodDto.fromDto(customerAccount, currentUser); 
     	String token=paymentMethod.getTokenId();
-    	if(StringUtils.isBlank(token)) {
+    	if(!StringUtils.isBlank(token)) {
     		paymentMethodService.approveSepaDDMandate(paymentMethod);
     	}
+    }
     	
+    public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    	if (StringUtils.isBlank(mandateReference)) {
+    		missingParameters.add("mandateReference");
+    	}
+    	if (StringUtils.isBlank(customerAccountCode)) {
+    		missingParameters.add("customerAccountCode");
+    	} 
+    	handleMissingParameters(); 
+    	MandatInfoDto mandateInfoDto=paymentMethodService.checkMandate(mandateReference, mandateId,customerAccountCode);
+    	return mandateInfoDto;
 
     }
 

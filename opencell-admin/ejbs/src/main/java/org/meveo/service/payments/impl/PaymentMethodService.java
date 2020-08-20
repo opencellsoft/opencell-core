@@ -36,7 +36,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -140,8 +139,31 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     	}
     	tokenId=ddpaymentMethod.getTokenId();
     	if (gatewayPaymentInterface != null && !StringUtils.isBlank(tokenId)) {
-    		gatewayPaymentInterface.approveSepaDDMandate(tokenId,DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy HH:mm:ss"));
+    		gatewayPaymentInterface.approveSepaDDMandate(tokenId,new Date());
     	} 
+    }
+    
+    public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode) throws BusinessException{
+    	GatewayPaymentInterface gatewayPaymentInterface = null;
+    	MandatInfoDto mandateInfoDto=null;
+    	CustomerAccount customerAccount =customerAccountService.findByCode(customerAccountCode);
+    	if(customerAccount!=null) {
+    		DDPaymentMethod ddpaymentMethod=new DDPaymentMethod();
+    		ddpaymentMethod.setCustomerAccount(customerAccount);
+    		PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+    		if (paymentGateway == null) {
+    			throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+    		}
+    		try {
+    			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+    		} catch (Exception e) { 
+    			log.warn("Cant find payment gateway");
+    		}
+    	}  
+    	if (gatewayPaymentInterface != null) {
+    		mandateInfoDto= gatewayPaymentInterface.checkMandat(mandateReference,mandateId);
+    	}
+    	return mandateInfoDto;
     }
     
     
