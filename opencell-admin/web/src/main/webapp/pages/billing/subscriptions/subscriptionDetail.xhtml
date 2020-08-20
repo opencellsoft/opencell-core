@@ -572,6 +572,7 @@
                                         valueIdField="chargeTemplate.id" />
                                     <hftl:column label="#{messages['chargeApplication.status']}" field="status" />
                                     <hftl:column label="#{messages['recurringChargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
+                                    <hftl:column label="#{messages['recurringChargeInstance.chargedToDate']}" field="chargedToDate" isDate="true" />
                                     <hftl:column label="#{messages['recurringChargeInstance.nextChargeDate']}" field="nextChargeDate" isDate="true" />
                                     <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
                                     <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false"
@@ -610,7 +611,7 @@
                                 <hftl:column label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate.code" entityView="usageChargeTemplateDetail"
                                     valueIdField="chargeTemplate.id" />
                                 <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
-                                <hftl:column label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
+                                <hftl:column label="#{messages['chargeInstance.chargeDate.usage']}" field="chargeDate" isDate="true" />
                                 <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}" />
                                 <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}">
                                     <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
@@ -729,7 +730,7 @@
                     <hftl:formField label="#{messages['chargeInstance.criteria3']}" field="criteria3" edit="false" isMessage="false" />
 
 
-                    <hftl:formField label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
+                    <hftl:formField label="#{messages['chargeInstance.chargeDate.usage']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
                     <hftl:formField rendered="#{!appProvider.entreprise}" label="#{messages['chargeInstance.amountWithTax']}" field="amountWithTax" newLine="true" />
                     <hftl:formField label="#{messages['chargeInstance.amountWithoutTax']}" field="amountWithoutTax" newLine="true" rendered="#{appProvider.entreprise}" />
