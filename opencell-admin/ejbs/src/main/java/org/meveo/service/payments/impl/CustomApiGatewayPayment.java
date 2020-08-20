@@ -327,7 +327,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public void approveSepaDDMandate(String token, String signatureDate) throws BusinessException {
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}
