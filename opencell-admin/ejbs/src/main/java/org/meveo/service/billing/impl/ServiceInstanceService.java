@@ -512,6 +512,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
+            recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+            recurringChargeInstance.setTerminationDate(terminationDate);
+
             Date chargedToDate = recurringChargeInstance.getChargedToDate();
 
             Date effectiveTerminationDate = terminationDate;
@@ -538,7 +541,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 }
 
             } else if (applyReimbursment && effectiveTerminationDate.before(chargedToDate)) {
-                recurringChargeInstance.setTerminationDate(effectiveTerminationDate);
+                
 
                 try {
                     recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
@@ -552,7 +555,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     throw e;
                 }
             }
-            recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
             recurringChargeInstance = recurringChargeInstanceService.update(recurringChargeInstance);
         }
 

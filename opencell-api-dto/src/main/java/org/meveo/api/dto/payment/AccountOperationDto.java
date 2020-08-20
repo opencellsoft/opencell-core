@@ -190,6 +190,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
      * @param customFieldsDto the custom fields dto
      */
     public AccountOperationDto(AccountOperation accountOp, CustomFieldsDto customFieldsDto) {
+        super(accountOp);
         setId(accountOp.getId());
         setDueDate(accountOp.getDueDate());
         setType(accountOp.getType());
