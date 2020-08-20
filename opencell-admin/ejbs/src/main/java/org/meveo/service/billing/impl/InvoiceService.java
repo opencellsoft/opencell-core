@@ -33,17 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -625,6 +616,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         postPaidInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
                     }
                 }
+            }else if(entityToInvoice instanceof Subscription) {
+                if (Objects.nonNull(((Subscription)entityToInvoice).getPaymentMethod())) {
+                    paymentMethod = ((Subscription)entityToInvoice).getPaymentMethod();
+                }
             }
             InvoiceType invoiceType = postPaidInvoiceType;
             boolean isPrepaid = rt.isPrepaid();
@@ -766,8 +761,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-
-            } else {
+            } else if (entityToInvoice instanceof Subscription) {
+                paymentMethod = ((Subscription) entityToInvoice).getPaymentMethod();
+            } else{
                 paymentMethod = customerAccountService.getPreferredPaymentMethod(ba.getCustomerAccount().getId());
 
                 // Calculate customer account balance
@@ -1108,7 +1104,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
         serviceSingleton.assignInvoiceNumberVirtual(invoice);
-
+        // todo pay
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
@@ -3344,6 +3340,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun != null) {
             invoice.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
         }
+        if (paymentMethod != null) {
+            invoice.setPaymentMethodType(paymentMethod.getPaymentType());
+            invoice.setPaymentMethod(paymentMethod);
+        }
         Order order = null;
         if (entity instanceof Order) {
             order = (Order) entity;
@@ -3351,10 +3351,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (entity instanceof Subscription) {
             invoice.setSubscription((Subscription) entity);
-        }
-        if (paymentMethod != null) {
-            invoice.setPaymentMethodType(paymentMethod.getPaymentType());
-            invoice.setPaymentMethod(paymentMethod);
+            PaymentMethod subscriptionPaymentMethod = ((Subscription) entity).getPaymentMethod();
+            if (Objects.nonNull(subscriptionPaymentMethod)) {
+                invoice.setPaymentMethod(subscriptionPaymentMethod);
+                invoice.setPaymentMethodType(subscriptionPaymentMethod.getPaymentType());
+            }
         }
 
         // Set due balance
@@ -3824,7 +3825,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
+        if (preferedPaymentMethod != null) {//todo
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
         invoice.setInvoiceType(invoiceType);

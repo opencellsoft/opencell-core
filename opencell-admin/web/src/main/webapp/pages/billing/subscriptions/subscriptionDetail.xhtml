@@ -387,6 +387,11 @@
                                         <hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" disabled="#{subscriptionBean.entity.offer == null}"
                                             valueLabelField="code" popup="true" componentWidth="30" required="true" allowEdit="false" popupId="sellerPopup" />
                                     </h:panelGroup>
+
+                                    <h:panelGroup id="paymentMethodField">
+                                        <hftl:formField id="paymentMethodSelectId" label="#{messages['paymentMethod']}" field="paymentMethod" disabled="#{subscriptionBean.entity.offer == null}"
+                                            valueLabelField="alias" popup="true" componentWidth="30" required="true" allowEdit="false"/>
+                                    </h:panelGroup>
                                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="80" />
 
                                     <hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />

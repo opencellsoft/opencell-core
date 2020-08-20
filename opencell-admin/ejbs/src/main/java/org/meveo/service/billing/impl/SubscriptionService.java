@@ -20,12 +20,7 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -69,6 +64,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
@@ -117,7 +113,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
-
+        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         subscription.createAutoRenewDate();
@@ -142,12 +138,22 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Override
     public Subscription update(Subscription subscription) throws BusinessException {
 
+        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         Subscription subscriptionOld = this.findByCode(subscription.getCode());
         subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
+    }
+
+    private void checkSubscriptionPaymentMethod(Subscription subscription, List<PaymentMethod> paymentMethods) {
+        if(Objects.nonNull(subscription.getPaymentMethod()) && (paymentMethods.isEmpty() || paymentMethods.stream()
+                .filter(PaymentMethod::isActive)
+                .noneMatch(paymentMethod -> paymentMethod.getId().equals(subscription.getPaymentMethod().getId())))){
+            log.error("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
+            throw new BusinessException("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
+        }
     }
 
     @MeveoAudit

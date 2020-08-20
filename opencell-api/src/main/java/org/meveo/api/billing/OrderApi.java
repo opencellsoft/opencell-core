@@ -19,12 +19,7 @@
 package org.meveo.api.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -574,7 +569,13 @@ public class OrderApi extends BaseApi {
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
         subscriptionDto.setSeller(subscriptionSeller);
-
+        Long paymentMethodId = (Long) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_PAYMENT_METHOD.getCharacteristicName(),
+                Long.class, null);
+        if(Objects.nonNull(paymentMethodId)){
+            PaymentMethodDto paymentMethodDto = new PaymentMethodDto();
+            paymentMethodDto.setId(paymentMethodId);
+            subscriptionDto.setPaymentMethod(paymentMethodDto);
+        }
         // instantiate and activate services
         extractServices(subscriptionDto, services);
 
