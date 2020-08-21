@@ -1635,6 +1635,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                         }
                                         woLine.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
                                         woLine.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
+                                        
+                                        addCustomFields(walletOperation, doc, woLine);
                                     }
                                 }
                             }
