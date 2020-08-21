@@ -64,9 +64,11 @@ public class CDRReprocessingReader implements ICdrReader {
         CDR cdr = cdrReader.next();
         String originRecord = cdr.getOriginRecord();
         String line = cdr.getLine();
+        Integer timesTried = cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1;
         cdr = cdrParser.parse(cdr.getLine());
         cdr.setLine(line);
         cdr.setOriginRecord(originRecord);
+        cdr.setTimesTried(timesTried);
         cdr.setOriginBatch(batchName);  
         return cdr;
     }
@@ -86,5 +88,11 @@ public class CDRReprocessingReader implements ICdrReader {
     @Override
     public void close() throws IOException {
         
+    }
+
+    @Override
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
+        // TODO Auto-generated method stub
+        return null;
     }   
 }

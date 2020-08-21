@@ -726,7 +726,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -753,7 +753,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(50d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
@@ -776,14 +776,15 @@ public class WalletOperationServiceTest {
 
         assertThat(wos.size()).isEqualTo(2);
 
+        // Will reimburse period 2019/1/1 to 2019/3/1
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -809,7 +810,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -829,20 +830,18 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
     }
-    
-    
-    
+
     @Test
     public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_wProrata_noApplyAgreement() {
 
@@ -857,19 +856,18 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-50d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
     }
-    
-    
+
     // Test when charge is applied in advance - Agreement was applied
 
     @Test
@@ -886,6 +884,7 @@ public class WalletOperationServiceTest {
 
         assertThat(wos.size()).isEqualTo(2);
 
+        // Will reimburse period 2019/1/1 to 2019/3/1
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
         assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
@@ -893,12 +892,11 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
     }
-    
 
     @Test
     public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToPeriod_wProrata_withApplyAgreement() {
@@ -914,6 +912,7 @@ public class WalletOperationServiceTest {
 
         assertThat(wos.size()).isEqualTo(2);
 
+        // Will reimburse period 2019/1/1 to 2019/3/1
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
         assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
@@ -921,15 +920,12 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
     }
-    
-    
-    
-    
+
     @Test
     public void test_test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_noProrata_withApplyAgreement() {
 
@@ -945,13 +941,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -972,26 +968,17 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-50d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     // TEST REIMBURSEMENT OF TERMINATED RECURRING CHARGES
 
@@ -1012,13 +999,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1039,13 +1026,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1066,13 +1053,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1093,13 +1080,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1122,13 +1109,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1149,13 +1136,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1176,13 +1163,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1203,13 +1190,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1240,7 +1227,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1267,7 +1254,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1294,7 +1281,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1321,7 +1308,7 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(50d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
@@ -1344,13 +1331,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1371,13 +1358,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1398,13 +1385,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isNull();
@@ -1425,13 +1412,13 @@ public class WalletOperationServiceTest {
         assertThat(wos.size()).isEqualTo(2);
 
         assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
-        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(50d);
-        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
         assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
         assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));

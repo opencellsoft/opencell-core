@@ -334,36 +334,7 @@ public class PaymentMethodApi extends BaseApi {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
     }
     
-    public void createMandate(PaymentMethodDto paymentMethodDto)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-    	String iban=paymentMethodDto.getBankCoordinates().getIban();
-    	CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
-    	if (customerAccount == null) {
-    		throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
-    	}
-
-    	if (iban==null ||StringUtils.isBlank(iban)) {
-    		missingParameters.add("iban");
-    	}
-    	handleMissingParameters();
-    	DDPaymentMethod paymentMethod = (DDPaymentMethod)paymentMethodDto.fromDto(customerAccount,currentUser);  
-    	paymentMethodService.createMandate(paymentMethod); 
-
-    }
-    
-    
-    public void approveSepaDDMandate(PaymentMethodDto paymentMethodDto)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException { 
-    	CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
-    	if (customerAccount == null) {
-    		throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
-    	} 
-    	handleMissingParameters();
-
-    	DDPaymentMethod paymentMethod = (DDPaymentMethod)paymentMethodDto.fromDto(customerAccount, currentUser); 
-    	String token=paymentMethod.getTokenId();
-    	if(!StringUtils.isBlank(token)) {
-    		paymentMethodService.approveSepaDDMandate(paymentMethod);
-    	}
-    }
+   
     	
     public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
     	if (StringUtils.isBlank(mandateReference)) {

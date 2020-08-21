@@ -105,7 +105,7 @@ public class CdrBean extends BaseBean<CDR> {
     }
 
     public boolean canReprocess(CDR cdr) {
-        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
+        if(currentUser.hasRole("cdrRateManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
