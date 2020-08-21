@@ -18,11 +18,12 @@
 
 package org.meveo.service.payments.impl;
 
-import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.http.client.utils.DateUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
@@ -37,6 +38,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.MandatStateEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -65,11 +67,13 @@ import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedC
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.CreateMandateRequest;
+import com.ingenico.connect.gateway.sdk.java.domain.mandates.GetMandateResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandateAddress;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandateContactDetails;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandateCustomer;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandatePersonalInformation;
 import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandatePersonalName;
+import com.ingenico.connect.gateway.sdk.java.domain.mandates.definitions.MandateResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
@@ -100,7 +104,6 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNa
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaDirectDebitWithoutCreditor;
-import com.ingenico.connect.gateway.sdk.java.merchant.tokens.TokensClient;
 
 /**
  * The Class IngenicoGatewayPayment.
@@ -357,10 +360,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public void approveSepaDDMandate(String token,String signatureDate) throws BusinessException {
+    public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException {
     	try {
     	ApproveTokenRequest body = new ApproveTokenRequest();
-    	body.setMandateSignatureDate(signatureDate);
+    	body.setMandateSignatureDate(DateUtils.formatDate(signatureDate, "YYYYMMdd"));
     	body.setMandateSignaturePlace("");
     	body.setMandateSigned(true);
     	
@@ -718,12 +721,25 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
 
-    }
+    } 
 
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
+    	MandatInfoDto mandatInfoDto=new MandatInfoDto();
+    	GetMandateResponse response = client.merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
+    	MandateResponse mandatResponse=response.getMandate();
+    	if(mandatResponse!=null) { 
+    		if("WAITING_FOR_REFERENCE".equals(mandatResponse.getStatus())) {
+    			mandatInfoDto.setState(MandatStateEnum.waitingForReference); 
+    		}else {
+    			mandatInfoDto.setState(MandatStateEnum.valueOf(mandatResponse.getStatus().toLowerCase()));
+    		}
+    		mandatInfoDto.setReference(mandatResponse.getUniqueMandateReference());
+    	}  
+
+    	return mandatInfoDto;
+
+    } 
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
