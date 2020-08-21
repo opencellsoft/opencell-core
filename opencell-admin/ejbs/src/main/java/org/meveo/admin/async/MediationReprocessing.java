@@ -21,7 +21,6 @@
  */
 package org.meveo.admin.async;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -93,55 +92,37 @@ public class MediationReprocessing {
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public Future<String> processAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, 
-			MeveoUser lastCurrentUser) throws BusinessException {
+            MeveoUser lastCurrentUser) throws BusinessException {
 
-		currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        List<CDR> cdrs = cdrReader.getRecords(cdrParser, null);
+        for (CDR cdr : cdrs) {
+            try {
+                if (StringUtils.isBlank(cdr.getRejectReason())) {
 
-		int i = 0;
-		CDR cdr = null;
-		
-		while (true) {
+                    List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
+                    log.debug("Processing cdr id:{}", cdr.getId());
 
-			i++;
-			if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-				break;
-			}
-
-			try {
-				cdr = cdrReader.getNextRecord(cdrParser);
-				if (cdr == null) {
-                    break;
+                    cdrParserService.createEdrs(edrs, cdr);
+                    cdrParserService.cleanReprocessedCDR(cdr);
+                    result.registerSucces();
+                } else {
+                    result.registerError("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                    cdrService.updateReprocessedCdr(cdr);
                 }
-				if (StringUtils.isBlank(cdr.getRejectReason())) {
+            } catch (Exception e) {
 
-    	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-    	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
-    				log.debug("Processing cdr id:{}", cdr.getId());
-    
-    				cdrParserService.createEdrs(edrs,cdr);    
-    				cdrParserService.cleanReprocessedCDR(cdr);
-				} else {
-				    cdrService.updateTimesTried(cdr);
-				}
-				result.registerSucces();
-
-			} catch (IOException e) {
-				log.error("Failed to read a CDR line", e);
-				result.addReport("Failed to read a CDR " + e.getMessage());
-				break;
-
-			} catch (Exception e) {
-
-				String errorReason = e.getMessage();
-				if (e instanceof CDRParsingException) {
-					log.error("Failed to process CDR id: {} error {}", cdr != null ? cdr.getId() : null, errorReason);
-				} else {
-					log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
-				}
-				result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
-			}
-		}
-		return new AsyncResult<String>("OK");
-	}
+                String errorReason = e.getMessage();
+                if (e instanceof CDRParsingException) {
+                    log.error("Failed to process CDR id: {} error {}", cdr != null ? cdr.getId() : null, errorReason);
+                } else {
+                    log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
+                }
+                result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
 
 }
