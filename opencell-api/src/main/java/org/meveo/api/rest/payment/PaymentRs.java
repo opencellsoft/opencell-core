@@ -37,6 +37,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -700,16 +701,20 @@ public interface PaymentRs extends IBaseRs {
     @PUT
     @Path("/paymentScheduleInstance/cancel")
     public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+     
     
     
-    @POST
-    @Path("/createMandate")
-    public ActionStatus createMandate(PaymentMethodDto paymentMethodDto);
-    
-    
-    @POST
-    @Path("/approveSepaDDMandate")
-    public ActionStatus approveSepaDDMandate(PaymentMethodDto paymentMethodDto);
+    /**
+     * Gets a created mandate.
+     * 
+     * @param mandateReference mandate reference
+     * @param mandateId mandate Id
+     * @param customerAccountCode customer account code
+     * @return created mandate
+     */
+    @GET
+    @Path("/paymentGateway/checkMandate")
+    public MandatInfoDto checkMandate(@QueryParam("mandateReference") String mandateReference,@QueryParam("mandateId") String mandateId,@QueryParam("customerAccountCode") String customerAccountCode);
     
     
 }
