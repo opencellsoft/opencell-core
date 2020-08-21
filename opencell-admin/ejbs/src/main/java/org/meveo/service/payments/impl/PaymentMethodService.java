@@ -36,7 +36,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -46,7 +46,8 @@ import org.meveo.service.crm.impl.CustomerService;
  * 
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 9.3.0
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  */
 @Stateless
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
@@ -80,8 +81,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 throw new BusinessException("Cant add expired card");
             }
             obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-        }
-
+        }else if (paymentMethod instanceof DDPaymentMethod) {
+        	DDPaymentMethod ddPayment = (DDPaymentMethod) paymentMethod; 
+            obtainAndSetSepaToken(ddPayment, ddPayment.getCustomerAccount());
+            createMandate(ddPayment);
+        } 
         super.create(paymentMethod);
 
         // Mark other payment methods as not preferred
@@ -91,6 +95,56 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
     }
 
+    public void createMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{  
+
+    	GatewayPaymentInterface gatewayPaymentInterface = null;
+    	
+    	if (ddpaymentMethod.getBankCoordinates() == null) {
+    		throw new BusinessException("Bank Coordinate is absent for Payment method " +ddpaymentMethod.getAlias());
+    	}
+    	String iban = ddpaymentMethod.getBankCoordinates().getIban();
+
+    	CustomerAccount customerAccount =ddpaymentMethod.getCustomerAccount();
+    	if(customerAccount!=null) {
+    		PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+    		if (paymentGateway == null) {
+    			throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+    		}
+    		try {
+    			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+    		} catch (Exception e) { 
+    			log.warn("Cant find payment gateway");
+    		}
+    	}
+    	if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban)) {
+    		gatewayPaymentInterface.createMandate(customerAccount, iban,ddpaymentMethod.getMandateIdentification());
+    	} 
+    }
+    
+    public void approveSepaDDMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{
+
+    	GatewayPaymentInterface gatewayPaymentInterface = null; 
+    	String tokenId=null;
+
+    	CustomerAccount customerAccount =ddpaymentMethod.getCustomerAccount();
+    	if(customerAccount!=null) {
+    		PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+    		if (paymentGateway == null) {
+    			throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+    		}
+    		try {
+    			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+    		} catch (Exception e) { 
+    			log.warn("Cant find payment gateway");
+    		}
+    	}
+    	tokenId=ddpaymentMethod.getTokenId();
+    	if (gatewayPaymentInterface != null && !StringUtils.isBlank(tokenId)) {
+    		gatewayPaymentInterface.approveSepaDDMandate(tokenId,DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy HH:mm:ss"));
+    	} 
+    }
+    
+    
     /**
      * Test if the card with a TokenId and aoociated to a customer account Exist.
      *
@@ -193,6 +247,42 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
     }
 
+    
+    /**
+     * Store payment information in payment gateway and return token id in a payment gateway.
+     * 
+     * @param ddPaymentMethod Direct debit method
+     * @param customerAccount Customer account
+     * @throws BusinessException business exception.
+     */
+    public void obtainAndSetSepaToken(DDPaymentMethod ddpaymentMethod, CustomerAccount customerAccount) throws BusinessException {
+        if (!StringUtils.isBlank(ddpaymentMethod.getTokenId())) {
+            return;
+        }
+        String alias = ddpaymentMethod.getAlias(); 
+        
+        if (ddpaymentMethod.getBankCoordinates() == null) {
+			throw new BusinessException("Bank Coordinate is absent for Payment method " +alias);
+		}
+        String iban = ddpaymentMethod.getBankCoordinates().getBankCode();
+        String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner(); 
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+        } catch (Exception e) { 
+            log.warn("Cant find payment gateway");
+        }
+
+        if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)){
+            String tockenID = gatewayPaymentInterface.createSepaDirectDebitToken(customerAccount, alias, accountHolderName, iban); 
+            ddpaymentMethod.setTokenId(tockenID);
+        } 
+    }
+    
     /**
      * Find by token id.
      *

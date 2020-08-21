@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -40,6 +41,7 @@ import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
@@ -53,7 +55,6 @@ import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 
 /**
@@ -413,8 +414,11 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @return A list of custom entity templates
      */
     public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
-
-        return cetsByCode.values();
+    	String providerCode=currentUser.getProviderCode();
+    	return cetsByCode.entrySet().stream()
+    			.filter(x-> ((providerCode==null && x.getKey().getProvider()==null) 
+    					|| (providerCode!=null && providerCode.equals(x.getKey().getProvider()))))
+    			.map(x -> x.getValue()).collect(Collectors.toList());
     }
 
     /**

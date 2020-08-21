@@ -63,7 +63,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * 
  * @author anasseh
  * @author Edward Legaspi
- * @lastModifiedVersion 5.3
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  */
 @SuppressWarnings("deprecation")
 @WebService
@@ -593,5 +594,14 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus cancelPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    
+    @WebMethod
+    public ActionStatus createMandate(@WebParam(name = "PaymentDto") PaymentMethodDto postData);
+    
+    
+    
+    @WebMethod
+    public ActionStatus approveSepaDDMandate(@WebParam(name = "PaymentDto") PaymentMethodDto postData);
 
 }
