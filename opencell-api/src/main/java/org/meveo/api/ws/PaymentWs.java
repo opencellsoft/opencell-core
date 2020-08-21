@@ -594,14 +594,5 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus cancelPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
-    
-    
-    @WebMethod
-    public ActionStatus createMandate(@WebParam(name = "PaymentDto") PaymentMethodDto postData);
-    
-    
-    
-    @WebMethod
-    public ActionStatus approveSepaDDMandate(@WebParam(name = "PaymentDto") PaymentMethodDto postData);
 
 }

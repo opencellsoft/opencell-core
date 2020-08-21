@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.json.Json;
@@ -429,7 +430,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public void approveSepaDDMandate(String token, String signatureDate) throws BusinessException {
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
 		throw new UnsupportedOperationException();
 		
 	}
