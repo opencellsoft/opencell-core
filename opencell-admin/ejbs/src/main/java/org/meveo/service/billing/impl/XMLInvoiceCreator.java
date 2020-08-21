@@ -1590,6 +1590,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
                             line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
                             line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
+                            line.setAttribute("taxPercent", ratedTransaction.getTaxPercent().toPlainString());
                             line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
 
                             if (appProvider.getInvoiceConfiguration().getDisplayWalletOperations()) {
