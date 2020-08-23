@@ -716,5 +716,9 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentGateway/checkMandate")
     public MandatInfoDto checkMandate(@QueryParam("mandateReference") String mandateReference,@QueryParam("mandateId") String mandateId,@QueryParam("customerAccountCode") String customerAccountCode);
     
+    @GET
+    @Path("/paymentGateway/approveSepaDDMandate")
+    public ActionStatus approveSepaDDMandate(@QueryParam("customerAccountCode") String customerAccountCode,@QueryParam("tokenId")String tokenId);
+    
     
 }

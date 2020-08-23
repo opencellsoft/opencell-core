@@ -133,7 +133,7 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @return sepa token.
      * @throws BusinessException business exception
      */
-    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException;
+    void createSepaDirectDebitToken(Map<String, Object> methodContext) throws BusinessException;
     
     /**
      * Creates a mandate to be used in a SEPA Direct Debit payment.
@@ -143,7 +143,7 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @param mandateReference mandate reference.
      * @throws BusinessException business exception
      */
-    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException;
+     void createMandate(Map<String, Object> methodContext) throws BusinessException;
     
     /**
      * approve a mandate to be used in a SEPA Direct Debit payment.
@@ -152,6 +152,6 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
      * @throws BusinessException business exception
      */
-    public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException;
+     void approveSepaDDMandate(Map<String, Object> methodContext) throws BusinessException;
     
     }

@@ -158,6 +158,21 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	
 	/** The Constant RESULT_HOSTED_CO_URL for  hostedCheckout url result. */
 	public static final String RESULT_HOSTED_CO_URL = "RESULT_HOSTED_CO_URL";
+	
+	 /** The Constant CONTEXT_ACCOUNT_HOLDER_NAME. */
+    public static final String CONTEXT_ACCOUNT_HOLDER_NAME = "CONTEXT_ACCOUNT_HOLDER_NAME";
+    
+    /** The Constant CONTEXT_IBAN. */
+    public static final String CONTEXT_IBAN = "CONTEXT_IBAN";
+    
+    /** The Constant CONTEXT_BIC. */
+    public static final String CONTEXT_BIC = "CONTEXT_BIC";
+
+    /** The Constant MANDATE_REFERENCE. */
+	public static final String CONTEXT_MANDATE_REFERENCE = "MANDATE_REFERENCE";
+
+	 /** The Constant Mandate SIGNATURE_DATE. */
+	public static final String CONTEXT_SIGNATURE_DATE = "SIGNATURE_DATE";
 
 
 
@@ -211,20 +226,21 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	}
 
 	@Override
-	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
-			String iban) throws BusinessException {
-		return null;
+	public void createSepaDirectDebitToken(Map<String, Object> methodContext) throws BusinessException {
+		
 	}
 
 	@Override
-	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference)
-			throws BusinessException {
-
+	public void createMandate(Map<String, Object> methodContext) throws BusinessException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+	public void approveSepaDDMandate(Map<String, Object> methodContext) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
 
-	}   
 
 }

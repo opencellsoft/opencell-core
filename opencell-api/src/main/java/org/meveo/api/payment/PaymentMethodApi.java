@@ -348,5 +348,13 @@ public class PaymentMethodApi extends BaseApi {
     	return mandateInfoDto;
 
     }
+    public void approveSepaDDMandate(String customerAccountCode,String tokenId)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    
+    	if (StringUtils.isBlank(customerAccountCode)) {
+    		missingParameters.add("customerAccountCode");
+    	} 
+    	handleMissingParameters(); 
+    	paymentMethodService.approveSepaDDMandate(customerAccountCode,tokenId);
 
+    }
 }
