@@ -18,16 +18,19 @@
 
 package org.meveo.service.script.payment;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.script.Script;
 
 /**
  * The Class PaymentScript.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Rachid-AIT
+ * @lastModifiedVersion 10.0.0
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
@@ -205,6 +208,23 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	public void createInvoice(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		return null;
+	}
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference)
+			throws BusinessException {
+
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+
 	}   
 
 }
