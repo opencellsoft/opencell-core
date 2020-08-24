@@ -1603,6 +1603,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                     for (WalletOperation walletOperation : walletOperations) {
                                         Element woLine = doc.createElement("walletOperation");
                                         woLine.setAttribute("code", walletOperation.getCode());
+                                        woLine.setAttribute("description", walletOperation.getDescription());
                                         line.appendChild(woLine);
 
                                         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
