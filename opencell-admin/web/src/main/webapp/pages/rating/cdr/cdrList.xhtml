@@ -18,7 +18,7 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
-				<p:menuitem outcome="cdrList" value="#{messages['menu.cdr']}" />
+				<p:menuitem outcome="cdr" value="#{messages['menu.cdr']}" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -41,8 +41,8 @@
 			</c:forEach>
 		</hftl:searchPanel>
 
-		<hftl:dataList id="cdrList" checkMany="true" noClose="false"
-			backingBean="#{cdrBean}" scrollable="true">
+		<hftl:dataList checkMany="true" noClose="false"
+			backingBean="#{cdrBean}">
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right"
 					icon="ui-icon-calculator" />
@@ -95,9 +95,9 @@
 						</p:panel>
 				</p:confirmDialog>
 				<p:commandButton id="reprocess" icon="ui-icon-play"
-					title="#{messages['cdr.reprocess']}"
+					title="#{messages['cdr.reprocess']}" update="datatable_results"
 					rendered="#{cdrBean.canReprocess(entity)}"
-					actionListener="#{cdrBean.reprocess(entity)}">
+					action="#{cdrBean.reprocess(entity)}">
 					<p:confirm header="#{messages['commons.confirmationHeader']}"
 						message="#{messages['message.confirm.cdr.reprocess']}"
 						icon="ui-icon-alert" />
