@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.json.Json;
@@ -63,7 +64,8 @@ import com.slimpay.hapiclient.util.EntityConverter;
  *
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  *
  */
 @PaymentGatewayClass
@@ -419,4 +421,24 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 		return null;
 	}
 
+ 
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException { 
+	        throw new UnsupportedOperationException();
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		throw new UnsupportedOperationException();
+		
+	}
+
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	} 
 }

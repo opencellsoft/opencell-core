@@ -859,5 +859,6 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 		}
 
 		return result;
-	}
+	} 
+	 
 }

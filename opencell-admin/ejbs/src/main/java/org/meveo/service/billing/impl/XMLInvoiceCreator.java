@@ -1590,6 +1590,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
                             line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
                             line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
+                            line.setAttribute("taxPercent", ratedTransaction.getTaxPercent().toPlainString());
                             line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
 
                             if (appProvider.getInvoiceConfiguration().getDisplayWalletOperations()) {
@@ -1602,6 +1603,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                     for (WalletOperation walletOperation : walletOperations) {
                                         Element woLine = doc.createElement("walletOperation");
                                         woLine.setAttribute("code", walletOperation.getCode());
+                                        woLine.setAttribute("description", walletOperation.getDescription());
                                         line.appendChild(woLine);
 
                                         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
@@ -1634,6 +1636,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                         }
                                         woLine.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
                                         woLine.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
+                                        
+                                        addCustomFields(walletOperation, doc, woLine);
                                     }
                                 }
                             }
