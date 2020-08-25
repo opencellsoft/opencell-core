@@ -137,9 +137,10 @@
 			<p:commandButton id="backoutCdr"
 					value="#{messages['cdr.backout']}"
 					update=":cdrform:fileNamesList"
-					onclick="PF('fieldsConfirmBackoutCdr').show();" rendered="#{currentUser.hasRole('cdrManager')}">
+					onclick="PF('fieldsConfirmBackoutCdr').show();" rendered="#{currentUser.hasRole('cdrManager')}" action="#{cdrListBean.setLoadCdrFileName(true)}" oncomplete="PF('fieldsConfirmBackoutCdr').show();">
 			</p:commandButton>
 			<p:confirmDialog 
+				rendered = "#{cdrListBean.loadCdrFileName}"
 				styleClass="confirm-dialog"
 				message="Be cautious! Back-out is an irreversible operation." header=""
 				severity="alert" widgetVar="fieldsConfirmBackoutCdr"
