@@ -9097,22 +9097,21 @@
 									"script": {
 										"id": "0266b3b7-a732-4d57-bbb7-2211d8dde275",
 										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"\");",
 											"});"
 										],
@@ -9178,22 +9177,21 @@
 									"script": {
 										"id": "ace0d63a-0b4f-473f-af4d-cd0e76633b9b",
 										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"\");",
 											"});"
 										],
@@ -9333,7 +9331,7 @@
 							"response": []
 						},
 						{
-							"name": "Find subscription I",
+							"name": "Find subscription 1",
 							"event": [
 								{
 									"listen": "test",
@@ -9514,112 +9512,6 @@
 							"response": []
 						},
 						{
-							"name": "Find subscription A1",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6ed668ad-c588-4bb7-ad3d-6412106d664a",
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SERVICE_WFL\");",
-											"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-											"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-12-01T\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1\");",
-											"    pm.globals.set(\"siid1\", jsonData.subscription.services.serviceInstance[0].id);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2016-12-02T\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE2\");",
-											"    pm.globals.set(\"siid2\", jsonData.subscription.services.serviceInstance[1].id);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"ACTIVE\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2017-01-01T\");",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SERVICE_WFL",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription"
-									],
-									"query": [
-										{
-											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_SERVICE_WFL"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Find service instance",
 							"event": [
 								{
@@ -9697,7 +9589,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription/serviceInstance?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SERVICE_WFL&serviceInstanceCode={{baseEntityPrefix}}_SERVICE1",
+									"raw": "{{opencell.url}}/billing/subscription/serviceInstance?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SERVICE_WFL&serviceInstanceCode={{baseEntityPrefix}}_SERVICE1&serviceInstanceId={{siid1}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -9714,6 +9606,10 @@
 										{
 											"key": "serviceInstanceCode",
 											"value": "{{baseEntityPrefix}}_SERVICE1"
+										},
+										{
+											"key": "serviceInstanceId",
+											"value": "{{siid1}}"
 										}
 									]
 								}
@@ -9744,7 +9640,7 @@
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated or activated.\");",
+											"    pm.expect(jsonData.message).to.eql(\"ServiceInstance with code=\"+pm.collectionVariables.get(\"baseEntityPrefix\")+\"_SERVICE1 is already instanciated.\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -9991,24 +9887,33 @@
 									"script": {
 										"id": "37bab414-573c-499e-91ae-7d71da354612",
 										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
+											"    pm.response.to.have.status(code);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"    pm.expect(jsonData.status).to.eql(status);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"\");",
-											"});"
+											"});",
+											"",
+											"/*",
+											"var msg = jsonData.message;",
+											"switch(msg){",
+											"    case \"is not of status [ACTIVE]\":",
+											"        pm.variables.set(\"code\",200);",
+											"        pm.variables.set(\"status\",\"SUCCESS\");",
+											"        break;",
+											"}",
+											"*/"
 										],
 										"type": "text/javascript"
 									}
@@ -10045,7 +9950,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"serviceIds\": [\n        \"{{siid1}}\"\n    ],\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_SERVICE_WFL\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2016-12-31\"\n}",
+									"raw": "{\n    \"serviceIds\": [\n        \"{{serviceId}}\"\n    ],\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_SERVICE_WFL\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2016-12-31\"\n}",
 									"options": {
 										"raw": {}
 									}
@@ -61817,82 +61722,82 @@
 	],
 	"variable": [
 		{
-			"id": "e7234a67-9cf3-42b0-8fc0-209077fdb28d",
+			"id": "913acb38-7bb6-4ff8-b361-c87cfebb1045",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "99c8e867-488a-4d5a-a68f-93e20a9a5256",
+			"id": "3cb2b6ac-64b6-4fc4-97c1-d37de703cc7d",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "330ee9d1-22fe-4cb7-9ea7-e4a46893f7ba",
+			"id": "b0704f94-c06f-402a-8561-53656e611bd3",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "e841dc15-8050-407e-bec5-b06bf9cb772d",
+			"id": "fd435f70-2340-4ba5-9100-2f7744316eac",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "92b9edbd-e3a5-4851-b340-051a841b082b",
+			"id": "a1be794c-4266-458e-9179-1684eaa6d7e7",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5d308607-6551-47d6-82f9-a5559ed940ed",
+			"id": "3eac98a5-b330-46c5-9554-c38748d92130",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "440f2a04-d8c6-4d6b-bed9-f1eaf65d7ffe",
+			"id": "f516cb84-f436-4d4a-a82b-30317fd0edd1",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "7419382a-b0bb-4f35-be42-9d1d4811da59",
+			"id": "bcd1b970-959a-425b-a235-934ed85e20cc",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "dc17f7cd-5a61-4db5-8a4b-4dcbaa13d1e1",
+			"id": "5c065f65-8c0b-4899-9375-ead1b8f3521a",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "bb4dd2e6-393f-4d6f-a240-80ac448ee7d8",
+			"id": "fdfcf765-911e-4faf-9775-1369d2cdcebd",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "a7a4b499-b3ae-4517-b0e8-4ebc90dc9aae",
+			"id": "5e1b65dc-e28a-4f78-a57c-bab9f9688409",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "1bc3da82-6cf8-4497-a813-4d90f7817c5f",
+			"id": "199ec897-ef6a-4638-a467-03e67d9c2587",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "77593dc1-07f9-4119-9355-b1efe2fd0c2e",
+			"id": "d95d9555-50dc-4c16-b4bd-baa3c4026aef",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "5bf43652-d5ab-4899-9a9b-6f41d29e2649",
+			"id": "c359f9ea-0f45-4899-8635-5a67859b9e65",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "3d4d104a-63cd-4770-84a5-09c3fa39b8df",
+			"id": "1966dcf5-a62c-4cc4-8232-44197e411b15",
 			"key": "project.version",
 			"value": "9.2+"
 		},
 		{
-			"id": "c4ff4e10-efdb-4cc6-801e-f07d03f5eccc",
+			"id": "4e763025-284b-4711-b03f-1d2a5ff4c4e3",
 			"key": "serviceId",
 			"value": ""
 		}
