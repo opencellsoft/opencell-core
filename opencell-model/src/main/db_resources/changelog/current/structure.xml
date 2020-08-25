@@ -3426,4 +3426,12 @@ END $$;]]>
             <column name="line" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#5454_20200824" author="khalidHORRI">
+        <dropView viewName="billing_wallet_operation_period"/>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
 </databaseChangeLog>
