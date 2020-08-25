@@ -18,6 +18,7 @@
 
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,7 +38,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
 /**
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 9.2
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  *
  */
 public interface GatewayPaymentInterface {
@@ -200,4 +202,38 @@ public interface GatewayPaymentInterface {
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException;
     
     public String createInvoice(Invoice invoice)  throws BusinessException;
+    
+    
+    
+    /**
+     * Declare a sepa direct debit on the psp and return the token for the future uses.
+     * 
+     * @param customerAccount customer account.
+     * @param alias An alias for the token. This can be used to visually represent the token.If no alias is given in Create token calls, a payment product specific default is used, e.g. the obfuscated card number for card payment products.
+              Do not include any unobfuscated sensitive data in the alias.
+     * @param accountHolderName Name in which the account is held 
+     * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token
+     * @return sepa token.
+     * @throws BusinessException business exception
+     */
+    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException;
+    
+    /**
+     * Creates a mandate to be used in a SEPA Direct Debit payment.
+     * 
+     * @param customerAccount customer account. 
+     * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
+     * @param mandateReference mandate reference.
+     * @throws BusinessException business exception
+     */
+    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException;
+    
+    /**
+     * approve a mandate to be used in a SEPA Direct Debit payment.
+     * 
+     * @param token 
+     * @param iban The IBAN is the International Bank Account Number,is required for Create and Update token 
+     * @throws BusinessException business exception
+     */
+    public void approveSepaDDMandate(String token,Date signatureDate) throws BusinessException;
 }

@@ -581,7 +581,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                     Date oldChargedToDate = chargeInstance.getChargedToDate();
 
-                    RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate, inputQuantity, null,
+                    Date operationDate = isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate;
+                    if (chargeInstance.getTerminationDate() != null && operationDate.after(chargeInstance.getTerminationDate())) {
+                        operationDate = chargeInstance.getTerminationDate();
+                    }
+
+                    RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, operationDate, inputQuantity, null,
                         orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
                         prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
 

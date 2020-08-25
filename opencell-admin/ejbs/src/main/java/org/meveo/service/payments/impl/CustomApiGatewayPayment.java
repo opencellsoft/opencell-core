@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  * 
  *  @author anasseh
  *  @author Mounir Bahije
- *  @lastModifiedVersion 5.2
+ *  @author Mbarek Ait-yaazza
+ *  @lastModifiedVersion 10.0.0
  */
 
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
@@ -310,6 +311,25 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
          String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
         
          return hostedCheckoutUrl;
+	}
+
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName,
+			String iban) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

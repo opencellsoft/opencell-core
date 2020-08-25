@@ -34,6 +34,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -851,5 +852,19 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
 
         return result;
+    }
+    
+
+    @Override
+    public MandatInfoDto checkMandate(String mandateReference, String mandateId,String customerAccountCode) {
+    	MandatInfoDto result = new MandatInfoDto();
+
+    	try {
+    		result = paymentMethodApi.checkMandate(mandateReference, mandateId, customerAccountCode);
+    	} catch (Exception e) {
+    		processException(e, result.getActionStatus());
+    	}
+
+    	return result;
     }
 }
