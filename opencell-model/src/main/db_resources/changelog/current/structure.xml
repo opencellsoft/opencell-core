@@ -3446,7 +3446,7 @@ END $$;]]>
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
-    
+
 
     <changeSet id="#5303_Update_CDR_Table_20200826" author="MohammedAmineTazi">
         <addColumn tableName="rating_cdr">
@@ -3503,8 +3503,8 @@ END $$;]]>
         <addColumn tableName="rating_edr">
             <column name="times_tried" type="int4"/>
         </addColumn>
-    </changeSet>  
-	
+    </changeSet>
+
 	<changeSet id="#5461_20200901" author="Mohammed_EL-AZZOUZI">
         <addColumn tableName="crm_customer">
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
@@ -3522,8 +3522,8 @@ END $$;]]>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
             </column>
         </addColumn>
-    </changeSet> 
-    
+    </changeSet>
+
     <changeSet id="#5460_BA_fields" author="AndriusKarpavicius">
         <sql>UPDATE ${db.schema.adapted}account_entity as ae SET minimum_amount_el = ba.minimum_amount_el, minimum_amount_el_sp = ba.minimum_amount_el_sp, minimum_label_el = ba.minimum_label_el, minimum_label_el_sp=ba.minimum_label_el_sp FROM ${db.schema.adapted}billing_billing_account AS ba WHERE ba.id=ae.id</sql>
 
@@ -3532,5 +3532,13 @@ END $$;]]>
         <dropColumn tableName="billing_billing_account" columnName="minimum_label_el"/>
         <dropColumn tableName="billing_billing_account" columnName="minimum_label_el_sp"/>
     </changeSet>
-    
+
+    <changeSet id="#CORE-5457_20200825" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_payment_token">
+            <column name="document_id"  type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="ar_payment_token" baseColumnNames="document_id"
+                                 constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
