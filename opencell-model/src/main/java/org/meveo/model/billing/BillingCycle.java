@@ -19,7 +19,6 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -262,19 +261,6 @@ public class BillingCycle extends BusinessCFEntity {
 
     public void setBillingAccounts(List<BillingAccount> billingAccounts) {
         this.billingAccounts = billingAccounts;
-    }
-
-    public Date getNextCalendarDate(Date subscriptionDate, Date date) {
-        Date result = null;
-        if (calendar != null) {
-            calendar.setInitDate(subscriptionDate);
-            result = calendar.nextCalendarDate(date != null ? date : new Date());
-        }
-        return result;
-    }
-
-    public Date getNextCalendarDate(Date subscriptionDate) {
-        return getNextCalendarDate(subscriptionDate, new Date());
     }
 
     /**
