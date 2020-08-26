@@ -287,6 +287,10 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Size(max = 2000)
 	private String line;
 
+    @Column(name = "updater",  length = 100)
+    @Size(max = 100)
+    private String updater;
+
 	@Transient
 	private Exception rejectReasonException = null;
 
@@ -307,6 +311,14 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 		this.line = line;
 	}
 
+	public String getUpdater() {
+        return updater;
+    }
+	
+	public void setUpdater(String updater) {
+        this.updater = updater;
+    }
+	
 	public Exception getRejectReasonException() {
 		return rejectReasonException;
 	}
