@@ -87,7 +87,7 @@
 								     <p:ajax event="keyup" update="writeOffButton" /> 							 
 							</p:inputTextarea>
 							<br/>
-							<p:commandButton id="writeOffButton" value="#{messages['commons.ok']}" disabled="#{cdrBean.writeOffReason == null}" 
+							<p:commandButton id="writeOffButton" value="#{messages['commons.ok']}" 
 								oncomplete="PF('fieldsConfirmWritingOff').hide()" update="datatable_results"
 								process="@form"
 								action="#{cdrBean.writeOff()}" />
