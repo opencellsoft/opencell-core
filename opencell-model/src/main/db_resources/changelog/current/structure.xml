@@ -3459,4 +3459,12 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#CORE-5457_20200825" author="AbdelkaderBouazza">
+        <addColumn tableName="ar_payment_token">
+            <column name="document_id"  type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="ar_payment_token" baseColumnNames="document_id"
+                                 constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

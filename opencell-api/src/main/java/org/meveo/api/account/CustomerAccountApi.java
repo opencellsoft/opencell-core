@@ -21,6 +21,7 @@ package org.meveo.api.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -54,6 +55,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.document.Document;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
@@ -64,6 +66,7 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.document.DocumentService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -109,6 +112,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    @Inject
+    private DocumentService documentService;
 
     public CustomerAccount create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -322,7 +328,7 @@ public class CustomerAccountApi extends AccountEntityApi {
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
-            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);
+            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, null, currentUser);
             customerAccount.addPaymentMethod(paymentMethodFromDto);
         }
 
@@ -354,7 +360,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
 
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, currentUser);
+                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
 
                 int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
                 if (index < 0) {

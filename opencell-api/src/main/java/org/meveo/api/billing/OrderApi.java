@@ -200,7 +200,7 @@ public class OrderApi extends BaseApi {
         }
 
         if ((productOrder.getPaymentMethods() != null) && !productOrder.getPaymentMethods().isEmpty()) {
-            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
+            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
 
