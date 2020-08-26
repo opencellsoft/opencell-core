@@ -687,7 +687,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException {
         String classname = (String) UIComponent.getCurrentComponent(facesContext).getAttributes().get("classname");
-        return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode);
+        return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, 50);
     }
 
     /**
