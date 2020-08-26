@@ -132,13 +132,14 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @return deletion's result.
      * @throws BusinessException business exception.
      */
-    private synchronized int removeRelatedCharge(String table, Long chargeId) throws BusinessException {
+    private synchronized int removeRelatedCharge(String chargeType, Long chargeId) throws BusinessException {
         int result = 0;
         StringBuilder builder = new StringBuilder();
-        builder.append("DELETE FROM ");
-        builder.append(table);
-        builder.append(" WHERE ID = ");
+        builder.append("DELETE FROM CAT_CHARGE_TEMPLATE WHERE ID = ");
         builder.append(chargeId);
+        builder.append("AND CHARGE_TYPE ='");
+        builder.append(chargeType);
+        builder.append("'");
         Query query = this.getEntityManager().createNativeQuery(builder.toString());
         result = query.executeUpdate();
 
@@ -151,7 +152,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @throws BusinessException business exception.
      */
     public synchronized int removeRelatedChargeUsage(Long chargeId) throws BusinessException {
-        return this.removeRelatedCharge("cat_usage_charge_template", chargeId);
+        return this.removeRelatedCharge("U", chargeId);
     }
 
     /**
@@ -160,7 +161,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @throws BusinessException business exception
      */
     public synchronized int removeRelatedChargeRecurring(Long chargeId) throws BusinessException {
-        return this.removeRelatedCharge("cat_recurring_charge_templ", chargeId);
+        return this.removeRelatedCharge("R", chargeId);
     }
 
     /**
@@ -169,7 +170,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @throws BusinessException business exception.
      */
     public synchronized int removeRelatedChargeOneshot(Long chargeId) throws BusinessException {
-        return this.removeRelatedCharge("cat_one_shot_charge_templ", chargeId);
+        return this.removeRelatedCharge("O", chargeId);
     }
 
     /**
