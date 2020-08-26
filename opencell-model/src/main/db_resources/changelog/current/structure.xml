@@ -3415,15 +3415,23 @@ END $$;]]>
     </changeSet>
     
     <changeSet id="#4156_20120719" author="anasseh">
-		<addColumn tableName="meveo_filter">
-			<column name="polling_query" type="text"/>
-		</addColumn>
-		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
+        <addColumn tableName="meveo_filter">
+            <column name="polling_query" type="text"/>
+        </addColumn>
+        <sql>CREATE INDEX ar_ao_dd_item_idx ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
     </changeSet>
 
     <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
         <addColumn tableName="rating_cdr">
             <column name="line" type="varchar(2000)"/>
         </addColumn>
+    </changeSet>
+    <changeSet id="#5454_20200824" author="khalidHORRI">
+        <dropView viewName="billing_wallet_operation_period"/>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
     </changeSet>
 </databaseChangeLog>
