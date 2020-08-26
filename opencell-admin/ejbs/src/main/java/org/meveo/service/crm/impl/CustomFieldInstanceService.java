@@ -142,7 +142,7 @@ public class CustomFieldInstanceService extends BaseService {
      * @throws InstantiationException
      */
     @SuppressWarnings("unchecked") // TODO review location
-    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode)
+    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode, Integer limit)
             throws ClassNotFoundException {
         Query query = null;
         Class<?> clazz = trimTableNameAndGetClass(classNameAndCode);
@@ -176,6 +176,9 @@ public class CustomFieldInstanceService extends BaseService {
 
         if (query == null) {
             return Collections.EMPTY_LIST;
+        }
+        if(limit!=null) {
+        	query.setMaxResults(limit);
         }
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
         List<BusinessEntity> entities = query.getResultList();
