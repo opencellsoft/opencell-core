@@ -146,7 +146,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -426,7 +430,7 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        if (!Objects.nonNull(postData.getPaymentMethod())) {
+        if (Objects.nonNull(postData.getPaymentMethod())) {
             PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
                 throw new EntityNotFoundException("payment method not found!");
