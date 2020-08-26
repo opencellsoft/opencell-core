@@ -9010,6 +9010,82 @@
 					"name": "Service workflow - service single activation",
 					"item": [
 						{
+							"name": "Terminate services",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ff3629da-383a-4b9a-93e4-c843407a6eaf",
+										"exec": [
+											"let jsonData = pm.response.json();\r",
+											"pm.test(request.name + \" - Check Code\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Status\", function () {\r",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {\r",
+											"    pm.expect(jsonData.errorCode).to.eql();\r",
+											"});\r",
+											"\r",
+											"pm.test(request.name + \" - Check Message\", function () {\r",
+											"    pm.expect(jsonData.message).to.eql(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"serviceIds\" : [{{serviceId}}],\r\n\"subscriptionCode\" : \"{{entityPrefix}}_{{index}}_SUB_SERVICE_WFL\",\r\n\"terminationReason\" : \"TERM_REASON_1\",\r\n\"terminationDate\" : \"2019-12-01\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/terminateServices",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"terminateServices"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Set service.allowMultiInstantiation=false - AUTHORIZATION_SUPERADMIN",
 							"event": [
 								{
@@ -10081,22 +10157,20 @@
 									"script": {
 										"id": "6f036420-ab9e-4c48-827a-6d5e732cd62b",
 										"exec": [
+											"let jsonData = pm.response.json();",
 											"pm.test(request.name + \" - Check Code\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errorCode).to.eql();",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"\");",
 											"});"
 										],
@@ -12436,7 +12510,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"2016-03-01\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"2016-03-01\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -14787,6 +14861,28 @@
 								}
 							},
 							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ba78af2a-140c-4af0-bf18-9468ec120051",
+								"type": "text/javascript",
+								"exec": [
+									"pm.variables.get(\"inc\",inc++);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb4ba4ae-7360-4180-a883-bffd4f9eb784",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -20702,7 +20798,7 @@
 							"days5before.setDate(today.getDate() - 5);",
 							"days3before.setDate(today.getDate() - 3);",
 							"days2before.setDate(today.getDate() - 2);",
-							"",
+							"pm.variables.set(\"inc\",0);",
 							"pm.globals.set(\"index\", 194);",
 							"pm.globals.set(\"today\", today.toISOString().slice(0, 10)+\"T\");",
 							"pm.globals.set(\"terminationDate\", terminationDate.toISOString().slice(0, 10)+\"T\");",
@@ -61722,82 +61818,82 @@
 	],
 	"variable": [
 		{
-			"id": "913acb38-7bb6-4ff8-b361-c87cfebb1045",
+			"id": "eabfba0b-84b7-460f-8a89-9cb7b0cfab8e",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "3cb2b6ac-64b6-4fc4-97c1-d37de703cc7d",
+			"id": "79608c55-1c01-47d6-a83c-f33421b56a26",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "b0704f94-c06f-402a-8561-53656e611bd3",
+			"id": "4a7d7276-ad73-4e6a-92ea-ff6240583343",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "fd435f70-2340-4ba5-9100-2f7744316eac",
+			"id": "8c8f80cb-f901-4e81-b3f7-694dfc5cd49a",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "a1be794c-4266-458e-9179-1684eaa6d7e7",
+			"id": "ca845cdc-84f5-4bde-800a-76380c4c5799",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "3eac98a5-b330-46c5-9554-c38748d92130",
+			"id": "c0a01582-b6ce-46c1-92f2-a39cd25c8b9a",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "f516cb84-f436-4d4a-a82b-30317fd0edd1",
+			"id": "54b4ee9a-d844-4601-b4ca-1ed717a61730",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "bcd1b970-959a-425b-a235-934ed85e20cc",
+			"id": "5ae9e62b-9458-4f6d-abc2-34be09d3a39c",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "5c065f65-8c0b-4899-9375-ead1b8f3521a",
+			"id": "72a872cd-99e9-46c5-8531-bf685839f517",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "fdfcf765-911e-4faf-9775-1369d2cdcebd",
+			"id": "8b978c1b-4591-45af-b1a8-fa173a4dd216",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "5e1b65dc-e28a-4f78-a57c-bab9f9688409",
+			"id": "2a7d7d95-8487-41e9-82f5-90ac1529f060",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "199ec897-ef6a-4638-a467-03e67d9c2587",
+			"id": "b1c29871-2a3e-499f-84a8-1e4d506617a2",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "d95d9555-50dc-4c16-b4bd-baa3c4026aef",
+			"id": "3417f72b-7749-4756-8716-4648c027edb5",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "c359f9ea-0f45-4899-8635-5a67859b9e65",
+			"id": "b95ca6bf-04d4-4d10-82d2-08e7659240cb",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "1966dcf5-a62c-4cc4-8232-44197e411b15",
+			"id": "a5a6813d-6fc7-4b82-b389-72bc3abbfe06",
 			"key": "project.version",
 			"value": "9.2+"
 		},
 		{
-			"id": "4e763025-284b-4711-b03f-1d2a5ff4c4e3",
+			"id": "34bf4784-6f1b-489b-a088-0b77815cdc13",
 			"key": "serviceId",
 			"value": ""
 		}
