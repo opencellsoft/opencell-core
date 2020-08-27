@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="cdr" value="#{messages['menu.cdr']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel styleClass="confirm-dialog-content">	
+							<hftl:searchPanel   backingBean="#{cdrListBean}" renderNewButton="false" columns="3" >
+								<hftl:searchField label="CDR File name" field="originBatch" />
+								<hftl:searchField label="Creation Date" field="created" />
+								<ui:define name="buttons">
+									<p:button outcome="cdr"
+										value="#{messages['action.back']}" />
+								</ui:define>
+							</hftl:searchPanel>																	
+							<br/>
+							<hftl:dataList backingBean="#{cdrListBean}"
+								exportToXml="false" exportXlsxButton="false" selectionMode="single" checkMany="false">						
+									<hftl:column label="CDR File Name" field="originBatch"/>
+									<hftl:column label="Creation Date" field="created"/>	
+									<p:column headerText="Back-out">
+					                    <p:commandButton id="backout" icon="ui-icon-circle-close"
+											title="back-out" action="#{cdrBean.backout()}"
+											process="@form" update="datatable_results">
+											<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
+											<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
+										</p:commandButton>
+		                    		</p:column>																
+							</hftl:dataList>
+					</p:panel>
+	</ui:define>
+</ui:composition>
