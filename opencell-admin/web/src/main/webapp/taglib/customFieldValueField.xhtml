@@ -125,7 +125,7 @@
                 <h:outputText value="#{e.referenceDescription}" />
             </p:column>
         </p:autoComplete>
-        <p:watermark for="autocomp-#{field.entityReferenceValueForGUI.referenceCode}" value="Search keyword (limited 50 results)" onclick="PrimeFaces.cleanWatermarks();" oncomplete="PrimeFaces.showWatermarks();" />
+        <p:watermark for="autocomp-#{field.entityReferenceValueForGUI.referenceCode}" value="Search keyword (limited #{paramBean.getProperty('autocomplete.limit','50')} results)" onclick="PrimeFaces.cleanWatermarks();" oncomplete="PrimeFaces.showWatermarks();" />
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LIST}">
         <h:outputText rendered="#{(!edit or disabled) and field.stringValue!=null}" value="#{cft.listValues[field.stringValue]} (#{field.stringValue})" styleClass="field-value" />
