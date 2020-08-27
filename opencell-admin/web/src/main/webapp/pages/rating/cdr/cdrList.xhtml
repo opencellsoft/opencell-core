@@ -21,7 +21,25 @@
 				<p:menuitem outcome="cdr" value="#{messages['menu.cdr']}" />
 			</p:breadCrumb>
 		</h:form>
-
+		<p:confirmDialog 
+			styleClass="confirm-dialog"
+			message="#{messages['message.confirm.cdr.writeoff']}" header=""
+			severity="alert" widgetVar="fieldsConfirmWritingOff"
+			appendTo="@(body)">
+				<p:panel styleClass="confirm-dialog-content">
+					<h:form>
+					<p:inputTextarea value="#{cdrBean.writeOffReason}" rows="5" cols="30"
+						 placeholder="Write-off reason" >
+						     <p:ajax event="keyup" update="writeOffButton" /> 							 
+					</p:inputTextarea>
+					<br/>
+					<p:commandButton id="writeOffButton" value="#{messages['commons.ok']}" disabled="#{cdrBean.writeOffReason == null}" 
+						oncomplete="PF('fieldsConfirmWritingOff').hide()" update="datatable_results"
+						process="@form"
+						action="#{cdrBean.writeOff()}" />
+					</h:form>
+				</p:panel>
+		</p:confirmDialog>
 		<hftl:searchPanel label="#{messages['commons.search']}"
 			backingBean="#{cdrBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['cdr.accessCode']}"
@@ -75,25 +93,6 @@
 					onclick="PF('fieldsConfirmWritingOff').show();">
 						<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />				
 					</p:commandButton>
-				<p:confirmDialog 
-					styleClass="confirm-dialog"
-					message="#{messages['message.confirm.cdr.writeoff']}" header=""
-					severity="alert" widgetVar="fieldsConfirmWritingOff"
-					appendTo="@(body)">
-						<p:panel styleClass="confirm-dialog-content">
-							<h:form>
-							<p:inputTextarea value="#{cdrBean.writeOffReason}" rows="5" cols="30"
-								 placeholder="Write-off reason" >
-								     <p:ajax event="keyup" update="writeOffButton" /> 							 
-							</p:inputTextarea>
-							<br/>
-							<p:commandButton id="writeOffButton" value="#{messages['commons.ok']}" disabled="#{cdrBean.writeOffReason == null}" 
-								oncomplete="PF('fieldsConfirmWritingOff').hide()" update="datatable_results"
-								process="@form"
-								action="#{cdrBean.writeOff()}" />
-							</h:form>
-						</p:panel>
-				</p:confirmDialog>
 				<p:commandButton id="reprocess" icon="ui-icon-play"
 					title="#{messages['cdr.reprocess']}" update="datatable_results"
 					rendered="#{cdrBean.canReprocess(entity)}"
