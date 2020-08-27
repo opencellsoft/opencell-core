@@ -135,42 +135,11 @@
 					</p:panel>
 			</p:confirmDialog>
 			<p:commandButton id="backoutCdr"
-					value="#{messages['cdr.backout']}"
-					update=":cdrform:fileNamesList"
-					onclick="PF('fieldsConfirmBackoutCdr').show();" rendered="#{currentUser.hasRole('cdrManager')}" action="#{cdrListBean.setLoadCdrFileName(true)}" oncomplete="PF('fieldsConfirmBackoutCdr').show();">
+					value="#{messages['cdr.backout']}" rendered="#{currentUser.hasRole('cdrManager')}" action="backoutCdrs">
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+					message="#{messages['cdr.backoutConfirmation']}"
+					icon="ui-icon-alert" />
 			</p:commandButton>
-			<p:confirmDialog 
-				rendered = "#{cdrListBean.loadCdrFileName}"
-				styleClass="confirm-dialog"
-				message="Be cautious! Back-out is an irreversible operation." header=""
-				severity="alert" widgetVar="fieldsConfirmBackoutCdr"
-				appendTo="@(body)">
-					<p:panel styleClass="confirm-dialog-content">
-						<h:form id="cdrform">	
-							<hftl:searchPanel  ajaxUpdateIds=":cdrform:fileNamesList" backingBean="#{cdrListBean}" renderNewButton="false" columns="3" update=":cdrform:fileNamesList">
-								<hftl:searchField label="CDR File name" field="originBatch" />
-								<hftl:searchField label="Creation Date" field="created" />
-							</hftl:searchPanel>																	
-							<br/>
-							<hftl:dataList  formId="fileNamesList" backingBean="#{cdrListBean}" dataModel="#{cdrListBean.filteredLazyDataModel}"
-								exportToXml="false" exportXlsxButton="false" selectionMode="single" checkMany="false">						
-									<hftl:column label="CDR File Name" field="originBatch"/>
-									<hftl:column label="Creation Date" field="created"/>	
-									<p:column headerText="Back-out">
-					                    <p:commandButton id="backout" icon="ui-icon-circle-close"
-											title="back-out" action="#{cdrBean.backout()}"
-											process="@form" update=":cdrform:fileNamesList">
-											<f:setPropertyActionListener value="#{entity}" target="#{cdrBean.entity}" />
-											<p:confirm header="Back-out" message="Are you sure to back-out this CDR file?" icon="ui-icon-alert"/>																	
-										</p:commandButton>
-		                    		</p:column>																
-							</hftl:dataList>
-							<p:commandButton value="Close"
-								oncomplete="PF('fieldsConfirmBackoutCdr').hide()">
-							</p:commandButton>
-						</h:form>
-					</p:panel>
-			</p:confirmDialog>
 		</p:panel>	
 	</ui:define>
 </ui:composition>

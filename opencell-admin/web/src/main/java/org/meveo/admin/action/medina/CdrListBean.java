@@ -48,6 +48,7 @@ public class CdrListBean extends CdrBean {
 
     @SuppressWarnings("rawtypes")
     public LazyDataModel<CDR> getFilteredLazyDataModel() {
+        
         if(filters != null && !filters.isEmpty() && filters.size() > 0) {
             return getLazyDataModel();
         }
