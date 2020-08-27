@@ -62,6 +62,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -117,8 +118,11 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
 
-        @NamedQuery(name = "WalletOperation.findUnbilledByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE (o.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
-        @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringCharges", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE o.status='CANCELED' and o.id in (:ids)"),
+        @NamedQuery(name = "WalletOperation.findInvoicedByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
+        @NamedQuery(name = "WalletOperation.findNotInvoicedByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o left join o.ratedTransaction rt WHERE (o.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
+        @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringCharges", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE o.status='CANCELED' and o.id in (:notInvoicedIds)"),
+        @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringChargesIncludingInvoiced", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE (o.status='CANCELED' and o.id in (:notInvoicedIds)) or (o.status='TREATED' and o.id in (:invoicedIds))"),
+        @NamedQuery(name = "WalletOperation.getMinStartDateOfResetRecurringChargesJustInvoiced", query = "SELECT min(o.startDate) FROM WalletOperation o WHERE o.status='TREATED' and o.id in (:invoicedIds)"),
 
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),
@@ -131,7 +135,17 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)") })
+        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)"),
+
+        @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeNotInvoicedByChargeInstance", query = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance=:chargeInstance"),
+        @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByChargeInstance", query = "select wo.id from WalletOperation wo where wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance=:chargeInstance"),
+        @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplate", query = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate"),
+        @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.id from WalletOperation wo where wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate"),
+
+        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByChargeInstance", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance=:chargeInstance group by wo.chargeInstance.id"),
+        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByChargeInstance", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance=:chargeInstance group by wo.chargeInstance.id"),
+        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
+        @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id") })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -976,6 +990,16 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     public void setEdr(EDR edr) {
         this.edr = edr;
+    }
+
+    @Transient
+    public WalletOperation getClone() {
+        WalletOperation result = new WalletOperation();
+        result = fillUnratedClone(result);
+        result.setAmountTax(amountTax);
+        result.setAmountWithoutTax(amountWithoutTax);
+        result.setAmountWithTax(amountWithTax);
+        return result;
     }
 
     @Transient

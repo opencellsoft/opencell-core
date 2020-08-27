@@ -967,28 +967,50 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     /**
+     * Rerate existing wallet operation. Executed in new transaction. <br/>
+     * <br/>
+     * 
+     * <b>When rerateInvoiced = false:</b><br/>
+     * 
      * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
      * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
      * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
+     * <p/>
+     * <b>When rerateInvoiced = true:</b> <br/>
+     * 
+     * Billed wallet operations will be refunded and new wallet operations with status TO_RERATE will be created. For the unbilled wallet operations the logic of
+     * includeinvoiced=false applies.
      * 
      * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      * @return Number of wallet operations marked for re-rating.
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int markToRerateInNewTx(List<Long> walletOperationIds) {
-        return markToRerate(walletOperationIds);
+    public int markToRerateInNewTx(List<Long> walletOperationIds, boolean rerateInvoiced) {
+        return markToRerate(walletOperationIds, rerateInvoiced);
     }
 
     /**
+     * Rerate existing wallet operation. <br/>
+     * <br/>
+     * 
+     * <b>When rerateInvoiced = false:</b><br/>
+     * 
      * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
      * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
      * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
+     * <p/>
+     * <b>When includeInvoiced = true:</b> <br/>
+     * 
+     * Billed wallet operations will be refunded and new wallet operations with status TO_RERATE will be created. For the unbilled wallet operations the logic of
+     * rerateInvoiced=false applies.
      * 
      * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded
      * @return Number of wallet operations marked for re-rating.
      */
-    public int markToRerate(List<Long> walletOperationIds) {
+    public int markToRerate(List<Long> walletOperationIds, boolean rerateInvoiced) {
 
         if (walletOperationIds.isEmpty()) {
             return 0;
@@ -1000,11 +1022,30 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         List<Long> walletOperationsBilled = getEntityManager().createNamedQuery("WalletOperation.getWalletOperationsBilled", Long.class).setParameter("walletIdList", walletOperationIds).getResultList();
         walletOperationIds.removeAll(walletOperationsBilled);
 
+        // Handle invoiced wallet operations if requested: Refund invoiced operations and create identical one (with negated amounts) with status TO_RERATE
+        if (rerateInvoiced && !walletOperationsBilled.isEmpty()) {
+
+            List<WalletOperation> refundedWOs = refundWalletOperations(walletOperationsBilled);
+            Date today = new Date();
+            for (WalletOperation refundedWO : refundedWOs) {
+
+                // A refund WO
+                WalletOperation wo = refundedWO.getClone();
+                wo.setAmountTax(wo.getAmountTax().negate());
+                wo.setAmountWithoutTax(wo.getAmountWithoutTax().negate());
+                wo.setAmountWithTax(wo.getAmountWithTax().negate());
+                wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
+                wo.setCreated(today);
+                wo.setUpdated(null);
+                create(wo);
+            }
+        }
+
         // Cancelled related RTS and change WO status to re-rate. Note: in case of aggregation, it will re-rate all WOs that are linked through the related RTs
         if (!walletOperationIds.isEmpty()) {
             getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", walletOperationIds).setParameter("now", new Date()).executeUpdate();
 
-            nrOfWosToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToToRerate").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
+            nrOfWosToRerate = nrOfWosToRerate + getEntityManager().createNamedQuery("WalletOperation.setStatusToToRerate").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
 
             log.info("{} out of {} requested Wallet operations are marked for rerating", nrOfWosToRerate, walletOperationIds.size());
         }
@@ -1120,10 +1161,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
-        String queryTemplate =
-                "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
-                        + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
-                        + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
+        String queryTemplate = "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+                + " from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= DATE(o.start_date)) then 0 else 1 end) as flag "
+                + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
         Map<String, String> parameters = new HashMap<>();
         if (aggregationSettings.isPeriodEndDateIncluded()) {
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "+ interval '1' day");
@@ -1350,5 +1390,33 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             log.info("{} out of {} requested Wallet operations are canceled/marked for rerating", nrOfWosUpdated, walletOperationIds.size());
         }
         return nrOfWosUpdated;
+    }
+
+    /**
+     * Refund already billed wallet operations by creating an identical wallet operation with a negated amount and status OPEN
+     * 
+     * @param ids A list of wallet operation identifiers to refund
+     * @return A list of newly created wallet operations with a negated amount and status OPEN
+     */
+    public List<WalletOperation> refundWalletOperations(List<Long> ids) {
+
+        List<WalletOperation> refundedWOs = new ArrayList<WalletOperation>();
+        List<WalletOperation> invoicedWos = findByIds(ids);
+        Date today = new Date();
+        for (WalletOperation invoicedWo : invoicedWos) {
+
+            // A refund WO
+            WalletOperation wo = invoicedWo.getClone();
+            wo.setAmountTax(wo.getAmountTax().negate());
+            wo.setAmountWithoutTax(wo.getAmountWithoutTax().negate());
+            wo.setAmountWithTax(wo.getAmountWithTax().negate());
+            wo.setStatus(WalletOperationStatusEnum.OPEN);
+            wo.setCreated(today);
+            wo.setUpdated(null);
+            create(wo);
+
+            refundedWOs.add(wo);
+        }
+        return refundedWOs;
     }
 }

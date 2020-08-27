@@ -51,15 +51,16 @@ public class ReratingService implements Serializable {
      * 
      * @param serviceInstance Service instance to re-rate
      * @param fromDate Date to re-rate from
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      */
-    public void rerate(ServiceInstance serviceInstance, Date fromDate) {
+    public void rerate(ServiceInstance serviceInstance, Date fromDate, boolean rerateInvoiced) {
 
         log.info("Will re-rate service instance {} from date {}", serviceInstance, DateUtils.formatAsDate(fromDate));
 
         // Re-rate each charge instance.
         // Another alternative, in case there are more than one charge of same type is to send offer, service template and a charge type instead of charge instance as parameter
         for (ChargeInstance chargeInstance : serviceInstance.getChargeInstances()) {
-            rerate(null, null, null, chargeInstance, fromDate);
+            rerate(null, null, null, chargeInstance, fromDate, rerateInvoiced);
         }
     }
 
@@ -68,13 +69,14 @@ public class ReratingService implements Serializable {
      * (wallet operation start/endDate)
      * 
      * @param reratingInfos Re-rating information
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      */
 //    @Asynchronous
 //    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void rerate(List<ReratingInfo> reratingInfos) {
+    public void rerate(List<ReratingInfo> reratingInfos, boolean rerateInvoiced) {
 
         for (ReratingInfo reratingInfo : reratingInfos) {
-            rerate(reratingInfo.getOfferTemplateId(), reratingInfo.getServiceTemplateId(), reratingInfo.getChargeType(), null, reratingInfo.getFromDate());
+            rerate(reratingInfo.getOfferTemplateId(), reratingInfo.getServiceTemplateId(), reratingInfo.getChargeType(), null, reratingInfo.getFromDate(), rerateInvoiced);
         }
     }
 
@@ -87,11 +89,12 @@ public class ReratingService implements Serializable {
      * @param chargeType Charge type
      * @param chargeInstance Charge instance. Either charge instance OR offer, serviceTemplate and chargeType must be provided
      * @param fromDate Date to re-rate from.
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      */
     @SuppressWarnings("unchecked")
 //    @Asynchronous
 //    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void rerate(Long offerTemplateId, Long serviceTemplateId, ChargeMainTypeEnum chargeType, ChargeInstance chargeInstance, Date fromDate) {
+    public void rerate(Long offerTemplateId, Long serviceTemplateId, ChargeMainTypeEnum chargeType, ChargeInstance chargeInstance, Date fromDate, boolean rerateInvoiced) {
 
         boolean sameTx = true; // chargeInstance != null;
         chargeType = chargeInstance != null ? chargeInstance.getChargeMainType() : chargeType;
@@ -100,19 +103,20 @@ public class ReratingService implements Serializable {
 
         // One shot and usage type charges are rerated by marking WO with status "TO_RERATE" and then initiating rerating of the same WO record
         if (chargeType == ChargeMainTypeEnum.ONESHOT || chargeType == ChargeMainTypeEnum.USAGE) {
-            String sql = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED')";
-            if (chargeInstance != null) {
-                sql = sql + " and wo.chargeInstance=:chargeInstance";
-            } else {
-                sql = sql + " and wo.chargeInstance.chargeType='" + (chargeType == ChargeMainTypeEnum.ONESHOT ? "O" : "U") + "' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
-            }
 
-            TypedQuery<Long> query = em.createQuery(sql, Long.class).setParameter("fromDate", fromDate);
+            TypedQuery<Long> query = null;
             if (chargeInstance != null) {
-                query.setParameter("chargeInstance", chargeInstance);
+                query = em.createNamedQuery(
+                    rerateInvoiced ? "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByChargeInstance" : "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeNotInvoicedByChargeInstance",
+                    Long.class).setParameter("fromDate", fromDate).setParameter("chargeInstance", chargeInstance);
+
             } else {
-                query.setParameter("offer", offerTemplateId);
-                query.setParameter("serviceTemplate", serviceTemplateId);
+                query = em
+                    .createNamedQuery(rerateInvoiced ? "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplate"
+                            : "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplate",
+                        Long.class)
+                    .setParameter("fromDate", fromDate).setParameter("chargeType", chargeType == ChargeMainTypeEnum.ONESHOT ? "O" : "U").setParameter("offer", offerTemplateId)
+                    .setParameter("serviceTemplate", serviceTemplateId);
             }
 
             List<Long> woIdsToRerate = query.getResultList();
@@ -129,36 +133,33 @@ public class ReratingService implements Serializable {
             }
             int countToRerate = 0;
             if (sameTx) {
-                countToRerate = walletOperationService.markToRerate(woIdsToRerate);
+                countToRerate = walletOperationService.markToRerate(woIdsToRerate, rerateInvoiced);
             } else {
-                countToRerate = walletOperationService.markToRerateInNewTx(woIdsToRerate);
+                countToRerate = walletOperationService.markToRerateInNewTx(woIdsToRerate, rerateInvoiced);
             }
             if (countToRerate > 0) {
                 ratingService.reRate(woIdsToRerate, false);
             }
 
-            // Recurring charges will result in canceling WOs, retroceding recurringChargeInstance.chargedToDate value and recreating then again via a standard recurring rating
+            // Recurring charges will result in refunding and/or canceling WOs, retroceding recurringChargeInstance.chargedToDate value and recreating them again via a standard
+            // recurring rating
             // process
         } else if (chargeType == ChargeMainTypeEnum.RECURRING) {
-            String sql = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE')";
+
+            Query query = null;
             if (chargeInstance != null) {
-                sql = sql + " and wo.chargeInstance=:chargeInstance";
+                query = em
+                    .createNamedQuery(
+                        rerateInvoiced ? "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByChargeInstance" : "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByChargeInstance")
+                    .setParameter("fromDate", fromDate).setParameter("chargeInstance", chargeInstance);
+
             } else {
-                sql = sql + " and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
+                query = em
+                    .createNamedQuery(rerateInvoiced ? "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate"
+                            : "WalletOperation.listWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplate")
+                    .setParameter("fromDate", fromDate).setParameter("offer", offerTemplateId).setParameter("serviceTemplate", serviceTemplateId);
             }
 
-            sql = sql + " group by wo.chargeInstance.id";
-
-            // Find subscriptions and service Instances that
-
-            Query query = em.createQuery(sql).setParameter("fromDate", fromDate);
-
-            if (chargeInstance != null) {
-                query.setParameter("chargeInstance", chargeInstance);
-            } else {
-                query.setParameter("offer", offerTemplateId);
-                query.setParameter("serviceTemplate", serviceTemplateId);
-            }
             List<Object[]> rerateInfos = query.getResultList();
 
             if (chargeInstance != null) {
@@ -185,9 +186,9 @@ public class ReratingService implements Serializable {
                 }
 
                 if (sameTx) {
-                    recurringChargeInstanceService.rerateRecurringCharge((Long) rerateInfo[0], rerateFromDate, rerateToDate);
+                    recurringChargeInstanceService.rerateRecurringCharge((Long) rerateInfo[0], rerateFromDate, rerateToDate, rerateInvoiced);
                 } else {
-                    recurringChargeInstanceService.rerateRecurringChargeInNewTx((Long) rerateInfo[0], rerateFromDate, rerateToDate);
+                    recurringChargeInstanceService.rerateRecurringChargeInNewTx((Long) rerateInfo[0], rerateFromDate, rerateToDate, rerateInvoiced);
                 }
             }
         }
