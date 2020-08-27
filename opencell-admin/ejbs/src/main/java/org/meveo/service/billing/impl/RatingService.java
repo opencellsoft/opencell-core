@@ -917,7 +917,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         for (Long woId : woIds) {
