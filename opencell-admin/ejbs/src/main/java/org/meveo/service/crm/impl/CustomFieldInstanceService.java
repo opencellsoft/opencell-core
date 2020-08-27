@@ -134,13 +134,14 @@ public class CustomFieldInstanceService extends BaseService {
      * 
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
+     * @param limit max number of entities to be returned. If null no limit is applied
      * @return A list of entities
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
     @SuppressWarnings("unchecked") // TODO review location
-    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode)
+    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode, Integer limit)
             throws ClassNotFoundException {
         Query query = null;
         Class<?> clazz = trimTableNameAndGetClass(classNameAndCode);
@@ -178,6 +179,9 @@ public class CustomFieldInstanceService extends BaseService {
 
         if (query == null) {
             return Collections.EMPTY_LIST;
+        }
+        if(limit!=null) {
+        	query.setMaxResults(limit);
         }
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
         List<BusinessEntity> entities = query.getResultList();

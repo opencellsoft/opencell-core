@@ -402,7 +402,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         String entityClazz = cft.getEntityClazz();
         if (!StringUtils.isBlank(entityClazz)) {
-            List<BusinessEntity> businessEntities = customFieldInstanceService.findBusinessEntityForCFVByCode(entityClazz, wildcode);
+            List<BusinessEntity> businessEntities = customFieldInstanceService.findBusinessEntityForCFVByCode(entityClazz, wildcode, null);
             if (businessEntities != null) {
                 for (BusinessEntity be : businessEntities) {
                     result.add(new BusinessEntityDto(be));
