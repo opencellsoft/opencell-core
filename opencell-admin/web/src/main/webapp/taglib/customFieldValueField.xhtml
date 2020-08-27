@@ -114,7 +114,7 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
         <h:outputText value="#{field.entityReferenceValueForGUI.referenceCode}" styleClass="field-value" rendered="#{!edit or disabled}" />
-        <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired and !hasInheritedValue}" size="30" maxlength="60" dropdown="true" label="#{cft.referenceDescription}"
+        <p:autoComplete id="autocomp-#{field.entityReferenceValueForGUI.referenceCode}" value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired and !hasInheritedValue}" size="30" maxlength="60" dropdown="true" label="#{cft.referenceDescription}"
             converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" var="e" itemLabel="#{e.referenceCode}"
             itemValue="#{e}" rendered="#{edit and !disabled}">
             <f:attribute name="classname" value="#{cft.entityClazz}" />
@@ -125,6 +125,7 @@
                 <h:outputText value="#{e.referenceDescription}" />
             </p:column>
         </p:autoComplete>
+        <p:watermark for="autocomp-#{field.entityReferenceValueForGUI.referenceCode}" value="Search keyword (limited #{paramBean.getProperty('autocomplete.limit','50')} results)" onclick="PrimeFaces.cleanWatermarks();" oncomplete="PrimeFaces.showWatermarks();" />
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LIST}">
         <h:outputText rendered="#{(!edit or disabled) and field.stringValue!=null}" value="#{cft.listValues[field.stringValue]} (#{field.stringValue})" styleClass="field-value" />
