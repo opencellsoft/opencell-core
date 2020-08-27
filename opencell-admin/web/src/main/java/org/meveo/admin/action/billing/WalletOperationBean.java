@@ -128,7 +128,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		try {
 			List<Long> walletIdList = new ArrayList<Long>();
 			walletIdList.add(walletOperation.getId());
-			if (walletOperationService.markToRerateInNewTx(walletIdList) > 0) {
+			if (walletOperationService.markToRerateInNewTx(walletIdList, false) > 0) {
 				walletOperationService.refresh(walletOperation);
 				messages.info(new BundleKey("messages", "update.successful"));
 			} else {
@@ -149,7 +149,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 					walletIdList.add(wallet.getId());
 				}
 			}
-			int count = walletOperationService.markToRerateInNewTx(walletIdList);
+			int count = walletOperationService.markToRerateInNewTx(walletIdList, false);
 			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"), count);
 		} catch (Exception e) {
 			log.error("error while updating to rerate", e);

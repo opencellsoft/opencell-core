@@ -524,40 +524,65 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * 
      * @param chargeInstanceId Charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      * @return Number of wallet operations canceled or reopended in case of rated transaction aggregation
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int resetRecurringCharge(Long chargeInstanceId, Date fromDate) {
+    public int resetRecurringCharge(Long chargeInstanceId, Date fromDate, boolean resetInvoiced) {
 
-        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findUnbilledByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate)
-            .getResultList();
-        if (woIds.isEmpty()) {
+        List<Long> invoicedWoIds = null;
+
+        // Cancel not invoiced wallet operations
+        int resetNr = 0;
+        List<Long> notInvoicedWoIds = getEntityManager().createNamedQuery("WalletOperation.findNotInvoicedByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId)
+            .setParameter("from", fromDate).getResultList();
+        if (!notInvoicedWoIds.isEmpty()) {
+            resetNr = walletOperationService.cancelWalletOperations(notInvoicedWoIds);
+        }
+
+        // Refund invoiced wallet operations if requested
+        if (resetInvoiced) {
+            invoicedWoIds = getEntityManager().createNamedQuery("WalletOperation.findInvoicedByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate)
+                .getResultList();
+            if (invoicedWoIds.isEmpty()) {
+                invoicedWoIds = null;
+            } else {
+                walletOperationService.refundWalletOperations(invoicedWoIds);
+            }
+        }
+        
+        if (invoicedWoIds == null && resetNr == 0) {
             log.warn("No wallet operations found to rerate for recurring charge {} from date {}. Rerating will be skipped.", chargeInstanceId, DateUtils.formatAsDate(fromDate));
             return 0;
         }
 
-        int resetNr = walletOperationService.cancelWalletOperations(woIds);
+        RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
 
-        if (resetNr > 0) {
+        try {
+            Date minStartDate = null;
+            if (invoicedWoIds != null && resetNr > 0) {
+                minStartDate = getEntityManager().createNamedQuery("WalletOperation.getMinStartDateOfResetRecurringChargesIncludingInvoiced", Date.class).setParameter("notInvoicedIds", notInvoicedWoIds)
+                    .setParameter("invoicedIds", invoicedWoIds).getSingleResult();
 
-            RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
+            } else if (resetNr > 0) {
+                minStartDate = getEntityManager().createNamedQuery("WalletOperation.getMinStartDateOfResetRecurringCharges", Date.class).setParameter("notInvoicedIds", notInvoicedWoIds).getSingleResult();
 
-            try {
-                Date minStartDate = getEntityManager().createNamedQuery("WalletOperation.getMinStartDateOfResetRecurringCharges", Date.class).setParameter("ids", woIds).getSingleResult();
-
-                log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
-                    DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(minStartDate));
-
-                chargeInstance.setChargeDate(minStartDate);
-                chargeInstance.setChargedToDate(minStartDate);
-                chargeInstance.setNextChargeDate(minStartDate);
-
-            } catch (NoResultException e) {
-                log.info("Will NOT reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}. No unbilled wallet operations were found.", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
-                    DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
-
+            } else {
+                minStartDate = getEntityManager().createNamedQuery("WalletOperation.getMinStartDateOfResetRecurringChargesJustInvoiced", Date.class).setParameter("invoicedIds", invoicedWoIds).getSingleResult();
             }
+
+            log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
+                DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(minStartDate));
+
+            chargeInstance.setChargeDate(minStartDate);
+            chargeInstance.setChargedToDate(minStartDate);
+            chargeInstance.setNextChargeDate(minStartDate);
+
+        } catch (NoResultException e) {
+            log.info("Will NOT reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}. No unbilled wallet operations were found.", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
+                DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
+
         }
 
         return resetNr;
@@ -565,19 +590,20 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     /**
      * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT
-     * aggregation will be marked as open.
+     * aggregation will be marked as open. Already invoiced wallet operations will be refunded if rerateInvoiced=true.
      * 
      * Recurring charge will be reset to a given date and existing wallet operations canceled independently of new wallet operations recreated
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
      * @param toDate Date to rate until. Partial periods might be considered if charge was terminated and rerating up to termination date.
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      * @throws BusinessException General business exception
      */
     @TransactionAttribute(TransactionAttributeType.NEVER) // This is set to NEVER, so two inner methods are executed in new transactions
-    public void rerateRecurringChargeInNewTx(Long chargeInstanceId, Date fromDate, Date toDate) {
+    public void rerateRecurringChargeInNewTx(Long chargeInstanceId, Date fromDate, Date toDate, boolean rerateInvoiced) {
 
-        int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate);
+        int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate, rerateInvoiced);
 
         if (nrWOCanceled > 0) {
             RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
@@ -597,16 +623,17 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     /**
      * Re-rate recurring charge up to a given date. Existing Wallet operations and Rated transactions will be marked as canceled. Other Wallet operations related through RT
-     * aggregation will be marked as open.
+     * aggregation will be marked as open. Already invoiced wallet operations will be refunded if rerateInvoiced=true.
      * 
      * @param chargeInstanceId Recurring charge instance id
      * @param fromDate Date to reset recurring charge to (chargedToDate value)
      * @param toDate Date to rate until. Partial periods might be considered if charge was terminated and rerating up to termination date.
+     * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      * @throws BusinessException General business exception
      */
-    public void rerateRecurringCharge(Long chargeInstanceId, Date fromDate, Date toDate) {
+    public void rerateRecurringCharge(Long chargeInstanceId, Date fromDate, Date toDate, boolean rerateInvoiced) {
 
-        int nrWOCanceled = resetRecurringCharge(chargeInstanceId, fromDate);
+        int nrWOCanceled = resetRecurringCharge(chargeInstanceId, fromDate, rerateInvoiced);
 
         if (nrWOCanceled > 0) {
 

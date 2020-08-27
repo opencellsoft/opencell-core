@@ -77,6 +77,7 @@ public class CDRService extends PersistenceService<CDR> {
            }
            cdr.setStatus(CDRStatusEnum.DISCARDED);
            cdr.setRejectReason(writeOffReason);
+           cdr.setUpdater(currentUser.getUserName());
            update(cdr);
         }
     }
