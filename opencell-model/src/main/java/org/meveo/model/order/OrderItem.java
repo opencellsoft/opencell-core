@@ -45,7 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -70,7 +70,7 @@ import org.meveo.model.shared.Address;
 @Table(name = "ord_order_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
-public class OrderItem extends BusinessEntity implements ICustomFieldEntity, IWFEntity {
+public class OrderItem extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
