@@ -768,36 +768,78 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate()));
             }
 
-            SubListCreator<Long> subListCreator = null;
+            processInvoiceNumberAssignements(billingRun, nbRuns, waitingMillis, jobInstanceId, result, invoicesToNumberInfo, invoices);
+            
+            List<Long> baIDs = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
+            processBAInvoiceDatesIncrementAsync(billingRun, nbRuns, waitingMillis, jobInstanceId, result, invoicesToNumberInfo, baIDs);
 
-            try {
-                subListCreator = new SubListCreator<>(invoices, (int) nbRuns);
-            } catch (Exception e1) {
-                throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
-            }
-
-            List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId, result, lastCurrentUser));
-                try {
-                    Thread.sleep(waitingMillis);
-                } catch (InterruptedException e) {
-                    log.error("Failed to create agregates and invoice waiting for thread", e);
-                    throw new BusinessException(e);
-                }
-            }
-            for (Future<String> futureItsNow : asyncReturns) {
-                try {
-                    futureItsNow.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("Failed to create agregates and invoice getting future", e);
-                    throw new BusinessException(e);
-                }
-            }
         }
     }
+	private void processBAInvoiceDatesIncrementAsync(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId,
+			JobExecutionResultImpl result, InvoicesToNumberInfo invoicesToNumberInfo, List<Long> baIDs) {
+		SubListCreator subListCreator = null;
 
+		try {
+		    subListCreator = new SubListCreator(baIDs, (int) nbRuns);
+		} catch (Exception e1) {
+		    throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+		}
+
+		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+		MeveoUser lastCurrentUser = currentUser.unProxy();
+		while (subListCreator.isHasNext()) {
+		    asyncReturns.add(invoicingAsync.incrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), jobInstanceId, result, lastCurrentUser));
+		    try {
+		        Thread.sleep(waitingMillis);
+		    } catch (InterruptedException e) {
+		        log.error("Failed to create agregates and invoice waiting for thread", e);
+		        throw new BusinessException(e);
+		    }
+		}
+		for (Future<String> futureItsNow : asyncReturns) {
+		    try {
+		        futureItsNow.get();
+		    } catch (InterruptedException | ExecutionException e) {
+		        log.error("Failed to create agregates and invoice getting future", e);
+		        throw new BusinessException(e);
+		    }
+		}
+	}
+	
+	private void processInvoiceNumberAssignements(BillingRun billingRun, long nbRuns, long waitingMillis,
+			Long jobInstanceId, JobExecutionResultImpl result, InvoicesToNumberInfo invoicesToNumberInfo,
+			List<Long> invoices) {
+		SubListCreator subListCreator = null;
+
+		try {
+		    subListCreator = new SubListCreator(invoices, (int) nbRuns);
+		} catch (Exception e1) {
+		    throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+		}
+
+		List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+		MeveoUser lastCurrentUser = currentUser.unProxy();
+		while (subListCreator.isHasNext()) {
+		    asyncReturns.add(invoicingAsync
+		            .assignInvoiceNumberAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId, result,
+		                    lastCurrentUser));
+		    try {
+		        Thread.sleep(waitingMillis);
+		    } catch (InterruptedException e) {
+		        log.error("Failed to create agregates and invoice waiting for thread", e);
+		        throw new BusinessException(e);
+		    }
+		}
+		for (Future<String> futureItsNow : asyncReturns) {
+		    try {
+		        futureItsNow.get();
+		    } catch (InterruptedException | ExecutionException e) {
+		        log.error("Failed to create agregates and invoice getting future", e);
+		        throw new BusinessException(e);
+		    }
+		}
+	}
+    
     /**
      * Assign invoice number and increment BA invoice dates.
      *
