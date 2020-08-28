@@ -306,7 +306,7 @@
                             rendered="#{!customEntityTemplateBean.customTable}" />
 
                         <h:panelGroup id="entityClazzField">
-                            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
+                            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255" allowEdit="false"
                                 autocompleteBean="#{customFieldTemplateBean}" isAutocomplete="true"
                                 autocompleteMethod="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY?'autocompleteClassNamesCEIOnly':'autocompleteClassNames'}"
                                 newLine="true" componentWidth="100" listenerUpdate="childEntityFields" actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="resetChildEntityFields"
