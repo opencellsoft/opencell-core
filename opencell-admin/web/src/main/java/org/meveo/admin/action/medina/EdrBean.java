@@ -113,8 +113,12 @@ public class EdrBean extends BaseBean<EDR> {
      * @param edr the edr
      */
     public void reprocess(EDR edr) {
-        edrService.reopenRejectedEDRS(Arrays.asList(edr.getId()));
-        usageRatingService.ratePostpaidUsage(edr.getId());
+        try {
+            edrService.reopenRejectedEDRS(Arrays.asList(edr.getId()));
+            usageRatingService.ratePostpaidUsage(edr.getId());
+        } catch (Exception e) {
+            // do nothing
+        }       
     }
     
     /**
@@ -134,13 +138,15 @@ public class EdrBean extends BaseBean<EDR> {
             edrService.reopenRejectedEDRS(selectedIds);
             log.debug("Reprocessing {} edrs", selectedIds.size());        
             for (Long id : selectedIds) {
-                usageRatingService.ratePostpaidUsage(id);
+                try {
+                    usageRatingService.ratePostpaidUsage(id);
+                } catch (Exception e) {
+                    // Do nothing
+                }                
             }
         } else {
             messages.warn(new BundleKey("messages", "edr.statusCanBeReprocessed"));
-        }
-        
-        
+        }  
     }
     
 }
