@@ -39,12 +39,16 @@ public class CdrListBean extends CdrBean {
     private static final long serialVersionUID = -6872704581103186463L;
 
     protected LazyDataModel<CDR> cdrFileNames;
+    
+    private boolean loadCdrFileName = false;
+        
 
     @Inject
     private CDRService cdrService;
 
     @SuppressWarnings("rawtypes")
     public LazyDataModel<CDR> getFilteredLazyDataModel() {
+        
         if(filters != null && !filters.isEmpty() && filters.size() > 0) {
             return getLazyDataModel();
         }
@@ -80,5 +84,13 @@ public class CdrListBean extends CdrBean {
         } 
         return cdrFileNames; 
     }
+
+    public boolean isLoadCdrFileName() {
+        return loadCdrFileName;
+    }
+
+    public void setLoadCdrFileName(boolean loadCdrFileName) {
+        this.loadCdrFileName = loadCdrFileName;
+    }        
 
 }

@@ -113,9 +113,10 @@ public class CDRService extends PersistenceService<CDR> {
         return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
     }
 
-    public void updateTimesTried(CDR cdr) {
-        getEntityManager().createNamedQuery("CDR.updateTimesTried")
+    public void updateReprocessedCdr(CDR cdr) {
+        getEntityManager().createNamedQuery("CDR.updateReprocessedCDR")
             .setParameter("timesTried", cdr.getTimesTried())
+            .setParameter("status", cdr.getStatus())
             .setParameter("originRecord", cdr.getOriginRecord())
             .executeUpdate();                    
        

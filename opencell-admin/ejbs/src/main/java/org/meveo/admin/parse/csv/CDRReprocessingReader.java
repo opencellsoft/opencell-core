@@ -56,7 +56,7 @@ public class CDRReprocessingReader implements ICdrReader {
         return origin;
     }
 
-    @Override
+   @Override
     public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
         if(cdrReader == null || cdrReader.hasNext() == false) {
             return null;
@@ -92,7 +92,20 @@ public class CDRReprocessingReader implements ICdrReader {
 
     @Override
     public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
-        // TODO Auto-generated method stub
-        return null;
+        List<CDR> parsedCdrs = new ArrayList<CDR>();
+        List<CDR> cdrs = cdrService.getCDRsToReprocess();
+        CDR parsedCdr;
+        for (CDR cdr : cdrs) {
+            parsedCdr = cdrParser.parse(cdr.getLine());
+            if (parsedCdr != null) {
+                parsedCdr.setTimesTried(cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1);
+                parsedCdr.setId(cdr.getId());
+                parsedCdr.setOriginBatch(batchName);
+                parsedCdr.setOriginRecord(cdr.getOriginRecord());
+                parsedCdr.setLine(cdr.getLine());
+                parsedCdrs.add(parsedCdr);
+            }
+        }
+        return parsedCdrs;
     }   
 }
