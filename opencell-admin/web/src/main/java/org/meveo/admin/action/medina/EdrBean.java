@@ -114,7 +114,7 @@ public class EdrBean extends BaseBean<EDR> {
      */
     public void reprocess(EDR edr) {
         try {
-            edrService.reopenRejectedEDRS(Arrays.asList(edr.getId()));
+            edrService.updateEdrsToReprocess(Arrays.asList(edr.getId()));
             usageRatingService.ratePostpaidUsage(edr.getId());
         } catch (Exception e) {
             // do nothing
@@ -135,7 +135,7 @@ public class EdrBean extends BaseBean<EDR> {
                 .collect(Collectors.toList());
         
         if (selectedIds != null && selectedIds.size() > 0) {
-            edrService.reopenRejectedEDRS(selectedIds);
+            edrService.updateEdrsToReprocess(selectedIds);
             log.debug("Reprocessing {} edrs", selectedIds.size());        
             for (Long id : selectedIds) {
                 try {

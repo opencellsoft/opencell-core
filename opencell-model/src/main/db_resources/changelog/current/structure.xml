@@ -3452,4 +3452,9 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#5303_20200831" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_edr">
+            <column name="times_tried" type="int4"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
