@@ -21,12 +21,14 @@ package org.meveo.api.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -84,6 +86,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.tax.TaxCategoryService;
 
 /**
@@ -146,6 +149,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private TaxCategoryService taxCategoryService;
+
+    @Inject
+    private PaymentMethodService paymentMethodService;
 
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -363,6 +369,14 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
             }
             billingAccount.setCustomerAccount(customerAccount);
+        }
+
+        if (Objects.nonNull(postData.getPaymentMethod())) {
+            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+            if (paymentMethod == null) {
+                throw new EntityNotFoundException("payment method not found!");
+            }
+            billingAccount.setPaymentMethod(paymentMethod);
         }
 
         if (postData.getBillingCycle() != null) {
@@ -701,9 +715,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 
-        if (postData.getPaymentMethod() == PaymentMethodEnum.CARD) {
+        if (postData.getPaymentMethodType() == PaymentMethodEnum.CARD) {
             throw new InvalidParameterException("paymentMethod", "Card");
-        } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
+        } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
             if (postData.getBankCoordinates() == null) {
                 throw new MissingParameterException("bankCoordinates");
             }
@@ -718,13 +732,13 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (customerAccount.getPaymentMethods() != null) {
             for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
-                if (postData.getPaymentMethod() == paymentMethod.getPaymentType()) {
+                if (postData.getPaymentMethodType() == paymentMethod.getPaymentType()) {
 
-                    if (postData.getPaymentMethod().isSimple()) {
+                    if (postData.getPaymentMethodType().isSimple()) {
                         found = true;
                         break;
 
-                    } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
+                    } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
 
                         if (postData.getBankCoordinates().getIban() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
                                 && postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
@@ -745,10 +759,10 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
-            if (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod())).fromDto(customerAccount, currentUser);
-            } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, currentUser);
+            if (postData.getPaymentMethodType() == PaymentMethodEnum.CHECK || postData.getPaymentMethodType() == PaymentMethodEnum.WIRETRANSFER) {
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType())).fromDto(customerAccount, currentUser);
+            } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, currentUser);
             }
 
             if (customerAccount.getPaymentMethods() == null) {

@@ -63,6 +63,7 @@
                     <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="30"
                         rendered="#{paramBean.sparkEnabled}" />
                     <hftl:formField id="referenceDate" label="#{messages['billingCycle.referenceDate']}" field="referenceDate" />
+                    <hftl:formField label="#{messages['billingCycle.splitPerPaymentMethod']}" field="splitPerPaymentMethod" isMessage="true"/>
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
             </p:tabView>

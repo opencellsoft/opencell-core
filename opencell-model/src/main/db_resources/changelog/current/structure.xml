@@ -3443,5 +3443,20 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_subscription"
                                  constraintName="fk_subscription_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+        <addColumn tableName="billing_billing_account">
+            <column name="payment_method_id"  type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_billing_account"
+                                 constraintName="fk_billing_account_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+        <addColumn tableName="billing_cycle">
+            <column name="split_per_payment_method" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
