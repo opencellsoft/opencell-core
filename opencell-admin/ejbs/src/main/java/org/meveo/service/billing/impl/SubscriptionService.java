@@ -20,7 +20,13 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

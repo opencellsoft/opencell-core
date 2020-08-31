@@ -220,7 +220,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     private List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
-     * Use to return the active discount plans for this entity.
+     * Use to return the paymentMethod.
      */
     @XmlElement(name = "paymentMethod")
     private PaymentMethodDto paymentMethod;
