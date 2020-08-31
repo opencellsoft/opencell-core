@@ -70,7 +70,7 @@ import org.meveo.model.billing.Subscription;
 
         @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate and e.id >:lastId order by e.id"),
         @NamedQuery(name = "EDR.getEdrsBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate and e.id >:lastId order by e.id"),
-        @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(e.timesTried+1) where e.id in :ids"),
+        @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids") })
 public class EDR extends BaseEntity {
 
