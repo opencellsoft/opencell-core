@@ -21,6 +21,7 @@ package org.meveo.api.dto.billing;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,6 +33,7 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -218,6 +220,12 @@ public class SubscriptionDto extends BusinessEntityDto {
     private List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
+     * Use to return the paymentMethod.
+     */
+    @XmlElement(name = "paymentMethod")
+    private PaymentMethodDto paymentMethod;
+
+    /**
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
@@ -269,6 +277,9 @@ public class SubscriptionDto extends BusinessEntityDto {
         setElectronicBilling(e.getElectronicBilling());
         if (e.getMinimumChargeTemplate() != null) {
             setMinimumChargeTemplate(e.getMinimumChargeTemplate().getCode());
+        }
+        if (Objects.nonNull(e.getPaymentMethod())) {
+            setPaymentMethod(new PaymentMethodDto(e.getPaymentMethod()));
         }
     }
 
@@ -768,6 +779,18 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+    /**
+     * @return the subscription payment method
+     */
+    public PaymentMethodDto getPaymentMethod() {
+        return paymentMethod;
+    }
+    /**
+     * @param paymentMethod a payment method, a reference to an active PaymentMethod defined on the CustomerAccount
+     */
+    public void setPaymentMethod(PaymentMethodDto paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     @Override
