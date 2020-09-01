@@ -268,25 +268,27 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
      * @param ddrequestLotOp the ddrequest lot op
      * @return the due date range script
      */
-    private DateRangeScript getDueDateRangeScript(DDRequestLotOp ddrequestLotOp) {
-        try {
-            ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
-            if (scriptInstance != null) {
-            	 scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
-                final String scriptCode = scriptInstance.getCode();
-                if (scriptCode != null) {
-                    log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
-                    ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-                    if (si != null && si instanceof DateRangeScript) {
-                        return (DateRangeScript) si;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error(" Error on getDueDateRangeScript : [{}]", e.getMessage());
-        }
-        return null;
-    }
+	private DateRangeScript getDueDateRangeScript(DDRequestLotOp ddrequestLotOp) {
+		try {
+			ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
+			scriptInstance = scriptInstanceService.refreshOrRetrieve(scriptInstance);
+			if (scriptInstance != null) {
+
+				scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
+				final String scriptCode = scriptInstance.getCode();
+				if (scriptCode != null) {
+					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+					ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+					if (si != null && si instanceof DateRangeScript) {
+						return (DateRangeScript) si;
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error(" Error on getDueDateRangeScript", e);
+		}
+		return null;
+	}
 
     /**
      * Creates a new DDRequestLotOp instance, using the initial one's informations. <br>
