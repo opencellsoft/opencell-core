@@ -18,29 +18,20 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -141,64 +132,9 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 	 * @param billingRun the billing run
 	 * @return a map of discount amounts grouped by billing account.
 	 */
-	public Map<Class, Map<Long, ThresholdAmounts>> getTotalDiscountAmountByBR(BillingRun billingRun) {
-		List<Object[]> resultSet = getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount")
+	public List<Object[]> getTotalDiscountAmountByBR(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
-		return getAmountsMap(resultSet);
-	}
-
-	/**
-	 * Group amounts by Billing account, Customer account and customer.
-	 *
-	 * @param resultSet the result fo the query
-	 * @return A map of grouped amounts by class
-	 */
-	private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
-		Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
-		Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
-		Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
-		for (Object[] result : resultSet) {
-			Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
-			Long baId = (Long) result[3];
-			Long caId = (Long) result[4];
-			Long custId = (Long) result[5];
-
-			if (baAmounts.get(baId) == null) {
-				List<Long> invoiceIds = new ArrayList<>();
-				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
-				baAmounts.put(baId, thresholdAmounts);
-			} else {
-				ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-				thresholdAmounts.getAmount().addAmounts(amounts);
-				thresholdAmounts.getInvoices().add((Long) result[2]);
-			}
-			if (caAmounts.get(caId) == null) {
-				List<Long> invoiceIds = new ArrayList<>();
-				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
-				caAmounts.put(caId, thresholdAmounts);
-			} else {
-				ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-				thresholdAmounts.getAmount().addAmounts(amounts.clone());
-				thresholdAmounts.getInvoices().add((Long) result[2]);
-			}
-			if (custAmounts.get(custId) == null) {
-				List<Long> invoiceIds = new ArrayList<>();
-				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
-				custAmounts.put(custId, thresholdAmounts);
-			} else {
-				ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-				thresholdAmounts.getAmount().addAmounts(amounts.clone());
-				thresholdAmounts.getInvoices().add((Long) result[2]);
-			}
-		}
-		Map<Class, Map<Long, ThresholdAmounts>> accountsAmounts = new HashMap<>();
-		accountsAmounts.put(BillingAccount.class, baAmounts);
-		accountsAmounts.put(CustomerAccount.class, caAmounts);
-		accountsAmounts.put(Customer.class, custAmounts);
-		return accountsAmounts;
 	}
 
 	/**

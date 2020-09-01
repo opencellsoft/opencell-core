@@ -448,7 +448,7 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getCheckThreshold() != null) {
             billingAccount.setCheckThreshold(postData.getCheckThreshold());
         }
-
+        billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         updateAccount(billingAccount, postData, checkCustomFields);
 
         if (postData.getNextInvoiceDate() != null) {

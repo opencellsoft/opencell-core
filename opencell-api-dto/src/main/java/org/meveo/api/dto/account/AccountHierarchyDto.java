@@ -214,6 +214,51 @@ public class AccountHierarchyDto implements Serializable {
 
     /** The invoicing threshold for the customer account. */
     private BigDecimal customerAccountInvoicingThreshold;
+    
+    /**
+     * 
+     * check the threshold per entity/invoice for BA.
+     */
+    @XmlElement
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+    /**
+     * 
+     * check the threshold per entity/invoice for customerAccount.
+     */
+    @XmlElement
+    private boolean customerAccountThresholdPerEntity;
+
+    public boolean isCustomerAccountThresholdPerEntity() {
+		return customerAccountThresholdPerEntity;
+	}
+
+	public void setCustomerAccountThresholdPerEntity(boolean customerAccountThresholdPerEntity) {
+		this.customerAccountThresholdPerEntity = customerAccountThresholdPerEntity;
+	}
+
+    /**
+     * 
+     * check the threshold per entity/invoice for customer.
+     */
+    @XmlElement
+    private boolean customerThresholdPerEntity;
+
+    public boolean isCustomerThresholdPerEntity() {
+		return customerThresholdPerEntity;
+	}
+
+	public void setCustomerThresholdPerEntity(boolean customerThresholdPerEntity) {
+		this.customerThresholdPerEntity = thresholdPerEntity;
+	}
 
     /**
      * Instantiates a new account hierarchy dto.

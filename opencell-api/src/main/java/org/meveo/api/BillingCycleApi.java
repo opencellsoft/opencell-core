@@ -234,6 +234,7 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getCheckThreshold() != null) {
             billingCycle.setCheckThreshold(postData.getCheckThreshold());
         }
+        billingCycle.setThresholdPerEntity(postData.isThresholdPerEntity());
 
         // populate customFields
         try {

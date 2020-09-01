@@ -80,6 +80,21 @@ public class CustomerDto extends AccountDto {
     private ThresholdOptionsEnum checkThreshold;
 
     /**
+     * 
+     * check the threshold per entity/invoice.
+     */
+    @XmlElement
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+    /**
      * Instantiates a new customer dto.
      */
     public CustomerDto() {
@@ -132,7 +147,7 @@ public class CustomerDto extends AccountDto {
         if (e.getCheckThreshold() != null) {
             setCheckThreshold(e.getCheckThreshold());
         }
-
+        setThresholdPerEntity(e.isThresholdPerEntity()); 
     }
 
     /**
