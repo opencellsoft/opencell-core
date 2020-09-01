@@ -3499,7 +3499,6 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
-	</changeSet>
 	<changeSet id="#5303_20200831" author="hznibar" dbms="postgresql" >
         <addColumn tableName="rating_edr">
             <column name="times_tried" type="int4"/>
