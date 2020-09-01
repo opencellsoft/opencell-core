@@ -19,7 +19,9 @@
 package org.meveo.admin.action.medina;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -32,6 +34,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.UsageRatingService;
 
 @Named
 @ConversationScoped
@@ -41,6 +44,9 @@ public class EdrBean extends BaseBean<EDR> {
 
     @Inject
     private EdrService edrService;
+    
+    @Inject
+    private UsageRatingService usageRatingService;
 
     public EdrBean() {
         super(EDR.class);
@@ -63,13 +69,14 @@ public class EdrBean extends BaseBean<EDR> {
     }
 
     public void massUpdate() {
-        if (getSelectedEntities() == null) {
+        List<EDR> edrs = getSelectedEntities();
+        if (edrs == null || edrs.isEmpty()) {
             return;
         }
-        log.debug("Reopening {} rejected edrs", getSelectedEntities().size());
+        log.debug("Reopening {} rejected edrs", edrs.size());
 
         List<Long> selectedIds = new ArrayList<>();
-        for (EDR edr : getSelectedEntities()) {
+        for (EDR edr : edrs) {
             if (EDRStatusEnum.REJECTED.equals(edr.getStatus())) {
                 selectedIds.add(edr.getId());
             }
@@ -86,4 +93,60 @@ public class EdrBean extends BaseBean<EDR> {
     protected IPersistenceService<EDR> getPersistenceService() {
         return edrService;
     }
+    
+    /**
+     * Can reprocess.
+     *
+     * @param cdr the cdr
+     * @return true, if the user has the necessaries roles and the edr status is open or rejected
+     */
+    public boolean canReprocess(EDR edr) {
+        if(currentUser.hasRole("cdrRateManager") && (EDRStatusEnum.OPEN.equals(edr.getStatus()) || EDRStatusEnum.REJECTED.equals(edr.getStatus()))) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Reprocess the edr
+     *
+     * @param edr the edr
+     */
+    public void reprocess(EDR edr) {
+        try {
+            edrService.updateEdrsToReprocess(Arrays.asList(edr.getId()));
+            usageRatingService.ratePostpaidUsage(edr.getId());
+        } catch (Exception e) {
+            // do nothing
+        }       
+    }
+    
+    /**
+     * Mass reprocessing of all selected edrs
+     */
+    public void massReprocessing() {
+        List<EDR> edrs = getSelectedEntities();
+        if (edrs == null || edrs.isEmpty()) {
+            return;
+        }
+        List<Long> selectedIds = edrs.parallelStream()
+                .filter(edr -> (EDRStatusEnum.REJECTED.equals(edr.getStatus()) || EDRStatusEnum.OPEN.equals(edr.getStatus())))
+                .map(EDR::getId)
+                .collect(Collectors.toList());
+        
+        if (selectedIds != null && selectedIds.size() > 0) {
+            edrService.updateEdrsToReprocess(selectedIds);
+            log.debug("Reprocessing {} edrs", selectedIds.size());        
+            for (Long id : selectedIds) {
+                try {
+                    usageRatingService.ratePostpaidUsage(id);
+                } catch (Exception e) {
+                    // Do nothing
+                }                
+            }
+        } else {
+            messages.warn(new BundleKey("messages", "edr.statusCanBeReprocessed"));
+        }  
+    }
+    
 }

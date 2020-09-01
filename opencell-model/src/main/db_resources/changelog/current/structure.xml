@@ -3446,6 +3446,7 @@ END $$;]]>
             FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
         </createView>
     </changeSet>
+    
 
     <changeSet id="#5303_Update_CDR_Table_20200826" author="MohammedAmineTazi">
         <addColumn tableName="rating_cdr">
@@ -3472,6 +3473,7 @@ END $$;]]>
 	    <dropColumn tableName="ar_account_operation">
             <column name="payment_history_id"></column>
         </dropColumn>
+	</changeSet>    
 	</changeSet>
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
@@ -3498,4 +3500,10 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+	</changeSet>
+	<changeSet id="#5303_20200831" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_edr">
+            <column name="times_tried" type="int4"/>
+        </addColumn>
+    </changeSet>  
 </databaseChangeLog>
