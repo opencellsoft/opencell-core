@@ -10362,6 +10362,57 @@
 					"name": "Service workflow - service multi activation",
 					"item": [
 						{
+							"name": "SET_VARIABLES",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "0c6c06e3-a41e-490e-afec-f5e3844a8b22",
+										"exec": [
+											"pm.globals.set(\"index\", 241);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "fbf552bc-5438-4438-8c0d-69c1c62d083c",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "OPTIONS",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "https://postman-echo.com/",
+									"protocol": "https",
+									"host": [
+										"postman-echo",
+										"com"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Set service.allowMultiInstantiation=true - AUTHORIZATION_SUPERADMIN",
 							"event": [
 								{
@@ -12339,57 +12390,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "SET_VARIABLES",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "0c6c06e3-a41e-490e-afec-f5e3844a8b22",
-										"exec": [
-											"pm.globals.set(\"index\", 241);"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"id": "fbf552bc-5438-4438-8c0d-69c1c62d083c",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "OPTIONS",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "https://postman-echo.com/",
-									"protocol": "https",
-									"host": [
-										"postman-echo",
-										"com"
-									],
-									"path": [
-										""
-									]
-								}
-							},
-							"response": []
 						}
 					],
 					"event": [
@@ -12477,6 +12477,16 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8b63fc32-da59-48cc-9b07-a10499804c8e",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -12510,7 +12520,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"2016-03-01\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"2019-03-01\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -12591,7 +12601,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2015-02-02\"\r\n            },\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\r\n                \"quantity\": \"2\",\r\n                \"subscriptionDate\": \"2015-04-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2015-02-02\"\r\n            },\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\r\n                \"quantity\": \"2\",\r\n                \"subscriptionDate\": \"2015-04-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -12696,7 +12706,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SUB_WFL",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -12707,7 +12717,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_SUB_WFL"
+											"value": "{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}"
 										}
 									]
 								}
@@ -12776,7 +12786,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"2016-04-30\"\r\n}\r\n",
+									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_SUB_WFL{{inc}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"2020-04-30\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -12790,110 +12800,6 @@
 										"billing",
 										"subscription",
 										"terminate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Find subscription 2",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "14ea61c3-b9da-4a49-be1a-bc7d9b860b67",
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_SUB_WFL\");",
-											"    pm.expect(jsonData.subscription.status).to.eql(\"RESILIATED\");",
-											"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(\"2016-03-01T\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE1\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"TERMINATED\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(\"2015-02-02T\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].status).to.eql(\"TERMINATED\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].quantity).to.eql(2);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[1].subscriptionDate).to.contains(\"2015-04-01T\");",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_SUB_WFL",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription"
-									],
-									"query": [
-										{
-											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_SUB_WFL"
-										}
 									]
 								}
 							},
@@ -12961,7 +12867,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\"\r\n  }",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\"\r\n  }",
 									"options": {
 										"raw": {}
 									}
@@ -13041,7 +12947,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{today}}\"\n            }\n        ]\n    }\n}",
+									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION{{inc}}\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{today}}\"\n            }\n        ]\n    }\n}",
 									"options": {
 										"raw": {}
 									}
@@ -13144,7 +13050,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -13155,7 +13061,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION"
+											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION{{inc}}"
 										}
 									]
 								}
@@ -13224,7 +13130,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{terminationDate}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION{{inc}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{terminationDate}}\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -13238,110 +13144,6 @@
 										"billing",
 										"subscription",
 										"terminate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Find subscription - future termination 2",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "74524edc-7fc2-4c48-aae9-b00fcc7d92fb",
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.actionStatus.message).to.eql();",
-											"});",
-											"",
-											"",
-											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.subscription.code).to.eql(pm.collectionVariables.get(\"entityPrefix\") + \"_\" + pm.globals.get(\"index\") + \"_SUB_FUTURE_TERMINATION\");",
-											"    pm.expect(jsonData.subscription.status).to.eql(\"ACTIVE\");",
-											"    pm.expect(jsonData.subscription.subscriptionDate).to.contains(pm.globals.get(\"today\"));",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].code).to.eql(pm.collectionVariables.get(\"baseEntityPrefix\") + \"_SERVICE2\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].status).to.eql(\"ACTIVE\");",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].quantity).to.eql(1);",
-											"    pm.expect(jsonData.subscription.services.serviceInstance[0].subscriptionDate).to.contains(pm.globals.get(\"today\"));",
-											"    pm.expect(jsonData.subscription.subscribedTillDate).to.contains(pm.globals.get(\"terminationDate\"));",
-											"    pm.expect(jsonData.subscription.renewalRule.endOfTermAction).to.eql(\"TERMINATE\");",
-											"    pm.expect(jsonData.subscription.renewalRule.terminationReasonCode).to.eql(\"TERM_REASON_1\");",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription"
-									],
-									"query": [
-										{
-											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION"
-										}
 									]
 								}
 							},
@@ -13409,7 +13211,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{10daysBefore}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{10daysBefore}}\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -13490,7 +13292,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"{{5daysBefore}}\"\r\n            },\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"{{2daysBefore}}\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"{{5daysBefore}}\"\r\n            },\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"{{2daysBefore}}\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -13596,7 +13398,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -13607,7 +13409,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION"
+											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}"
 										}
 									]
 								}
@@ -13676,7 +13478,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{20daysBefore}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{20daysBefore}}\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -13757,7 +13559,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{10daysBefore}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{10daysBefore}}\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -13866,7 +13668,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -13877,7 +13679,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION"
+											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_TERMINATION{{inc}}"
 										}
 									]
 								}
@@ -13946,7 +13748,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{10daysBefore}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{10daysBefore}}\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -14026,7 +13828,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{5daysBefore}}\"\n            },\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{2daysBefore}}\"\n            }\n        ]\n    }\n}",
+									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{5daysBefore}}\"\n            },\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{2daysBefore}}\"\n            }\n        ]\n    }\n}",
 									"options": {
 										"raw": {}
 									}
@@ -14132,7 +13934,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -14143,7 +13945,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION"
+											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}"
 										}
 									]
 								}
@@ -14212,7 +14014,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{3daysBefore}}\"\r\n}\r\n\t",
+									"raw": "{\r\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\",\r\n    \"terminationDate\": \"{{3daysBefore}}\"\r\n}\r\n\t",
 									"options": {
 										"raw": {}
 									}
@@ -14321,7 +14123,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -14332,7 +14134,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION"
+											"value": "{{entityPrefix}}_{{index}}_SUB_INBETWEEN_2_TERMINATION{{inc}}"
 										}
 									]
 								}
@@ -14401,7 +14203,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_3\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\",\r\n    \"terminationDate\": \"{{terminationDate}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\",\r\n    \"terminationDate\": \"{{terminationDate}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -14414,6 +14216,87 @@
 									"path": [
 										"billing",
 										"subscription"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate services - future termination 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "14ebd4f5-6d7c-4376-82fb-7020b33d8330",
+										"exec": [
+											"pm.test(request.name + \" - Check Code\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Status\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check ErrorCode\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errorCode).to.eql();",
+											"});",
+											"",
+											"pm.test(request.name + \" - Check Message\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{today}}\"\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/subscription/activateServices",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"subscription",
+										"activateServices"
 									]
 								}
 							},
@@ -14499,7 +14382,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_3",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -14510,7 +14393,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_3"
+											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}"
 										}
 									]
 								}
@@ -14518,168 +14401,7 @@
 							"response": []
 						},
 						{
-							"name": "Create subscription - future termination 4",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e9ff88f2-9da8-4c5d-ac0c-c9a0e1d90bf4",
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql(\"\");",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_4\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Activate services - future termination 4",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "14ebd4f5-6d7c-4376-82fb-7020b33d8330",
-										"exec": [
-											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql();",
-											"});",
-											"",
-											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.message).to.eql(\"\");",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_4\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"{{today}}\"\n            }\n        ]\n    }\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/subscription/activateServices",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"subscription",
-										"activateServices"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update subscription - future termination 4",
+							"name": "Update subscription - future termination 3",
 							"event": [
 								{
 									"listen": "test",
@@ -14740,7 +14462,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_4\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\",\r\n    \"terminationDate\": \"{{terminationDate}}\",\r\n    \"terminationReason\": \"TERM_REASON_1\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\r\n    \"subscriptionDate\": \"{{today}}\",\r\n    \"terminationDate\": \"{{terminationDate}}\",\r\n    \"terminationReason\": \"TERM_REASON_1 updated\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -14759,7 +14481,7 @@
 							"response": []
 						},
 						{
-							"name": "Find subscription - future termination 4",
+							"name": "Find subscription - future termination 3",
 							"event": [
 								{
 									"listen": "test",
@@ -14844,7 +14566,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_4",
+									"raw": "{{opencell.url}}/billing/subscription?subscriptionCode={{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -14855,7 +14577,7 @@
 									"query": [
 										{
 											"key": "subscriptionCode",
-											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION_4"
+											"value": "{{entityPrefix}}_{{index}}_SUB_FUTURE_TERMINATION3_{{inc}}"
 										}
 									]
 								}
@@ -14870,7 +14592,7 @@
 								"id": "ba78af2a-140c-4af0-bf18-9468ec120051",
 								"type": "text/javascript",
 								"exec": [
-									"pm.variables.get(\"inc\",inc++);"
+									""
 								]
 							}
 						},
@@ -17950,22 +17672,21 @@
 									"script": {
 										"id": "c8b89d89-39a9-4a9c-b535-a377509cbab2",
 										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
 											"pm.test(request.name + \" - Check Code\", function () {",
-											"    pm.response.to.have.status(500);",
+											"    pm.response.to.have.status(400);",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Status\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check ErrorCode\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errorCode).to.eql();",
+											"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
 											"});",
 											"",
 											"pm.test(request.name + \" - Check Message\", function () {",
-											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.message).to.eql(\"Cannot subscribe to disabled offer\");",
 											"});"
 										],
@@ -19268,7 +18989,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_AGE\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER_SUB_AGE\",\r\n    \"subscriptionDate\": \"2017-03-01\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_AGE{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER_SUB_AGE\",\r\n    \"subscriptionDate\": \"2017-03-01\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -19349,7 +19070,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_AGE\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE_SUB_AGE\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2017-05-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_AGE{{inc}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE_SUB_AGE\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2017-05-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -19430,7 +19151,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_AGE\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2017-12-01\"\n}\n",
+									"raw": "{\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_AGE{{inc}}\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2017-12-01\"\n}\n",
 									"options": {
 										"raw": {}
 									}
@@ -19511,7 +19232,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_AGE2\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER_SUB_AGE\",\r\n    \"subscriptionDate\": \"2017-07-01\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_AGE2_{{inc}}\",\r\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\r\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER_SUB_AGE\",\r\n    \"subscriptionDate\": \"2017-07-01\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -19592,7 +19313,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_AGE2\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE_SUB_AGE\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2017-07-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_AGE2_{{inc}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE_SUB_AGE\",\r\n                \"quantity\": \"1\",\r\n                \"subscriptionDate\": \"2017-07-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -19673,7 +19394,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_AGE2\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2017-09-01\"\n}\n",
+									"raw": "{\n    \"subscriptionCode\": \"{{entityPrefix}}_{{index}}_SUB_AGE2_{{inc}}\",\n    \"terminationReason\": \"TERM_REASON_1\",\n    \"terminationDate\": \"2017-09-01\"\n}\n",
 									"options": {
 										"raw": {}
 									}
@@ -20798,7 +20519,6 @@
 							"days5before.setDate(today.getDate() - 5);",
 							"days3before.setDate(today.getDate() - 3);",
 							"days2before.setDate(today.getDate() - 2);",
-							"pm.variables.set(\"inc\",0);",
 							"pm.globals.set(\"index\", 194);",
 							"pm.globals.set(\"today\", today.toISOString().slice(0, 10)+\"T\");",
 							"pm.globals.set(\"terminationDate\", terminationDate.toISOString().slice(0, 10)+\"T\");",
@@ -20806,7 +20526,11 @@
 							"pm.globals.set(\"10daysBefore\", days10before.toISOString().slice(0, 10)+\"T\");",
 							"pm.globals.set(\"5daysBefore\", days5before.toISOString().slice(0, 10)+\"T\");",
 							"pm.globals.set(\"3daysBefore\", days3before.toISOString().slice(0, 10)+\"T\");",
-							"pm.globals.set(\"2daysBefore\", days2before.toISOString().slice(0, 10)+\"T\");"
+							"pm.globals.set(\"2daysBefore\", days2before.toISOString().slice(0, 10)+\"T\");",
+							"var inc = pm.globals.get(\"inc\");",
+							"if(inc!=null){",
+							"    inc++;",
+							"}"
 						]
 					}
 				},
@@ -21140,13 +20864,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/userAccount",
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
-										"userAccount"
+										"userAccount",
+										"createOrUpdate"
 									]
 								}
 							},
@@ -21978,7 +21703,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email\": \"{{entityPrefix}}_432@manaty.net\",\n    \"paymentMethod\": \"2\",\n    \"customerId\": \"{{entityPrefix}}_{{index}}_CUST1\",\n    \"sellerCode\": \"SELLER_FR\",\n    \"customerBrandCode\": \"DEFAULT\",\n    \"customerCategoryCode\": \"CLIENT\",\n    \"currencyCode\": \"USD\",\n    \"countryCode\": \"US\",\n    \"languageCode\": \"ENG\",\n    \"billingCycleCode\": \"CYC_INV_MT_1\",\n    \"titleCode\": \"MR\",\n    \"firstName\": \"firstName\",\n    \"lastName\": \"lastName\",\n    \"phoneNumber\": \"+102354749\",\n    \"address1\": \"Address1\",\n    \"address2\": \"Address2\",\n    \"zipCode\": \"75001\",\n    \"city\": \"Tunis\"\n}\n",
+									"raw": "{\n    \"email\": \"{{entityPrefix}}_432@opencellsoft.net\",\n    \"paymentMethod\": \"2\",\n    \"customerId\": \"{{entityPrefix}}_{{index}}_CUST1\",\n    \"sellerCode\": \"SELLER_FR\",\n    \"customerBrandCode\": \"DEFAULT\",\n    \"customerCategoryCode\": \"CLIENT\",\n    \"currencyCode\": \"USD\",\n    \"countryCode\": \"US\",\n    \"languageCode\": \"ENG\",\n    \"billingCycleCode\": \"CYC_INV_MT_1\",\n    \"titleCode\": \"MR\",\n    \"firstName\": \"firstName\",\n    \"lastName\": \"lastName\",\n    \"phoneNumber\": \"+102354749\",\n    \"address1\": \"Address1\",\n    \"address2\": \"Address2\",\n    \"zipCode\": \"75001\",\n    \"city\": \"Tunis\"\n}\n",
 									"options": {
 										"raw": {}
 									}
@@ -61801,7 +61526,7 @@
 				"id": "aa8bef6f-ba65-4804-8744-18b97af4461b",
 				"type": "text/javascript",
 				"exec": [
-					""
+					"pm.globals.set(\"inc\",1);"
 				]
 			}
 		},
@@ -61818,82 +61543,82 @@
 	],
 	"variable": [
 		{
-			"id": "eabfba0b-84b7-460f-8a89-9cb7b0cfab8e",
+			"id": "579f66b8-a04c-46bb-b45a-377a6de90d2e",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "79608c55-1c01-47d6-a83c-f33421b56a26",
+			"id": "54178f8b-dd1a-423b-b30d-98228583970a",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "4a7d7276-ad73-4e6a-92ea-ff6240583343",
+			"id": "3a0b534d-c24b-417a-b19e-3feadf2c3bb4",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "8c8f80cb-f901-4e81-b3f7-694dfc5cd49a",
+			"id": "644bff19-14f9-4b6f-ac2d-5e114791d53f",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "ca845cdc-84f5-4bde-800a-76380c4c5799",
+			"id": "c46fc674-cdda-4489-a05d-da0b76f82c54",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c0a01582-b6ce-46c1-92f2-a39cd25c8b9a",
+			"id": "158a00c9-e971-48d6-b919-c07f146daffd",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "54b4ee9a-d844-4601-b4ca-1ed717a61730",
+			"id": "58a88a05-ce72-46f6-869e-e324292c0d73",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "5ae9e62b-9458-4f6d-abc2-34be09d3a39c",
+			"id": "ed5a7124-06d8-4289-88e5-cf8c76e67dd4",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "72a872cd-99e9-46c5-8531-bf685839f517",
+			"id": "0135b0d4-71c5-4914-bacc-b4b58ba288e0",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "8b978c1b-4591-45af-b1a8-fa173a4dd216",
+			"id": "0ce85520-a0fc-42c2-ae24-33498ab98855",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "2a7d7d95-8487-41e9-82f5-90ac1529f060",
+			"id": "a19b6f97-2afa-4360-97f5-93065c1b20e5",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "b1c29871-2a3e-499f-84a8-1e4d506617a2",
+			"id": "93cbd8cf-d222-42f9-99a8-c139f2149463",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "3417f72b-7749-4756-8716-4648c027edb5",
+			"id": "1a9ad644-eb4f-48f2-abbe-1cfa140240ba",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "b95ca6bf-04d4-4d10-82d2-08e7659240cb",
+			"id": "dfd789c8-a84b-407d-9e0f-e1132ca5b975",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "a5a6813d-6fc7-4b82-b389-72bc3abbfe06",
+			"id": "7cfbb713-9145-49f0-90e9-8b5ae80b1835",
 			"key": "project.version",
 			"value": "9.2+"
 		},
 		{
-			"id": "34bf4784-6f1b-489b-a088-0b77815cdc13",
+			"id": "8419f002-7bec-47db-9451-c30c800d3645",
 			"key": "serviceId",
 			"value": ""
 		}
