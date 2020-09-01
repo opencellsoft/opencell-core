@@ -233,13 +233,18 @@
 
 
                                     <p:fieldset legend="#{messages['account.invoicing']}" styleClass="clearLeft">
-                                    
-                                        <hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle"
-                                            valueLabelField="code" popup="true" componentWidth="30" popupId="billingCyclePopup" />
-                                        <hftl:formField label="#{messages['account.invoicingThreshold']}" field="invoicingThreshold" required="false" size="20"
-                                            listenerUpdate="checkThresholdId" />
-                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId" noSelectionLabel="false"
-                                            disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+                                        <h:panelGrid columns="2" cellpadding="5">
+	                                        <hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle"
+	                                            valueLabelField="code" popup="true" componentWidth="30" popupId="billingCyclePopup" />
+	                                        <hftl:formField label="#{messages['account.invoicingThreshold']}" field="invoicingThreshold" required="false" size="20"
+	                                            listenerUpdate="checkThresholdId" />
+	                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId" noSelectionLabel="false"
+	                                            disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+	                                        <p:panelGrid columns="1" styleClass="ui-noborder"> 
+	                                        	<p:outputLabel for="@next" value="#{messages['invoice.checkthreshold.per']}" cellpadding="5" />
+	                                        	<p:selectBooleanButton  value="${billingAccountBean.entity.thresholdPerEntity}" onLabel="#{messages['invoice.checkthreshold.per.entity']}" offLabel="#{messages['invoice.checkthreshold.per.invoice']}"/>
+	                                        </p:panelGrid>
+                     					</h:panelGrid>
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" rendered="#{not empty billingAccountBean.entity.id}">

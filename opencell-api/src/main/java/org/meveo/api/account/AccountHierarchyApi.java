@@ -294,7 +294,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-
+        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         // CustomerBrand customerBrand = null;
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -382,7 +382,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
         }
-
+        customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
@@ -464,7 +464,8 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
-
+        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
         setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
 
@@ -571,7 +572,8 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCustomerCheckThreshold() != null) {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-
+        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
             findOrCreateCustomerBrand(customerBrandCode);
@@ -638,6 +640,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCustomerAccountCheckThreshold() != null) {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
         }
+        customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -700,6 +703,8 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCheckThreshold() != null) {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
+        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        
         billingAccountApi.createOrUpdate(billingAccountDto);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -1265,6 +1270,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
+        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
 
         if (postData.getMinimumAmountEl() != null) {
             if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
@@ -1322,7 +1328,8 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
         }
-
+        customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
+        
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
             // Start compatibility with pre-4.6 versions
@@ -1406,7 +1413,8 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-
+        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());

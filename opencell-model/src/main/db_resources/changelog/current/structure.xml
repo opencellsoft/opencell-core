@@ -3504,4 +3504,24 @@ END $$;]]>
             <column name="times_tried" type="int4"/>
         </addColumn>
     </changeSet>  
+	
+	<changeSet id="#5461_20200901" author="Mohammed_EL-AZZOUZI">
+        <addColumn tableName="crm_customer">
+            <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_billing_account">
+            <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+    </changeSet> 
+    
 </databaseChangeLog>

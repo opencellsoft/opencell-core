@@ -17,23 +17,14 @@
  */
 package org.meveo.model.payments;
 
-import org.hibernate.annotations.Type;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.dunning.DunningDocument;
-import org.meveo.model.intcrm.AddressBook;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,16 +46,25 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningDocument;
+import org.meveo.model.intcrm.AddressBook;
 
 /**
  * Customer Account
@@ -267,6 +267,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * check threshold per entity?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_per_entity")
+    private boolean thresholdPerEntity;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -286,6 +293,14 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
     }
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 
     public AddressBook getAddressbook() {
         return addressbook;
