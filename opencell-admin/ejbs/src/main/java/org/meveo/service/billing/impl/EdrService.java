@@ -201,6 +201,15 @@ public class EdrService extends PersistenceService<EDR> {
     public void reopenRejectedEDRS(List<Long> ids) {
         getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
         }
+    
+    /**
+     * Update edrs to reprocess.
+     *
+     * @param ids the ids
+     */
+    public void updateEdrsToReprocess(List<Long> ids) {
+        getEntityManager().createNamedQuery("EDR.updateEdrsToReprocess").setParameter("ids", ids).executeUpdate();
+        }
 
     /**
      * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
