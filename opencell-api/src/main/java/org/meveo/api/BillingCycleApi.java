@@ -223,6 +223,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getCheckThreshold() != null) {
             entity.setCheckThreshold(dto.getCheckThreshold());
         }
+        if (dto.getSplitPerPaymentMethod() != null) {
+            entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
+        }
 
         // populate customFields
         try {
