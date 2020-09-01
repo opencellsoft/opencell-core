@@ -3473,7 +3473,6 @@ END $$;]]>
 	    <dropColumn tableName="ar_account_operation">
             <column name="payment_history_id"></column>
         </dropColumn>
-	</changeSet>    
 	</changeSet>
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
