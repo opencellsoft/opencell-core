@@ -390,7 +390,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		message.setGrpHdr(groupHeader);
 		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + ddRequestLOT.getId());
 		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
-		groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getDdrequestItems().size()));
+		groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getNbItemsOk()));
 		groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
 		PartyIdentification32 initgPty = new PartyIdentification32();
 		if (ddRequestLOT.getSeller() != null) {
@@ -431,7 +431,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", SEPA_LOCAL_INSTRUMENT_CODE));
 		paymentTypeInformation.setSeqTp(SequenceType1Code.RCUR);
 
-		paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date()))); // à revoir
+		paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(dDRequestItem.getDueDate() != null ? dDRequestItem.getDueDate():new Date()))); 
 
 		BankCoordinates bankCoordinates = getBankCoordinates(dDRequestItem.getDdRequestLOT(), appProvider);
 
