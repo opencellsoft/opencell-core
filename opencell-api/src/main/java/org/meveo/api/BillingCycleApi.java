@@ -224,6 +224,7 @@ public class BillingCycleApi extends BaseApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+            billingCycle.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getReferenceDate() != null) {
             billingCycle.setReferenceDate(postData.getReferenceDate());
@@ -234,7 +235,6 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getCheckThreshold() != null) {
             billingCycle.setCheckThreshold(postData.getCheckThreshold());
         }
-        billingCycle.setThresholdPerEntity(postData.isThresholdPerEntity());
 
         // populate customFields
         try {

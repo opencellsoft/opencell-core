@@ -190,13 +190,13 @@ public class BillingAccountDto extends AccountDto {
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
+    public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 	
@@ -220,6 +220,7 @@ public class BillingAccountDto extends AccountDto {
         }
         if (e.getInvoicingThreshold() != null) {
             setInvoicingThreshold(e.getInvoicingThreshold());
+            setThresholdPerEntity(e.isThresholdPerEntity());
         }
         BillingCycle bc = e.getBillingCycle();
         if (bc != null) {
@@ -237,7 +238,6 @@ public class BillingAccountDto extends AccountDto {
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
         }
-        setThresholdPerEntity(e.isThresholdPerEntity());
         setNextInvoiceDate(e.getNextInvoiceDate());
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());

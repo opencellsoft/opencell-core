@@ -220,13 +220,13 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
+    public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 
@@ -235,9 +235,9 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for customerAccount.
      */
     @XmlElement
-    private boolean customerAccountThresholdPerEntity;
+    private Boolean customerAccountThresholdPerEntity;
 
-    public boolean isCustomerAccountThresholdPerEntity() {
+    public Boolean isCustomerAccountThresholdPerEntity() {
 		return customerAccountThresholdPerEntity;
 	}
 
@@ -250,9 +250,9 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for customer.
      */
     @XmlElement
-    private boolean customerThresholdPerEntity;
+    private Boolean customerThresholdPerEntity;
 
-    public boolean isCustomerThresholdPerEntity() {
+    public Boolean isCustomerThresholdPerEntity() {
 		return customerThresholdPerEntity;
 	}
 

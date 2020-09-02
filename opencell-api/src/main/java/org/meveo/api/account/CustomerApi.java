@@ -347,11 +347,11 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+            customer.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getCheckThreshold() != null) {
             customer.setCheckThreshold(postData.getCheckThreshold());
         }
-        customer.setThresholdPerEntity(postData.isThresholdPerEntity());
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);
