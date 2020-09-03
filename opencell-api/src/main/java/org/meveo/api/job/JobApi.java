@@ -171,10 +171,14 @@ public class JobApi extends BaseApi {
     }
 
     /**
-     * Retrieve job execution result.
+     * Retrieve job execution result. 
+     * 		Can be matched by:
+     * 			JobInstance code, in that case the last execution is returned
+     * 			JobExecution id, the job execution is matched by ID.
+     *      If both code and id are provided, an InvalidParameterException is thrown.
      * 
-     * @param code The job instance code
-     * @param id Job execution result identifier
+     * @param code The job instance code. If used,the last job execution instance is returned.
+     * @param id Job execution result identifier.
      * @return Job execution result DTO
      * @throws MeveoApiException meveo api exception
      */
@@ -183,6 +187,9 @@ public class JobApi extends BaseApi {
         if (StringUtils.isBlank(code) && StringUtils.isBlank(id)) {
             missingParameters.add("id or code");
             handleMissingParameters();
+        }
+        if(!StringUtils.isBlank(code) && !StringUtils.isBlank(id)) {
+        	throw new InvalidParameterException("Selection by both 'id' and 'code' is not allowed");
         }
 
         JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
