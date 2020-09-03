@@ -192,13 +192,16 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
      */
     public CreationDetailedInvoiceBean() {
         super(Invoice.class);
+        selectedServiceTemplate = new ServiceTemplate();
+        selectedAccountingCode = new AccountingCode();
+        selectedTaxClass = new TaxClass();
     }
 
     @Override
     public Invoice initEntity() {
         aggregateHandler.reset();
         entity = super.initEntity();
-        entity.setDueDate(new Date());
+        entity.setDueDate(DateUtils.addMonthsToDate(new Date(), 1));
         entity.setInvoiceDate(new Date());
 
         if (entity.isTransient()) {
@@ -361,10 +364,6 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
     
-    public void onServiceTemplateSet(SelectEvent event) {
-        selectedServiceTemplate = (ServiceTemplate) event.getObject();
-    }
-
     /**
      * Recompute agregates
      * 
@@ -1008,11 +1007,6 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
      * ###################################################################################################
      */
 
-    public void handleSelectedInvoiceCatOrSubCat() {
-        if (selectedInvoiceSubCategory != null) {
-            description = selectedInvoiceSubCategory.getDescriptionOrCode();
-        }
-    }
 
     public void handleSelectedCharge() {
         if (selectedCharge != null) {

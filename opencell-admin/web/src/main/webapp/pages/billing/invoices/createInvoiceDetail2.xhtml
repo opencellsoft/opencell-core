@@ -323,7 +323,7 @@
                         <p:panel id="addDetailInvoiceLine" style="float: right; width: 100%;">
                             <h:panelGrid columns="5">
 					            <hftl:formField id="serviceSelectId" required="true" label="#{messages['businessServiceModel.serviceTemplate']}" entity="#{creationDetailedInvoiceBean.selectedServiceTemplate}"
-					                popup="true" popupId="serviceTemplatePopup" field="code" >
+					                popup="true" popupId="serviceTemplatePopup" field="code">
 					            </hftl:formField>
 					                					                					                					                					                					                					                					                
                                 <hftl:decorateFormField fieldId="description" label="#{messages['BusinessEntity.description']} *">
@@ -337,7 +337,7 @@
                                     </p:selectOneMenu>
                                 </hftl:decorateFormField>                                                                               
                             </h:panelGrid>
-                            <h:panelGrid columns="8">
+                            <h:panelGrid columns="5">
                                 <hftl:decorateFormField fieldId="usageDate" label="#{messages['ratedTransaction.chargeDate']} *">
                                     <p:calendar id="usageDate" value="#{creationDetailedInvoiceBean.usageDate}" pattern="#{paramBean.dateFormat}" />
                                 </hftl:decorateFormField>
@@ -357,7 +357,6 @@
                                         converter="omnifaces.SelectItemsConverter">
                                         <f:selectItem itemLabel="" noSelectionOption="true" />
                                         <f:selectItems value="#{creationDetailedInvoiceBean.invoiceCatSubCats}" />
-                                        <p:ajax update="selectedCharge description" event="valueChange" listener="#{creationDetailedInvoiceBean.handleSelectedInvoiceCatOrSubCat}" />
                                     </p:selectOneMenu>
                                 </hftl:decorateFormField>                            
 					            <hftl:formField id="taxClassSelectId" required="true" label="Tax Class" entity="#{creationDetailedInvoiceBean.selectedTaxClass}"
