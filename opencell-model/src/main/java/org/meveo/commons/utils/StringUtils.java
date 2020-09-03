@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class StringUtils {
 
-    public static final String CODE_REGEX = "^[@A-Za-z0-9_\\.\\/-]+$";
+    public static final String CODE_REGEX = "^[ @A-Za-z0-9_\\.\\/-]+$";
     public static final String EMPTY = "";
 
     /**

@@ -17,21 +17,13 @@
  */
 package org.meveo.model.crm;
 
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.intcrm.AdditionalDetails;
-import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.CustomerAccount;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,35 +35,27 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.payments.CustomerAccount;
 
 /**
  * Customer
@@ -89,7 +73,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 @Table(name = "crm_customer")
 @NamedQueries({
         @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
-        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer")})
+        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer") })
 public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -142,26 +126,11 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     private Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
-     * Expression to determine minimum amount value
-     */
-    @Column(name = "minimum_amount_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountEl;
-
-    /**
      * The billable Entity
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_target_account_id")
     private BillingAccount minimumTargetAccount;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value
-     */
-    @Column(name = "minimum_label_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelEl;
-
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount.
@@ -272,13 +241,6 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
     }
-    public String getMinimumAmountEl() {
-        return minimumAmountEl;
-    }
-
-    public void setMinimumAmountEl(String minimumAmountEl) {
-        this.minimumAmountEl = minimumAmountEl;
-    }
 
     public BillingAccount getMinimumTargetAccount() {
         return minimumTargetAccount;
@@ -286,14 +248,6 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
 
     public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
         this.minimumTargetAccount = minimumTargetAccount;
-    }
-
-    public String getMinimumLabelEl() {
-        return minimumLabelEl;
-    }
-
-    public void setMinimumLabelEl(String minimumLabelEl) {
-        this.minimumLabelEl = minimumLabelEl;
     }
 
     /**

@@ -141,7 +141,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             sourceDS = discountPlanService.list();
             discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
         }
-
+        
         return entity;
     }
 
@@ -472,7 +472,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("customerAccount", "customerAccount.billingAccounts", "billingCycle");
+        return null;
+//        return Arrays.asList("customerAccount");
     }
 
     public CounterInstance getSelectedCounterInstance() {
