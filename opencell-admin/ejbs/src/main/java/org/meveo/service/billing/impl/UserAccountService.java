@@ -50,12 +50,12 @@ public class UserAccountService extends AccountService<UserAccount> {
 		
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
-		walletService.create(wallet);
+        wallet.setUserAccount(userAccount);
+        wallet.updateAudit(currentUser);
 		
 		userAccount.setWallet(wallet);
 		create(userAccount);
 		
-		wallet.setUserAccount(userAccount);
 	}
 
 	@MeveoAudit
