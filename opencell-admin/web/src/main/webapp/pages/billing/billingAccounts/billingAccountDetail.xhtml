@@ -30,7 +30,7 @@
             <hftl:entityPopup id="customerAccountPopup" header="#{messages['customerAccount.popup.header']}" backingBean="#{customerAccountListBean}"
                 searchField1Label="#{messages['customerAccount.code']}" searchField1="code" searchField2Label="#{messages['customerAccount.name']}" searchField2="name"
                 column1Label="#{messages['customerAccount.code']}" column1="code" column2Label="#{messages['customerAccount.name']}" column2="name"
-                selection="#{billingAccountBean.entity.customerAccount}" updateField=":parentTab:formId:childTab:customerSelectId :parentTab:formId:childTab:customerSelectId_text">
+                selection="#{billingAccountBean.entity.customerAccount}" updateField=":parentTab:formId:childTab:customerSelectId :parentTab:formId:childTab:customerSelectId_text :parentTab:formId:childTab:payment_method">
             </hftl:entityPopup>
 
             <!-- 			<hftl:entityPopup id="billingCyclePopup" -->
@@ -202,19 +202,20 @@
 
                                         <hftl:decorateFormField fieldId="payment_method"
                                                                 label="#{messages['paymentMethod.alias']}"
-                                                                rendered="#{not empty billingAccountBean.entity.customerAccount.paymentMethods and billingAccountBean.edit}" required="#{false}"
-                                                                listenerUpdate=":parentTab:formId:childTab:userNamePanel">
+                                                                required="#{false}" >
                                             <p:selectOneMenu id="payment_method"
                                                              value="#{billingAccountBean.entity.paymentMethod}"
-                                                             required="#{false}"
-                                                             rendered="#{not empty billingAccountBean.entity.customerAccount.paymentMethods}">
+                                                             required="#{false}" rendered="#{billingAccountBean.edit}">
                                                 <hftl:objectConverter/>
-                                                <f:selectItem itemLabel="#{billingAccountBean.entity.paymentMethod.alias}" itemValue="#{billingAccountBean.entity.paymentMethod}"
+                                                <f:selectItem itemLabel="#{billingAccountBean.entity.paymentMethod.paymentType}" itemValue="#{billingAccountBean.entity.paymentMethod}"
                                                               rendered="#{billingAccountBean.entity.paymentMethod != null}"/>
                                                 <f:selectItem itemLabel="" itemValue="" rendered="#{billingAccountBean.entity.paymentMethod == null}"/>
-                                                <f:selectItems value="#{billingAccountBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['alias']}"
+                                                <f:selectItems value="#{billingAccountBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
                                                                itemValue="#{elem}"/>
                                             </p:selectOneMenu>
+
+                                            <h:outputText rendered="#{!billingAccountBean.edit}"
+                                                          value="#{billingAccountBean.entity.paymentMethod.paymentType}" />
                                         </hftl:decorateFormField>
                                     </p:fieldset>
                                     <p:fieldset legend="#{messages['billingAccount.minimumToInvoice']}" styleClass="clearLeft">

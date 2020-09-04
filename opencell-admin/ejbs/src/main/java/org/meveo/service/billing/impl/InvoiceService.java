@@ -679,6 +679,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return paymentMethod;
     }
 
+
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
@@ -784,11 +785,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else if (entityToInvoice instanceof Subscription) {
-                paymentMethod = ((Subscription) entityToInvoice).getPaymentMethod();
             } else{
-                paymentMethod = customerAccountService.getPreferredPaymentMethod(ba.getCustomerAccount().getId());
-
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
@@ -864,9 +861,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreRatedTransactionsExpected = true;
-
-        PaymentMethod paymentMethod = defaultPaymentMethod;
-
         // Contains distinct Invoice information - one for each invoice produced. Map key is billingAccount.id_seller.id_invoiceType.id_isPrepaid
         Map<String, InvoiceAggregateProcessingInfo> rtGroupToInvoiceMap = new HashMap<>();
 
@@ -905,9 +899,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (entityToInvoice instanceof Order) {
                         if (billingAccount == null || !billingAccount.getId().equals(rtGroup.getBillingAccount().getId())) {
                             billingAccount = rtGroup.getBillingAccount();
-                            if (defaultPaymentMethod == null) {
-                                paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
-                            }
                             // Balance are calculated on CA level and will be the same for all rated transactions of same order
                             boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
                             boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
@@ -929,7 +920,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate, isDraft, rtGroup.getBillingCycle(),
-                            paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
+                                rtGroup.getPaymentMethod(), rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
                         invoiceList.add(invoiceAggregateProcessingInfo.invoice);
                     }
 
@@ -3362,10 +3353,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun != null) {
             invoice.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
         }
-        if (paymentMethod != null) {
-            invoice.setPaymentMethodType(paymentMethod.getPaymentType());
-            invoice.setPaymentMethod(paymentMethod);
-        }
         Order order = null;
         if (entity instanceof Order) {
             order = (Order) entity;
@@ -3373,11 +3360,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (entity instanceof Subscription) {
             invoice.setSubscription((Subscription) entity);
-            PaymentMethod subscriptionPaymentMethod = ((Subscription) entity).getPaymentMethod();
-            if (Objects.nonNull(subscriptionPaymentMethod)) {
-                invoice.setPaymentMethod(subscriptionPaymentMethod);
-                invoice.setPaymentMethodType(subscriptionPaymentMethod.getPaymentType());
-            }
+        }
+        if (paymentMethod != null) {
+            invoice.setPaymentMethodType(paymentMethod.getPaymentType());
+            invoice.setPaymentMethod(paymentMethod);
         }
 
         // Set due balance

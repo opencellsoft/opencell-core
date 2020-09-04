@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -75,6 +76,8 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -1317,5 +1320,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             this.selectedCounterInstance = null;
         }
+    }
+    /**
+     * Get configured payment method's list
+     * @return list of payment methods
+     */
+    public List<PaymentMethod> listPaymentMethod() {
+        if (Objects.nonNull(entity) && Objects.nonNull(entity.getUserAccount()) ) {
+            UserAccount userAccount = userAccountService.findById(entity.getUserAccount().getId());
+            return userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
+        }
+        return Collections.emptyList();
     }
 }
