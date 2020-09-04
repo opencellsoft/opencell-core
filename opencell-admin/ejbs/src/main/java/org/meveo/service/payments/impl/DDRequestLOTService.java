@@ -356,6 +356,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (ca == null) {
 			return prefix + "recordedInvoice.ca";
 		}
+		prefix = "CA.code:"+ca.getCode()+" AO.id:" + accountOperation.getId() + " : ";
 		if (ca.getName() == null) {
 			return prefix + "ca.name";
 		}
