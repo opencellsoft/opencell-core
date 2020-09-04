@@ -33,7 +33,15 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
-import org.meveo.api.dto.catalog.*;
+import org.meveo.api.dto.account.CustomerCategoryDto;
+import org.meveo.api.dto.catalog.ChannelDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.OfferProductTemplateDto;
+import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -51,13 +59,13 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.*;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.*;
+import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 
@@ -101,6 +109,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
+
+    @Inject
+    private CustomerCategoryService customerCategoryService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -261,6 +272,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
 
+        if(postData.getCustomerCategories() != null && !postData.getCustomerCategories().isEmpty()) {
+            offerTemplate.getCustomerCategories().clear();
+            addCustomerCategories(postData.getCustomerCategories(), offerTemplate);
+        }
+
         offerTemplate.setBusinessOfferModel(businessOffer);
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
@@ -307,6 +323,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processOfferProductTemplates(postData, offerTemplate);
 
         return offerTemplate;
+    }
+
+    private void addCustomerCategories(List<CustomerCategoryDto> customerCategoryDtos, OfferTemplate offerTemplate) {
+              for (CustomerCategoryDto categoryDto : customerCategoryDtos) {
+                CustomerCategory customerCategory = customerCategoryService.findByCode(categoryDto.getCode());
+                if (customerCategory == null) {
+                    throw new EntityDoesNotExistsException(CustomerCategory.class, categoryDto.getCode());
+                }
+                offerTemplate.addCustomerCategory(customerCategory);
+            }
     }
 
     private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
