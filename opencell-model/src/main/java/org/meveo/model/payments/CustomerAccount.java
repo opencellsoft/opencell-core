@@ -252,6 +252,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * check threshold per entity?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_per_entity")
+    private boolean thresholdPerEntity;
 
     /**
      * This method is called implicitly by hibernate, used to enable encryption for custom fields of this entity
@@ -270,6 +277,14 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
     }
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 
     public AddressBook getAddressbook() {
         return addressbook;

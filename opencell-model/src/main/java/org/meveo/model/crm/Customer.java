@@ -40,7 +40,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -73,7 +75,7 @@ import org.meveo.model.payments.CustomerAccount;
 @Table(name = "crm_customer")
 @NamedQueries({
         @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
-        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer") })
+        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer")})
 public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -126,11 +128,26 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     private Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
+     * Expression to determine minimum amount value
+     */
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    /**
      * The billable Entity
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_target_account_id")
     private BillingAccount minimumTargetAccount;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount.
@@ -144,6 +161,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * check threshold per entity?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_per_entity")
+    private boolean thresholdPerEntity;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -164,6 +188,14 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public Customer() {
         accountType = ACCOUNT_TYPE;
     }
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 
     public Seller getSeller() {
         return seller;
@@ -241,6 +273,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
     }
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
 
     public BillingAccount getMinimumTargetAccount() {
         return minimumTargetAccount;
@@ -248,6 +287,14 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
 
     public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
         this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 
     /**

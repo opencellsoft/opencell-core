@@ -299,7 +299,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (postData.getCheckThreshold() != null) {
             customerAccount.setCheckThreshold(postData.getCheckThreshold());
         }
-
+        customerAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         // Synchronize payment methods
         updatePaymentMethods(customerAccount, postData);
 
