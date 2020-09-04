@@ -19,6 +19,7 @@
 package org.meveo.api.dto.payment;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,6 +33,7 @@ import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.document.Document;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -176,6 +178,11 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
     private String email;
 
     /**
+     * Document.
+     */
+    private String referenceDocumentCode;
+
+    /**
      * Customer code, used only on dtp validation.
      */
     @XmlTransient
@@ -230,6 +237,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         this.paymentMethodType = paymentMethod.getPaymentType();
         if (paymentMethod.getCustomerAccount() != null) {
             this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
+        }
+        if (paymentMethod.getReferenceDocument() != null) {
+            this.referenceDocumentCode = paymentMethod.getReferenceDocument().getCode();
         }
         if (paymentMethod instanceof DDPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.DIRECTDEBIT);
@@ -286,16 +296,18 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         this.issueNumber = cardPaymentMethodDto.getIssueNumber();
         this.tokenId = cardPaymentMethodDto.getTokenId();
         this.customerAccountCode = cardPaymentMethodDto.getCustomerAccountCode();
+        this.referenceDocumentCode = cardPaymentMethodDto.getReferenceDocumentCode();
     }
 
     /**
      * Build entity class from dto class.
      *
      * @param customerAccount the customerAccount.
+     * @param document
      * @param currentUser the currentUser.
      * @return PaymentMethod entity.
      */
-    public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {
+    public final PaymentMethod fromDto(CustomerAccount customerAccount, Document document, MeveoUser currentUser) {
         PaymentMethod pmEntity = null;
         boolean disabledBool = isDisabled() != null ? isDisabled() : false;
         switch (getPaymentMethodType()) {
@@ -333,6 +345,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             pmEntity.setInfo5(getInfo5());
             pmEntity.setUserId(getUserId());
             pmEntity.updateAudit(currentUser);
+            if(Objects.nonNull(document)){
+                pmEntity.setReferenceDocument(document);
+            }
         }
         return pmEntity;
     }
@@ -426,6 +441,10 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         }
         if (!StringUtils.isBlank(getUserId())) {
             paymentMethod.setUserId(getUserId());
+        }
+
+        if (!StringUtils.isBlank(getUserId())) {
+            paymentMethod.setUserId(getReferenceDocumentCode());
         }
         return paymentMethod;
     }
@@ -848,12 +867,20 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
 		this.email = email;
 	}
 
-	@Override
+    public String getReferenceDocumentCode() {
+        return referenceDocumentCode;
+    }
+
+    public void setReferenceDocumentCode(String referenceDocumentCode) {
+        this.referenceDocumentCode = referenceDocumentCode;
+    }
+
+    @Override
     public final String toString() {
         return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id + ", disabled=" + disabled + ", alias=" + alias + ", preferred=" + preferred
                 + ", customerAccountCode=" + customerAccountCode + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5
                 + ", bankCoordinates=" + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", cardType=" + cardType
                 + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
-                + CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + "]";
+                + CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + ", referenceDocumentCode=" + referenceDocumentCode + "]";
     }
 }
