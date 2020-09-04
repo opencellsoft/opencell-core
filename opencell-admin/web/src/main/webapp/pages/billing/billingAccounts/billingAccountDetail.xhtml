@@ -238,8 +238,10 @@
                                             valueLabelField="code" popup="true" componentWidth="30" popupId="billingCyclePopup" />
                                         <hftl:formField label="#{messages['account.invoicingThreshold']}" field="invoicingThreshold" required="false" size="20"
                                             listenerUpdate="checkThresholdId" />
-                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId" noSelectionLabel="false"
-                                            disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+                                        <h:panelGroup id="checkThresholdId">
+                                            <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false"
+                                                disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+                                        </h:panelGroup>
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" rendered="#{not empty billingAccountBean.entity.id}">
