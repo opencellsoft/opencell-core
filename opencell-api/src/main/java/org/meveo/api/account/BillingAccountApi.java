@@ -761,9 +761,9 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
             if (postData.getPaymentMethodType() == PaymentMethodEnum.CHECK || postData.getPaymentMethodType() == PaymentMethodEnum.WIRETRANSFER) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType())).fromDto(customerAccount, currentUser);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType())).fromDto(customerAccount, null, currentUser);
             } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, currentUser);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethodType(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, null, currentUser);
             }
 
             if (customerAccount.getPaymentMethods() == null) {
