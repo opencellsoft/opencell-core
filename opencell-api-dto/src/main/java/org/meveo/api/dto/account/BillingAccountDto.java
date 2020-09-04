@@ -196,6 +196,21 @@ public class BillingAccountDto extends AccountDto {
      */
     @XmlElement(name = "paymentMethod")
     private PaymentMethodDto paymentMethod;
+    
+    /**
+     * 
+     * check the threshold per entity/invoice for BA.
+     */
+    @XmlElement
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 	
     /**
      * Instantiates a new billing account dto.
@@ -235,6 +250,7 @@ public class BillingAccountDto extends AccountDto {
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
         }
+        setThresholdPerEntity(e.isThresholdPerEntity());
         setNextInvoiceDate(e.getNextInvoiceDate());
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());

@@ -68,6 +68,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.document.Document;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
@@ -428,7 +429,7 @@ public class BillingAccountApi extends AccountEntityApi {
         } else if (isNew && postData.getInvoicingThreshold() != null) {
             billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         }
-
+        billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         updateAccount(billingAccount, postData, checkCustomFields);
 
         if (postData.getNextInvoiceDate() != null) {
