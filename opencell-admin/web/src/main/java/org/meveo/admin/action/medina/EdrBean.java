@@ -117,7 +117,7 @@ public class EdrBean extends BaseBean<EDR> {
             edrService.updateEdrsToReprocess(Arrays.asList(edr.getId()));
             usageRatingService.ratePostpaidUsage(edr.getId());
         } catch (Exception e) {
-            // do nothing
+            log.error(e.getMessage());
         }       
     }
     
@@ -141,7 +141,7 @@ public class EdrBean extends BaseBean<EDR> {
                 try {
                     usageRatingService.ratePostpaidUsage(id);
                 } catch (Exception e) {
-                    // Do nothing
+                    log.error(e.getMessage());
                 }                
             }
         } else {

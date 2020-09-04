@@ -39,7 +39,6 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -58,10 +57,6 @@ public class MediationReprocessing {
 
 	@Inject
 	protected Logger log;
-
-	/** The job execution service. */
-	@Inject
-	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private CurrentUserProvider currentUserProvider;
@@ -99,13 +94,11 @@ public class MediationReprocessing {
         for (CDR cdr : cdrs) {
             try {
                 if (StringUtils.isBlank(cdr.getRejectReason())) {
-
                     List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
                     List<EDR> edrs = cdrParser.convertCdrToEdr(cdr, accessPoints);
                     log.debug("Processing cdr id:{}", cdr.getId());
 
                     cdrParserService.createEdrs(edrs, cdr);
-                    //cdrParserService.cleanReprocessedCDR(cdr);
                     result.registerSucces();
                 } else {
                     result.registerError("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
@@ -120,6 +113,7 @@ public class MediationReprocessing {
                     log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
                 }
                 result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+                cdrService.updateReprocessedCdr(cdr);
             }
         }
         return new AsyncResult<String>("OK");

@@ -3503,5 +3503,12 @@ END $$;]]>
         <addColumn tableName="rating_edr">
             <column name="times_tried" type="int4"/>
         </addColumn>
-    </changeSet>  
+    </changeSet>
+    <changeSet id="#5303_20200902" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="source" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
