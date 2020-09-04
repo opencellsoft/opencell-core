@@ -228,6 +228,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
 		if (cdr != null && persistCDR) {
 			cdr.setHeaderEDR(edr);
 			cdr.setStatus(CDRStatusEnum.PROCESSED);
+			//once the cdr is processed, we don't need the serialized dto
+			cdr.setSource(null);
+			cdr.setType(null);
 			cdrService.update(cdr);
 		}
 	}

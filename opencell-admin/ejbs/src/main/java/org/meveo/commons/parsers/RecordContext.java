@@ -18,7 +18,19 @@
 
 package org.meveo.commons.parsers;
 
-public class RecordContext {
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+import org.meveo.admin.exception.BusinessException;
+public class RecordContext implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     int lineNumber = -1;
     String lineContent = null;
     Object record = null;
@@ -27,7 +39,6 @@ public class RecordContext {
      * When line is rejected, exception of reject
      */
     private Exception rejectReason = null;
-
     public RecordContext() {
 
     }
@@ -86,5 +97,51 @@ public class RecordContext {
      */
     public void setRejectReason(Exception rejectReason) {
         this.rejectReason = rejectReason;
+    }
+    
+    /**
+     * Serialize record into a string.
+     *
+     * @param record the record
+     * @return String in XML format
+     * @throws BusinessException business exception
+     */
+    public static String serializeRecord(Object record) throws BusinessException { 
+        try {
+            JAXBContext jaxbCxt =  JAXBContext.newInstance(record.getClass());            
+            Marshaller mar = jaxbCxt.createMarshaller();
+            mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            
+            StringWriter w = new StringWriter();
+            mar.marshal(record, w);
+
+            return w.toString();
+
+        } catch (JAXBException e) {
+            throw new BusinessException(e);
+        }
+    }
+
+    /**
+     * Deserialize record from a string.
+     *
+     * @param type the class name
+     * @param source the record
+     * @return the record object
+     * @throws BusinessException business exception
+     */
+    public static Object deserializeRecord(String type, String source) throws BusinessException {
+        if (type == null || source == null) {
+            return null;
+        }
+        try {
+            Class<?> clazz = Class.forName(type);
+            JAXBContext jaxbCxt = JAXBContext.newInstance(clazz);
+            Unmarshaller umar = jaxbCxt.createUnmarshaller();
+            return (Object) umar.unmarshal(new StringReader(source));
+
+        } catch (JAXBException | ClassNotFoundException e) {
+            throw new BusinessException(e);
+        }
     }
 }

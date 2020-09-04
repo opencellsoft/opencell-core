@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.commons.parsers.RecordContext;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CDRService;
@@ -95,8 +96,14 @@ public class CDRReprocessingReader implements ICdrReader {
         List<CDR> parsedCdrs = new ArrayList<CDR>();
         List<CDR> cdrs = cdrService.getCDRsToReprocess();
         CDR parsedCdr;
+        Object record;
         for (CDR cdr : cdrs) {
-            parsedCdr = cdrParser.parse(cdr.getLine());
+            if(cdr.getType() != null && cdr.getSource() != null) {
+                record = RecordContext.deserializeRecord(cdr.getType(),cdr.getSource());
+            } else { // This case should never happen, but it's added to manage the old data
+                record = cdr.getLine();                                
+            }
+            parsedCdr = cdrParser.parse(record);
             if (parsedCdr != null) {
                 parsedCdr.setTimesTried(cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1);
                 parsedCdr.setId(cdr.getId());
@@ -104,7 +111,8 @@ public class CDRReprocessingReader implements ICdrReader {
                 parsedCdr.setOriginRecord(cdr.getOriginRecord());
                 parsedCdr.setLine(cdr.getLine());
                 parsedCdrs.add(parsedCdr);
-            }
+            }   
+                      
         }
         return parsedCdrs;
     }   

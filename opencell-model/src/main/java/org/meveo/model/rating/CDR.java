@@ -290,6 +290,11 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "updater",  length = 100)
     @Size(max = 100)
     private String updater;
+    
+    /** The serialized CDR dto. to be used while re-processing the CDR */
+    @Column(name = "source", nullable = true, columnDefinition = "TEXT")
+    private String source;
+    
 
 	@Transient
 	private Exception rejectReasonException = null;
@@ -648,6 +653,26 @@ public class CDR extends BaseEntity implements ICustomFieldEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+       
+    
+
+    /**
+     * Gets the source.
+     *
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * Sets the source.
+     *
+     * @param source the new source
+     */
+    public void setSource(String source) {
+        this.source = source;
     }
 
     /**

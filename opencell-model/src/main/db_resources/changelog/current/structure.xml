@@ -3541,4 +3541,12 @@ END $$;]]>
                                  constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="#5303_20200902" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="source" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
