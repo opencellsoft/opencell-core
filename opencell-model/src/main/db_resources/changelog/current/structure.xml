@@ -3503,6 +3503,15 @@ END $$;]]>
         <addColumn tableName="rating_edr">
             <column name="times_tried" type="int4"/>
         </addColumn>
+    </changeSet>  
+    
+    <changeSet id="#5460_BA_fields" author="AndriusKarpavicius">
+        <sql>UPDATE ${db.schema.adapted}account_entity as ae SET minimum_amount_el = ba.minimum_amount_el, minimum_amount_el_sp = ba.minimum_amount_el_sp, minimum_label_el = ba.minimum_label_el, minimum_label_el_sp=ba.minimum_label_el_sp FROM ${db.schema.adapted}billing_billing_account AS ba WHERE ba.id=ae.id</sql>
+
+        <dropColumn tableName="billing_billing_account" columnName="minimum_amount_el"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_amount_el_sp"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_label_el"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_label_el_sp"/>
     </changeSet>
     <changeSet id="#5303_20200902" author="hznibar" dbms="postgresql" >
         <addColumn tableName="rating_cdr">
@@ -3511,4 +3520,5 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+    
 </databaseChangeLog>

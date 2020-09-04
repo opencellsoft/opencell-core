@@ -73,6 +73,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableCreatorService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
@@ -109,6 +110,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private CustomTableCreatorService customTableCreatorService;
+    
+    @Inject
+    private CustomTableService customTableService;
 
     static boolean useCFTCache = true;
 
@@ -253,49 +257,64 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     	create(cft, false);
     }
     
-	private void create(CustomFieldTemplate cft, Boolean updateUniqueConstraint) {
-		   if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-	                || !cft.isVersionable() || cft.getCalendar() == null)) {
-	            throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
-	        }
-	        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-	                || !cft.isVersionable() || cft.getCalendar() == null)) {
-	            throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
-	        }
-	        String oldConstraintColumns = "";
-	        Map<String, CustomFieldTemplate> cetFields = new TreeMap<>();
-	        CustomEntityTemplate cet = findCETbyCFT(cft);
-	        // Check if its a custom table field we need to get previous constraint state
-	        if (cet!=null && cet.isStoreAsTable()) {
-	        	cetFields = findByAppliesToNoCache(cet.getAppliesTo());
-	            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-	    				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
+    private void create(CustomFieldTemplate cft, Boolean updateUniqueConstraint) {
+	   if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
+            throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
+        }
+        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
+            throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
+        }
+        String oldConstraintColumns = "";
+        Map<String, CustomFieldTemplate> cetFields = new TreeMap<>();
+        CustomEntityTemplate cet = findCETbyCFT(cft);
+       
+        boolean isCustomTable = cet!=null && cet.isStoreAsTable();
+		if (isCustomTable) {
+        	// Check if its a custom table field we need to get previous constraint state
+        	cetFields = findByAppliesToNoCache(cet.getAppliesTo());
+            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
+    				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
+        }
+        
+        super.create(cft);
 
-	        }
-	        
-	        super.create(cft);
-
-	        //  if its a custom table field update table structure in DB
-	        if (cet!=null && cet.isStoreAsTable()) {
-	            customTableCreatorService.addField(cet.getDbTablename(), cft);
-	            cetFields.put(cft.getCode(), cft);
-	        }
-			
-	        customFieldsCache.addUpdateCustomFieldTemplate(cft);
-	        elasticClient.updateCFMapping(cft);
-
-	        boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
-	        if (reaccumulateCFValues) {
-
-	            clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-	             cfValueAccumulator.cftCreated(cft);
-	        }
-	        if(updateUniqueConstraint) {
-				updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
-	        }
+        //  if its a custom table field update table structure in DB
+        if (isCustomTable) {
+            customTableCreatorService.addField(cet.getDbTablename(), cft);
+            cetFields.put(cft.getCode(), cft);
+        }
 		
+        customFieldsCache.addUpdateCustomFieldTemplate(cft);
+        elasticClient.updateCFMapping(cft);
+
+        boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
+        if (reaccumulateCFValues) {
+
+            clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
+             cfValueAccumulator.cftCreated(cft);
+        }
+        if(updateUniqueConstraint) {
+			updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
+        }
+        
+        if (isCustomTable && CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType()) ) {
+        	CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(cft.tableName());
+        	if(relatedEntity == null) {
+        		try {
+					Class clazz = Class.forName(cft.getEntityClazz());
+					String referenceTable= customTableService.getTableNameForClass(clazz);
+					customTableCreatorService.addForeingKeyConstraint(cet.getCode(), cft.getCode(), referenceTable, "id");
+				} catch (ClassNotFoundException e) {
+					throw new BusinessException("Cannot find referenced clazz "+cft.getEntityClazz(), e);
+				}
+        	} else if(relatedEntity.isStoreAsTable()) {
+        		customTableCreatorService.addForeingKeyConstraint(cet.getCode(), cft.getCode(), cft.tableName(), "id");
+        	}
+        }
 	}
-    
+	
     @Override
     public void create(CustomFieldTemplate cft) throws BusinessException {
     	create(cft, true);
@@ -309,7 +328,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 			}
 			String cetConstraintName = customEntityTemplate.getUniqueContraintName();
 			String constraintName = !StringUtils.isBlank(cetConstraintName) ? cetConstraintName
-					: customTableCreatorService.extractConstraintName(customEntityTemplate.getDbTablename());
+					: customTableCreatorService.extractUniqueConstraintName(customEntityTemplate.getDbTablename());
 			removeConstraintFromCET(customEntityTemplate, constraintName);
 		}
 		addConstraintByColumnsName(customEntityTemplate, newConstraintColumns);
