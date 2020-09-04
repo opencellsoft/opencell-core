@@ -1071,8 +1071,7 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-        em.getProperties();
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(addCurrentSchema(q.toString().substring(q.indexOf(FROM))));
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1103,7 +1102,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-        String countSql = "select count(*) " + addCurrentSchema(q.toString().substring(q.indexOf(FROM)));
+    	String countSql = "select count(*) " + q.toString().substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
