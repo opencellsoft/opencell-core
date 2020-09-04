@@ -18,19 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
 import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
@@ -39,28 +26,46 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 /**
  * The Class FlatFileProcessingJobBean.
- * 
+ *
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.4.0
+ * @lastModifiedVersion 10.0.0
  */
 @Stateless
 public class FlatFileProcessingJobBean {
 
-    /** The log. */
+    /**
+     * The log.
+     */
     @Inject
     private Logger log;
 
-    /** The script instance service. */
+    /**
+     * The script instance service.
+     */
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -71,32 +76,35 @@ public class FlatFileProcessingJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    @Inject
+    private FlatFileService flatFileService;
+
     /**
      * Process a single file
      *
-     * @param result Job execution result
-     * @param inputDir Input directory
-     * @param outputDir Directory to store a successfully processed records
-     * @param archiveDir Directory to store a copy of a processed file
-     * @param rejectDir Directory to store a failed records
-     * @param file File to process
-     * @param mappingConf File record mapping configuration
+     * @param result                 Job execution result
+     * @param inputDir               Input directory
+     * @param outputDir              Directory to store a successfully processed records
+     * @param archiveDir             Directory to store a copy of a processed file
+     * @param rejectDir              Directory to store a failed records
+     * @param file                   File to process
+     * @param mappingConf            File record mapping configuration
      * @param scriptInstanceFlowCode Script to invoke for each record
-     * @param recordVariableName Variable name in script for record
-     * @param context Processing parameters
-     * @param filenameVariableName Filename variable name as it will appear in the script context
-     * @param formatTransfo Format to transform to
-     * @param errorAction action to do on error : continue, stop or rollback after an error
-     * @param nbRuns Number of parallel executions
-     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
+     * @param recordVariableName     Variable name in script for record
+     * @param context                Processing parameters
+     * @param filenameVariableName   Filename variable name as it will appear in the script context
+     * @param formatTransfo          Format to transform to
+     * @param errorAction            action to do on error : continue, stop or rollback after an error
+     * @param nbRuns                 Number of parallel executions
+     * @param waitingMills           Number of milliseconds to wait between launching parallel processing threads
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf,
-            String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, String errorAction,
-            Long nbRuns, Long waitingMillis) {
+                        String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, String errorAction,
+                        Long nbRuns, Long waitingMillis) {
 
         log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(),
-            scriptInstanceFlowCode, formatTransfo, errorAction);
+                scriptInstanceFlowCode, formatTransfo, errorAction);
 
         String fileName = file.getName();
         ScriptInterface script = null;
@@ -120,6 +128,12 @@ public class FlatFileProcessingJobBean {
                 file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
             }
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
+            FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
+            if (flatFile != null) {
+                flatFile.setFileCurrentName(currentFile.getName());
+                flatFileService.update(flatFile);
+            }
+
             script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
             context.put("outputDir", outputDir);
             context.put(filenameVariableName, fileName);
@@ -151,10 +165,10 @@ public class FlatFileProcessingJobBean {
             for (long i = 0; i < nbRuns; i++) {
                 if (FlatFileProcessingJob.ROLLBACK.equals(errorAction)) {
                     futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction,
-                        rejectFileWriter, outputFileWriter, lastCurrentUser));
+                            rejectFileWriter, outputFileWriter, lastCurrentUser));
                 } else {
                     futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction, rejectFileWriter,
-                        outputFileWriter, lastCurrentUser));
+                            outputFileWriter, lastCurrentUser));
                 }
                 if (waitingMillis > 0) {
                     try {

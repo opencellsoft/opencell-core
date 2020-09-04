@@ -1078,6 +1078,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         dto.setNetToPay(invoice.getNetToPay());
+        dto.setStatus(invoice.getStatus());
 
         return dto;
     }

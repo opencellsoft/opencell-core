@@ -214,7 +214,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
      */
-    @Column(name = "entity_clazz", length = 255)
+    @Column(name = "entity_clazz", length = 255, updatable = false)
     @Size(max = 255)
     private String entityClazz;
 

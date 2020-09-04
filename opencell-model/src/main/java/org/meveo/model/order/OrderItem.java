@@ -20,7 +20,6 @@ package org.meveo.model.order;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,11 +34,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -171,13 +168,6 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
-    /**
-     * Unique identifier - UUID
-     */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    private String uuid;
 
     /**
      * Main product offering
@@ -356,15 +346,6 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
-    /**
-     * setting uuid if null
-     */
-    @PrePersist
-    public void setUUIDIfNull() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString();
-        }
-    }
     @Override
     public CustomFieldValues getCfAccumulatedValues() {
         return cfAccumulatedValues;
@@ -374,21 +355,7 @@ public class OrderItem extends BusinessCFEntity implements IWFEntity {
         this.cfAccumulatedValues = cfAccumulatedValues;
     }
     @Override
-    public String getUuid() {
-        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
-        return uuid;
-    }
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-    @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
-    }
-    @Override
-    public String clearUuid() {
-        String oldUuid = uuid;
-        uuid = UUID.randomUUID().toString();
-        return oldUuid;
     }
 }
