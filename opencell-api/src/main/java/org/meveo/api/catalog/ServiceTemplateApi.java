@@ -81,7 +81,8 @@ import org.primefaces.model.SortOrder;
  * @author akadid abdelmounaim
  * @author Abdellatif BARI
  * @author Youssef IZEM
- * @lastModifiedVersion 5.4
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 10.0.0
  */
 @Stateless
 public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemplateDto> {
@@ -480,14 +481,15 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for termination charges
         if (postData.getServiceChargeTemplateTerminations() != null) {
+        	serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate);
             createServiceChargeTemplateTermination(postData, serviceTemplate);
-            serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate);
+            
         }
 
         // check for usage charges
         if (postData.getServiceChargeTemplateUsages() != null) {
+        	serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate);
             createServiceChargeTemplateUsage(postData, serviceTemplate);
-            serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate);
         }
         return serviceTemplate;
     }
