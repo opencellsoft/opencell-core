@@ -20,6 +20,7 @@ package org.meveo.api.payment;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -39,12 +40,14 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.document.Document;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.document.DocumentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.primefaces.model.SortOrder;
@@ -64,6 +67,10 @@ public class PaymentMethodApi extends BaseApi {
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
+
+    /** The Document Service service. */
+    @Inject
+    private DocumentService documentService;
 
     /** The customer service. */
     @Inject
@@ -91,8 +98,12 @@ public class PaymentMethodApi extends BaseApi {
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
         }
+        Document document = null;
+        if (Objects.nonNull(paymentMethodDto.getReferenceDocumentCode())) {
+            document = documentService.findByCode(paymentMethodDto.getReferenceDocumentCode());
+        }
 
-        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser); 
+        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
         	paymentMethod.setTokenId(paymentMethodDto.getTokenId()); 
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
@@ -119,6 +130,17 @@ public class PaymentMethodApi extends BaseApi {
             throw new EntityDoesNotExistsException(PaymentMethod.class, paymentMethodDto.getId());
         }
 
+        if (Objects.nonNull(paymentMethodDto.getReferenceDocumentCode())) {
+            if (StringUtils.isBlank(paymentMethodDto.getReferenceDocumentCode())) {
+                paymentMethod.setReferenceDocument(null);
+            }else{
+                final Document document = documentService.findByCode(paymentMethodDto.getReferenceDocumentCode());
+                if (document == null) {
+                    throw new EntityDoesNotExistsException(Document.class, paymentMethodDto.getReferenceDocumentCode());
+                }
+                paymentMethod.setReferenceDocument(document);
+            }
+        }
         paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
     }
 
