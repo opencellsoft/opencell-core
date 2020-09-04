@@ -39,7 +39,7 @@ import org.meveo.api.rest.IBaseRs;
 public interface InvoicingRs extends IBaseRs {
 
     /**
-     * Create a new billing run
+     * Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.
      * 
      * @param createBillingRunDto The billing run's data
      * @return Request processing status
