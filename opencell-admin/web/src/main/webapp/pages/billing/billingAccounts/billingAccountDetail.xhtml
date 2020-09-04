@@ -200,7 +200,22 @@
                                         <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
                                         <hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 
-
+                                        <hftl:decorateFormField fieldId="payment_method"
+                                                                label="#{messages['paymentMethod.alias']}"
+                                                                rendered="#{not empty billingAccountBean.entity.customerAccount.paymentMethods and billingAccountBean.edit}" required="#{false}"
+                                                                listenerUpdate=":parentTab:formId:childTab:userNamePanel">
+                                            <p:selectOneMenu id="payment_method"
+                                                             value="#{billingAccountBean.entity.paymentMethod}"
+                                                             required="#{false}"
+                                                             rendered="#{not empty billingAccountBean.entity.customerAccount.paymentMethods}">
+                                                <hftl:objectConverter/>
+                                                <f:selectItem itemLabel="#{billingAccountBean.entity.paymentMethod.alias}" itemValue="#{billingAccountBean.entity.paymentMethod}"
+                                                              rendered="#{billingAccountBean.entity.paymentMethod != null}"/>
+                                                <f:selectItem itemLabel="" itemValue="" rendered="#{billingAccountBean.entity.paymentMethod == null}"/>
+                                                <f:selectItems value="#{billingAccountBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['alias']}"
+                                                               itemValue="#{elem}"/>
+                                            </p:selectOneMenu>
+                                        </hftl:decorateFormField>
                                     </p:fieldset>
                                     <p:fieldset legend="#{messages['billingAccount.minimumToInvoice']}" styleClass="clearLeft">
 
@@ -223,8 +238,10 @@
                                             valueLabelField="code" popup="true" componentWidth="30" popupId="billingCyclePopup" />
                                         <hftl:formField label="#{messages['account.invoicingThreshold']}" field="invoicingThreshold" required="false" size="20"
                                             listenerUpdate="checkThresholdId" />
-                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId" noSelectionLabel="false"
-                                            disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+                                        <h:panelGroup id="checkThresholdId">
+                                            <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false"
+                                                disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}" />
+                                        </h:panelGroup>
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" rendered="#{not empty billingAccountBean.entity.id}">

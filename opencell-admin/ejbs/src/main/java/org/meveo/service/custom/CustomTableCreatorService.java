@@ -28,15 +28,12 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import org.hibernate.Session;
 import org.meveo.jpa.EntityManagerProvider;
-import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 
 import liquibase.Contexts;
@@ -47,12 +44,14 @@ import liquibase.change.ColumnConfig;
 import liquibase.change.ConstraintsConfig;
 import liquibase.change.core.AddColumnChange;
 import liquibase.change.core.AddDefaultValueChange;
+import liquibase.change.core.AddForeignKeyConstraintChange;
 import liquibase.change.core.AddNotNullConstraintChange;
 import liquibase.change.core.AddUniqueConstraintChange;
 import liquibase.change.core.CreateSequenceChange;
 import liquibase.change.core.CreateTableChange;
 import liquibase.change.core.DropColumnChange;
 import liquibase.change.core.DropDefaultValueChange;
+import liquibase.change.core.DropForeignKeyConstraintChange;
 import liquibase.change.core.DropNotNullConstraintChange;
 import liquibase.change.core.DropSequenceChange;
 import liquibase.change.core.DropTableChange;
@@ -63,6 +62,8 @@ import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.statement.SequenceNextValueFunction;
 
@@ -72,15 +73,11 @@ public class CustomTableCreatorService implements Serializable {
 
     private static final long serialVersionUID = -5858023657669249422L;
 
-    @PersistenceUnit(unitName = "MeveoAdmin")
-    private EntityManagerFactory emf;
-
-    @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
-
     @Inject
     private EntityManagerProvider entityManagerProvider;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @Inject
     private Logger log;
@@ -139,30 +136,24 @@ public class CustomTableCreatorService implements Serializable {
         dbLog.addChangeSet(mysqlChangeSet);
 
         EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
-
+        
         Session hibernateSession = em.unwrap(Session.class);
-
+        
+        
         hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to create a custom table {}", dbTableName, e);
                     throw new SQLException(e);
                 }
-                
             }
         });
     }
-
+    
     /**
      * Add a field to a db table. Creates a liquibase changeset to add a field to a table and executes it
      *
@@ -374,14 +365,8 @@ public class CustomTableCreatorService implements Serializable {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a field {} to a custom table {}", dbTableName, dbFieldname, e);
                     throw new SQLException(e);
@@ -430,13 +415,8 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
 
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to drop a custom table {}", dbTableName, e);
                     throw new SQLException(e);
@@ -478,12 +458,8 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
 
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -493,16 +469,16 @@ public class CustomTableCreatorService implements Serializable {
     }
     
     /**
-     * Remove a field from a table
+     * Add a unique constraint to table
      *
-     * @param dbTableName Db table name to remove from
-     * @param cft Field definition
+     * @param dbTableName Db table name to add constraint
+     * @param columnNames Field of the unique constraint
      */
     public String addUniqueConstraint(String dbTableName, String columnNames) {
 
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
-        String constraintName = extractConstraintName(dbTableName);
+        String constraintName = extractUniqueConstraintName(dbTableName);
         // Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
@@ -524,13 +500,8 @@ public class CustomTableCreatorService implements Serializable {
 
             @Override
             public void execute(Connection connection) throws SQLException {
-
-                Database database;
                 try {
-                    database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                    Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                    liquibase.update(new Contexts(), new LabelExpression());
-
+                	liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to add a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -539,9 +510,114 @@ public class CustomTableCreatorService implements Serializable {
         });
         return constraintName;
     }
+    
+    /**
+     * Add a foreingKey constraint to table
+     *
+     * @param baseTable Db table name to add constraint
+     * @param referencedTable Field of the unique constraint
+     */
+    public String addForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
 
-	public String extractConstraintName(String dbTableName) {
+
+        DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
+        String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
+        
+        ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_CFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+        changeSet.setFailOnError(true);
+
+        
+        AddForeignKeyConstraintChange addFKConstraintStatement = new AddForeignKeyConstraintChange();
+        addFKConstraintStatement.setConstraintName(constraintName);
+        addFKConstraintStatement.setBaseTableName(baseTable);
+        addFKConstraintStatement.setBaseColumnNames(baseColumn);
+        addFKConstraintStatement.setReferencedTableName(referencedTable);
+        addFKConstraintStatement.setReferencedColumnNames(referencedColumn);
+
+        changeSet.addChange(addFKConstraintStatement);
+        dbLog.addChangeSet(changeSet);
+
+        EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
+
+        Session hibernateSession = em.unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                try {
+                	liquibaseUpdate(dbLog, connection);
+                } catch (Exception e) {
+                    log.error("Failed to add a constraint {} to a custom table {}", constraintName, baseTable, e);
+                    throw new SQLException(e);
+                }
+            }
+        });
+        return constraintName;
+    }
+    
+    /**
+     * Remove a ForeingKay from a table
+     *
+     * @param dbTableName Db table name to remove from
+     * @param cft Field definition
+     */
+    public void dropForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
+
+
+        DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
+
+        String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
+        
+        ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_DFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+        changeSet.setFailOnError(true);
+
+        
+        DropForeignKeyConstraintChange dropForeignKeyConstraintChange = new DropForeignKeyConstraintChange();
+        dropForeignKeyConstraintChange.setBaseTableName(baseTable);
+        dropForeignKeyConstraintChange.setConstraintName(constraintName);
+
+        changeSet.addChange(dropForeignKeyConstraintChange);
+        dbLog.addChangeSet(changeSet);
+
+        EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
+
+        Session hibernateSession = em.unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try {
+                	liquibaseUpdate(dbLog, connection);
+                } catch (Exception e) {
+                    log.error("Failed to remove a constraint {} to a custom table {}", constraintName, baseTable, e);
+                    throw new SQLException(e);
+                }
+            }
+        });
+    }
+
+	public String extractUniqueConstraintName(String dbTableName) {
 		String constraintName = "CT_UniqueConstraint_"+dbTableName;
 		return constraintName;
+	}
+	
+	public String extractFKConstraintName(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
+		String constraintName = "CT_FOREING_KEY_CONSTRAINT_"+baseTable+"__"+baseColumn+"__"+referencedTable+"__"+referencedColumn;
+		return constraintName;
+	}
+	
+    private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
+		Database database;
+		database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+		if(currentproviderCode!=null) {
+			database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
+		}
+		
+		Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
+		liquibase.update(new Contexts(), new LabelExpression());
 	}
 }

@@ -63,7 +63,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * 
  * @author anasseh
  * @author Edward Legaspi
- * @lastModifiedVersion 5.3
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  */
 @SuppressWarnings("deprecation")
 @WebService

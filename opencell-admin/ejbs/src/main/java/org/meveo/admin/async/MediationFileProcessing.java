@@ -23,6 +23,7 @@ package org.meveo.admin.async;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -32,21 +33,28 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @author HORRI Khalid
- * @lastModifiedVersion 9.1
+ * @author H.ZNIBAR
+ * @lastModifiedVersion 10.0
  * 
  */
 
@@ -67,16 +75,20 @@ public class MediationFileProcessing {
 	@Inject
 	private CDRParsingService cdrParserService;
 
+	@Inject
+	private CDRService cdrService;
+	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
 	 * NO transaction - each line will be processed in a separate transaction, one
 	 * line failure will not affect processing of other lines.
-	 * 
-	 * @param cdrParser        CDR file parser
+	 *
+	 * @param cdrReader        CDR file reader
+	 * @param cdrParser        The cdr parser
 	 * @param result           Job execution result
 	 * @param fileName         File name being processed
-	 * @param outputFileWriter File writer to output processed data
 	 * @param rejectFileWriter File writer to output failed data
+	 * @param outputFileWriter File writer to output processed data
 	 * @param lastCurrentUser  Current user. In case of multitenancy, when user
 	 *                         authentication is forced as result of a fired trigger
 	 *                         (scheduled jobs, other timed event expirations),
@@ -87,7 +99,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> processFileAsync(CSVCDRParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
+	public Future<String> processFileAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -103,14 +115,15 @@ public class MediationFileProcessing {
 			}
 
 			try {
-				cdr = cdrParser.getNextRecord();
+				cdr = cdrReader.getNextRecord(cdrParser);
 				if (cdr == null) {
-					break;
-				}
-
+                    break;
+                }
+	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
 				log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
 
-				cdrParserService.createEdrs(cdr);
+				cdrParserService.createEdrs(edrs,cdr);
 
 				synchronized (outputFileWriter) {
 					outputFileWriter.println(cdr.getLine());
@@ -120,6 +133,9 @@ public class MediationFileProcessing {
 			} catch (IOException e) {
 				log.error("Failed to read a CDR line from file {}", fileName, e);
 				result.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
+	            cdr.setStatus(CDRStatusEnum.ERROR);
+	            cdr.setRejectReason(e.getMessage());
+	            cdrService.update(cdr);
 				break;
 
 			} catch (Exception e) {
@@ -135,6 +151,9 @@ public class MediationFileProcessing {
 					rejectFileWriter.println((cdr != null ? cdr.getLine() : "") + "\t" + errorReason);
 				}
 				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                cdr.setRejectReason(e.getMessage());
+                cdrService.update(cdr);
 			}
 		}
 		return new AsyncResult<String>("OK");

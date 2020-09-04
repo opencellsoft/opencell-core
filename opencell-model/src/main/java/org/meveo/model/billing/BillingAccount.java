@@ -60,6 +60,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxCategory;
 
 /**
@@ -82,7 +83,7 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
         @NamedQuery(name = "BillingAccount.getUnbilledByBC", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getUnbilledByBCWithStartDate", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate>=:minNextInvoiceDate) and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
-        @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")})
+        @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount") })
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -108,7 +109,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
-    private Boolean electronicBilling = false;
+    private boolean electronicBilling;
 
     /**
      * Next invoice date
@@ -149,23 +150,21 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     /**
      * Invoices
      */
-    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
-     * Billing runs
+     * For GDPR - Billing runs
      */
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+   @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<BillingRunList> billingRunLists = new ArrayList<>();
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
-     * Invoice aggregates
+     * For GDPR - Invoice aggregates
      */
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     /**
@@ -244,38 +243,17 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
-    /**
-     * Expression to determine minimum amount value
-     */
-    @Column(name = "minimum_amount_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountEl;
-
-    /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Column(name = "minimum_amount_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountElSpark;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value
-     */
-    @Column(name = "minimum_label_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelEl;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    @Column(name = "minimum_label_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelElSpark;
-
     /** Corresponding invoice subcategory */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+    /**
+     * Allowed payment methods
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     /**
      * A list of rated transactions
@@ -290,9 +268,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private BigDecimal totalInvoicingAmountWithoutTax;
 
     /**
-     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     * For GDPR - Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
-    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<DiscountPlanInstance> discountPlanInstances;
 
     /**
@@ -398,11 +376,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
         this.statusDate = statusDate;
     }
 
-    public Boolean getElectronicBilling() {
+    public boolean getElectronicBilling() {
         return electronicBilling;
     }
 
-    public void setElectronicBilling(Boolean electronicBilling) {
+    public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
     }
 
@@ -564,62 +542,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
         this.invoicingThreshold = invoicingThreshold;
-    }
-
-    /**
-     * @return Expression to determine minimum amount value
-     */
-    public String getMinimumAmountEl() {
-        return minimumAmountEl;
-    }
-
-    /**
-     * @param minimumAmountEl Expression to determine minimum amount value
-     */
-    public void setMinimumAmountEl(String minimumAmountEl) {
-        this.minimumAmountEl = minimumAmountEl;
-    }
-
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value
-     */
-    public String getMinimumLabelEl() {
-        return minimumLabelEl;
-    }
-
-    /**
-     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
-     */
-    public void setMinimumLabelEl(String minimumLabelEl) {
-        this.minimumLabelEl = minimumLabelEl;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public String getMinimumLabelElSpark() {
-        return minimumLabelElSpark;
-    }
-
-    /**
-     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
-    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
-        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     @Override
@@ -803,6 +725,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets the threshold option.
+     * 
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -811,9 +734,18 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets the threshold option.
+     * 
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

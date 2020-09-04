@@ -67,6 +67,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         ddDequestItem.setPaymentInfo3(listAO.get(0).getPaymentInfo3());
         ddDequestItem.setPaymentInfo4(listAO.get(0).getPaymentInfo4());
         ddDequestItem.setPaymentInfo5(listAO.get(0).getPaymentInfo5());
+        ddDequestItem.setDueDate(listAO.get(0).getDueDate());
         ddDequestItem.setAccountOperations(listAO);
         if(listAO.size() == 1 && !StringUtils.isBlank(listAO.get(0).getReference())) {
             ddDequestItem.setReference(listAO.get(0).getReference());

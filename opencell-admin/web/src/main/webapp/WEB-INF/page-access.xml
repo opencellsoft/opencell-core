@@ -351,5 +351,10 @@
 		<constraint>currentUser.hasRole('administrationManagement')
 		</constraint>
 	</page>
-
+	
+    <page view-id=".+\/cdr\/.+" >
+        <constraint>currentUser.hasRole('cdrManager')</constraint>
+        <constraint>currentUser.hasRole('cdrRateManager')</constraint>
+        <constraint type="READ">currentUser.hasRole('cdrVisualizer')</constraint>
+    </page>
 </page-access>

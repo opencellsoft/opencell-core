@@ -149,7 +149,7 @@ public class ExportAccountsJobBean {
             if (ba.getAddress() != null) {
                 dto.setAddress(new Address(ba.getAddress()));
             }
-            dto.setElectronicBilling(ba.getElectronicBilling() == null ? null : ba.getElectronicBilling() + "");
+            dto.setElectronicBilling(ba.getElectronicBilling() + "");
             if(ba.getContactInformation() != null) {
                 dto.setEmail(ba.getContactInformation().getEmail() == null ? null : ba.getContactInformation().getEmail());
             }

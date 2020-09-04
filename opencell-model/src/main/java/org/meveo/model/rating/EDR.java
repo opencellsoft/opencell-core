@@ -70,8 +70,8 @@ import org.meveo.model.billing.Subscription;
 
         @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate and e.id >:lastId order by e.id"),
         @NamedQuery(name = "EDR.getEdrsBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate and e.id >:lastId order by e.id"),
-
-        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
+        @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
+        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids") })
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;
@@ -285,6 +285,10 @@ public class EDR extends BaseEntity {
     @Column(name = "reject_reason", columnDefinition = "text")
     @Size(max = 255)
     private String rejectReason;
+    
+    /** The times tried. */
+    @Column(name = "times_tried")
+    private Integer timesTried = 0;
 
     @Transient
     private String ratingRejectionReason;
@@ -637,4 +641,22 @@ public class EDR extends BaseEntity {
     public void setRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
     }
+
+    /**
+     * Gets the times tried.
+     *
+     * @return the times tried
+     */
+    public Integer getTimesTried() {
+        return timesTried;
+    }
+
+    /**
+     * Sets the times tried.
+     *
+     * @param timesTried the new times tried
+     */
+    public void setTimesTried(Integer timesTried) {
+        this.timesTried = timesTried;
+    }        
 }

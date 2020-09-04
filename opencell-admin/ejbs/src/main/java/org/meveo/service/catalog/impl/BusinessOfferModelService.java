@@ -404,6 +404,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             serviceTemplate.getServiceSubscriptionCharges().size();
             serviceTemplate.getServiceTerminationCharges().size();
             serviceTemplate.getServiceUsageCharges().size();
+            serviceTemplate.getServiceUsageCharges().stream().forEach(x->x.getAccumulatorCounterTemplates().size());
             serviceTemplateService.detach(serviceTemplate);
             OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateServiceWithoutDuplicatingChargeTemplates(offerServiceTemplate, serviceTemplate, serviceConfigurationDto, prefix);
             newOfferServiceTemplates.add(newOfferServiceTemplate);

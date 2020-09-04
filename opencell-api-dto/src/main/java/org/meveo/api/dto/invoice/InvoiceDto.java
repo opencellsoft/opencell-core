@@ -235,7 +235,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /** paymentIncident
      * 
      */
-    protected String paymentIncident;
+    protected List<String> paymentIncidents;
     
     /** sendPaymentDate
      * 
@@ -252,12 +252,16 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     protected Date paymentDate;
 
-    public String getPaymentIncident() {
-		return paymentIncident;
+    public List<String> getPaymentIncidents() {
+		return paymentIncidents;
 	}
 
-	public void setPaymentIncident(String paymentIncident) {
-		this.paymentIncident = paymentIncident;
+	public void setPaymentIncidents(List<String> paymentIncidents) {
+		this.paymentIncidents = paymentIncidents;
+	}
+	
+	public void addPaymentIncidents(String paymentIncident) {
+		this.paymentIncidents.add(paymentIncident);
 	}
 
 	public BigDecimal getWriteOffAmount() {

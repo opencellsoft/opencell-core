@@ -43,6 +43,14 @@ public interface IPersistenceService<E extends IEntity> {
     E findById(Long id);
 
     /**
+     * Find entities by its id.
+     * 
+     * @param ids A list of Ids to find entity by.
+     * @return Entity found.
+     */
+    List<E> findByIds(List<Long> ids);
+
+    /**
      * Find an entity by its id and fetch required fields.
      * 
      * @param id Id to find entity by.

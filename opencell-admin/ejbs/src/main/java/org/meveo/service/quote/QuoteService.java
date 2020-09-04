@@ -59,7 +59,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.ICdrParser;
 
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
@@ -198,7 +198,7 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true);
+                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true, null);
                                 if (walletOps != null && !walletOps.isEmpty()) {
                                     walletOperations.addAll(walletOps);
                                 }
@@ -217,14 +217,14 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && subscription != null) {
 
-                        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), "quote");
+                        ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
 
                         List<EDR> edrs = new ArrayList<>();
 
                         // Parse CDRs to Edrs
                         try {
                             for (String cdrLine : quoteInvoiceInfo.getCdrs()) {
-                                CDR cdr = cdrParser.parseCDR(cdrLine);
+                                CDR cdr = cdrParser.parse(cdrLine);
                                 edrs.add(cdrParsingService.getEDRForVirtual(cdr, subscription));
                             }
 

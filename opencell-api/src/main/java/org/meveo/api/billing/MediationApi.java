@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -45,10 +46,12 @@ import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
@@ -56,7 +59,8 @@ import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.service.medina.impl.CSVCDRParser;
+import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
@@ -87,6 +91,9 @@ public class MediationApi extends BaseApi {
 
     @Inject
     private DefaultObserver defaultObserver;
+    
+    @Inject
+    private CDRService cdrService;
 
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
@@ -104,17 +111,23 @@ public class MediationApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), postData.getIpAddress());
-
+        ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
+        CDR cdr = null;        
         try {
-            for (String line : cdrLines) {
-                CDR cdr = cdrParser.parseCDR(line);
-                cdrParsingService.createEdrs(cdr);
+            ListIterator<String> cdrIterator = cdrLines.listIterator();
+            while (cdrIterator.hasNext()) {
+                cdr = cdrParser.parseByApi(cdrIterator.next(), currentUser.getUserName(), postData.getIpAddress());
+                List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
+                cdrParsingService.createEdrs(edrs,cdr);
             }
-        } catch (CDRParsingException e) {
-            log.error("Error parsing cdr={}", e);
-            throw new MeveoApiException(e.getMessage());
+        } catch (Exception e) {
+            String errorReason = e.getMessage();
+            if (e instanceof CDRParsingException) {
+                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason);
+            } else {
+                log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
+            }
         }
     }
 
@@ -131,11 +144,16 @@ public class MediationApi extends BaseApi {
         }
 
         handleMissingParameters();
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
-       
+        ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
+        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+        CDR cdr = null;
         try {
-            CDR cdr = cdrParser.parseCDR(cdrLine);           
-            List<EDR> edrs = cdrParsingService.getEDRList(cdr);
+            cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), chargeCDRDto.getIp());
+            if(cdr == null) {
+                return null;
+            }
+            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);                        
             List<WalletOperation> walletOperations = new ArrayList<>();
             for (EDR edr : edrs) {            	 
                 log.debug("edr={}", edr);
@@ -154,6 +172,10 @@ public class MediationApi extends BaseApi {
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
             throw new MeveoApiException(e.getRejectionCause().toString());
+        } finally {
+            if (persistCDR && cdr != null) {
+                cdrService.create(cdr);
+            }
         }
     }
 
@@ -213,14 +235,13 @@ public class MediationApi extends BaseApi {
 
         handleMissingParameters();
 
-        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), ip);
-
+        ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
+        CDR cdr = null;
         List<EDR> edrs;
-        try {
-
-            CDR cdr = cdrParser.parseCDR(cdrLine);
-
-            edrs = cdrParsingService.getEDRList(cdr);
+        try {           
+            cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), ip); 
+            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+            edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);
             for (EDR edr : edrs) {
                 edrService.create(edr);
                 try {

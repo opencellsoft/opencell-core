@@ -130,7 +130,11 @@ public enum OrderProductCharacteristicEnum {
     /**
      * Seller code
      */
-    SUBSCRIPTION_SELLER("seller", String.class),
+    SUBSCRIPTION_SELLER("seller", String.class),/**
+
+     * payment method code
+     */
+    SUBSCRIPTION_PAYMENT_METHOD("paymentMethod", String.class),
 
     /**
      * The criteria1

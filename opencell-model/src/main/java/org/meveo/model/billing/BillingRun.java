@@ -219,8 +219,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Include in invoice Rated transactions up to that date
      */
-    @Column(name = "last_transaction_date")
+    @Column(name = "last_transaction_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
     private Date lastTransactionDate;
 
     /**

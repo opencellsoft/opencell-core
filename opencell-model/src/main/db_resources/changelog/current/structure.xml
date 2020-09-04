@@ -3231,6 +3231,13 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
         <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
+    
+    <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_cdr">
+            <column name="times_tried" type="int4"/>
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#5241_20200622" author="khalidHORRI">
         <createTable tableName="wo_aggregation_line">
@@ -3297,6 +3304,82 @@ END $$;]]>
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
+
+    <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
+        <createTable tableName="document" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name"  type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="tags"  type="varchar(255)"/>
+            <column name="linked_account_entity_id" type="bigint" />
+            <column name="document_category_id" type="bigint" />
+            <column name="document_status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+
+        <createTable tableName="document_category" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_category_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="relative_path"  type="varchar(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </createTable>
+        <createTable tableName="document_tags">
+            <column name="document_id"  type="bigint"/>
+            <column name="tags"  type="varchar(60)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="linked_account_entity_id"
+                                 constraintName="document_account_entity_id_fk" referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="document" baseColumnNames="document_category_id"
+                                 constraintName="document_category_id_fk" referencedTableName="document_category"
+                                 referencedColumnNames="id"/>
+
+        <createSequence sequenceName="document_seq" startValue="1"/>
+        <createSequence sequenceName="document_category_seq" startValue="1"/>
+    </changeSet>
     
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
@@ -3310,9 +3393,125 @@ END $$;]]>
             <column name="file_name_uniqueness" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5405_20190723" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReportExtractJob'</sql>
+    </changeSet>
+
+    <changeSet id="#5404_20200728" author="khalidHORRI">
+        <addColumn tableName="wo_aggregation_settings">
+            <column name="additional_order_by" type="varchar(255)"/>
+        </addColumn>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o ) o WHERE o.status='OPEN'
+        </createView>
+    </changeSet>
+    <changeSet id="#5400_23072020" author="KhalidHORRI">
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="payment_day_in_month_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+		<addColumn tableName="meveo_filter">
+			<column name="polling_query" type="text"/>
+		</addColumn>
+		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
+    </changeSet>
+
+    <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
+        <addColumn tableName="rating_cdr">
+            <column name="line" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#5372_20190813" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}billing_billing_run set last_transaction_date = process_date where last_transaction_date is null</sql>
+        <addNotNullConstraint tableName="billing_billing_run" columnName="last_transaction_date"/>
+    </changeSet>
+
+    <changeSet id="#5442_CET_ES" author="AndriusKarpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_in_es" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+        <addNotNullConstraint tableName="cust_cet" columnName="store_in_es"/>
+    </changeSet>
+    <changeSet id="#5454_20200824" author="khalidHORRI">
+        <dropView viewName="billing_wallet_operation_period"/>
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+            FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    
+
+    <changeSet id="#5303_Update_CDR_Table_20200826" author="MohammedAmineTazi">
+        <addColumn tableName="rating_cdr">
+        	<column name="updater" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
+        <changeSet id="#5416_20120809" author="anasseh">
+		<createTable tableName="ar_ao_payment_histories">
+			<column name="ao_id" type="bigint" />
+			<column name="history_id" type="bigint" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="ar_account_operation" />
+		<addForeignKeyConstraint
+			baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_histo_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="ar_payment_history" />
+
+        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
+	    <dropColumn tableName="ar_account_operation">
+            <column name="payment_history_id"></column>
+        </dropColumn>
+	</changeSet>
+    <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
+        <addColumn tableName="billing_subscription">
+            <column name="payment_method_id"  type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_subscription"
+                                 constraintName="fk_subscription_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+        <addColumn tableName="billing_billing_account">
+            <column name="payment_method_id"  type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_billing_account"
+                                 constraintName="fk_billing_account_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+        <addColumn tableName="billing_cycle">
+            <column name="split_per_payment_method" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+	<changeSet id="#5303_20200831" author="hznibar" dbms="postgresql" >
+        <addColumn tableName="rating_edr">
+            <column name="times_tried" type="int4"/>
+        </addColumn>
+    </changeSet>  
+    
+    <changeSet id="#5460_BA_fields" author="AndriusKarpavicius">
+        <sql>UPDATE ${db.schema.adapted}account_entity as ae SET minimum_amount_el = ba.minimum_amount_el, minimum_amount_el_sp = ba.minimum_amount_el_sp, minimum_label_el = ba.minimum_label_el, minimum_label_el_sp=ba.minimum_label_el_sp FROM ${db.schema.adapted}billing_billing_account AS ba WHERE ba.id=ae.id</sql>
+
+        <dropColumn tableName="billing_billing_account" columnName="minimum_amount_el"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_amount_el_sp"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_label_el"/>
+        <dropColumn tableName="billing_billing_account" columnName="minimum_label_el_sp"/>
     </changeSet>
     
 </databaseChangeLog>

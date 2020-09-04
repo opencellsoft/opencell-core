@@ -25,14 +25,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -55,105 +54,104 @@ import org.meveo.model.AuditableEntity;
         @Parameter(name = "sequence_name", value = "ar_payment_history_seq"), })
 public class PaymentHistory extends AuditableEntity {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 4319694328397367053L;
 
-    /** The customer Account Code. */
-    @Column(name = "customer_account_code")
-    @NotNull
-    private String customerAccountCode;
+	private static final long serialVersionUID = 4319694328397367053L;
 
-    /** The customer Account Name. */
-    @Column(name = "customer_account_name")
-    private String customerAccountName;
+	/** The customer Account Code. */
+	@Column(name = "customer_account_code")
+	@NotNull
+	private String customerAccountCode;
 
-    /** The seller Code. */
-    @Column(name = "seller_code")
-    private String sellerCode;
+	/** The customer Account Name. */
+	@Column(name = "customer_account_name")
+	private String customerAccountName;
 
-    /** The customer Code. */
-    @Column(name = "customer_code")
-    private String customerCode;
+	/** The seller Code. */
+	@Column(name = "seller_code")
+	private String sellerCode;
 
-    /** The operation date. */
-    @Column(name = "operation_date")
-    @NotNull
-    private Date operationDate;
+	/** The customer Code. */
+	@Column(name = "customer_code")
+	private String customerCode;
 
-    /** The last Update Date. */
-    @Column(name = "last_update_date")
-    private Date lastUpdateDate;
+	/** The operation date. */
+	@Column(name = "operation_date")
+	@NotNull
+	private Date operationDate;
 
-    /** The amount. */
-    @Column(name = "amount_cts")
-    @NotNull
-    private Long amountCts;
+	/** The last Update Date. */
+	@Column(name = "last_update_date")
+	private Date lastUpdateDate;
 
-    /** The synchrone status. */
-    @Column(name = "sync_status")
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private PaymentStatusEnum syncStatus;
+	/** The amount. */
+	@Column(name = "amount_cts")
+	@NotNull
+	private Long amountCts;
 
-    /** The asynchrone status. */
-    @Column(name = "async_status")
-    @Enumerated(EnumType.STRING)
-    private PaymentStatusEnum asyncStatus;
+	/** The synchrone status. */
+	@Column(name = "sync_status")
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private PaymentStatusEnum syncStatus;
 
-    /** The status. */
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private PaymentStatusEnum status;
+	/** The asynchrone status. */
+	@Column(name = "async_status")
+	@Enumerated(EnumType.STRING)
+	private PaymentStatusEnum asyncStatus;
 
-    /** The external payment id. */
-    @Column(name = "external_payment_id")
-    private String externalPaymentId;
+	/** The status. */
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
+	private PaymentStatusEnum status;
 
-    /** The error code. */
-    @Column(name = "error_code")
-    private String errorCode;
+	/** The external payment id. */
+	@Column(name = "external_payment_id")
+	private String externalPaymentId;
 
-    /** The error message. */
-    @Column(name = "error_message")
-    private String errorMessage;
+	/** The error code. */
+	@Column(name = "error_code")
+	private String errorCode;
 
-    /** The error type, rejected or error. */
-    @Column(name = "error_type")
-    @Enumerated(EnumType.STRING)
-    private PaymentErrorTypeEnum errorType;
+	/** The error message. */
+	@Column(name = "error_message")
+	private String errorMessage;
 
-    /** The payment gateway. */
-    @Column(name = "payment_gateway_code")
-    private String paymentGatewayCode;
+	/** The error type, rejected or error. */
+	@Column(name = "error_type")
+	@Enumerated(EnumType.STRING)
+	private PaymentErrorTypeEnum errorType;
 
-    /** The payment method type. */
-    @Column(name = "payment_method_type")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethodType;
+	/** The payment gateway. */
+	@Column(name = "payment_gateway_code")
+	private String paymentGatewayCode;
 
-    /** The payment method name: card number or mandat. */
-    @Column(name = "payment_method_name")
-    private String paymentMethodName;
+	/** The payment method type. */
+	@Column(name = "payment_method_type")
+	@Enumerated(EnumType.STRING)
+	private PaymentMethodEnum paymentMethodType;
 
-    /** The operation category, credit for payment or debit for refund. */
-    @Column(name = "operation_category")
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private OperationCategoryEnum operationCategory;
+	/** The payment method name: card number or mandat. */
+	@Column(name = "payment_method_name")
+	private String paymentMethodName;
 
-    /** The payment. */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
+	/** The operation category, credit for payment or debit for refund. */
+	@Column(name = "operation_category")
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private OperationCategoryEnum operationCategory;
 
-    /** The refund. */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refund_id")
-    private Refund refund;
-    
-	/** The list ao paid. */
-	@OneToMany(mappedBy = "paymentHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<AccountOperation> listAoPaid;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "refund_id")
+	private Refund refund;
+	
+	
+	@ManyToMany(mappedBy = "paymentHistories")
+	List<AccountOperation> listAoPaid;
+
 
     /**
      * Gets the seller code.

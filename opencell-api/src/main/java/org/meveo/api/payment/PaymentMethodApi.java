@@ -29,8 +29,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -55,7 +55,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @author Mbarek Ait-yaazza
+ * @lastModifiedVersion 10.0.0
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
@@ -91,10 +92,8 @@ public class PaymentMethodApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
         }
 
-        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser);
-        if(paymentMethodDto instanceof CardPaymentMethodDto) {
-        	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
-        }
+        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser); 
+        	paymentMethod.setTokenId(paymentMethodDto.getTokenId()); 
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
@@ -333,6 +332,21 @@ public class PaymentMethodApi extends BaseApi {
 
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+    
+   
+    	
+    public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    	if (StringUtils.isBlank(mandateReference)) {
+    		missingParameters.add("mandateReference");
+    	}
+    	if (StringUtils.isBlank(customerAccountCode)) {
+    		missingParameters.add("customerAccountCode");
+    	} 
+    	handleMissingParameters(); 
+    	MandatInfoDto mandateInfoDto=paymentMethodService.checkMandate(mandateReference, mandateId,customerAccountCode);
+    	return mandateInfoDto;
+
     }
 
 }

@@ -18,11 +18,13 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -47,6 +49,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -58,7 +61,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author anasseh
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -108,6 +112,27 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
 
         create(billingAccount);
+    }
+
+    @Override
+    public void create(BillingAccount entity) throws BusinessException {
+        checkBillingAccountPaymentMethod(entity, entity.getCustomerAccount().getPaymentMethods());
+        super.create(entity);
+    }
+
+    @Override
+    public BillingAccount update(BillingAccount entity) throws BusinessException {
+        checkBillingAccountPaymentMethod(entity, entity.getCustomerAccount().getPaymentMethods());
+        return super.update(entity);
+    }
+
+    private void checkBillingAccountPaymentMethod(BillingAccount billingAccount, List<PaymentMethod> paymentMethods) {
+        if(Objects.nonNull(billingAccount.getPaymentMethod()) && (paymentMethods.isEmpty() || paymentMethods.stream()
+                .filter(PaymentMethod::isActive)
+                .noneMatch(paymentMethod -> paymentMethod.getId().equals(billingAccount.getPaymentMethod().getId())))){
+            log.error("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
+            throw new BusinessException("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
+        }
     }
 
     /**
@@ -354,7 +379,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
             }
-
+            qb.addOrderCriterionAsIs("id", true);
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);

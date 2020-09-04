@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
@@ -34,6 +36,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentHistory;
 
 /**
  * The Class AccountOperationDto.
@@ -166,6 +169,11 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     /** The billing account name. */
     private String billingAccountName;
+    
+    
+    @XmlElementWrapper(name = "paymentHistories")
+    @XmlElement(name = "paymentHistory")
+    private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
 
     /**
      * Instantiates a new account operation dto.
@@ -190,6 +198,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
      * @param customFieldsDto the custom fields dto
      */
     public AccountOperationDto(AccountOperation accountOp, CustomFieldsDto customFieldsDto) {
+        super(accountOp);
         setId(accountOp.getId());
         setDueDate(accountOp.getDueDate());
         setType(accountOp.getType());
@@ -236,6 +245,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
             setRejectedPayment(new RejectedPaymentDto(accountOp.getRejectedPayment()));
         }
 
+      
         setCustomFields(customFieldsDto);
     }
 
@@ -923,4 +933,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         this.billingAccountName = billingAccountName;
     }
 
+	public List<PaymentHistoryDto> getPaymentHistories() {
+		return paymentHistories;
+	}
+
+	public void setPaymentHistories(List<PaymentHistoryDto> paymentHistories) {
+		this.paymentHistories = paymentHistories;
+	}
+
+	
 }

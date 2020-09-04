@@ -18,7 +18,10 @@
 package org.meveo.admin.action.billing;
 
 import java.io.File;
+
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Collections;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +41,7 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
+
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
@@ -45,6 +49,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -55,6 +60,7 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.DualListModel;
 
@@ -92,6 +98,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     
     @Inject
     private ExternalContext externalContext;
+
+    @Inject
+    private PaymentMethodService paymentMethodService;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -132,7 +141,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             sourceDS = discountPlanService.list();
             discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
         }
-
+        
         return entity;
     }
 
@@ -159,7 +168,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         entity.setCustomerAccount(customerAccountService.findById(entity.getCustomerAccount().getId()));
-
+        if(entity.getPaymentMethod() != null){
+            entity.setPaymentMethod(paymentMethodService.findById(entity.getPaymentMethod().getId()));
+        }
         try {
 
             if (entity.isTransient()) {
@@ -461,7 +472,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("customerAccount", "customerAccount.billingAccounts", "billingCycle");
+        return null;
+//        return Arrays.asList("customerAccount");
     }
 
     public CounterInstance getSelectedCounterInstance() {
@@ -501,5 +513,17 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     public void setDiscountPlanDM(DualListModel<DiscountPlan> discountPlanDM) {
         this.discountPlanDM = discountPlanDM;
+    }
+
+    /**
+     * Get configured payment method's list
+     * @return list of payment methods
+     */
+    public List<PaymentMethod> listPaymentMethod() {
+        if (Objects.nonNull(entity) && Objects.nonNull(entity.getCustomerAccount()) ) {
+            final CustomerAccount customerAccount = customerAccountService.findById(entity.getCustomerAccount().getId());
+            return customerAccount.getPaymentMethods();
+        }
+        return Collections.emptyList();
     }
 }

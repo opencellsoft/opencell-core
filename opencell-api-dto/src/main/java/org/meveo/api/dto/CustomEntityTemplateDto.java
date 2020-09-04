@@ -58,6 +58,12 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
     @XmlAttribute
     private Boolean storeAsTable;
 
+    /**
+     * Store data in Elastic search
+     */
+    @XmlAttribute
+    private Boolean storeInES;
+
     /** The fields. */
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
@@ -88,6 +94,10 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
         setName(cet.getName());
         if (cet.isStoreAsTable()) {
             setStoreAsTable(true);
+        }
+
+        if (!cet.isStoreInES()) {
+            setStoreInES(false);
         }
 
         if (cetFields != null) {
@@ -137,6 +147,20 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
      */
     public void setStoreAsTable(Boolean storeAsTable) {
         this.storeAsTable = storeAsTable;
+    }
+
+    /**
+     * @return Store data in Elastic search
+     */
+    public Boolean getStoreInES() {
+        return storeInES;
+    }
+
+    /**
+     * @param storeInES Store data in Elastic search
+     */
+    public void setStoreInES(Boolean storeInES) {
+        this.storeInES = storeInES;
     }
 
     /**

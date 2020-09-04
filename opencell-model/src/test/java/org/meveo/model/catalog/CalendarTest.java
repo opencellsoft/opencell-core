@@ -293,6 +293,30 @@ public class CalendarTest {
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.MARCH, 2, 15, 12, 59), nextDate);
 
     }
+    
+    @Test()
+    public void testEndOfMonthDiff_InMonthCalendar() {
+
+        CalendarPeriod calendar = new CalendarPeriod();
+        calendar.setPeriodLength(1);
+        calendar.setPeriodUnit(java.util.Calendar.MONTH);
+        calendar.setInitDate(DateUtils.newDate(2020, java.util.Calendar.JANUARY, 31, 0, 0, 0));
+
+        Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2020, java.util.Calendar.JANUARY, 30, 0, 0, 0));
+        Assert.assertNull(prevDate);
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 29, 0, 0, 0), nextDate);
+        
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2020, java.util.Calendar.MARCH, 31, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 29, 0, 0, 0), nextDate);
+        
+        nextDate = calendar.nextCalendarDate(DateUtils.newDate(2020, java.util.Calendar.JULY, 1, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.JULY, 31, 0, 0, 0), nextDate);
+        
+        prevDate = calendar.previousCalendarDate(DateUtils.newDate(2020, java.util.Calendar.JULY, 1, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.JUNE, 30, 0, 0, 0), prevDate);
+    }
 
     @Test()
     public void testOnePeriodInHourCalendar() {

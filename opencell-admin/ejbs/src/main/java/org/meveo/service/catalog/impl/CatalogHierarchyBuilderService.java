@@ -485,6 +485,7 @@ public class CatalogHierarchyBuilderService {
         });
         entity.setServiceUsageCharges(new ArrayList<>(entity.getServiceUsageCharges()));
         entity.getServiceUsageCharges().forEach(sctUsageCharge -> {
+        	sctUsageCharge.setAccumulatorCounterTemplates(new ArrayList<>(sctUsageCharge.getAccumulatorCounterTemplates()));
             serviceChargeTemplateUsageService.detach(sctUsageCharge);
             linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge);
         });

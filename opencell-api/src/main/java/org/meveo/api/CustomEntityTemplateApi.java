@@ -56,14 +56,6 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 /**
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
@@ -107,6 +99,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             dto.setStoreAsTable(Boolean.FALSE);
         }
 
+        if (dto.getStoreInES() == null) {
+            dto.setStoreInES(Boolean.TRUE);
+        }
+
         if (customEntityTemplateService.findByCode(dto.getCode()) != null) {
             throw new EntityAlreadyExistsException(CustomEntityTemplate.class, dto.getCode());
         }
@@ -128,11 +124,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                     pos++;
                 }
 
-                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
-                        || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
+                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LIST && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY) || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
             }
@@ -146,8 +140,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 cftDto.setDisabled(dto.isDisabled());
                 customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
-			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
-			customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
+            String columnNames = dto.getFields().stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint()).map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted()
+                .collect(Collectors.joining(","));
+            customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
         }
 
         if (dto.getActions() != null) {
@@ -195,11 +190,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                     pos++;
                 }
 
-                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
-                        || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
+                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LIST && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY) || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
             }
@@ -209,7 +202,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         cet = customEntityTemplateService.update(cet);
 
         synchronizeCustomFieldsAndActions(cet, cet.getAppliesTo(), dto.getFields(), dto.getActions());
-        
+
         return cet;
     }
 
@@ -278,13 +271,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         synchronizeCustomFieldsAndActions(cet, appliesTo, dto.getFields(), dto.getActions());
     }
 
-    private void synchronizeCustomFieldsAndActions(CustomEntityTemplate cet, String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions)
-            throws MeveoApiException, BusinessException {
+    private void synchronizeCustomFieldsAndActions(CustomEntityTemplate cet, String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions) throws MeveoApiException, BusinessException {
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesToNoCache(appliesTo);
-		String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
-        
+        String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
+
         // Create, update or remove fields as necessary
         List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
         if (fields != null && !fields.isEmpty()) {
@@ -311,7 +302,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         } else {
             cftsToRemove.addAll(cetFields.values());
         }
-        
+
         for (CustomFieldTemplate cft : cftsToRemove) {
             customFieldTemplateService.remove(cft.getId());
         }
@@ -348,12 +339,12 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         for (EntityCustomAction action : actionsToRemove) {
             entityActionScriptService.remove(action.getId());
         }
-        if(cet !=null) {
-        	boolean keyColumnRemoved = cftsToRemove.stream().anyMatch(x -> x.isUniqueConstraint());
-			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
-					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
-							.map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
-			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, keyColumnRemoved);
+        if (cet != null) {
+            boolean keyColumnRemoved = cftsToRemove.stream().anyMatch(x -> x.isUniqueConstraint());
+            String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
+                    : fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint()).map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted()
+                        .collect(Collectors.joining(","));
+            customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, keyColumnRemoved);
         }
     }
 
@@ -381,8 +372,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }
 
-    public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
-            throws MeveoApiException, ClassNotFoundException {
+    public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode) throws MeveoApiException, ClassNotFoundException {
         List<BusinessEntityDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(code)) {
@@ -402,7 +392,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         String entityClazz = cft.getEntityClazz();
         if (!StringUtils.isBlank(entityClazz)) {
-            List<BusinessEntity> businessEntities = customFieldInstanceService.findBusinessEntityForCFVByCode(entityClazz, wildcode);
+            List<BusinessEntity> businessEntities = customFieldInstanceService.findBusinessEntityForCFVByCode(entityClazz, wildcode, null);
             if (businessEntities != null) {
                 for (BusinessEntity be : businessEntities) {
                     result.add(new BusinessEntityDto(be));
@@ -422,8 +412,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
      * @throws MissingParameterException when there is a missing parameter
      * @throws BusinessException business logic is violated
      */
-    public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode, Long entityId)
-            throws MissingParameterException, BusinessException {
+    public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode, Long entityId) throws MissingParameterException, BusinessException {
         EntityCustomizationDto result = new EntityCustomizationDto();
         log.debug("IPIEL: listELFiltered");
 
@@ -449,8 +438,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         // search for custom field entity filtered by type and code
-        String key=entityId!=null ? "id" : "code";
-        Object value=entityId!=null?entityId:entityCode;
+        String key = entityId != null ? "id" : "code";
+        Object value = entityId != null ? entityId : entityCode;
         // search for custom field entity filtered by type and code
         ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndKeyValue(entityClass, key, value);
 
@@ -518,6 +507,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
         cet.setName(dto.getName());
         cet.setDescription(dto.getDescription());
+
+        if (dto.getStoreInES() != null) {
+            cet.setStoreInES(dto.getStoreInES());
+        }
 
         return cet;
     }

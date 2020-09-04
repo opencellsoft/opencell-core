@@ -45,6 +45,7 @@ import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
@@ -161,25 +162,25 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Services subscribed to
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("id")
     private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
     /**
      * Products subscribed to
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductInstance> productInstances = new ArrayList<>();
 
     /**
      * Child access points
      */
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<EDR> edrs = new ArrayList<>();
 
     /**
@@ -394,6 +395,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialSubscriptionRenewal;
+
+    /**
+     * Allowed payment methods
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -1035,5 +1043,21 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
+    /**
+     * Gets the subscription payment method
+     * @return payment method a reference to an active PaymentMethod defined on the CustomerAccount
+     */
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * Sets the subscription payment method.
+     * @param paymentMethod payment method a reference to an active PaymentMethod defined on the CustomerAccount
+     */
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

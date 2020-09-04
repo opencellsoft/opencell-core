@@ -28,18 +28,22 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 
 
 /**
  * The Class AccountOperationsGenerationJob generate the invoice account operation for all invoices that dont have it yet.
+ * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class AccountOperationsGenerationJob extends Job {
@@ -85,8 +89,35 @@ public class AccountOperationsGenerationJob extends Job {
    		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
    		waitingMillis.setValueRequired(false);
    		waitingMillis.setDefaultValue("0");
+
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
    		result.put(Job.CF_WAITING_MILLIS, waitingMillis);
+
+   		result.put("waitingMillis", waitingMillis);
+   		
+   		
+        CustomFieldTemplate scriptCF = new CustomFieldTemplate();
+        scriptCF.setCode("AccountOperationsGenerationJob_script");
+        scriptCF.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
+        scriptCF.setActive(true);
+        scriptCF.setDescription("Script");
+        scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        scriptCF.setEntityClazz(ScriptInstance.class.getName());
+        scriptCF.setValueRequired(false);
+        result.put("AccountOperationsGenerationJob_script", scriptCF);
+
+        CustomFieldTemplate variablesCF = new CustomFieldTemplate();
+        variablesCF.setCode("AccountOperationsGenerationJob_variables");
+        variablesCF.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
+        variablesCF.setActive(true);
+        variablesCF.setDescription("Script variables");
+        variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
+        variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
+        variablesCF.setValueRequired(false);
+        variablesCF.setMaxValue(600L);
+        variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        result.put("AccountOperationsGenerationJob_variables", variablesCF);
+
 
    		return result;
    	}

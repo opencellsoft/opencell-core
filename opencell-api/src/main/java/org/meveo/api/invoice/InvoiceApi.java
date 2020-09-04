@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -55,6 +56,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
+import org.meveo.api.payment.PaymentApi;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -154,6 +156,10 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private PaymentApi paymentApi;
+
 
     @Inject
     @MeveoParamBean
@@ -1094,7 +1100,14 @@ public class InvoiceApi extends BaseApi {
 
         RecordedInvoice recordedInvoice = invoice.getRecordedInvoice();
         if (recordedInvoice != null) {
-            dto.setRecordedInvoiceDto(new RecordedInvoiceDto(recordedInvoice));
+        	RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(recordedInvoice);
+            dto.setRecordedInvoiceDto(recordedInvoiceDto);
+            if(invoice.getRecordedInvoice().getPaymentHistories() != null && !invoice.getRecordedInvoice().getPaymentHistories().isEmpty()) {
+            	for(PaymentHistory ph : invoice.getRecordedInvoice().getPaymentHistories() ) {
+            		recordedInvoiceDto.getPaymentHistories().add(paymentApi.fromEntity(ph,false));
+            	}
+            }
+            
 			DunningDocument dunningDocument = recordedInvoice.getDunningDocument();
 			if(dunningDocument!=null) {
 				dto.setDunningEntryDate(dunningDocument.getAuditable().getCreated());
@@ -1105,9 +1118,9 @@ public class InvoiceApi extends BaseApi {
 				}
 				List<Payment> payments = dunningDocument.getPayments();
 				if(payments!=null && !payments.isEmpty()) {
-					PaymentHistory paymentHistory = payments.get(0).getPaymentHistory();
+					List<PaymentHistory> paymentHistory = payments.get(0).getPaymentHistories();
 					if(paymentHistory!=null) {
-						dto.setPaymentIncident(paymentHistory.getErrorMessage());
+						dto.setPaymentIncidents(paymentHistory.stream().map(x->x.getErrorMessage()).collect(Collectors.toList()));
 					}
 					Date paymentDate = new Date(0);
 					for(Payment payment : payments) {
@@ -1121,6 +1134,7 @@ public class InvoiceApi extends BaseApi {
         }
         dto.setRealTimeStatus(invoice.getRealTimeStatus());
         dto.setNetToPay(invoice.getNetToPay());
+        dto.setStatus(invoice.getStatus());
 
         return dto;
     }

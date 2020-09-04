@@ -303,35 +303,14 @@
                                     <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" lazy="true" resizableColumns="true"
                                         value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
                                         widgetVar="walletOperationsTable" styleClass="verticalSpaceSmall custom-grid">
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="#{messages['walletOperation.operationDate']}" />
-                                            </f:facet>
-                                            <c:set var="converter1" value="#{getConverter.forType(e[operationDate], 'date')}"></c:set>
-                                            <h:outputText value="#{e.operationDate}" converter="#{converter1}" />
-                                        </p:column>
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="#{messages['walletOperation.endDate']}" />
-                                            </f:facet>
-                                            <c:set var="converter2" value="#{getConverter.forType(e[endDate], 'date')}"></c:set>
-                                            <h:outputText value="#{e.endDate}" converter="#{converter2}" />
-                                        </p:column>
-                                        <p:column filterBy="#{e.code}" footerText="contains" filterMatchMode="contains">
-                                            <f:facet name="header">
-                                                <h:outputText value="#{messages['chargeInstance.code']}" />
-                                            </f:facet>
-                                            <h:outputText value="#{e.code}" />
-                                        </p:column>
-                                        <p:column headerText="#{messages['walletOperation.quantity']}">
-                                            <h:outputText value="#{e.quantity}" converter="bigDecimal4DigitsConverter" />
-                                        </p:column>
-                                        <p:column headerText="#{messages['walletOperation.amountWithoutTax']}">
-                                            <h:outputText value="#{e.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
-                                        </p:column>
-                                        <p:column headerText="#{messages['walletOperation.amountWithTax']}">
-                                            <h:outputText value="#{e.amountWithTax}" converter="bigDecimal12DigitsConverter" />
-                                        </p:column>
+                                        <hftl:column label="#{messages['walletOperation.operationDate']}" entity="#{e}" field="operationDate" isDate="true" />
+                                        <hftl:column label="#{messages['walletOperation.startDate']}" entity="#{e}" field="startDate" isDate="true" />
+                                        <hftl:column label="#{messages['walletOperation.endDate']}" entity="#{e}" field="endDate" isDate="true" />
+                                        <hftl:column label="#{messages['BusinessEntity.code']}" entity="#{e}" field="code"/>
+                                        <hftl:column label="#{messages['walletOperation.quantity']}" field="quantity" entity="#{e}" converterParam="4digits" wrapHeader="true" />
+                                        <hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" entity="#{e}" converterParam="4digits" wrapHeader="true" />
+                                        <hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" entity="#{e}" converterParam="4digits" wrapHeader="true" />
+                                        
                                         <p:column filterBy="#{e.status}" headerText="#{messages['walletOperation.status']}" footerText="exact" filterMatchMode="exact">
                                             <f:facet name="filter">
                                                 <p:selectOneMenu onchange="PF('walletOperationsTable').filter()">
@@ -342,7 +321,8 @@
                                                 </p:selectOneMenu>
                                             </f:facet>
                                             <h:outputText value="#{messages[e.status.label]}" />
-                                        </p:column>
+                                        </p:column>           
+                                        <hftl:column label="#{messages['walletOperation.statusRT']}" field="ratedTransaction.status.label" entity="#{e}" isMessage="true" />
                                     </p:dataTable>
                                 </h:form>
                                 <!-- <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"

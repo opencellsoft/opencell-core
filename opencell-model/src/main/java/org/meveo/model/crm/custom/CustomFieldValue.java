@@ -1690,7 +1690,11 @@ public class CustomFieldValue implements Serializable, Cloneable {
             sb.append(", isNewPeriod=true");
         }
 
-        return "CustomFieldValue [" + sb.substring(2);
+        if (sb.length() > 0) {
+            return "CustomFieldValue [" + sb.substring(2);
+        } else {
+            return "";
+        }
     }
 
     /**
