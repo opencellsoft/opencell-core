@@ -268,6 +268,52 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     private ThresholdOptionsEnum customerCheckThreshold;
 
     /**
+     * 
+     * check the threshold per entity/invoice for BA.
+     */
+    @XmlElement
+    private Boolean thresholdPerEntity;
+
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+    /**
+     * 
+     * check the threshold per entity/invoice for customerAccount.
+     */
+    @XmlElement
+    private Boolean customerAccountThresholdPerEntity;
+
+    public Boolean isCustomerAccountThresholdPerEntity() {
+		return customerAccountThresholdPerEntity;
+	}
+
+	public void setCustomerAccountThresholdPerEntity(boolean customerAccountThresholdPerEntity) {
+		this.customerAccountThresholdPerEntity = customerAccountThresholdPerEntity;
+	}
+
+    /**
+     * 
+     * check the threshold per entity/invoice for customer.
+     */
+    @XmlElement
+    private Boolean customerThresholdPerEntity;
+
+    public Boolean isCustomerThresholdPerEntity() {
+		return customerThresholdPerEntity;
+	}
+
+	public void setCustomerThresholdPerEntity(boolean customerThresholdPerEntity) {
+		this.customerThresholdPerEntity = customerThresholdPerEntity;
+	}
+
+	
+    /**
      * Gets the crm account type.
      *
      * @return the crm account type

@@ -155,6 +155,10 @@
 														field="invoicingThreshold" required="false" size="20" listenerUpdate="checkThresholdId"/>
 													<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId"
 																	noSelectionLabel="false" disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}"/>
+			                                        <p:panelGrid columns="1" styleClass="ui-noborder"> 
+			                                        	<p:outputLabel for="@next" value="#{messages['invoice.checkthreshold.per']}" cellpadding="5" />
+			                                        	<p:selectBooleanButton  value="${billingAccountBean.entity.thresholdPerEntity}" onLabel="#{messages['invoice.checkthreshold.per.entity']}" offLabel="#{messages['invoice.checkthreshold.per.invoice']}"/>
+			                                        </p:panelGrid>
 
 													<!--
 													<h:panelGroup id="invoicePrefixBoxPanel">

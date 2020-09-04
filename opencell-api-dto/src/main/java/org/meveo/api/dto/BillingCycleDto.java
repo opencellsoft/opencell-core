@@ -122,6 +122,21 @@ public class BillingCycleDto extends BusinessEntityDto {
 
 
     /**
+     * 
+     * check the threshold per entity/invoice.
+     */
+    @XmlElement
+    private Boolean thresholdPerEntity;
+
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+	/**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -164,6 +179,9 @@ public class BillingCycleDto extends BusinessEntityDto {
             }
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
+            if(billingCycleEntity.getInvoicingThreshold()!=null) {
+            	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
+            }
         }
     }
 
