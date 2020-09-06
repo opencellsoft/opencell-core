@@ -36,6 +36,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -120,24 +121,39 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     	} 
     }
     
-    public void approveSepaDDMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{
+    public void approveSepaDDMandate(String customerAccountCode,String tokenId) throws BusinessException{
 
     	GatewayPaymentInterface gatewayPaymentInterface = null; 
-    	String tokenId=null;
-
-    	CustomerAccount customerAccount =ddpaymentMethod.getCustomerAccount();
-    	if(customerAccount!=null) {
-    		PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
-    		if (paymentGateway == null) {
-    			throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
-    		}
-    		try {
-    			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-    		} catch (Exception e) { 
-    			log.warn("Cant find payment gateway");
-    		}
-    	}
-    	tokenId=ddpaymentMethod.getTokenId();
+       
+        	
+        	CustomerAccount customerAccount =customerAccountService.findByCode(customerAccountCode);
+        	if(customerAccount!=null) {
+        		DDPaymentMethod ddpaymentMethod=new DDPaymentMethod();
+        		ddpaymentMethod.setCustomerAccount(customerAccount);
+        		ddpaymentMethod.setCustomerAccount(customerAccount);
+        		PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+        		if (paymentGateway == null) {
+        			throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        		}
+        		try {
+        			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+        		} catch (Exception e) { 
+        			log.warn("Cant find payment gateway");
+        		}
+        		 if(tokenId==null){
+        			 /***If token is null, get the preferred payment method*/
+        			 PaymentMethod paymentMethod=customerAccount.getPreferredPaymentMethod();
+             		if(paymentMethod==null || !PaymentMethodEnum.DIRECTDEBIT.equals(paymentMethod.getPaymentType()))	{
+             			throw new BusinessException("No preferred DirectDebit payment method for customerAccount:" + customerAccount.getCode());
+             		}
+             		 ddpaymentMethod=(DDPaymentMethod)paymentMethod;
+             		tokenId=ddpaymentMethod.getTokenId();
+        		 }
+        		
+        	} 
+        
+ 
+    	
     	if (gatewayPaymentInterface != null && !StringUtils.isBlank(tokenId)) {
     		gatewayPaymentInterface.approveSepaDDMandate(tokenId,new Date());
     	} 

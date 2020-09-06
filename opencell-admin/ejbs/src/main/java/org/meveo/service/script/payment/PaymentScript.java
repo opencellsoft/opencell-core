@@ -18,16 +18,19 @@
 
 package org.meveo.service.script.payment;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.script.Script;
 
 /**
  * The Class PaymentScript.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Rachid-AIT
+ * @lastModifiedVersion 10.0.0
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
@@ -155,6 +158,21 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	
 	/** The Constant RESULT_HOSTED_CO_URL for  hostedCheckout url result. */
 	public static final String RESULT_HOSTED_CO_URL = "RESULT_HOSTED_CO_URL";
+	
+	 /** The Constant CONTEXT_ACCOUNT_HOLDER_NAME. */
+    public static final String CONTEXT_ACCOUNT_HOLDER_NAME = "CONTEXT_ACCOUNT_HOLDER_NAME";
+    
+    /** The Constant CONTEXT_IBAN. */
+    public static final String CONTEXT_IBAN = "CONTEXT_IBAN";
+    
+    /** The Constant CONTEXT_BIC. */
+    public static final String CONTEXT_BIC = "CONTEXT_BIC";
+
+    /** The Constant MANDATE_REFERENCE. */
+	public static final String CONTEXT_MANDATE_REFERENCE = "MANDATE_REFERENCE";
+
+	 /** The Constant Mandate SIGNATURE_DATE. */
+	public static final String CONTEXT_SIGNATURE_DATE = "SIGNATURE_DATE";
 
 
 
@@ -205,6 +223,24 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	public void createInvoice(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
-	}   
+	}
+
+	@Override
+	public void createSepaDirectDebitToken(Map<String, Object> methodContext) throws BusinessException {
+		
+	}
+
+	@Override
+	public void createMandate(Map<String, Object> methodContext) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(Map<String, Object> methodContext) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
