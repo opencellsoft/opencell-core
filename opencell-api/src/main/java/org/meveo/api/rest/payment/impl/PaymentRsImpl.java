@@ -853,7 +853,6 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
-    
 
     @Override
     public MandatInfoDto checkMandate(String mandateReference, String mandateId,String customerAccountCode) {
@@ -866,5 +865,17 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     	}
 
     	return result;
+    }
+    @Override
+    public ActionStatus approveSepaDDMandate(String customerAccountCode,String tokenId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            paymentMethodApi.approveSepaDDMandate(customerAccountCode,tokenId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
     }
 }

@@ -96,14 +96,20 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     @Override
     public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
         RecordContext recordContext = getNextRecord();
-        CDR cdr = cdrParser.parse(recordContext);
-        if(cdr == null) {
-            return null;
-        }
-        String line = recordContext.getLineContent();
-        cdr.setLine(line);
-        cdr.setOriginBatch(batchName);
-        cdr.setOriginRecord(getOriginRecord(line));
+        CDR cdr = null;
+        if(recordContext != null) {
+            cdr = cdrParser.parse(recordContext.getRecord());
+            if(cdr != null) {
+                cdr.setSource(RecordContext.serializeRecord(recordContext.getRecord()));
+                cdr.setType(recordContext.getRecord().getClass().getName());
+                String line = recordContext.getLineContent();
+                cdr.setLine(line);
+                cdr.setOriginBatch(batchName);
+                cdr.setOriginRecord(getOriginRecord(line));
+            }
+        }        
+        
+        
         return cdr;
     }
     
