@@ -44,6 +44,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -563,6 +564,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
+        // Register dd payment methods in payment gateway and obtain a token id
+        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
+        	if(ddPaymentMethod.getTokenId() == null){
+        		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
+        	}
+        }
 
         entity.ensureOnePreferredPaymentMethod();
         super.create(entity);
@@ -586,6 +593,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
+        
+        // Register dd payment methods in payment gateway and obtain a token id
+        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
+        	if(ddPaymentMethod.getTokenId() == null){
+        		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
+        	}
+        }
+        
 
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
