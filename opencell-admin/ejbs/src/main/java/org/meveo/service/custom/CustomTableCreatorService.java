@@ -193,13 +193,8 @@ public class CustomTableCreatorService implements Serializable {
         
         hibernateSession.doWork(connection -> {
             
-            Database database;
             try {
-                database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                
-                Liquibase liquibase = new Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                liquibase.update(new Contexts(), new LabelExpression());
-                
+            	liquibaseUpdate(dbLog, connection);
             } catch (Exception e) {
                 log.error("Failed to add a field {} to a custom table {}", dbTableName, dbFieldname, e);
                 throw new SQLException(e);
@@ -318,13 +313,8 @@ public class CustomTableCreatorService implements Serializable {
         
         hibernateSession.doWork(connection -> {
             
-            Database database;
             try {
-                database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                
-                Liquibase liquibase = new Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                liquibase.update(new Contexts(), new LabelExpression());
-                
+            	liquibaseUpdate(dbLog, connection);
             } catch (Exception e) {
                 log.error("Failed to update a field {} in a custom table {}", dbTableName, dbFieldname, e);
                 throw new SQLException(e);
@@ -515,8 +505,7 @@ public class CustomTableCreatorService implements Serializable {
 	}
 	
     private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
-		Database database;
-		database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+		Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
 		if(currentproviderCode!=null) {
 			database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
