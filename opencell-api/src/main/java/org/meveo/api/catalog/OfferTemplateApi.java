@@ -31,6 +31,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
@@ -70,6 +71,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -80,6 +82,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 
@@ -120,6 +123,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
+
+    @Inject
+    private CustomerCategoryService customerCategoryService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -282,6 +288,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
 
+        if(postData.getCustomerCategories() != null && !postData.getCustomerCategories().isEmpty()) {
+            offerTemplate.getCustomerCategories().clear();
+            addCustomerCategories(postData.getCustomerCategories(), offerTemplate);
+        }
+
         offerTemplate.setBusinessOfferModel(businessOffer);
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
@@ -328,6 +339,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processOfferProductTemplates(postData, offerTemplate);
 
         return offerTemplate;
+    }
+
+    private void addCustomerCategories(List<CustomerCategoryDto> customerCategoryDtos, OfferTemplate offerTemplate) {
+              for (CustomerCategoryDto categoryDto : customerCategoryDtos) {
+                CustomerCategory customerCategory = customerCategoryService.findByCode(categoryDto.getCode());
+                if (customerCategory == null) {
+                    throw new EntityDoesNotExistsException(CustomerCategory.class, categoryDto.getCode());
+                }
+                offerTemplate.addCustomerCategory(customerCategory);
+            }
     }
 
     private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
