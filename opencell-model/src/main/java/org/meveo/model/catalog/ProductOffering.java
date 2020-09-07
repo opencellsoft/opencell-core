@@ -229,6 +229,15 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
         }
     }
 
+    public void addCustomerCategory(CustomerCategory customerCategory) {
+        if (getCustomerCategories() == null) {
+            customerCategories = new ArrayList<>();
+        }
+        if (!customerCategories.contains(customerCategory)) {
+            customerCategories.add(customerCategory);
+        }
+    }
+
     public String getName() {
         return name;
     }
