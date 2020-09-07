@@ -39,6 +39,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
+import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
@@ -57,6 +58,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 
 /**
  * The Class DDRequestLOTService.
@@ -88,6 +90,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
 
+	@Inject
+	private CalendarBankingService calendarBankingService;
 	/**
 	 * Creates the DDRequest lot.
 	 *
@@ -112,10 +116,10 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 			DDRequestLOT ddRequestLOT = new DDRequestLOT();
 			ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
-			ddRequestLOT.setSendDate(new Date());
 			ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
 			ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
-			ddRequestLOT.setSendDate(new Date());
+			
+			ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
 			create(ddRequestLOT);
 			ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
 
@@ -357,7 +361,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			return prefix + "recordedInvoice.ca";
 		}
 		prefix = "CA.code:"+ca.getCode()+" AO.id:" + accountOperation.getId() + " : ";
-		if (ca.getName() == null) {
+		if (ca.getName() == null && ca.getCustomer().getName() == null ) {
 			return prefix + "ca.name";
 		}
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
@@ -404,9 +408,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		}
 		if (accountOperation.getReference() == null) {
 			return prefix + "accountOperation.reference";
-		}
-		if (ca.getDescription() == null) {
-			return prefix + "ca.description";
 		}
 		return null;
 	}
