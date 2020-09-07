@@ -480,14 +480,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for termination charges
         if (postData.getServiceChargeTemplateTerminations() != null) {
+        	serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate);
             createServiceChargeTemplateTermination(postData, serviceTemplate);
-            serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate);
         }
 
         // check for usage charges
         if (postData.getServiceChargeTemplateUsages() != null) {
+        	serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate);
             createServiceChargeTemplateUsage(postData, serviceTemplate);
-            serviceUsageChargeTemplateService.removeByServiceTemplate(serviceTemplate);
         }
         return serviceTemplate;
     }
