@@ -105,12 +105,14 @@ public class CDRReprocessingReader implements ICdrReader {
             }
             parsedCdr = cdrParser.parse(record);
             if (parsedCdr != null) {
-                parsedCdr.setTimesTried(cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1);
-                parsedCdr.setId(cdr.getId());
-                parsedCdr.setOriginBatch(batchName);
-                parsedCdr.setOriginRecord(cdr.getOriginRecord());
-                parsedCdr.setLine(cdr.getLine());
-                parsedCdrs.add(parsedCdr);
+                cdr.setTimesTried(cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1);
+                cdr.setRejectReason(parsedCdr.getRejectReason());
+                cdr.setRejectReasonException(parsedCdr.getRejectReasonException());
+                cdr.setStatus(parsedCdr.getStatus());  
+                cdr.setSource(parsedCdr.getSource());
+                cdr.setType(parsedCdr.getType());
+                cdr.setOriginBatch(batchName);
+                parsedCdrs.add(cdr);
             }   
                       
         }
