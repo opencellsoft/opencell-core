@@ -328,8 +328,8 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
         if (seller == null) {
             seller = ua.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
-
-        TaxInfo taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, entity.getInvoiceDate());
+        
+        TaxInfo taxInfo = taxMappingService.determineTax(selectedTaxClass, seller, entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
 
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
@@ -337,6 +337,9 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
             seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null);
 
         ratedTransaction.setInvoice(entity);
+        if(selectedAccountingCode != null) {
+            ratedTransaction.setAccountingCode(selectedAccountingCode);
+        }
 
         aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
         updateAmountsAndLines();
