@@ -21,7 +21,6 @@ package org.meveo.services.job;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,11 +42,13 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.RecurringRatingJobExecutionError;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.job.RecurringRatingJobExecutionErrorService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 
 /**
@@ -68,9 +69,14 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     private JobExecutionService jobExecutionService;
 
     @Inject
+    private RecurringRatingJobExecutionErrorService recurringRatingJobExecutionErrorService;
+
+    @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     private ServiceBasedLazyDataModel<JobExecutionResultImpl> executionHistoryDM = null;
+
+    private ServiceBasedLazyDataModel<RecurringRatingJobExecutionError> executionErrorDM = null;
 
     public JobInstanceBean() {
         super(JobInstance.class);
@@ -94,9 +100,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     public List<JobCategoryEnum> getJobCategoryEnumValues() {
-    	List<Object> categories = EnumBuilder.values(JobCategoryEnum.class);
+        List<Object> categories = EnumBuilder.values(JobCategoryEnum.class);
         if (categories != null) {
-           return categories.stream().map(cat -> (JobCategoryEnum) cat).collect(Collectors.toList());
+            return categories.stream().map(cat -> (JobCategoryEnum) cat).collect(Collectors.toList());
         }
         return null;
     }
@@ -293,5 +299,47 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         }
 
         return executionHistoryDM;
+    }
+
+    /**
+     * Get execution error for recurring rating job
+     *
+     * @return Recurring rating job execution lazy data model
+     */
+    public ServiceBasedLazyDataModel<RecurringRatingJobExecutionError> getRecurringRatingJobExecutionErrors() {
+
+        if (executionErrorDM == null) {
+
+            executionErrorDM = new ServiceBasedLazyDataModel<RecurringRatingJobExecutionError>() {
+
+                private static final long serialVersionUID = 87900L;
+
+                @Override
+                protected Map<String, Object> getSearchCriteria() {
+
+                    Map<String, Object> filters = new HashMap<>();
+                    filters.put("jobInstance", entity);
+                    return filters;
+                }
+
+                @Override
+                protected String getDefaultSortImpl() {
+                    return "id";
+                }
+
+                @Override
+                protected IPersistenceService<RecurringRatingJobExecutionError> getPersistenceServiceImpl() {
+                    return recurringRatingJobExecutionErrorService;
+                }
+
+                @Override
+                protected ElasticClient getElasticClientImpl() {
+                    return null;
+                }
+            };
+
+        }
+
+        return executionErrorDM;
     }
 }

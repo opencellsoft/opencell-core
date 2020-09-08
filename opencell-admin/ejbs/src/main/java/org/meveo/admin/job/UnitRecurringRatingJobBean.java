@@ -20,17 +20,22 @@ package org.meveo.admin.job;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -40,6 +45,9 @@ public class UnitRecurringRatingJobBean implements Serializable {
 
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+
+    @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
 
     @Inject
     protected Logger log;
@@ -52,14 +60,24 @@ public class UnitRecurringRatingJobBean implements Serializable {
             RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, maxDate, false);
             if (ratingStatus.getNbRating() == 1) {
                 result.registerSucces();
-            } else if (ratingStatus.getNbRating() > 1) {
-                result.registerWarning(chargeInstanceId + " rated " + ratingStatus.getNbRating() + " times");
             } else {
                 if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
                     result.registerWarning(chargeInstanceId + " not rated");
                 }
             }
         } catch (Exception e) {
+
+            Map<String, Object> errorContext = null;
+            if (e instanceof BusinessException) {
+                ((BusinessException) e).addErrorContext(ErrorContextAttributeEnum.CHARGE_INSTANCE, chargeInstanceId);
+                errorContext = ((BusinessException) e).getErrorContext();
+            } else {
+                errorContext = new HashMap<>();
+                errorContext.put(ErrorContextAttributeEnum.CHARGE_INSTANCE.name(), chargeInstanceId);
+            }
+
+            jobExecutionErrorService.registerJobError(result.getJobInstance(), ((BusinessException) e).getErrorContext(), e);
+
             result.registerError(chargeInstanceId, e.getMessage());
             throw e;
         }

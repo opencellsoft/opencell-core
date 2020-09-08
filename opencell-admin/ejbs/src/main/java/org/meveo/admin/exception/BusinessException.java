@@ -17,13 +17,16 @@
  */
 package org.meveo.admin.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ejb.ApplicationException;
+
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.ApplicationException;
 
 /**
  * General business exception. Will result in data rollback
@@ -36,6 +39,27 @@ public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private static final boolean sendException;
+
+    /**
+     * An attribute name for capturing addition error information
+     */
+    public enum ErrorContextAttributeEnum {
+
+        /**
+         * Recurring rating period
+         */
+        RATING_PERIOD,
+
+        /**
+         * Charge instance
+         */
+        CHARGE_INSTANCE;
+    }
+
+    /**
+     * Can provide any additional information needed to identify better the error occurred
+     */
+    private Map<String, Object> errorContext = null;
 
     static {
         ParamBean paramBean = ParamBean.getInstance();
@@ -95,5 +119,48 @@ public class BusinessException extends RuntimeException {
                 log.error("Failed to access event helper", e);
             }
         }
+    }
+
+    /**
+     * @return Any additional information needed to identify better the error occurred
+     */
+    public Map<String, Object> getErrorContext() {
+        return errorContext;
+    }
+
+    /**
+     * @param errorContext Any additional information needed to identify better the error occurred
+     */
+    public void setErrorContext(Map<String, Object> errorContext) {
+        this.errorContext = errorContext;
+    }
+
+    /**
+     * Add Any additional information needed to identify better the error occurred
+     * 
+     * @param attribute Additional information attribute name
+     * @param value Value
+     * @return Additional information context to be able to chain methods
+     */
+    public Map<String, Object> addErrorContext(ErrorContextAttributeEnum attribute, Object value) {
+
+        return addErrorContext(attribute.name(), value);
+    }
+
+    /**
+     * Add Any additional information needed to identify better the error occurred
+     * 
+     * @param attribute Additional information attribute name
+     * @param value Value
+     * @return Additional information context to be able to chain methods
+     */
+    public Map<String, Object> addErrorContext(String attribute, Object value) {
+
+        if (errorContext == null) {
+            errorContext = new HashMap<>();
+        }
+        errorContext.put(attribute, value);
+
+        return errorContext;
     }
 }
