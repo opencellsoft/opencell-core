@@ -29,7 +29,7 @@
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['userAccount.name']}" column2="name" selection="#{orderBean.selectedOrderItem.userAccount}"
-            updateField=":orderForm:tabView:orderLineTabView:userAccount :orderForm:tabView:orderLineTabView:userAccount_text">
+            updateField=":orderForm:tabView:orderLineTabView:userAccount :orderForm:tabView:orderLineTabView:userAccount_text :orderForm:tabView:orderLineTabView:configTab">
         </hftl:entityPopup>
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['access.subscription']}"
             updateField=":orderForm:tabView:orderLineTabView:subscription :orderForm:tabView:orderLineTabView:subscription_text :orderForm:tabView:orderLineTabView:offerTree  :orderForm:tabView:orderLineTabView:offerConfigurations" backingBean="#{subscriptionBean}"
@@ -408,7 +408,7 @@
 
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="payment_method_#{itemStatus.index}"
+                                                        <hftl:decorateFormField fieldId="payment_method_#{itemStatus.index}" class="sub_payment_method"
                                                                                 label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD.characteristicName)]}"
                                                                                 rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.MODIFY}">
 
@@ -418,7 +418,7 @@
                                                                              rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
                                                                 <hftl:objectConverter/>
                                                                 <f:selectItem itemLabel="" itemValue=""/>
-                                                                <f:selectItems value="#{orderBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['alias']}"
+                                                                <f:selectItems value="#{orderBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
                                                                                itemValue="#{elem['id']}"/>
 
                                                             </p:selectOneMenu>
