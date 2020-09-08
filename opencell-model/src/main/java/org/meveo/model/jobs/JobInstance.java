@@ -28,6 +28,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -56,8 +58,8 @@ import org.meveo.model.ModuleItem;
 @CustomFieldEntity(cftCodePrefix = "JobInstance", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
+@NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code") })
 public class JobInstance extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -5517252645289726288L;
@@ -80,7 +82,7 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * Job category
      */
-    @Convert(converter=JobCategoryEnumCoverter.class)
+    @Convert(converter = JobCategoryEnumCoverter.class)
     @Column(name = "job_category")
     private JobCategoryEnum jobCategoryEnum;
 
@@ -308,15 +310,15 @@ public class JobInstance extends EnableBusinessCFEntity {
         } else if (!(obj instanceof JobInstance)) {
             return false;
         }
-        
-        JobInstance other = (JobInstance)obj;  
-        
+
+        JobInstance other = (JobInstance) obj;
+
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        
+
         return false;
-        
+
     }
 
     /**
@@ -349,8 +351,8 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres,
-            jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres, jobCategoryEnum, timerEntity,
+            followingJob != null ? followingJob.getCode() : null);
     }
 
     /**

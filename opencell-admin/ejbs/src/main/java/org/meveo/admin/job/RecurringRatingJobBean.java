@@ -47,6 +47,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -67,6 +68,9 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     private BillingCycleService billingCycleService;
 
     @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
+
+    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -75,6 +79,8 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("start in running with parameter={}", jobInstance.getParametres());
+
+        jobExecutionErrorService.purgeJobErrors(jobInstance);
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {

@@ -33,6 +33,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
@@ -295,8 +296,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             return true;
 
         } else {
-            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentNode);
+            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(), jobInstance.getJobTemplate(), currentNode);
         }
 
         return false;
@@ -370,5 +370,16 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         } catch (BusinessException e) {
             log.error("Failed to create missing custom field templates", e);
         }
+    }
+
+    /**
+     * Get a list of job instances of a given job template
+     * 
+     * @param jobTemplate Job template
+     * @return A list of jobInstances
+     */
+    public List<JobInstance> listByJobType(String jobTemplate) {
+
+        return getEntityManager().createNamedQuery("JobInstance.listByTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplate).getResultList();
     }
 }
