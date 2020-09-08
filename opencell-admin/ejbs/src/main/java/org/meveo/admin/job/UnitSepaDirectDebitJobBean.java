@@ -18,7 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,16 +26,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
-import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
@@ -54,7 +50,6 @@ import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -99,10 +94,6 @@ public class UnitSepaDirectDebitJobBean {
 	@Inject
 	private Logger log;
 
-	/** The rejecteded edr producer. */
-	@Inject
-	@Rejected
-	private Event<Serializable> rejectededEdrProducer;
 
 	/**
 	 * Execute processing one ddRequestItem.
@@ -129,7 +120,7 @@ public class UnitSepaDirectDebitJobBean {
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
-						DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddrequestItem.getDueDate(), ddRequestLOT.getSendDate(),
+						ddRequestLOT.getSendDate(), ddrequestItem.getDueDate(), new Date(),
 						ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
 				if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
 					ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);

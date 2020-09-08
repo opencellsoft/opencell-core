@@ -26,7 +26,7 @@ public class ArConfig {
     // private static final String DDREQUEST_HEADER_DDMODE = "bayad.ddrequest.header.DDmode";
     private static final String DDREQUEST_HEADER_REFRENCE = "bayad.ddrequest.header.reference";
 
-    private static final String DDREQUEST_DATE_VALUE_AFTER = "bayad.ddrequest.dateValueAfterNbDays";
+    private static final String DDREQUEST_DATE_VALUE_AFTER = "bayad.ddrequest.dateValueAfterNbBusinessDays";
 
     private static final String DDREQUEST_OUTPUT_DIR = "bayad.ddrequest.outputDir";
     private static final String DDREQUEST_FILE_NAME_EXTENSION = "bayad.ddrequest.fileName.extension";
@@ -60,7 +60,7 @@ public class ArConfig {
     }
 
     public static int getDateValueAfter() {
-        return Integer.parseInt(ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_DATE_VALUE_AFTER, "0"));
+        return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getPropertyAsInteger(DDREQUEST_DATE_VALUE_AFTER, 3);
     }
 
     public static int getDunningBlanceFlag() {
