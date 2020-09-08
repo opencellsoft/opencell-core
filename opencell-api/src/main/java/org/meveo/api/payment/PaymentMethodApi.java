@@ -100,6 +100,9 @@ public class PaymentMethodApi extends BaseApi {
         Document document = null;
         if (Objects.nonNull(paymentMethodDto.getReferenceDocumentCode())) {
             document = documentService.findByCode(paymentMethodDto.getReferenceDocumentCode());
+            if (document == null) {
+                throw new EntityDoesNotExistsException(Document.class, paymentMethodDto.getReferenceDocumentCode());
+            }
         }
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
