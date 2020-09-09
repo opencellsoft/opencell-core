@@ -291,7 +291,7 @@ public class RecurringChargeInstance extends ChargeInstance {
 
         SubscriptionTerminationReason terminationReason = getServiceInstance().getSubscriptionTerminationReason();
         if (terminationReason.isApplyAgreement() && getServiceInstance().getEndAgreementDate() != null) {
-            return getServiceInstance().getEndAgreementDate();
+            return terminationDate.after(getServiceInstance().getEndAgreementDate()) ? terminationDate : getServiceInstance().getEndAgreementDate();
         } else {
             return terminationDate;
         }
