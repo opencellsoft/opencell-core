@@ -1224,13 +1224,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             case POSITIVE_RT:
             	Map<Long, Amounts> thresholdAmounts = positiveRTThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
-                	checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                	checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
                 }
                 break;
             case AFTER_DISCOUNT:
                 thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
                 }
                 break;
             case BEFORE_DISCOUNT:
@@ -1240,7 +1240,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     if (discountAmounts != null) {
                         thresholdAmounts.keySet().stream().forEach(x->thresholdAmounts.get(x).addAmounts(discountAmounts.get(x).negate()));
                     }
-                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntityId, threshold,
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold,
 							isThresholdPerEntity, thresholdAmounts);
                 }
                 break;
@@ -1251,8 +1251,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return invoicesToRemove;
     }
 
-	private void checkThresholdInvoices(Set<Long> rejectedBillingAccounts, List<Long> invoicesToRemove,
-			Long billableEntityId, BigDecimal threshold, boolean isThresholdPerEntity,
+	private void checkThresholdInvoices(Collection<Long> rejectedBillingAccounts, List<Long> invoicesToRemove,
+			Collection<Long> billableEntities, Long billableEntityId, BigDecimal threshold, boolean isThresholdPerEntity,
 			Map<Long, Amounts> thresholdAmounts) {
 		if(isThresholdPerEntity) {
 			BigDecimal totalAmount=BigDecimal.ZERO;
@@ -1261,7 +1261,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 			if (totalAmount.compareTo(threshold) < 0) {
 		        invoicesToRemove.addAll(thresholdAmounts.keySet());
-		        rejectedBillingAccounts.add(billableEntityId);
+		        rejectedBillingAccounts.addAll(billableEntities);
 		    }
 		} else {
 			thresholdAmounts.keySet().forEach(x -> {

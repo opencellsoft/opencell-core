@@ -255,8 +255,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date)
-                .setParameter("jobInstance", jobInstance).getSingleResult();
+            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date).setParameter("jobInstance", jobInstance).getSingleResult();
         }
 
         return result;
@@ -285,8 +284,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date)
-                .setParameter("jobInstance", jobInstance).executeUpdate();
+            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date).setParameter("jobInstance", jobInstance).executeUpdate();
         }
 
         log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);

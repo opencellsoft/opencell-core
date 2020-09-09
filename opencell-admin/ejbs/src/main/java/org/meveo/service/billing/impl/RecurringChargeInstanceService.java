@@ -301,6 +301,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeWasUpdated = true;
         }
 
+     
         try {
             // Need to initialize charge if it is the first time that recurring charge is being applied
             // It is considered as first time application when both dates are null. NextChargeDate check is not sufficient as if recurring calendar is period based, end date will
@@ -406,7 +407,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(ratingStatus.getNbRating() + 1);
+            ratingStatus.setNbRating(1);
         }
         return ratingStatus;
     }
@@ -428,7 +429,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(ratingStatus.getNbRating() + 1);
+            ratingStatus.setNbRating(1);
         }
         return ratingStatus;
     }

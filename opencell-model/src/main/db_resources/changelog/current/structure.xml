@@ -3549,4 +3549,32 @@ END $$;]]>
         </addColumn>
     </changeSet>
     
+    
+    
+    <changeSet id="#5471-2020-09-07" author="AndriusKarpavicius">
+        <createTable tableName="job_execution_error" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="job_execution_error_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="job_instance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_id" type="bigint"/>
+            <column name="period_from" type="datetime"/>
+            <column name="period_to" type="datetime"/>
+            
+            <column name="error_reason"  type="varchar(2000)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="job_execution_error" baseColumnNames="job_instance_id"
+                                 constraintName="job_execution_error_job_instance_fk" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+
+        <createSequence sequenceName="job_execution_error_seq" startValue="1"/>
+    </changeSet>
+    
 </databaseChangeLog>
