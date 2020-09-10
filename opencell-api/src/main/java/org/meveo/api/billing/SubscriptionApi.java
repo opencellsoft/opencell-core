@@ -990,9 +990,24 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
+
+        // populate customFields
         try {
-            oneShotChargeInstanceService.oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(), postData.getAmountWithoutTax(),
-                postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), null, true);
+            populateCustomFields(postData.getCustomFields(), oneShotChargeInstance, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        try {
+
+            oneShotChargeInstanceService
+                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
+                            postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
+                            postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true);
 
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
