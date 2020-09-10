@@ -1332,7 +1332,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             UserAccount userAccount = userAccountService.findById(entity.getUserAccount().getId());
             List<PaymentMethod> paymentMethods = userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
             return paymentMethods.stream()
-                    .filter(paymentMethod -> paymentMethod instanceof HibernateProxy)
                     .map(paymentMethod -> paymentMethod instanceof HibernateProxy ? (PaymentMethod)((HibernateProxy) paymentMethod).getHibernateLazyInitializer().getImplementation() : paymentMethod)
                     .collect(Collectors.toList());
         }
