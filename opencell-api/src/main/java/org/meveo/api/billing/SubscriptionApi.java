@@ -583,6 +583,11 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
 
+        List<ServiceTemplate> serviceToActivate = new ArrayList<>();
+        List<ServiceToActivateDto> servicesToActivateDto = new ArrayList<>();
+        getServiceToActivate(activateServicesDto.getServicesToActivateDto().getService(), serviceToActivate, servicesToActivateDto);
+        subscriptionService.checkCompatibilityOfferServices(subscription, serviceToActivate);
+
         // Find instantiated or instantiate if not instantiated yet
         List<ServiceInstance> serviceInstances = new ArrayList<>();
         for (ServiceToActivateDto serviceToActivateDto : activateServicesDto.getServicesToActivateDto().getService()) {
@@ -772,6 +777,23 @@ public class SubscriptionApi extends BaseApi {
                 log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
                 throw e;
             }
+        }
+    }
+
+    private void getServiceToActivate(List<ServiceToActivateDto> services, List<ServiceTemplate> serviceToActivate,
+                                      List<ServiceToActivateDto> servicesToActivateDto) {
+        for (ServiceToActivateDto serviceToActivateDto : services) {
+            if (serviceToActivateDto.getQuantity() == null) {
+                throw new MissingParameterException("quantity for service " + serviceToActivateDto.getCode());
+            }
+            ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
+            if (serviceTemplate == null) {
+                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+            }
+
+            serviceToActivateDto.setServiceTemplate(serviceTemplate);
+            servicesToActivateDto.add(serviceToActivateDto);
+            serviceToActivate.add(serviceTemplate);
         }
     }
 
