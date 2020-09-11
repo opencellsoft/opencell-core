@@ -1,6 +1,16 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.async.SubListCreator;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
@@ -15,21 +25,8 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.script.Script;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Calculate the overrun by Agency-Offer-ChargeType and create WalletOperation
@@ -85,8 +82,8 @@ public class OfferPoolRatingUnitJobBean {
             Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate,
                     CF_POOL_PER_OFFER_MAP, walletOperation.getOperationDate());
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
-                throw new IllegalStateException(String.format("Pool counter not yet initialized. " +
-                        "ServiceTemplate=%s Agency=%s", serviceTemplate.getCode(),  agencyCode));
+                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " +
+                        "ServiceTemplate=%s Agency=%s", walletOperation.getOperationDate(),serviceTemplate.getCode(),  agencyCode));
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
 
@@ -118,7 +115,6 @@ public class OfferPoolRatingUnitJobBean {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
                                                          String overageUnit, Double overagePrice, Double multiplier) {
         WalletOperation overageWO = new WalletOperation();
