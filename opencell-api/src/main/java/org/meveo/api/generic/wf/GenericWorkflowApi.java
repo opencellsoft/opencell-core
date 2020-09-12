@@ -21,6 +21,7 @@ package org.meveo.api.generic.wf;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.generic.wf.GWFTransitionDto;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
 import org.meveo.api.dto.generic.wf.WFStatusDto;
@@ -220,24 +221,21 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         return result;
     }
 
-    protected GenericWorkflow fromDTO(GenericWorkflowDto dto, GenericWorkflow workflowToUpdate) {
-        GenericWorkflow genericWorkflow = workflowToUpdate;
-        if (workflowToUpdate == null) {
-            genericWorkflow = new GenericWorkflow();
-            genericWorkflow.setTargetEntityClass(dto.getTargetEntityClass());
-            genericWorkflow.setTargetCetCode(dto.getTargetCetCode());
-            if (dto.isDisabled() != null) {
-                genericWorkflow.setDisabled(dto.isDisabled());
+    protected GenericWorkflow fromDTO(GenericWorkflowDto dto, GenericWorkflow genericWorkflow) {
+        genericWorkflow.setTargetEntityClass(dto.getTargetEntityClass());
+        genericWorkflow.setTargetCetCode(dto.getTargetCetCode());
+        if (dto.isDisabled() != null) {
+            genericWorkflow.setDisabled(dto.isDisabled());
+        }
+        if (dto.getFilter() != null && dto.getFilter().getCode() != null) {
+            Filter filter = filterService.findByCode(dto.getFilter().getCode());
+            if (filter == null) {
+                filter = createFilter(dto.getFilter());
             }
-            if (dto.getFilter() != null) {
-                Filter filter = filterService.findByCode(dto.getFilter().getCode()) ;
-                if (filter.getPrimarySelector() != null) {
-                    String clazzName = filter.getPrimarySelector().getTargetEntity();
-                    if (clazzName.equals(dto.getTargetEntityClass())) {
-                        genericWorkflow.setFilter(filterService.findByCode(dto.getFilter().getCode()));
-                    }
-                }
-            }
+            genericWorkflow.setFilter(filter);
+        }
+        if (dto.getFilter() != null && dto.getFilter().getCode() == null) {
+            genericWorkflow.setFilter(null);
         }
 
         genericWorkflow.setCode(dto.getCode());
@@ -248,11 +246,26 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         return genericWorkflow;
     }
 
+    private Filter createFilter(FilterDto filterDto) {
+        if (filterDto == null) {
+            return null;
+        }
+        Filter filter = new Filter();
+        filter.clearUuid();
+        filter.setCode(filterDto.getCode());
+        filter.setDescription(filterDto.getDescription());
+        filter.setInputXml(filterDto.getInputXml());
+        filter.setShared(filterDto.getShared());
+        filter.setPollingQuery(filterDto.getPollingQuery());
+        filterService.create(filter);
+        return filterService.findByCode(filter.getCode());
+    }
+
     /**
      * Validate Workflow Dto
-     * 
+     *
      * @param genericWorkflowDto Workflow Dto
-     * @param isUpdate Indicates that Dto is for update
+     * @param isUpdate           Indicates that Dto is for update
      * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(GenericWorkflowDto genericWorkflowDto, boolean isUpdate) throws MissingParameterException {

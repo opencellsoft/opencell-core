@@ -106,9 +106,16 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
     @Inject
     private FilterService filterService;
 
+    @Override
+    public GenericWorkflow initEntity() {
+        super.initEntity();
+        selectedFilter = entity.getFilter();
+        return entity;
+    }
+
     /**
      * Autocomplete method for class filter field - search entity type classes with @WorkflowedEntity annotation
-     * 
+     *
      * @param query A partial class name (including a package)
      * @return A list of classnames
      */
@@ -158,9 +165,7 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if (entity.getId() == null) {
-            entity.setFilter(selectedFilter);
-        }
+        entity.setFilter(selectedFilter);
         super.saveOrUpdate(killConversation);
         return null;
     }
