@@ -3,8 +3,20 @@
  */
 package org.meveo.admin.async;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.job.OfferPoolInitializerUnitJobBean;
-import org.meveo.admin.job.OfferPoolRatingUnitJobBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -12,14 +24,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * @author Mounir BOUKAYOUA
@@ -31,7 +35,7 @@ public class OfferPoolInitializerAsync {
             + "from billing_subscription sub \n"
             + "where sub.offer_id=:offerId and sub.status='ACTIVE' \n"
             + "and sub.subscription_date <= :counterEndDate  \n"
-            + "and sub.termination_date is null \n"
+            + "and ( sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') <= :counterEndDate ) \n"
             + "group by sub.user_account_id";
     @Inject
     private Logger log;
@@ -51,7 +55,7 @@ public class OfferPoolInitializerAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterEndDate, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterEndDate, int terminationDelay, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         log.info("Start new thread to initialize pool counters of offerIds workSet with length={}", offerIds.size());
@@ -60,7 +64,8 @@ public class OfferPoolInitializerAsync {
         for (BigInteger offerId : offerIds) {
             i++;
             @SuppressWarnings("unchecked")
-            List<Object[]> items = emWrapper.getEntityManager().createNativeQuery(OFFER_AGENCIES_COUNTERS_QUERY)
+            List<Object[]> items = emWrapper.getEntityManager()
+                    .createNativeQuery(OFFER_AGENCIES_COUNTERS_QUERY.replaceAll(":termination_delay", String.valueOf(terminationDelay)))
                     .setParameter("offerId", offerId.longValue())
                     .setParameter("counterEndDate", counterEndDate)
                     .getResultList();

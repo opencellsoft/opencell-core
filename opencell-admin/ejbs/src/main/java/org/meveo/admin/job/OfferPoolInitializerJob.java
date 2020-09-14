@@ -84,7 +84,7 @@ public class OfferPoolInitializerJob extends Job {
         customFieldDate.setAllowEdit(true);
         customFieldDate.setDescription("DATE");
         customFieldDate.setFieldType(CustomFieldTypeEnum.STRING);
-        customFieldDate.setDefaultValue(null);
+        customFieldDate.setDefaultValue("");
         customFieldDate.setValueRequired(false);
         customFieldDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:2");
         result.put("DATE", customFieldDate);

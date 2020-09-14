@@ -32,26 +32,23 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
     private static final String DATE_PATTERN = "MM/yyyy";
 
-    private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " +
-            "(select sub.user_account_id, offer.id offerId, count(sub.id) \n"
-            + "from billing_subscription sub \n"
-            + "inner join cat_offer_template offer on sub.offer_id=offer.id \n"
-            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
-            + "and sub.status='ACTIVE' \n"
-            + "and sub.subscription_date <= :counterEndDate  \n"
-            + "and sub.termination_date is null \n"
-            + "group by sub.user_account_id, offerId \n"
-            + "having count(sub.id) > 0) t";
-
-    private static final String OFFERS_TO_INITILIZE = "select distinct offer.id \n"
-            + "from billing_subscription sub \n"
+    private static final int TERMINATION_DELAY = 90; // 3 months
+    
+    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
             + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
             + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
-            + "and sub.status = 'ACTIVE' \n"
-            + "and sub.subscription_date <= :counterEndDate  \n"
-            + "and sub.termination_date is null \n"
-            + "group by sub.user_account_id, offer.id \n"
+            + "and sub.status='ACTIVE' \n"
+            + "and sub.subscription_date <= :counterEndDate \n"
+            + "and ( sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS ') <= :counterEndDate ) \n"
+            + "group by sub.user_account_id, offerId \n"
             + "having count(sub.id) > 0";
+
+    private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " +
+            "(select sub.user_account_id, offer.id offerId, count(sub.id) \n"
+            + FROM_CLAUSE + ") t";
+
+    private static final String OFFERS_TO_INITILIZE = "select distinct offer.id offerId \n"
+            + FROM_CLAUSE;
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -77,7 +74,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
         try {
             BigInteger offerCountersNbr = (BigInteger) emWrapper.getEntityManager()
-                    .createNativeQuery(OFFER_INIT_COUNT_QUERY)
+                    .createNativeQuery(OFFER_INIT_COUNT_QUERY.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
                     .setParameter("counterEndDate", counterEndDate)
                     .getSingleResult();
 
@@ -85,7 +82,8 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
             result.setNbItemsToProcess(offerCountersNbr.longValue());
 
             @SuppressWarnings("unchecked")
-            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE)
+            List<BigInteger> offerIds = emWrapper.getEntityManager()
+                    .createNativeQuery(OFFERS_TO_INITILIZE.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
                     .setParameter("counterEndDate", counterEndDate)
                     .getResultList();
 
@@ -96,7 +94,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures.add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterEndDate, result, lastCurrentUser));
+                futures.add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterEndDate, TERMINATION_DELAY, result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -147,10 +145,14 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
         } else {
             date = new Date();
         }
-        // Set last day of month
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        // Set last day of month
+        int lastDay = cal.getActualMaximum(Calendar.DATE);
+        cal.set(year, month, lastDay, 23, 59, 59);
+        cal.set(Calendar.MILLISECOND, 0);
 
         return cal.getTime();
     }
