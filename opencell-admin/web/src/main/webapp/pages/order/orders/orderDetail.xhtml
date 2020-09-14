@@ -408,7 +408,7 @@
 
                                                         </hftl:decorateFormField>
 
-                                                        <hftl:decorateFormField fieldId="payment_method_#{itemStatus.index}" class="sub_payment_method"
+                                                        <hftl:decorateFormField fieldId="payment_method_#{itemStatus.index}"
                                                                                 label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD.characteristicName)]}"
                                                                                 rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.MODIFY}">
 
@@ -417,10 +417,12 @@
                                                                              required="#{false}"
                                                                              rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
                                                                 <hftl:objectConverter/>
-                                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                                <f:selectItem itemLabel="#{orderBean.getPaymentMethodById(itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD]).getPaymentType()}"
+                                                                              itemValue="#{orderBean.getPaymentMethodById(itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD]).getId()}"
+                                                                              rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD] != null}"/>
+                                                                <f:selectItem itemLabel="" itemValue="" rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD] == null}"/>
                                                                 <f:selectItems value="#{orderBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
                                                                                itemValue="#{elem['id']}"/>
-
                                                             </p:selectOneMenu>
                                                             <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_PAYMENT_METHOD]}"
                                                                           styleClass="field-value"

@@ -576,11 +576,11 @@ public class OrderApi extends BaseApi {
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
         subscriptionDto.setSeller(subscriptionSeller);
-        Long paymentMethodId = (Long) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_PAYMENT_METHOD.getCharacteristicName(),
-                Long.class, null);
-        if(Objects.nonNull(paymentMethodId)){
+        String paymentMethodId = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_PAYMENT_METHOD.getCharacteristicName(),
+                String.class, null);
+        if(Objects.nonNull(paymentMethodId) && !paymentMethodId.isBlank()){
             PaymentMethodDto paymentMethodDto = new PaymentMethodDto();
-            paymentMethodDto.setId(paymentMethodId);
+            paymentMethodDto.setId(Long.valueOf(paymentMethodId));
             subscriptionDto.setPaymentMethod(paymentMethodDto);
         }
         // instantiate and activate services

@@ -38,7 +38,6 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.HibernateProxyHelper;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -1333,8 +1332,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             UserAccount userAccount = userAccountService.findById(entity.getUserAccount().getId());
             List<PaymentMethod> paymentMethods = userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
             return paymentMethods.stream()
-                    .filter(paymentMethod -> paymentMethod instanceof HibernateProxy)
-                    .map(paymentMethod -> (PaymentMethod)((HibernateProxy) paymentMethod).getHibernateLazyInitializer().getImplementation())
+                    .map(paymentMethod -> paymentMethod instanceof HibernateProxy ? (PaymentMethod)((HibernateProxy) paymentMethod).getHibernateLazyInitializer().getImplementation() : paymentMethod)
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

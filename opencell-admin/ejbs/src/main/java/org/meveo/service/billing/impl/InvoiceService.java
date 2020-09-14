@@ -606,7 +606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
         PaymentMethod paymentMethod = defaultPaymentMethod;
         if (defaultPaymentMethod == null) {
-            paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+            defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
         }
 
         EntityManager em = getEntityManager();
@@ -632,7 +632,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(true, isDraft, null, null, null);
             }
 
-            paymentMethod = resolvePaymentMethod(billingAccount, billingCycle, paymentMethod, rt);
+            paymentMethod = resolvePaymentMethod(billingAccount, billingCycle, defaultPaymentMethod, rt);
 
             String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
@@ -663,7 +663,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
-    private PaymentMethod resolvePaymentMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod paymentMethod, RatedTransaction rt) {
+    private PaymentMethod resolvePaymentMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, RatedTransaction rt) {
         if(BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())){
             if(Objects.nonNull(rt.getSubscription().getPaymentMethod())){
                 return rt.getSubscription().getPaymentMethod();
@@ -674,7 +674,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && (!billingCycle.isSplitPerPaymentMethod() && Objects.nonNull(billingAccount.getPaymentMethod()))){
             return billingAccount.getPaymentMethod();
         }
-        return paymentMethod;
+        return defaultPaymentMethod;
     }
 
 
