@@ -120,9 +120,9 @@ public class SubscriptionImportService extends ImportService {
                 log.warn("failed to find offerTemplate ", e);
             }
         }
-        checkSubscription.offerTemplate = offerTemplate;
+        checkSubscription.setOfferTemplate(offerTemplate);
 
-        UserAccount userAccount = checkSubscription.userAccount;
+        UserAccount userAccount = checkSubscription.getUserAccount();
         if (userAccount == null) {
             userAccount = userAccountMap.get(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getUserAccountId()));
             if (userAccount == null) {
@@ -133,11 +133,11 @@ public class SubscriptionImportService extends ImportService {
                     log.error("failed to find userAccount", e);
                 }
             }
-            checkSubscription.userAccount = userAccount;
+            checkSubscription.setUserAccount(userAccount);
         }
         
         
-        Seller seller = checkSubscription.seller;
+        Seller seller = checkSubscription.getSeller();
         if (seller == null) {
             seller = sellerMap.get(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getSellerCode()));
             if (seller == null) {
@@ -148,20 +148,20 @@ public class SubscriptionImportService extends ImportService {
                     log.error("failed to find userAccount", e);
                 }
             }
-            checkSubscription.userAccount = userAccount;
+            checkSubscription.setUserAccount(userAccount);
         }        
         
         
         boolean ignoreCheck = jaxbSubscription.getIgnoreCheck() != null && jaxbSubscription.getIgnoreCheck().booleanValue();
         try {
             if (!ignoreCheck) {
-                checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
+                checkSubscription.setSubscription(subscriptionService.findByCode(jaxbSubscription.getCode()));
             }
         } catch (Exception e) {
             log.error("failed to find checkSubscription", e);
         }
 
-        Subscription subscription = checkSubscription.subscription;
+        Subscription subscription = checkSubscription.getSubscription();
         if (subscription != null) {
             if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
 
@@ -188,7 +188,7 @@ public class SubscriptionImportService extends ImportService {
         }
 
         subscription = new Subscription();
-        subscription.setOffer(checkSubscription.offerTemplate);
+        subscription.setOffer(checkSubscription.getOfferTemplate());
         subscription.setCode(jaxbSubscription.getCode());
         subscription.setDescription(jaxbSubscription.getDescription());
 
@@ -196,8 +196,8 @@ public class SubscriptionImportService extends ImportService {
         subscription.setEndAgreementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
         subscription.setStatusDate(DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-        subscription.setUserAccount(checkSubscription.userAccount);
-        subscription.setSeller(checkSubscription.seller);
+        subscription.setUserAccount(checkSubscription.getUserAccount());
+        subscription.setSeller(checkSubscription.getSeller());
         subscriptionService.create(subscription);
 
         if (jaxbSubscription.getCustomFields() != null) {
@@ -206,7 +206,7 @@ public class SubscriptionImportService extends ImportService {
 
         log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Created");
 
-        for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
+        for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.getServiceInsts()) {
             try {
                 ServiceTemplate serviceTemplate = null;
                 ServiceInstance serviceInstance = new ServiceInstance();
@@ -257,9 +257,9 @@ public class SubscriptionImportService extends ImportService {
             log.info("File:" + fileName + ", typeEntity:ServiceInstance, index:" + i + ", code:" + serviceInst.getCode() + ", status:Actived");
         }
 
-        log.info("accessPoints.size=" + checkSubscription.accessPoints.size());
+        log.info("accessPoints.size=" + checkSubscription.getAccessPoints().size());
 
-        for (Access jaxbAccessPoint : checkSubscription.accessPoints) {
+        for (Access jaxbAccessPoint : checkSubscription.getAccessPoints()) {
             org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
             access.setSubscription(subscription);
             access.setAccessUserId(jaxbAccessPoint.getAccessUserId());
@@ -306,8 +306,8 @@ public class SubscriptionImportService extends ImportService {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void activateServices(CheckedSubscription checkSubscription, org.meveo.model.jaxb.subscription.Subscription subscrip) throws SubscriptionServiceException {
-        if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {
-            for (ServiceInstance serviceInstance : checkSubscription.subscription.getServiceInstances()) {
+        if (checkSubscription.getSubscription() != null && checkSubscription.getSubscription().getServiceInstances().size() > 0) {
+            for (ServiceInstance serviceInstance : checkSubscription.getSubscription().getServiceInstances()) {
                 try {
                     serviceInstanceService.serviceActivation(serviceInstance);
                 } catch (Exception e) {

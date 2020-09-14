@@ -360,7 +360,7 @@ public class ImportSubscriptionsJobBean {
                     return null;
                 }
 
-                checkSubscription.serviceInsts.add(serviceInst);
+                checkSubscription.getServiceInsts().add(serviceInst);
             }
 
             if (jaxbSubscription.getAccesses() != null) {
@@ -370,7 +370,7 @@ public class ImportSubscriptionsJobBean {
                         return null;
                     }
 
-                    checkSubscription.accessPoints.add(jaxbAccess);
+                    checkSubscription.getAccessPoints().add(jaxbAccess);
                 }
             }
         }

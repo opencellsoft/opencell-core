@@ -39,7 +39,7 @@ public class BusinessEntityResponseDto extends BaseResponse {
     private static final long serialVersionUID = -7750620521980139640L;
 
     /** The business entities. */
-    public List<BusinessEntityDto> businessEntities;
+    private List<BusinessEntityDto> businessEntities;
 
     /**
      * Gets the business entities.

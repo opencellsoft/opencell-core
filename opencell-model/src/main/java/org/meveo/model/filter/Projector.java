@@ -63,7 +63,7 @@ public class Projector extends BusinessEntity {
     private List<String> ignoreIfNotFoundForeignKeys = new ArrayList<String>();
 
     @OneToOne(mappedBy = "projector")
-    public FilterSelector filterSelector;
+    private FilterSelector filterSelector;
 
     public List<String> getDisplayFields() {
         return displayFields;

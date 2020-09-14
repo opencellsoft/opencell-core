@@ -418,8 +418,8 @@ public class AccountImportService extends ImportService {
                     if (checkSubscription == null) {
                         continue;
                     }
-                    checkSubscription.userAccount = userAccount;
-                    checkSubscription.seller = seller;
+                    checkSubscription.setUserAccount(userAccount);
+                    checkSubscription.setSeller(seller);
                     nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription, jaxbSubscription, "", i);
                 } catch (ImportIgnoredException ie) {
 
@@ -501,7 +501,7 @@ public class AccountImportService extends ImportService {
                     return null;
                 }
 
-                checkSubscription.serviceInsts.add(serviceInst);
+                checkSubscription.getServiceInsts().add(serviceInst);
             }
 
             if (jaxbSubscription.getAccesses() != null) {
@@ -510,7 +510,7 @@ public class AccountImportService extends ImportService {
                         return null;
                     }
 
-                    checkSubscription.accessPoints.add(jaxbAccess);
+                    checkSubscription.getAccessPoints().add(jaxbAccess);
                 }
             }
         }
