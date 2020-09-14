@@ -25,12 +25,62 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.jaxb.subscription.Access;
+import org.meveo.model.jaxb.subscription.ServiceInstance;
 
 public class CheckedSubscription {
-	public OfferTemplate offerTemplate;
-	public UserAccount userAccount;
-	public Subscription subscription;
-	public Seller seller;
-	public List<org.meveo.model.jaxb.subscription.ServiceInstance> serviceInsts = new ArrayList<org.meveo.model.jaxb.subscription.ServiceInstance>();
-	public List<org.meveo.model.jaxb.subscription.Access> accessPoints = new ArrayList<org.meveo.model.jaxb.subscription.Access>();
+	private OfferTemplate offerTemplate;
+	private UserAccount userAccount;
+	private Subscription subscription;
+	private Seller seller;
+	private List<org.meveo.model.jaxb.subscription.ServiceInstance> serviceInsts = new ArrayList<org.meveo.model.jaxb.subscription.ServiceInstance>();
+	private List<org.meveo.model.jaxb.subscription.Access> accessPoints = new ArrayList<org.meveo.model.jaxb.subscription.Access>();
+
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	public List<ServiceInstance> getServiceInsts() {
+		return serviceInsts;
+	}
+
+	public void setServiceInsts(List<ServiceInstance> serviceInsts) {
+		this.serviceInsts = serviceInsts;
+	}
+
+	public List<Access> getAccessPoints() {
+		return accessPoints;
+	}
+
+	public void setAccessPoints(List<Access> accessPoints) {
+		this.accessPoints = accessPoints;
+	}
 }

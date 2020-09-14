@@ -48,11 +48,11 @@ public class FileProducer {
     @Inject
     protected Logger log;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
+    protected Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public JasperReport jasperReport;
+    private JasperReport jasperReport;
 
-    public JasperPrint jasperPrint;
+    private JasperPrint jasperPrint;
 
     @Inject
     @ApplicationProvider
