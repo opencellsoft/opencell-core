@@ -101,7 +101,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    public static long DEFAULT_MAX_LENGTH_STRING = 50L;
+    public static final long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
     private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
