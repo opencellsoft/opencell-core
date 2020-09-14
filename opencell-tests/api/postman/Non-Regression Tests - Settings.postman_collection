@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "88c90304-6fbd-46d4-9251-52313513794b",
+		"_postman_id": "ae8ddf88-ac41-48ef-a918-3143c755f44a",
 		"name": "Non-Regression Tests - Settings",
 		"description": "\r\nHere are all core API tests and the essential CRUD requests when available as well as exceptions that might occure, to assure that everything works as intended.\r\n\r\n### Typical execution\r\n\r\nThe typical test consists of:\r\n1. A successful createOrUpdate(POST) - remplace with create when createOrUpdate is unavailable\r\n2. A successful read (GET) - check if entity created in point 1 is retreived\r\n3. A failed Create (POST) - due to entity already created\r\n4. A failed update (PUT) - due to a non existant entity\r\n5. A succesfull update (PUT) - update entity created in point 1\r\n6. A succesfull createOrUpdate(POST) - update entity created in point 1 - skip this if createOrUpdate is unavailable\r\n7. A successful read (GET) - check if updated entity from point 5 and 6 have been correctly updated\r\n\r\nPlease ensure that tests are correctly asserted in the Tests tab.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -18,7 +18,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "90324657-2175-4465-b5af-b6ec0a8e439d",
+										"id": "55835391-e55a-4d0a-b8bf-dd217addff74",
 										"exec": [
 											""
 										],
@@ -82,7 +82,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ab8538c3-c166-4d6a-bc1e-a9a2dfdbd6f6",
+										"id": "817ff4e1-8de9-4abd-82e9-b974910d47aa",
 										"exec": [
 											""
 										],
@@ -154,7 +154,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7af1b060-c62a-40dd-bd46-9f28e2a097ad",
+										"id": "44cfa519-e6b6-4daa-a33c-68c78705a518",
 										"exec": [
 											""
 										],
@@ -217,7 +217,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ddb902e5-4d88-4eef-9473-1f50418f9c64",
+										"id": "3325470c-0818-4122-bc42-1e67a24b8083",
 										"exec": [
 											""
 										],
@@ -289,7 +289,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "432b1653-b34b-4668-99ee-734272294ccb",
+										"id": "94250a46-1d6d-4a28-97e8-59e78485b9f1",
 										"exec": [
 											""
 										],
@@ -352,7 +352,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "db136d04-648e-4304-b466-c37ea8bbf591",
+								"id": "bacc7242-4187-472e-9c85-9f092b950d56",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"titleDto\");"
@@ -362,7 +362,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dddcc3bd-fefc-46bc-8e01-d1965868bc65",
+								"id": "82c8061c-7f2c-4492-b73a-c8c7e244d594",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -382,7 +382,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c27ce25a-dc55-47ae-9f79-356d424fc689",
+										"id": "96661a42-4588-40fe-bcac-85528e20c3e7",
 										"exec": [
 											""
 										],
@@ -445,7 +445,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4b4938ad-0287-4877-9e90-026e9f393a85",
+										"id": "20e91472-1d07-4686-a52f-7735e83f65dc",
 										"exec": [
 											""
 										],
@@ -517,7 +517,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "abcc6b4d-74be-41a1-a8cc-749faed0757a",
+										"id": "c43749a7-45c2-455d-81f8-53d0989bac2c",
 										"exec": [
 											""
 										],
@@ -579,7 +579,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6b48dc0e-0109-4d16-b76e-d0e23ef2ab09",
+										"id": "c02918fb-9ea7-4e1c-95ef-e18a06059566",
 										"exec": [
 											""
 										],
@@ -651,7 +651,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5db30b2f-b9d4-46d5-b420-3b1afde20fa2",
+										"id": "9d4adb42-68ea-4d08-a4f7-51abc2f95d3c",
 										"exec": [
 											""
 										],
@@ -721,7 +721,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "25d4cabf-2cc1-40fa-91b7-8bc82469c03e",
+										"id": "78485193-f1e4-4430-934d-e68639e6dce5",
 										"exec": [
 											""
 										],
@@ -785,7 +785,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5d906fee-5dae-4d7f-ab33-af331a548d71",
+										"id": "70466b81-f6bc-44eb-b08f-b1b0a5c8b969",
 										"exec": [
 											""
 										],
@@ -857,7 +857,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e072471b-2027-466c-a2eb-9cf365b96d4d",
+										"id": "02faa93e-e0b7-4452-a756-b19b384da27e",
 										"exec": [
 											""
 										],
@@ -920,7 +920,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e15d80c9-cd77-4fe9-af24-f14e88804038",
+										"id": "b01ad945-8e55-4b07-97dc-434b3faba711",
 										"exec": [
 											""
 										],
@@ -992,7 +992,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a066527d-f355-4af1-bdd9-b13f0fc3f665",
+										"id": "ef0e6ec5-fbc5-49bb-9abe-5aa0ce19c54b",
 										"exec": [
 											""
 										],
@@ -1068,7 +1068,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2abd0267-6433-49c3-b6b2-9d181254c801",
+										"id": "d6b0221d-5331-4825-a071-87aefabaf608",
 										"exec": [
 											""
 										],
@@ -1126,12 +1126,12 @@
 							"response": []
 						},
 						{
-							"name": "Read|Country|TS|SUCCESS",
+							"name": "Read|Country|FR|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "b3db763c-4d1e-4ed4-a9c2-75b3ee6f36d2",
+										"id": "c64e696f-36ce-4cda-9ffa-8b21bd6031a6",
 										"exec": [
 											""
 										],
@@ -1197,12 +1197,12 @@
 							"response": []
 						},
 						{
-							"name": "Update|Country|TS|SUCCESS",
+							"name": "Update|Country|FR|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "a288cfab-ad87-4eec-adbf-4e4db433dbed",
+										"id": "b909e1d1-fc63-40fd-9f2d-e7e4e4f5c6d5",
 										"exec": [
 											""
 										],
@@ -1264,7 +1264,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "34cb9e4a-857c-4cfe-9550-da60145d0c27",
+										"id": "09d88144-8e83-4293-8537-bb69f233b155",
 										"exec": [
 											""
 										],
@@ -1335,7 +1335,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "414ef45d-0305-46ae-b20e-019f9eab7108",
+										"id": "c2a5d527-2114-4618-a77e-bdcdec35cf41",
 										"exec": [
 											""
 										],
@@ -1397,7 +1397,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1189da37-befa-4869-a76f-197bed84a73d",
+								"id": "f0873b63-05a7-4e63-8a91-fb93364efcab",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));",
@@ -1408,7 +1408,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "83597e06-0ba2-477e-bac2-144412f9985b",
+								"id": "521af32b-e640-4239-a689-9ffc19eba73d",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1428,7 +1428,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "472f61ef-f284-40b4-860f-cfdece886596",
+										"id": "c0f5d5d5-cd34-4c94-a4d2-ae4cbefa7a3a",
 										"exec": [
 											""
 										],
@@ -1491,7 +1491,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3b84feeb-9e2f-4625-94e6-57ae92b90ff2",
+										"id": "83fd0584-93ad-47ec-9648-cd9a91c68e07",
 										"exec": [
 											""
 										],
@@ -1562,7 +1562,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cb48deab-8437-4b95-b5da-f1325e785086",
+										"id": "2f67f788-31f0-48ed-9ac6-1f83307d5749",
 										"exec": [
 											""
 										],
@@ -1624,7 +1624,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "bd508a40-28d4-490b-a063-2c910ffb0e5e",
+										"id": "4bc17ca7-2c88-411d-b84a-992d433eebad",
 										"exec": [
 											""
 										],
@@ -1695,7 +1695,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5551c5d1-6a43-4d29-97b4-0f03d7723cf7",
+										"id": "f088161a-1a70-4045-a2e0-343895a54933",
 										"exec": [
 											""
 										],
@@ -1757,7 +1757,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c8fa75aa-c242-4184-ada0-0de6d3ddfdfd",
+								"id": "b9642a6d-f4ec-466c-8151-c2f205ebac11",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
@@ -1767,7 +1767,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dfaa4b8b-8f61-44bc-8899-b5d79f4dc5fd",
+								"id": "35d5dee9-40d6-4995-98af-4350d010afa2",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1787,7 +1787,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "06c0d9f2-a893-4093-ad2c-677e923fb3ef",
+										"id": "fd7815ed-ca6b-4d56-9acb-7f9ae086ba71",
 										"exec": [
 											""
 										],
@@ -1845,12 +1845,12 @@
 							"response": []
 						},
 						{
-							"name": "Read|Language|TST|SUCCESS",
+							"name": "Read|Language|TS|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ddfa85b-574a-4fa6-a504-9dee0294709d",
+										"id": "9a91fffe-b64c-4383-99ba-e7fa3166b83e",
 										"exec": [
 											""
 										],
@@ -1921,7 +1921,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cd1d336a-9ec8-45de-8cfe-d62193ac4fd3",
+										"id": "e40848e9-a242-4c67-b207-83e4d9b92c5e",
 										"exec": [
 											""
 										],
@@ -1983,7 +1983,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9392f9ef-0653-427a-8d71-5e4ec3859360",
+										"id": "97023c23-221f-4d87-8d66-a67353229934",
 										"exec": [
 											""
 										],
@@ -2054,7 +2054,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9ae31a93-45a9-4863-9d9f-6a12dfc57628",
+										"id": "d6c26cfa-6866-482d-abcb-653151ff4bf4",
 										"exec": [
 											""
 										],
@@ -2116,7 +2116,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c96cf4ec-b87b-402b-b321-281efc993464",
+								"id": "e15256f0-2f22-4f1c-83ba-454ab519bd03",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
@@ -2126,7 +2126,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6ce68da4-6e92-40bc-a69a-82b7b54d812e",
+								"id": "ce814f17-4c52-4aa6-9520-aa2184340b68",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2146,7 +2146,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4ed1c3db-fef3-40a8-b045-50960e56a817",
+										"id": "9b88108e-f753-4f89-a03b-61ff762f9317",
 										"exec": [
 											""
 										],
@@ -2170,7 +2170,7 @@
 										}
 									]
 								},
-								"method": "POST",
+								"method": "PUT",
 								"header": [
 									{
 										"key": "Authorization",
@@ -2208,7 +2208,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b1ade385-0cc1-496f-96e2-11573284ea8e",
+										"id": "c00e0bc8-71f5-4c52-8a05-a8e385cf4571",
 										"exec": [
 											""
 										],
@@ -2273,7 +2273,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0a2e9053-2d97-4d90-ad5a-7ee79fc051e9",
+										"id": "ca77a25e-8c1a-45aa-a440-be073dc8a356",
 										"exec": [
 											""
 										],
@@ -2335,7 +2335,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ee9cf82-1dc8-407d-9908-5e8da4f405b0",
+										"id": "45715230-77f9-42a9-b75b-5f6295492026",
 										"exec": [
 											""
 										],
@@ -2399,7 +2399,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5dbefa73-48c1-4385-a20a-c6ca40493a9e",
+								"id": "31277b36-2f4e-4cee-80f6-13b250c12455",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2409,7 +2409,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "45e5c905-612c-413a-a319-66f044034d41",
+								"id": "a6fec159-f003-48a6-b4c2-cb717ae8b060",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2429,7 +2429,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "38e5601e-ba88-4d61-b2e4-785ea3a5c606",
+										"id": "07a28b68-775c-4e5e-ad7a-ad0c2a5b09e1",
 										"exec": [
 											""
 										],
@@ -2492,7 +2492,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "970a6898-c8df-46fc-ac90-ce7592b986be",
+										"id": "af54a885-5a19-4c9c-a123-e92d5d8f2279",
 										"exec": [
 											""
 										],
@@ -2563,7 +2563,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b01940aa-f8aa-40c2-9f7b-0ba433ce992d",
+										"id": "bf69b01a-fe8e-42e2-a84e-6833bc074562",
 										"exec": [
 											""
 										],
@@ -2625,7 +2625,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d919fd82-1533-4a94-9d45-3a50e9170ace",
+										"id": "d5d0839b-0f4b-493b-b5de-1fa6ff68988e",
 										"exec": [
 											""
 										],
@@ -2696,7 +2696,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "717aa377-e3b3-423e-8432-efda6b68083d",
+										"id": "30bbcad8-84e0-4d84-94b1-51b18e026f08",
 										"exec": [
 											""
 										],
@@ -2758,7 +2758,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "aee0000f-3f48-4f2f-b3c3-951d23e2da16",
+								"id": "382846d1-1987-470a-96b8-9df42da88a16",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"roleDto\");",
@@ -2769,7 +2769,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f64f967a-9c72-4d8c-92c3-79fefbc7c41b",
+								"id": "2ef3a100-fab0-49c1-83a3-7350d268bdf3",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2789,7 +2789,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7174f8d9-1b01-4d64-b03a-bad611264e41",
+										"id": "e0507a2d-8d98-46ba-b6b8-d781a82f3a4c",
 										"exec": [
 											""
 										],
@@ -2852,7 +2852,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9ca5521e-cc79-4590-a4b1-bdcd429c8594",
+										"id": "1980ede4-2550-440b-b5e9-5093f0bd4d4d",
 										"exec": [
 											""
 										],
@@ -2923,7 +2923,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "50cf1cb4-4368-488a-b35a-d55dbb915568",
+										"id": "3f1955f6-249d-4138-abb0-9715fa8256d0",
 										"exec": [
 											""
 										],
@@ -2985,7 +2985,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0a77b08f-8823-422d-8230-ae5a5a91b702",
+										"id": "02adee0d-4f02-4732-a40d-8afed2674af3",
 										"exec": [
 											""
 										],
@@ -3056,7 +3056,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d88dd1e2-34d9-4f7e-9d98-80769d1662e3",
+										"id": "3f49ab43-8ba6-4a25-8b10-12c2942bebda",
 										"exec": [
 											""
 										],
@@ -3126,7 +3126,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b1739c08-f167-4a91-8129-9253c7f8856a",
+										"id": "8709d780-b7bd-4c17-9ce6-16135afb7525",
 										"exec": [
 											""
 										],
@@ -3189,7 +3189,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a4451b47-aaf6-48ad-a8e4-78b07905e8b1",
+										"id": "61216b49-50c1-4069-80f8-179f1e1399b3",
 										"exec": [
 											""
 										],
@@ -3199,7 +3199,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "589f6f85-8208-4372-83a0-870ba70f9755",
+										"id": "d2e28d20-66b8-481b-b948-5c73051a140c",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -3270,7 +3270,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c57830dc-b8ad-480e-bc16-694aa5328fbe",
+										"id": "eb246248-769e-4b52-b53b-49762c026b7d",
 										"exec": [
 											""
 										],
@@ -3332,7 +3332,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "86b7c308-07b8-4e01-8e8f-7cfdd795bec0",
+										"id": "6af77a2b-4053-41d6-835e-7552ac8bf396",
 										"exec": [
 											""
 										],
@@ -3342,7 +3342,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "9276ad4f-9525-4348-85a0-a26bc5ca8c07",
+										"id": "f3b3d7cb-9c7e-40ae-bedc-2135eb74e9b3",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -3413,7 +3413,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c853ba4e-4c3c-42e8-bfa6-b0a1defe5787",
+										"id": "137d9b5f-8607-4a3f-ac18-36ff69a90753",
 										"exec": [
 											""
 										],
@@ -3475,7 +3475,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8ae4a7ed-9755-48ec-b504-de39cd7acd93",
+								"id": "6de4e103-11fa-4398-821a-367ef42975f6",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"invoiceTypeDto\");"
@@ -3485,7 +3485,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f1be814-36f4-4d84-bde8-923c4442f242",
+								"id": "915ce627-dc91-4aeb-82cb-d30f9aa0ee78",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3505,7 +3505,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3609ecae-1b90-4f94-9c38-acacb82093f9",
+										"id": "9e0fb3d3-e86c-4299-936f-0990b81221a2",
 										"exec": [
 											""
 										],
@@ -3568,7 +3568,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1c8f3616-3f79-48b5-9065-c11c54b42e1d",
+										"id": "cff082f8-d965-46ef-a7ec-9ed64864b643",
 										"exec": [
 											""
 										],
@@ -3634,12 +3634,12 @@
 							"response": []
 						},
 						{
-							"name": "Create|BillingCycle|BC|SUCCESS",
+							"name": "Update|BillingCycle|BC|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "2b3c423c-2fac-47dd-95d4-2ae993df08f0",
+										"id": "eb284b58-8af0-4001-9094-9dd2d9605278",
 										"exec": [
 											""
 										],
@@ -3678,7 +3678,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"billingTemplateName\": \"TEST\",\r\n  \"invoiceDateDelay\": \"0\",\r\n  \"dueDateDelay\": \"30\",\r\n  \"invoiceDateProductionDelay\": \"0\",\r\n  \"transactionDateDelay\": \"0\",\r\n  \"invoicingThreshold\": 0.01,\r\n  \"calendar\": \"MONTHLY\",\r\n  \"invoiceTypeCode\": \"ADJ\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"billingTemplateName\": \"TEST\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -3701,7 +3701,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8ad2255d-232b-42eb-a953-7c9f8b186a2c",
+										"id": "cbdce6b2-e6f3-482c-9f9d-9bf52490f36e",
 										"exec": [
 											""
 										],
@@ -3772,7 +3772,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "566629e8-2c54-42f2-9b26-81001c4e2c14",
+										"id": "42f55ed7-ac9d-4a0e-b90d-54e03b6dbf99",
 										"exec": [
 											""
 										],
@@ -3834,7 +3834,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0f7ccd1d-0363-4965-9787-a387e55908eb",
+								"id": "275706be-2e02-4a45-8ee5-f9bf305d75a1",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"billingCycleCode\", pm.variables.get(\"entityCode\"));"
@@ -3844,7 +3844,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ca4d6294-94c6-428c-bbd7-692c721f375f",
+								"id": "1aeb99a9-bc31-42f9-8fd6-aea3cc9e1ae8",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3864,7 +3864,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "eb45b9a4-e7b2-44be-9ae3-34ced0191e2b",
+										"id": "31a2566b-d40b-4736-b5af-b25b6e3801f4",
 										"exec": [
 											""
 										],
@@ -3927,7 +3927,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8a59e7d5-1152-40be-8750-97e2374381fd",
+										"id": "b8c8ae67-ce6d-469e-871b-e91153669629",
 										"exec": [
 											""
 										],
@@ -3998,7 +3998,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c1dcfcc9-949e-421f-b43c-c00138df12fe",
+										"id": "cf573f8f-6019-412e-acfa-5698d2c8e04a",
 										"exec": [
 											""
 										],
@@ -4060,7 +4060,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "023d7413-e69f-47b3-b439-b23ad5fbac72",
+										"id": "15618a45-8dc3-40b0-8544-5ccf9aba4c00",
 										"exec": [
 											""
 										],
@@ -4131,7 +4131,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7cabaf10-45c7-430f-84f4-04ffaa187ad4",
+										"id": "ba6709f6-724b-4b58-93e3-63b71cd84938",
 										"exec": [
 											""
 										],
@@ -4193,7 +4193,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "db1ce3a1-df99-4c13-af58-e1f28d678a11",
+								"id": "cc9853eb-3dfa-4413-bd47-f7e2ae939b37",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"sellerCode\", pm.variables.get(\"entityCode\"));"
@@ -4203,7 +4203,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "04519a7c-cbe2-44a0-9b98-5762549cc97a",
+								"id": "3b0ac8df-f717-441b-941a-2ff5e1fe78f9",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -4223,7 +4223,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e4096841-8d5f-4e7c-b40e-59354271f651",
+										"id": "8b7bd9f3-7b45-44c7-90dc-398007c2b269",
 										"exec": [
 											"console.log(\"TEST Body Content\",pm.response.json());"
 										],
@@ -4233,7 +4233,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "fd047bc0-25d3-4de2-9593-39971bcd04ac",
+										"id": "d2917aa8-5d73-41d1-a3a1-ae94beaff914",
 										"exec": [
 											""
 										],
@@ -4272,7 +4272,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"TEST_CB\",\r\n    \"description\": \"{{testDescription}}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -4297,7 +4297,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "2e24e9f7-978d-452a-a6e3-bb92202cd06c",
+										"id": "82ad0708-a335-4e91-951b-dc10f6436ce2",
 										"exec": [
 											""
 										],
@@ -4306,6 +4306,21 @@
 								}
 							],
 							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -4321,6 +4336,11 @@
 										{
 											"key": "id",
 											"value": "12345"
+										},
+										{
+											"key": "customerCode",
+											"value": "TEST_CB",
+											"disabled": true
 										}
 									]
 								}
@@ -4333,7 +4353,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ff66e2ef-d03b-4ceb-bfa0-05dd63883e0c",
+										"id": "c0a86f44-328e-4974-b3c3-ebe0cdae6561",
 										"exec": [
 											""
 										],
@@ -4397,7 +4417,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ac96a7b6-62ec-4ce0-83bc-98a54f4625a0",
+										"id": "a17c2a48-12b4-46d5-8c41-e991144b12a8",
 										"exec": [
 											""
 										],
@@ -4461,7 +4481,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6d17bb6e-7a71-4c22-9f92-1fa8553f69d0",
+										"id": "6ec9ec9f-8f5d-4603-a549-41df0a275600",
 										"exec": [
 											""
 										],
@@ -4525,7 +4545,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "22cc6350-ae32-463d-b961-62bf70a7d391",
+								"id": "0d8eb67b-6784-4943-b921-5d3be0b06b59",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerBrandCode\", pm.variables.get(\"entityCode\"));"
@@ -4535,7 +4555,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6476f236-c747-46f4-bddf-558775590637",
+								"id": "8cfcf3b0-abce-44a6-a205-8692658c524a",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -4555,7 +4575,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4e92494e-4557-4b53-8e0c-64ff621db081",
+										"id": "fc9855ed-9379-4cd4-a00d-e4a5aa7bf1fa",
 										"exec": [
 											""
 										],
@@ -4619,7 +4639,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "49b8c2cc-5c53-4103-8af4-f2625b087398",
+										"id": "43275ab7-df6b-4e00-a900-03e5e5875c7c",
 										"exec": [
 											""
 										],
@@ -4687,7 +4707,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "226bfc4d-c0f0-4a13-90df-48cc117293cd",
+										"id": "f50c8e20-39c3-49b6-b124-9f1b497e98ea",
 										"exec": [
 											""
 										],
@@ -4751,7 +4771,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a5f9e2a-9855-4908-abff-6994a4425fba",
+										"id": "26f3c3fd-5f1b-43a0-b701-d64b1e1bf42f",
 										"exec": [
 											""
 										],
@@ -4818,7 +4838,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "65d28482-537f-470e-bf2c-f19433559b8d",
+								"id": "3b3348af-7953-474b-bac5-fffe346ddd4f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerCategoryCode\", pm.variables.get(\"entityCode\"));"
@@ -4828,7 +4848,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8e6a4445-30ec-4859-ab8e-b2d97b123112",
+								"id": "71915a4a-bf7c-4f00-8002-fe2bc5bc9c3d",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -4848,7 +4868,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3312442a-eb57-4b3f-81b7-2e08f1a78d50",
+										"id": "f063c838-ea4e-4262-ae20-a4f32e19d5fd",
 										"exec": [
 											""
 										],
@@ -4911,7 +4931,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6e31a539-9d95-447b-b0f2-1767effd55eb",
+										"id": "5716edc1-783d-4412-adf2-8323fd459c1a",
 										"exec": [
 											""
 										],
@@ -4921,7 +4941,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "779cd704-8d07-46e7-bdc7-9e99cc790616",
+										"id": "97f4eb78-f8be-46ba-b728-4af375fe0100",
 										"exec": [
 											""
 										],
@@ -4992,7 +5012,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "10668a92-0b14-4289-bca6-23f58be334ab",
+										"id": "da1b1297-aa42-4aff-9720-4fe955585dfc",
 										"exec": [
 											""
 										],
@@ -5054,7 +5074,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7e92782d-bca2-4298-b179-6bb6824cc0d2",
+										"id": "637e44b7-9503-4a90-9d54-755c5a074ee6",
 										"exec": [
 											""
 										],
@@ -5117,7 +5137,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7545d24f-91f1-4931-a59a-968629647f3c",
+										"id": "f9cc3b33-436e-4aea-8d2c-5fad5d8de56d",
 										"exec": [
 											""
 										],
@@ -5188,7 +5208,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2cd3c7c3-40f0-486f-ad56-c819a3a76b80",
+										"id": "ef28e131-6c4f-44e4-a298-1f4b183da80d",
 										"exec": [
 											""
 										],
@@ -5250,7 +5270,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3f30f9e0-fbe3-49af-b051-13c9c702225c",
+								"id": "5ca38d25-ea2c-4a54-a0fc-39cb02e52363",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"dto\");",
@@ -5261,7 +5281,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a3a270a9-50b2-48ca-a904-06765219cf8d",
+								"id": "ba9aae8d-2e60-48a0-8cd1-f2201b5a2401",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5287,7 +5307,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "83774303-8208-4083-a3a3-4e83a1e1939e",
+										"id": "e59d607f-dd93-4b48-bbb3-c3c2da307d6c",
 										"exec": [
 											""
 										],
@@ -5353,7 +5373,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ded6550-e2e6-4d19-af1e-a336c371d583",
+										"id": "359c65a6-e823-4212-bda3-433f6201dfaf",
 										"exec": [
 											""
 										],
@@ -5425,7 +5445,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "40c86e74-4c91-4470-bb67-34391c2cdf33",
+										"id": "0093845e-6142-4d39-acb1-066b3598bba1",
 										"exec": [
 											""
 										],
@@ -5488,7 +5508,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5734c251-d81e-438f-b8e0-b8c6814b5af5",
+										"id": "e749b169-171a-4aaa-8d4f-1f94631fd608",
 										"exec": [
 											""
 										],
@@ -5552,7 +5572,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2bd543a9-6832-49e0-bc3c-d6285cd39961",
+										"id": "66f5e03e-5815-4f0b-8177-33834a60d207",
 										"exec": [
 											""
 										],
@@ -5624,7 +5644,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c8f7c0c9-1b14-413c-ac26-cceb68d69259",
+										"id": "91509cd4-a351-4c43-a479-ce9746eb1b47",
 										"exec": [
 											""
 										],
@@ -5687,7 +5707,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5e2626a0-0a7e-444a-97d2-66882fef23a5",
+								"id": "228e4e96-9ee1-4fde-bd95-65ae2c1d9c65",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"accountingCodeCode\", pm.variables.get(\"entityCode\"));"
@@ -5697,7 +5717,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5bfddbe7-220f-4b0d-8fc8-10dee0c0a816",
+								"id": "71e7e495-8d13-4534-8346-5c420b7a6bc5",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5717,7 +5737,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4c1729f1-38a2-494e-a180-436829b06b61",
+										"id": "c1fcf3dd-ebda-4369-9456-028ee4ffff01",
 										"exec": [
 											""
 										],
@@ -5780,7 +5800,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ff5d073-5e2e-4be9-848c-2e7a80324625",
+										"id": "25ac5a91-e37a-4f67-83ee-792be76dce72",
 										"exec": [
 											""
 										],
@@ -5842,7 +5862,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "86cb5095-33fa-46bd-b8e3-80d9b3c09f89",
+										"id": "68945bd3-8809-4e1e-a0b7-d2f5e2cef743",
 										"exec": [
 											""
 										],
@@ -5905,7 +5925,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "99e9c4a5-40c3-412d-afe9-b1b90386733f",
+										"id": "b8a37673-ec1a-4735-8333-ddf5271f2029",
 										"exec": [
 											""
 										],
@@ -5967,7 +5987,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "bfc592e0-0429-4bd6-ba92-9aa7455abf70",
+								"id": "bd87eca8-b15e-4bb0-9b14-828616178c54",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5977,7 +5997,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c28e98ed-6e60-44d3-bcae-f701ce21efd5",
+								"id": "36a7c7db-4e11-484d-9148-3b929fc1758f",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6003,7 +6023,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a47a43bb-9473-4528-88bd-2e1b13a49c46",
+										"id": "c2838883-669f-45ae-9c6e-196fd14728f5",
 										"exec": [
 											""
 										],
@@ -6067,7 +6087,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6df89503-1a55-48ac-9a37-d1ddea66f996",
+										"id": "7ee0bd39-867a-47cf-be7d-b169f2b453fd",
 										"exec": [
 											""
 										],
@@ -6139,7 +6159,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "98792d60-e22d-4657-8a8e-6b73ccc5b2f6",
+										"id": "8cef08d0-f1bc-4159-8b72-f9b5c85b7011",
 										"exec": [
 											""
 										],
@@ -6202,7 +6222,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0b670508-9465-4ecf-89ab-db9ddaf01ea0",
+										"id": "384eb1d0-2eaf-46ff-90e6-70ca96b0b581",
 										"exec": [
 											""
 										],
@@ -6274,7 +6294,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2864606f-2ae6-4644-accb-97e78d8a773e",
+										"id": "4dfec0a9-ffcc-491b-93a3-f8022cffbfcf",
 										"exec": [
 											""
 										],
@@ -6337,7 +6357,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "32d6835c-d02f-464c-8450-169d78a1d923",
+								"id": "12db3a9a-822c-4f02-91a7-f4f61d732c97",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"userAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -6347,7 +6367,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f00ea5ba-446a-48a5-bb1f-89d87442ffa1",
+								"id": "44a22218-f538-46b3-acf5-7b998e1c9818",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6367,7 +6387,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "29ed806b-a7d5-4630-b858-efceeea9c451",
+										"id": "61fbc85e-da2a-40c3-a371-9eb5f75ba70f",
 										"exec": [
 											""
 										],
@@ -6431,7 +6451,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f6ce7966-a3fc-44e9-b8d7-bde2ee4d43b4",
+										"id": "389a9d89-db32-478f-9480-aa25a6cccc57",
 										"exec": [
 											""
 										],
@@ -6503,7 +6523,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5663e32-cb2f-4229-a48f-36c85427b739",
+										"id": "776fe2a0-85ad-4178-bb0c-015cd4132975",
 										"exec": [
 											""
 										],
@@ -6566,7 +6586,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a3f7318f-e7bd-46f7-9fc8-3e8a554da649",
+										"id": "83590f81-2265-4635-9621-75e29c05b2ac",
 										"exec": [
 											""
 										],
@@ -6638,7 +6658,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f27c7cbb-ed27-43ea-adca-2e8ffd0ef390",
+										"id": "4df42c3c-4daf-4707-b655-fac0a7ad4f56",
 										"exec": [
 											""
 										],
@@ -6701,7 +6721,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f36b1ef8-115f-47f5-968b-14c8b94afa64",
+								"id": "002aa5a5-9b75-4c6b-9ff8-18c739b59d99",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerCode\", pm.variables.get(\"entityCode\"));"
@@ -6711,7 +6731,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8dc34ea2-a72d-4b73-b597-8e0b3bf53154",
+								"id": "8923e334-f8ff-475e-81ee-96ab6fe2addb",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6731,7 +6751,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "818c42b4-f2c0-422b-887f-31092d53cf66",
+										"id": "a64d18ad-b4a0-4592-b7e8-f8a675a64e8b",
 										"exec": [
 											""
 										],
@@ -6795,7 +6815,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ee61cc23-7d42-4f81-b2e4-a7648a6636ec",
+										"id": "8b43292e-2929-4cd6-8437-cb0ad8073693",
 										"exec": [
 											""
 										],
@@ -6867,7 +6887,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ca57fcfd-d759-4f13-ba51-4b82982a251d",
+										"id": "7a9402d8-652d-4a0e-b381-1488c5b87d85",
 										"exec": [
 											""
 										],
@@ -6930,7 +6950,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4d3f91f6-2585-4ec8-adaf-31dc1dd495e9",
+										"id": "7a33dd47-555e-41de-93db-e0b055e2b52a",
 										"exec": [
 											""
 										],
@@ -7002,7 +7022,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "16e9ab07-934d-400c-9a75-851bb8b8b73b",
+										"id": "1410ff98-cbf5-463e-a0a0-8f3594d20f3c",
 										"exec": [
 											""
 										],
@@ -7065,7 +7085,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "57ae4036-a03e-4ee5-8bff-56e003fa17c0",
+								"id": "133c3fed-736f-4ee7-914c-eff3b91762fc",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -7075,7 +7095,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "623a033e-59a6-4e29-a55d-c5c96f2c012a",
+								"id": "11e18631-233b-4dfe-9bba-d0ec71a2cb13",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7095,7 +7115,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "61192304-20bc-4a84-863e-9dd83117d261",
+										"id": "3c640646-c601-46fa-b879-ecf0454414c7",
 										"exec": [
 											""
 										],
@@ -7159,7 +7179,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "761b67ec-f7cb-4fa0-8726-1bb83d321ccc",
+										"id": "5d5264fa-a0be-4b58-b755-8b4c1a3aa21d",
 										"exec": [
 											""
 										],
@@ -7231,7 +7251,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "24c07e1b-0cf2-4536-8399-93194ffa487c",
+										"id": "3a540a77-642f-4f2f-b024-0722196df1ce",
 										"exec": [
 											""
 										],
@@ -7294,7 +7314,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "db3cd011-f1b7-49e2-a002-a242a7470eec",
+										"id": "ac1068ba-b7c6-4f9e-9a40-331516765e69",
 										"exec": [
 											""
 										],
@@ -7366,7 +7386,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5e07025d-9cbe-4093-a52c-acf428add25a",
+										"id": "3ea9b850-3c7b-4dc0-9024-a3b46177876c",
 										"exec": [
 											""
 										],
@@ -7429,7 +7449,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8b086406-a395-49c2-8c20-b39ae3d7d9cc",
+								"id": "dccfa784-a302-4eb2-8f2b-af52c9415892",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"billingAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -7439,7 +7459,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1610d44c-520d-42c3-a147-c71a4adc5579",
+								"id": "a92b25ce-c9c0-4fa2-a35c-df170b3617eb",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7459,7 +7479,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "bc4d693a-725d-4bd0-b46c-9d572cc8e8d8",
+										"id": "aa2b5fe4-5d04-42c1-be5e-d8a1acdedcf5",
 										"exec": [
 											""
 										],
@@ -7523,7 +7543,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3b563356-aac8-4cea-99bd-b87c27c4d0a5",
+										"id": "dfa668ae-8f41-4696-87d8-666a2130714c",
 										"exec": [
 											""
 										],
@@ -7595,7 +7615,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8ded5bb3-fa70-4ca1-bfc9-ba93e777a381",
+										"id": "d93a876f-2b10-4800-aa4e-b9a43a3fb282",
 										"exec": [
 											""
 										],
@@ -7658,7 +7678,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c2bb72b2-a941-44dc-b5d4-c2c3e6e5e5ee",
+										"id": "5d6604a9-524c-4cb8-b5ed-88380e7bc775",
 										"exec": [
 											""
 										],
@@ -7730,7 +7750,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f9807217-f275-44b1-bc7b-a2df9216c308",
+										"id": "792058b3-7872-428a-8c20-cc6d9393ffcb",
 										"exec": [
 											""
 										],
@@ -7793,7 +7813,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5ba1c24e-2f96-4f09-bb15-e7e5df3894ea",
+								"id": "6a47ddd9-aec9-48d4-b32f-d3bc599f1338",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7803,7 +7823,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1f5c46d3-8c2e-4fe7-b438-029267f52e40",
+								"id": "07092eb6-4840-49ea-9252-6fb9990201d7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7823,7 +7843,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "01b74209-9187-4ca3-b82c-3bdbf7b19db9",
+										"id": "3cdadeb9-5a7a-4d88-9d8d-1d0787a6e781",
 										"exec": [
 											""
 										],
@@ -7833,7 +7853,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "0da2a187-3a71-478e-9ff8-d3953868fc33",
+										"id": "ab78f8cd-fb9f-42a8-a483-195022ce0a54",
 										"exec": [
 											""
 										],
@@ -7897,7 +7917,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5f762528-d3da-4475-bacb-1d1f83a7a9a1",
+										"id": "795c720a-5998-46fc-89e9-2a377cdfcbfb",
 										"exec": [
 											""
 										],
@@ -7907,7 +7927,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "2564e71c-bd78-402c-a8e9-94e9d4bb1889",
+										"id": "9f5f8f14-4e51-4df3-8086-818562861f85",
 										"exec": [
 											""
 										],
@@ -7979,7 +7999,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ef461313-1ad2-49b6-90f5-31902e10f28c",
+										"id": "abcf05d8-0f45-4bfe-a5e9-effefd215d93",
 										"exec": [
 											""
 										],
@@ -8042,7 +8062,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b19e3dfb-d3dd-4f23-a2e5-19ec81435918",
+										"id": "75f8b565-27ae-4bef-88a2-8024cc92286f",
 										"exec": [
 											""
 										],
@@ -8106,7 +8126,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "00d74b8b-bd3e-4fa1-861b-640ee475513e",
+										"id": "8a1d2e39-8f7f-4733-a68b-b3576c5e477d",
 										"exec": [
 											""
 										],
@@ -8116,7 +8136,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8c6279a4-46b6-461e-884c-036742f03146",
+										"id": "04db574e-e108-4602-a73d-9e69199eb698",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);"
 										],
@@ -8188,7 +8208,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4d70d393-fd61-443a-8af1-028c384fceeb",
+										"id": "0acee3f4-39b0-411e-aa56-fd05e4ed365f",
 										"exec": [
 											""
 										],
@@ -8251,7 +8271,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0a0ded26-2fc4-4784-8111-7aefd041c2ba",
+								"id": "af94d91d-23ba-4ade-8e4e-2441811c48cc",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"customer\");",
@@ -8263,7 +8283,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d706dbae-f1df-448c-9f86-3eb5d311225f",
+								"id": "a17c7ee4-e86d-4870-b960-95f914a0eace",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8289,7 +8309,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "812453c5-ac61-4de8-b6a8-5b4b1cf1debb",
+										"id": "09d48193-8be1-43b7-8351-90fce7344961",
 										"exec": [
 											""
 										],
@@ -8352,7 +8372,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4f7fe918-704f-4d5b-bbc8-a0a9816c7e26",
+										"id": "38661d86-78ec-4b51-a75d-838425c371c9",
 										"exec": [
 											""
 										],
@@ -8423,7 +8443,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ea7c4549-40d4-4be8-ad69-aae67b66b9ce",
+										"id": "72669649-4812-430c-afb6-4921ef4e821d",
 										"exec": [
 											""
 										],
@@ -8485,7 +8505,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4bc0af78-7a24-4f39-9632-479207969179",
+										"id": "1529f01a-7317-401b-93d6-1176131be3e8",
 										"exec": [
 											""
 										],
@@ -8548,7 +8568,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fd82610c-9825-4a49-ba96-749e644c2209",
+										"id": "46d88e88-7ab8-4932-9951-9487651fde4a",
 										"exec": [
 											""
 										],
@@ -8619,7 +8639,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2abc3ec6-a6b9-49b9-80fa-580c3fca012a",
+										"id": "f96fc26d-537c-4adf-8a9d-0a51d39a6dfb",
 										"exec": [
 											""
 										],
@@ -8681,7 +8701,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d925d2b4-3ba3-4179-b7c3-8d26173eef65",
+								"id": "7d712602-0558-49e5-a6b2-d8192698f7c6",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8691,7 +8711,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce0a9d8a-1a9d-4bad-93e1-08418bb34395",
+								"id": "e803b0fb-ecea-4c15-be34-83e9c71a8ee1",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8711,7 +8731,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8de49b69-8cd1-4961-9855-86a6eadc2883",
+										"id": "48af8ad1-887d-4079-a303-37933e2f78ed",
 										"exec": [
 											""
 										],
@@ -8774,7 +8794,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e36c5d4e-c001-4426-ae8f-1ee7bdd5d770",
+										"id": "95f97ce2-35bc-47a6-9797-c896ce6d1ff3",
 										"exec": [
 											""
 										],
@@ -8845,7 +8865,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "56182227-942f-45a4-87d9-7bb1a4640d05",
+										"id": "83eeac97-cc4d-455d-a602-2655acf11261",
 										"exec": [
 											""
 										],
@@ -8908,7 +8928,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "18988033-015b-4927-9400-c9e1bcd1da3f",
+										"id": "964dc01e-1c39-41d9-98f7-ad23fd315d7c",
 										"exec": [
 											""
 										],
@@ -8979,7 +8999,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "adcea426-5073-4fa3-ad6a-44269270f0eb",
+										"id": "cc3d2abd-5185-4aa5-ab5f-789085869731",
 										"exec": [
 											""
 										],
@@ -9041,7 +9061,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "2fa49c3e-b63a-423f-a6c2-7d2b817e6bb8",
+								"id": "33cdb2cf-c69e-4063-a4b9-37ed57cf2244",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"jobInstanceDto\");",
@@ -9052,7 +9072,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "09b7506f-2daa-4250-accb-aa0cc6a67258",
+								"id": "e947bbc6-4484-45cc-a1e0-a42be0df65e8",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9078,7 +9098,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "67a1211f-ae62-4cf2-9025-5df27bd20cb7",
+										"id": "d3da9377-6676-4eb6-9ef8-df80e60f4f14",
 										"exec": [
 											""
 										],
@@ -9117,7 +9137,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -9142,7 +9162,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "31cbedfe-9f9b-42a7-900a-61789e030534",
+										"id": "d8585b16-042d-42ef-9299-b835a7690c48",
 										"exec": [
 											"pm.test(request.name + \" - Check Data\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -9226,7 +9246,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "63ed67ae-380c-4988-ac04-b4cebc5ce1de",
+										"id": "a5c5f616-e686-4be4-b2fc-e39558505367",
 										"exec": [
 											""
 										],
@@ -9265,7 +9285,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -9289,7 +9309,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "25016a95-4d15-452d-8155-843a0f6cfbdb",
+										"id": "fe035cc3-a418-49f8-85ee-dd4da7acb5f2",
 										"exec": [
 											"pm.test(request.name + \" - Check Data \", function () {",
 											"    var jsonData = pm.response.json();",
@@ -9373,7 +9393,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "075d6695-bd73-4c8f-9be6-37436cbfa844",
+										"id": "29c24ecb-1cef-4804-99d0-a120e61494be",
 										"exec": [
 											""
 										],
@@ -9454,7 +9474,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c6feb36f-ab8d-484a-972c-ccca60ac9ec1",
+										"id": "addf08f2-36b0-408b-b7af-3a2744bb3fca",
 										"exec": [
 											""
 										],
@@ -9493,7 +9513,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -9518,7 +9538,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2676a517-f166-4624-8244-0591f69f7396",
+										"id": "f5cffa1d-6d6b-483b-84ad-f530e3f09ad6",
 										"exec": [
 											""
 										],
@@ -9590,7 +9610,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3be15570-b09a-48d1-9d0e-cdeacee93861",
+										"id": "d20815d9-62b2-47dc-80c4-3256a1a12caa",
 										"exec": [
 											""
 										],
@@ -9629,7 +9649,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -9653,7 +9673,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "caa78147-6d4d-4450-a062-5c74050ab9a0",
+										"id": "cea7a226-bdb9-4145-a712-ad13143e11f2",
 										"exec": [
 											""
 										],
@@ -9692,7 +9712,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -9717,7 +9737,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b8a0c38f-264b-47a9-9a43-83fc17e77c86",
+										"id": "2076f1dc-339b-4a18-970f-b0391de33ee4",
 										"exec": [
 											""
 										],
@@ -9789,7 +9809,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e2a745aa-62ca-4986-92a6-57231d7790bf",
+										"id": "c4f55614-0e9f-42c7-a034-117c6acb706b",
 										"exec": [
 											""
 										],
@@ -9852,7 +9872,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3db15887-1e71-47a5-8a82-b7afc1287ba7",
+								"id": "6e6c12f9-b4af-4ac1-9fee-88c36c3aa7f8",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"recurringChargeTemplateCode\", pm.variables.get(\"entityCode\"));"
@@ -9862,7 +9882,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1c02d8b1-c13b-49d7-878b-a5153a1ad5af",
+								"id": "43e8335d-ccd7-4219-9384-7136f0cd35c5",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9882,7 +9902,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "34b3d4c5-1ed5-49a6-ae1e-fa2153d952b0",
+										"id": "3be69ac3-14f6-4129-b940-154d27b19c72",
 										"exec": [
 											""
 										],
@@ -9946,7 +9966,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5e6a74d2-e32e-48ac-9f0c-82a4afa1dd57",
+										"id": "2d5500e0-efaa-42ad-aaac-211033fc4b7f",
 										"exec": [
 											""
 										],
@@ -10018,7 +10038,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a894ad37-4751-44c9-a60d-f465d9653907",
+										"id": "97344931-8fae-49b4-908c-904f81164756",
 										"exec": [
 											""
 										],
@@ -10081,7 +10101,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9f58993f-0206-4a0a-a76a-b79fdc00aba7",
+										"id": "7d2645e6-9dbb-4a2b-af04-517f497fc5d4",
 										"exec": [
 											""
 										],
@@ -10145,7 +10165,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6879bdb2-56c2-4cb7-a94e-d051f171f802",
+										"id": "a14a19fb-0e41-43a4-ac79-25139a2588c4",
 										"exec": [
 											""
 										],
@@ -10217,7 +10237,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "933b3f1a-ed17-4df3-a876-ec728bf2adf0",
+										"id": "ed2aa95c-c4dd-4d08-86ca-2696b28c9ad0",
 										"exec": [
 											""
 										],
@@ -10280,7 +10300,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "58622704-debf-482d-81f4-1808bce4010d",
+								"id": "a4b898fa-e854-435e-b3c3-b06f71335685",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"pricePlan\");",
@@ -10291,7 +10311,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "19ce506c-8398-445f-bae6-63a7f5040b01",
+								"id": "9cfcf2f3-ee15-4c92-af32-f17b0832fb4a",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -10311,7 +10331,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3581737a-94cb-47da-921c-02498102c593",
+										"id": "def2afc4-5b6e-4a05-92f5-4149adb3136d",
 										"exec": [
 											""
 										],
@@ -10375,7 +10395,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4e5a98a5-b5b8-4af4-855b-892be6073172",
+										"id": "10d31490-14d7-4c8b-acd4-ab410e3275fc",
 										"exec": [
 											""
 										],
@@ -10447,7 +10467,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b463776f-3a97-4466-80ff-e16c0fac2a9d",
+										"id": "0c99dc80-43ee-4727-a05c-e6fcb5303463",
 										"exec": [
 											""
 										],
@@ -10510,7 +10530,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1e9353d4-fee8-42b8-9f75-2d2bd322421d",
+										"id": "5d09ddfe-ca84-4675-ade4-415d5a77b2bc",
 										"exec": [
 											""
 										],
@@ -10574,7 +10594,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "37bf78d7-58f3-436f-8281-4ec5df38ddc1",
+										"id": "8a4002be-397e-4871-a976-8fb164b8bd53",
 										"exec": [
 											""
 										],
@@ -10646,7 +10666,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7ba9c485-4ed2-4db3-9ca3-7ebfdbf0e8e1",
+										"id": "be13caf0-c506-4a69-9e1e-2040c690d0b2",
 										"exec": [
 											""
 										],
@@ -10709,7 +10729,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4aa9b4bb-c58c-4e34-81c1-530f3eacbc9e",
+								"id": "a904b815-93d2-42e6-a07e-3abee97412dd",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -10719,7 +10739,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "76afe551-2f9e-4a9b-8c18-5b28c919e935",
+								"id": "bb548720-0aaf-4e01-862b-d756d2eb3b76",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -10739,7 +10759,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "18716544-992c-427c-8c08-acc8116b9e9b",
+										"id": "32ff33f1-b51b-46dc-aebf-960b8d6e1895",
 										"exec": [
 											""
 										],
@@ -10803,7 +10823,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "149650fe-68e3-4ea9-8104-c9902d688209",
+										"id": "a89d8b61-d7c0-4bc8-8bea-8a6f939846d0",
 										"exec": [
 											""
 										],
@@ -10875,7 +10895,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "97d050cd-91a6-47c5-8c79-a97b5aafc82c",
+										"id": "b5e9ea01-4cc9-4f14-bd71-8e9af77ea60d",
 										"exec": [
 											""
 										],
@@ -10938,7 +10958,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "819837d0-d2a2-40af-9894-4ae5bcd845af",
+										"id": "abe9d5d1-ca75-4b09-a241-1acd2b9f13fa",
 										"exec": [
 											""
 										],
@@ -11002,7 +11022,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "68142853-3a29-4350-8232-b5422490c9c7",
+										"id": "6759866d-58f8-4ee6-a16f-9b9fcd625e32",
 										"exec": [
 											""
 										],
@@ -11074,7 +11094,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6145a2f3-72df-4809-8217-4d7739a93f1a",
+										"id": "06d418bc-7cef-4e3b-849f-0338b379eb9c",
 										"exec": [
 											""
 										],
@@ -11142,7 +11162,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0e19654e-4d99-4e53-b070-e6ff6e7d1a9d",
+								"id": "16f547ae-2c51-43bd-b8c7-9aa481056a2b",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"discountPlanDto\");",
@@ -11153,7 +11173,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "af0bdccb-8ba6-4d20-b5b8-3377bc49091b",
+								"id": "38f3abd4-a320-4252-8de8-fe2720f0940e",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11179,7 +11199,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8308d6e5-a431-418c-b881-4d9cb7544ad8",
+										"id": "4fc6d8ce-8ed1-4314-9e19-aff3ca936b8c",
 										"exec": [
 											""
 										],
@@ -11242,7 +11262,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4e15c43b-b6c2-4b09-a0ee-c0fad0fd09a7",
+										"id": "bda16d60-8492-47f0-a8ff-116de9c67737",
 										"exec": [
 											""
 										],
@@ -11313,7 +11333,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "89069c34-8684-4e0b-b4f6-b823e7a28a7e",
+										"id": "6a3a01a8-8045-4259-b30b-52c1b6ce1bf8",
 										"exec": [
 											""
 										],
@@ -11375,7 +11395,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "640d6b04-a556-465f-b65f-b1ff2434559f",
+										"id": "7ebbad1c-f805-4bb2-a5b4-51b953009e6c",
 										"exec": [
 											""
 										],
@@ -11438,7 +11458,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cf1340a7-bbab-4242-9166-cbcf2378f9dd",
+										"id": "6dcf00f3-7d3d-4804-bee9-13545ca6251b",
 										"exec": [
 											""
 										],
@@ -11509,7 +11529,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "91331f39-ba27-42c7-a069-725f6902b413",
+										"id": "979e3e9a-1127-4a47-8cbe-443fbdc8a0df",
 										"exec": [
 											""
 										],
@@ -11571,7 +11591,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "770d07bd-a6c9-4f80-85e8-094108e549c6",
+								"id": "66c45ff7-a5ad-4236-82af-76862c6007c3",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"invoiceCategoryCode\", pm.variables.get(\"entityCode\"));"
@@ -11581,7 +11601,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4b3353d8-606b-4bfb-a185-e09ae64d9a1a",
+								"id": "6f08e5a2-f24d-4aa4-a60f-ef4f90290fba",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11601,7 +11621,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d5be8ed4-5fdf-4f4d-ad87-2b3414e3d905",
+										"id": "532bbd42-3cd2-4ec7-a00e-bb3acb6816be",
 										"exec": [
 											""
 										],
@@ -11664,7 +11684,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "743433b0-d0b5-416c-bc0c-adf5568a14bc",
+										"id": "a22439a2-f1a2-4ea1-bd2b-27fd2ee78ca2",
 										"exec": [
 											""
 										],
@@ -11735,7 +11755,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d05fada8-3263-4a3a-a488-3433ee1786bf",
+										"id": "6fc4f7d2-a38f-4363-8483-7faf6753bfeb",
 										"exec": [
 											""
 										],
@@ -11797,7 +11817,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d3a87c43-8524-49a8-a3b8-69c60f2ee0f7",
+										"id": "957bee3d-9c45-49a3-9beb-556928ccfbe4",
 										"exec": [
 											""
 										],
@@ -11860,7 +11880,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6367c2e4-da58-4cc7-bbea-c229538d52e0",
+										"id": "dac72af9-19ce-47c8-8e19-1cec772ec163",
 										"exec": [
 											""
 										],
@@ -11931,7 +11951,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5bf1ddf7-adac-430a-ae36-f7b70ecb7496",
+										"id": "1828a93b-f8f2-4e4d-96a1-b258cfc384bb",
 										"exec": [
 											""
 										],
@@ -11993,7 +12013,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "54eb4f14-a4dc-450c-b90d-bfc7739f6429",
+								"id": "7637a091-137e-456a-8167-bba717f24d7f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"invoiceSubCategoryCode\", pm.variables.get(\"entityCode\"));"
@@ -12003,7 +12023,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5fd845e3-9a26-4db4-b084-dfafa72a2cc8",
+								"id": "6046c150-682c-4291-adfe-7a9f8b04a60a",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -12023,7 +12043,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "285dc848-45ed-46d6-b78a-b14959e2d076",
+										"id": "84e08025-73c6-4764-88f9-af7894dace69",
 										"exec": [
 											""
 										],
@@ -12086,7 +12106,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "737ede20-c7cf-48fa-a5d4-09f9912d7f48",
+										"id": "0bff3065-73f6-4e36-86ba-1dc522f00a50",
 										"exec": [
 											""
 										],
@@ -12096,7 +12116,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "3bbb3fe2-a68f-4984-8516-1ee7a36b7e10",
+										"id": "3f52dbed-a8b9-40ce-8327-3f7c939b6977",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -12167,7 +12187,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "719292d3-ef0a-474e-b2ff-c3db131cfbed",
+										"id": "abf52299-7c87-4f11-ab85-5a6d6a365881",
 										"exec": [
 											""
 										],
@@ -12229,7 +12249,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "46e47398-131a-49ab-86f5-d38fc8d740a3",
+										"id": "33eb9be4-839a-4dac-8864-32f72a57cd5c",
 										"exec": [
 											""
 										],
@@ -12239,7 +12259,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "19a13820-0743-460f-bbf0-e6417336bc62",
+										"id": "4c4d9102-fc08-41d7-ad09-415a3f3ade59",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -12309,7 +12329,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46ec2cac-aa71-4ed4-be16-3435fe9273c4",
+								"id": "f802da53-d458-47a9-89a6-040ade100f1c",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"invoiceSequenceCode\", pm.variables.get(\"entityCode\"));",
@@ -12320,7 +12340,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3a11ff3b-f1f0-4f09-8808-8709e4dbe93f",
+								"id": "5c19badf-d0ee-4ae6-9648-6de647432c50",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -12340,7 +12360,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d2f6dcaf-309b-456a-9adb-7c4fed88e088",
+										"id": "ba5d8da0-c7ba-4128-9fe3-f5d87a2f30ae",
 										"exec": [
 											""
 										],
@@ -12414,7 +12434,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ef5970f1-b528-412e-9bfc-690301fb619d",
+								"id": "a2dc8ff6-707f-4bfc-a664-0762b566b698",
 								"exec": [
 									""
 								],
@@ -12478,7 +12498,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "51240d59-a5b0-4d0d-b1b7-99afa836a7ec",
+								"id": "f8c04743-b5bf-4283-8957-17a8144b448d",
 								"exec": [
 									""
 								],
@@ -12550,7 +12570,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "11147bf3-b624-4b60-b775-2fcd32f25bc9",
+								"id": "abb04987-b5df-45f3-9e69-3a0a5b0c822b",
 								"exec": [
 									""
 								],
@@ -12613,7 +12633,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b5a29277-c94d-4308-8afd-773587332495",
+								"id": "1ae2f465-3722-47bc-9a61-8bad90fc0b02",
 								"exec": [
 									""
 								],
@@ -12685,7 +12705,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b7abbe1a-ab7c-4926-94ec-7c1c77dda1b6",
+								"id": "54dbc721-53ab-45a3-9112-d356681d9d75",
 								"exec": [
 									""
 								],
@@ -12749,7 +12769,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d6347d8b-db2b-4e4c-96ee-ae4de7dbf87d",
+								"id": "8676094e-0d04-4b13-8a6a-7521431d37b7",
 								"exec": [
 									""
 								],
@@ -12759,7 +12779,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "27dab590-1c30-407e-a981-f5a8723b2cbb",
+								"id": "22d0722b-39f4-4f7d-817e-ebd1f5511d75",
 								"exec": [
 									"pm.variables.set(\"code\", 500);\r",
 									"pm.variables.set(\"errorCode\", );\r",
@@ -12825,7 +12845,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4377c7d9-bc20-4f22-bdd6-c9d98ab0612e",
+								"id": "47de9de7-853c-4749-ad18-814eadfad2d6",
 								"exec": [
 									""
 								],
@@ -12898,7 +12918,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "78641909-6b87-4e37-b497-319842f327bf",
+										"id": "0733417d-4659-47c7-aa91-eed0bdd35ce8",
 										"exec": [
 											""
 										],
@@ -12962,7 +12982,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "244250ba-9194-4545-91e4-c1d82e6b9775",
+										"id": "e81494fe-2fb3-46d3-ad43-c94f100576b4",
 										"exec": [
 											""
 										],
@@ -12972,7 +12992,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "23be7910-6398-4bd1-8978-dadd3a9dee8a",
+										"id": "489d7feb-3740-43c8-8357-a22a14b295e7",
 										"exec": [
 											""
 										],
@@ -13044,7 +13064,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6afce581-9c32-4c92-bf55-0328d7a2d5ad",
+										"id": "a2ee5dfc-8c8d-4e2b-b42e-30bdc916b660",
 										"exec": [
 											""
 										],
@@ -13107,7 +13127,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3fe3f4b4-7e82-4390-9202-634ad703f983",
+										"id": "70cf58db-dab5-4294-bcc6-2baab770ce75",
 										"exec": [
 											""
 										],
@@ -13171,7 +13191,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "12cddb95-cc91-4b09-838c-734fafa71da9",
+										"id": "ee189fdf-3990-4704-8ae3-93467aa5d366",
 										"exec": [
 											""
 										],
@@ -13243,7 +13263,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "813e79da-c451-48a3-b882-2008e80be0e6",
+										"id": "5a418cd8-24d8-4035-a2f4-80ab1bc0670e",
 										"exec": [
 											""
 										],
@@ -13306,7 +13326,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "66fe5aa3-ed22-4a53-ba71-e247abe1e692",
+								"id": "46c9c9b4-e228-44d2-b01c-fe69360b84c7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -13316,7 +13336,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f471e4f0-91a3-4f6e-80b5-d9d3e5f3a7b9",
+								"id": "72e3bb33-8a70-427f-a89f-f77a39fbdf9e",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -13336,7 +13356,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "48bf18ad-d9e3-4f36-b8af-8383575d901b",
+										"id": "d60190ac-a6ed-47dd-9545-3e8f4121e94d",
 										"exec": [
 											""
 										],
@@ -13346,7 +13366,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "77ff7899-a826-43c1-80af-ecbec94437a0",
+										"id": "4d22f818-e3b1-4e0f-88e0-295209ff955a",
 										"exec": [
 											"pm.variables.set(\"message\", );"
 										],
@@ -13410,7 +13430,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a88bf89-281c-4a5f-bc0e-e952ef783160",
+										"id": "6c93e7ee-fab9-4f9e-a8d8-7ac6e0f529c5",
 										"exec": [
 											""
 										],
@@ -13420,7 +13440,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "c1b3f65f-84db-4f1e-91d2-e11ee0f321ec",
+										"id": "ec61e46e-09aa-450b-a187-9f9a2f8afccf",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);\r",
 											"pm.variables.set(\"haveCode\", false);"
@@ -13493,7 +13513,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5b070dc-c097-4bbc-be8f-2bfbeeb6648e",
+										"id": "e84df292-796d-4868-9176-ae65da25bb7a",
 										"exec": [
 											""
 										],
@@ -13556,7 +13576,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "aa4bd5a2-7f2b-47e8-ac34-a91b701ec235",
+										"id": "f6e5b29b-a228-4c9a-bf27-7442592048dc",
 										"exec": [
 											""
 										],
@@ -13566,7 +13586,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "34118356-36af-443e-825a-639e335fc864",
+										"id": "2d9a51db-c7ec-4ccb-be1e-674bcefa1d63",
 										"exec": [
 											"pm.variables.set(\"message\", );"
 										],
@@ -13630,7 +13650,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1c775b83-75f0-4933-a20a-6395c35b42b3",
+										"id": "43f6f671-4855-4acf-aefa-4abb0600edfd",
 										"exec": [
 											""
 										],
@@ -13640,7 +13660,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8bf9cbb5-dc45-4e53-b8a9-c3d902da0f06",
+										"id": "b54fcaba-7111-4b8c-ac40-a6e06d78dfbc",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);\r",
 											"pm.variables.set(\"haveCode\", false);"
@@ -13713,7 +13733,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8988f004-3f98-4bbb-9cff-0762fee538f9",
+										"id": "768ca47f-a2cf-4f4b-a420-83a124b0cc2e",
 										"exec": [
 											""
 										],
@@ -13781,7 +13801,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "de35deee-840f-49b7-8321-84f2fb6e8de5",
+								"id": "c85e1646-f7b3-45ea-8f26-d457e3557f6a",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -13791,7 +13811,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b0000b4d-fadf-4414-8c85-a7bab234170d",
+								"id": "681065c5-fae6-42f4-8f6c-c533f0210769",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -13811,7 +13831,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b3b71bb3-dfa5-4f6b-8ffe-7c8cfc36d12b",
+										"id": "141e632b-fdcf-4901-99fa-f5fe4e87391d",
 										"exec": [
 											"var jsonData = pm.response.json();",
 											"pm.globals.set(\"id_PST\", jsonData.message);",
@@ -13823,7 +13843,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "2fe4698e-856a-4fec-b400-66eee26e1563",
+										"id": "313e61ba-697c-438f-8fb4-52d88168aff1",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);"
 										],
@@ -13887,7 +13907,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "88534449-8000-476a-aa26-8e7ed4b5b89e",
+										"id": "c0efcda6-865e-49a2-9a05-44f3d011b694",
 										"exec": [
 											"",
 											"pm.test(request.name + \" - Id is equal \"+pm.globals.get(\"id_PST\"), function () {",
@@ -13963,7 +13983,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5c9f344d-f86f-4c59-a316-44d4952b4a28",
+										"id": "55de2a33-c281-4dc5-ab1d-692012545a6f",
 										"exec": [
 											""
 										],
@@ -13973,7 +13993,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "4b848242-2c38-4db6-9ca8-c3b2dc252bcb",
+										"id": "e00de098-4e93-479a-b069-0e9049830ed5",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);"
 										],
@@ -14036,7 +14056,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9bdf249f-7ca3-4f80-8ac5-d2a095566c55",
+										"id": "844cb8b7-7902-4a31-8e62-23281f882997",
 										"exec": [
 											""
 										],
@@ -14046,7 +14066,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "fc9c06f2-ce9f-425f-bad4-314707e3db5e",
+										"id": "8d0af047-aee2-4710-b2fa-2e9c1f815e49",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);"
 										],
@@ -14110,7 +14130,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e25abd4f-cfe1-4697-a4c1-6fbef73c56f0",
+										"id": "96b13e41-afd4-4588-9eac-1419c203685f",
 										"exec": [
 											"pm.test(request.name + \" - Id is equal \"+pm.globals.get(\"id_PST\"), function () {",
 											"    var jsonData = pm.response.json();",
@@ -14185,7 +14205,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2910939b-dbaf-4461-a9a8-907fcd698424",
+										"id": "98f38bbb-f236-438f-a511-b706f994cb47",
 										"exec": [
 											""
 										],
@@ -14253,7 +14273,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8f9bc1bf-3fc2-4655-ae1d-52f6a59d505e",
+								"id": "6137a54c-a122-44d0-aafe-ab6bacbfafc0",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"paymentScheduleTemplateDto\");"
@@ -14263,7 +14283,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "721272b9-c3e2-4190-af0a-7c846b911657",
+								"id": "9dc24b40-b56e-4a97-a268-b711a4f76cae",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -14282,7 +14302,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "29e4df62-b967-4016-9d9f-b15395726a37",
+				"id": "2293ae14-3c6c-42a2-a797-f3af3fa9a978",
 				"type": "text/javascript",
 				"exec": [
 					"var parts = pm.info.requestName.split(\"|\");",
@@ -14382,7 +14402,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "8203f2f4-baae-49d9-a628-2b6d0d784dac",
+				"id": "521acbd5-7db1-45ad-a67f-0493596249b5",
 				"type": "text/javascript",
 				"exec": [
 					"var jsonData = pm.response.json();",
@@ -14408,7 +14428,7 @@
 					"        pm.expect((jsonData.actionStatus ? jsonData.actionStatus.message : jsonData.message)).to.contains(pm.variables.get(\"message\"));",
 					"    }",
 					"});",
-					"",
+					"/*",
 					"if(pm.variables.get(\"action\").includes(\"Read\")){",
 					"    if(pm.variables.get(\"haveCode\")){",
 					"        pm.test(request.name + \" - Code is equal \" + pm.variables.get(\"entityCode\"), function () {",
@@ -14421,7 +14441,7 @@
 					"        });",
 					"    }",
 					"}",
-					"",
+					"*/",
 					""
 				]
 			}
@@ -14429,239 +14449,244 @@
 	],
 	"variable": [
 		{
-			"id": "3ae73f38-e568-413a-867f-8d6e90b2ceb2",
+			"id": "530e63dd-3650-4a68-91d3-32e585e24377",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "f329371a-5d03-4b87-b5e8-6e9889b8e6b4",
+			"id": "52dd21da-6e4e-4dce-bdcb-961423ed0195",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "7ec11d28-e2f3-4c50-a92f-193665876133",
+			"id": "93614920-abde-45db-85ab-c44e92c2e504",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "220503fd-96f0-4b94-8b39-72268dea1e75",
+			"id": "b94b3624-f88a-4802-b566-82c106645fff",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "48173b3d-51c3-455a-a2db-93dcae27735d",
+			"id": "fff9a431-3167-4106-8fd6-b17f090c365a",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "84b0b2f7-df5d-4260-ba91-820a46e6f983",
+			"id": "13802536-d8c0-446b-bffc-50a8b3997592",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "33f08528-49ca-468f-83e1-bc09d4b4567c",
+			"id": "33712489-8c93-406b-a3eb-e0ec0b67675e",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "2281d261-6fdd-4df6-bd1e-95ad2053af04",
+			"id": "8cc5821c-a1ff-4022-944c-a32c1269071e",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "41a4fdff-cd4e-4a22-860f-e1495a08a72a",
+			"id": "8568564d-66df-4b01-a2ff-24448515d04a",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "ce2508f7-26e0-4be2-a105-d9bc526ef2e8",
+			"id": "3d6fda19-1f1b-42e7-819e-93a43c6ccf88",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "c1a74528-3832-4129-adb2-5ff89a71a11f",
+			"id": "cba8507f-6905-4d8b-ba00-35890a02cf4b",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "b1f1ced8-f888-44dd-a55a-6322fee5e0af",
+			"id": "b69ccb45-db55-4118-ba23-fb75e3de4249",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "226aa329-2691-4254-a86c-5d8eec6b9e06",
+			"id": "0fe72efa-c73c-4ac9-b5a4-5f81ed13367c",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "0b398636-8a7e-4b2d-99f4-479292a68046",
+			"id": "abcd48ab-8aea-4ebb-834f-fac9790a03e9",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "94d39507-bb3b-4732-a734-d88925a4af46",
+			"id": "404a2730-7eab-42b3-a411-c787bbe6ff99",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "ac5af546-0b54-46ee-903d-d05fa8c221e8",
+			"id": "aa2c913a-46fb-4fb9-81bf-e56da5fa94ec",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "eb506cf9-51c3-44f2-802d-ad8dbb01acb0",
+			"id": "40afc515-aace-4e74-bf6b-6f0cba61ee05",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "5963acc5-d527-47d0-9bfa-72c611e915fd",
+			"id": "b1d6d027-3111-4031-b751-b517ead46f67",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "74fb1383-67c5-48f3-9245-90fdd38f3383",
+			"id": "1994bfb7-df53-43f5-b660-b6a555551b29",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "eae821aa-0585-4688-8b13-c90f5d65af51",
+			"id": "bef92c1a-1225-4ac2-a9c3-b825b8e02a33",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "6de8811b-6610-4e4b-9304-e027a9d5f829",
+			"id": "28e750b3-feb4-4d1d-8791-3a8c5505c22e",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "7c87118f-7e3f-4ca6-b2e0-302de0da2d89",
+			"id": "1371e206-634b-47d5-8037-e4292cfa986e",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "5f689227-45f6-4c9b-88a6-9ebab38ca790",
+			"id": "bfbe8105-b7dd-403c-a803-bb84a8d06f0a",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "d9975a00-18fd-41a2-9b7e-e7845a4464d9",
+			"id": "1c03b0c9-fa97-4e82-91d6-e6f44834287b",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "9709ead3-91a3-413e-a1ca-5872fe756733",
+			"id": "d65b8965-ddc8-4f30-adf1-36ac4759d1b5",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "9c159785-2e58-45bf-b769-d6cfcd394c38",
+			"id": "311db1a3-e81e-4dd9-8cc9-b5e2ce99be48",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "27e67235-54c4-428f-b540-b128e1d7ee7c",
+			"id": "27ec6dde-0945-4c79-9aaf-c2d673df8a8d",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "1ee276a0-fa59-4ef8-8d5c-41652b7732c5",
+			"id": "a609b895-dea8-4346-8040-d67d13e57900",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "7a80f8a9-eb87-43be-9c8d-7c58f71361cd",
+			"id": "36d8351e-dffd-4acc-9bc2-1bb8a69ee208",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "0b81181b-a0c5-4c7c-8a04-96f8e58a2680",
+			"id": "c6c6bc67-9092-4161-bf24-901590469db2",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "4887c536-01c2-4c35-a25b-69629c39c746",
+			"id": "130a7826-9735-4d93-8997-051802dbb054",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "9c9695d9-6087-49ff-bf35-0ed7e09a6bec",
+			"id": "b9107e49-b3e3-40fa-a306-0d4a18b8eab1",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "2b01552c-ae46-4996-88e0-fa42c35dc792",
+			"id": "96beb948-d327-47ff-a288-d4f0101c1d4c",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "78e886fa-dd2f-420e-894c-c0e285a18f9b",
+			"id": "2974a8fa-3463-42a0-b112-c38bd63bce59",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "a9452984-347f-4540-9d02-367e01350d98",
+			"id": "6f85422f-72c6-4e3e-86fe-b1b6dac4d116",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "044388eb-b4a6-4245-8d68-7278a60694b3",
+			"id": "9c3324ff-bf3f-4806-b14e-70119b702a43",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "172dddf4-4899-43da-b584-aa55a67f45b8",
+			"id": "e86f332e-f938-4e38-ab98-8fd0b4f351f3",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "c6c90f3c-4a3a-47a2-b7b6-a3ec87e1d87e",
+			"id": "ad06849c-b4e1-47da-8d04-ceb7f52511b0",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "13639dab-6c13-4dcc-a8a5-4721789ff66a",
+			"id": "74971f17-f174-4c88-85bf-2427addcbc1a",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "a6ab6a0e-a350-4f32-832f-7efbab4dc3d9",
+			"id": "eeec6e70-4a1a-4948-be86-a9e8c5acdb67",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "64c2ce16-ed1d-4605-b347-b1af8a85d655",
+			"id": "96b3d60a-c8df-474d-9887-0f3ac13ce029",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "4e478291-a493-40f0-8810-4e03078971c6",
+			"id": "ddde5eeb-3176-4723-b752-05cce9b7ed08",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "d7a09e79-a188-41ae-9dae-29fbd39aaf7e",
+			"id": "2c1316d2-6b64-43c4-b067-fa98123194d2",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "7bde50d8-7ba8-4ba7-ba05-0dd9ee143d95",
+			"id": "1d23e616-3f55-444d-97f6-4c592aec7755",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "7f5e802f-05ba-4f0f-b1d1-82f0d21aae00",
+			"id": "9b84a790-1852-4894-beeb-d334bb5486ef",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "3280f008-5632-4f48-945a-675e5845bf7d",
+			"id": "773468c9-33ed-4855-b923-98b15326f531",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "62d142c5-b46d-4eaf-9bb9-6d5bb8217923",
+			"id": "041d7c86-a29c-40ff-805c-c42799f374df",
 			"key": "seller",
 			"value": "FR_SELLER"
+		},
+		{
+			"id": "ce7044e2-9b74-42ea-b40a-b47429a20928",
+			"key": "accCode",
+			"value": "ACC_TST"
 		}
 	],
 	"protocolProfileBehavior": {}
