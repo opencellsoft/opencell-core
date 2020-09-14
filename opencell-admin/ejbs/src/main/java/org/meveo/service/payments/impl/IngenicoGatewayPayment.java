@@ -226,45 +226,51 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @return the payment response dto
      * @throws BusinessException the business exception
      */
-    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
-            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        try {
-            
-            CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
-            
-            CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
-            
-            if (response != null) {
-            	log.info("doPayment RESPONSE:"+marshaller.marshal(response));
-                PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
-                doPaymentResponseDto.setPaymentID(response.getPayment().getId());
-                doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
-                if (response.getCreationOutput() != null) {
-                    doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
-                    doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
-                }
-                Payment payment = response.getPayment();
-                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
-                    PaymentStatusOutput statusOutput = payment.getStatusOutput();
-                    if (statusOutput != null) {
-                        List<APIError> errors = statusOutput.getErrors();
-                        if (CollectionUtils.isNotEmpty(errors)) {
-                            doPaymentResponseDto.setErrorMessage(errors.toString());
-                            doPaymentResponseDto.setErrorCode(errors.get(0).getId()); 
-                        }
-                    }
-                }
-                return doPaymentResponseDto;
-            } else {
-                throw new BusinessException("Gateway response is null");
-            }
-        } catch (DeclinedPaymentException e) {
-            throw new BusinessException(e.getResponseBody());
-        } catch (ApiException e) {
-            throw new BusinessException(e.getResponseBody());
-        }
-    }
+	private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
+			String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
+		try {
+
+			CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+
+			CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
+
+			if (response != null) {
+				log.info("doPayment RESPONSE:" + marshaller.marshal(response));
+
+				doPaymentResponseDto.setPaymentID(response.getPayment().getId());
+				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
+				if (response.getCreationOutput() != null) {
+					doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
+					doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
+					doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+				}
+				Payment payment = response.getPayment();
+				if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
+					PaymentStatusOutput statusOutput = payment.getStatusOutput();
+					if (statusOutput != null) {
+						List<APIError> errors = statusOutput.getErrors();
+						if (CollectionUtils.isNotEmpty(errors)) {
+							doPaymentResponseDto.setErrorMessage(errors.toString());
+							doPaymentResponseDto.setErrorCode(errors.get(0).getId());
+						}
+					}
+				}
+				return doPaymentResponseDto;
+			} else {
+				throw new BusinessException("Gateway response is null");
+			}
+		} catch (ApiException e) {
+			log.error("Error on doPayment :",e);
+			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
+			if (CollectionUtils.isNotEmpty(e.getErrors())) {
+				doPaymentResponseDto.setErrorCode(e.getErrors().get(0).getId());
+			}
+		}
+		return doPaymentResponseDto;
+	}
     
     private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
             String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
@@ -453,10 +459,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
 
-    @Override
-    public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+	@Override
+	public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
 		try {
-            CustomerAccount customerAccount = paymentToken.getCustomerAccount();
+			CustomerAccount customerAccount = paymentToken.getCustomerAccount();
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(ctsAmount);
 			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
@@ -466,11 +474,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CompanyInformation companyInformation = new CompanyInformation();
 			companyInformation.setName(customerAccount.getCode());
 			ContactDetailsBase contactDetails = new ContactDetailsBase();
-			
-			if(customerAccount.getContactInformation() != null ) {
+
+			if (customerAccount.getContactInformation() != null) {
 				contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail());
 			}
-			
+
 			PersonalName name = new PersonalName();
 			if (customerAccount.getName() != null) {
 				name.setFirstName(customerAccount.getName().getFirstName());
@@ -494,13 +502,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setAmountOfMoney(amountOfMoney);
 			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);
 			body.setReferences(references);
-			//body.setCustomer(customer);	
+			// body.setCustomer(customer);
 			getClient();
-			log.info("doRefundToken REQUEST:"+marshaller.marshal(body));
-			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
+			log.info("doRefundToken REQUEST:" + marshaller.marshal(body));
+			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);
 			if (response != null) {
-				log.info("doRefundToken RESPONSE:"+marshaller.marshal(response));
-				PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+				log.info("doRefundToken RESPONSE:" + marshaller.marshal(response));
+
 				doPaymentResponseDto.setPaymentID(response.getId());
 				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getStatus()));
 				if (response.getPayoutOutput() != null && response.getPayoutOutput().getReferences() != null) {
@@ -519,13 +527,16 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			} else {
 				throw new BusinessException("Gateway response is null");
 			}
-		} catch (DeclinedPaymentException e) {
-			log.error("Error on doRefundToken :",e);
-			throw new BusinessException(e.getResponseBody());
+
 		} catch (ApiException e) {
 			log.error("Error on doRefundToken :",e);
-			throw new BusinessException(e.getResponseBody());
+			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
+			if (CollectionUtils.isNotEmpty(e.getErrors())) {
+				doPaymentResponseDto.setErrorCode(e.getErrors().get(0).getId());
+			}
 		}
+		return doPaymentResponseDto;
 	}
 
 
