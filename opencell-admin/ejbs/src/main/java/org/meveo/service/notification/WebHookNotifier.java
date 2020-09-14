@@ -116,7 +116,7 @@ public class WebHookNotifier {
                 paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
                 sep = "&";
             }
-            String bodyEL_evaluated = null;
+            String bodyEL_evaluated;
             log.debug("paramQuery={}", paramQuery);
             if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
                 url += "?" + paramQuery;
@@ -124,7 +124,7 @@ public class WebHookNotifier {
                 bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
                 if (!StringUtils.isBlank(bodyEL_evaluated)) {
-                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&" + bodyEL_evaluated : bodyEL_evaluated;
+                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&body=" + bodyEL_evaluated : "body=" + bodyEL_evaluated;
                 }
             }
             log.debug("webhook url: {}", url);
