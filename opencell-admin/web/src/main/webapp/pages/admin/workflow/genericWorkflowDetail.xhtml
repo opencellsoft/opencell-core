@@ -59,12 +59,11 @@
 							listenerUpdate="targetCetCodeField targetEntityFilterPanel" />
 
 						<h:panelGroup id="targetEntityFilterPanel">
-							<hftl:decorateFormField fieldId="targetEntityFilter"  label="#{messages['filter.title']}" valueLabelField="code">
-								<p:selectOneMenu id="targetEntityFilter" value="#{genericWorkflowBean.selectedFilter}" rendered="#{genericWorkflowBean.entity.id == null}"  required="false" converter="omnifaces.SelectItemsConverter" >
-									<f:selectItem itemLabel="" />
-									<f:selectItems value="#{genericWorkflowBean.listFilterTargetEntity()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}" />
+							<hftl:decorateFormField fieldId="targetEntityFilter" label="#{messages['filter.title']}" valueLabelField="code">
+								<p:selectOneMenu id="targetEntityFilter" value="#{genericWorkflowBean.selectedFilter}" required="false" converter="omnifaces.SelectItemsConverter">
+									<f:selectItem itemLabel=""/>
+									<f:selectItems value="#{genericWorkflowBean.listFilterTargetEntity()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}"/>
 								</p:selectOneMenu>
-								<h:outputText value="#{genericWorkflowBean.entity.filter.code}" rendered="#{genericWorkflowBean.entity.id!=null}" />
 							</hftl:decorateFormField>
 						</h:panelGroup>
 
