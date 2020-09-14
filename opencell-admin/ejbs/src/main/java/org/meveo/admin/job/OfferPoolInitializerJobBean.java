@@ -30,6 +30,8 @@ import java.util.concurrent.Future;
 @Stateless
 public class OfferPoolInitializerJobBean extends BaseJobBean {
 
+    private static final String DATE_PATTERN = "MM/yyyy";
+
     private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " +
             "(select sub.user_account_id, offer.id offerId, count(sub.id) \n"
             + "from billing_subscription sub \n"
@@ -119,6 +121,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
                 }
             }
 
+            result.addReport("OfferPoolInitializer has been executed for the month: " + DateUtils.formatDateWithPattern(counterEndDate, DATE_PATTERN));
             result.setDone(true);
 
         } catch (Exception e) {
@@ -137,9 +140,9 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
         String dateParam = (String) this.getParamOrCFValue(jobInstance, "DATE", "");
         if (!StringUtils.isBlank(dateParam)) {
-            date = DateUtils.parseDateWithPattern(dateParam, "MM/yyyy");
+            date = DateUtils.parseDateWithPattern(dateParam, DATE_PATTERN);
             if (date == null) {
-                throw new BusinessException("The date format is incorrect, it must respect the format: MM/yyyy");
+                throw new BusinessException("The date format is incorrect, it must respect the format: " + DATE_PATTERN);
             }
         } else {
             date = new Date();
