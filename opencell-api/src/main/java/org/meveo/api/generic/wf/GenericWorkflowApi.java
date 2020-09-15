@@ -95,8 +95,8 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         if (noneMatch) {
             throw new EntityNotAllowedException(WFStatus.class, GenericWorkflow.class, genericWorkflowDto.getInitStatus());
         }
-
-        genericWorkflow = fromDTO(genericWorkflowDto, null);
+        genericWorkflow = new GenericWorkflow();
+        genericWorkflow = fromDTO(genericWorkflowDto, genericWorkflow);
         genericWorkflowService.create(genericWorkflow);
 
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
