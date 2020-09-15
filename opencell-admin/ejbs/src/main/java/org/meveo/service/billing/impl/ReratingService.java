@@ -170,7 +170,7 @@ public class ReratingService implements Serializable {
 
             for (Object[] rerateInfo : rerateInfos) {
 
-                // Termination date is before the max endDate - so will rate up to termination date only
+                // Termination date (chargeToDateOnTermination) is before the max endDate - so will rate up to termination (chargeToDateOnTermination) date only
                 // If from date is past the termination date, a reimbursement will be applied
                 Date rerateFromDate = (Date) rerateInfo[1];
                 Date rerateToDate = (Date) rerateInfo[2];
@@ -179,10 +179,10 @@ public class ReratingService implements Serializable {
                 if (chargeInstance == null) {
                     recurringChargeInstance = recurringChargeInstanceService.findById((Long) rerateInfo[0]);
                 }
-                Date terminationDate = recurringChargeInstance.getEffectiveTerminationDate();
+                Date chargeToDateOnTermination = recurringChargeInstance.getChargeToDateOnTermination();
 
-                if (terminationDate != null && rerateFromDate.compareTo(terminationDate) <= 0) {
-                    rerateToDate = terminationDate;
+                if (chargeToDateOnTermination != null && rerateFromDate.compareTo(chargeToDateOnTermination) <= 0) {
+                    rerateToDate = chargeToDateOnTermination;
                 }
 
                 if (sameTx) {

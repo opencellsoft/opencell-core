@@ -108,6 +108,13 @@ public class RecurringChargeInstance extends ChargeInstance {
     @Column(name = "apply_in_advance")
     private Boolean applyInAdvance;
 
+    /**
+     * The date to which charge should be applied to upon charge/service termination
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "charge_to_date_on_termination")
+    private Date chargeToDateOnTermination;
+
     public RecurringChargeInstance() {
 
     }
@@ -278,22 +285,16 @@ public class RecurringChargeInstance extends ChargeInstance {
     }
 
     /**
-     * Get an effective date that charge should be applied to. In case of termination reason implies to apply a endAgreement, effective date will be endAgreement date (if it was
-     * provided on service), otherwise a termination date.
-     * 
-     * @return Termination date or end agreement date depending on termination reason
+     * @return The date to which charge should be applied to upon charge/service termination
      */
-    public Date getEffectiveTerminationDate() {
+    public Date getChargeToDateOnTermination() {
+        return chargeToDateOnTermination;
+    }
 
-        if (status != InstanceStatusEnum.TERMINATED) {
-            return null;
-        }
-
-        SubscriptionTerminationReason terminationReason = getServiceInstance().getSubscriptionTerminationReason();
-        if (terminationReason.isApplyAgreement() && getServiceInstance().getEndAgreementDate() != null) {
-            return terminationDate.after(getServiceInstance().getEndAgreementDate()) ? terminationDate : getServiceInstance().getEndAgreementDate();
-        } else {
-            return terminationDate;
-        }
+    /**
+     * @param chargeToDateOnTermination The date to which charge should be applied to upon charge/service termination
+     */
+    public void setChargeToDateOnTermination(Date chargeToDateOnTermination) {
+        this.chargeToDateOnTermination = chargeToDateOnTermination;
     }
 }

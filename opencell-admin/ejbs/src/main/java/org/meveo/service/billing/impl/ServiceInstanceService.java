@@ -60,6 +60,7 @@ import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
@@ -500,7 +501,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
-        boolean applyAgreement = terminationReason.isApplyAgreement();
         boolean applyReimbursment = terminationReason.isApplyReimbursment();
         boolean applyTerminationCharges = terminationReason.isApplyTerminationCharges();
 
@@ -515,21 +515,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
             recurringChargeInstance.setTerminationDate(terminationDate);
 
+            Date chargeToDateOnTermination = getChargeToDateOnTermination(recurringChargeInstance);
+            recurringChargeInstance.setChargeToDateOnTermination(chargeToDateOnTermination);
+
             Date chargedToDate = recurringChargeInstance.getChargedToDate();
 
-            Date effectiveTerminationDate = terminationDate;
-
-            if (applyAgreement && serviceInstance.getEndAgreementDate() != null && terminationDate.before(serviceInstance.getEndAgreementDate())) {
-                effectiveTerminationDate = serviceInstance.getEndAgreementDate();
-            }
-
             log.info("Terminating recurring charge {} with chargedToDate {},  terminationDate {}, endAggrementDate {}, efectiveTerminationDate {}, terminationReason {}", recurringChargeInstance.getId(),
-                recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), effectiveTerminationDate, terminationReason.getCode());
+                recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
 
             // Effective termination date was moved to the future - to the end of agreement
-            if (effectiveTerminationDate.after(chargedToDate)) {
+            if (chargeToDateOnTermination.after(chargedToDate)) {
                 try {
-                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, effectiveTerminationDate);
+                    recurringChargeInstanceService.applyRecuringChargeToEndAgreementDate(recurringChargeInstance, chargeToDateOnTermination);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -540,8 +537,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     throw e;
                 }
 
-            } else if (applyReimbursment && effectiveTerminationDate.before(chargedToDate)) {
-                
+            } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
                 try {
                     recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
@@ -978,5 +974,41 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setServiceRenewal(serviceRenewal);
         serviceInstance.setSubscribedTillDate(subscribedTillDate);
         update(serviceInstance);
+    }
+
+    /**
+     * Get an effective date that charge should be applied to. In case termination reason implies to apply a endAgreement, effective date will be endAgreement date (if it was
+     * provided on service), otherwise a termination date. This rule can be overridden by an EL expression on Recurring charge template level.
+     * 
+     * 
+     * @return Termination date or end agreement date depending on termination reason
+     */
+    private Date getChargeToDateOnTermination(RecurringChargeInstance chargeInstance) {
+
+        if (chargeInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+            return null;
+        }
+
+        if (chargeInstance.getChargeToDateOnTermination() != null) {
+            return chargeInstance.getChargeToDateOnTermination();
+        }
+
+        Date terminationDate = chargeInstance.getTerminationDate();
+        Date endAgreementDate = chargeInstance.getServiceInstance().getEndAgreementDate();
+
+        Date chargeToDateOnTermination = terminationDate;
+
+        SubscriptionTerminationReason terminationReason = chargeInstance.getServiceInstance().getSubscriptionTerminationReason();
+        if (terminationReason.isApplyAgreement() && endAgreementDate != null) {
+            chargeToDateOnTermination = terminationDate.after(endAgreementDate) ? terminationDate : endAgreementDate;
+        }
+
+        if (chargeInstance.getRecurringChargeTemplate().getApplyTerminatedChargeToDateEL() != null) {
+            Date evalDate = ValueExpressionWrapper.evaluateExpression(chargeInstance.getRecurringChargeTemplate().getApplyTerminatedChargeToDateEL(), Date.class, chargeInstance, chargeToDateOnTermination);
+            if (evalDate != null) {
+                chargeToDateOnTermination = evalDate;
+            }
+        }
+        return chargeToDateOnTermination;
     }
 }
