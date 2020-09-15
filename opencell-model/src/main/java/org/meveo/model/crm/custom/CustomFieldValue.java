@@ -275,7 +275,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * Is it a newly entered period that was not saved to DB yet
      */
     @JsonIgnore
-    protected boolean isNewPeriod = false;
+    private boolean isNewPeriod = false;
 
     /**
      * A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
@@ -327,6 +327,20 @@ public class CustomFieldValue implements Serializable, Cloneable {
         this.priority = priority;
         setValue(value);
         this.isNewPeriod = true;
+    }
+
+    /**
+     * @return boolean value of isNewPeriod
+     */
+    public boolean isNewPeriod() {
+        return isNewPeriod;
+    }
+
+    /**
+     * set a new value for variable isNewPeriod
+     */
+    public void setNewPeriod(boolean value) {
+        this.isNewPeriod = value;
     }
 
     /**
