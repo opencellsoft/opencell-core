@@ -3549,8 +3549,6 @@ END $$;]]>
         </addColumn>
     </changeSet>
     
-    
-    
     <changeSet id="#5471-2020-09-07" author="AndriusKarpavicius">
         <createTable tableName="job_execution_error" >
             <column name="id" type="bigint">
@@ -3577,4 +3575,12 @@ END $$;]]>
         <createSequence sequenceName="job_execution_error_seq" startValue="1"/>
     </changeSet>
     
+    <changeSet id="#5489-2020-09-14" author="AndriusKarpavicius">
+        <addColumn tableName="billing_charge_instance">
+            <column name="charge_to_date_on_termination" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="apply_terminated_charge_to_date_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
