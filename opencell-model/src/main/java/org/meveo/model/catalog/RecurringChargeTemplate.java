@@ -143,6 +143,13 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     private String calendarCodeEl;
 
     /**
+     * Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    @Column(name = "apply_terminated_charge_to_date_el", length = 2000)
+    @Size(max = 2000)
+    private String applyTerminatedChargeToDateEL;
+
+    /**
      * Gets the calendar.
      *
      * @return the calendar
@@ -353,5 +360,19 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
     public void setProrataOnPriceChange(boolean prorataOnPriceChange) {
         this.prorataOnPriceChange = prorataOnPriceChange;
+    }
+    
+    /**
+     * @return Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    public String getApplyTerminatedChargeToDateEL() {
+        return applyTerminatedChargeToDateEL;
+    }
+    
+    /**
+     * @param applyTerminatedChargeToDateEL Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    public void setApplyTerminatedChargeToDateEL(String applyTerminatedChargeToDateEL) {
+        this.applyTerminatedChargeToDateEL = applyTerminatedChargeToDateEL;
     }
 }
