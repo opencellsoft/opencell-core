@@ -35,9 +35,15 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
+
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Aggregated wallet operation.
@@ -166,6 +172,15 @@ public class AggregatedWalletOperation {
 	private Date endDate;
 	private Date startDate;
 	private String description;
+
+	/**
+	 * EDR that produced this operation.
+	 */
+	private EDR edr;
+	/**
+	 * The wallet on which the operation is applied.
+	 */
+	private WalletInstance wallet;
 
 	/**
 	 * List of wallet operations.
@@ -550,5 +565,19 @@ public class AggregatedWalletOperation {
 		this.description = description;
 	}
 
+	public EDR getEdr() {
+		return edr;
+	}
 
+	public void setEdr(EDR edr) {
+		this.edr = edr;
+	}
+
+	public WalletInstance getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(WalletInstance wallet) {
+		this.wallet = wallet;
+	}
 }
