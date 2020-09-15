@@ -134,18 +134,15 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business api exeption.
      */
     public FlatFile uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
-        FileOutputStream fop = null;
-        try {
+        File file = new File(getProviderRootDir() + File.separator + filename);
+        try (FileOutputStream fop = new FileOutputStream(file)){
 //            if (!file.exists()) {
 //                file.createNewFile();
 //            }
 
-            File file = new File(getProviderRootDir() + File.separator + filename);
-            fop = new FileOutputStream(file);
+            ;
 
             fop.write(data);
-            fop.close();
-            fop = null;
 
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
@@ -161,10 +158,6 @@ public class FilesApi extends BaseApi {
 
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
-        } finally {
-            if (fop != null) {
-                IOUtils.closeQuietly(fop);
-            }
         }
     }
 
@@ -225,9 +218,9 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("The zipped file is invalid ! ");
         }
 
-        try {
+        try(FileInputStream fileInputStream = new FileInputStream(file)) {
             String parentDir = file.getParent();
-            FileUtils.unzipFile(parentDir, new FileInputStream(file));
+            FileUtils.unzipFile(parentDir, fileInputStream);
         } catch (Exception e) {
             if (deleteOnError) {
                 suppressFile(filePath);
