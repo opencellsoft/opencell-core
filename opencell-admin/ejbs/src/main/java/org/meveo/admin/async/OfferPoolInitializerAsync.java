@@ -55,7 +55,7 @@ public class OfferPoolInitializerAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterEndDate, int terminationDelay, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterStartDate, Date counterEndDate, int terminationDelay, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         log.info("Start new thread to initialize pool counters of offerIds workSet with length={}", offerIds.size());
@@ -80,7 +80,7 @@ public class OfferPoolInitializerAsync {
                 Long userAccountId = ((BigInteger) item[0]).longValue();
                 BigDecimal countSubs = BigDecimal.valueOf(((BigInteger) item[1]).longValue());
 
-                offerPoolInitializerUnitJobBean.execute(result, offerId.longValue(), userAccountId, countSubs, counterEndDate);
+                offerPoolInitializerUnitJobBean.execute(result, offerId.longValue(), userAccountId, countSubs, counterStartDate);
             }
         }
 

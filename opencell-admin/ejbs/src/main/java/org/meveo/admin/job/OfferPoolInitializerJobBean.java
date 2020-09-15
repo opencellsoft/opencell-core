@@ -1,5 +1,19 @@
 package org.meveo.admin.job;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.OfferPoolInitializerAsync;
 import org.meveo.admin.async.SubListCreator;
@@ -14,16 +28,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 /**
  * @author Mounir BOUKAYOUA
  */
@@ -33,22 +37,15 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
     private static final String DATE_PATTERN = "MM/yyyy";
 
     private static final int TERMINATION_DELAY = 90; // 3 months
-    
-    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
-            + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
-            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
-            + "and sub.status='ACTIVE' \n"
-            + "and sub.subscription_date <= :counterEndDate \n"
+
+    private static final String FROM_CLAUSE = "from billing_subscription sub \n" + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
+            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n" + "and sub.status='ACTIVE' \n" + "and sub.subscription_date <= :counterEndDate \n"
             + "and ( sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS ') <= :counterEndDate ) \n"
-            + "group by sub.user_account_id, offerId \n"
-            + "having count(sub.id) > 0";
+            + "group by sub.user_account_id, offerId \n" + "having count(sub.id) > 0";
 
-    private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " +
-            "(select sub.user_account_id, offer.id offerId, count(sub.id) \n"
-            + FROM_CLAUSE + ") t";
+    private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " + "(select sub.user_account_id, offer.id offerId, count(sub.id) \n" + FROM_CLAUSE + ") t";
 
-    private static final String OFFERS_TO_INITILIZE = "select distinct offer.id offerId \n"
-            + FROM_CLAUSE;
+    private static final String OFFERS_TO_INITILIZE = "select distinct offer.id offerId \n" + FROM_CLAUSE;
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -70,22 +67,20 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
-        Date counterEndDate = getCounterEndDate(jobInstance);
+        Date counterStartDate = getCounterStartDate(jobInstance);
+        Date counterEndDate = getCounterEndDate(counterStartDate);
 
         try {
             BigInteger offerCountersNbr = (BigInteger) emWrapper.getEntityManager()
-                    .createNativeQuery(OFFER_INIT_COUNT_QUERY.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
-                    .setParameter("counterEndDate", counterEndDate)
-                    .getSingleResult();
+                .createNativeQuery(OFFER_INIT_COUNT_QUERY.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY))).setParameter("counterEndDate", counterEndDate)
+                .getSingleResult();
 
             log.info("Total of offers/agencies counters to be initialized: {}", offerCountersNbr.longValue());
             result.setNbItemsToProcess(offerCountersNbr.longValue());
 
             @SuppressWarnings("unchecked")
-            List<BigInteger> offerIds = emWrapper.getEntityManager()
-                    .createNativeQuery(OFFERS_TO_INITILIZE.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
-                    .setParameter("counterEndDate", counterEndDate)
-                    .getResultList();
+            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
+                .setParameter("counterEndDate", counterEndDate).getResultList();
 
             log.info("Total of sahred offers that pools should be initialized: {}", offerIds.size());
 
@@ -94,7 +89,8 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures.add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterEndDate, TERMINATION_DELAY, result, lastCurrentUser));
+                futures
+                    .add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterStartDate, counterEndDate, TERMINATION_DELAY, result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -128,12 +124,12 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
     }
 
     /**
-     * Get date from param
+     * Get start date from param
      *
      * @param jobInstance
      * @return
      */
-    private Date getCounterEndDate(JobInstance jobInstance) {
+    private Date getCounterStartDate(JobInstance jobInstance) {
         Date date;
 
         String dateParam = (String) this.getParamOrCFValue(jobInstance, "DATE", "");
@@ -149,6 +145,23 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
         cal.setTime(date);
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
+        cal.set(year, month, 1, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal.getTime();
+    }
+
+    /**
+     * Get end date from param
+     * 
+     * @param date
+     * @return
+     */
+    private Date getCounterEndDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
         // Set last day of month
         int lastDay = cal.getActualMaximum(Calendar.DATE);
         cal.set(year, month, lastDay, 23, 59, 59);
@@ -156,4 +169,5 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
         return cal.getTime();
     }
+
 }

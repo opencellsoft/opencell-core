@@ -1,6 +1,16 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.exception.BusinessException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
@@ -9,21 +19,10 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Calculate the overrun by Agency-Offer-ChargeType and create WalletOperation
@@ -64,7 +63,7 @@ public class OfferPoolInitializerUnitJobBean {
     @SuppressWarnings({"unchecked"})
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long offerId, Long userAccountId, BigDecimal subCount, Date counterEndDate) {
+    public void execute(JobExecutionResultImpl result, Long offerId, Long userAccountId, BigDecimal subCount, Date counterStartDate) {
 
         log.info("Start pool counters initialization for offerId={}, userAccountId={}", offerId, userAccountId);
 
@@ -82,7 +81,7 @@ public class OfferPoolInitializerUnitJobBean {
 
             for (ServiceTemplate serviceTemplate : serviceTemplates) {
 
-                Map<String, Double> poolPerOfferMap = (Map<String, Double>) serviceTemplate.getCfValue(CF_POOL_PER_OFFER_MAP, counterEndDate);
+                Map<String, Double> poolPerOfferMap = (Map<String, Double>) serviceTemplate.getCfValue(CF_POOL_PER_OFFER_MAP, counterStartDate);
                 if (poolPerOfferMap == null) {
                     poolPerOfferMap = new HashMap<>();
                 }
@@ -93,7 +92,7 @@ public class OfferPoolInitializerUnitJobBean {
 
                     poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
                     poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());
-                    cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, poolPerOfferMap, counterEndDate);
+                    cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, poolPerOfferMap, counterStartDate);
                     serviceTemplateService.update(serviceTemplate);
                 }
             }
