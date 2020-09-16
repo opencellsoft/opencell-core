@@ -267,12 +267,16 @@ public class ParamBean {
                 saveProperties(file);
                 result = true;
             } else {
-                pr.load(new FileInputStream(_propertyFile));
-                setProperties(pr);
-                result = true;
+                try(FileInputStream propertyFileInputStream = new FileInputStream(_propertyFile)){
+                    pr.load(propertyFileInputStream);
+                    setProperties(pr);
+                    result = true;
+                }
             }
         } catch (IOException e1) {
             log.error("Impossible to create :" + _propertyFile);
+        }finally {
+
         }
         // log.debug("-Fin initialize , result:" + result
         // + ", portability.defaultDelay="

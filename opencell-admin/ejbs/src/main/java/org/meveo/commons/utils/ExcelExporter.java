@@ -161,13 +161,8 @@ public final class ExcelExporter {
 					}
 				}
 				// Save to file
-				try {
-					inputStream.close();
-
-					FileOutputStream outputStream = new FileOutputStream(output);
+				try (FileOutputStream outputStream = new FileOutputStream(output)){
 					workbook.write(outputStream);
-					workbook.close();
-					outputStream.close();
 				} catch (Exception e) {
 					throw new RuntimeException("Unable to export to Excel", e);
 				}
