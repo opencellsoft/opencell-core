@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 
 /**
  * The Class ApplyOneShotChargeInstanceRequestDto.
@@ -44,40 +45,68 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     @XmlElement(required = true)
     private String oneShotCharge;
 
-    /** The subscription. */
+    /**
+     * The subscription.
+     */
     @XmlElement(required = true)
     private String subscription;
 
-    /** The wallet. */
+    /**
+     * The wallet.
+     */
     private String wallet;
 
-    /** The create wallet. */
+    /**
+     * The create wallet.
+     */
     private Boolean createWallet;
 
-    /** The operation date. */
+    /**
+     * The operation date.
+     */
     @XmlElement(required = true)
     private Date operationDate;
 
-    /** The quantity. */
+    /**
+     * The quantity.
+     */
     private BigDecimal quantity;
 
-    /** The description. */
+    /**
+     * The description.
+     */
     private String description;
-    
-    /** The amount without tax. */
+
+    /**
+     * The amount without tax.
+     */
     private BigDecimal amountWithoutTax;
-    
-    /** The amount with tax. */
+
+    /**
+     * The amount with tax.
+     */
     private BigDecimal amountWithTax;
-    
-    /** The criteria 1. */
+
+    /**
+     * The criteria 1.
+     */
     private String criteria1;
-    
-    /** The criteria 2. */
+
+    /**
+     * The criteria 2.
+     */
     private String criteria2;
-    
-    /** The criteria 3. */
+
+    /**
+     * The criteria 3.
+     */
     private String criteria3;
+
+    /**
+     * The custom fields.
+     */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
     /**
      * Gets the one shot charge.
@@ -294,7 +323,25 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     public void setSubscription(String subscription) {
         this.subscription = subscription;
     }
-    
+
+    /**
+     * Get Custom fields DTO.
+     *
+     * @return
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Set Custom fields DTO.
+     *
+     * @param customFields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     @Override
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
