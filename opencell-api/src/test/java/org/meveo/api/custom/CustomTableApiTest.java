@@ -24,6 +24,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -32,6 +33,7 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +50,8 @@ public class CustomTableApiTest {
     @InjectMocks
     private CustomTableApi sut;
 
-    @Mock
+    @Spy
+    @InjectMocks
     private CustomTableService customTableService;
 
     @Mock
@@ -119,7 +122,10 @@ public class CustomTableApiTest {
     public void should_replace_value_if_all_is_ok() {
         //Given
         CustomFieldTemplate customTableField = mock(CustomFieldTemplate.class);
-        when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate - TABLE_2");
+        when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate");
+        CustomEntityTemplate relatedEntity = mock(CustomEntityTemplate.class);
+        when(relatedEntity.isStoreAsTable()).thenReturn(true);
+        when(customEntityTemplateService.findByCode(anyString())).thenReturn(relatedEntity);
         Map<String, CustomFieldTemplate> reference = new HashMap<String, CustomFieldTemplate>() {{
             put("flirtikit", customTableField);
         }};

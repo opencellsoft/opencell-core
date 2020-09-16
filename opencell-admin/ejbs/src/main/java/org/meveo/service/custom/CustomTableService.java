@@ -924,7 +924,8 @@ public class CustomTableService extends NativePersistenceService {
 
     public Map<String, Object> findRecordOfTableById(CustomFieldTemplate field, Long id) {
         try {
-            return Optional.ofNullable(field).map(CustomFieldTemplate::tableName).map(tableName -> findRecordByIdAndTableName(id, tableName)).orElse(new HashMap<>());
+            return Optional.ofNullable(field).map(CustomFieldTemplate::tableName)
+                    .map(tableName -> findRecordByIdAndTableName(id, tableName)).orElse(new HashMap<>());
         } catch (Exception ex) {
             return new HashMap<>();
         }
@@ -1049,7 +1050,8 @@ public class CustomTableService extends NativePersistenceService {
     public void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
         if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
             CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
-            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz())).map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
+                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
                 .filter(values -> values.size() > 0).ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
         }
     }
