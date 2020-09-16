@@ -158,7 +158,8 @@ public class CustomFieldValues implements Serializable {
             String cfCode = valueInfo.getKey();
             for (CustomFieldValue cfValue : valueInfo.getValue()) {
                 CustomFieldValue cfPeriodExisting = getCfValueByPeriod(valueInfo.getKey(), cfValue.getPeriod(), true, false);
-                cfValue.isNewPeriod = cfPeriodExisting == null;
+                cfValue.setNewPeriod(cfPeriodExisting == null);
+//                cfValue.isNewPeriod = cfPeriodExisting == null;
 
                 // Mark dirty fields - new period, or just a value change. Ignore value change for excessive size fields, as they should not be inherited/accumulated
                 if (cfPeriodExisting == null) {
@@ -588,13 +589,13 @@ public class CustomFieldValues implements Serializable {
 
         CustomFieldValue valueByPeriod = getCfValueByPeriod(cfCode, period, true, true);
 
-        if (priority == null && valueByPeriod.isNewPeriod) {
+        if (priority == null && valueByPeriod.isNewPeriod()) {
             valueByPeriod.setPriority(0);
         } else if (priority != null && priority.intValue() >= 0) {
             valueByPeriod.setPriority(priority);
         }
 
-        if (valueByPeriod.isNewPeriod) {
+        if (valueByPeriod.isNewPeriod()) {
 
             valueByPeriod.setValue(value);
 
@@ -749,7 +750,7 @@ public class CustomFieldValues implements Serializable {
 
         for (Entry<String, List<CustomFieldValue>> valueInfo : valuesByCode.entrySet()) {
             for (CustomFieldValue cfValue : valueInfo.getValue()) {
-                if (cfValue.isNewPeriod && cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
+                if (cfValue.isNewPeriod() && cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
                     if (!newPeriods.containsKey(valueInfo.getKey())) {
                         newPeriods.put(valueInfo.getKey(), new ArrayList<>());
                     }
@@ -801,7 +802,7 @@ public class CustomFieldValues implements Serializable {
 
                 dirtyCfValues.add(cfCode);
 
-                if (customFieldValueFound.isNewPeriod) {
+                if (customFieldValueFound.isNewPeriod()) {
                     // Mark fields dirty - new period
                     dirtyCfPeriods.add(cfCode);
                 }

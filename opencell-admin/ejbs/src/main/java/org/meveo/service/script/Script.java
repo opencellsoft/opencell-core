@@ -40,7 +40,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     /**
      * GUI redirection after entity custom action execution
      */
-    public static String RESULT_GUI_OUTCOME = "GUI_OUTCOME";
+    public static final String RESULT_GUI_OUTCOME = "GUI_OUTCOME";
 
     /**
      * A key of a message to show after entity custom action execution
@@ -55,7 +55,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     /**
      * Script return value
      */
-    public static String RESULT_VALUE = "RESULT_VALUE";
+    public static final String RESULT_VALUE = "RESULT_VALUE";
 
     /**
      * Entity or event on which script acts on in case of fired notification
@@ -65,7 +65,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     /**
      * Entity, on which script acts on
      */
-    public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
+    public static final String CONTEXT_ENTITY = "CONTEXT_ENTITY";
 
     /**
      * Parent entity of an entity, on which script acts on
@@ -80,42 +80,42 @@ public abstract class Script implements Serializable, ScriptInterface {
     /**
      * Current user
      */
-    public static String CONTEXT_CURRENT_USER = "CONTEXT_CURRENT_USER";
+    public static final String CONTEXT_CURRENT_USER = "CONTEXT_CURRENT_USER";
 
     /**
      * Current provider/tenant
      */
-    public static String CONTEXT_APP_PROVIDER = "CONTEXT_APP_PROVIDER";
+    public static final String CONTEXT_APP_PROVIDER = "CONTEXT_APP_PROVIDER";
 
     /**
      * Entity custom action's code
      */
-    public static String CONTEXT_ACTION = "CONTEXT_ACTION";
+    public static final String CONTEXT_ACTION = "CONTEXT_ACTION";
 
     /**
      * Nb of ok when script is executed by a Job
      */
-    public static String JOB_RESULT_NB_OK = "RESULT_NB_OK";
+    public static final String JOB_RESULT_NB_OK = "RESULT_NB_OK";
 
     /**
      * Nb of ko when script is executed by a Job
      */
-    public static String JOB_RESULT_NB_KO = "RESULT_NB_KO";
+    public static final String JOB_RESULT_NB_KO = "RESULT_NB_KO";
 
     /**
      * Nb of warn when script is executed by a Job
      */
-    public static String JOB_RESULT_NB_WARN = "RESULT_NB_WARN";
+    public static final String JOB_RESULT_NB_WARN = "RESULT_NB_WARN";
 
     /**
      * Report when script is executed by a Job
      */
-    public static String JOB_RESULT_REPORT = "RESULT_REPORT";
+    public static final String JOB_RESULT_REPORT = "RESULT_REPORT";
 
     /**
      * Nb of result to process when script is executed by a Job
      */
-    public static String JOB_RESULT_TO_PROCESS = "RESULT_TO_PROCESS";
+    public static final String JOB_RESULT_TO_PROCESS = "RESULT_TO_PROCESS";
 
     /**
      * The job execution result.

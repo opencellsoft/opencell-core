@@ -30,12 +30,12 @@ public class AccountScript extends ModuleScript implements AccountScriptInterfac
     /**
      * seller constant.
      */
-    public static String CONTEXT_SELLER = "CONTEXT_SELLER";
+    public static final String CONTEXT_SELLER = "CONTEXT_SELLER";
 
     /**
      * account hierachy constant.
      */
-    public static String CONTEXT_ACCOUNT_HIERARCHY_DTO = "CONTEXT_ACCOUNT_HIERARCHY_DTO";
+    public static final String CONTEXT_ACCOUNT_HIERARCHY_DTO = "CONTEXT_ACCOUNT_HIERARCHY_DTO";
 
     @Override
     public void createAccount(Map<String, Object> methodContext) throws BusinessException {

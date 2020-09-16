@@ -360,7 +360,7 @@ public class ImportSubscriptionsJobBean {
                     return null;
                 }
 
-                checkSubscription.getServiceInsts().add(serviceInst);
+                checkSubscription.getServiceInstances().add(serviceInst);
             }
 
             if (jaxbSubscription.getAccesses() != null) {

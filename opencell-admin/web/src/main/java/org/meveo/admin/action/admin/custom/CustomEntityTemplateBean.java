@@ -532,16 +532,16 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
             // Only tab, fieldGroup and action can be under root
             if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
-                currentPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
+                currentPosition = GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
 
             } else if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
                 if (!sortedNode.getParent().getType().equals(GroupedCustomFieldTreeItemType.root.name())) {
-                    currentPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + sortedNode.getParent().getData() + ":" + ((SortedTreeNode) sortedNode.getParent()).getIndexInParent() + ";";
+                    currentPosition = GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + sortedNode.getParent().getData() + ":" + ((SortedTreeNode) sortedNode.getParent()).getIndexInParent() + ";";
                 }
-                currentPosition = currentPosition + GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
+                currentPosition = currentPosition + GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
 
             } else if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
-                String guiPosition = GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedNode.getIndexInParent();
+                String guiPosition = GroupedCustomFieldTreeItemType.action.getPositionTag() + ":" + sortedNode.getIndexInParent();
                 EntityCustomAction action = (EntityCustomAction) sortedNode.getData();
                 action = entityActionScriptService.refreshOrRetrieve(action);
                 if (!guiPosition.equals(action.getGuiPosition())) {
@@ -556,7 +556,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             for (TreeNode node : sortedNode.getChildren()) {
                 SortedTreeNode sortedChildNode = (SortedTreeNode) node;
                 if (sortedChildNode.getType().equals(GroupedCustomFieldTreeItemType.field.name())) {
-                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":" + sortedChildNode.getIndexInParent();
+                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.field.getPositionTag() + ":" + sortedChildNode.getIndexInParent();
                     CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildNode.getData();
                     cft = customFieldTemplateService.refreshOrRetrieve(cft);
                     if (!guiPosition.equals(cft.getGuiPosition())) {
@@ -566,7 +566,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                     }
 
                 } else if (sortedChildNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
-                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedChildNode.getIndexInParent();
+                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.action.getPositionTag() + ":" + sortedChildNode.getIndexInParent();
                     EntityCustomAction action = (EntityCustomAction) sortedChildNode.getData();
                     action = entityActionScriptService.refreshOrRetrieve(action);
                     if (!guiPosition.equals(action.getGuiPosition())) {
@@ -581,7 +581,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                         SortedTreeNode sortedChildChildNode = (SortedTreeNode) childNode;
 
                         if (sortedChildChildNode.getType().equals(GroupedCustomFieldTreeItemType.field.name())) {
-                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":" + sortedChildChildNode.getIndexInParent();
+                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.field.getPositionTag() + ":" + sortedChildChildNode.getIndexInParent();
                             CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildChildNode.getData();
                             cft = customFieldTemplateService.refreshOrRetrieve(cft);
                             if (!guiPosition.equals(cft.getGuiPosition())) {
@@ -591,7 +591,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                             }
 
                         } else if (sortedChildChildNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
-                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedChildChildNode.getIndexInParent();
+                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.action.getPositionTag() + ":" + sortedChildChildNode.getIndexInParent();
                             EntityCustomAction action = (EntityCustomAction) sortedChildChildNode.getData();
                             action = entityActionScriptService.refreshOrRetrieve(action);
                             if (!guiPosition.equals(action.getGuiPosition())) {
@@ -624,13 +624,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         public String getGuiPositionForField() {
 
             if (getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
-                return GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":" + getChildCount();
+                return GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.field.getPositionTag() + ":" + getChildCount();
 
             } else if (getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
-                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":"
+                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.field.getPositionTag() + ":"
                         + getChildCount();
                 if (getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
-                    guiPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";" + guiPosition;
+                    guiPosition = GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";" + guiPosition;
                 }
                 return guiPosition;
             }
@@ -640,13 +640,13 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         public String getGuiPositionForAction() {
 
             if (getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
-                return GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":" + getChildCount();
+                return GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.action.getPositionTag() + ":" + getChildCount();
 
             } else if (getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
-                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":"
+                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";" + GroupedCustomFieldTreeItemType.action.getPositionTag() + ":"
                         + getChildCount();
                 if (getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
-                    guiPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";" + guiPosition;
+                    guiPosition = GroupedCustomFieldTreeItemType.tab.getPositionTag() + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";" + guiPosition;
                 }
                 return guiPosition;
             }

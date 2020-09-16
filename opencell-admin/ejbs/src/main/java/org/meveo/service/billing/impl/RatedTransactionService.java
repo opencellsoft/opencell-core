@@ -150,6 +150,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private TaxClassService taxClassService;
 
+    @Inject
+    private WalletService walletService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -322,7 +325,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setStartDate(aggregatedWo.getStartDate());
         ratedTransaction.setEndDate(aggregatedWo.getEndDate());
         //ratedTransaction.setEdr(aggregatedWo.getEdr());
-        ratedTransaction.setWallet(aggregatedWo.getWallet());
+        WalletInstance wallet = walletService.refreshOrRetrieve(aggregatedWo.getWallet());
+        ratedTransaction.setWallet(wallet);
         populateCustomfield(ratedTransaction, aggregatedWo);
         if (!isVirtual) {
             create(ratedTransaction);

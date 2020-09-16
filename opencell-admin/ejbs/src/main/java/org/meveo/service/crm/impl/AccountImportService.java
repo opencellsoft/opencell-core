@@ -501,7 +501,7 @@ public class AccountImportService extends ImportService {
                     return null;
                 }
 
-                checkSubscription.getServiceInsts().add(serviceInst);
+                checkSubscription.getServiceInstances().add(serviceInst);
             }
 
             if (jaxbSubscription.getAccesses() != null) {

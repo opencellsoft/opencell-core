@@ -206,7 +206,7 @@ public class SubscriptionImportService extends ImportService {
 
         log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Created");
 
-        for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.getServiceInsts()) {
+        for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.getServiceInstances()) {
             try {
                 ServiceTemplate serviceTemplate = null;
                 ServiceInstance serviceInstance = new ServiceInstance();

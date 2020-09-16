@@ -22,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.jaxb.subscription.Access;
-import org.meveo.model.jaxb.subscription.ServiceInstance;
 
 public class CheckedSubscription {
 	private OfferTemplate offerTemplate;
@@ -36,51 +35,87 @@ public class CheckedSubscription {
 	private List<org.meveo.model.jaxb.subscription.ServiceInstance> serviceInsts = new ArrayList<org.meveo.model.jaxb.subscription.ServiceInstance>();
 	private List<org.meveo.model.jaxb.subscription.Access> accessPoints = new ArrayList<org.meveo.model.jaxb.subscription.Access>();
 
+	/**
+	 * @return offerTemplate
+	 */
 	public OfferTemplate getOfferTemplate() {
 		return offerTemplate;
 	}
 
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
+	/**
+	 * set a new value for offerTemplate
+	 */
+	public void setOfferTemplate(OfferTemplate value) {
+		this.offerTemplate = value;
 	}
 
-	public UserAccount getUserAccount() {
-		return userAccount;
+	/**
+	 * @return serviceInsts
+	 */
+	public List<org.meveo.model.jaxb.subscription.ServiceInstance> getServiceInstances() {
+		return serviceInsts;
 	}
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
+	/**
+	 * set a new value for serviceInsts
+	 */
+	public void setServiceInstances(List<org.meveo.model.jaxb.subscription.ServiceInstance> serviceInstances) {
+		this.serviceInsts = serviceInstances;
 	}
 
-	public Subscription getSubscription() {
-		return subscription;
+	/**
+	 * @return accessPoints
+	 */
+	public List<org.meveo.model.jaxb.subscription.Access> getAccessPoints() {
+		return accessPoints;
 	}
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
+	/**
+	 * set a new value for accessPoints
+	 */
+	public void setAccessPoints(List<org.meveo.model.jaxb.subscription.Access> accessPoints) {
+		this.accessPoints = accessPoints;
 	}
 
+	/**
+	 * @return seller
+	 */
 	public Seller getSeller() {
 		return seller;
 	}
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
+	/**
+	 * set a new value for seller
+	 */
+	public void setSeller(Seller value) {
+		this.seller = value;
 	}
 
-	public List<ServiceInstance> getServiceInsts() {
-		return serviceInsts;
+	/**
+	 * @return userAccount
+	 */
+	public UserAccount getUserAccount() {
+		return userAccount;
 	}
 
-	public void setServiceInsts(List<ServiceInstance> serviceInsts) {
-		this.serviceInsts = serviceInsts;
+	/**
+	 * set a new value for userAccount
+	 */
+	public void setUserAccount(UserAccount value) {
+		this.userAccount = value;
 	}
 
-	public List<Access> getAccessPoints() {
-		return accessPoints;
+	/**
+	 * @return subscription
+	 */
+	public Subscription getSubscription() {
+		return subscription;
 	}
 
-	public void setAccessPoints(List<Access> accessPoints) {
-		this.accessPoints = accessPoints;
+	/**
+	 * set a new value for subscription
+	 */
+	public void setSubscription(Subscription value) {
+		this.subscription = value;
 	}
 }

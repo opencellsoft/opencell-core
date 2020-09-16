@@ -51,6 +51,14 @@ public enum PaperFormatEnum {
         return result;
     }
 
+    public int getHeightInMillimeters() {
+        return heightInMillimeters;
+    }
+
+    public int getWidhtInMillimeter() {
+        return widhtInMillimeter;
+    }
+
     public static PaperFormatEnum getLargerFormatSmallerOrEqualThan(int height, int width, PaperSerieEnum serie) {
         PaperFormatEnum result = null;
         int deltaMin = 0;
@@ -74,13 +82,5 @@ public enum PaperFormatEnum {
             }
         }
         return result;
-    }
-
-    public int getHeightInMillimeters() {
-        return heightInMillimeters;
-    }
-
-    public int getWidhtInMillimeter() {
-        return widhtInMillimeter;
     }
 }
