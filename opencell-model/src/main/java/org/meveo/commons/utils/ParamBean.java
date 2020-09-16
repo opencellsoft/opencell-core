@@ -139,7 +139,7 @@ public class ParamBean {
      * 
      * @return Application configuration instance
      */
-    public static synchronized ParamBean getInstance() {
+    public static ParamBean getInstance() {
         try {
             return getInstance("opencell-admin.properties");
         } catch (Exception e) {
