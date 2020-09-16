@@ -478,9 +478,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public static String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
-        String appliesTo = null;
+//        String appliesTo = null;
+        StringBuffer appliesToSB = new StringBuffer();
         if (cfeAnnotation != null) {
-            appliesTo = cfeAnnotation.cftCodePrefix();
+//            appliesTo = cfeAnnotation.cftCodePrefix();
+            appliesToSB.append(cfeAnnotation.cftCodePrefix());
             if (cfeAnnotation.cftCodeFields().length > 0) {
                 for (String fieldName : cfeAnnotation.cftCodeFields()) {
                     try {
@@ -488,7 +490,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                         if (fieldValue == null) {
                             throw new CustomFieldException("Can not calculate AppliesTo value");
                         }
-                        appliesTo = appliesTo + "_" + fieldValue;
+//                        appliesTo = appliesTo + "_" + fieldValue;
+                        appliesToSB.append("_" + fieldValue);
                     } catch (IllegalArgumentException | IllegalAccessException e) {
                         Logger log = LoggerFactory.getLogger(CustomFieldTemplateService.class);
                         log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
@@ -497,6 +500,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 }
             }
         }
+        String appliesTo = appliesToSB.toString();
+
         return appliesTo;
     }
 
