@@ -89,9 +89,9 @@ public class CfValueAccumulatorRule implements Serializable {
         calendar = cft.getCalendar();
         storedAsMap = cft.getStorageType() == CustomFieldStorageTypeEnum.MAP || cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX;
 
-        Map<Class<?>, CustomFieldTemplate> cftsByClass = cftList.stream().collect(Collectors.toMap(x -> CfValueAccumulator.appliesToMap.get(x.getAppliesTo()), x -> x));
+        Map<Class<?>, CustomFieldTemplate> cftsByClass = cftList.stream().collect(Collectors.toMap(x -> CfValueAccumulator.getAppliesToMap().get(x.getAppliesTo()), x -> x));
 
-        for (Class<?> clazz : CfValueAccumulator.topPropagateToClasses) {
+        for (Class<?> clazz : CfValueAccumulator.getTopPropagateToClasses()) {
             constructAccumulationRules(cftsByClass, clazz, null, null, null);
         }
 
@@ -125,8 +125,8 @@ public class CfValueAccumulatorRule implements Serializable {
 
                 // For provider path will be always null
                 String path = null;
-                if (!Provider.class.equals(lastEntityClassWithCft) && CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) != null) {
-                    path = CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : "");
+                if (!Provider.class.equals(lastEntityClassWithCft) && CfValueAccumulator.getTreeAcumulateFrom().get(entityClazz).get(previousClazzInHierarchy) != null) {
+                    path = CfValueAccumulator.getTreeAcumulateFrom().get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : "");
                 }
                 accumulateFrom.get(entityClazz).add(new CfValueAccumulatorPath(lastEntityClassWithCft, path));
             }
@@ -134,16 +134,16 @@ public class CfValueAccumulatorRule implements Serializable {
             accumulationPath = null;
 
         } else if (previousClazzInHierarchy != null) {
-            accumulationPath = CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) == null ? null
-                    : (CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : ""));
+            accumulationPath = CfValueAccumulator.getTreeAcumulateFrom().get(entityClazz).get(previousClazzInHierarchy) == null ? null
+                    : (CfValueAccumulator.getTreeAcumulateFrom().get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : ""));
         }
 
         // Keep going down the propagation hierarchy unless it is the same class and the loop will continue forever
         if (entityClazz.equals(previousClazzInHierarchy)) {
             return;
         }
-        if (CfValueAccumulator.treePropagateTo.containsKey(entityClazz)) {
-            for (Class<?> nextPropagateTo : CfValueAccumulator.treePropagateTo.get(entityClazz)) {
+        if (CfValueAccumulator.getTreePropagateTo().containsKey(entityClazz)) {
+            for (Class<?> nextPropagateTo : CfValueAccumulator.getTreePropagateTo().get(entityClazz)) {
                 constructAccumulationRules(cftsByClass, nextPropagateTo, entityClazz, lastEntityClassWithCft, accumulationPath);
             }
         }

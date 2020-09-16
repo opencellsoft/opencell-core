@@ -47,8 +47,8 @@ public enum EnvelopeFormatEnum {
         if (heightFoldingNumber <= 0) {
             heightFoldingNumber = 1;
         }
-        int foldedPaperWidth = paperFormat.widhtInMillimeter / withFoldingNumber;
-        int foldedPaperHeight = paperFormat.heightInMillimeters / heightFoldingNumber;
+        int foldedPaperWidth = paperFormat.getWidhtInMillimeter() / withFoldingNumber;
+        int foldedPaperHeight = paperFormat.getHeightInMillimeters() / heightFoldingNumber;
         int sizeMax = 0;
         for (EnvelopeFormatEnum format : EnvelopeFormatEnum.values()) {
             if (format.heightInMillimeters > foldedPaperHeight && format.widhtInMillimeter > foldedPaperWidth && (excludedFormats == null || !excludedFormats.contains(format))) {

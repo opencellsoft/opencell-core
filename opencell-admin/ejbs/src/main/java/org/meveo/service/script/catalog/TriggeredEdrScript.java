@@ -34,7 +34,7 @@ public class TriggeredEdrScript extends Script implements TriggeredEdrScriptInte
     /**
      * Wallet Operation which trigger the creation of TriggeredEdr
      */
-    public static String CONTEXT_WO = "CONTEXT_WO";
+    public static final String CONTEXT_WO = "CONTEXT_WO";
 
     @Override
     public EDR updateEdr(Map<String, Object> methodContext) {
