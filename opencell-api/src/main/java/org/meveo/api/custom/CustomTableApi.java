@@ -64,7 +64,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
-
 /**
  * @author Andrius Karpavicius
  * @author Mohammed ELAZZOUZI
