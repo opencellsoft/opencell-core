@@ -81,7 +81,7 @@ public class ReportExecution implements Serializable {
     //
     // public JasperDesign jasperDesign;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
 
     /**
      * Generates PDF report using String data source.

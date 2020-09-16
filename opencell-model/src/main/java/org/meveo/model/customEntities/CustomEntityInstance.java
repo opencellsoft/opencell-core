@@ -59,14 +59,14 @@ public class CustomEntityInstance extends EnableBusinessCFEntity implements IWFE
     @Column(name = "cet_code", length = 255, nullable = false)
     @Size(max = 255)
     @NotNull
-    public String cetCode;
+    private String cetCode;
 
     /**
      * Parent entity unique identifier UUID. Used only as part of Custom field Embedded entity data type.
      */
     @Column(name = "parent_uuid", updatable = false, length = 60)
     @Size(max = 60)
-    public String parentEntityUuid;
+    private String parentEntityUuid;
 
     public String getCetCode() {
         return cetCode;
