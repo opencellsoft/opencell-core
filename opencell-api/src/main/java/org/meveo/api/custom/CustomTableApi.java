@@ -64,22 +64,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.Entity;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 /**
  * @author Andrius Karpavicius
@@ -108,7 +93,7 @@ public class CustomTableApi extends BaseApi {
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void create(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
-    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
+    	Map<String, Object> toValidate = new TreeMap<>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
     	validateParams(toValidate);
     	CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         if (dto.getOverwrite() == null) {
