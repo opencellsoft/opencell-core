@@ -445,7 +445,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 selectedPaymentMethod.setPreferred(true);
             }
 
-            if (!entity.getPaymentMethods().contains(selectedPaymentMethod)) {
+            if (!entity.getPaymentMethods().stream().anyMatch(paymentMethod -> paymentMethod.getId()!= null && paymentMethod.getId().equals(selectedPaymentMethod.getId()))) {
                 selectedPaymentMethod.setCustomerAccount(getEntity());
                 entity.getPaymentMethods().add(selectedPaymentMethod);
             } else {
