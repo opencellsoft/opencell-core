@@ -93,7 +93,7 @@ public class ParamBean {
      */
     private static boolean reload = false;
 
-    public ParamBean() {
+    protected ParamBean() {
 
     }
 
