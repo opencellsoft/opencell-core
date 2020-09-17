@@ -1539,8 +1539,16 @@ public class CsvReader {
      * 
      */
     @Override
-    protected void finalize() {
-        close(false);
+    protected void finalize() throws Throwable {
+//        close(false);
+        try {
+            System.out.println("Calling finalize() method of CsvReader class");
+        } catch(Throwable aTh) {
+            throw aTh;
+        } finally {
+            System.out.println("Calling finalize() method of Object class");
+            super.finalize();
+        }
     }
 
     private class ComplexEscape {
