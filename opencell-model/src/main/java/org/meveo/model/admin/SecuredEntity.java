@@ -19,6 +19,7 @@
 package org.meveo.model.admin;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -113,11 +114,16 @@ public class SecuredEntity implements Serializable {
         }
 
         thatCode = thatClass + "-_-" + thatCode;
-        String thisCode = entityClass + "-_-" + code;
+        String thisCode = this.getEntityClass() + "-_-" + this.getCode();
 
         if (!thisCode.equals(thatCode)) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getCode(), this.getEntityClass());
     }
 }

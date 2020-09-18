@@ -93,7 +93,7 @@ public class ParamBean {
      */
     private static boolean reload = false;
 
-    public ParamBean() {
+    protected ParamBean() {
 
     }
 
@@ -139,7 +139,7 @@ public class ParamBean {
      * 
      * @return Application configuration instance
      */
-    public static ParamBean getInstance() {
+    public static synchronized ParamBean getInstance() {
         try {
             return getInstance("opencell-admin.properties");
         } catch (Exception e) {

@@ -54,9 +54,12 @@ public class EjbUtils {
      */
     public static Object getInterface(String nameEJB) throws NamingException {
         InitialContext ctx = null;
-        if (System.getenv("JBOSS_HOST") != null) {
-            logger.info(String.format("JBOSS_HOST=", System.getenv("JBOSS_HOST")));
-            ctx = getInitialContext(System.getenv("JBOSS_HOST"));
+//        if (System.getenv("JBOSS_HOST") != null) {
+        if (System.getProperty("JBOSS_HOST") != null) {
+//            logger.info(String.format("JBOSS_HOST=", System.getenv("JBOSS_HOST")));
+//            ctx = getInitialContext(System.getenv("JBOSS_HOST"));
+            logger.info(String.format("JBOSS_HOST=", System.getProperty("JBOSS_HOST")));
+            ctx = getInitialContext(System.getProperty("JBOSS_HOST"));
         } else {
             ctx = getInitialContext(LOCALHOST);
         }
