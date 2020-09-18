@@ -244,6 +244,7 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
@@ -484,7 +485,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-            billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
+        if (postData.isThresholdPerEntity() != null) {
+        	billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getPhone() != null) {
             billingAccount.getContactInformation().setPhone(postData.getPhone());
@@ -787,6 +790,9 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+                }
+                if(postData.isThresholdPerEntity() != null) {
+                	existedBillingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
                 }
 
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
