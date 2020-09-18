@@ -104,6 +104,5 @@ public class DeletionServiceTest {
         template.setDescription("bcda");
         template.setAppliesTo("Customer");
 
-        when(sut.getPersistenceService(eq(Customer.class))).thenReturn(Optional.of(mock(CustomerService.class)));
     }
 }
