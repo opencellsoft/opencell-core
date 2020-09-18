@@ -229,8 +229,8 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-        if (postData.getInvoicingThreshold() != null) {
-            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        if (postData.isThresholdPerEntity() != null) {
+            customer.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getCheckThreshold() != null) {
             customer.setCheckThreshold(postData.getCheckThreshold());
@@ -344,9 +344,6 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getCheckThreshold() != null) {
             customer.setCheckThreshold(postData.getCheckThreshold());
-        }
-        if (postData.getInvoicingThreshold() != null) {
-            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
         if (postData.isThresholdPerEntity() != null) {
         	customer.setThresholdPerEntity(postData.isThresholdPerEntity());

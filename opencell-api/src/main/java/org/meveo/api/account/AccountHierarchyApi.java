@@ -291,9 +291,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
-        if(postData.getCustomerInvoicingThreshold()!=null) {
-        	customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
-        }
+        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
         if (postData.getCustomerCheckThreshold() == null && postData.getCustomerInvoicingThreshold() != null) {
             customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
@@ -381,13 +379,11 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setDateDunningLevel(new Date());
         customerAccountDto.setJobTitle(postData.getJobTitle());
         customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        customerAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         if (postData.getCustomerAccountCheckThreshold() == null && postData.getCustomerAccountInvoicingThreshold() != null) {
             customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
-        }
-        if(postData.getCustomerAccountInvoicingThreshold()!=null) {
-        	customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
         }
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -699,6 +695,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());

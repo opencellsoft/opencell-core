@@ -117,6 +117,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingCycle.setThresholdPerEntity(postData.isThresholdPerEntity());
         billingCycle.setInvoiceType(invoiceType);
         billingCycle.setScriptInstance(scriptInstance);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
