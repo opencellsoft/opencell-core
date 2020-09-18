@@ -706,6 +706,9 @@ public class BillingAccountApi extends AccountEntityApi {
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
                 }
+                if(postData.isThresholdPerEntity() != null) {
+                	existedBillingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+                }
 
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
                 if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
