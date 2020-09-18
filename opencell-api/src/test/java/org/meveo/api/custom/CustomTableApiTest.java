@@ -7,7 +7,6 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.custom.CustomTableService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -28,7 +27,7 @@ public class CustomTableApiTest {
 
     @Spy
     @InjectMocks
-    private CustomTableService customTableService;
+    private CustomTableServiceMock customTableService;
 
     @Mock
     private CustomEntityTemplateService customEntityTemplateService;
@@ -99,9 +98,6 @@ public class CustomTableApiTest {
         //Given
         CustomFieldTemplate customTableField = mock(CustomFieldTemplate.class);
         when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate");
-        CustomEntityTemplate relatedEntity = mock(CustomEntityTemplate.class);
-        when(relatedEntity.isStoreAsTable()).thenReturn(true);
-        when(customEntityTemplateService.findByCode(anyString())).thenReturn(relatedEntity);
         Map<String, CustomFieldTemplate> reference = new HashMap<String, CustomFieldTemplate>() {{
             put("flirtikit", customTableField);
         }};
