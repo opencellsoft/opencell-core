@@ -335,6 +335,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.isThresholdPerEntity() != null) {
             customerAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getCheckThreshold() != null) {

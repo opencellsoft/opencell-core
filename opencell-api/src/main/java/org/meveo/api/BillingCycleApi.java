@@ -224,6 +224,8 @@ public class BillingCycleApi extends BaseApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.isThresholdPerEntity() != null) {
             billingCycle.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         if (postData.getReferenceDate() != null) {
