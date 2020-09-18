@@ -457,6 +457,24 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
+        if (postData.isThresholdPerEntity() != null) {
+        	billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
+        if (postData.getPhone() != null) {
+            billingAccount.getContactInformation().setPhone(postData.getPhone());
+        }
+        if (postData.getMinimumAmountEl() != null) {
+            billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumAmountElSpark() != null) {
+            billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (postData.getMinimumLabelElSpark() != null) {
+            billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        }
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
