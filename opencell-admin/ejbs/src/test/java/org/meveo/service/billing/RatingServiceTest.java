@@ -75,7 +75,7 @@ public class RatingServiceTest {
             for (String[] testValue : testValues) {
 
                 appProvider.setEntreprise(testValue[enterprise].equals("1"));
-                appProvider.setRounding(testValue[rounding].equals("-1") ? null : new Double(testValue[rounding]).intValue());
+                appProvider.setRounding(testValue[rounding].equals("-1") ? -1 : new Double(testValue[rounding]).intValue());
 
                 WalletOperation wo = new WalletOperation();
                 wo.setQuantity(new BigDecimal(testValue[quantity]));
