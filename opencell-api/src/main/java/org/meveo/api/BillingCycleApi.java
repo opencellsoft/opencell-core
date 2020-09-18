@@ -211,6 +211,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getInvoiceDateProductionDelayEL() != null) {
             entity.setInvoiceDateProductionDelayEL(StringUtils.isEmpty(dto.getInvoiceDateProductionDelayEL()) ? null : dto.getInvoiceDateProductionDelayEL());
         }
+        if (dto.isThresholdPerEntity() != null) {
+        	entity.setThresholdPerEntity(dto.isThresholdPerEntity());
+        }
         if (dto.getInvoicingThreshold() != null) {
             entity.setInvoicingThreshold(dto.getInvoicingThreshold());
         }
