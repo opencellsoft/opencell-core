@@ -33,7 +33,7 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-@ApplicationPath("/api/rest/v2")
+@ApplicationPath("/api/rest/v2/ordering")
 public class OpencellRestful extends Application {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override

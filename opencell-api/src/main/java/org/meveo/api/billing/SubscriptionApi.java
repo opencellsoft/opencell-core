@@ -112,6 +112,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -137,16 +138,19 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -240,6 +244,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
+
+    @Inject
+    private PaymentMethodService paymentMethodService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -423,6 +430,14 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        if (Objects.nonNull(postData.getPaymentMethod())) {
+            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+            if (paymentMethod == null) {
+                throw new EntityNotFoundException("payment method not found!");
+            }
+            subscription.setPaymentMethod(paymentMethod);
+        }
+
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
@@ -490,7 +505,16 @@ public class SubscriptionApi extends BaseApi {
                 applyProduct(dto);
             }
         }
-
+        if (postData.getProducts() != null) {
+            for (ProductDto productDto : postData.getProducts().getProducts()) {
+                if (StringUtils.isBlank(productDto.getCode())) {
+                    log.warn("code is null={}", productDto);
+                    continue;
+                }
+                ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
+                applyProduct(dto);
+            }
+        }
         // terminate discounts
         if (postData.getDiscountPlansForTermination() != null) {
             for (String dpiCode : postData.getDiscountPlansForTermination()) {
@@ -2274,6 +2298,14 @@ public class SubscriptionApi extends BaseApi {
                 throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
             }
             subscription.setBillingCycle(billingCycle);
+        }
+
+        if (Objects.nonNull(postData.getPaymentMethod())) {
+            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+            if (paymentMethod == null) {
+                throw new EntityNotFoundException("payment method not found!");
+            }
+            subscription.setPaymentMethod(paymentMethod);
         }
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());

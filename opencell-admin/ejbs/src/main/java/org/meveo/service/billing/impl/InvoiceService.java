@@ -41,9 +41,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
+import java.util.Set;
+import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -125,6 +126,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.ThresholdAmounts;
@@ -605,6 +607,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingCycle billingCycle = defaultBillingCycle;
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
         PaymentMethod paymentMethod = defaultPaymentMethod;
+        if (defaultPaymentMethod == null) {
+            defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+        }
 
         EntityManager em = getEntityManager();
 
@@ -615,9 +620,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine postpaid invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
-                    if (defaultPaymentMethod == null) {
-                        paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
-                    }
                     if (defaultBillingCycle == null) {
                         billingCycle = billingAccount.getBillingCycle();
                     }
@@ -631,6 +633,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (isPrepaid) {
                 invoiceType = determineInvoiceType(true, isDraft, null, null, null);
             }
+
+            paymentMethod = resolvePaymentMethod(billingAccount, billingCycle, defaultPaymentMethod, rt);
 
             String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
@@ -660,6 +664,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return new RatedTransactionsToInvoice(moreRts, convertedRtGroups);
 
     }
+
+    private PaymentMethod resolvePaymentMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, RatedTransaction rt) {
+        if(BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())){
+            if(Objects.nonNull(rt.getSubscription().getPaymentMethod())){
+                return rt.getSubscription().getPaymentMethod();
+            } else if(Objects.nonNull(billingAccount.getPaymentMethod())){
+                return billingAccount.getPaymentMethod();
+            }
+        }
+        if(BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && (!billingCycle.isSplitPerPaymentMethod() && Objects.nonNull(billingAccount.getPaymentMethod()))){
+            return billingAccount.getPaymentMethod();
+        }
+        return defaultPaymentMethod;
+    }
+
 
     /**
      * Creates invoices and their aggregates - IN new transaction
@@ -766,10 +785,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-
-            } else {
-                paymentMethod = customerAccountService.getPreferredPaymentMethod(ba.getCustomerAccount().getId());
-
+            } else{
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
@@ -845,9 +861,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreRatedTransactionsExpected = true;
-
-        PaymentMethod paymentMethod = defaultPaymentMethod;
-
         // Contains distinct Invoice information - one for each invoice produced. Map key is billingAccount.id_seller.id_invoiceType.id_isPrepaid
         Map<String, InvoiceAggregateProcessingInfo> rtGroupToInvoiceMap = new HashMap<>();
 
@@ -886,9 +899,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (entityToInvoice instanceof Order) {
                         if (billingAccount == null || !billingAccount.getId().equals(rtGroup.getBillingAccount().getId())) {
                             billingAccount = rtGroup.getBillingAccount();
-                            if (defaultPaymentMethod == null) {
-                                paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
-                            }
                             // Balance are calculated on CA level and will be the same for all rated transactions of same order
                             boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
                             boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
@@ -910,7 +920,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate, isDraft, rtGroup.getBillingCycle(),
-                            paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
+                                rtGroup.getPaymentMethod(), rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
                         invoiceList.add(invoiceAggregateProcessingInfo.invoice);
                     }
 
@@ -1108,7 +1118,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
         serviceSingleton.assignInvoiceNumberVirtual(invoice);
-
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());

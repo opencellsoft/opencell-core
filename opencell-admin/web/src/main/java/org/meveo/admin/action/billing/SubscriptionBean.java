@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -35,6 +37,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -75,6 +78,8 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -1317,5 +1322,19 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             this.selectedCounterInstance = null;
         }
+    }
+    /**
+     * Get configured payment method's list
+     * @return list of payment methods
+     */
+    public List<PaymentMethod> listPaymentMethod() {
+        if (Objects.nonNull(entity) && Objects.nonNull(entity.getUserAccount()) ) {
+            UserAccount userAccount = userAccountService.findById(entity.getUserAccount().getId());
+            List<PaymentMethod> paymentMethods = userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
+            return paymentMethods.stream()
+                    .map(paymentMethod -> paymentMethod instanceof HibernateProxy ? (PaymentMethod)((HibernateProxy) paymentMethod).getHibernateLazyInitializer().getImplementation() : paymentMethod)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

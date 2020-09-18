@@ -387,6 +387,26 @@
                                         <hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" disabled="#{subscriptionBean.entity.offer == null}"
                                             valueLabelField="code" popup="true" componentWidth="30" required="true" allowEdit="false" popupId="sellerPopup" />
                                     </h:panelGroup>
+
+                                    <hftl:decorateFormField fieldId="payment_method"
+                                                            label="#{messages['paymentMethod.alias']}"
+                                                            required="#{false}" >
+                                        <p:selectOneMenu id="payment_method"
+                                                         disabled="#{subscriptionBean.entity.userAccount == null}"
+                                                         value="#{subscriptionBean.entity.paymentMethod}"
+                                                         required="#{false}" rendered="#{subscriptionBean.edit}">
+                                            <hftl:objectConverter/>
+                                            <f:selectItem itemLabel="#{subscriptionBean.entity.paymentMethod.paymentType}" itemValue="#{subscriptionBean.entity.paymentMethod}"
+                                                          rendered="#{subscriptionBean.entity.paymentMethod != null}"/>
+                                            <f:selectItem itemLabel="" itemValue="" rendered="#{subscriptionBean.entity.paymentMethod == null}"/>
+                                            <f:selectItems value="#{subscriptionBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
+                                                           itemValue="#{elem}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputText rendered="#{!subscriptionBean.edit}"
+                                                      value="#{subscriptionBean.entity.paymentMethod.paymentType}" />
+                                    </hftl:decorateFormField>
+
                                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="80" />
 
                                     <hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />
