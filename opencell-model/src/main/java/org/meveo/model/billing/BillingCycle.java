@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -180,6 +181,21 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * check threshold per entity?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_per_entity")
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 
     public String getBillingTemplateName() {
         return billingTemplateName;

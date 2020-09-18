@@ -383,6 +383,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         qb.addCriterionEntity("jobInstance", jobInstance);
         qb.addOrderCriterionAsIs("startDate", false);
 
-        return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
+        List resultList = qb.getQuery(getEntityManager()).setMaxResults(1).getResultList();
+        if(resultList!=null && !resultList.isEmpty()) {
+        	return (JobExecutionResultImpl) resultList.get(0);
+        }
+        return null;
     }
 }

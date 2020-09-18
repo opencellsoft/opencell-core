@@ -56595,6 +56595,7 @@ public class CreateMandateCallBackScript_${#TestSuite#index} extends Script {
             <billingCycle>CYC_INV_MT_1</billingCycle>\r
             <country>FR</country>\r
             <invoicingThreshold>0</invoicingThreshold>\r
+            <thresholdPerEntity>false</thresholdPerEntity>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="CHECK">\r
 \r			<alias>By check</alias>               
@@ -57089,6 +57090,7 @@ public class CheckPaymentScript_${#TestSuite#index} extends Script {
             <billingCycle>CYC_INV_MT_1</billingCycle>\r
             <country>FR</country>\r
             <invoicingThreshold>0</invoicingThreshold>\r
+            <thresholdPerEntity>false</thresholdPerEntity>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="DIRECTDEBIT">\r
 \r			<alias>On CIC</alias>

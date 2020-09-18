@@ -185,6 +185,20 @@ public class BillingAccountDto extends AccountDto {
      */
     private ThresholdOptionsEnum checkThreshold;
 
+    /**
+     * 
+     * check the threshold per entity/invoice for BA.
+     */
+    @XmlElement
+    private Boolean thresholdPerEntity;
+
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 	
     /**
      * Instantiates a new billing account dto.
@@ -206,6 +220,7 @@ public class BillingAccountDto extends AccountDto {
         }
         if (e.getInvoicingThreshold() != null) {
             setInvoicingThreshold(e.getInvoicingThreshold());
+            setThresholdPerEntity(e.isThresholdPerEntity());
         }
         BillingCycle bc = e.getBillingCycle();
         if (bc != null) {

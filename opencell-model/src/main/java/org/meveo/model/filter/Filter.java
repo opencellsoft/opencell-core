@@ -40,9 +40,10 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
 /**
+ * @author anasseh
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 10.0
  */
 @Entity
 @ModuleItem
@@ -56,7 +57,7 @@ public class Filter extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -6150352877726034654L;
     private static final String FILTER_CODE_PREFIX = "FILTER_";
-
+   
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "filter_condition_id")
     private FilterCondition filterCondition;
@@ -78,7 +79,10 @@ public class Filter extends EnableBusinessCFEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "shared")
-    private Boolean shared = false;
+    private Boolean shared = true;
+    
+    @Column(name = "polling_query", columnDefinition = "TEXT")
+    private String pollingQuery;
 
     public FilterCondition getFilterCondition() {
         return filterCondition;
@@ -131,4 +135,13 @@ public class Filter extends EnableBusinessCFEntity {
     public String getAppliesTo() {
         return FILTER_CODE_PREFIX + getCode();
     }
+
+	public String getPollingQuery() {
+		return pollingQuery;
+	}
+
+	public void setPollingQuery(String pollingQuery) {
+		this.pollingQuery = pollingQuery;
+	}
+    
 }

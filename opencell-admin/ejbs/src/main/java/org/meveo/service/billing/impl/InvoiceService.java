@@ -96,7 +96,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -121,7 +120,6 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -2330,7 +2328,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Assign invoice number and increment BA invoice date.
+     * Assign invoice number .
      *
      * @param invoiceId invoice id
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
@@ -2338,19 +2336,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
+    public void assignInvoiceNumber(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
         Invoice invoice = findById(invoiceId);
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
-
-        BillingAccount billingAccount = invoice.getBillingAccount();
-
-        Date initCalendarDate = billingAccount.getSubscriptionDate();
-        if (initCalendarDate == null) {
-            initCalendarDate = billingAccount.getAuditable().getCreated();
-        }
-
-        incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         invoice = update(invoice);
     }
     
@@ -2368,11 +2357,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
     	
         BillingCycle billingCycle = billingCycleService.refreshOrRetrieve(billingAccount.getBillingCycle());
 		Date nextCalendarDate = billingCycle.getNextCalendarDate(getReferenceDate(billingRun, billingAccount));
-		if(nextCalendarDate!=null) {
-	        billingAccount.setNextInvoiceDate(nextCalendarDate);
+		if(nextCalendarDate!=null && (billingAccount.getNextInvoiceDate()==null || nextCalendarDate.compareTo(billingAccount.getNextInvoiceDate())!=0)) {
+			billingAccount.setNextInvoiceDate(nextCalendarDate);
 	        billingAccount.updateAudit(currentUser);
 	        billingAccountService.update(billingAccount);
 		}
+    }
+    
+    /**
+     * Increment BA invoice date by ID.
+     * 
+     * @param billingRun
+     * @param billingAccount
+     * 
+     * @throws BusinessException business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void incrementBAInvoiceDate(BillingRun billingRun, Long billingAccountId) throws BusinessException {
+    	BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+    	incrementBAInvoiceDate(billingRun, billingAccount);
     }
 
     /**
@@ -2447,6 +2451,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
+            .setParameter("invoiceDate", invoiceDate).getResultList();
+    }
+    
+    /**
+     * Retrieve billingAccount ids matching billing run, invoice type, seller and invoice date combination.
+     *
+     * @param billingRunId Billing run id
+     * @param invoiceTypeId Invoice type id
+     * @param sellerId Seller id
+     * @param invoiceDate Invoice date
+     * @return A list of billingAccount identifiers
+     */
+    public List<Long> getBillingAccountIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
+        return getEntityManager().createNamedQuery("Invoice.billingAccountIdByBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
             .setParameter("invoiceDate", invoiceDate).getResultList();
     }
 
@@ -3852,63 +3870,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRun the billing run
      * @return a map of positive rated transaction grouped by billing account.
      */
-    public Map<Class, Map<Long, ThresholdAmounts>> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
-
-        List<Object[]> resultSet = getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
-        return getAmountsMap(resultSet);
-    }
-
-    /**
-     * Group amounts by billing account, customer account and customer.
-     *
-     * @param resultSet the result set of the query
-     * @return A map of grouped amounts by account class.
-     */
-    private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
-        Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
-        Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
-        Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
-        for (Object[] result : resultSet) {
-            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
-            Long baId = (Long) result[3];
-            Long caId = (Long) result[4];
-            Long custId = (Long) result[5];
-
-            if (baAmounts.get(baId) == null) {
-                List<Long> invoiceIds = new ArrayList<>();
-                invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
-                baAmounts.put(baId, thresholdAmounts);
-            } else {
-                ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
-                thresholdAmounts.getInvoices().add((Long) result[2]);
-            }
-            if (caAmounts.get(caId) == null) {
-                List<Long> invoiceIds = new ArrayList<>();
-                invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
-                caAmounts.put(caId, thresholdAmounts);
-            } else {
-                ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-                thresholdAmounts.getAmount().addAmounts(amounts.clone());
-                thresholdAmounts.getInvoices().add((Long) result[2]);
-            }
-            if (custAmounts.get(custId) == null) {
-                List<Long> invoiceIds = new ArrayList<>();
-                invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
-                custAmounts.put(custId, thresholdAmounts);
-            } else {
-                ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-                thresholdAmounts.getAmount().addAmounts(amounts.clone());
-                thresholdAmounts.getInvoices().add((Long) result[2]);
-            }
-        }
-        Map<Class, Map<Long, ThresholdAmounts>> accountsAmounts = new HashMap<>();
-        accountsAmounts.put(BillingAccount.class, baAmounts);
-        accountsAmounts.put(CustomerAccount.class, caAmounts);
-        accountsAmounts.put(Customer.class, custAmounts);
-        return accountsAmounts;
+    public List<Object[]> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 }

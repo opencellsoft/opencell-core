@@ -48,9 +48,14 @@
 						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!filterBean.entity.transient}">
                 			<h:outputText value="#{filterBean.partOfModules}" />
                			</hftl:decorateFormField>
+               			
+               			<hftl:formField label="#{messages['filter.pollingQuery']}"
+							field="pollingQuery" textArea="true" maxlength="4000"
+							disabled="#{!filterBean.entity.transient and !filterBean.entity.auditable.isCreator(currentUser)}" />
+               			
 
 						<hftl:decorateFormField fieldId="inputXml"
-							label="#{messages['filter.inputXml']}" newLine="true" required="true">
+							label="#{messages['filter.inputXml']}" newLine="true" required="false">
 							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
 								value="#{filterBean.entity.inputXml}" lineNumbers="true" required="true"
 								readonly="#{!filterBean.entity.transient and !filterBean.entity.auditable.isCreator(currentUser)}" />

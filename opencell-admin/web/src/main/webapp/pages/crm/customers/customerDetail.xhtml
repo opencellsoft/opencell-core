@@ -127,6 +127,10 @@
 
 								<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId"
 												noSelectionLabel="false" disabled="false" required="#{not empty customerBean.entity.invoicingThreshold}"/>
+                                <p:panelGrid columns="1" styleClass="ui-noborder"> 
+				                  	<p:outputLabel for="@next" value="#{messages['invoice.checkthreshold.per']}" cellpadding="5" />
+				                  	<p:selectBooleanButton  value="${customerBean.entity.thresholdPerEntity}" onLabel="#{messages['invoice.checkthreshold.per.entity']}" offLabel="#{messages['invoice.checkthreshold.per.invoice']}"/>
+				                </p:panelGrid>
 
 
 							</p:tab>
