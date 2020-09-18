@@ -25,6 +25,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.document.Document;
 
 /**
  * Payment method
@@ -118,6 +119,13 @@ public abstract class PaymentMethod extends EnableEntity {
      */
     @Column(name = "token_id")
     private String tokenId;
+
+    /**
+     * Document identifier
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    private Document referenceDocument;
 
     /**
      * Add to deal with payment method auditing
@@ -235,5 +243,13 @@ public abstract class PaymentMethod extends EnableEntity {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public Document getReferenceDocument() {
+        return referenceDocument;
+    }
+
+    public void setReferenceDocument(Document referenceDocument) {
+        this.referenceDocument = referenceDocument;
     }
 }

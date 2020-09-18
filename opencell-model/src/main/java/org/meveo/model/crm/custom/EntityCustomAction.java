@@ -192,12 +192,12 @@ public class EntityCustomAction extends EnableBusinessEntity {
 
         for (String position : positions) {
             String[] positionDetails = position.split(":");
-            if (!positionDetails[0].equals(GroupedCustomFieldTreeItemType.action.positionTag)) {
+            if (!positionDetails[0].equals(GroupedCustomFieldTreeItemType.action.getPositionTag())) {
                 parsedInfo.put(positionDetails[0] + "_name", positionDetails[1]);
                 if (positionDetails.length == 3) {
                     parsedInfo.put(positionDetails[0] + "_pos", positionDetails[2]);
                 }
-            } else if (positionDetails[0].equals(GroupedCustomFieldTreeItemType.action.positionTag) && positionDetails.length == 2) {
+            } else if (positionDetails[0].equals(GroupedCustomFieldTreeItemType.action.getPositionTag()) && positionDetails.length == 2) {
                 parsedInfo.put(positionDetails[0] + "_pos", positionDetails[1]);
             }
         }

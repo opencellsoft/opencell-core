@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,7 @@ import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -1029,4 +1032,19 @@ public class OrderBean extends CustomFieldBean<Order> {
         }
     }
 
+    /**
+     * Get configured payment method's list
+     * @return list of payment methods
+     */
+    public List<PaymentMethod> listPaymentMethod() {
+        if (Objects.nonNull(selectedOrderItem) && Objects.nonNull(selectedOrderItem.getUserAccount()) ) {
+            UserAccount userAccount = userAccountService.findById(selectedOrderItem.getUserAccount().getId());
+            return userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
+        }
+        return Collections.emptyList();
+    }
+
+    public PaymentMethod getPaymentMethodById(String id) {
+        return id.isBlank() ? null : listPaymentMethod().stream().filter(pm -> pm.getId().equals(Long.valueOf(id))).findFirst().get();
+    }
 }

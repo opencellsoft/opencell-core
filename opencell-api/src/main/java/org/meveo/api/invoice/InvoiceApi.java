@@ -19,17 +19,18 @@
 package org.meveo.api.invoice;
 
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -45,15 +46,17 @@ import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
+import org.meveo.api.payment.PaymentApi;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -72,11 +75,21 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.generic.wf.WorkflowInstance;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentHistory;
+import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.WriteOff;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -87,6 +100,7 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
@@ -142,6 +156,10 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private PaymentApi paymentApi;
+
 
     @Inject
     @MeveoParamBean
@@ -149,6 +167,9 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     protected ResourceBundle resourceMessages;
+
+    @Inject
+    protected WorkflowInstanceService workflowInstanceService;
 
     /**
      * Create an invoice based on the DTO object data and current user
@@ -1005,8 +1026,26 @@ public class InvoiceApi extends BaseApi {
         dto.setAuditable(invoice);
         dto.setInvoiceId(invoice.getId());
         dto.setBillingAccountCode(invoice.getBillingAccount().getCode());
-        if (invoice.getSubscription() != null) {
-            dto.setSubscriptionCode(invoice.getSubscription().getCode());
+        Subscription subscription = invoice.getSubscription();
+		if (subscription != null) {
+            dto.setSubscriptionCode(subscription.getCode());
+            dto.setSubscriptionId(subscription.getId());
+            List<PaymentScheduleInstanceDto> instances = new ArrayList<PaymentScheduleInstanceDto>();
+			for(ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+				for(PaymentScheduleInstance psInstance:serviceInstance.getPsInstances()) {
+					PaymentScheduleInstanceDto psiDto = new PaymentScheduleInstanceDto(psInstance);
+					instances.add(psiDto);
+				}
+            }
+			PaymentScheduleInstancesDto instancesDto = new PaymentScheduleInstancesDto();
+			instancesDto.setInstances(instances);
+			BigDecimal writeOffAmount = BigDecimal.ZERO;
+			for(AccountOperation ao : subscription.getAccountOperations()) {
+				if(ao instanceof WriteOff) {
+					writeOffAmount.add(ao.getAmount());
+				}
+			}
+			dto.setWriteOffAmount(writeOffAmount);
         }
         if (invoice.getOrder() != null) {
             dto.setOrderNumber(invoice.getOrder().getOrderNumber());
@@ -1059,12 +1098,43 @@ public class InvoiceApi extends BaseApi {
             dto.setListInvoiceIdToLink(listInvoiceIdToLink);
         }
 
-        if (invoice.getRecordedInvoice() != null) {
-            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
+        RecordedInvoice recordedInvoice = invoice.getRecordedInvoice();
+        if (recordedInvoice != null) {
+        	RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(recordedInvoice);
             dto.setRecordedInvoiceDto(recordedInvoiceDto);
+            if(invoice.getRecordedInvoice().getPaymentHistories() != null && !invoice.getRecordedInvoice().getPaymentHistories().isEmpty()) {
+            	for(PaymentHistory ph : invoice.getRecordedInvoice().getPaymentHistories() ) {
+            		recordedInvoiceDto.getPaymentHistories().add(paymentApi.fromEntity(ph,false));
+            	}
+            }
+            
+			DunningDocument dunningDocument = recordedInvoice.getDunningDocument();
+			if(dunningDocument!=null) {
+				dto.setDunningEntryDate(dunningDocument.getAuditable().getCreated());
+				dto.setDunningLastModification(dunningDocument.getAuditable().getUpdated());
+				List<WorkflowInstance> workflows = workflowInstanceService.findByEntityIdAndClazz(dunningDocument.getId(), DunningDocument.class);
+				if(workflows!=null && !workflows.isEmpty()) {
+					dto.setDunningStatus(workflows.get(0).getCurrentStatus().getCode());
+				}
+				List<Payment> payments = dunningDocument.getPayments();
+				if(payments!=null && !payments.isEmpty()) {
+					List<PaymentHistory> paymentHistory = payments.get(0).getPaymentHistories();
+					if(paymentHistory!=null) {
+						dto.setPaymentIncidents(paymentHistory.stream().map(x->x.getErrorMessage()).collect(Collectors.toList()));
+					}
+					Date paymentDate = new Date(0);
+					for(Payment payment : payments) {
+						if(payment.getAuditable()!=null && payment.getAuditable().getCreated().after(paymentDate)) {
+							paymentDate=payment.getAuditable().getCreated();
+						}
+					}
+					dto.setPaymentDate(paymentDate);
+				}
+			}
         }
-
+        dto.setRealTimeStatus(invoice.getRealTimeStatus());
         dto.setNetToPay(invoice.getNetToPay());
+        dto.setStatus(invoice.getStatus());
 
         return dto;
     }

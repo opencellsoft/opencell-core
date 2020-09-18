@@ -21,6 +21,7 @@ package org.meveo.api.dto.account;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -40,6 +41,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Class BillingAccountDto.
@@ -128,7 +130,7 @@ public class BillingAccountDto extends AccountDto {
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
      */
     @Deprecated
-    private PaymentMethodEnum paymentMethod;
+    private PaymentMethodEnum paymentMethodType;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
@@ -189,6 +191,26 @@ public class BillingAccountDto extends AccountDto {
      */
     private ThresholdOptionsEnum checkThreshold;
 
+    /**
+     * Use to return the paymentMethod.
+     */
+    @XmlElement(name = "paymentMethod")
+    private PaymentMethodDto paymentMethod;
+    
+    /**
+     * 
+     * check the threshold per entity/invoice for BA.
+     */
+    @XmlElement
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
 	
     /**
      * Instantiates a new billing account dto.
@@ -228,6 +250,7 @@ public class BillingAccountDto extends AccountDto {
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
         }
+        setThresholdPerEntity(e.isThresholdPerEntity());
         setNextInvoiceDate(e.getNextInvoiceDate());
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());
@@ -258,10 +281,12 @@ public class BillingAccountDto extends AccountDto {
         }
 
         // Start compatibility with pre-4.6 versions
-
         PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
+        if(Objects.nonNull(e.getPaymentMethod())){
+            paymentMethod = e.getPaymentMethod();
+        }
         if (paymentMethod != null) {
-            setPaymentMethod(paymentMethod.getPaymentType());
+            setPaymentMethodType(paymentMethod.getPaymentType());
             if (paymentMethod instanceof DDPaymentMethod) {
                 setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
             }
@@ -551,19 +576,20 @@ public class BillingAccountDto extends AccountDto {
     /**
      * Gets the payment method.
      *
-     * @return the payment method
+     * @return the payment method TYPE
      */
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
     }
 
     /**
      * Sets the payment method.
      *
-     * @param paymentMethod the new payment method
+     * @param paymentMethodType the new payment method TYPE
      */
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
+
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
+        this.paymentMethodType = paymentMethodType;
     }
 
     /**
@@ -792,5 +818,21 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the payment Method.
+     * @return the paymentMethod
+     */
+    public PaymentMethodDto getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * Sets the paymentMethod.
+     * @param paymentMethod the payment Method
+     */
+    public void setPaymentMethod(PaymentMethodDto paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

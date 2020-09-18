@@ -54,17 +54,17 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Check if job is still running (or is stopped) every 25 records being processed (per thread). Value to be used in jobs that run slow.
      */
-    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW = 25;
+    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW = 25;
 
     /**
      * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be in jobs that run slower.
      */
-    public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
 
     /**
      * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster.
      */
-    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
+    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
 
     /**
      * job instance service.
@@ -255,8 +255,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date)
-                .setParameter("jobInstance", jobInstance).getSingleResult();
+            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date).setParameter("jobInstance", jobInstance).getSingleResult();
         }
 
         return result;
@@ -285,8 +284,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date)
-                .setParameter("jobInstance", jobInstance).executeUpdate();
+            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date).setParameter("jobInstance", jobInstance).executeUpdate();
         }
 
         log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
@@ -383,6 +381,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         qb.addCriterionEntity("jobInstance", jobInstance);
         qb.addOrderCriterionAsIs("startDate", false);
 
-        return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
+        List resultList = qb.getQuery(getEntityManager()).setMaxResults(1).getResultList();
+        if(resultList!=null && !resultList.isEmpty()) {
+        	return (JobExecutionResultImpl) resultList.get(0);
+        }
+        return null;
     }
 }

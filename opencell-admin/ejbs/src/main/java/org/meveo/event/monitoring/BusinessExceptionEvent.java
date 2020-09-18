@@ -25,9 +25,9 @@ import javax.inject.Named;
 @Named
 public class BusinessExceptionEvent {
 
-	public Date dateTime;
-	public String meveoInstanceCode;
-	public Exception exception;
+	private Date dateTime;
+	private String meveoInstanceCode;
+	private Exception exception;
 	
 	public BusinessExceptionEvent(){
 		

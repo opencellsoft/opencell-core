@@ -39,10 +39,10 @@ public class PrepaidReservationDto extends BaseEntityDto {
 
     /** The reservation id. */
     @XmlAttribute(required = true)
-    public long reservationId;
+    private long reservationId;
 
     /** The consumed quantity. */
-    public BigDecimal consumedQuantity;
+    private BigDecimal consumedQuantity;
 
     /**
      * Gets the reservation id.

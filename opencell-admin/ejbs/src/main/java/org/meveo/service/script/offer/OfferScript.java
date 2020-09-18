@@ -30,11 +30,11 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
 
     private static final long serialVersionUID = 3558009489909516714L;
 
-    public static String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
-    public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
-    public static String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
-    public static String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
-    public static String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
+    public static final String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
+    public static final String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
+    public static final String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
+    public static final String CONTEXT_TERMINATION_REASON = "CONTEXT_TERMINATION_REASON";
+    public static final String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
 
     @Override
     public void subscribe(Map<String, Object> methodContext) throws BusinessException {

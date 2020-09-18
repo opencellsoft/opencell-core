@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -180,6 +181,28 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * check threshold per entity?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_per_entity")
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+    /**
+     * if true then subscriptions are grouped by paymentMethod and billed separately.
+     */
+    @Column(name = "split_per_payment_method")
+    @Type(type = "numeric_boolean")
+    private boolean splitPerPaymentMethod;
 
     /**
      * @return Invoicing calendar
@@ -411,5 +434,23 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the splitPerPaymentMethod option.
+     *
+     * @return the splitPerPaymentMethod option
+     */
+    public boolean isSplitPerPaymentMethod() {
+        return splitPerPaymentMethod;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param splitPerPaymentMethod the splitPerPaymentMethod option
+     */
+    public void setSplitPerPaymentMethod(boolean splitPerPaymentMethod) {
+        this.splitPerPaymentMethod = splitPerPaymentMethod;
     }
 }

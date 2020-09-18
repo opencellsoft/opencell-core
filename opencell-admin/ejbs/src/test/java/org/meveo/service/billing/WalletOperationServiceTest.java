@@ -927,7 +927,7 @@ public class WalletOperationServiceTest {
     }
 
     @Test
-    public void test_test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_noProrata_withApplyAgreement() {
+    public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_noProrata_withApplyAgreement() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
             DateUtils.newDate(2019, 1, 15, 0, 0, 0));
@@ -980,6 +980,122 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
     }
 
+    // Test when charge is applied in advance - Charge to Date on Termination value was applied
+
+    @Test
+    public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToPeriod_noProrata_withChargeToDateOnTermination() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
+            DateUtils.newDate(2019, 1, 15, 0, 0, 0));
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        // Will reimburse period 2019/1/1 to 2019/3/1
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToPeriod_wProrata_withChargeToDateOnTermination() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
+            DateUtils.newDate(2019, 1, 15, 0, 0, 0));
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        // Will reimburse period 2019/1/1 to 2019/3/1
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_noProrata_withChargeToDateOnTermination() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
+            DateUtils.newDate(2019, 1, 15, 0, 0, 0));
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_rerateReimburseReccuringCharge_cycleForward_reimburseToMidPeriod_wProrata_withChargeToDateOnTermination() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 2, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 1, 10, 0, 0, 0),
+            DateUtils.newDate(2019, 1, 15, 0, 0, 0));
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 1, 25, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-50d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
+    }
+
     // TEST REIMBURSEMENT OF TERMINATED RECURRING CHARGES
 
     // Test when charge is applied in advance
@@ -988,7 +1104,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleForward_existingCharge_terminateOnPeriod_noProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1015,7 +1130,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleForward_existingCharge_terminateOnPeriod_wProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1042,7 +1156,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleForward_existingCharge_terminateMidPeriod_noProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1069,7 +1182,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleForward_existingCharge_terminateMidPeriod_wProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1098,7 +1210,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleEnd_existingCharge_terminateOnPeriod_noProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1125,7 +1236,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleEnd_existingCharge_terminateOnPeriod_wProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1152,7 +1262,6 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleEnd_existingCharge_terminateMidPeriod_noProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -1179,8 +1288,228 @@ public class WalletOperationServiceTest {
     public void test_reimburseReccuringCharge_cycleEnd_existingCharge_terminateMidPeriod_wProrata() {
 
         RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 3, 16, 0, 0, 0), null);
-//        chargeInstance.setTerminationDate(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
 
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    // TEST REIMBURSEMENT OF TERMINATED RECURRING CHARGES with CHARGE to DATE ON TERMINATION
+
+    // Test when charge is applied in advance
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleForward_chargeToDateOnTermination_terminateOnPeriod_noProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleForward_chargeToDateOnTermination_terminateOnPeriod_wProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleForward_chargeToDateOnTermination_terminateMidPeriod_noProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleForward_chargeToDateOnTermination_terminateMidPeriod_wProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-50d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 3, 1, 0, 0, 0), DateUtils.newDate(2019, 4, 1, 0, 0, 0)));
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    // Test when charge is applied at the end of a period
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleEnd_chargeToDateOnTermination_terminateOnPeriod_noProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleEnd_chargeToDateOnTermination_terminateOnPeriod_wProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleEnd_chargeToDateOnTermination_terminateMidPeriod_noProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, false, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(-100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(chargeInstance.getTerminationDate());
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_reimburseReccuringCharge_cycleEnd_chargeToDateOnTermination_terminateMidPeriod_wProrata() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 5, 1, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), false, false, true, DateUtils.newDate(2019, 2, 1, 0, 0, 0), null);
+        chargeInstance.setChargeToDateOnTermination(DateUtils.newDate(2019, 3, 16, 0, 0, 0));
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
         assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
@@ -1443,13 +1772,17 @@ public class WalletOperationServiceTest {
 
         if (terminationDate != null) {
             chargeInstance.setTerminationDate(terminationDate);
+            chargeInstance.setChargeToDateOnTermination(terminationDate);
             chargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
             SubscriptionTerminationReason terminationReason = new SubscriptionTerminationReason();
             terminationReason.setApplyAgreement(endAgreementDate != null);
             terminationReason.setOverrideProrata(OverrideProrataEnum.NO_OVERRIDE);
             chargeInstance.getServiceInstance().setSubscriptionTerminationReason(terminationReason);
-            chargeInstance.getServiceInstance().setEndAgreementDate(endAgreementDate);
+            if (endAgreementDate != null) {
+                chargeInstance.getServiceInstance().setEndAgreementDate(endAgreementDate);
+                chargeInstance.setChargeToDateOnTermination(endAgreementDate);
+            }
         }
         return chargeInstance;
     }

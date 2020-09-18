@@ -18,7 +18,12 @@
 
 package org.meveo.interceptor;
 
-import org.apache.commons.lang3.ArrayUtils;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
@@ -27,18 +32,10 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.service.audit.AuditableFieldConfiguration;
 import org.meveo.service.audit.AuditableFieldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This interceptor allows to intercept persistent objects, inspect and/or manipulate their properties before it is saved, updated, deleted or loaded.
@@ -101,19 +98,23 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
         auditableFieldService.resetChangedEntities();
     }
     
-    @Override
-    public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-
-    	int[] dirtyProps = super.findDirty(entity, id, currentState, previousState, propertyNames, types);
-    	
-    	if(entity instanceof ICustomFieldEntity) {
-        	ICustomFieldEntity customFieldEntity = (ICustomFieldEntity) entity;
-            if(customFieldEntity.isDirtyCF()) {
-            	List<String> propertyNamesList = Arrays.asList(propertyNames);
-            	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
-            }
-        }
-    	
-		return dirtyProps;
-    }
+    // Commented out for an issue:
+    // super.findDirty() returns null - which acording to that method javadoc means that its up to hibernate to do dirty checking.  
+    // AND then you check if CFs are dirty and add cfValue to the list of dirty parameters if applicable.
+    // So as result, if any CF value was changed, all that it would return is ["cfValues"] as dirty fieldnames. That means that all other field changes are ignored.
+//    @Override
+//    public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+//
+//    	int[] dirtyProps = super.findDirty(entity, id, currentState, previousState, propertyNames, types);
+//    	
+//    	if(entity instanceof ICustomFieldEntity) {
+//        	ICustomFieldEntity customFieldEntity = (ICustomFieldEntity) entity;
+//            if(customFieldEntity.isDirtyCF()) {
+//            	List<String> propertyNamesList = Arrays.asList(propertyNames);
+//            	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
+//            }
+//        }
+//    	
+//		return dirtyProps;
+//    }
 }

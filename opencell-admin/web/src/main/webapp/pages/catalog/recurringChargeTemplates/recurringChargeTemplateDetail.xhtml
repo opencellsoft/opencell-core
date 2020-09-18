@@ -49,7 +49,7 @@
                     <hftl:formField label="#{messages['recurringChargeTemplate.prorataOnPriceChange']}" field="prorataOnPriceChange" />
                     <hftl:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
                     <hftl:formField label="#{messages['recurringChargeTemplate.sharedLevel']}" field="shareLevel" />
-                    <hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo"/>
+                    <hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo" />
                     <hftl:formField id="revenueRecognitionRuleId" label="#{messages['charge.revenueRecognitionRule']}" field="revenueRecognitionRule" valueLabelField="code"
                         listBean="#{revenueRecognitionRuleBean}" />
 
@@ -76,7 +76,7 @@
                         newLine="true" />
                     <hftl:formField label="#{messages['usageChargeTemplate.filterExpressionSpark']}" field="filterExpressionSpark" textArea="true" rows="1" maxlength="2000"
                         rendered="#{paramBean.sparkEnabled}" />
-                    <hftl:formField label="#{messages['chargeTemplate.sortIndexEl']}" field="sortIndexEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"/>
+                    <hftl:formField label="#{messages['chargeTemplate.sortIndexEl']}" field="sortIndexEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
                     <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates" listType="pickUpList" valueLabelField="code"
                         dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true" />
 
@@ -85,8 +85,9 @@
                     <hftl:formField label="#{messages['recurringChargeTemplate.applyInAdvance']} EL" field="applyInAdvanceEl" textArea="true" rows="1" maxlength="2000" />
                     <hftl:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']} EL" field="durationTermInMonthEl" textArea="true" rows="1" maxlength="2000" />
                     <hftl:formField label="#{messages['recurringChargeTemplate.calendar']} EL" field="calendarCodeEl" textArea="true" rows="1" maxlength="2000" />
+                    <hftl:formField label="#{messages['recurringChargeTemplate.applyTerminatedChargeToDateEL']}" field="applyTerminatedChargeToDateEL" textArea="true" rows="1" maxlength="2000" />
 
-                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true"/>
 
                 </p:tab>
 

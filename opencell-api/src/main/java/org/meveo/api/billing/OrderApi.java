@@ -19,9 +19,11 @@
 package org.meveo.api.billing;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -198,7 +200,7 @@ public class OrderApi extends BaseApi {
         }
 
         if ((productOrder.getPaymentMethods() != null) && !productOrder.getPaymentMethods().isEmpty()) {
-            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
+            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
 
@@ -574,7 +576,13 @@ public class OrderApi extends BaseApi {
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
         subscriptionDto.setSeller(subscriptionSeller);
-
+        String paymentMethodId = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_PAYMENT_METHOD.getCharacteristicName(),
+                String.class, null);
+        if(Objects.nonNull(paymentMethodId) && !paymentMethodId.isBlank()){
+            PaymentMethodDto paymentMethodDto = new PaymentMethodDto();
+            paymentMethodDto.setId(Long.valueOf(paymentMethodId));
+            subscriptionDto.setPaymentMethod(paymentMethodDto);
+        }
         // instantiate and activate services
         extractServices(subscriptionDto, services);
 

@@ -17,10 +17,7 @@
  */
 package org.meveo.admin.report;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,11 +45,11 @@ public class FileProducer {
     @Inject
     protected Logger log;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
+    protected Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public JasperReport jasperReport;
+    private JasperReport jasperReport;
 
-    public JasperPrint jasperPrint;
+    private JasperPrint jasperPrint;
 
     @Inject
     @ApplicationProvider
@@ -66,18 +63,17 @@ public class FileProducer {
      */
     public void generatePDFfile(File dataSourceFile, String fileName, String reportFileName, Map<String, Object> parameters) {
 
-        try {
-            InputStream reportTemplate = new FileInputStream(reportFileName);
+        try(InputStream reportTemplate = new FileInputStream(reportFileName)) {
             jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             if (dataSourceFile != null) {
                 JRCsvDataSource dataSource = createDataSource(dataSourceFile);
                 jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
                 JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
             }
-        } catch (JRException e) {
-            log.error("failed to generate PDF file", e);
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();
+        } catch (JRException | IOException e) {
+            log.error("failed to generate PDF file", e);
         }
     }
 

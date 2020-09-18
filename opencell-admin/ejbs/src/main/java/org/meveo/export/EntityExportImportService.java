@@ -2286,7 +2286,7 @@ public class EntityExportImportService implements Serializable {
      * @throws Exception
      */
     private String uploadFileToRemoteMeveoInstance(String filename, MeveoInstance remoteInstance) throws Exception {
-        try {
+        try(FileInputStream fileInputStream = new FileInputStream(new File(filename))) {
 
             log.debug("Uplading {} file to a remote meveo instance {}", filename, remoteInstance.getCode());
 
@@ -2297,7 +2297,8 @@ public class EntityExportImportService implements Serializable {
             target.register(basicAuthentication);
 
             MultipartFormDataOutput mdo = new MultipartFormDataOutput();
-            mdo.addFormData("file", new FileInputStream(new File(filename)), MediaType.APPLICATION_OCTET_STREAM_TYPE, filename);
+
+            mdo.addFormData("file", fileInputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE, filename);
             GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(mdo) {
             };
 

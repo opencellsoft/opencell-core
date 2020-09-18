@@ -65,18 +65,16 @@ public class AesEncrypt {
 	 * @throws Exception
 	 */
 	public String getFileKey() throws Exception {
-		String aesKey;
 		String _propertyFile = System.getProperty("jboss.server.config.dir") + File.separator
 				+ "opencell-admin.properties";
 		if (_propertyFile.startsWith("file:")) {
 			_propertyFile = _propertyFile.substring(5);
 		}
 		Properties pr = new Properties();
-		pr.load(new FileInputStream(_propertyFile));
-		aesKey = getProperty("opencell.aes.key", pr);
-		
-
-		return aesKey;
+		try(FileInputStream propertyFile = new FileInputStream(_propertyFile)){
+			pr.load(propertyFile);
+			return getProperty("opencell.aes.key", pr);
+		}
 	}
 
 	/**

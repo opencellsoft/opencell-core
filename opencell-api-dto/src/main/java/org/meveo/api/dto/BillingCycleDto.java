@@ -136,6 +136,10 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement()
     private BigDecimal invoicingThreshold;
 
+    /** The split Per Payment Method option. */
+    @XmlElement()
+    private Boolean splitPerPaymentMethod;
+
     /** The invoice type code. */
     private String invoiceTypeCode;
 
@@ -171,8 +175,23 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
-
+    
     /**
+     * 
+     * check the threshold per entity/invoice.
+     */
+    @XmlElement
+    private boolean thresholdPerEntity;
+
+    public boolean isThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity;
+	}
+
+	/**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -212,8 +231,10 @@ public class BillingCycleDto extends BusinessEntityDto {
             if (billingCycleEntity.getCalendar() != null) {
                 calendar = billingCycleEntity.getCalendar().getCode();
             }
+            splitPerPaymentMethod = billingCycleEntity.isSplitPerPaymentMethod();
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
+            thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
         }
     }
 
@@ -587,4 +608,11 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.checkThreshold = checkThreshold;
     }
 
+    public Boolean getSplitPerPaymentMethod() {
+        return splitPerPaymentMethod;
+    }
+
+    public void setSplitPerPaymentMethod(Boolean splitPerPaymentMethod) {
+        this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
 }

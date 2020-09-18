@@ -44,12 +44,14 @@ import liquibase.change.ColumnConfig;
 import liquibase.change.ConstraintsConfig;
 import liquibase.change.core.AddColumnChange;
 import liquibase.change.core.AddDefaultValueChange;
+import liquibase.change.core.AddForeignKeyConstraintChange;
 import liquibase.change.core.AddNotNullConstraintChange;
 import liquibase.change.core.AddUniqueConstraintChange;
 import liquibase.change.core.CreateSequenceChange;
 import liquibase.change.core.CreateTableChange;
 import liquibase.change.core.DropColumnChange;
 import liquibase.change.core.DropDefaultValueChange;
+import liquibase.change.core.DropForeignKeyConstraintChange;
 import liquibase.change.core.DropNotNullConstraintChange;
 import liquibase.change.core.DropSequenceChange;
 import liquibase.change.core.DropTableChange;
@@ -193,13 +195,8 @@ public class CustomTableCreatorService implements Serializable {
         
         hibernateSession.doWork(connection -> {
             
-            Database database;
             try {
-                database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                
-                Liquibase liquibase = new Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                liquibase.update(new Contexts(), new LabelExpression());
-                
+            	liquibaseUpdate(dbLog, connection);
             } catch (Exception e) {
                 log.error("Failed to add a field {} to a custom table {}", dbTableName, dbFieldname, e);
                 throw new SQLException(e);
@@ -318,13 +315,8 @@ public class CustomTableCreatorService implements Serializable {
         
         hibernateSession.doWork(connection -> {
             
-            Database database;
             try {
-                database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                
-                Liquibase liquibase = new Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-                liquibase.update(new Contexts(), new LabelExpression());
-                
+            	liquibaseUpdate(dbLog, connection);
             } catch (Exception e) {
                 log.error("Failed to update a field {} in a custom table {}", dbTableName, dbFieldname, e);
                 throw new SQLException(e);
@@ -467,16 +459,16 @@ public class CustomTableCreatorService implements Serializable {
     }
     
     /**
-     * Remove a field from a table
+     * Add a unique constraint to table
      *
-     * @param dbTableName Db table name to remove from
-     * @param cft Field definition
+     * @param dbTableName Db table name to add constraint
+     * @param columnNames Field of the unique constraint
      */
     public String addUniqueConstraint(String dbTableName, String columnNames) {
 
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
-        String constraintName = extractConstraintName(dbTableName);
+        String constraintName = extractUniqueConstraintName(dbTableName);
         // Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
@@ -508,15 +500,107 @@ public class CustomTableCreatorService implements Serializable {
         });
         return constraintName;
     }
+    
+    /**
+     * Add a foreingKey constraint to table
+     *
+     * @param baseTable Db table name to add constraint
+     * @param referencedTable Field of the unique constraint
+     */
+    public String addForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
 
-	public String extractConstraintName(String dbTableName) {
+
+        DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
+        String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
+        
+        ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_CFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+        changeSet.setFailOnError(true);
+
+        
+        AddForeignKeyConstraintChange addFKConstraintStatement = new AddForeignKeyConstraintChange();
+        addFKConstraintStatement.setConstraintName(constraintName);
+        addFKConstraintStatement.setBaseTableName(baseTable);
+        addFKConstraintStatement.setBaseColumnNames(baseColumn);
+        addFKConstraintStatement.setReferencedTableName(referencedTable);
+        addFKConstraintStatement.setReferencedColumnNames(referencedColumn);
+
+        changeSet.addChange(addFKConstraintStatement);
+        dbLog.addChangeSet(changeSet);
+
+        EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
+
+        Session hibernateSession = em.unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                try {
+                	liquibaseUpdate(dbLog, connection);
+                } catch (Exception e) {
+                    log.error("Failed to add a constraint {} to a custom table {}", constraintName, baseTable, e);
+                    throw new SQLException(e);
+                }
+            }
+        });
+        return constraintName;
+    }
+    
+    /**
+     * Remove a ForeingKay from a table
+     *
+     * @param dbTableName Db table name to remove from
+     * @param cft Field definition
+     */
+    public void dropForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
+
+
+        DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
+
+        String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
+        
+        ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_DFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+        changeSet.setFailOnError(true);
+
+        
+        DropForeignKeyConstraintChange dropForeignKeyConstraintChange = new DropForeignKeyConstraintChange();
+        dropForeignKeyConstraintChange.setBaseTableName(baseTable);
+        dropForeignKeyConstraintChange.setConstraintName(constraintName);
+
+        changeSet.addChange(dropForeignKeyConstraintChange);
+        dbLog.addChangeSet(changeSet);
+
+        EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
+
+        Session hibernateSession = em.unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try {
+                	liquibaseUpdate(dbLog, connection);
+                } catch (Exception e) {
+                    log.error("Failed to remove a constraint {} to a custom table {}", constraintName, baseTable, e);
+                    throw new SQLException(e);
+                }
+            }
+        });
+    }
+
+	public String extractUniqueConstraintName(String dbTableName) {
 		String constraintName = "CT_UniqueConstraint_"+dbTableName;
 		return constraintName;
 	}
 	
+	public String extractFKConstraintName(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
+		String constraintName = "CT_FOREING_KEY_CONSTRAINT_"+baseTable+"__"+baseColumn+"__"+referencedTable+"__"+referencedColumn;
+		return constraintName;
+	}
+	
     private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
-		Database database;
-		database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+		Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
 		if(currentproviderCode!=null) {
 			database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));

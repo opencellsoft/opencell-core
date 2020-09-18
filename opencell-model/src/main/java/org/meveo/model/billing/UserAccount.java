@@ -40,16 +40,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ISearchable;
-import org.meveo.model.IWFEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 
 /**
@@ -125,7 +124,7 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     /**
      * Primary waller
      */
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
@@ -153,20 +152,6 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
-
-    /**
-     * Expression to determine minimum amount value
-     */
-    @Column(name = "minimum_amount_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountEl;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value
-     */
-    @Column(name = "minimum_label_el", length = 2000)
-    @Size(max = 2000)
-    private String minimumLabelEl;
 
     public UserAccount() {
         accountType = ACCOUNT_TYPE;
@@ -279,21 +264,5 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @Override
     public Class<? extends BusinessEntity> getParentEntityType() {
         return BillingAccount.class;
-    }
-
-    public String getMinimumAmountEl() {
-        return minimumAmountEl;
-    }
-
-    public void setMinimumAmountEl(String minimumAmountEl) {
-        this.minimumAmountEl = minimumAmountEl;
-    }
-
-    public String getMinimumLabelEl() {
-        return minimumLabelEl;
-    }
-
-    public void setMinimumLabelEl(String minimumLabelEl) {
-        this.minimumLabelEl = minimumLabelEl;
     }
 }

@@ -39,6 +39,10 @@
                     <hftl:formField label="#{messages['billingCycle.invoicingThreshold']}" field="invoicingThreshold" listenerUpdate="checkThresholdId" />
                     <hftl:formField label="#{messages['billingCycle.checkThreshold']}" field="checkThreshold" id="checkThresholdId" noSelectionLabel="false" disabled="false"
                         required="#{not empty billingCycleBean.entity.invoicingThreshold}" />
+	                  <p:panelGrid columns="1" styleClass="ui-noborder"> 
+	                  	<p:outputLabel for="@next" value="#{messages['invoice.checkthreshold.per']}" cellpadding="5" />
+	                  	<p:selectBooleanButton  value="${billingCycleBean.entity.thresholdPerEntity}" onLabel="#{messages['invoice.checkthreshold.per.entity']}" offLabel="#{messages['invoice.checkthreshold.per.invoice']}"/>
+	                  </p:panelGrid>
                     <hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}" field="billingTemplateNameEL" textArea="true" rows="1" maxlength="2000"
                         componentWidth="30" newLine="true" />
                     <hftl:formField label="#{messages['billingCycle.lastTransactionDateDelayEL']}" field="lastTransactionDateDelayEL" textArea="true" rows="1" maxlength="2000"
@@ -63,6 +67,7 @@
                     <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="30"
                         rendered="#{paramBean.sparkEnabled}" />
                     <hftl:formField id="referenceDate" label="#{messages['billingCycle.referenceDate']}" field="referenceDate" />
+                    <hftl:formField label="#{messages['billingCycle.splitPerPaymentMethod']}" field="splitPerPaymentMethod" isMessage="true"/>
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
             </p:tabView>

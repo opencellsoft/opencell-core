@@ -48,12 +48,12 @@ public class FilterCondition extends BaseEntity {
     private static final long serialVersionUID = -4620739918936998431L;
 
     @OneToOne(mappedBy = "filterCondition")
-    public Filter filter;
+    private Filter filter;
 
     @Column(name = "filter_condition_type", length = 50, nullable = false)
     @Size(max = 50)
     @NotNull
-    public String filterConditionType;
+    private String filterConditionType;
 
     public boolean match(BaseEntity e) {
         return false;

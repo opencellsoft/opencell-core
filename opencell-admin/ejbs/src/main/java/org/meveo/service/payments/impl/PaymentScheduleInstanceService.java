@@ -348,22 +348,22 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @param status the status
      * @return the list
      */
-    public List<PaymentScheduleInstance> findByService(ServiceInstance serviceInstance, PaymentScheduleStatusEnum status) {
-        try {
-            String strQuery = "from " + PaymentScheduleInstance.class.getSimpleName() + " where serviceInstance.id :=serviceInstanceID";
-            if (status != null) {
-                strQuery += " and status =:statusIN";
-            }
-            strQuery += " order by status";
-            Query query = getEntityManager().createQuery(strQuery);
-            query = query.setParameter("serviceInstanceID", serviceInstance.getId());
-            if (status != null) {
-                query = query.setParameter("status", status);
-            }
-            return (List<PaymentScheduleInstance>) query.getResultList();
-        } catch (Exception e) {
-        }
-        return null;
-    }
+	public List<PaymentScheduleInstance> findByService(ServiceInstance serviceInstance, PaymentScheduleStatusEnum status) {
+		try {
+			String strQuery = "from " + PaymentScheduleInstance.class.getSimpleName() + " where serviceInstance.id =:serviceInstanceID";
+			if (status != null) {
+				strQuery += " and status =:statusIN";
+			}
+			strQuery += " order by status";
+			Query query = getEntityManager().createQuery(strQuery);
+			query = query.setParameter("serviceInstanceID", serviceInstance.getId());
+			if (status != null) {
+				query = query.setParameter("statusIN", status);
+			}
+			return (List<PaymentScheduleInstance>) query.getResultList();
+		} catch (Exception e) {
+		}
+		return null;
+	}
 
 }

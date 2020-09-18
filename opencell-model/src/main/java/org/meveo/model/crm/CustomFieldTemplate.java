@@ -101,16 +101,20 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    public static long DEFAULT_MAX_LENGTH_STRING = 50L;
+    public static final long DEFAULT_MAX_LENGTH_STRING = 50L;
 
-    public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+    public static final String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
     private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
 
     public enum GroupedCustomFieldTreeItemType {
 
         root(null), tab("tab"), fieldGroup("fieldGroup"), field("field"), action("action");
 
-        public String positionTag;
+        private String positionTag;
+
+        public String getPositionTag() {
+            return positionTag;
+        }
 
         private GroupedCustomFieldTreeItemType(String tag) {
             this.positionTag = tag;
@@ -214,7 +218,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
      */
-    @Column(name = "entity_clazz", length = 255)
+    @Column(name = "entity_clazz", length = 255, updatable = false)
     @Size(max = 255)
     private String entityClazz;
 

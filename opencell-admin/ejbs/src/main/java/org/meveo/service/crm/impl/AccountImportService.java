@@ -393,20 +393,19 @@ public class AccountImportService extends ImportService {
         userAccount.setStatus(AccountStatusEnum.ACTIVE);
         userAccount.setStatusDate(new Date());
 
-        userAccountService.create(userAccount);
+        // create wallet
+        WalletInstance wallet = new WalletInstance();
+        wallet.setCode(WalletTemplate.PRINCIPAL);
+        wallet.setUserAccount(userAccount);
+
+        userAccount.setWallet(wallet);
+        userAccount.setBillingAccount(billingAccount);
 
         if (uAccount.getCustomFields() != null) {
             populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount);
         }
 
-        // create wallet
-        WalletInstance wallet = new WalletInstance();
-        wallet.setCode(WalletTemplate.PRINCIPAL);
-        wallet.setUserAccount(userAccount);
-        walletService.create(wallet);
-
-        userAccount.setWallet(wallet);
-        userAccount.setBillingAccount(billingAccount);
+        userAccountService.create(userAccount);
 
         Subscriptions subscriptions = uAccount.getSubscriptions();
 
@@ -419,8 +418,8 @@ public class AccountImportService extends ImportService {
                     if (checkSubscription == null) {
                         continue;
                     }
-                    checkSubscription.userAccount = userAccount;
-                    checkSubscription.seller = seller;
+                    checkSubscription.setUserAccount(userAccount);
+                    checkSubscription.setSeller(seller);
                     nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription, jaxbSubscription, "", i);
                 } catch (ImportIgnoredException ie) {
 
@@ -502,7 +501,7 @@ public class AccountImportService extends ImportService {
                     return null;
                 }
 
-                checkSubscription.serviceInsts.add(serviceInst);
+                checkSubscription.getServiceInstances().add(serviceInst);
             }
 
             if (jaxbSubscription.getAccesses() != null) {
@@ -511,7 +510,7 @@ public class AccountImportService extends ImportService {
                         return null;
                     }
 
-                    checkSubscription.accessPoints.add(jaxbAccess);
+                    checkSubscription.getAccessPoints().add(jaxbAccess);
                 }
             }
         }

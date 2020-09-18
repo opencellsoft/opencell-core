@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.commons.parsers.RecordContext;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CDRService;
@@ -56,7 +57,7 @@ public class CDRReprocessingReader implements ICdrReader {
         return origin;
     }
 
-    @Override
+   @Override
     public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
         if(cdrReader == null || cdrReader.hasNext() == false) {
             return null;
@@ -92,7 +93,29 @@ public class CDRReprocessingReader implements ICdrReader {
 
     @Override
     public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
-        // TODO Auto-generated method stub
-        return null;
+        List<CDR> parsedCdrs = new ArrayList<CDR>();
+        List<CDR> cdrs = cdrService.getCDRsToReprocess();
+        CDR parsedCdr;
+        Object record;
+        for (CDR cdr : cdrs) {
+            if(cdr.getType() != null && cdr.getSource() != null) {
+                record = RecordContext.deserializeRecord(cdr.getType(),cdr.getSource());
+            } else { // This case should never happen, but it's added to manage the old data
+                record = cdr.getLine();                                
+            }
+            parsedCdr = cdrParser.parse(record);
+            if (parsedCdr != null) {
+                cdr.setTimesTried(cdr.getTimesTried() == null ? 1 : cdr.getTimesTried() + 1);
+                cdr.setRejectReason(parsedCdr.getRejectReason());
+                cdr.setRejectReasonException(parsedCdr.getRejectReasonException());
+                cdr.setStatus(parsedCdr.getStatus());  
+                cdr.setSource(parsedCdr.getSource());
+                cdr.setType(parsedCdr.getType());
+                cdr.setOriginBatch(batchName);
+                parsedCdrs.add(cdr);
+            }   
+                      
+        }
+        return parsedCdrs;
     }   
 }

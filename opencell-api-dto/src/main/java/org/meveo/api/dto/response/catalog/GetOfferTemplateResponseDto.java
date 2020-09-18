@@ -38,7 +38,7 @@ public class GetOfferTemplateResponseDto extends BaseResponse {
     private static final long serialVersionUID = -8776189890084137788L;
 
     /** The offer template. */
-    public OfferTemplateDto offerTemplate;
+    private OfferTemplateDto offerTemplate;
 
     /**
      * Gets the offer template.

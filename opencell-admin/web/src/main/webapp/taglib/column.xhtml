@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
-    xmlns:pe="http://primefaces.org/ui/extensions">
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" xmlns:pe="http://primefaces.org/ui/extensions">
 
 <!-- 
 
@@ -27,10 +27,13 @@
         style - style to apply to the p:column
         styleClass - style class to apply to the p:column
         noLinkToView - should field (in case of code field) not be displayed as a link to a detail view
+        toggleable - allow to toggle column visibility
+        toggleIndex - column visibility index
         
     Additional attributes for text type fields
         showTruncated - show truncated text in column and show full text when clicking on the text "..."  
         truncateToSize - in case of show truncated, a max number of characters to show in a popup
+        truncateToInListSize - in case of show truncated, a max number of characters to show in a list
         
     Additional attributes for list type fields
         valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
@@ -63,7 +66,7 @@
     <c:if test="${empty isMessage}">
         <c:set var="isMessage" value="false" />
     </c:if>
-    
+
     <c:if test="${empty isDiabledMessage}">
         <c:set var="isDiabledMessage}" value="false" />
     </c:if>
@@ -118,9 +121,13 @@
     <c:if test="${empty showTruncated}">
         <c:set var="showTruncated" value="false" />
     </c:if>
-    
+
     <c:if test="${showTruncated and empty truncateToSize}">
         <c:set var="truncateToSize" value="10000" />
+    </c:if>
+
+    <c:if test="${showTruncated and empty truncateToInListSize}">
+        <c:set var="truncateToInListSize" value="50" />
     </c:if>
 
     <c:if test="${empty exportable}">
@@ -158,7 +165,16 @@
         <c:set var="showSortLinks" value="true" />
     </c:if>
 
-    <p:column exportable="#{exportable}" rendered="#{rendered}" filterable="false">
+    <c:if test="${empty toggleable}">
+        <c:set var="toggleable" value="false" />
+        <c:set var="toggleVisible" value="true" />
+    </c:if>
+
+    <c:if test="${toggleable}">
+        <c:set var="toggleVisible" value="#{backingBean.getColumnVisibilitylist()[toggleIndex]}" />
+    </c:if>
+
+    <p:column exportable="#{exportable}" rendered="#{rendered}" filterable="false" toggleable="#{toggleable}" visible="#{toggleVisible}">
         <f:facet name="header">
             <h:outputText value="#{label}" />
         </f:facet>
@@ -171,13 +187,13 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-        
+
         <c:if test="#{sort and !empty(field)}">
             <f:attribute name="field" value="#{field}" />
             <f:attribute name="sortable" value="#{true}" />
             <f:attribute name="sortBy" value="#{valueField}" />
         </c:if>
-        
+
         <c:if test="#{! empty(styleClasss)}">
             <f:attribute name="styleClasss" value="#{styleClasss}" />
         </c:if>
@@ -217,15 +233,17 @@
                         </c:if>
                         <c:if test="${showTruncated}">
 
-                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length() &lt;=50}" converter="#{converter}" />
-                            <p:lightBox rendered="#{show and valueField.length()>50}">
+                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length() &lt;=truncateToInListSize}" converter="#{converter}" />
+                            <p:lightBox rendered="#{show and valueField.length()>truncateToInListSize}">
                                 <h:outputLink value="#">
-                                    <h:outputText value="#{fn:substring(valueField,0,50)} ..." rendered="#{show}" converter="#{converter}" />
+                                    <h:outputText value="#{fn:substring(valueField,0,truncateToInListSize)} ..." rendered="#{show}" converter="#{converter}" />
                                 </h:outputLink>
 
                                 <f:facet name="inline">
                                     <p:scrollPanel mode="native" style="width:1000px;max-height:600px">
-                                        <h:outputText value="#{(valueField.length()>truncateToSize?(fn:substring(valueField,0,truncateToSize)):valueField).replaceAll('\\n','&lt;BR/&gt;')}" escape="false" />
+                                        <h:outputText
+                                            value="#{(valueField.length()>truncateToSize?(fn:substring(valueField,0,truncateToSize)):valueField).replaceAll('\\n','&lt;BR/&gt;')}"
+                                            escape="false" />
                                     </p:scrollPanel>
                                 </f:facet>
                             </p:lightBox>
@@ -271,7 +289,8 @@
                 <c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
                     <c:set var="valueId" value="#{valueId[valueIdVar]}" />
                 </c:forEach>
-                <h:link id="#{attrId}_message_link" value="#{valueField}" outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;" rendered="#{valueId != null}">
+                <h:link id="#{attrId}_message_link" value="#{valueField}" outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;"
+                    rendered="#{valueId != null}">
                     <f:param name="#{objectIdParamName}" value="#{valueId}" />
                     <f:param name="edit" value="#{edit}" />
                     <c:if test="${propagateConversation}">
@@ -312,8 +331,8 @@
                         <c:set var="valueId" value="#{valueId[valueIdVar]}" />
                     </c:forEach>
                     <c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
-                    <hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}" popupFields="#{popupFields}"
-                        value="#{valueLabel}" propagateConversation="${propagateConversation}" view="#{entityView}" backView="#{backView}" />
+                    <hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
+                        popupFields="#{popupFields}" value="#{valueLabel}" propagateConversation="${propagateConversation}" view="#{entityView}" backView="#{backView}" />
                     <hf:linkToEntity linkId="#{attrId}_message_link" rendered="#{not isMessage}" entity="#{c}" objectIdParamName="#{objectIdParamName}" popupFields="#{popupFields}"
                         entityId="#{valueId}" propagateConversation="${propagateConversation}" value="#{valueLabel}" view="#{entityView}" backView="#{backView}" />
                 </c:if>

@@ -83,31 +83,31 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * In a deserialized matrix, represents a map key name to hold the names of matrix keys In Map/matrix value management for GUI (a list of maps), represents a map key name to
      * hold key value
      */
-    public static String MAP_KEY = "key";
+    public static final String MAP_KEY = "key";
 
     /**
      * In Map/matrix value management for GUI (a list of maps), represents a map key name to hold a value
      */
-    public static String MAP_VALUE = "value";
+    public static final String MAP_VALUE = "value";
 
     /**
      * A separator for matrix column names
      */
-    public static String MATRIX_COLUMN_NAME_SEPARATOR = "/";
+    public static final String MATRIX_COLUMN_NAME_SEPARATOR = "/";
 
     /**
      * A separator for matrix keys
      */
-    public static String MATRIX_KEY_SEPARATOR = "|";
+    public static final String MATRIX_KEY_SEPARATOR = "|";
 
     /**
      * A separator for values in a range of numbers
      */
-    public static String RON_VALUE_SEPARATOR = "<";
+    public static final String RON_VALUE_SEPARATOR = "<";
 
     private static String SERIALIZATION_SEPARATOR = "|";
 
-    public static String WILDCARD_MATCH_ALL = "*";
+    public static final String WILDCARD_MATCH_ALL = "*";
 
     /**
      * Period to which value applies to
@@ -275,7 +275,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * Is it a newly entered period that was not saved to DB yet
      */
     @JsonIgnore
-    protected boolean isNewPeriod = false;
+    private boolean isNewPeriod = false;
 
     /**
      * A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
@@ -327,6 +327,20 @@ public class CustomFieldValue implements Serializable, Cloneable {
         this.priority = priority;
         setValue(value);
         this.isNewPeriod = true;
+    }
+
+    /**
+     * @return boolean value of isNewPeriod
+     */
+    public boolean isNewPeriod() {
+        return isNewPeriod;
+    }
+
+    /**
+     * set a new value for variable isNewPeriod
+     */
+    public void setNewPeriod(boolean value) {
+        this.isNewPeriod = value;
     }
 
     /**
@@ -1690,7 +1704,11 @@ public class CustomFieldValue implements Serializable, Cloneable {
             sb.append(", isNewPeriod=true");
         }
 
-        return "CustomFieldValue [" + sb.substring(2);
+        if (sb.length() > 0) {
+            return "CustomFieldValue [" + sb.substring(2);
+        } else {
+            return "";
+        }
     }
 
     /**
