@@ -15,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
 
-@Path("/communication")
+@Path("/communications/sms")
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Produces({ APPLICATION_JSON, APPLICATION_XML })
 public interface SMSNotification extends IBaseRs {
