@@ -470,7 +470,9 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
         setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
@@ -690,7 +692,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
@@ -716,7 +720,6 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.isThresholdPerEntity() != null) {
             billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         
         billingAccountApi.createOrUpdate(billingAccountDto);
 
@@ -1254,7 +1257,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setTerminationReason(postData.getTerminationReason());
         billingAccountDto.setEmail(postData.getEmail());
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         billingAccountDto.setName(postData.getName());
         billingAccountDto.setAddress(postData.getAddress());
         billingAccountDto.setExternalRef1(postData.getExternalRef1());
@@ -1284,8 +1289,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
-
+        
 		if(postData.isThresholdPerEntity() != null) {
 			billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
 		}

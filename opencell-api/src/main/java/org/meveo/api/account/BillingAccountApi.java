@@ -429,7 +429,9 @@ public class BillingAccountApi extends AccountEntityApi {
         } else if (isNew && postData.getInvoicingThreshold() != null) {
             billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         }
-        billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         updateAccount(billingAccount, postData, checkCustomFields);
 
         if (postData.getNextInvoiceDate() != null) {
