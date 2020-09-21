@@ -1074,7 +1074,7 @@ public class DateUtils {
                     periods.add(new DatePeriodSplit(new DatePeriod(fromDate, toDate), calendar.getPriority(), calendar.getValue()));
                 } 
                 fromDate = calendar.getCalendar().nextPeriodStartDate((toDate == null)? fromDate : toDate);
-                if(fromDate == null || fromDate.after(datePeriod.getTo())) {
+                if(fromDate == null || fromDate.equals(datePeriod.getTo()) || fromDate.after(datePeriod.getTo())) {
                     break;
                 }
             }           
