@@ -21,6 +21,20 @@
  */
 package org.meveo.admin.async;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
@@ -42,14 +56,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * FlatFile processing
@@ -111,11 +117,11 @@ public class FlatFileProcessing {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> processFileAsync(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName,
-                                           String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
+                                           String filenameVariableName, Long nbLinesToProcess, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, actionOnError, rejectFileWriter, outputFileWriter);
+        processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, actionOnError, rejectFileWriter, outputFileWriter);
         return new AsyncResult<String>("OK");
     }
 
@@ -141,11 +147,11 @@ public class FlatFileProcessing {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Future<String> processFileAsyncInOneTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName,
-                                                  String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
+                                                  String filenameVariableName, Long nbLinesToProcess, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, actionOnError, rejectFileWriter, outputFileWriter);
+        processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, actionOnError, rejectFileWriter, outputFileWriter);
         return new AsyncResult<String>("OK");
     }
 
@@ -165,7 +171,7 @@ public class FlatFileProcessing {
      * @throws BusinessException General exception
      */
     private void processFile(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName,
-                             String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter) throws BusinessException {
+                             Long nbLinesToProcess, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter) throws BusinessException {
 
         int i = 0;
         Map<String, Object> executeParams = new HashMap<String, Object>();
@@ -181,20 +187,27 @@ public class FlatFileProcessing {
             if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-
+           List<Object> records = new ArrayList<>();
             try {
-                recordContext = fileParser.getNextRecord();
-                if (recordContext == null) {
-                    break;
+                for(int nbLine = 0 ; nbLine < nbLinesToProcess; nbLine++) {
+                    
+                    recordContext = fileParser.getNextRecord();              
+                    if (recordContext == null) {
+                        break;
+                    }
+    
+                    log.debug("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
+                    
+                    if (recordContext.getRecord() == null) {
+                        throw recordContext.getRejectReason();
+                    }
+                    records.add(recordContext.getRecord());
                 }
-
-                log.debug("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
-
-                if (recordContext.getRecord() == null) {
-                    throw recordContext.getRejectReason();
+                if(records.size() == 1) {       
+                    executeParams.put(recordVariableName, records.get(0));
+                } else {
+                    executeParams.put(recordVariableName, records);
                 }
-
-                executeParams.put(recordVariableName, recordContext.getRecord());
 
                 if (FlatFileProcessingJob.ROLLBACK.equals(actionOnError)) {
                     script.execute(executeParams);
