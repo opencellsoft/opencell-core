@@ -28,10 +28,35 @@ public class SMSNotificationImpl extends BaseRs implements SMSNotification {
 
     @Override
     public Response send(SMSInfoDto smsDTO) throws MeveoApiException {
-        Communication communication = new Communication(smsDTO.getCustomerCode(), smsDTO.getBody());
+        String[] result = smsDTO.getTargetType().split("\\|");
+        var to = result[0];
+        var targetType = entityFrom(result[1]);
+        Communication communication = new Communication(smsDTO.getCode(), to, smsDTO.getBody(), targetType);
         SMSInfoResponseDTO response = smsService.send(communication);
         return Response.status(nonNull(response.getErrorCode()) ? BAD_REQUEST : OK)
                 .entity(response)
                 .build();
+    }
+
+    private String entityFrom(String targetType) {
+        var result = "";
+        switch (targetType) {
+            case "S" :
+                result = "Seller";
+                break;
+            case "C" :
+                result = "Customer";
+                break;
+            case "BA" :
+                result = "BillingAccount";
+                break;
+            case "CA" :
+                result = "CustomerAccount";
+                break;
+            case "UA" :
+                result = "UserAccount";
+                break;
+        }
+        return result;
     }
 }
