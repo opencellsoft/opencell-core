@@ -33,12 +33,14 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.AutomatedRefund;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -47,10 +49,12 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -89,6 +93,9 @@ public class UnitSepaDirectDebitJobBean {
 	/** The d D request item service. */
 	@Inject
 	private DDRequestItemService dDRequestItemService;
+	
+	@Inject
+	private CustomerAccountService customerAccountService;
 
 	/** The log. */
 	@Inject
@@ -140,12 +147,14 @@ public class UnitSepaDirectDebitJobBean {
 				result.registerError(errorMsg);
 			}
 		}
+		
+		PaymentMethod pmUsed = customerAccountService.getPreferredPaymentMethod(ddrequestItem.getAccountOperations().get(0),PaymentMethodEnum.DIRECTDEBIT);
 
 		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
 				(automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null),
 				(automatedPayment instanceof Refund ? (Refund) automatedPayment : null), (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
 				paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess(),
-				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());
+				ddRequestLOT.getDdRequestBuilder().getCode(),(DDPaymentMethod) PersistenceUtils.initializeAndUnproxy(pmUsed),ddrequestItem.getAccountOperations());
 
 	}
 

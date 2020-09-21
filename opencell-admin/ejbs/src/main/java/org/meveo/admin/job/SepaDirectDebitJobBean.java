@@ -19,7 +19,6 @@
 package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.meveo.service.script.payment.AccountOperationFilterScript.DD_REQ_OP;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +49,7 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -189,7 +189,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.info("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());						
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
 						log.info("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
@@ -328,8 +328,13 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
 			Map<String, Object> methodContext = new HashMap<>();				
-			 methodContext.put(DD_REQ_OP, ddRequestLotOp);
-			return aoFilterScript.filterAoToPay(methodContext);
+			 methodContext.put(AccountOperationFilterScript.DD_REQ_OP, ddRequestLotOp);
+			 methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, ddRequestLotOp.getFromDueDate());
+			 methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, ddRequestLotOp.getToDueDate());
+			 methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, PaymentMethodEnum.DIRECTDEBIT);
+			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess());
+
+			return aoFilterScript.filterAoToPay(methodContext); 
 		}
 		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);
 	}

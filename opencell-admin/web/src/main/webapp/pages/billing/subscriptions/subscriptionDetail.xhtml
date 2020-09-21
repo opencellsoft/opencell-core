@@ -399,7 +399,7 @@
                                             <f:selectItem itemLabel="#{subscriptionBean.entity.paymentMethod.paymentType}" itemValue="#{subscriptionBean.entity.paymentMethod}"
                                                           rendered="#{subscriptionBean.entity.paymentMethod != null}"/>
                                             <f:selectItem itemLabel="" itemValue="" rendered="#{subscriptionBean.entity.paymentMethod == null}"/>
-                                            <f:selectItems value="#{subscriptionBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
+                                            <f:selectItems value="#{subscriptionBean.listPaymentMethod()}" var="elem" itemLabel="#{elem.alias}"
                                                            itemValue="#{elem}"/>
                                         </p:selectOneMenu>
 

@@ -227,7 +227,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider)
 			throws BusinessEntityException, Exception {		
 		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);

@@ -49,6 +49,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -568,11 +569,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         super.create(entity);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.service.base.PersistenceService#update(org.meveo.model.IEntity)
-     */
+
     @Override
     public CustomerAccount update(CustomerAccount entity) throws BusinessException {
 
@@ -608,6 +605,19 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             log.warn("Customer account {} has no preferred payment method", customerAccountId, e);
             return null;
         }
+    }
+    
+    public PaymentMethod getPreferredPaymentMethod(AccountOperation ao,PaymentMethodEnum paymentMethodType) {
+    	
+    	if(ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType ) {
+    		return ao.getSubscription().getPaymentMethod();
+    	}
+    	if(ao instanceof RecordedInvoice) {
+    		if(((RecordedInvoice)ao).getInvoice() != null && ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod() != null && ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType ) {
+    			return ((RecordedInvoice)ao).getInvoice().getBillingAccount().getPaymentMethod();
+    		}
+    	}
+    	return ao.getCustomerAccount().getPreferredPaymentMethod();       
     }
 
     /**

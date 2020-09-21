@@ -210,7 +210,7 @@
                                                 <f:selectItem itemLabel="#{billingAccountBean.entity.paymentMethod.paymentType}" itemValue="#{billingAccountBean.entity.paymentMethod}"
                                                               rendered="#{billingAccountBean.entity.paymentMethod != null}"/>
                                                 <f:selectItem itemLabel="" itemValue="" rendered="#{billingAccountBean.entity.paymentMethod == null}"/>
-                                                <f:selectItems value="#{billingAccountBean.listPaymentMethod()}" var="elem" itemLabel="#{elem['paymentType']}"
+                                                <f:selectItems value="#{billingAccountBean.listPaymentMethod()}" var="elem" itemLabel="#{elem.alias}"
                                                                itemValue="#{elem}"/>
                                             </p:selectOneMenu>
 
