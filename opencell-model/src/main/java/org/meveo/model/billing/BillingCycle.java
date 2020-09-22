@@ -187,14 +187,18 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
-		return thresholdPerEntity;
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity.booleanValue();
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
+	}
+	
+	public Boolean isThresholdPerEntityNotNull() {
+		return thresholdPerEntity != null ;
 	}
 
     /**

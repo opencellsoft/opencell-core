@@ -250,7 +250,9 @@ public class BillingAccountDto extends AccountDto {
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
         }
-        setThresholdPerEntity(e.isThresholdPerEntity());
+        if(e.isThresholdPerEntityNotNull()) {
+        	setThresholdPerEntity(e.isThresholdPerEntity());
+        }
         setNextInvoiceDate(e.getNextInvoiceDate());
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());

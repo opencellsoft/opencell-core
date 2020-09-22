@@ -258,7 +258,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
     /**
      * This method is called implicitly by hibernate, used to enable encryption for custom fields of this entity
@@ -278,12 +278,16 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
         accountType = ACCOUNT_TYPE;
     }
 
-    public boolean isThresholdPerEntity() {
-		return thresholdPerEntity;
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity.booleanValue();
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
-		this.thresholdPerEntity = thresholdPerEntity;
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+		this.thresholdPerEntity = thresholdPerEntity.booleanValue();
+	}
+	
+	public Boolean isThresholdPerEntityNotNull() {
+		return thresholdPerEntity != null ;
 	}
 
     public AddressBook getAddressbook() {

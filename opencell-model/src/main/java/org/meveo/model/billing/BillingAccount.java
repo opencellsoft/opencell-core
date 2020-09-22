@@ -342,13 +342,17 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
-		return thresholdPerEntity;
+    public Boolean isThresholdPerEntity() {
+		return thresholdPerEntity.booleanValue();
+	}
+    
+	public Boolean isThresholdPerEntityNotNull() {
+		return thresholdPerEntity != null ;
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 
