@@ -373,16 +373,19 @@ public class SubscriptionRenewal implements Serializable {
             return false;
         }
         SubscriptionRenewal that = (SubscriptionRenewal) o;
-        return autoRenew == that.autoRenew && extendAgreementPeriodToSubscribedTillDate == that.extendAgreementPeriodToSubscribedTillDate
-                && Objects.equals(autoRenewDate, that.autoRenewDate) && endOfTermAction == that.endOfTermAction && initialyActiveForUnit == that.initialyActiveForUnit
-                && Objects.equals(initialyActiveFor, that.initialyActiveFor) && renewForUnit == that.renewForUnit && Objects.equals(renewFor, that.renewFor)
-                && initialTermType == that.initialTermType;
+        return this.isAutoRenew() == that.autoRenew && this.isExtendAgreementPeriodToSubscribedTillDate() == that.extendAgreementPeriodToSubscribedTillDate
+                && Objects.equals(this.getAutoRenewDate(), that.autoRenewDate) && this.getEndOfTermAction() == that.endOfTermAction &&
+                this.getInitialyActiveForUnit() == that.initialyActiveForUnit
+                && Objects.equals(this.getInitialyActiveFor(), that.initialyActiveFor) && this.getRenewForUnit() == that.renewForUnit
+                && Objects.equals(this.getRenewFor(), that.renewFor)
+                && this.getInitialTermType() == that.initialTermType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(autoRenew, autoRenewDate, endOfTermAction, initialyActiveForUnit, initialyActiveFor, extendAgreementPeriodToSubscribedTillDate, renewForUnit, renewFor,
-            initialTermType);
+        return Objects.hash(this.isAutoRenew(), this.getAutoRenewDate(), this.getEndOfTermAction(), this.getInitialyActiveForUnit(),
+                this.getInitialyActiveFor(), this.isExtendAgreementPeriodToSubscribedTillDate(), this.getRenewForUnit(),
+                this.getRenewFor(), this.getInitialTermType());
     }
 
     public SubscriptionRenewal copy() {
