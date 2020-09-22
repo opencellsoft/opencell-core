@@ -11015,7 +11015,7 @@
             <column name="type" value="NATIF" />
             <column name="payment_method" value="DIRECTDEBIT" />
             <column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
-            <column name="country_id" valueNumeric="102" />
+            <column name="country_id" valueNumeric="220" />
             <column name="uuid" value="gateway_SLIMPAY" />
         </insert>
         <insert tableName="ar_payment_gateway">
