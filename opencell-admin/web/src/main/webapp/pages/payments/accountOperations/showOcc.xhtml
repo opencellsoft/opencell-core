@@ -34,6 +34,7 @@
   			<hftl:formField label="#{messages['accountOperation.unMatchingAmount']}" converter="bigDecimal4DigitsConverter" field="unMatchingAmount" edit="false" />
    			<hftl:formField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" fieldValueLabel="label" edit="false" />
    			<hftl:formField label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" edit="false" isMessage="true"/>
+   			<hftl:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCode" edit="false" isMessage="true"/>
 			</p:tab>
 				<hftl:customFields backingBean="#{accountOperationBean}" messagesId=":showOccFormId:messages" />
 				<hftl:displayGenericWFsHistory backingBean="#{accountOperationBean}" />
