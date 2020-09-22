@@ -1,5 +1,7 @@
 package org.meveo.admin.action.notification;
 
+import static java.util.Optional.ofNullable;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.util.Enumeration;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.HttpConstraint;
 import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -74,7 +75,12 @@ public class InboundServlet extends HttpServlet {
             inReq.setScheme(req.getScheme());
             inReq.setRemoteAddr(req.getRemoteAddr());
             inReq.setRemotePort(req.getRemotePort());
-            String body = getBodyString(req);
+            String body;
+            if (inReq.getParameters().containsKey("body")) {
+                body = retrieveBodyFromParm(inReq);
+            } else {
+                body = getBodyString(req);
+            }
             inReq.setBody(body);
 
             inReq.setMethod(req.getMethod());
@@ -116,6 +122,38 @@ public class InboundServlet extends HttpServlet {
             log.error("Failed to process Inbound request ", e);
         }
 
+    @Override
+    public void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
+
+    @Override
+    public void doTrace(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
+
+    private String retrieveBodyFromParm(InboundRequest inReq) {
+        String body = ofNullable(inReq.getParameters().get("body")).orElse("");
+        inReq.getParameters().remove("body");
+        return body;
+    }
+
+    private String getBodyString(HttpServletRequest req) {
+        StringBuilder buffer = new StringBuilder();
+        BufferedReader reader;
+        try {
+            reader = req.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+                buffer.append("\n");
+            }
+        } catch (IOException e2) {
+            log.error("Error at getBodyString: ", e2);
+        }
+        String body = buffer.toString();
+        body = body.trim();
+        return body;
     }
 
     private void addHeaders(HttpServletRequest req, InboundRequest inReq) {
