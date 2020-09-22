@@ -59,6 +59,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -316,6 +318,8 @@ public class AccountOperationApi extends BaseApi {
                 try {
                     accountOp = accountOperationService.findById(accountOperation.getId());
                 } catch (Exception e) {
+                    Logger log = LoggerFactory.getLogger(this.getClass());
+                    log.info("An exception is raised ! Cannot find accountOp by ID");
                 }
                 if (accountOp == null) {
                     throw new EntityDoesNotExistsException(AccountOperation.class, accountOperation.getId());
@@ -352,6 +356,8 @@ public class AccountOperationApi extends BaseApi {
         try {
             accountOperation = accountOperationService.findById(postData.getAccountOperationId());
         } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.info("An exception is raised ! Cannot find accountOperation by ID");
         }
         if (accountOperation == null) {
             throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());

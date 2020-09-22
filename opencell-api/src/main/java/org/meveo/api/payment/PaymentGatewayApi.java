@@ -44,7 +44,6 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
@@ -182,7 +181,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      */
     public PaymentGatewayResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
         PaymentGatewayResponseDto result = new PaymentGatewayResponseDto();
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.DESCENDING, null, pagingAndFiltering, PaymentMethod.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.DESCENDING, null, pagingAndFiltering, PaymentGateway.class);
         Long totalCount = paymentGatewayService.count(paginationConfig);
         result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());

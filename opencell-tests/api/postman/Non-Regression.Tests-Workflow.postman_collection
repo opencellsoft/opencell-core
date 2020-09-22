@@ -42235,7 +42235,7 @@
 		{
 			"id": "cda91d95-3d26-4ba6-88cf-eabf9826c220",
 			"key": "opencell.base",
-			"value": "http://localhost:8080/opencell"
+			"value": "https://vnn.d2.opencell.work/opencell"
 		},
 		{
 			"id": "ecaa098d-e799-4a0d-9f95-22ce8e09cc9e",

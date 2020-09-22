@@ -472,8 +472,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Override
     protected List<String> getFormFieldsToFetch() {
-        return null;
-//        return Arrays.asList("customerAccount");
+        return Arrays.asList("customerAccount");
     }
 
     public CounterInstance getSelectedCounterInstance() {

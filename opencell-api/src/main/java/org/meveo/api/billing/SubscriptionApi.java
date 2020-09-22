@@ -583,6 +583,11 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
 
+        List<ServiceTemplate> serviceToActivate = new ArrayList<>();
+        List<ServiceToActivateDto> servicesToActivateDto = new ArrayList<>();
+        getServiceToActivate(activateServicesDto.getServicesToActivateDto().getService(), serviceToActivate, servicesToActivateDto);
+        subscriptionService.checkCompatibilityOfferServices(subscription, serviceToActivate);
+
         // Find instantiated or instantiate if not instantiated yet
         List<ServiceInstance> serviceInstances = new ArrayList<>();
         for (ServiceToActivateDto serviceToActivateDto : activateServicesDto.getServicesToActivateDto().getService()) {
@@ -772,6 +777,23 @@ public class SubscriptionApi extends BaseApi {
                 log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
                 throw e;
             }
+        }
+    }
+
+    private void getServiceToActivate(List<ServiceToActivateDto> services, List<ServiceTemplate> serviceToActivate,
+                                      List<ServiceToActivateDto> servicesToActivateDto) {
+        for (ServiceToActivateDto serviceToActivateDto : services) {
+            if (serviceToActivateDto.getQuantity() == null) {
+                throw new MissingParameterException("quantity for service " + serviceToActivateDto.getCode());
+            }
+            ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
+            if (serviceTemplate == null) {
+                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+            }
+
+            serviceToActivateDto.setServiceTemplate(serviceTemplate);
+            servicesToActivateDto.add(serviceToActivateDto);
+            serviceToActivate.add(serviceTemplate);
         }
     }
 
@@ -968,9 +990,24 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
+
+        // populate customFields
         try {
-            oneShotChargeInstanceService.oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(), postData.getAmountWithoutTax(),
-                postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), null, true);
+            populateCustomFields(postData.getCustomFields(), oneShotChargeInstance, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        try {
+
+            oneShotChargeInstanceService
+                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
+                            postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
+                            postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true);
 
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());

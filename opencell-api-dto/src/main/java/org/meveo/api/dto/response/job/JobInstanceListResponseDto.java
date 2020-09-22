@@ -39,7 +39,7 @@ public class JobInstanceListResponseDto extends SearchResponse {
 	private static final long serialVersionUID = -2043156401122771487L;
 	
 	/** The job instances. */
-    public JobInstanceListDto jobInstances;
+    private JobInstanceListDto jobInstances;
 
     /**
      * Gets the job instances.

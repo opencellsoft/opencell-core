@@ -67,8 +67,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    public HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
-    public HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
+    private HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
+    private HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 

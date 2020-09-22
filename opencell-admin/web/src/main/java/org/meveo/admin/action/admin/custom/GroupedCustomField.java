@@ -95,8 +95,8 @@ public class GroupedCustomField implements Serializable {
             Map<String, String> guiPositionParsed = field.getGuiPositionParsed();
 
             // Add missing grouping nodes to a tree
-            String tabName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.positionTag + "_name");
-            String fieldGroupName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.positionTag + "_name");
+            String tabName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.getPositionTag() + "_name");
+            String fieldGroupName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + "_name");
             String positionKey = tabName + "_" + fieldGroupName;
             if (!groupingNodes.containsKey(positionKey)) {
 
@@ -106,14 +106,14 @@ public class GroupedCustomField implements Serializable {
                     // Add tab
                     if (tabNode == null) {
                         tabNode = new GroupedCustomField(GroupedCustomFieldTreeItemType.tab, tabName, this,
-                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.positionTag + "_pos"));
+                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.getPositionTag() + "_pos"));
                         groupingNodes.put(tabName + "_null", tabNode);
                     }
 
                     // Add field group
                     if (fieldGroupName != null) {
                         GroupedCustomField fieldGroupNode = new GroupedCustomField(GroupedCustomFieldTreeItemType.fieldGroup, fieldGroupName, tabNode,
-                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.positionTag + "_pos"));
+                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + "_pos"));
                         groupingNodes.put(positionKey, fieldGroupNode);
 
                     }
@@ -123,14 +123,14 @@ public class GroupedCustomField implements Serializable {
                 } else if (fieldGroupName != null) {
 
                     new GroupedCustomField(GroupedCustomFieldTreeItemType.field, field, defaultTab,
-                        guiPositionParsed.get(GroupedCustomFieldTreeItemType.field.positionTag + "_pos"));
+                        guiPositionParsed.get(GroupedCustomFieldTreeItemType.field.getPositionTag() + "_pos"));
                     continue;
                 }
             }
 
             // Add field to a tree
             GroupedCustomField fieldParentNode = groupingNodes.get(positionKey);
-            new GroupedCustomField(GroupedCustomFieldTreeItemType.field, field, fieldParentNode, guiPositionParsed.get(GroupedCustomFieldTreeItemType.field.positionTag + "_pos"));
+            new GroupedCustomField(GroupedCustomFieldTreeItemType.field, field, fieldParentNode, guiPositionParsed.get(GroupedCustomFieldTreeItemType.field.getPositionTag() + "_pos"));
         }
 
         // Remove default node if it is empty and there are more nodes
@@ -197,15 +197,15 @@ public class GroupedCustomField implements Serializable {
             Map<String, String> guiPositionParsed = action.getGuiPositionParsed();
 
             // Add missing grouping nodes to a tree
-            String tabName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.positionTag + "_name");
-            String fieldGroupName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.positionTag + "_name");
+            String tabName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.getPositionTag() + "_name");
+            String fieldGroupName = guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + "_name");
 
             GroupedCustomField actionParentNode = this;
             if (tabName != null) {
                 GroupedCustomField tabNode = findTab(tabName);
                 if (tabNode == null) {
                     tabNode = new GroupedCustomField(GroupedCustomFieldTreeItemType.tab, tabName, this,
-                        guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.positionTag + "_pos"));
+                        guiPositionParsed.get(GroupedCustomFieldTreeItemType.tab.getPositionTag() + "_pos"));
                 }
                 actionParentNode = tabNode;
 
@@ -213,7 +213,7 @@ public class GroupedCustomField implements Serializable {
                     GroupedCustomField fieldGroupNode = findFieldGroup(fieldGroupName);
                     if (fieldGroupNode == null) {
                         fieldGroupNode = new GroupedCustomField(GroupedCustomFieldTreeItemType.fieldGroup, fieldGroupName, tabNode,
-                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.positionTag + "_pos"));
+                            guiPositionParsed.get(GroupedCustomFieldTreeItemType.fieldGroup.getPositionTag() + "_pos"));
                     }
                     actionParentNode = fieldGroupNode;
                 }
@@ -221,7 +221,7 @@ public class GroupedCustomField implements Serializable {
 
             // Add action to a tree
             new GroupedCustomField(GroupedCustomFieldTreeItemType.action, action, actionParentNode,
-                guiPositionParsed.get(GroupedCustomFieldTreeItemType.action.positionTag + "_pos"));
+                guiPositionParsed.get(GroupedCustomFieldTreeItemType.action.getPositionTag() + "_pos"));
         }
 
         sort();

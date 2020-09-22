@@ -147,11 +147,11 @@ public class CustomFieldMatrixColumn implements Serializable {
 
         CustomFieldMatrixColumn other = (CustomFieldMatrixColumn) obj;
 
-        if (code == null) {
+        if (this.getCode() == null) {
             if (other.getCode() != null) {
                 return false;
             }
-        } else if (!code.equals(other.getCode())) {
+        } else if (!this.getCode().equals(other.getCode())) {
             return false;
         }
         return true;

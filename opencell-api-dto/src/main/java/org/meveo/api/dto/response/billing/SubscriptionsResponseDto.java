@@ -38,7 +38,7 @@ public final class SubscriptionsResponseDto extends BaseResponse {
     private static final long serialVersionUID = 5980154480190489704L;
 
     /** The subscriptions. */
-    public SubscriptionsDto subscriptions;
+    private SubscriptionsDto subscriptions;
 
     /**
      * Gets the subscriptions.

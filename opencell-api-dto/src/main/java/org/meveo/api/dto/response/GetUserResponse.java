@@ -37,7 +37,7 @@ public class GetUserResponse extends BaseResponse {
     private static final long serialVersionUID = 6212357569361512794L;
 
     /** The user. */
-    public UserDto user;
+    private UserDto user;
 
     /**
      * Instantiates a new gets the user response.

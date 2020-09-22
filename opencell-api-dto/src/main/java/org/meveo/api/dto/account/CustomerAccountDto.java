@@ -159,13 +159,13 @@ public class CustomerAccountDto extends AccountDto {
      * check the threshold per entity/invoice.
      */
     @XmlElement
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
+    public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 

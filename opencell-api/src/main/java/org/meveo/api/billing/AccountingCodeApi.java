@@ -36,7 +36,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.Subscription;
 import org.meveo.service.billing.impl.AccountingCodeService;
 
 /**
@@ -112,7 +111,7 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
     }
 
     public AccountingCodeListResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, AccountingCode.class);
 
         Long totalCount = accountingCodeService.count(paginationConfiguration);
 

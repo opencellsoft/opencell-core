@@ -18,6 +18,10 @@
 
 package org.meveo.util;
 
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -32,7 +36,7 @@ import java.util.regex.Pattern;
  * 
  * @author Randall Hauch
  */
-public class Inflector {
+public class Inflector implements Cloneable {
 
     protected static final Inflector INSTANCE = new Inflector();
 
@@ -107,7 +111,17 @@ public class Inflector {
 
     @Override
     public Inflector clone() {
-        return new Inflector(this);
+        try {
+            Inflector cloned = (Inflector) super.clone();
+
+            return new Inflector(this);
+        }
+        catch (CloneNotSupportedException e) {
+            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+            log.error("Failed to clone", e);
+            return this;
+        }
+//        return new Inflector(this);
     }
 
     // ------------------------------------------------------------------------------------------------

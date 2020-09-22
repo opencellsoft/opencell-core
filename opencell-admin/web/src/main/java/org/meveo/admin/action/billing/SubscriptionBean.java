@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -1328,7 +1330,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public List<PaymentMethod> listPaymentMethod() {
         if (Objects.nonNull(entity) && Objects.nonNull(entity.getUserAccount()) ) {
             UserAccount userAccount = userAccountService.findById(entity.getUserAccount().getId());
-            return userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
+            List<PaymentMethod> paymentMethods = userAccount.getBillingAccount().getCustomerAccount().getPaymentMethods();
+            return paymentMethods.stream()
+                    .map(paymentMethod -> paymentMethod instanceof HibernateProxy ? (PaymentMethod)((HibernateProxy) paymentMethod).getHibernateLazyInitializer().getImplementation() : paymentMethod)
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

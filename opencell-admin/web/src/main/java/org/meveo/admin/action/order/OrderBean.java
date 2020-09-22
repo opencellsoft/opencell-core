@@ -1043,4 +1043,8 @@ public class OrderBean extends CustomFieldBean<Order> {
         }
         return Collections.emptyList();
     }
+
+    public PaymentMethod getPaymentMethodById(String id) {
+        return id.isBlank() ? null : listPaymentMethod().stream().filter(pm -> pm.getId().equals(Long.valueOf(id))).findFirst().get();
+    }
 }

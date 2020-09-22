@@ -406,7 +406,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(ratingStatus.getNbRating() + 1);
+            ratingStatus.setNbRating(1);
         }
         return ratingStatus;
     }
@@ -428,7 +428,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RatingStatus ratingStatus = new RatingStatus();
         if (!wos.isEmpty()) {
-            ratingStatus.setNbRating(ratingStatus.getNbRating() + 1);
+            ratingStatus.setNbRating(1);
         }
         return ratingStatus;
     }
@@ -475,7 +475,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             chargeWasUpdated = true;
         }
 
-        log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getTerminationDate(), chargeInstance.getChargedToDate());
+        log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
         List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
 
@@ -551,7 +551,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 walletOperationService.refundWalletOperations(invoicedWoIds);
             }
         }
-        
+
         if (invoicedWoIds == null && resetNr == 0) {
             log.warn("No wallet operations found to rerate for recurring charge {} from date {}. Rerating will be skipped.", chargeInstanceId, DateUtils.formatAsDate(fromDate));
             return 0;
@@ -607,10 +607,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         if (nrWOCanceled > 0) {
             RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-            Date terminationDate = chargeInstance.getEffectiveTerminationDate();
+            Date chargeToDateOnTermination = chargeInstance.getChargeToDateOnTermination();
 
             // Reimbursement is applied directly as application end date is fixed and can not be changed
-            if (terminationDate != null && terminationDate.before(chargeInstance.getChargedToDate())) {
+            if (chargeToDateOnTermination != null && chargeToDateOnTermination.before(chargeInstance.getChargedToDate())) {
                 walletOperationService.applyReccuringChargeInNewTx(chargeInstanceId, ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
 
                 // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period
@@ -638,10 +638,13 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         if (nrWOCanceled > 0) {
 
             RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-            Date terminationDate = chargeInstance.getEffectiveTerminationDate();
+            Date chargeToDateOnTermination = chargeInstance.getChargeToDateOnTermination();
 
-            // Reimbursement is applied directly as application end date is fixed and can not be changed
-            if (terminationDate != null && terminationDate.before(chargeInstance.getChargedToDate())) {
+            // Reimbursement is applied directly as application end date is fixed and can not be changed.
+            // On rerating, invoiced operations dont count unless the are canceled based on rerateInvoiced flag.
+            // As in resetRecurringCharge() chargedToDate will be reset to a fromDate or a later date (depending on rerateInvoiced flag), need to reimburse not from
+            // chargeToDateOnTermination, but from what chargedToDate was reset to.
+            if (chargeToDateOnTermination != null && chargeToDateOnTermination.before(chargeInstance.getChargedToDate())) {
                 walletOperationService.applyReccuringCharge(findById(chargeInstanceId), ChargeApplicationModeEnum.RERATING_REIMBURSEMENT, false, toDate, null, false);
 
                 // Regular re-rating goes though applyRecurringCharge() as recurring calendar might change in mid rating and end date is not a strict date, but rather a period

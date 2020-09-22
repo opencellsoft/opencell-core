@@ -93,7 +93,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
      * record
      */
-    public static long CURRENT_PROVIDER_ID = 1L;
+    public static final long CURRENT_PROVIDER_ID = 1L;
 
     /**
      * Code

@@ -18,12 +18,10 @@
 
 package org.meveo.api.dto.account;
 
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,10 +29,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.crm.Customer;
 
 /**
  * The Class AccountHierarchyDto.
@@ -225,13 +226,13 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
-    private boolean thresholdPerEntity;
+    private Boolean thresholdPerEntity;
 
-    public boolean isThresholdPerEntity() {
+    public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 
@@ -240,13 +241,13 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for customerAccount.
      */
     @XmlElement
-    private boolean customerAccountThresholdPerEntity;
+    private Boolean customerAccountThresholdPerEntity;
 
-    public boolean isCustomerAccountThresholdPerEntity() {
+    public Boolean isCustomerAccountThresholdPerEntity() {
 		return customerAccountThresholdPerEntity;
 	}
 
-	public void setCustomerAccountThresholdPerEntity(boolean customerAccountThresholdPerEntity) {
+	public void setCustomerAccountThresholdPerEntity(Boolean customerAccountThresholdPerEntity) {
 		this.customerAccountThresholdPerEntity = customerAccountThresholdPerEntity;
 	}
 
@@ -255,13 +256,13 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for customer.
      */
     @XmlElement
-    private boolean customerThresholdPerEntity;
+    private Boolean customerThresholdPerEntity;
 
-    public boolean isCustomerThresholdPerEntity() {
+    public Boolean isCustomerThresholdPerEntity() {
 		return customerThresholdPerEntity;
 	}
 
-	public void setCustomerThresholdPerEntity(boolean customerThresholdPerEntity) {
+	public void setCustomerThresholdPerEntity(Boolean customerThresholdPerEntity) {
 		this.customerThresholdPerEntity = thresholdPerEntity;
 	}
 

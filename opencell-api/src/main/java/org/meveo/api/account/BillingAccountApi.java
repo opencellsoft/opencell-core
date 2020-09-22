@@ -429,7 +429,9 @@ public class BillingAccountApi extends AccountEntityApi {
         } else if (isNew && postData.getInvoicingThreshold() != null) {
             billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         }
-        billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         updateAccount(billingAccount, postData, checkCustomFields);
 
         if (postData.getNextInvoiceDate() != null) {
@@ -457,6 +459,24 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.isThresholdPerEntity() != null) {
+        	billingAccount.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
+        if (postData.getPhone() != null) {
+            billingAccount.getContactInformation().setPhone(postData.getPhone());
+        }
+        if (postData.getMinimumAmountEl() != null) {
+            billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumAmountElSpark() != null) {
+            billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (postData.getMinimumLabelElSpark() != null) {
+            billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
 
         if (businessAccountModel != null) {
@@ -688,6 +708,9 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+                }
+                if(postData.isThresholdPerEntity() != null) {
+                	existedBillingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
                 }
 
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);

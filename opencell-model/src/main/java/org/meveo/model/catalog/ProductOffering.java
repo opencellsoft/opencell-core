@@ -82,7 +82,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({
         @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
-        @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
+        @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id <>:id order by id"),
         @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where e.lifeCycleStatus='ACTIVE' AND type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))") })
 public abstract class ProductOffering extends EnableBusinessCFEntity implements IImageUpload {
 
@@ -226,6 +226,15 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
         }
         if (!channels.contains(channel)) {
             channels.add(channel);
+        }
+    }
+
+    public void addCustomerCategory(CustomerCategory customerCategory) {
+        if (getCustomerCategories() == null) {
+            customerCategories = new ArrayList<>();
+        }
+        if (!customerCategories.contains(customerCategory)) {
+            customerCategories.add(customerCategory);
         }
     }
 
