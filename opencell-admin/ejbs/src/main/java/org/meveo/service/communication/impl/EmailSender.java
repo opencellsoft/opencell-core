@@ -20,7 +20,6 @@ package org.meveo.service.communication.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +39,6 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,26 +168,26 @@ public class EmailSender {
             if (!StringUtils.isBlank(from)) {
                 msg.setFrom(new InternetAddress(from));
             }
-            List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
+            List<InternetAddress> addressTo = new ArrayList<>();
             for (String address : to) {
                 addressTo.add(new InternetAddress(address));
             }
             msg.setRecipients(RecipientType.TO, addressTo.toArray(new InternetAddress[addressTo.size()]));
-            List<InternetAddress> replytoAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> replytoAddress = new ArrayList<>();
             if (replyTo != null && !replyTo.isEmpty()) {
                 for (String address : replyTo) {
                     replytoAddress.add(new InternetAddress(address));
                 }
                 msg.setReplyTo(replytoAddress.toArray(new InternetAddress[replytoAddress.size()]));
             }
-            List<InternetAddress> ccAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> ccAddress = new ArrayList<>();
             if (cc != null && !cc.isEmpty()) {
                 for (String address : cc) {
                     ccAddress.add(new InternetAddress(address));
                 }
                 msg.setRecipients(RecipientType.CC, ccAddress.toArray(new InternetAddress[ccAddress.size()]));
             }
-            List<InternetAddress> bccAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> bccAddress = new ArrayList<>();
             if (bcc != null && !bcc.isEmpty()) {
                 for (String address : bcc) {
                     bccAddress.add(new InternetAddress(address));
