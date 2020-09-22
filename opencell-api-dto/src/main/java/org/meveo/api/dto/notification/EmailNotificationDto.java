@@ -62,7 +62,7 @@ public class EmailNotificationDto extends NotificationDto {
 
     /** The send to mail. */
     @XmlElement(name = "sendToMail")
-    private List<String> sendToMail = new ArrayList<String>();
+    private List<String> sendToMail = new ArrayList<>();
 
     /**
      * Instantiates a new email notification dto.
@@ -80,6 +80,8 @@ public class EmailNotificationDto extends NotificationDto {
         super((Notification) emailNotification);
         emailFrom = emailNotification.getEmailFrom();
         emailToEl = emailNotification.getEmailToEl();
+        sendToMail.addAll(emailNotification.getEmails());
+        description = emailNotification.getDescription();
         if (emailNotification != null && emailNotification.getEmailTemplate() != null) {
             subject = emailNotification.getEmailTemplate().getSubject();
             body = emailNotification.getEmailTemplate().getTextContent();

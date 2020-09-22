@@ -18,8 +18,9 @@
 
 package org.meveo.service.notification;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class EmailNotifier {
 
             HashMap<Object, Object> userMap = (HashMap<Object, Object>) customFieldInstanceService.getCFValue(notification, EmailNotification.EMAIL_TEMPLATE_PARAMS);
             if (userMap == null) {
-                userMap = new HashMap<Object, Object>();
+                userMap = new HashMap<>();
             }
             userMap.put("event", entityOrEvent);
             userMap.put("context", context);
@@ -113,15 +114,21 @@ public class EmailNotifier {
                 }
             }
 
-            List<String> to = new ArrayList<String>();
-
+            List<String> to = new ArrayList<>();
             if (!StringUtils.isBlank(notification.getEmailToEl())) {
-                to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
+                String result = context.containsKey("EMAIL_TO_LIST") ?
+                        (String)context.get("EMAIL_TO_LIST") : notification.getEmailToEl();
+                for (String mail : result.split(",")) {
+                    to.add(mail);
+                }
             }
             if (notification.getEmails() != null) {
                 to.addAll(notification.getEmails());
             }
-            emailSender.send(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);
+
+            String emailFrom = context.containsKey("EMAIL_FROM") ? (String)context.get("EMAIL_FROM") :
+                    ValueExpressionWrapper.evaluateExpression(notification.getEmailFrom(), userMap, String.class);
+            emailSender.send(emailFrom, asList(emailFrom), to, subject, body, htmlBody);
             if (notification.isSaveSuccessfulNotifications()) {
                 notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
             }
