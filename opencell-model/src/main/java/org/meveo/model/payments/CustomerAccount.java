@@ -279,11 +279,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     }
 
     public Boolean isThresholdPerEntity() {
-		return thresholdPerEntity.booleanValue();
+		return thresholdPerEntity==null ? false : thresholdPerEntity;
 	}
 
 	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
-		this.thresholdPerEntity = thresholdPerEntity.booleanValue();
+		this.thresholdPerEntity = thresholdPerEntity;
 	}
 	
 	public Boolean isThresholdPerEntityNotNull() {

@@ -190,7 +190,7 @@ public class BillingCycle extends BusinessCFEntity {
     private Boolean thresholdPerEntity;
 
     public Boolean isThresholdPerEntity() {
-		return thresholdPerEntity.booleanValue();
+    	return thresholdPerEntity==null ? false : thresholdPerEntity;
 	}
 
 	public void setThresholdPerEntity(Boolean thresholdPerEntity) {

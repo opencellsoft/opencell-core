@@ -345,7 +345,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private Boolean thresholdPerEntity;
 
     public Boolean isThresholdPerEntity() {
-		return thresholdPerEntity.booleanValue();
+    	return thresholdPerEntity==null ? false : thresholdPerEntity;
 	}
     
 	public Boolean isThresholdPerEntityNotNull() {
