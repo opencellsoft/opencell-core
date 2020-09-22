@@ -18,6 +18,8 @@
 
 package org.meveo.admin.action.notification;
 
+import static java.util.Optional.ofNullable;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +30,6 @@ import java.util.Enumeration;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.HttpConstraint;
 import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -104,7 +105,12 @@ public class InboundServlet extends HttpServlet {
             inReq.setScheme(req.getScheme());
             inReq.setRemoteAddr(req.getRemoteAddr());
             inReq.setRemotePort(req.getRemotePort());
-            String body = getBodyString(req);
+            String body;
+            if (inReq.getParameters().containsKey("body")) {
+                body = retrieveBodyFromParm(inReq);
+            } else {
+                body = getBodyString(req);
+            }
             inReq.setBody(body);
 
             inReq.setMethod(req.getMethod());
@@ -183,6 +189,12 @@ public class InboundServlet extends HttpServlet {
     @Override
     public void doTrace(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         doService(req, res);
+    }
+
+    private String retrieveBodyFromParm(InboundRequest inReq) {
+        String body = ofNullable(inReq.getParameters().get("body")).orElse("");
+        inReq.getParameters().remove("body");
+        return body;
     }
 
     private String getBodyString(HttpServletRequest req) {

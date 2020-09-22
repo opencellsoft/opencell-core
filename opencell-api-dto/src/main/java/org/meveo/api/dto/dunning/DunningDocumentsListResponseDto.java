@@ -37,7 +37,7 @@ public final class DunningDocumentsListResponseDto extends SearchResponse {
     private static final long serialVersionUID = 2861319507019272869L;
     
     /** The dunningDocuments. */
-    public DunningDocumentListDto dunningDocuments;
+    private DunningDocumentListDto dunningDocuments;
 
     /**
      * Gets the dunningDocuments.

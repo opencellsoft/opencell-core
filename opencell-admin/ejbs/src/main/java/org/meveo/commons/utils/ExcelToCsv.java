@@ -449,18 +449,16 @@ public class ExcelToCsv {
   *                             underylying file system.
   */
  private void saveCSVFile(File file) throws FileNotFoundException, IOException {
-     FileWriter fw = null;
-     BufferedWriter bw = null;
      ArrayList<String> line = null;
      StringBuffer buffer = null;
      String csvLineElement = null;
-     try {
+     try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw)){
 
          log.debug("Saving the CSV file [" + file.getName() + "]");
 
          // Open a writer onto the CSV file.
-         fw = new FileWriter(file);
-         bw = new BufferedWriter(fw);
+
+         ;
 
          // Step through the elements of the ArrayList that was used to hold
          // all of the data recovered from the Excel workbooks' sheets, rows
@@ -506,8 +504,6 @@ public class ExcelToCsv {
          }
          
          bw.flush();
-        } finally {
-            IOUtils.closeQuietly(bw);
         }
  }
 

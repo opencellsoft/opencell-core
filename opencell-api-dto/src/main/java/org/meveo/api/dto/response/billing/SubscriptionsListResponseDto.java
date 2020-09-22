@@ -38,7 +38,7 @@ public final class SubscriptionsListResponseDto extends SearchResponse {
     private static final long serialVersionUID = 5980154480190489704L;
 
     /** The subscriptions. */
-    public SubscriptionsListDto subscriptions;
+    private SubscriptionsListDto subscriptions;
 
     /**
      * Gets the subscriptions.

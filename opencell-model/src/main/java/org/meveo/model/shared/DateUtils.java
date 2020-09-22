@@ -55,8 +55,8 @@ public class DateUtils {
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
-    public static String DATE_PATTERN = "yyyy-MM-dd";
-    public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
     private static final String START_DATE_DELIMITER = "[";
     private static final String END_DATE_DELIMITER = "]";
 
@@ -1074,7 +1074,7 @@ public class DateUtils {
                     periods.add(new DatePeriodSplit(new DatePeriod(fromDate, toDate), calendar.getPriority(), calendar.getValue()));
                 } 
                 fromDate = calendar.getCalendar().nextPeriodStartDate((toDate == null)? fromDate : toDate);
-                if(fromDate == null || fromDate.after(datePeriod.getTo())) {
+                if(fromDate == null || fromDate.equals(datePeriod.getTo()) || fromDate.after(datePeriod.getTo())) {
                     break;
                 }
             }           

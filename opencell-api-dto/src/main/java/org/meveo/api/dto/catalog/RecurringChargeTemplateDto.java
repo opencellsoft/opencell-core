@@ -80,6 +80,11 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     private String applyInAdvanceEl;
 
     /**
+     * Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    private String applyTerminatedChargeToDateEL;
+
+    /**
      * Instantiates a new recurring charge template dto.
      */
     public RecurringChargeTemplateDto() {
@@ -103,6 +108,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         terminationProrataEl = recurringChargeTemplate.getTerminationProrataEl();
         applyInAdvanceEl = recurringChargeTemplate.getApplyInAdvanceEl();
         calendarCodeEl = recurringChargeTemplate.getCalendarCodeEl();
+        applyTerminatedChargeToDateEL = recurringChargeTemplate.getApplyTerminatedChargeToDateEL();
         if (recurringChargeTemplate.getShareLevel() != null) {
             shareLevel = recurringChargeTemplate.getShareLevel().getId();
         }
@@ -305,6 +311,20 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.applyInAdvanceEl = applyInAdvanceEl;
     }
 
+    /**
+     * @return Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    public String getApplyTerminatedChargeToDateEL() {
+        return applyTerminatedChargeToDateEL;
+    }
+
+    /**
+     * @param applyTerminatedChargeToDateEL Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
+     */
+    public void setApplyTerminatedChargeToDateEL(String applyTerminatedChargeToDateEL) {
+        this.applyTerminatedChargeToDateEL = applyTerminatedChargeToDateEL;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -313,7 +333,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     @Override
     public String toString() {
         return "RecurringChargeTemplateDto [" + super.toString() + ", calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata + ", terminationProrata="
-                + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl="
-                + durationTermInMonthEl + ", subscriptionProrataEl=" + subscriptionProrataEl + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
+                + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl=" + durationTermInMonthEl
+                + ", subscriptionProrataEl=" + subscriptionProrataEl + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
     }
 }

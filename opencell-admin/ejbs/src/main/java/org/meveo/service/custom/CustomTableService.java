@@ -18,6 +18,10 @@
 
 package org.meveo.service.custom;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.lang.Long.valueOf;
+import static java.math.BigDecimal.ZERO;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
@@ -534,7 +538,7 @@ public class CustomTableService extends NativePersistenceService {
         String tableName = customEntityTemplate.getDbTablename();
         int importedLines = 0;
         int importedLinesTotal = 0;
-        List<Map<String, Object>> valuesPartial = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> valuesPartial = new ArrayList<>();
 
         // Delete current data first if in override mode
         if (!append) {
@@ -897,9 +901,12 @@ public class CustomTableService extends NativePersistenceService {
                     // must check the default value
                     valuesConverted.put(key, cft.getDefaultValueConverted());
 
-                } else if (FIELD_DISABLED.equals(key) && (BigDecimal) value != BigDecimal.ZERO) {
-
-                    valuesConverted.put(key, 1);
+                } else if (FIELD_DISABLED.equals(key) && checkValue(value)) {
+                    if(value instanceof Boolean) {
+                        valuesConverted.put(key, TRUE);
+                    } else {
+                        valuesConverted.put(key, 1);
+                    }
 
                 } else if (value != null) {
 
@@ -920,6 +927,19 @@ public class CustomTableService extends NativePersistenceService {
 
         }
         return valuesConverted;
+    }
+
+    private boolean checkValue(Object value) {
+        if(value instanceof Boolean && value != FALSE) {
+            return true;
+        }
+        if(value instanceof Long && value != valueOf(0)) {
+            return true;
+        }
+        if(value instanceof BigDecimal && value != ZERO) {
+            return true;
+        }
+        return false;
     }
 
     public Map<String, Object> findRecordOfTableById(CustomFieldTemplate field, Long id) {
@@ -1049,7 +1069,7 @@ public class CustomTableService extends NativePersistenceService {
     public void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
         if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
             CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
-            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz())).map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz())).map(field -> getEitherTableOrEntityValue(field, valueOf(entry.getValue().toString())))
                 .filter(values -> values.size() > 0).ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
         }
     }

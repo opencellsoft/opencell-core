@@ -793,6 +793,9 @@
                     <hftl:formField label="#{messages['recurringChargeInstance.nextChargeDate']}" field="nextChargeDate" edit="false" />
                     <hftl:formField label="#{messages['recurringChargeInstance.chargedToDate']}" field="chargedToDate" edit="false" />
                     <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
+                    <hftl:formField label="#{messages['serviceInstance.terminationDate']}" field="terminationDate" edit="false" rendered="#{subscriptionBean.recurringChargeInstance.status eq 'TERMINATED'}"/>
+                    <hftl:formField label="#{messages['recurringChargeInstance.chargeToDateOnTermination']}" field="chargeToDateOnTermination" edit="false" rendered="#{subscriptionBean.recurringChargeInstance.status eq 'TERMINATED'}"/>
+                    
 
                     <ui:param name="buttons" value="true" />
                     <ui:define name="buttons">

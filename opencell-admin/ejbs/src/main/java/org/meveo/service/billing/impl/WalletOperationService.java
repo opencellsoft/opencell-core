@@ -383,8 +383,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         // -- Determine charge period, prorating for the first termination period and prorating of first subscription period
 
-        // For reimbursement need to reimburse earlier applied recurring charges starting from termination date to the last date charged.
-        // This might span multiple calendar periods and might require a first period proration
+        // For reimbursement need to reimburse earlier applied recurring charges starting from "apply charge to upon termination" date to the last date charged (chargedToDate).
+        // This might span multiple calendar periods and might require a first period proration. Here none of WOs are created yet and chargedToDate reflects the real last charged
+        // to date.
         if (chargeMode == ChargeApplicationModeEnum.REIMBURSMENT) {
 
             if (chargeInstance.getChargedToDate() == null) {
@@ -393,7 +394,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 return new ArrayList<>();
             }
 
-            applyChargeFromDate = chargeInstance.getTerminationDate();
+            applyChargeFromDate = chargeInstance.getChargeToDateOnTermination();
             applyChargeToDate = chargeInstance.getChargedToDate();
 
             // Take care of the first charge period that termination date falls into
@@ -407,8 +408,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 prorateFirstPeriodFromDate = null;
             }
 
-            // For rerating reimbursement need to reimburse earlier applied recurring charges starting from chargedToDate to the last date charged.
-            // This might span multiple calendar periods and might require a first period proration
+            // For rerating reimbursement need to reimburse earlier applied recurring charges starting from the last date charged (chargedToDate) to the end of the period or the
+            // chargeToDate.
+            // This might span multiple calendar periods and might require a first period proration.
+            // As in RecurringChargeInstanceService.resetRecurringCharge() chargedToDate will be reset to a fromDate or a later date (depending on rerateInvoiced
+            // flag), need to reimburse not from chargeToDateOnTermination, but from what chargedToDate was reset to.
+            // And chargeToDate (not chargedToDate) is expected as to know what date to reimburse charges to
         } else if (chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT) {
 
             if (chargeInstance.getChargedToDate() == null) {
@@ -542,12 +547,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 // Handle a case of re-rating of recurring charge - existing WOs have been canceled and new ones are re-generated up to termination date only if it falls within the
                 // rating period. chargeToDate is not passed in rerating cases.
                 if ((chargeMode == ChargeApplicationModeEnum.RERATING || chargeMode == ChargeApplicationModeEnum.AGREEMENT) && chargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-                    Date terminationOrEndAggreementDate = chargeInstance.getEffectiveTerminationDate();
+                    Date chargeToDateOnTermination = chargeInstance.getChargeToDateOnTermination();
                     // Termination date is not charged, its like TO value in a range of dates - e.g. if termination date is on friday, friday will not be charged.
-                    if (terminationOrEndAggreementDate != null && currentPeriodFromDate.compareTo(terminationOrEndAggreementDate) < 0 && terminationOrEndAggreementDate.compareTo(currentPeriodToDate) <= 0) {
-                        effectiveChargeToDate = effectiveChargeToDate.before(terminationOrEndAggreementDate) ? effectiveChargeToDate : terminationOrEndAggreementDate;
+                    if (chargeToDateOnTermination != null && currentPeriodFromDate.compareTo(chargeToDateOnTermination) < 0 && chargeToDateOnTermination.compareTo(currentPeriodToDate) <= 0) {
+                        effectiveChargeToDate = effectiveChargeToDate.before(chargeToDateOnTermination) ? effectiveChargeToDate : chargeToDateOnTermination;
 
-                        if (terminationOrEndAggreementDate.compareTo(currentPeriodToDate) < 0) {
+                        if (chargeToDateOnTermination.compareTo(currentPeriodToDate) < 0) {
                             prorate = prorate || prorateTerminationCharges(chargeInstance);
                         }
                     }
@@ -587,6 +592,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         Date oldChargedToDate = chargeInstance.getChargedToDate();
 
                         Date operationDate = isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate;
+                        // Any operation past the termination date is invoiced with termination date
                         if (chargeInstance.getTerminationDate() != null && operationDate.after(chargeInstance.getTerminationDate())) {
                             operationDate = chargeInstance.getTerminationDate();
                         }

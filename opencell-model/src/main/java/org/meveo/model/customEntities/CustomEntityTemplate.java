@@ -54,7 +54,7 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
 
     private static final long serialVersionUID = 8281478284763353310L;
 
-    public static String CFT_PREFIX = "CE";
+    public static final String CFT_PREFIX = "CE";
 
     /**
      * Template name

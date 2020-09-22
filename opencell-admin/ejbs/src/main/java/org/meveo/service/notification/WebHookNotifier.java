@@ -18,12 +18,7 @@
 
 package org.meveo.service.notification;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -134,7 +129,7 @@ public class WebHookNotifier {
                 paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
                 sep = "&";
             }
-            String bodyEL_evaluated = null;
+            String bodyEL_evaluated;
             log.debug("paramQuery={}", paramQuery);
             if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
                 url += "?" + paramQuery;
@@ -142,7 +137,7 @@ public class WebHookNotifier {
                 bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
                 if (!StringUtils.isBlank(bodyEL_evaluated)) {
-                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&" + bodyEL_evaluated : bodyEL_evaluated;
+                    paramQuery += (!StringUtils.isBlank(paramQuery)) ? "&body=" + bodyEL_evaluated : "body=" + bodyEL_evaluated;
                 }
             }
             log.debug("webhook url: {}", url);
@@ -174,20 +169,26 @@ public class WebHookNotifier {
             if (WebHookMethodEnum.HTTP_GET != webHook.getHttpMethod() && WebHookMethodEnum.HTTP_DELETE != webHook.getHttpMethod()) {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
+                BufferedWriter writer = new BufferedWriter(out);
                 writer.write(paramQuery);
                 writer.flush();
                 writer.close();
+                out.close();
                 os.close();
             }
             int responseCode = conn.getResponseCode();
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            InputStream is = conn.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
+            BufferedReader in = new BufferedReader(inputStreamReader);
             String inputLine;
             StringBuffer response = new StringBuffer();
 
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
+            is.close();
+            inputStreamReader.close();
             in.close();
             result = response.toString();
             if (responseCode < 200 && responseCode > 299) {
@@ -229,13 +230,17 @@ public class WebHookNotifier {
         } catch (Exception e) {
             try {
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                InputStream errorStream = conn.getErrorStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(errorStream);
+                BufferedReader in = new BufferedReader(inputStreamReader);
                 String inputLine;
                 StringBuffer response = new StringBuffer();
 
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
+                errorStream.close();
+                inputStreamReader.close();
                 in.close();
                 String errorResult = response.toString();
                 log.debug("webhook Server error : ", errorResult);

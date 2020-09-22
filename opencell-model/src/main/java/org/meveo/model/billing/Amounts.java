@@ -18,6 +18,10 @@
 
 package org.meveo.model.billing;
 
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -27,7 +31,7 @@ import java.math.BigDecimal;
  * @author Andrius Karpavicius
  * @since 5.0.1
  */
-public class Amounts implements Serializable {
+public class Amounts implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 9184599956127715623L;
 
@@ -237,8 +241,35 @@ public class Amounts implements Serializable {
      *
      * @return A copy of an object
      */
+    @Override
     public Amounts clone() {
-        return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
+        try {
+            Amounts cloned = (Amounts) super.clone();
+
+            if (this.getAmountWithoutTax() != null) {
+                cloned.setAmountWithoutTax(this.getAmountWithoutTax());
+            }
+
+            if (this.getAmountWithTax() != null) {
+                cloned.setAmountWithTax(this.getAmountWithTax());
+            }
+
+            if (this.getAmountTax() != null) {
+                cloned.setAmountTax(this.getAmountTax());
+            }
+
+            if (this.getTax() != null) {
+                cloned.setTax(this.getTax());
+            }
+
+            return cloned;
+        }
+        catch (CloneNotSupportedException e){
+            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+            log.error("Failed to clone", e);
+            return this;
+        }
+//        return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
     }
 
     /**

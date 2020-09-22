@@ -31,8 +31,8 @@ public enum PaperFormatEnum {
                                                     162), C7(PaperSerieEnum.C, 81, 114), C8(PaperSerieEnum.C, 57, 81), C9(PaperSerieEnum.C, 40, 57), C10(PaperSerieEnum.C, 28, 40);
 
     PaperSerieEnum serie;
-    public int heightInMillimeters;
-    public int widhtInMillimeter;
+    private int heightInMillimeters;
+    private int widhtInMillimeter;
 
     private PaperFormatEnum(PaperSerieEnum serie, int height, int width) {
         this.serie = serie;
@@ -49,6 +49,14 @@ public enum PaperFormatEnum {
             }
         }
         return result;
+    }
+
+    public int getHeightInMillimeters() {
+        return heightInMillimeters;
+    }
+
+    public int getWidhtInMillimeter() {
+        return widhtInMillimeter;
     }
 
     public static PaperFormatEnum getLargerFormatSmallerOrEqualThan(int height, int width, PaperSerieEnum serie) {

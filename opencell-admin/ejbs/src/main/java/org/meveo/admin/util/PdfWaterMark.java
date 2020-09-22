@@ -42,11 +42,13 @@ public class PdfWaterMark {
         PdfStamper pdfStamper = null;
         PdfContentByte over = null;
         PdfGState gs = null;
-        try {
-            byte[] pdfBytes = IOUtils.toByteArray(new FileInputStream(new File(pdfFileName)));
+        try(FileInputStream inputStream = new FileInputStream(new File(pdfFileName)); FileOutputStream outputStream = new FileOutputStream(pdfFileName)) {
+
+            byte[] pdfBytes = IOUtils.toByteArray(inputStream);
 
             reader = new PdfReader(pdfBytes);
-            pdfStamper = new PdfStamper(reader, new FileOutputStream(pdfFileName));
+
+            pdfStamper = new PdfStamper(reader, outputStream);
             if (imagePath != null) {
                 Image.getInstance(imagePath);
             }

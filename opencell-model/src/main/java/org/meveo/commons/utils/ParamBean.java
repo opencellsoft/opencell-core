@@ -93,7 +93,7 @@ public class ParamBean {
      */
     private static boolean reload = false;
 
-    public ParamBean() {
+    protected ParamBean() {
 
     }
 
@@ -139,7 +139,7 @@ public class ParamBean {
      * 
      * @return Application configuration instance
      */
-    public static ParamBean getInstance() {
+    public static synchronized ParamBean getInstance() {
         try {
             return getInstance("opencell-admin.properties");
         } catch (Exception e) {
@@ -267,12 +267,16 @@ public class ParamBean {
                 saveProperties(file);
                 result = true;
             } else {
-                pr.load(new FileInputStream(_propertyFile));
-                setProperties(pr);
-                result = true;
+                try(FileInputStream propertyFileInputStream = new FileInputStream(_propertyFile)){
+                    pr.load(propertyFileInputStream);
+                    setProperties(pr);
+                    result = true;
+                }
             }
         } catch (IOException e1) {
             log.error("Impossible to create :" + _propertyFile);
+        }finally {
+
         }
         // log.debug("-Fin initialize , result:" + result
         // + ", portability.defaultDelay="

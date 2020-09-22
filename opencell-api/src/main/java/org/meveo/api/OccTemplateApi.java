@@ -34,7 +34,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -202,7 +201,7 @@ public class OccTemplateApi extends BaseApi {
      */
     public GetOccTemplatesResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
-            AccountOperation.class);
+            OCCTemplate.class);
 
         Long totalCount = occTemplateService.count(paginationConfiguration);
 

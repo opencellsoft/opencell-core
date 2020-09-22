@@ -45,6 +45,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -127,22 +128,22 @@ public class CfValueAccumulator {
     /**
      * Where to cf values should be propagated to. Key is an entity class and value is a list of entity classes that should receive updated CF value
      */
-    protected static Map<Class<?>, List<Class<?>>> treePropagateTo = new HashMap<>();
+    private static Map<Class<?>, List<Class<?>>> treePropagateTo = new HashMap<>();
 
     /**
      * Entity classes that only propagate values downwards and do not accumulate custom field values from other entities
      */
-    protected static List<Class<?>> topPropagateToClasses = new ArrayList<>();
+    private static List<Class<?>> topPropagateToClasses = new ArrayList<>();
 
     /**
      * Where CF values are being accumulated from. Key is an entity class and value is a list of fields and field type (entity clases) that entity should inherit CF values from.
      */
-    protected static Map<Class<?>, Map<Class<?>, String>> treeAcumulateFrom = new HashMap<>();
+    private static Map<Class<?>, Map<Class<?>, String>> treeAcumulateFrom = new HashMap<>();
 
     /**
      * Maps CFT appliesTo value to an entity class
      */
-    protected static Map<String, Class<?>> appliesToMap = new HashMap<>();
+    private static Map<String, Class<?>> appliesToMap = new HashMap<>();
 
     /**
      * Custom field value accumulation rules identified by a custom field template code and a provider code in: &lt;provider code&gt;_&lt;cft code&gt;
@@ -234,6 +235,62 @@ public class CfValueAccumulator {
         if (providerPos > 0) {
             topPropagateToClasses.add(0, topPropagateToClasses.remove(providerPos));
         }
+    }
+
+    /**
+     * @return treePropagateTo
+     */
+    public static Map<Class<?>, List<Class<?>>> getTreePropagateTo() {
+        return treePropagateTo;
+    }
+
+    /**
+     * set a new value for treePropagateTo
+     */
+    public void setTreePropagateTo(Map<Class<?>, List<Class<?>>> value) {
+        this.treePropagateTo = value;
+    }
+
+    /**
+     * @return topPropagateToClasses
+     */
+    public static Map<String, Class<?>> getAppliesToMap() {
+        return appliesToMap;
+    }
+
+    /**
+     * set a new value for topPropagateToClasses
+     */
+    public void setAppliesToMap(Map<String, Class<?>> value) {
+        this.appliesToMap = value;
+    }
+
+    /**
+     * @return treeAcumulateFrom
+     */
+    public static Map<Class<?>, Map<Class<?>, String>> getTreeAcumulateFrom() {
+        return treeAcumulateFrom;
+    }
+
+    /**
+     * set a new value for treeAcumulateFrom
+     */
+    public void setTreeAcumulateFrom(Map<Class<?>, Map<Class<?>, String>> value) {
+        this.treeAcumulateFrom = value;
+    }
+
+    /**
+     * @return topPropagateToClasses
+     */
+    public static List<Class<?>> getTopPropagateToClasses() {
+        return topPropagateToClasses;
+    }
+
+    /**
+     * set a new value for topPropagateToClasses
+     */
+    public void setTopPropagateToClasses(List<Class<?>> value) {
+        this.topPropagateToClasses = value;
     }
 
     /**
