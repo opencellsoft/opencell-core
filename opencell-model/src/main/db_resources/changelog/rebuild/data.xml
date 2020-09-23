@@ -10995,7 +10995,7 @@
         <insert tableName="ar_payment_gateway">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="now()" />
             <column name="code" value="INGENICO_OGONE_SEPA" />
             <column name="description" value="Ingenico API Connect OGONE for Sepa payments" />
