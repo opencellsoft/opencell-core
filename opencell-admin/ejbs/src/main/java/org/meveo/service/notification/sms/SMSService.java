@@ -26,7 +26,7 @@ public class SMSService {
     private CustomerService customerService;
 
     public SMSInfoResponseDTO send(Communication communication) {
-        SMS sms = buildSmsInfo(communication);
+        SMS sms = new SMS(communication.getTo(), communication.getMessage());
         SMSGateWay smsGateWay = providerInstance();
         MessageResponse response = smsGateWay.send(sms);
         log.info(format("Account SID %s sent SMS to %s with status %s",
@@ -34,27 +34,11 @@ public class SMSService {
         return toResponseDto(response);
     }
 
-    private SMS buildSmsInfo(Communication communication) {
-        String phoneNumberTo = fromCustomer(communication.getCustomerCode());
-        return new SMS(phoneNumberTo, communication.getMessage());
-    }
-
     private SMSGateWay providerInstance() {
         ServiceLoader<SMSGateWay> loader = ServiceLoader.load(SMSGateWay.class);
         return loader
                 .findFirst()
                 .orElseThrow(() -> new BusinessApiException("No SMS provider implementation found"));
-    }
-
-    private String fromCustomer(String code) {
-        Customer customer = ofNullable(customerService.findByCode(code))
-                .orElseThrow(() -> new BusinessApiException("Customer not found"));
-        return customer.getCustomerAccounts()
-                .stream()
-                .findFirst()
-                .map(CustomerAccount::getContactInformation)
-                .map(ContactInformation::getMobile)
-                .orElseThrow(() -> new BusinessApiException("Customer contact information is missing"));
     }
 
     private SMSInfoResponseDTO toResponseDto(MessageResponse message) {
@@ -67,5 +51,16 @@ public class SMSService {
         ofNullable(message.getErrorCode()).ifPresent(response::setErrorCode);
         ofNullable(message.getErrorMessage()).ifPresent(response::setErrorMessage);
         return response;
+    }
+
+    private String fromCustomer(String code) {
+        Customer customer = ofNullable(customerService.findByCode(code))
+                .orElseThrow(() -> new BusinessApiException("Customer not found"));
+        return customer.getCustomerAccounts()
+                .stream()
+                .findFirst()
+                .map(CustomerAccount::getContactInformation)
+                .map(ContactInformation::getMobile)
+                .orElseThrow(() -> new BusinessApiException("Customer contact information is missing"));
     }
 }

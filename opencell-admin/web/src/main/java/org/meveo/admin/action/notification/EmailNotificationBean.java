@@ -39,6 +39,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.model.ICustomFieldEntity;
@@ -47,6 +48,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
@@ -108,11 +110,19 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 
     @Override
     public EmailNotification initEntity() {
-        super.initEntity();
+        EmailNotification emailNotification = super.initEntity();
+        extractMapTypeFieldFromEntity(emailNotification.getParams(), "params");
         refreshCustomFieldsAndActions();
         return entity;
     }
-    
+
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        updateMapTypeFieldInEntity(entity.getParams(), "params");
+        return super.saveOrUpdate(killConversation);
+    }
+
     @Override
     protected IPersistenceService<EmailNotification> getPersistenceService() {
         return emailNotificationService;
@@ -208,7 +218,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
                 for (String email : listMail) {
                     email = email.trim();
                     if (existingEntity.getEmails() == null) {
-                        existingEntity.setEmails(new HashSet<String>());
+                        existingEntity.setEmails(new HashSet<>());
                     }
                     existingEntity.getEmails().add(email);
                 }
@@ -283,7 +293,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
         // Create missing custom field templates if needed
         Collection<CustomFieldTemplate> cft = null;
         if (emailCustomFields == null) {
-            cft = new ArrayList<CustomFieldTemplate>();
+            cft = new ArrayList<>();
         } else {
             cft = emailCustomFields.values();
         }
