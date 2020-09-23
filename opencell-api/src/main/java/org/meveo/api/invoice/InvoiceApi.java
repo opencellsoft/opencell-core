@@ -1039,6 +1039,7 @@ public class InvoiceApi extends BaseApi {
             }
 			PaymentScheduleInstancesDto instancesDto = new PaymentScheduleInstancesDto();
 			instancesDto.setInstances(instances);
+			dto.setPaymentScheduleInstancesDto(instancesDto);
 			BigDecimal writeOffAmount = BigDecimal.ZERO;
 			for(AccountOperation ao : subscription.getAccountOperations()) {
 				if(ao instanceof WriteOff) {
