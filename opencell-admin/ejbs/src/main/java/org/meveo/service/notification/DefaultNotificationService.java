@@ -134,7 +134,7 @@ public class DefaultNotificationService {
      * @param context map of context
      * @throws BusinessException exception when script fails to run
      */
-    private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
+    private Map<String, Object> executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
 
         try {
@@ -150,10 +150,10 @@ public class DefaultNotificationService {
             }
 
             if (scriptInstance.getReuse()) {
-                scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
+                return scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
 
             } else {
-                scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
+                return scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
             }
 
         } catch (Exception e) {
@@ -239,11 +239,7 @@ public class DefaultNotificationService {
 
             Map<String, Object> context = new HashMap<>();
             // Rethink notif and script - maybe create pre and post script
-            if (!(notif instanceof WebHook) && notif.getScriptInstance() != null) {
-                EmailNotification  emailNotification = (EmailNotification) notif;
-                context.put("EMAIL_FROM", evaluateExpression(emailNotification.getEmailFrom(), new HashMap<>(), String.class));
-                context.put("EMAIL_TO_LIST", evaluateExpression(emailNotification.getEmailToEl(), new HashMap<>(), String.class));
-                addParamsTo(context, emailNotification.getParams());
+            if (!(notif instanceof WebHook) && !(notif instanceof EmailNotification) && notif.getScriptInstance() != null) {
                 executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
             }
 
@@ -267,6 +263,14 @@ public class DefaultNotificationService {
 
             } else if (notif instanceof EmailNotification) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
+                EmailNotification  emailNotification = (EmailNotification) notif;
+                context.put("EMAIL_FROM", evaluateExpression(emailNotification.getEmailFrom(), new HashMap<>(), String.class));
+                context.put("EMAIL_TO_LIST", evaluateExpression(emailNotification.getEmailToEl(), new HashMap<>(), String.class));
+                addParamsTo(context, emailNotification.getParams());
+                if(notif.getScriptInstance() != null) {
+                    // script context overwrite
+                    context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context));
+                }
                 emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {
