@@ -722,7 +722,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             addCustomFields(userAccount, doc, userAccountTag);
 
-            List<ServiceInstance> allServiceInstances = new ArrayList<ServiceInstance>();
+            List<ServiceInstance> allServiceInstances = new ArrayList<>();
             if (!isVirtual) { // if it is not virtual (not quote) add all subscriptions to XML (DO NOT KNOW if required or NO)
                 allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions,billingAccountLanguage);
             }
@@ -1337,35 +1337,46 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     private Element getMinAmountRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
-        
-        LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<InvoiceSubCategory, Element>();
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
+        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
+        LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<>();
         if(ratedTransactions != null) {
             for (RatedTransaction ratedTransaction : ratedTransactions) {
                 if (ratedTransaction.getWallet() == null) {
-                    
-                    Element subCategory = null;
-                    if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
-                        subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
-                    }
-    
-                    subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());
 
-                    String subCategoryLabel = ratedTransaction.getInvoiceSubCategory().getDescription();
-					if (ratedTransaction.getInvoiceSubCategory().getDescriptionI18n() != null && ratedTransaction
+                    Element subCategory = null;
+                    InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
+                    if(subCategoriesMap.get(invoiceSubCategory) == null) {
+                        subCategoriesMap.put(invoiceSubCategory, doc.createElement("subCategory"));
+                    }
+
+                    subCategory = subCategoriesMap.get(invoiceSubCategory);
+
+                    String subCategoryLabel = invoiceSubCategory.getDescription();
+                    if (invoiceSubCategory.getDescriptionI18n() != null && ratedTransaction
 							.getInvoiceSubCategory().getDescriptionI18n().get(languageCode) != null) {
-						subCategoryLabel = ratedTransaction.getInvoiceSubCategory().getDescriptionI18n()
+                        subCategoryLabel = invoiceSubCategory.getDescriptionI18n()
 								.get(languageCode);
-					}
+                    }
 
                     subCategory.setAttribute("label", subCategoryLabel);
-                    subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
+                    subCategory.setAttribute("code", invoiceSubCategory.getCode());
                     subCategory.setAttribute("amountWithoutTax", toPlainString(ratedTransaction.getAmountWithoutTax()));
-    
+                    subCategory.setAttribute("sortIndex", (invoiceSubCategory.getSortIndex() != null) ? invoiceSubCategory.getSortIndex() + "" : "");
                     Element line = doc.createElement("line");
                     Element lebel = doc.createElement("label");
                     Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
                     lebel.appendChild(lebelTxt);
-    
+                    Date periodStartDateRT = ratedTransaction.getStartDate();
+                    Date periodEndDateRT = ratedTransaction.getEndDate();
+
+                    line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
+                    line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
+                    line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
+
+
                     Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
                     Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
                     lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
@@ -1390,12 +1401,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     line.appendChild(lebel);
                     subCategory.appendChild(line);
     
-                    subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), subCategory);
+                    subCategoriesMap.put(invoiceSubCategory, subCategory);
                 }
             }
         }
         
-        LinkedHashMap<InvoiceCategory, Element> categoriesMap = new LinkedHashMap<InvoiceCategory, Element>();
+        LinkedHashMap<InvoiceCategory, Element> categoriesMap = new LinkedHashMap<>();
         for (Map.Entry<InvoiceSubCategory, Element> entry : subCategoriesMap.entrySet()) {
         	InvoiceSubCategory invoiceSubCategory = entry.getKey();
         	InvoiceCategory invoiceCategory = invoiceSubCategory.getInvoiceCategory();
@@ -1411,6 +1422,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
         		category.setAttribute("label", invoiceCategoryLabel);
                 category.setAttribute("code", invoiceCategory.getCode());
+                //here
+                category.setAttribute("sortIndex", (invoiceCategory.getSortIndex() != null) ? invoiceCategory.getSortIndex() + "" : "");
                 Element subCategories = doc.createElement("subCategories");
                 category.appendChild(subCategories);
         		categoriesMap.put(invoiceCategory, category);
@@ -1481,7 +1494,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         
         List<Element> categoriesList = new ArrayList<>();
         boolean entreprise = appProvider.isEntreprise();
-        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
+        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
 
         if (hasInvoiceAgregates) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
