@@ -3583,4 +3583,7 @@ END $$;]]>
             <column name="apply_terminated_charge_to_date_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#5510_20200923" author="anasseh">
+		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
+    </changeSet>
 </databaseChangeLog>
