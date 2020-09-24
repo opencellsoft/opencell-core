@@ -277,7 +277,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
 
-        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+        if (postData.getChannels() != null) {
             offerTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
                 Channel channel = channelService.findByCode(channelDto.getCode());
@@ -288,7 +288,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
 
-        if(postData.getCustomerCategories() != null && !postData.getCustomerCategories().isEmpty()) {
+        if(postData.getCustomerCategories() != null) {
             offerTemplate.getCustomerCategories().clear();
             addCustomerCategories(postData.getCustomerCategories(), offerTemplate);
         }
@@ -326,7 +326,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
         processAllowedDiscountPlans(postData, offerTemplate);
         try {
-            saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
+        	String imagePath = postData.getImagePath();
+			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
+        		deleteImage(offerTemplate);
+        		offerTemplate.setImagePath(imagePath);
+        	}else {
+        		saveImage(offerTemplate, imagePath, postData.getImageBase64());
+        	}
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
