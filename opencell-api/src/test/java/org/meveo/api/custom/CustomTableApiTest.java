@@ -123,7 +123,7 @@ public class CustomTableApiTest {
         //When
         customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
-        assertThat(entry.getValue()).isNotNull(;
+        assertThat(entry.getValue()).isNotNull();
     }
 
     @Test
