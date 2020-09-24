@@ -72,13 +72,13 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private static String MAPPING_DEFAULT = "default";
 
-    public static String MAPPING_FIELD_TYPE = "entityType";
+    public static final String MAPPING_FIELD_TYPE = "entityType";
 
     private static String MAPPING_CFT_INDEX_VALUE_PLACEHOLDER = "<indexValue>";
 
     private static String MAPPING_CFT_STRING_TYPE_PLACEHOLDER = "<keywordOrText>";
 
-    protected static String MAPPING_DOC_TYPE = "_doc";
+    protected static final String MAPPING_DOC_TYPE = "_doc";
 
     /**
      * Contains a mapping of classnames to Elastic Search index name. Index name does not contain provider code prefix.

@@ -59,10 +59,10 @@ public class InboundServletClient {
 			servletConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
 			servletConnection.setUseCaches(false);
 
-			DataOutputStream wr = new DataOutputStream(servletConnection.getOutputStream());
-			wr.write(postData);
-			wr.flush();
-			wr.close();
+			try(DataOutputStream wr = new DataOutputStream(servletConnection.getOutputStream())){
+				wr.write(postData);
+				wr.flush();
+			}
 
 			int responseCode = servletConnection.getResponseCode();
 			System.out.println("\nSending 'POST' request to URL : " + inboundServlet.getPath());

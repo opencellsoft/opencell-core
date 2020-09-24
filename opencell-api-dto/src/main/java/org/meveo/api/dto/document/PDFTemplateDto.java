@@ -44,7 +44,7 @@ public class PDFTemplateDto extends BaseEntityDto {
     private String templatePath;
     
     /** The bar code fields. */
-    public List<String> barCodeFields;
+    private List<String> barCodeFields;
     
     /**
      * Gets the template fields.

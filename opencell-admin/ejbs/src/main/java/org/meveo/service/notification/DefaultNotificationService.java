@@ -18,6 +18,8 @@
 
 package org.meveo.service.notification;
 
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,7 +114,7 @@ public class DefaultNotificationService {
         Map<Object, Object> userMap = new HashMap<>();
         userMap.put("event", entityOrEvent);
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        Object res = evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
 
@@ -132,7 +134,7 @@ public class DefaultNotificationService {
      * @param context map of context
      * @throws BusinessException exception when script fails to run
      */
-    private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
+    private Map<String, Object> executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
 
         try {
@@ -148,10 +150,10 @@ public class DefaultNotificationService {
             }
 
             if (scriptInstance.getReuse()) {
-                scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
+                return scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
 
             } else {
-                scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
+                return scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
             }
 
         } catch (Exception e) {
@@ -175,7 +177,7 @@ public class DefaultNotificationService {
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
                 log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
-                executeScript(notif.getScriptInstance(), cdr, notif.getParams(), new HashMap<String, Object>());
+                executeScript(notif.getScriptInstance(), cdr, notif.getParams(), new HashMap<>());
             }
 
         } catch (BusinessException e1) {
@@ -237,7 +239,7 @@ public class DefaultNotificationService {
 
             Map<String, Object> context = new HashMap<>();
             // Rethink notif and script - maybe create pre and post script
-            if (!(notif instanceof WebHook) && notif.getScriptInstance() != null) {
+            if (!(notif instanceof WebHook) && !(notif instanceof EmailNotification) && notif.getScriptInstance() != null) {
                 executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
             }
 
@@ -261,12 +263,19 @@ public class DefaultNotificationService {
 
             } else if (notif instanceof EmailNotification) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
+                EmailNotification  emailNotification = (EmailNotification) notif;
+                context.put("EMAIL_FROM", evaluateExpression(emailNotification.getEmailFrom(), new HashMap<>(), String.class));
+                context.put("EMAIL_TO_LIST", evaluateExpression(emailNotification.getEmailToEl(), new HashMap<>(), String.class));
+                addParamsTo(context, emailNotification.getParams());
+                if(notif.getScriptInstance() != null) {
+                    // script context overwrite
+                    context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context));
+                }
                 emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
                 webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context, lastCurrentUser);
-
             } else if (notif instanceof InstantMessagingNotification) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
                 imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent, lastCurrentUser);
@@ -297,6 +306,12 @@ public class DefaultNotificationService {
         }
 
         return true;
+    }
+
+    private void addParamsTo(Map<String, Object> context, Map<String, String> params) {
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            context.put(entry.getKey(), evaluateExpression(entry.getValue(),new HashMap<>(), String.class));
+        }
     }
 
     private Object extractId(Object entityOrEvent) {

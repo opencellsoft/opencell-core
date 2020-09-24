@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class ReportExecution implements Serializable {
     //
     // public JasperDesign jasperDesign;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new HashMap<>();
 
     /**
      * Generates PDF report using String data source.

@@ -55,7 +55,7 @@ public class OrderCondition extends BaseEntity {
     private boolean ascending;
 
     @OneToOne(mappedBy = "orderCondition")
-    public Filter filter;
+    private Filter filter;
 
     public List<String> getFieldNames() {
         return fieldNames;

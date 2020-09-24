@@ -472,17 +472,20 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
         BigDecimal sumTax = BigDecimal.ZERO;
         BigDecimal sumWithoutTax = BigDecimal.ZERO;
-        String orderNums = "";
+//        String orderNums = "";
+        StringBuffer orderNumsSB = new StringBuffer();
         for (Long aoId : aoIdsToPay) {
             AccountOperation ao = accountOperationService.findById(aoId);
             sumTax = sumTax.add(ao.getTaxAmount());
             sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
             if (!StringUtils.isBlank(ao.getOrderNumber())) {
-                orderNums = orderNums + ao.getOrderNumber() + "|";
+//                orderNums = orderNums + ao.getOrderNumber() + "|";
+                orderNumsSB.append(ao.getOrderNumber() + "|");
             }
         }
         payment.setTaxAmount(sumTax);
         payment.setAmountWithoutTax(sumWithoutTax);
+        String orderNums = orderNumsSB.toString();
         payment.setOrderNumber(orderNums);
         create(payment);
         return payment.getId();

@@ -39,7 +39,7 @@ public final class DunningDocumentResponseDto extends BaseResponse {
     private static final long serialVersionUID = -4896934078440314084L;
     
     /** The dunningDocuments. */
-    public DunningDocumentDto dunningDocument;
+    private DunningDocumentDto dunningDocument;
 
     /**
      * Gets the dunningDocuments.

@@ -60,8 +60,14 @@ public class FileParserFlatworm implements IFileParser {
 
     @Override
     public void parsing() throws Exception {
-        fileFormat = parser.loadConfigurationFile(new ByteArrayInputStream(mappingDescriptor.getBytes(StandardCharsets.UTF_8)));
-        bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)));
+        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(mappingDescriptor.getBytes(StandardCharsets.UTF_8));
+            InputStreamReader inputStream = new InputStreamReader(new FileInputStream(dataFile))) {
+
+            fileFormat = parser.loadConfigurationFile(byteArrayInputStream);
+            bufferedReader = new BufferedReader(inputStream);
+        }
+
+
     }
 
     @Override

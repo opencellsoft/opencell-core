@@ -135,7 +135,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)"),
+        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.amountWithoutTax=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)"),
 
         @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeNotInvoicedByChargeInstance", query = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance=:chargeInstance"),
         @NamedQuery(name = "WalletOperation.listWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByChargeInstance", query = "select wo.id from WalletOperation wo where wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance=:chargeInstance"),

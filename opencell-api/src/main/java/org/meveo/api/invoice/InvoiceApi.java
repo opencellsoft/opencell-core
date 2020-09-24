@@ -1039,6 +1039,7 @@ public class InvoiceApi extends BaseApi {
             }
 			PaymentScheduleInstancesDto instancesDto = new PaymentScheduleInstancesDto();
 			instancesDto.setInstances(instances);
+			dto.setPaymentScheduleInstancesDto(instancesDto);
 			BigDecimal writeOffAmount = BigDecimal.ZERO;
 			for(AccountOperation ao : subscription.getAccountOperations()) {
 				if(ao instanceof WriteOff) {
@@ -1135,6 +1136,7 @@ public class InvoiceApi extends BaseApi {
         dto.setRealTimeStatus(invoice.getRealTimeStatus());
         dto.setNetToPay(invoice.getNetToPay());
         dto.setStatus(invoice.getStatus());
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(invoice));
 
         return dto;
     }
