@@ -122,6 +122,9 @@ public class BomOfferDto extends BaseEntityDto {
 
     /** The long descriptions translated. */
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+    
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /** The channels. */
     @XmlElementWrapper(name = "channels")
@@ -490,5 +493,19 @@ public class BomOfferDto extends BaseEntityDto {
                 + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
                 + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
     }
+
+	/**
+	 * @return the languageDescriptions
+	 */
+	public List<LanguageDescriptionDto> getLanguageDescriptions() {
+		return languageDescriptions;
+	}
+
+	/**
+	 * @param languageDescriptions the languageDescriptions to set
+	 */
+	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+		this.languageDescriptions = languageDescriptions;
+	}
 
 }

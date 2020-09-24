@@ -315,36 +315,44 @@ public class BusinessOfferApi extends BaseApi {
             }
 
             newOfferTemplate = businessOfferModelService.instantiateFromBOM(bomParams);
+            
+            if (postData.getLanguageDescriptions() != null) {
+            	newOfferTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), newOfferTemplate.getDescriptionI18n()));
+            }
 
             newOfferTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(newOfferTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
 
-            newOfferTemplate.setChannels(postData.getChannels().stream()
-                    .map(channelCode -> {
-                        Channel channel = channelService.findByCode(channelCode);
-                        if (channel == null) {
-                            throw new EntityDoesNotExistsException(Channel.class, channelCode);
-                        }
-                        return channel;
-                    }).collect(Collectors.toList()));
-
-            newOfferTemplate.setSellers(postData.getSellers().stream()
-                    .map(sellerCode -> {
-                        Seller seller = sellerService.findByCode(sellerCode);
-                        if (seller == null) {
-                            throw new EntityDoesNotExistsException(Seller.class, sellerCode);
-                        }
-                        return seller;
-                    }).collect(Collectors.toList()));
-
-            newOfferTemplate.setCustomerCategories(postData.getCustomerCategories().stream()
-                    .map(customerCategoryCode -> {
-                        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
-                        if (customerCategory == null) {
-                            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategory.getCode());
-                        }
-                        return customerCategory;
-                    }).collect(Collectors.toList()));
-
+            if(postData.getChannels()!=null) {
+	            newOfferTemplate.setChannels(postData.getChannels().stream()
+	                    .map(channelCode -> {
+	                        Channel channel = channelService.findByCode(channelCode);
+	                        if (channel == null) {
+	                            throw new EntityDoesNotExistsException(Channel.class, channelCode);
+	                        }
+	                        return channel;
+	                    }).collect(Collectors.toList()));
+            }
+            
+            if(postData.getSellers()!=null) {
+	            newOfferTemplate.setSellers(postData.getSellers().stream()
+	                    .map(sellerCode -> {
+	                        Seller seller = sellerService.findByCode(sellerCode);
+	                        if (seller == null) {
+	                            throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+	                        }
+	                        return seller;
+	                    }).collect(Collectors.toList()));
+            }
+            if(postData.getCustomerCategories()!=null) {
+	            newOfferTemplate.setCustomerCategories(postData.getCustomerCategories().stream()
+	                    .map(customerCategoryCode -> {
+	                        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
+	                        if (customerCategory == null) {
+	                            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategory.getCode());
+	                        }
+	                        return customerCategory;
+	                    }).collect(Collectors.toList()));
+            }
 
             return newOfferTemplate;
         } catch (BusinessException e) {
