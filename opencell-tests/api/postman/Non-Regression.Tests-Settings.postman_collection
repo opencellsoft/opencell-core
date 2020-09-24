@@ -1523,7 +1523,7 @@
 							"response": []
 						},
 						{
-							"name": "Read|Language|TST|SUCCESS",
+							"name": "Read|Languages|TST|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
@@ -4205,6 +4205,16 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3c138767-1619-4ebe-a498-fd4f42f531dc",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -4390,6 +4400,69 @@
 							"response": []
 						},
 						{
+							"name": "Delete|BillingCycle|BC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ddf5b39e-67e3-4191-bdf6-771512093cf5",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete|Country|FR|SUCCESS",
 							"event": [
 								{
@@ -4407,7 +4480,7 @@
 									"script": {
 										"id": "07f2a1f4-4495-42d1-afdf-72ef6b940b87",
 										"exec": [
-											""
+											"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -4544,6 +4617,16 @@
 										"id": "945d7d0c-70dd-4050-a1b3-21cb9a545755",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3aa6c458-9e36-4c8d-883b-aea3b67a5ab7",
+										"exec": [
+											"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -4788,69 +4871,6 @@
 							"response": []
 						},
 						{
-							"name": "Delete|BillingCycle|BC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ddf5b39e-67e3-4191-bdf6-771512093cf5",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Delete|Seller|SELLER|SUCCESS",
 							"event": [
 								{
@@ -5049,7 +5069,8 @@
 								"id": "e9a19bda-7ea0-401a-a3f7-fe1011169b2e",
 								"type": "text/javascript",
 								"exec": [
-									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
+									"//pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));",
+									"pm.variables.set(\"entityCode\", \"TEST_\"+pm.variables.get(\"suffix\"));"
 								]
 							}
 						},
@@ -12423,12 +12444,12 @@
 					"response": []
 				},
 				{
-					"name": "Delete|Customer|C|SUCCESS",
+					"name": "Delete|BillingAccount|BA|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "68312c23-5444-42b1-a18e-b0747911f267",
+								"id": "c1ce6d67-68e9-4f8e-9756-8a26ba12beed",
 								"exec": [
 									""
 								],
@@ -12473,13 +12494,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
+							"raw": "{{opencell.url}}/account/billingAccount/{{entityCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"account",
-								"customer",
+								"billingAccount",
 								"{{entityCode}}"
 							]
 						}
@@ -12551,12 +12572,12 @@
 					"response": []
 				},
 				{
-					"name": "Delete|BillingAccount|BA|SUCCESS",
+					"name": "Delete|Customer|C|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "c1ce6d67-68e9-4f8e-9756-8a26ba12beed",
+								"id": "68312c23-5444-42b1-a18e-b0747911f267",
 								"exec": [
 									""
 								],
@@ -12601,13 +12622,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/billingAccount/{{entityCode}}",
+							"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"account",
-								"billingAccount",
+								"customer",
 								"{{entityCode}}"
 							]
 						}
@@ -13557,6 +13578,21 @@
 			"protocolProfileBehavior": {}
 		}
 	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{opencell.password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{opencell.username}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -13707,272 +13743,272 @@
 	],
 	"variable": [
 		{
-			"id": "9a2826b0-6365-4c36-a604-ee3c6d00381b",
+			"id": "b431308c-2c0c-4ec9-8784-fc68b19b9029",
 			"key": "opencell.base",
 			"value": "https://vnn.d2.opencell.work/opencell"
 		},
 		{
-			"id": "2046fc22-bcf0-4f10-81b6-a656a8b373e9",
+			"id": "829af1fd-be68-44f3-a145-4af90a900122",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "329dbc5a-8865-4968-a659-0d27225cf5f2",
+			"id": "006c89af-4639-45bf-9c8b-70e3d5e193ca",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "4613fd69-bfd2-406d-bebe-d08d13da7348",
+			"id": "b4cbc52c-3c8d-42e6-941a-fefca9303d80",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "0311ba55-4a1f-4138-8968-00b5cffa092b",
+			"id": "1b3c948f-e38d-4299-aa8d-e9c1b30859d5",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "05a326f5-c197-4d94-ba3a-de75eb71b3fc",
+			"id": "49f03720-e566-4fe8-a1ad-afd2cf9db8c4",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "5819bb57-309e-4172-bd9f-48c95421a0fa",
+			"id": "d3ec75b1-dd3b-47df-a419-065ecdba023c",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "5d8b9e20-6e48-45b1-b553-de69e8b9157d",
+			"id": "915198d0-b7eb-4dc2-a19a-4439fa2cb1b7",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "0d886205-8c2a-43c5-aa31-05ea6483be27",
+			"id": "466f86e5-b747-4af1-98ac-e5e3bda59f39",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "300591cc-2175-465c-bb59-6197f8f3840a",
+			"id": "57f8bdf5-511c-4ceb-8c54-23bceb510689",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "74238916-1463-47db-b4ec-35b2a682521c",
+			"id": "bb558567-807b-4482-ac5e-ac2db4e4c0b0",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "ed9c4925-ef54-4ee9-8a58-b33ef56fc5d0",
+			"id": "995181ac-df06-4905-80cf-a36f331fb637",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "ac6442a9-7035-4f75-943e-2ef7577adf44",
+			"id": "49d5aadf-a8a4-4ca1-9fe1-10948d4e4b65",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "6f3f2613-ed08-4711-b86a-9a89570417b3",
+			"id": "25ded3e5-fe85-42f0-9095-481f0f3b1732",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "afb74f28-7140-4066-a374-f589700ac8f7",
+			"id": "5a978d85-76f9-429c-bf06-73072ca70338",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "57e2e19e-bf24-4d2c-8549-22b6e692dad0",
+			"id": "253703cb-8c47-4ff1-a679-727324aa6db1",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "59fd5915-907b-42e0-b004-a5e8830c22df",
+			"id": "a841973f-e0d7-4fd7-bfbe-03acbbc18b98",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "b72cdd5e-dab6-4ff9-b414-a0a2750c6759",
+			"id": "0f96d5f6-4ce6-4a9a-8a6d-1f59e58fee2c",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "4a7c9615-b992-42a4-a4f1-a68a31812983",
+			"id": "b8c13452-8958-4f44-921c-61e9c624eb01",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "ebeae749-98b7-4d43-90cc-72444b8d24ea",
+			"id": "c6c94f9e-711b-456a-8e07-d0c4ff319be5",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "d7a0abde-d9ca-499f-891e-0d40cd83956a",
+			"id": "8c959ff5-0fb0-49ae-bfc3-5cfa5113e1d8",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "b70a8464-f7a2-4003-ba61-6413a6046cb9",
+			"id": "a1045437-8cd3-4311-8832-a1d0eb899d87",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "3c0d229e-4785-40ac-8dda-ef82407d2ff3",
+			"id": "f63fa839-efa3-45c0-ab29-4b8d1499fae2",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "90085614-f7f2-4da6-abeb-9daea84feb91",
+			"id": "097d8658-5717-4f2c-ac44-13c7893a06ad",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "f376fe31-1b03-42a5-adf0-b33ff4e8e09d",
+			"id": "fb3caab7-b2d6-41a3-8a3b-58d9bbc07be7",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "1e03f3f3-ca6a-4a16-b7c0-9d17376222a9",
+			"id": "08ecb2bf-7f70-4c14-9cb5-2432568e0a09",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "5dc0aa57-602e-4093-b5d8-6657212c473d",
+			"id": "2c864430-41eb-478c-a8d0-c9bbdcd05e9e",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "da4f89d3-4b7d-487a-b523-46d68ca76896",
+			"id": "d70990ec-a460-41ac-88b8-98269d8d11e2",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "166b5eff-7d0f-4a89-bbad-084b77a62537",
+			"id": "301d26ed-fcf9-4422-aace-eedb6b053020",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "5fdfcea7-4146-4188-8946-bd4b84488ae7",
+			"id": "d84ecc57-9202-4080-aaf3-f2783ac31266",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "a80ddf1d-0862-44a9-abf9-b5cf86f395fe",
+			"id": "531ca249-395e-4199-8ccf-ae92b0bb99f0",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "b137d067-25c2-48d4-b2d7-3ebe35059dcd",
+			"id": "f91a3785-6fc5-4c4e-89c0-23cba0d2eb66",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "f2879cae-34c8-4f13-b0f5-fbda8f7a12e4",
+			"id": "5410a491-0107-4bd2-be1b-b2f27cdfabf1",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "ab623274-4f9e-4539-8e8b-4528b9dae3fa",
+			"id": "565a1e40-d1ea-4db5-8024-13fa909dcb39",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "73c20122-b87b-4763-ab1d-64db8fc6ecee",
+			"id": "ab237b0d-102f-47d0-90ea-e9a78ded1303",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "2d82756a-386d-4c37-82da-bf798e511a95",
+			"id": "db940d59-109b-4eaf-b046-a570d2a3acd4",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "d3cbb47a-fbc4-4b03-824c-44ef2505926b",
+			"id": "869f66b5-bec5-44fc-b1c4-0f834333968f",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "a28e003e-cd15-4e1b-a010-9ad6f77574b0",
+			"id": "1323c5f2-40f3-42d9-9f58-d41e40d55b1c",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "a5f6cbee-355c-4824-828d-76ee1f06fab7",
+			"id": "ccc20205-fe9c-48a4-a35f-4e6308b07706",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "8510c881-7ffc-473c-87ad-4014f99bd25b",
+			"id": "cdfb3df8-d91c-4073-823c-ebce6e42bdf7",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "7e6adb89-fb6f-451b-be59-f499870ff843",
+			"id": "3f3f93f9-340d-49b4-9ae7-37d99ec7f291",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "8340dd41-a64b-49f6-b767-21299ae678e3",
+			"id": "0058d455-bf4d-4b39-9d9e-89798a014785",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "5ba05c32-78fd-475d-b6f4-208e34d3c402",
+			"id": "32455df1-f50f-4ceb-9418-068d2946066d",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "cb4a78fe-7185-4658-904f-f64594940066",
+			"id": "845a22e4-0da1-4c67-b36c-2308b2bf0b86",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "a854698b-15eb-4ddb-8df4-1f793cb528ca",
+			"id": "a24e9dff-c310-45a4-bfe7-867bcdf492e2",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "7ed5b98c-47ca-4733-9d1f-d5b6ad597dd9",
+			"id": "204f498e-33d0-4116-912d-5d9d01767b68",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "110a27a4-8818-43ce-bf2c-effd14c9d8b0",
+			"id": "8cf51360-3213-4a0d-80f0-00816c1ac75c",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "5791f924-db8e-4871-bd48-6ad0ead293cf",
+			"id": "c410809a-69d4-4038-8781-7f1d6723940c",
 			"key": "accCode",
 			"value": "ACC_TST"
 		},
 		{
-			"id": "56c2cca4-12ce-418b-abd9-9b1736f10ad2",
+			"id": "b3e775c4-a800-4cf0-a0e5-50953dcfd99d",
 			"key": "invoiceSubCat",
 			"value": "CLASSIC_COMMISSION"
 		},
 		{
-			"id": "789a8870-bdf1-4d13-a8c4-4d7f1dd665c4",
+			"id": "6ae138cf-d512-458f-9a02-6474e0aec621",
 			"key": "billingAccCode",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "d435fe5e-ff29-47f9-9d73-98833e596ea5",
+			"id": "aab66be5-5939-48b4-b9d4-8db610978130",
 			"key": "inc",
 			"value": "0"
 		},
 		{
-			"id": "46d3169e-3517-4bf6-94ff-8eb2abdbbe4c",
+			"id": "8363535f-fc99-48b2-beb5-5cbffb99a264",
 			"key": "subCode",
 			"value": "ben.ohara"
 		},
 		{
-			"id": "81df6e08-b78f-49a6-bdf7-ea447171bd45",
+			"id": "caac1597-0aae-4d42-87fe-7ccb6367b83d",
 			"key": "biilingCycle",
 			"value": "BC_CLASSIC_MONTHLY_1ST"
 		},
 		{
-			"id": "76c7cde2-a7ea-4ba1-817b-886f7504aba9",
+			"id": "ae9fc52b-0cb7-47a4-a4a2-76d85dfbc93f",
 			"key": "customerCategory",
 			"value": "CLIENT"
 		}
