@@ -68,6 +68,6 @@ public class CustomTableCreatorServiceTest {
         //When
         sut.setColumnType(customFieldTemplate, addColumnConfig);
         //Then
-        assertThat(addColumnConfig.getType()).isEqualTo("boolean default false");
+        assertThat(addColumnConfig.getType()).isEqualTo("boolean ");
     }
 }
