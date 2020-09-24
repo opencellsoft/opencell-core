@@ -167,7 +167,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
-    private Boolean thresholdPerEntity;
+    private boolean thresholdPerEntity;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -189,18 +189,14 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
         accountType = ACCOUNT_TYPE;
     }
 
-    public Boolean isThresholdPerEntity() {
-    	return thresholdPerEntity==null ? false : thresholdPerEntity;
+    public boolean isThresholdPerEntity() {
+    	return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 	
-	public Boolean isThresholdPerEntityNotNull() {
-		return thresholdPerEntity != null ;
-	}
-
     public Seller getSeller() {
         return seller;
     }

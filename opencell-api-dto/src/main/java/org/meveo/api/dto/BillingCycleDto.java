@@ -234,7 +234,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             splitPerPaymentMethod = billingCycleEntity.isSplitPerPaymentMethod();
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
-            if(billingCycleEntity.isThresholdPerEntityNotNull()) {
+            if(billingCycleEntity.getCheckThreshold()!=null) {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
         }

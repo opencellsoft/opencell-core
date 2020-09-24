@@ -187,20 +187,16 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
-    private Boolean thresholdPerEntity;
+    private boolean thresholdPerEntity;
 
-    public Boolean isThresholdPerEntity() {
-    	return thresholdPerEntity==null ? false : thresholdPerEntity;
+    public boolean isThresholdPerEntity() {
+    	return thresholdPerEntity;
 	}
 
-	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
+	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 	
-	public Boolean isThresholdPerEntityNotNull() {
-		return thresholdPerEntity != null ;
-	}
-
     /**
      * if true then subscriptions are grouped by paymentMethod and billed separately.
      */

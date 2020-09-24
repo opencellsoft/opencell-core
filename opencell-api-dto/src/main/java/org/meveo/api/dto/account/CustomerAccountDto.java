@@ -238,9 +238,7 @@ public class CustomerAccountDto extends AccountDto {
         }
         if (e.getCheckThreshold() != null) {
             setCheckThreshold(e.getCheckThreshold());
-        }
-        if(e.isThresholdPerEntityNotNull()) {
-        	setThresholdPerEntity(e.isThresholdPerEntity());
+            setThresholdPerEntity(e.isThresholdPerEntity());
         }
     }
 
