@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 
@@ -52,21 +51,21 @@ public class BomOfferDto extends BaseEntityDto {
     /** The bom code. */
     @NotNull
     @XmlAttribute(required = true)
-    private java.lang.String bomCode;
+    private String bomCode;
 
     /** The code. */
     @NotNull
     @XmlAttribute(required = true)
-    private java.lang.String code;
+    private String code;
 
     /** The name. */
     @NotNull
     @XmlAttribute(required = true)
-    private java.lang.String name;
+    private String name;
 
     /** The description. */
     @XmlAttribute
-    private java.lang.String description;
+    private String description;
 
     /** The custom fields. */
     @XmlElementWrapper(name = "parameters")
@@ -75,7 +74,7 @@ public class BomOfferDto extends BaseEntityDto {
 
     /** The prefix. */
     @Deprecated
-    private java.lang.String prefix;
+    private String prefix;
 
     /** The services to activate. */
     @XmlElementWrapper(name = "servicesToActivate")
@@ -101,10 +100,10 @@ public class BomOfferDto extends BaseEntityDto {
     private List<OfferTemplateCategoryDto> offerTemplateCategories;
 
     /** The image base64 encoding string. */
-    private java.lang.String imageBase64;
+    private String imageBase64;
     
     /** The image path. */
-    private java.lang.String imagePath;
+    private String imagePath;
 
     /** The valid from. */
     @XmlAttribute()
@@ -118,7 +117,7 @@ public class BomOfferDto extends BaseEntityDto {
     private SubscriptionRenewalDto renewalRule;
 
     /** The long description. */
-    protected java.lang.String longDescription;
+    protected String longDescription;
 
     /** The long descriptions translated. */
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
@@ -142,7 +141,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the bom code
      */
-    public java.lang.String getBomCode() {
+    public String getBomCode() {
         return bomCode;
     }
 
@@ -151,7 +150,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param bomCode the new bom code
      */
-    public void setBomCode(java.lang.String bomCode) {
+    public void setBomCode(String bomCode) {
         this.bomCode = bomCode;
     }
 
@@ -160,7 +159,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the prefix
      */
-    public java.lang.String getPrefix() {
+    public String getPrefix() {
         return prefix;
     }
 
@@ -169,7 +168,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param prefix the new prefix
      */
-    public void setPrefix(java.lang.String prefix) {
+    public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
@@ -178,7 +177,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the description
      */
-    public java.lang.String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -187,7 +186,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param description the new description
      */
-    public void setDescription(java.lang.String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -232,7 +231,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the code
      */
-    public java.lang.String getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -241,7 +240,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param code the new code
      */
-    public void setCode(java.lang.String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -250,7 +249,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the name
      */
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
@@ -259,7 +258,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param name the new name
      */
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -341,7 +340,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the image Base64 encoding string
      */
-    public java.lang.String getImageBase64() {
+    public String getImageBase64() {
         return imageBase64;
     }
     
@@ -350,7 +349,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param imageBase64 the image Base64 encoding string
      */
-    public void setImageBase64(java.lang.String imageBase64) {
+    public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
     
@@ -359,7 +358,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the image path
      */
-    public java.lang.String getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 
@@ -368,7 +367,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param imagePath the new image path
      */
-    public void setImagePath(java.lang.String imagePath) {
+    public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 
@@ -393,7 +392,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the channels
      */
-    public List<java.lang.String> getChannels() {
+    public List<String> getChannels() {
         return channels;
     }
 
@@ -402,7 +401,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param channels the new channels
      */
-    public void setChannels(List<java.lang.String> channels) {
+    public void setChannels(List<String> channels) {
         this.channels = channels;
     }
 
@@ -412,7 +411,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the long description
      */
-    public java.lang.String getLongDescription() {
+    public String getLongDescription() {
         return longDescription;
     }
 
@@ -421,7 +420,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param longDescription the new long description
      */
-    public void setLongDescription(java.lang.String longDescription) {
+    public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
@@ -466,7 +465,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the sellers
      */
-    public List<java.lang.String> getSellers() {
+    public List<String> getSellers() {
         return sellers;
     }
 
@@ -475,7 +474,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param sellers the new sellers
      */
-    public void setSellers(List<java.lang.String> sellers) {
+    public void setSellers(List<String> sellers) {
         this.sellers = sellers;
     }
 
@@ -488,7 +487,7 @@ public class BomOfferDto extends BaseEntityDto {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
                 + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
                 + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
