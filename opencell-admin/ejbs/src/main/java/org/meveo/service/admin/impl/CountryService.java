@@ -48,14 +48,8 @@ public class CountryService extends PersistenceService<Country> {
         }
 
         QueryBuilder qb = new QueryBuilder(Country.class, "c");
-        if (countryCode.length() <= 3) {
-            qb.addCriterion("countryCode", "=", countryCode, false);
-        } else {
-            qb.startOrClause();
-            qb.addCriterion("description", "=", countryCode, false);
-            qb.addSql("lower(descriptionI18n) like'%" + countryCode.toLowerCase() + "%'");
-            qb.endOrClause();
-        }
+        qb.addCriterion("countryCode", "=", countryCode, false);
+
         try {
             return (Country) qb.getQuery(getEntityManager()).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
