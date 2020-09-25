@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3141,7 +3142,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode,
             SubCategoryInvoiceAgregate scAggregate, Map<Tax, BigDecimal> amountsByTax, CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
 
-        Map<Tax, BigDecimal> discountAmountsByTax = new HashMap<Tax, BigDecimal>();
+        Map<Tax, BigDecimal> discountAmountsByTax = new HashMap<>();
         BigDecimal amountToApplyDiscountOn = sumMapValues(amountsByTax);
 
         if (BigDecimal.ZERO.compareTo(amountToApplyDiscountOn) == 0) {
@@ -3456,6 +3457,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         Auditable auditable = new Auditable(currentUser);
+
         boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED == invoiceDTO.getInvoiceMode();
 
         Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap = extractMappedRatedTransactionsTolink(invoiceDTO, billingAccount);
@@ -3516,9 +3518,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void linkExistingRTs(InvoiceDto invoiceDTO, Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, boolean isEnterprise, Invoice invoice, UserAccount userAccount,
             InvoiceSubCategory invoiceSubCategory, SubCategoryInvoiceAgregate invoiceAgregateSubcat, boolean isDetailledInvoiceMode) {
-        List<RatedTransaction> rtsToLink = new ArrayList<RatedTransaction>();
+        List<RatedTransaction> rtsToLink = new ArrayList<>();
         if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-            rtsToLink = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, null, null);
+            rtsToLink = ratedTransactionService.openRTbySubCat(userAccount != null ? userAccount.getWallet() : null, invoiceSubCategory, null, null);
         } else if (isDetailledInvoiceMode && !existingRtsTolinkMap.isEmpty() && existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
             rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
         }
@@ -3726,12 +3728,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal amountWithTax = amounts[1];
         BigDecimal amountTax = amounts[2];
 
-        RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
-            ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null, null,
+        RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
+                ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
+                ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED,
+                userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount, invoiceSubCategory, null, null, null,
             null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(),
             ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null);
 
-        rt.setWallet(userAccount.getWallet());
+        rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -3750,8 +3754,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
                 throw new InvalidParameterException("User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
             }
-        } else {
-            userAccount = billingAccount.getUsersAccounts().get(0);
         }
         return userAccount;
     }
