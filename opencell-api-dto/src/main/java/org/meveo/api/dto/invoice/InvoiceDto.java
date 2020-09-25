@@ -76,12 +76,12 @@ public class InvoiceDto extends AuditableEntityDto {
      * Id of the subscription
      */
     protected Long subscriptionId;
-    
-	/**
+
+    /**
      * Order number
      */
     protected String orderNumber;
-    
+
     /** The invoice status. */
     private InvoiceStatusEnum status;
 
@@ -144,14 +144,19 @@ public class InvoiceDto extends AuditableEntityDto {
     protected Boolean autoValidation;
 
     /**
-     * A request-only parameter. True if currently XML invoice should be returned.
+     * A request-only parameter. True if XML invoice should be generated and returned.
      */
     protected Boolean returnXml;
 
     /**
-     * A request-only parameter. True if currently PDF invoice should be returned.
+     * A request-only parameter. True if PDF invoice should be generated and returned.
      */
     protected Boolean returnPdf;
+
+    /**
+     * A request-only parameter. True if PDF should be delivered by email. Defaults to True.
+     */
+    private boolean sendByEmail = true;
 
     /**
      * A request-only parameter. True if currently due balance should be returned
@@ -193,112 +198,113 @@ public class InvoiceDto extends AuditableEntityDto {
     protected String overrideEmail;
 
     /**
-     * True if the invoice is sent, false otherwise
+     * True if the invoice was sent by email or delibered by some other electronic means, false otherwise
      */
     protected boolean sentByEmail;
-    
+
     /**
-     * list of related payment schedule instances 
+     * list of related payment schedule instances
      * 
      */
     protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
-    
+
     /**
      * associated dunning creation date
      * 
      */
     protected Date dunningEntryDate;
-	
-	/**
+
+    /**
      * associated dunning last update date
      * 
      */
     protected Date dunningLastModification;
-	
-	/**
+
+    /**
      * associated dunning current status
      * 
      */
     protected String dunningStatus;
-    
-    /** 
-     * The invoice real time status. 
+
+    /**
+     * The invoice real time status.
      */
     private InvoiceStatusEnum realTimeStatus;
-    
-	/**
-     * list of existing RTs to include, identified by id
-     * This option is allowed only if invoiceMode=="DETAILLED"
+
+    /**
+     * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
      * 
      */
     protected List<Long> ratedTransactionsToLink;
-    /** paymentIncident
+    /**
+     * paymentIncident
      * 
      */
     protected List<String> paymentIncidents;
-    
-    /** sendPaymentDate
+
+    /**
+     * sendPaymentDate
      * 
      */
     protected Date sendPaymentDate;
-    
+
     /**
      * sum off writeOff accountOperations amounts
      */
     protected BigDecimal writeOffAmount;
-    
+
     /**
      * last payment Date
      */
     protected Date paymentDate;
 
     public List<String> getPaymentIncidents() {
-		return paymentIncidents;
-	}
+        return paymentIncidents;
+    }
 
-	public void setPaymentIncidents(List<String> paymentIncidents) {
-		this.paymentIncidents = paymentIncidents;
-	}
-	
-	public void addPaymentIncidents(String paymentIncident) {
-		this.paymentIncidents.add(paymentIncident);
-	}
+    public void setPaymentIncidents(List<String> paymentIncidents) {
+        this.paymentIncidents = paymentIncidents;
+    }
 
-	public BigDecimal getWriteOffAmount() {
-		return writeOffAmount;
-	}
+    public void addPaymentIncidents(String paymentIncident) {
+        this.paymentIncidents.add(paymentIncident);
+    }
 
-	public void setWriteOffAmount(BigDecimal writeOffAmount) {
-		this.writeOffAmount = writeOffAmount;
-	}
+    public BigDecimal getWriteOffAmount() {
+        return writeOffAmount;
+    }
 
-	public Date getPaymentDate() {
-		return paymentDate;
-	}
+    public void setWriteOffAmount(BigDecimal writeOffAmount) {
+        this.writeOffAmount = writeOffAmount;
+    }
 
-	public void setPaymentDate(Date paymentDate) {
-		this.paymentDate = paymentDate;
-	}
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
 
-	/**
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    /**
      * Get the list of existing RTs to include.
      *
      * @return the ratedTransactionsTolink
      */
     public List<Long> getRatedTransactionsTolink() {
-		return ratedTransactionsToLink;
-	}
+        return ratedTransactionsToLink;
+    }
 
     /**
      * Set the list of existing RTs to include.
      *
      * @param the ratedTransactionTolink
      */
-	public void setRatedTransactionsTolink(List<Long> ratedTransactionsTolink) {
-		this.ratedTransactionsToLink = ratedTransactionsTolink;
-	}
+    public void setRatedTransactionsTolink(List<Long> ratedTransactionsTolink) {
+        this.ratedTransactionsToLink = ratedTransactionsTolink;
+    }
 
-	/**
+    /**
      * Gets the list invoice id to link.
      *
      * @return the listInvoiceIdToLink
@@ -641,6 +647,20 @@ public class InvoiceDto extends AuditableEntityDto {
     }
 
     /**
+     * @return A request-only parameter. True if PDF should be delivered by email. Defaults to True.
+     */
+    public boolean isSendByEmail() {
+        return sendByEmail;
+    }
+
+    /**
+     * @param sendByEmail A request-only parameter. True if PDF should be delivered by email. Defaults to True.
+     */
+    public void setSendByEmail(boolean sendByEmail) {
+        this.sendByEmail = sendByEmail;
+    }
+
+    /**
      * Gets the invoice mode.
      *
      * @return the invoiceMode
@@ -809,7 +829,7 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
     }
-    
+
     /**
      * @return the status
      */
@@ -858,58 +878,58 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setSentByEmail(boolean sentByEmail) {
         this.sentByEmail = sentByEmail;
     }
-    
+
     public Long getSubscriptionId() {
-		return subscriptionId;
-	}
+        return subscriptionId;
+    }
 
-	public void setSubscriptionId(Long subscriptionId) {
-		this.subscriptionId = subscriptionId;
-	}
-	
+    public void setSubscriptionId(Long subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
     public Date getDunningEntryDate() {
-		return dunningEntryDate;
-	}
+        return dunningEntryDate;
+    }
 
-	public void setDunningEntryDate(Date dunningEntryDate) {
-		this.dunningEntryDate = dunningEntryDate;
-	}
+    public void setDunningEntryDate(Date dunningEntryDate) {
+        this.dunningEntryDate = dunningEntryDate;
+    }
 
-	public Date getDunningLastModification() {
-		return dunningLastModification;
-	}
+    public Date getDunningLastModification() {
+        return dunningLastModification;
+    }
 
-	public void setDunningLastModification(Date dunningLastModification) {
-		this.dunningLastModification = dunningLastModification;
-	}
+    public void setDunningLastModification(Date dunningLastModification) {
+        this.dunningLastModification = dunningLastModification;
+    }
 
-	public String getDunningStatus() {
-		return dunningStatus;
-	}
+    public String getDunningStatus() {
+        return dunningStatus;
+    }
 
-	public void setDunningStatus(String dunningStatus) {
-		this.dunningStatus = dunningStatus;
-	}
+    public void setDunningStatus(String dunningStatus) {
+        this.dunningStatus = dunningStatus;
+    }
 
-	public PaymentScheduleInstancesDto getPaymentScheduleInstancesDto() {
-		return paymentScheduleInstancesDto;
-	}
+    public PaymentScheduleInstancesDto getPaymentScheduleInstancesDto() {
+        return paymentScheduleInstancesDto;
+    }
 
-	public void setPaymentScheduleInstancesDto(PaymentScheduleInstancesDto paymentScheduleInstancesDto) {
-		this.paymentScheduleInstancesDto = paymentScheduleInstancesDto;
-	}
+    public void setPaymentScheduleInstancesDto(PaymentScheduleInstancesDto paymentScheduleInstancesDto) {
+        this.paymentScheduleInstancesDto = paymentScheduleInstancesDto;
+    }
 
-	/**
-	 * @return the realTimeStatus
-	 */
-	public InvoiceStatusEnum getRealTimeStatus() {
-		return realTimeStatus;
-	}
+    /**
+     * @return the realTimeStatus
+     */
+    public InvoiceStatusEnum getRealTimeStatus() {
+        return realTimeStatus;
+    }
 
-	/**
-	 * @param realTimeStatus the realTimeStatus to set
-	 */
-	public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
-		this.realTimeStatus = realTimeStatus;
-	}
+    /**
+     * @param realTimeStatus the realTimeStatus to set
+     */
+    public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
+        this.realTimeStatus = realTimeStatus;
+    }
 }
