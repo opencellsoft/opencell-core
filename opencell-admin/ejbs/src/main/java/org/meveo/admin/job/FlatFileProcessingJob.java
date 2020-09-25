@@ -77,6 +77,8 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION = "FlatFileProcessingJob_fileNameExtension";
 
+    private static final String FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS = "FlatFileProcessingJob_nbLinesToProcess";
+
     private static final String EMPTY_STRING = "";
 
     private static final String TWO_POINTS_PARENT_DIR = "\\..";
@@ -122,6 +124,7 @@ public class FlatFileProcessingJob extends Job {
             String fileNameFilter = null;
             String scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
             String fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
+            Long nbLinesToProcess = (Long) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS);
             String recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
             String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
             String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
@@ -211,7 +214,7 @@ public class FlatFileProcessingJob extends Job {
                 }
 
                 String fileName = file.getName();
-                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,
+                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo, nbLinesToProcess,
                     errorAction, nbRuns, waitingMillis);
 
                 result.addReport("Processed file: " + fileName);
@@ -324,6 +327,17 @@ public class FlatFileProcessingJob extends Job {
         fileNameExtensionCF.setMaxValue(256L);
         fileNameExtensionCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:6");
         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION, fileNameExtensionCF);
+
+        CustomFieldTemplate nbLinesToProcessCF = new CustomFieldTemplate();
+        nbLinesToProcessCF.setCode(FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS);
+        nbLinesToProcessCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        nbLinesToProcessCF.setActive(true);
+        nbLinesToProcessCF.setDescription(resourceMessages.getString("flatFile.nbLinesToProcess"));
+        nbLinesToProcessCF.setFieldType(CustomFieldTypeEnum.LONG);
+        nbLinesToProcessCF.setDefaultValue("1");
+        nbLinesToProcessCF.setValueRequired(false);
+        nbLinesToProcessCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:7");
+        result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION, nbLinesToProcessCF);
 
         CustomFieldTemplate mappingConf = new CustomFieldTemplate();
         mappingConf.setCode(FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);

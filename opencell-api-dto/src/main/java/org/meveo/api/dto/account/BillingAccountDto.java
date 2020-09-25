@@ -243,15 +243,13 @@ public class BillingAccountDto extends AccountDto {
         }
         if (e.getCheckThreshold() != null) {
             setCheckThreshold(e.getCheckThreshold());
+            setThresholdPerEntity(e.isThresholdPerEntity());
         }
         if (e.getTradingCountry() != null) {
             setCountry(e.getTradingCountry().getCountryCode());
         }
         if (e.getTradingLanguage() != null) {
             setLanguage(e.getTradingLanguage().getLanguageCode());
-        }
-        if(e.isThresholdPerEntityNotNull()) {
-        	setThresholdPerEntity(e.isThresholdPerEntity());
         }
         setNextInvoiceDate(e.getNextInvoiceDate());
         setSubscriptionDate(e.getSubscriptionDate());

@@ -19,6 +19,7 @@
 package org.meveo.service.catalog.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -33,6 +35,7 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -175,7 +178,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.ACTIVE);
         }
 
-        newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
+        SubscriptionRenewal newSubscriptionRenewal =new SubscriptionRenewal() ;
+        try {
+			BeanUtils.copyProperties(newSubscriptionRenewal, bomOffer.getSubscriptionRenewal());
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		} 
+		newOfferTemplate.setSubscriptionRenewal(newSubscriptionRenewal);
 
         if (bomParams.getOfferCfValue() != null) {
             newOfferTemplate.getCfValuesNullSafe().setValues(bomParams.getOfferCfValue());

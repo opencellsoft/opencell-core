@@ -41,56 +41,57 @@ import org.meveo.service.script.ScriptInterface;
 @Stateless
 public class ScriptingAsync {
 
-	@Inject
-	protected ScriptInstanceService scriptInstanceService;
+    @Inject
+    protected ScriptInstanceService scriptInstanceService;
 
-	@Inject
-	private CurrentUserProvider currentUserProvider;
-	
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
-	/**
-	 * 
-	 * @param result
-	 * @param scriptCode
-	 * @param context
-	 * @param currentUser
-	 * @param script
-	 * @return
-	 */
-	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context, MeveoUser currentUser, ScriptInterface script) {
+    /**
+     * 
+     * @param result
+     * @param scriptCode
+     * @param context
+     * @param currentUser
+     * @param script
+     * @return
+     */
+    public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context, MeveoUser currentUser, ScriptInterface script) {
 
-		try {
-			if (currentUserProvider.getCurrentUserProviderCode() == null) {
-				currentUserProvider.forceAuthentication(currentUser.getUserName(), currentUser.getProviderCode());
-			}
-			script.execute(context);
-			if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
-				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
-			} else {
-				result.registerSucces();
-			}
-			if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
-				result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
-			}
-			if (context.containsKey(Script.JOB_RESULT_NB_KO)) {
-				result.setNbItemsProcessedWithError(convert(context.get(Script.JOB_RESULT_NB_KO)));
-			}
-			if (context.containsKey(Script.JOB_RESULT_TO_PROCESS)) {
-				result.setNbItemsToProcess(convert(context.get(Script.JOB_RESULT_TO_PROCESS)));
-			}
-			if (context.containsKey(Script.JOB_RESULT_REPORT)) {
-				result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
-			}
-		} catch (Exception e) {
-			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
-		}
+        try {
+            if (currentUserProvider.getCurrentUserProviderCode() == null) {
+                currentUserProvider.forceAuthentication(currentUser.getUserName(), currentUser.getProviderCode());
+            }
 
-		return "OK";
-	}
+            context.put(Script.JOB_EXECUTION_RESULT, result);
+            script.execute(context);
+            if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
+                result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
+            } else {
+                result.registerSucces();
+            }
+            if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
+                result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_NB_KO)) {
+                result.setNbItemsProcessedWithError(convert(context.get(Script.JOB_RESULT_NB_KO)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_TO_PROCESS)) {
+                result.setNbItemsToProcess(convert(context.get(Script.JOB_RESULT_TO_PROCESS)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_REPORT)) {
+                result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
+            }
+        } catch (Exception e) {
+            result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+        }
 
-	long convert(Object s) {
-		long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
-		return result;
-	}
+        return "OK";
+    }
+
+    long convert(Object s) {
+        long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
+        return result;
+    }
 
 }

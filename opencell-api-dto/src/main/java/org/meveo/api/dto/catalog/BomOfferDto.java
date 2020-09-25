@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 
 /**
@@ -101,6 +104,37 @@ public class BomOfferDto extends BaseEntityDto {
     
     /** The image path. */
     private String imagePath;
+
+    /** The valid from. */
+    @XmlAttribute()
+    protected Date validFrom;
+
+    /** The valid to. */
+    @XmlAttribute()
+    protected Date validTo;
+
+    /** The renewal rule. */
+    private SubscriptionRenewalDto renewalRule;
+
+    /** The long description. */
+    protected String longDescription;
+
+    /** The long descriptions translated. */
+    protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+    
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
+
+    /** The channels. */
+    @XmlElementWrapper(name = "channels")
+    private List<String> channels;
+
+    /** The sellers. */
+    @XmlElementWrapper(name = "sellers")
+    private List<String> sellers;
+
+    @XmlElementWrapper(name = "customerCategories")
+    private List<String> customerCategories;
 
     /**
      * Gets the bom code.
@@ -337,11 +371,140 @@ public class BomOfferDto extends BaseEntityDto {
         this.imagePath = imagePath;
     }
 
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
+
+    public Date getValidTo() {
+        return validTo;
+    }
+
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
+    }
+
+    /**
+     * Gets the channels.
+     *
+     * @return the channels
+     */
+    public List<String> getChannels() {
+        return channels;
+    }
+
+    /**
+     * Sets the channels.
+     *
+     * @param channels the new channels
+     */
+    public void setChannels(List<String> channels) {
+        this.channels = channels;
+    }
+
+
+    /**
+     * Gets the long description.
+     *
+     * @return the long description
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    /**
+     * Sets the long description.
+     *
+     * @param longDescription the new long description
+     */
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    /**
+     * Gets the long descriptions translated.
+     *
+     * @return the long descriptions translated
+     */
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    /**
+     * Sets the long descriptions translated.
+     *
+     * @param longDescriptionsTranslated the new long descriptions translated
+     */
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
+    }
+
+    /**
+     * Gets the renewal rule.
+     *
+     * @return the renewal rule
+     */
+    public SubscriptionRenewalDto getRenewalRule() {
+        return renewalRule;
+    }
+
+    /**
+     * Sets the renewal rule.
+     *
+     * @param renewalRule the new renewal rule
+     */
+    public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+        this.renewalRule = renewalRule;
+    }
+
+    /**
+     * Gets the sellers.
+     *
+     * @return the sellers
+     */
+    public List<String> getSellers() {
+        return sellers;
+    }
+
+    /**
+     * Sets the sellers.
+     *
+     * @param sellers the new sellers
+     */
+    public void setSellers(List<String> sellers) {
+        this.sellers = sellers;
+    }
+
+    public List<String> getCustomerCategories() {
+        return customerCategories;
+    }
+
+    public void setCustomerCategories(List<String> customerCategories) {
+        this.customerCategories = customerCategories;
+    }
+
     @Override
     public String toString() {
         return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
                 + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
                 + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
     }
+
+	/**
+	 * @return the languageDescriptions
+	 */
+	public List<LanguageDescriptionDto> getLanguageDescriptions() {
+		return languageDescriptions;
+	}
+
+	/**
+	 * @param languageDescriptions the languageDescriptions to set
+	 */
+	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+		this.languageDescriptions = languageDescriptions;
+	}
 
 }

@@ -203,8 +203,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createEdrs(List<EDR> edrs, CDR cdr) throws CDRParsingException, BusinessException {
         if (edrs != null && edrs.size() > 0) {
-            for (EDR edr : edrs) {
-                createEdr(edr, cdr);
+            createEdr(edrs.get(0),cdr);
+            for (int i = 1; i < edrs.size(); i++) {
+                createEdr(edrs.get(i));
             }
         }
     }
@@ -231,7 +232,11 @@ public class CDRParsingService extends PersistenceService<EDR> {
 			//once the cdr is processed, we don't need the serialized dto
 			cdr.setSource(null);
 			cdr.setType(null);
-			cdrService.update(cdr);
+			if(cdr.getId() == null) {
+			    cdrService.create(cdr);
+			} else {
+			    cdrService.update(cdr);
+			}			
 		}
 	}
 

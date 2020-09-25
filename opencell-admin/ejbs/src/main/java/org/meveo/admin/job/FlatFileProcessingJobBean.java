@@ -18,6 +18,19 @@
 
 package org.meveo.admin.job;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
@@ -34,18 +47,6 @@ import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * The Class FlatFileProcessingJobBean.
@@ -100,7 +101,7 @@ public class FlatFileProcessingJobBean {
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf,
-                        String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, String errorAction,
+                        String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo,Long nbLinesToProcess, String errorAction,
                         Long nbRuns, Long waitingMillis) {
 
         log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(),
@@ -164,10 +165,10 @@ public class FlatFileProcessingJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
             for (long i = 0; i < nbRuns; i++) {
                 if (FlatFileProcessingJob.ROLLBACK.equals(errorAction)) {
-                    futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction,
+                    futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction,
                             rejectFileWriter, outputFileWriter, lastCurrentUser));
                 } else {
-                    futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction, rejectFileWriter,
+                    futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction, rejectFileWriter,
                             outputFileWriter, lastCurrentUser));
                 }
                 if (waitingMillis > 0) {
