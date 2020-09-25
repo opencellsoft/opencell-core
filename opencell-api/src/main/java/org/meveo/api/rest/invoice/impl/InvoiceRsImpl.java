@@ -50,6 +50,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 
 /**
  * The Class InvoiceRsImpl.
+ * 
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
@@ -70,7 +71,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         try {
             result = invoiceApi.create(invoiceDto);
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-            if (invoiceDto.isReturnPdf() != null && invoiceDto.isReturnPdf() && !invoiceDto.isDraft()) {
+            if (invoiceDto.isSendByEmail() && invoiceDto.isReturnPdf() != null && invoiceDto.isReturnPdf() && !invoiceDto.isDraft()) {
                 invoiceDto.setCheckAlreadySent(true);
                 invoiceDto.setInvoiceId(result.getInvoiceId());
                 boolean res = invoiceApi.sendByEmail(invoiceDto, MailingTypeEnum.AUTO);
@@ -85,7 +86,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode ,@QueryParam("returnPdf") Boolean returnPdf) {
+    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("returnPdf") Boolean returnPdf) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
@@ -211,14 +212,14 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions, Boolean includePdf, Boolean includeXml) {
         GetInvoiceResponseDto result = new GetInvoiceResponseDto();
         try {
-            // #2236 :  includePdf's default value = false.
+            // #2236 : includePdf's default value = false.
             boolean isPdfToInclude = includePdf != null ? includePdf.booleanValue() : false;
             // #2236 : includeXml's default value = false
             boolean isXmlToInclude = includeXml != null ? includeXml.booleanValue() : false;
-            
+
             result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions, isPdfToInclude, isXmlToInclude));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-            
+
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
