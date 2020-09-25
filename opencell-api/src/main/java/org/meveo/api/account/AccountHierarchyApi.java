@@ -291,7 +291,9 @@ public class AccountHierarchyApi extends BaseApi {
 
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
-        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        if(postData.isCustomerThresholdPerEntity()!=null) {
+        	customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        }
         if (postData.getCustomerCheckThreshold() == null && postData.getCustomerInvoicingThreshold() != null) {
             customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
@@ -695,7 +697,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        if(postData.isThresholdPerEntity()!=null) {
+        	billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
