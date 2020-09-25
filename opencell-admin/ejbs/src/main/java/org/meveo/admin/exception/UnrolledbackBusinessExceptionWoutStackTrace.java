@@ -17,22 +17,19 @@
  */
 package org.meveo.admin.exception;
 
-import javax.ejb.ApplicationException;
-
 /**
- * A business exception that will not rollback the DB transaction
+ * A business exception that will not rollback the DB transaction and wont print stack trace in the logs
  * 
  * @author Andrius Karpavicius
  *
  */
-@ApplicationException(rollback = false)
-public class UnrolledbackBusinessException extends BusinessException {
+public class UnrolledbackBusinessExceptionWoutStackTrace extends UnrolledbackBusinessException {
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new exception
      */
-    public UnrolledbackBusinessException() {
+    public UnrolledbackBusinessExceptionWoutStackTrace() {
         super();
     }
 
@@ -42,7 +39,7 @@ public class UnrolledbackBusinessException extends BusinessException {
      * @param message the detail message
      * @param cause the cause
      */
-    public UnrolledbackBusinessException(String message, Throwable cause) {
+    public UnrolledbackBusinessExceptionWoutStackTrace(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -51,7 +48,7 @@ public class UnrolledbackBusinessException extends BusinessException {
      * 
      * @param message The detail message
      */
-    public UnrolledbackBusinessException(String message) {
+    public UnrolledbackBusinessExceptionWoutStackTrace(String message) {
         super(message);
     }
 
@@ -60,7 +57,15 @@ public class UnrolledbackBusinessException extends BusinessException {
      * 
      * @param cause the cause
      */
-    public UnrolledbackBusinessException(Throwable cause) {
+    public UnrolledbackBusinessExceptionWoutStackTrace(Throwable cause) {
         super(cause);
+    }
+
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
     }
 }
