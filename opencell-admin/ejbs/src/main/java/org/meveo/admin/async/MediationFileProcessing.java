@@ -33,7 +33,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
@@ -104,7 +106,7 @@ public class MediationFileProcessing {
 		currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
 		int i = 0;
-		CDR cdr = null;
+		CDR cdr = null;		
 		
 		while (true) {
 
@@ -118,23 +120,31 @@ public class MediationFileProcessing {
 				if (cdr == null) {
                     break;
                 }
-	            List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-	            List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);				
-				log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
+				if (StringUtils.isBlank(cdr.getRejectReason())) {
+				    List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+	                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);               
+	                log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
 
-				cdrParserService.createEdrs(edrs,cdr);
+	                cdrParserService.createEdrs(edrs,cdr);
 
-				synchronized (outputFileWriter) {
-					outputFileWriter.println(cdr.getLine());
+	                synchronized (outputFileWriter) {
+	                    outputFileWriter.println(cdr.getLine());
+	                }
+	                result.registerSucces();
+				} else {
+				    result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+				    cdr.setStatus(CDRStatusEnum.ERROR);
+				    createOrUpdateCdr(cdr);
+				    
 				}
-				result.registerSucces();
+	            
 
 			} catch (IOException e) {
 				log.error("Failed to read a CDR line from file {}", fileName, e);
 				result.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
 	            cdr.setStatus(CDRStatusEnum.ERROR);
 	            cdr.setRejectReason(e.getMessage());
-	            cdrService.update(cdr);
+	            createOrUpdateCdr(cdr);
 				break;
 
 			} catch (Exception e) {
@@ -152,9 +162,25 @@ public class MediationFileProcessing {
 				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setRejectReason(e.getMessage());
-                cdrService.update(cdr);
+                createOrUpdateCdr(cdr);
 			}
 		}
 		return new AsyncResult<String>("OK");
 	}
+
+    /**
+     * Save the cdr if the configuration property mediation.persistCDR is true.
+     *
+     * @param cdr the cdr
+     */
+    private void createOrUpdateCdr(CDR cdr) {
+        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+        if(cdr != null && persistCDR) {
+            if(cdr.getId() == null) {
+                cdrService.create(cdr);
+            } else {
+                cdrService.update(cdr);
+            }                       
+        }
+    }
 }

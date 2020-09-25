@@ -52,7 +52,9 @@ import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
@@ -61,6 +63,7 @@ import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
+import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
@@ -117,9 +120,15 @@ public class MediationApi extends BaseApi {
             ListIterator<String> cdrIterator = cdrLines.listIterator();
             while (cdrIterator.hasNext()) {
                 cdr = cdrParser.parseByApi(cdrIterator.next(), currentUser.getUserName(), postData.getIpAddress());
-                List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
-                List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
-                cdrParsingService.createEdrs(edrs,cdr);
+                if(cdr.getRejectReason() != null) {
+                    log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, cdr.getRejectReason());
+                    cdr.setStatus(CDRStatusEnum.ERROR);
+                    createOrUpdateCdr(cdr);
+                } else {
+                    List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
+                    List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);       
+                    cdrParsingService.createEdrs(edrs,cdr);
+                }                
             }
         } catch (Exception e) {
             String errorReason = e.getMessage();
@@ -128,6 +137,8 @@ public class MediationApi extends BaseApi {
             } else {
                 log.error("Failed to process a CDR line: {} error {}", cdr != null ? cdr.getLine() : null, errorReason, e);
             }
+            cdr.setStatus(CDRStatusEnum.ERROR);
+            createOrUpdateCdr(cdr);
         }
     }
 
@@ -152,10 +163,20 @@ public class MediationApi extends BaseApi {
             if(cdr == null) {
                 return null;
             }
+            if(cdr.getRejectReason() != null) {
+                log.error("Error parsing cdr={}", cdr.getRejectReason()); 
+                cdr.setStatus(CDRStatusEnum.ERROR);
+                if(cdr.getRejectReasonException() != null && cdr.getRejectReasonException() instanceof InvalidAccessException) {
+                    throw new CDRParsingException(cdr, CDRRejectionCauseEnum.INVALID_ACCESS, cdr.getRejectReason());
+                } else {
+                    throw new CDRParsingException(cdr, CDRRejectionCauseEnum.INVALID_FORMAT, cdr.getRejectReason());
+                }               
+            }
+
             List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
             List<EDR> edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);                        
             List<WalletOperation> walletOperations = new ArrayList<>();
-            for (EDR edr : edrs) {            	 
+            for (EDR edr : edrs) {               
                 log.debug("edr={}", edr);
                 edr.setSubscription(edr.getSubscription());
                 if (!chargeCDRDto.isVirtual()) {
@@ -167,8 +188,7 @@ public class MediationApi extends BaseApi {
                 }
             }
 
-            return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());
-
+            return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());                    
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
             throw new MeveoApiException(e.getRejectionCause().toString());
@@ -240,6 +260,10 @@ public class MediationApi extends BaseApi {
         List<EDR> edrs;
         try {           
             cdr = cdrParser.parseByApi(cdrLine, currentUser.getUserName(), ip); 
+            if(cdr.getRejectReason() != null) {
+                log.error("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, cdr.getRejectReason());
+            }
             List<Access> accessPoints = cdrParser.accessPointLookup(cdr);
             edrs = cdrParser.convertCdrToEdr(cdr,accessPoints);
             for (EDR edr : edrs) {
@@ -392,6 +416,22 @@ public class MediationApi extends BaseApi {
             } catch (Exception e) {
                 log.error("Failed to notify of rejected CDR {}", cdr, e);
             }
+        }
+    }
+    
+    /**
+     * Save the cdr if the configuration property mediation.persistCDR is true.
+     *
+     * @param cdr the cdr
+     */
+    private void createOrUpdateCdr(CDR cdr) {
+        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+        if(cdr != null && persistCDR) {
+            if(cdr.getId() == null) {
+                cdrService.create(cdr);
+            } else {
+                cdrService.update(cdr);
+            }                       
         }
     }
 }

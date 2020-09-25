@@ -37,6 +37,7 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.ScriptInstanceRs;
+import org.meveo.service.script.Script;
 
 /**
  * @author Edward P. Legaspi
@@ -103,7 +104,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-	public Response execute(String scriptInstanceCode) {
+    public Response execute(String scriptInstanceCode) {
         Response.ResponseBuilder responseBuilder = null;
         Map<String, Object> result = null;
         Map<String, Object> context = new HashMap<String, Object>();
@@ -118,21 +119,24 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
         }
 
         try {
-                result = scriptInstanceApi.execute(scriptInstanceCode, context);
-                responseBuilder = Response.ok().entity(result);
+            result = scriptInstanceApi.execute(scriptInstanceCode, context);
+            if (result.containsKey(Script.RESULT_VALUE)) {
+                responseBuilder = Response.ok().entity(result.get(Script.RESULT_VALUE));
+            } else {
+                responseBuilder = Response.ok();
+            }
         } catch (MeveoApiException e) {
             log.error(e.getLocalizedMessage());
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
             responseBuilder.entity(e.getLocalizedMessage());
         } catch (BusinessException e) {
-            log.error("Failed to execute a script {}", scriptInstanceCode , e);
+            log.error("Failed to execute a script {}", scriptInstanceCode, e);
             responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result);
             responseBuilder.entity(e.getLocalizedMessage());
         }
 
         return responseBuilder.build();
     }
-
 
     @Override
     public ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData) {

@@ -257,6 +257,7 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                     InvoiceSequence newInvoiceSequence = dto.getSequenceDto().fromDto();
                     newInvoiceSequence.setCode(entity.getCode());
                     invoiceSequenceService.create(newInvoiceSequence);
+                    entity.setInvoiceSequence(newInvoiceSequence);
                 }
             } else {
                 InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(dto.getSequenceDto().getInvoiceSequenceCode());
@@ -264,7 +265,6 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                     throw new EntityDoesNotExistsException(InvoiceSequence.class, dto.getSequenceDto().getInvoiceSequenceCode());
                 }
                 entity.setInvoiceSequence(invoiceSequence);
-                entity.setPrefixEL(dto.getSequenceDto().getPrefixEL());
             }
             entity.setPrefixEL(dto.getSequenceDto().getPrefixEL());
         }

@@ -19,11 +19,7 @@
 package org.meveo.api.catalog;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -33,40 +29,27 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.catalog.BSMConfigurationDto;
-import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.dto.catalog.BpmProductDto;
-import org.meveo.api.dto.catalog.BsmServiceDto;
-import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
-import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
+import org.meveo.api.dto.catalog.*;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.BusinessProductModel;
-import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.*;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.service.catalog.impl.BOMInstantiationParameters;
-import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.BusinessProductModelService;
-import org.meveo.service.catalog.impl.BusinessServiceModelService;
-import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.catalog.impl.*;
+import org.meveo.service.crm.impl.CustomerCategoryService;
 
 /**
  * @author Said Ramli
@@ -95,6 +78,18 @@ public class BusinessOfferApi extends BaseApi {
 
     @Inject
     private ProductTemplateService productTemplateService;
+
+    @Inject
+    private ChannelService channelService;
+
+    @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private CustomerCategoryService customerCategoryService;
+
+    @Inject
+    private SubscriptionApi subscriptionApi;
 
     public Long instantiateBOM(BomOfferDto postData) throws MeveoApiException, BusinessException {
 
@@ -127,6 +122,7 @@ public class BusinessOfferApi extends BaseApi {
             postData.getServicesToActivate().addAll(serviceConfigurationDtoFromBSM);
         }
 
+        //ProductTemplate newProducTemplate = businessProductModelService.instantiateBPM(postData.getPrefix(), null, bpm, postData.getCustomFields());
         // create newOfferTemplate
         OfferTemplate newOfferTemplate = createNewOfferTemplate(postData, businessOfferModel);
 
@@ -308,7 +304,56 @@ public class BusinessOfferApi extends BaseApi {
                 }
                 bomParams.setOfferTemplateCategories(offerTemplateCategories);
             }
+
+            bomParams.setValidFrom(postData.getValidFrom());
+            bomParams.setValidTo(postData.getValidTo());
+
+            bomParams.setLongDescription(postData.getLongDescription());
+
+            if (postData.getLongDescriptionsTranslated() != null) {
+                bomParams.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), bomParams.getLongDescriptionI18n()));
+            }
+
             newOfferTemplate = businessOfferModelService.instantiateFromBOM(bomParams);
+            
+            if (postData.getLanguageDescriptions() != null) {
+            	newOfferTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), newOfferTemplate.getDescriptionI18n()));
+            }
+
+            newOfferTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(newOfferTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
+
+            if(postData.getChannels()!=null) {
+	            newOfferTemplate.setChannels(postData.getChannels().stream()
+	                    .map(channelCode -> {
+	                        Channel channel = channelService.findByCode(channelCode);
+	                        if (channel == null) {
+	                            throw new EntityDoesNotExistsException(Channel.class, channelCode);
+	                        }
+	                        return channel;
+	                    }).collect(Collectors.toList()));
+            }
+            
+            if(postData.getSellers()!=null) {
+	            newOfferTemplate.setSellers(postData.getSellers().stream()
+	                    .map(sellerCode -> {
+	                        Seller seller = sellerService.findByCode(sellerCode);
+	                        if (seller == null) {
+	                            throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+	                        }
+	                        return seller;
+	                    }).collect(Collectors.toList()));
+            }
+            if(postData.getCustomerCategories()!=null) {
+	            newOfferTemplate.setCustomerCategories(postData.getCustomerCategories().stream()
+	                    .map(customerCategoryCode -> {
+	                        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
+	                        if (customerCategory == null) {
+	                            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategory.getCode());
+	                        }
+	                        return customerCategory;
+	                    }).collect(Collectors.toList()));
+            }
+
             return newOfferTemplate;
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
