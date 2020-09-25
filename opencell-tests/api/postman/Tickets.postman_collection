@@ -7,7 +7,4304 @@
 	"item": [
 		{
 			"name": "#5299 - [WF] Error when running WF job multi times",
-			"item": [],
+			"item": [
+				{
+					"name": "Setup",
+					"item": [
+						{
+							"name": "Settings",
+							"item": [
+								{
+									"name": "Provider/Seller/Account",
+									"item": [
+										{
+											"name": "Update Provider",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"value": "application/json",
+														"key": "Content-Type"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"code\": \"{{provider.code}}\",\n    \"description\": \"{{template.label}}\",\n    \"enterprise\": \"true\",\n    \"rounding\": 6,\n    \"roundingMode\": \"NEAREST\",\n    \"invoiceRounding\": 2,\n    \"invoiceRoundingMode\": \"NEAREST\",\n    \"invoiceConfiguration\": {\n        \"displaySubscriptions\": \"true\",\n        \"displayServices\": \"true\",\n        \"displayOffers\": \"true\",\n        \"displayEdrs\": \"true\",\n        \"displayProvider\": \"true\",\n        \"displayCfAsXML\": \"true\",\n        \"displayPricePlans\": \"true\",\n        \"displayDetail\": \"true\",\n        \"displayChargesPeriods\": \"true\",\n        \"displayFreeTransacInInvoice\": \"true\",\n        \"displayBillingCycle\": \"true\",\n        \"displayOrders\": \"true\"\n    }\n}"
+												},
+												"url": {
+													"raw": "{{opencell.url}}/provider/createOrUpdate",
+													"host": [
+														"{{opencell.url}}"
+													],
+													"path": [
+														"provider",
+														"createOrUpdate"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "CF_PROV_PROJECT_VERSION",
+											"event": [
+												{
+													"script": {
+														"type": "text/javascript",
+														"id": "918f888d-8a81-456e-804f-e232ac4d052e",
+														"exec": [
+															""
+														]
+													},
+													"listen": "prerequest"
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"value": "application/json",
+														"key": "Content-Type"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"code\": \"{{request.label}}_{{$timestamp}}\",\r\n    \"description\": \"{{project.code}} {{project.type}} {{project.version}}\",\r\n    \"fieldType\": \"STRING\",\r\n    \"appliesTo\": \"Provider\",\r\n    \"defaultValue\": \"{{timestamp.iso}}\",\r\n    \"storageType\": \"SINGLE\",\r\n    \"valueRequired\": false,\r\n    \"versionable\": false,\r\n    \"allowEdit\": false,\r\n    \"hideOnNew\": false,\r\n    \"cacheValue\": false,\r\n    \"guiPosition\": \"tab:Project versions:999\"\r\n}\r\n"
+												},
+												"url": {
+													"raw": "{{opencell.url}}/customFieldTemplate/createOrUpdate",
+													"host": [
+														"{{opencell.url}}"
+													],
+													"path": [
+														"customFieldTemplate",
+														"createOrUpdate"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "S|MAIN_SELLER|Opencell",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"value": "application/json",
+														"key": "Content-Type"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n\t\"code\" : \"{{request.label.1}}\",\r\n\t\"description\" : \"{{request.label.2}}\",\r\n    \"currencyCode\": \"EUR\",\r\n    \"countryCode\": \"FR\",\r\n    \"languageCode\": \"ENG\",\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": \"Esc. A\",\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": null\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"billing@opencellsoft.com\",\r\n        \"phone\": \"0123456789\",\r\n        \"mobile\": \"0678912345\",\r\n        \"fax\": null\r\n    }\r\n}"
+												},
+												"url": {
+													"raw": "{{opencell.url}}/seller/createOrUpdate",
+													"host": [
+														"{{opencell.url}}"
+													],
+													"path": [
+														"seller",
+														"createOrUpdate"
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"event": [
+										{
+											"script": {
+												"type": "text/javascript",
+												"id": "29839a5b-7301-4a68-948a-5d68c3738678",
+												"exec": [
+													""
+												]
+											},
+											"listen": "prerequest"
+										},
+										{
+											"script": {
+												"type": "text/javascript",
+												"id": "fe2b5ebc-5d26-4785-bd49-8aa8023df4f9",
+												"exec": [
+													""
+												]
+											},
+											"listen": "test"
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Taxes",
+									"item": [
+										{
+											"name": "Tax rates",
+											"item": [
+												{
+													"name": "tax|code=TAX_20|desc=VAT 20%|percentage=20|accCode=445710000",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"type": "text/javascript",
+																"id": "3758cbe9-e7ef-4870-a2bb-99c971c1097c",
+																"exec": [
+																	""
+																]
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"code\": \"{{code}}\",\n  \"description\": \"{{desc}}\",\n  \"percent\": \"{{percentage}}\",\n  \"accountingCode\": \"{{accCode}}\",\n  \"languageDescriptions\": [\n  {\n    \"languageCode\": \"FRA\",\n    \"description\": \"{{desc}}\"\n  }\n  ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/tax/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"tax",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "tax|code=TAX_10|desc=VAT 10%|percentage=10|accCode=445710000",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"type": "text/javascript",
+																"id": "bc9fa910-bc4a-433a-8806-9121a8b4baae",
+																"exec": [
+																	""
+																]
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"code\": \"{{code}}\",\n  \"description\": \"{{desc}}\",\n  \"percent\": \"{{percentage}}\",\n  \"accountingCode\": \"{{accCode}}\",\n  \"languageDescriptions\": [\n  {\n    \"languageCode\": \"FRA\",\n    \"description\": \"{{desc}}\"\n  }\n  ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/tax/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"tax",
+																"createOrUpdate"
+															]
+														},
+														"description": "Taux à 16% pour la Polynésie Française (taux nominal)"
+													},
+													"response": []
+												},
+												{
+													"name": "tax|code=NO_TAX|desc=No tax|percentage=0|accCode=445710000",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"type": "text/javascript",
+																"id": "8f1164e4-2db8-465a-bb1d-4d1b53930021",
+																"exec": [
+																	""
+																]
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"code\": \"{{code}}\",\n  \"description\": \"{{desc}}\",\n  \"percent\": \"{{percentage}}\",\n  \"accountingCode\": \"{{accCode}}\",\n  \"languageDescriptions\": [\n  {\n    \"languageCode\": \"FRA\",\n    \"description\": \"{{desc}}\"\n  }\n  ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/tax/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"tax",
+																"createOrUpdate"
+															]
+														},
+														"description": "Permettra d'identifier qu'il faut enlever les lignes de taxe (différent d'une ligne avec Taxe à 0)"
+													},
+													"response": []
+												}
+											],
+											"protocolProfileBehavior": {},
+											"_postman_isSubFolder": true
+										},
+										{
+											"name": "Tax categories (account)",
+											"item": [
+												{
+													"name": "taxCat|code=STANDARD|desc=Standard accounts",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"type": "text/javascript",
+																"id": "66bd09f0-a243-44dc-b4e0-6e887d06207d",
+																"exec": [
+																	""
+																]
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"descriptionI18n\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxCategory/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxCategory",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxCat|code=NO_TAX|desc=Exempted accounts",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"type": "text/javascript",
+																"id": "4d562256-956c-4a74-bfb4-9d36fd043fd5",
+																"exec": [
+																	""
+																]
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"descriptionI18n\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxCategory/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxCategory",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												}
+											],
+											"protocolProfileBehavior": {},
+											"_postman_isSubFolder": true
+										},
+										{
+											"name": "Tax classes (charge)",
+											"item": [
+												{
+													"name": "taxClass|code=REGULAR|desc=Regular products",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "4abb0a7f-7a29-46a0-8b86-f43e3eab4e4b",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"descriptionI18n\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxClass/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxClass",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxClass|code=REDUCED|desc=Products with reduced tax",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "46b4bb0d-3c64-4f34-b39e-429d9f558010",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"descriptionI18n\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxClass/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxClass",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxClass|code=NO_TAX|desc=Products with no VAT",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "bb0abb50-2eb9-462c-a1ce-b448aa0455a1",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"descriptionI18n\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxClass/createOrUpdate",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxClass",
+																"createOrUpdate"
+															]
+														}
+													},
+													"response": []
+												}
+											],
+											"protocolProfileBehavior": {},
+											"_postman_isSubFolder": true
+										},
+										{
+											"name": "Tax mapping",
+											"item": [
+												{
+													"name": "taxMapping|priority=100|taxCat=NO_TAX|taxClass=|buyer=|tax=NO_TAX",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "85cb9e98-ba0b-4794-9f29-e393e3647e45",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"accountTaxCategoryCode\": \"{{taxCat}}\",\n    \"chargeTaxClassCode\": \"{{taxClass}}\",\n    \"buyerCountryCode\": \"{{buyer}}\",\n    \"taxCode\": \"{{tax}}\",\n    \"priority\": {{priority}}\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxMapping",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxMapping"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxMapping|priority=20|taxCat=STANDARD|taxClass=NO_TAX|buyer=|tax=NO_TAX",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "cae384e2-2f6b-490e-a9ee-740ca4fa2808",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"accountTaxCategoryCode\": \"{{taxCat}}\",\n    \"chargeTaxClassCode\": \"{{taxClass}}\",\n    \"buyerCountryCode\": \"{{buyer}}\",\n    \"taxCode\": \"{{tax}}\",\n    \"priority\": {{priority}}\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxMapping",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxMapping"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxMapping|priority=1|taxCat=STANDARD|taxClass=REGULAR|buyer=|tax=TAX_20",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "9d7d5bc8-7fb4-4d29-b13b-41b3349f8630",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"accountTaxCategoryCode\": \"{{taxCat}}\",\n    \"chargeTaxClassCode\": \"{{taxClass}}\",\n    \"buyerCountryCode\": \"{{buyer}}\",\n    \"taxCode\": \"{{tax}}\",\n    \"priority\": {{priority}}\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxMapping",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxMapping"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxMapping|priority=2|taxCat=STANDARD|taxClass=REDUCED|buyer=|tax=TAX_10",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "2798b4ef-1279-4f2c-a114-a305f6a7d139",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"accountTaxCategoryCode\": \"{{taxCat}}\",\n    \"chargeTaxClassCode\": \"{{taxClass}}\",\n    \"buyerCountryCode\": \"{{buyer}}\",\n    \"taxCode\": \"{{tax}}\",\n    \"priority\": {{priority}}\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxMapping",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxMapping"
+															]
+														}
+													},
+													"response": []
+												},
+												{
+													"name": "taxMapping|priority=10|taxCat=STANDARD|taxClass=REGULAR|buyer=US|tax=TAX_10",
+													"event": [
+														{
+															"script": {
+																"type": "text/javascript",
+																"id": "8f5ee9f0-d474-4403-93b7-24027433128c",
+																"exec": [
+																	""
+																]
+															},
+															"listen": "prerequest"
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"value": "application/json",
+																"key": "Content-Type"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"accountTaxCategoryCode\": \"{{taxCat}}\",\n    \"chargeTaxClassCode\": \"{{taxClass}}\",\n    \"buyerCountryCode\": \"{{buyer}}\",\n    \"taxCode\": \"{{tax}}\",\n    \"priority\": {{priority}}\n}"
+														},
+														"url": {
+															"raw": "{{opencell.url}}/taxMapping",
+															"host": [
+																"{{opencell.url}}"
+															],
+															"path": [
+																"taxMapping"
+															]
+														}
+													},
+													"response": []
+												}
+											],
+											"protocolProfileBehavior": {},
+											"_postman_isSubFolder": true
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Account",
+									"item": [
+										{
+											"name": "custCat|code=CLIENT|taxCat=STANDARD",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"value": "application/json",
+														"key": "Content-Type"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Client\",\r\n    \"taxCategoryCode\": \"STANDARD\"\r\n}\r\n"
+												},
+												"url": {
+													"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
+													"host": [
+														"{{opencell.url}}"
+													],
+													"path": [
+														"account",
+														"customer",
+														"createOrUpdateCategory"
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Catalog",
+							"item": [
+								{
+									"name": "script|rating.LogWalletOperation|Logs the WalletOperation",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "bfea63e0-ca9e-4218-9f8c-9247dae39f6d",
+												"exec": [
+													"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"value": "application/xml",
+												"type": "text",
+												"name": "Content-Type",
+												"key": "Content-Type"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "<ScriptInstance>\r\n        <code>org.meveo.service.script.{{request.label.1}}</code>\r\n        <description>{{request.label.2}} {{$timestamp}}</description>\r\n        <type>JAVA</type>\r\n        <script><![CDATA[\r\npackage org.meveo.service.script.rating;\r\n\r\nimport org.meveo.service.script.Script;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.util.Map;\r\n\r\nimport org.slf4j.Logger;\r\nimport org.slf4j.LoggerFactory;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.api.dto.billing.WalletOperationDto;\r\nimport org.meveo.model.billing.WalletOperation;\r\nimport org.meveo.model.billing.Tax;\r\n\r\nimport org.meveo.service.catalog.impl.TaxService;\r\nimport org.meveo.service.billing.impl.RatingService;\r\n\r\n/**\r\n * Logs the WalletOperation\r\n * @author schambrin\r\n */\r\npublic class LogWalletOperation extends org.meveo.service.script.Script {\r\n\r\n    private static final Logger log = LoggerFactory.getLogger(LogWalletOperation.class);\r\n\r\n    public void execute(Map<String, Object> context) throws BusinessException {\r\n        context.entrySet().stream().forEach(entry->{ log.info(\"{}={}\",entry.getKey(),entry.getValue()); });\r\n        TaxService taxService = (TaxService)getServiceInterface(\"TaxService\");\r\n        RatingService ratingService = (RatingService)getServiceInterface(\"RatingService\");\r\n        WalletOperation wo = (WalletOperation) context.get(Script.CONTEXT_ENTITY);\r\n\r\n        try {\r\n        \tlog.info(\"wo={}\",new WalletOperationDto(wo));\r\n        \tlog.info(\"wo.tax={}\", wo.getTax());\r\n\r\n        } catch(Exception e) {\r\n            log.error(\"Exception:\", e);\r\n            throw new BusinessException(e.getMessage());\r\n        }\r\n    }\r\n}\r\n]]></script>\r\n</ScriptInstance>"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"scriptInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "counter|code=CN_USG_ACCUM_C|type=USAGE|target=CUST|calendar=MONTHLY|desc=Accumulates quantities on the Customer",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"value": "application/json",
+												"key": "Content-Type"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"disabled\": false,\n    \"calendar\": \"{{calendar}}\",\n    \"type\": \"{{type}}\",\n    \"ceiling\": 0,\n    \"counterLevel\": \"{{target}}\",\n    \"ceilingExpressionEl\": null,\n    \"accumulator\": true\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "counter|CN_USG_COUNTER|Counter",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"code\" : \"{{request.label.1}}\",\r\n  \"description\" : \"{{request.label.2}}\",\r\n  \"calendar\": \"MONTHLY\",\r\n  \"unity\": null,\r\n  \"type\": \"USAGE\",\r\n  \"ceiling\": 100,\r\n  \"disabled\": false,\r\n  \"counterLevel\": \"SI\",\r\n  \"ceilingExpressionEl\": null\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"counterTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "charge|CH_USG_UNIT|Charge unit",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{request.label.2}}\",\n    \"invoiceSubCategory\": \"CMP_DATA\",\n    \"taxClassCode\": \"REDUCED\",\n    \"disabled\": false,\n    \"amountEditable\": true,\n    \"inputUnitDescription\": \"unit\",\n    \"ratingUnitDescription\": \"unit\",\n    \"unitMultiplicator\": 1,\n    \"unitNbDecimal\": 6,\n    \"roundingModeDtoEnum\": \"NEAREST\",\n    \"filterParam1\": \"UNIT\",\n    \"priority\": 10,\n    \"triggerNextCharge\": false\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/usageChargeTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"usageChargeTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "pp|code=PP_USG_UNIT|charge=CH_USG_UNIT",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"eventCode\": \"{{charge}}\",\n    \"amountWithoutTax\": 1,\n    \"amountWithTax\": 1,\n    \"amountWithoutTaxEL\": null,\n    \"woDescriptionEL\": null,\n    \"scriptInstance\": \"org.meveo.service.script.rating.LogWalletOperation\"\n}\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"pricePlan",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "se|code=SE_USG_UNIT|desc=Unit usage service",
+									"event": [
+										{
+											"script": {
+												"id": "69397aa0-c187-4341-b8f1-f51361365425",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											},
+											"listen": "prerequest"
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"value": "application/json",
+												"key": "Content-Type"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"customFields\": {\n        \"customField\": []\n    },\n    \"imageBase64\": null,\n    \"imagePath\": null,\n    \"invoicingCalendar\": null,\n    \"longDescription\": null,\n    \"mandatory\": true,\n    \"serviceChargeTemplateUsages\": {\n        \"serviceChargeTemplateUsage\": [\n            {\n                \"code\": \"CH_USG_UNIT\",\n                \"wallets\": null,\n                \"counterTemplate\": null,\n                \"accumulatorCounterTemplates\": {\n                \t\"counterTemplate\": [\n                \t\t\"CN_USG_ACCUM_C\"\n                \t]\n                }\n            }\n        ]\n    },\n    \"serviceChargeTemplateRecurrings\": null,\n    \"serviceChargeTemplateSubscriptions\": null,\n    \"serviceChargeTemplateTerminations\": null,\n    \"somCode\": null\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"serviceTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "of|code=OF",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"value": "application/json",
+												"key": "Content-Type"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{template.label}} offer {{$timestamp}}\",\n    \"disabled\": false,\n    \"lifeCycleStatus\": \"ACTIVE\",\n    \"bomCode\": null,\n    \"offerTemplateCategoryCode\": null,\n    \"offerServiceTemplate\": [\n        {\n            \"serviceTemplate\": {\n                \"code\": \"SE_USG_UNIT\",\n                \"customFields\": null\n            },\n            \"mandatory\": false,\n            \"incompatibleServiceTemplate\": []\n        }\n    ],\n    \"customFields\": null\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"offerTemplate",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Account",
+					"item": [
+						{
+							"name": "C|Jean|Bonnot",
+							"event": [
+								{
+									"script": {
+										"id": "9dfdaa88-9d85-4aa1-addc-d721a53b178c",
+										"exec": [
+											"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+											"var index = pm.globals.get(\"index\");",
+											"",
+											"if (typeof index === 'undefined') {",
+											"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+											"    pm.globals.set(\"index\", \"00\");",
+											"    index = \"00\";",
+											"}",
+											"",
+											"var prefix = pm.variables.get(\"template.code\") + \"-\";",
+											"var suffix = \" \" + prefix + index;",
+											"",
+											"switch (parts.length) {",
+											"    case 1:",
+											"        pm.globals.set(\"account.code\", prefix + parts[0] + index);",
+											"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+											"        pm.globals.set(\"account.firstname\", \"\");",
+											"        pm.globals.set(\"account.lastname\", \"\");",
+											"        break;",
+											"    case 2:",
+											"        pm.globals.set(\"account.code\", prefix + parts[0] + index);",
+											"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+											"        pm.globals.set(\"account.firstname\", \"\");",
+											"        pm.globals.set(\"account.lastname\", \"\");",
+											"        break;",
+											"    case 3:",
+											"        pm.globals.set(\"account.code\", prefix + parts[0] + index);",
+											"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+											"        pm.globals.set(\"account.firstname\", parts[1]);",
+											"        pm.globals.set(\"account.lastname\", parts[2]);",
+											"        break;",
+											"    case 4:",
+											"        pm.globals.set(\"account.code\", prefix + parts[0] + index);",
+											"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+											"        pm.globals.set(\"account.firstname\", parts[2]);",
+											"        pm.globals.set(\"account.lastname\", parts[3]);",
+											"        break;",
+											"}",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									},
+									"listen": "prerequest"
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"value": "application/json",
+										"key": "Content-Type"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"MR\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2018-01-10\",\r\n  \"jobTitle\": \"Ruler of the known Universe\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"99999\",\r\n    \"city\" : \"METROVILLE\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"stephane.chambrin@opencellsoft.com\",\r\n    \"mobile\" : \"+33123546789\",\r\n    \"phone\":\"+33123546789\"\r\n  },\r\n  \"email\" : \"stephane.chambrin@opencellsoft.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"CYC_INV_MT_1\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"accountHierarchy",
+										"createOrUpdateCRMAccountHierarchy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ActionScriptExample1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3d0aedf6-75cf-49d0-8e86-5964046f75d0",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"com.opencellsoft.script.ActionScriptExample1\",\r\n    \"description\": \"Action Script Example1\",\r\n    \"script\": \"package com.opencellsoft.script;\\r\\n\\r\\nimport java.util.Map;\\r\\nimport org.meveo.service.script.Script;\\r\\nimport org.meveo.admin.exception.BusinessException;\\r\\n\\r\\n\\r\\npublic class ActionScriptExample1 extends Script {\\r\\n\\r\\n\\t@Override\\r\\n\\tpublic void execute(Map<String, Object> methodContext) throws BusinessException {\\r\\n\\t\\tlog.info(\\\" >>> execute ActionScriptExample1 \\\");\\r\\n\\t}\\r\\n}\",\r\n    \"type\": \"JAVA\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"scriptInstance",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "workflow",
+					"item": [
+						{
+							"name": "T1-T3-T8",
+							"item": [
+								{
+									"name": "Create Workflow|WF_T1_T3_T8",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.crm.Customer\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Workflow Job|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e0eeffff-bd62-4946-90c2-3ddde6d9e734",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"active\": \"false\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Customer Workflow Job\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"gwfJob_generic_wf\",\r\n                \"entityReferenceValue\": { \"code\" : \"{{request.label.1}}\", \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\" }\r\n            }\r\n        ]\r\n    },\r\n    \"timerCode\": \"Daily-midnight\",\r\n    \"jobCategory\": \"MISC\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\"\r\n    \r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7e101cea-5b05-4765-a139-f12aab3b0d69",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "d40bef76-e14c-49e1-a3bb-6133cf42092c",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1_T3_T8|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "392f1f95-cd02-42e3-8c8c-fe8d29109b47",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "db8ade57-aafd-49f7-81df-71992674585d",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "46b3aeb9-70fa-42ca-92ee-29a2a1586399",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job - Again|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "8be91c93-b3fc-4485-be3c-26471252df61",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "5469f1cc-9e82-4fd0-8b4e-6cdaef7e2f19",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report  - Again|WF_T1_T3_T8|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7866cd32-ed43-43ad-b290-48cf3fb0b933",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "4878a835-3a01-484f-935c-5ce3b3567776",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow - Again|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "50375d45-06cb-42f4-bd3c-52a44c53ff9b",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update Workflow|WF_T1_T3_T8",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.crm.Customer\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "a816c43c-fb9f-4a8f-96ba-a794e8298330",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "c5a02c8d-96fc-4b92-bedb-aa68df689d99",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1_T3_T8|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "dcd74591-ecf3-4630-9e08-09f2aa5f2e8a",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "755990ca-cd8b-4e01-850b-d9e079c0557c",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1_T3_T8",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7c067de2-74df-45e6-928d-af80ac661b84",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T3\");\r",
+													"    pm.expect(jsonData.workflowHistory[2].transitionName).to.eql(\"T8\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "T1-T3-T4-T6-T9",
+							"item": [
+								{
+									"name": "Create Workflow|WF_T1-T4-T6-T9",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Workflow Job|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "4b6adf59-17c9-403a-9968-5788bb6a2ed2",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"active\": \"false\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Customer Workflow Job\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"gwfJob_generic_wf\",\r\n                \"entityReferenceValue\": { \"code\" : \"{{request.label.1}}\", \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\" }\r\n            }\r\n        ]\r\n    },\r\n    \"timerCode\": \"Daily-midnight\",\r\n    \"jobCategory\": \"MISC\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\"\r\n    \r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "477119b8-7ce5-4bf4-8376-8552b03aba49",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "c0b39d01-deec-4ae0-bcb7-c306fb98b73d",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1-T4-T6-T9|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d2da59e3-7ea0-484b-be74-20362424b10e",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "ab8f959a-ad3b-4e86-bfc6-32950181ebae",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7cb7106d-2317-49c3-a578-205070e20773",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory.length).to.eql(0);\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update Workflow|WF_T1-T4-T6-T9",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "08b30b58-87fa-40a3-bbf4-c8bfab28d1e7",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "b87d6fc1-37e4-470e-a9dc-0ffc406c3b7e",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1-T4-T6-T9|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d5ba8327-1516-4739-926e-33875e2d4bb6",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "fb6aa14c-2ea8-4f69-a494-30d9a652b6ee",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0b41907e-516d-4c57-a128-88043169d579",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update Workflow|WF_T1-T4-T6-T9",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.payments.CustomerAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5da536c0-67ec-4d83-b9e4-f4c579e4d748",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3d56001e-08d8-4b8e-beda-110dc5013193",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1-T4-T6-T9|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "a132fb31-c7ca-4f61-8efb-f6b989b90fa8",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "e50d4966-cb81-4274-8fc2-45abb68d5f48",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1-T4-T6-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f81d5614-5cbf-402f-bddc-1830f4226b83",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T4\");\r",
+													"    pm.expect(jsonData.workflowHistory[2].transitionName).to.eql(\"T6\");\r",
+													"    pm.expect(jsonData.workflowHistory[3].transitionName).to.eql(\"T9\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "T2-T5-T7-T9",
+							"item": [
+								{
+									"name": "Create Workflow|WF_T2-T5-T7-T9",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.billing.BillingAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"F\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"B\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"G\", \"description\": \"T7\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"G\", \"description\": \"T6\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"F\", \"toStatus\": \"H\", \"description\": \"T8\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"G\", \"toStatus\": \"H\", \"description\": \"T9\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Workflow Job|WF_T2-T5-T7-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0a37ee02-4712-4ba6-b28a-d3799006148e",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"active\": \"false\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Customer Workflow Job\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"gwfJob_generic_wf\",\r\n                \"entityReferenceValue\": { \"code\" : \"{{request.label.1}}\", \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\" }\r\n            }\r\n        ]\r\n    },\r\n    \"timerCode\": \"Daily-midnight\",\r\n    \"jobCategory\": \"MISC\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\"\r\n    \r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job|WF_T2-T5-T7-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "3c02b602-e8ae-4278-9721-7792a928e695",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "06f75e0f-a7c5-417a-aa0b-01372ef7a52b",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T2-T5-T7-T9|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f5856f16-3566-4630-adcf-e3b8359bc48f",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "832789ed-237e-469d-8a1b-93345dceb7aa",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T2-T5-T7-T9",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d273a935-fda9-41b7-b513-1cb4ec91af77",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T2\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T5\");\r",
+													"    pm.expect(jsonData.workflowHistory[2].transitionName).to.eql(\"T7\");\r",
+													"    pm.expect(jsonData.workflowHistory[3].transitionName).to.eql(\"T9\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d23af061-6576-4ea4-8322-dbcc5089b6c7",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "ae5c7ed7-e24c-49df-811d-328129a39fbd",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "T1-T2-T3-T4-T5",
+							"item": [
+								{
+									"name": "Create Workflow|WF_T1-T2-T3-T4-T5",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.billing.UserAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"B\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T3\", \"conditionEl\": \"#{false}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"F\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Workflow Job|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "cae9345b-9dd6-43c5-9fa2-419a4ac4eb33",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"active\": \"false\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"Customer Workflow Job\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"gwfJob_generic_wf\",\r\n                \"entityReferenceValue\": { \"code\" : \"{{request.label.1}}\", \"classname\": \"org.meveo.model.generic.wf.GenericWorkflow\" }\r\n            }\r\n        ]\r\n    },\r\n    \"timerCode\": \"Daily-midnight\",\r\n    \"jobCategory\": \"MISC\",\r\n    \"jobTemplate\": \"GenericWorkflowJob\"\r\n    \r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6f0a9274-33bd-4d3a-a1f3-3e8c5d45edff",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "d57d8f39-99e5-4605-973e-eb32bd4c6850",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1-T2-T3-T4-T5|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "eb74a88b-5358-45e1-b693-09e0f47f95d8",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "91a6b0d8-63d4-4f95-bf5e-de4134b4f41d",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b696ae5a-fd68-48e7-879a-52f54d0317b5",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T2\");\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run Job  - again|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "748734b2-e30d-415e-8e59-1d2f880355b0",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "ad12917f-e2d8-4c77-a5ed-096496dcaf70",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report  - again|WF_T1-T2-T3-T4-T5|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "06912bda-6348-46c7-abf3-b0e691947bee",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "d647541f-55d8-491a-a1ae-ebeddff4987e",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow - Again|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "a0872e96-991b-45ec-9bca-f03e7213da8e",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T2\");\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update Workflow|WF_T1-T2-T3-T4-T5",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"targetEntityClass\": \"org.meveo.model.billing.UserAccount\",\r\n    \"code\": \"{{request.label.1}}\",\r\n    \"description\": \"workflow Customer\",\r\n    \"status\": [ \r\n    \t{ \"code\": \"A\", \"description\": \"A\" },\r\n    \t{ \"code\": \"B\", \"description\": \"B\" },\r\n    \t{ \"code\": \"C\", \"description\": \"C\" },\r\n    \t{ \"code\": \"D\", \"description\": \"D\" },\r\n    \t{ \"code\": \"E\", \"description\": \"E\" },\r\n    \t{ \"code\": \"F\", \"description\": \"F\" },\r\n    \t{ \"code\": \"G\", \"description\": \"G\" },\r\n    \t{ \"code\": \"H\", \"description\": \"H\" }\r\n    ],\r\n    \"initStatus\": \"A\",\r\n    \"transition\": [\r\n    \t\t{ \"fromStatus\": \"A\", \"toStatus\": \"B\", \"description\": \"T1\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\"},\r\n    \t\t{ \"fromStatus\": \"B\", \"toStatus\": \"C\", \"description\": \"T2\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"com.opencellsoft.script.ActionScriptExample1\" },\r\n    \t{ \"fromStatus\": \"C\", \"toStatus\": \"D\", \"description\": \"T3\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"D\", \"toStatus\": \"E\", \"description\": \"T4\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" },\r\n    \t{ \"fromStatus\": \"E\", \"toStatus\": \"F\", \"description\": \"T5\", \"conditionEl\": \"#{true}\", \"actionScriptCode\": \"\" }\r\n    \t\r\n    \t\t\r\n    \r\n    \r\n    \r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "63b0f9d7-ff3a-4f6c-901b-9abb753138c9",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"",
+													"postman.setGlobalVariable(\"jobRun.id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "47e2691e-a103-4631-84ea-9fbe7a86a9fb",
+												"exec": [
+													"pm.globals.set(\"task.code\", pm.variables.get(\"request.label.1\"));"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"type": "any"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\":\"{{request.label.1}}\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Job Report|WF_T1-T2-T3-T4-T5|wait=5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "ff23c63f-6640-4593-b461-c26b3da008ea",
+												"exec": [
+													"var jsonData = JSON.parse(responseBody);",
+													"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+													"var task=pm.variables.get(\"task.code\");",
+													"",
+													"if( typeof jsonData.jobExecutionResultDto.endDate !== \"undefined\" && jsonData.jobExecutionResultDto.done === true ){",
+													"    tests[\"is.done.\"+task] = true;",
+													"    tests[\"is.jobNoWarning\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithWarning === 0;",
+													"    tests[\"is.jobNoError\"] = jsonData.jobExecutionResultDto.nbItemsProcessedWithError === 0;",
+													"    if( ! (tests[\"is.jobNoWarning\"] && tests[\"is.jobNoError\"]) ){",
+													"        console.log(\"Errors have occured, check job \"+task+\" report.\");",
+													"    }",
+													"} else {",
+													"    postman.setNextRequest(pm.variables.get(\"task.wait\"));",
+													"    tests[\"is.not.done.yet.\"+task] = true;",
+													"    console.log(\"Not done yet (\"+task+\").\");",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "bdb0e7fe-33d7-4735-a24b-6fb78ab55e72",
+												"exec": [
+													"pm.globals.set(\"task.wait\", pm.variables.get(\"request.label\"));",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "saveHelperData",
+													"value": true,
+													"type": "boolean"
+												},
+												{
+													"key": "showPassword",
+													"value": false,
+													"type": "boolean"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{jobRun.id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{jobRun.id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find History Workflow|WF_T1-T2-T3-T4-T5",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6cbce9b1-a4cf-4863-bf4a-c981006c7e9a",
+												"exec": [
+													"\r",
+													"pm.test(\"check workflow\", function () {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    pm.expect(jsonData.workflowHistory[0].transitionName).to.eql(\"T1\");\r",
+													"    pm.expect(jsonData.workflowHistory[1].transitionName).to.eql(\"T2\");\r",
+													"    pm.expect(jsonData.workflowHistory[2].transitionName).to.eql(\"T3\");\r",
+													"    pm.expect(jsonData.workflowHistory[3].transitionName).to.eql(\"T4\");\r",
+													"    pm.expect(jsonData.workflowHistory[4].transitionName).to.eql(\"T5\");\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{opencell.url}}/admin/genericWorkflow/history?entityInstanceCode={{account.code}}&workflowCode={{request.label.1}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"admin",
+												"genericWorkflow",
+												"history"
+											],
+											"query": [
+												{
+													"key": "entityInstanceCode",
+													"value": "{{account.code}}"
+												},
+												{
+													"key": "workflowCode",
+													"value": "{{request.label.1}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "be95856b-2aec-4673-88a7-8e0a7d48eade",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "493833ba-0d50-46db-9436-604fbd93e4c9",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
 			"auth": {
 				"type": "oauth2",
 				"oauth2": [
@@ -27649,147 +31946,147 @@
 	],
 	"variable": [
 		{
-			"id": "b7e3f4c5-58bb-4f06-8cc6-bdcc3edbe45a",
+			"id": "b28a394d-d83c-4dc1-b953-1a40cdaf3e91",
 			"key": "opencell.base",
 			"value": "http://localhost:8080/opencell"
 		},
 		{
-			"id": "3c44530a-7469-4763-8c7e-8e47f5f03838",
+			"id": "d3391393-cd7a-4c3c-a6be-559ebb3ec540",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "fe5c1c98-bbad-4c6d-a21d-b77345e37211",
+			"id": "7630fa3c-84f8-4e0a-9fd7-6e1ffff273f8",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c1fde69d-6a63-4a5f-8054-ea22b38583fe",
+			"id": "7e1307aa-8cd6-47c6-8514-1df9f9fa27fd",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "6706bf47-837b-4c6a-99e6-e9e744994b4b",
+			"id": "ed98d60d-fa3a-46c4-966d-a314975a1dd4",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "84ce8101-23a6-4d56-a128-50b5074168cf",
+			"id": "1eb84325-edbe-47b4-8505-45426b47a16b",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "76d63f24-9a3b-48c4-babe-49e4920fbb9b",
+			"id": "bcaa26d7-35d4-4817-ae12-b625d5f1c148",
 			"key": "testCode",
 			"value": "TST_CODE"
 		},
 		{
-			"id": "41be78a9-4173-4fb8-9e90-b34444042d10",
+			"id": "3e19592f-9728-4c31-ab38-5f5c11824a88",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "ab6ec571-b25b-4e4a-b7d6-8213f8bf10c4",
+			"id": "3c8466de-4897-40f5-bcac-e5c46e57a3b5",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "d29e1a82-3e55-41a8-aded-0c697472ad70",
+			"id": "9a9aecc4-34df-4397-81f1-0ae013eeacb9",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "0423d80d-167f-4212-a038-ea92f726bc63",
+			"id": "93f0f685-a495-4b7a-b613-c32b4cd49b0e",
 			"key": "test_email",
 			"value": "test@test.com"
 		},
 		{
-			"id": "2819d366-9887-4c66-b52f-7cc9b20b0204",
+			"id": "1f3c463e-afd8-412b-ba88-d766eca6a6b7",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "1508c82f-f530-4176-b97d-2c58776ea107",
+			"id": "3244ccdd-1cae-4d89-ad0b-d925be472100",
 			"key": "first_name",
 			"value": "FNAME"
 		},
 		{
-			"id": "dd176e1f-ae8d-49d0-b247-62e075320e49",
+			"id": "6d1e5dee-c06e-4fac-9ae6-3c1d2dc80f4c",
 			"key": "last_name",
 			"value": "LNAME"
 		},
 		{
-			"id": "1b2947c9-2af0-4549-a705-060aa260ef69",
+			"id": "aa81afa8-53b1-475d-a2f9-6996914fad74",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "86796c94-87b7-44f5-8fbe-2f578fdd5842",
+			"id": "11b2c2a6-ec64-443f-bd68-d05e5cf283bc",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "3a5e20ee-4c7c-494f-8080-fc1e0512d5ee",
+			"id": "ef1e8da2-ce73-4b5e-91de-b0db1cbbd929",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "543bfa1f-b515-425f-bd1f-950a7ed564e2",
+			"id": "278dde6c-5115-4cad-865c-0e6982113694",
 			"key": "phone",
 			"value": "+212587654321"
 		},
 		{
-			"id": "b487a723-965d-4c7f-ac40-287a004c5ce8",
+			"id": "fd327a40-4022-49cf-97ff-cf57d81fc3de",
 			"key": "storage",
 			"value": "List of values"
 		},
 		{
-			"id": "68e6c29b-d07d-4f37-bfa6-11ba10d77ba6",
+			"id": "81a0a873-caeb-4b01-a3fb-4c3a7dad3c6d",
 			"key": "type",
 			"value": "String"
 		},
 		{
-			"id": "4a4e631f-343b-4179-83ee-a24875a898cb",
+			"id": "73557e26-24e6-4f56-a265-a1b0507203ab",
 			"key": "provider.code",
 			"value": "DEMO"
 		},
 		{
-			"id": "66fe70bc-6e68-48cb-b107-b09a55acbde8",
+			"id": "20b99974-75f6-4115-a413-3b8aa7644228",
 			"key": "template.code",
 			"value": "BASIC"
 		},
 		{
-			"id": "bd55551e-b34a-4cf9-bfab-6a2b165c1c46",
+			"id": "46571e2b-49d1-477b-9bc6-8b34b3f0c92a",
 			"key": "template.label",
 			"value": "Basic"
 		},
 		{
-			"id": "2fee9aba-7099-4e75-b5bd-2ccea9551f26",
+			"id": "d10a1139-36b8-42dc-869a-722f15b2bc26",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "396d8d7e-25af-4489-8227-57f68f3ab905",
+			"id": "d9e4850d-6524-49f4-9b85-37010d2d0c55",
 			"key": "offer.code",
 			"value": "OF"
 		},
 		{
-			"id": "1da235ae-ce93-4f36-a707-148dba39f0b6",
+			"id": "1394302e-bc12-463c-853d-d312d30e7836",
 			"key": "project.code",
 			"value": "Basic-001"
 		},
 		{
-			"id": "b75e21de-3a67-4f09-9fd2-1f7974a8378a",
+			"id": "4914326b-1d36-4640-bd4a-b4213b386e31",
 			"key": "project.description",
 			"value": "Basic offer project for tests"
 		},
 		{
-			"id": "e31cc5a3-8187-4403-b25f-7a4c6bf0313d",
+			"id": "bf79831f-7ec7-430a-83c0-c4085d1f2a0f",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "d7d8d926-ff11-4b04-9252-e473a097f763",
+			"id": "411c7f51-7ab5-4ea9-8f36-61f022fdaa76",
 			"key": "project.version",
 			"value": "9.4+"
 		}
