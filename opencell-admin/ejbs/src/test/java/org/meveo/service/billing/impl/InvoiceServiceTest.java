@@ -4,15 +4,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.*;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -45,6 +43,7 @@ import org.mockito.stubbing.Answer;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +58,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceServiceTest {
 
-    @Spy
     @InjectMocks
     private InvoiceService invoiceService;
 
@@ -69,12 +67,15 @@ public class InvoiceServiceTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private EntityManagerWrapper emWrapper;
+
     @Before
     public void setUp() {
         when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
             public List<RatedTransaction> answer(InvocationOnMock invocation) throws Throwable {
                 List<RatedTransaction> ratedTransactions = new ArrayList<>();
-                IBillableEntity entity = (IBillableEntity) invocation.getArguments()[1];
+                IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
                 RatedTransaction rt1 = getRatedTransaction(entity, 1l);
                 RatedTransaction rt2 = getRatedTransaction(entity, 2l);
                 RatedTransaction rt3 = getRatedTransaction(entity, 3l);
@@ -84,19 +85,9 @@ public class InvoiceServiceTest {
                 return ratedTransactions;
             }
         });
-        doReturn(entityManager).when(invoiceService).getEntityManager();
 
-        doAnswer(new Answer<InvoiceService.RatedTransactionsToInvoice>() {
-            @Override
-            public InvoiceService.RatedTransactionsToInvoice answer(InvocationOnMock invocation) throws Throwable {
-                RatedTransactionGroup rtg = new RatedTransactionGroup();
-                rtg.setBillingAccount((BillingAccount) invocation.getArguments()[2]);
-                rtg.setSeller(mock(Seller.class));
-                rtg.setBillingCycle((BillingCycle) invocation.getArguments()[4]);
-                rtg.setPaymentMethod((PaymentMethod) invocation.getArguments()[9]);
-                return null;
-            }
-        }).when(invoiceService).getRatedTransactionGroups(any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any());
+        when(emWrapper.getEntityManager()).thenReturn(entityManager);
+
     }
 
     private RatedTransaction getRatedTransaction(IBillableEntity entity, long sellerId) {
@@ -149,17 +140,18 @@ public class InvoiceServiceTest {
 
     @Test
     public void test_getRatedTransactionGroups_EntityToInvoice_Order() {
-        Order order = mock(Order.class);
-        BillingAccount ba = mock(BillingAccount.class);
-        BillingCycle bc = mock(BillingCycle.class);
-        InvoiceType invoiceType = mock(InvoiceType.class);
-        PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService
-                .getRatedTransactionGroups(order, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
+        Order order = new Order();
+        BillingAccount ba = new BillingAccount();
+        ba.setId(1L);
+        BillingCycle bc = new BillingCycle();
+        InvoiceType invoiceType = new InvoiceType();
+        PaymentMethod paymentMethod = new CardPaymentMethod();
+
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class), mock(Date.class), mock(Date.class), false, paymentMethod);
+
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
         RatedTransactionGroup ratedTransactionGroup = ratedTransactionsToInvoice.ratedTransactionGroups.get(0);
-        Assert.assertEquals(ratedTransactionGroup.getBillingAccount(), ba);
         Assert.assertEquals(ratedTransactionGroup.getInvoiceKey().split("_").length, 5);
     }
 }

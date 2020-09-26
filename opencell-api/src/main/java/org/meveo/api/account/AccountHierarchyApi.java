@@ -295,7 +295,6 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         // CustomerBrand customerBrand = null;
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -580,7 +579,9 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCustomerCheckThreshold() != null) {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-        customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        if(postData.isCustomerThresholdPerEntity()!=null) {
+        	customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        }
         
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {

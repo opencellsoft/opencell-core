@@ -172,7 +172,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public AddressBook getAddressbook() {
         return addressbook;
     }
-
+	
     public void setAddressbook(AddressBook addressbook) {
         this.addressbook = addressbook;
     }
@@ -190,13 +190,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     }
 
     public boolean isThresholdPerEntity() {
-		return thresholdPerEntity;
+    	return thresholdPerEntity;
 	}
 
 	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-
+	
     public Seller getSeller() {
         return seller;
     }

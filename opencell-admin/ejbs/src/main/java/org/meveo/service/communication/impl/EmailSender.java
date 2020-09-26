@@ -20,7 +20,6 @@ package org.meveo.service.communication.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,15 +39,15 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.admin.exception.UnrolledbackBusinessExceptionWoutStackTrace;
 import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
 public class EmailSender {
-	
-	private Logger log = LoggerFactory.getLogger(EmailSender.class);
+
+    private Logger log = LoggerFactory.getLogger(EmailSender.class);
 
     @Resource(lookup = "java:/MeveoMail")
     private Session mailSession;
@@ -59,7 +58,7 @@ public class EmailSender {
      * @param from email address from which the email is sent
      * @param replyTo email address in wich the reply should be sent.
      * @param to email address in which email is sent to
-     * @param cc email address 'cc 
+     * @param cc email address 'cc
      * @param bcc email address's bcc
      * @param subject email subject
      * @param textContent text content
@@ -67,8 +66,7 @@ public class EmailSender {
      * @throws BusinessException business exception.
      */
     @Deprecated
-    public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent)
-            throws BusinessException {
+    public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent) throws BusinessException {
         sent(from, replyTo, to, cc, bcc, subject, textContent, htmlContent, null, null);
     }
 
@@ -94,7 +92,7 @@ public class EmailSender {
      * @param from email address from which the email is sent
      * @param replyTo email address in wich the reply should be sent.
      * @param to email address in which email is sent to
-     * @param cc email address 'cc 
+     * @param cc email address 'cc
      * @param bcc email address's bcc
      * @param subject email subject
      * @param textContent text content
@@ -104,8 +102,8 @@ public class EmailSender {
      * @throws BusinessException business exception.
      */
     @Deprecated
-    public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent,
-            List<File> attachments, Date sendDate) throws BusinessException {
+    public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent, List<File> attachments, Date sendDate)
+            throws BusinessException {
 
     }
 
@@ -122,9 +120,8 @@ public class EmailSender {
      * @param htmlContent HTML type contents
      * @throws BusinessException business exception.
      */
-    public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent)
-            throws BusinessException {
-        send(from, replyTo, to, cc, bcc, subject, textContent, htmlContent, null, null);
+    public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent) throws BusinessException {
+        send(from, replyTo, to, cc, bcc, subject, textContent, htmlContent, null, null, false);
     }
 
     /**
@@ -139,7 +136,7 @@ public class EmailSender {
      * @throws BusinessException business exception.
      */
     public void send(String from, List<String> replyTo, List<String> to, String subject, String textContent, String htmlContent) throws BusinessException {
-        send(from, replyTo, to, null, null, subject, textContent, htmlContent, null, null);
+        send(from, replyTo, to, null, null, subject, textContent, htmlContent, null, null, false);
     }
 
     /**
@@ -155,41 +152,42 @@ public class EmailSender {
      * @param htmlContent HTML type contents
      * @param attachments Email attachments
      * @param sendDate Sending date
+     * @param failSilently If true an exception will be thrown without rolling back the transaction
      * @throws BusinessException business exception.
      */
-    public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent,
-            List<File> attachments, Date sendDate) throws BusinessException {
+    public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent, List<File> attachments, Date sendDate,
+            boolean failSilently) throws BusinessException {
 
         try {
             if (to == null || to.isEmpty()) {
-                //throw new MissingParameterException(Arrays.asList("addressTo"));
-            	log.warn("addressTo is null. Email will not be sent");
-            	return;
+                // throw new MissingParameterException(Arrays.asList("addressTo"));
+                log.warn("addressTo is null. Email will not be sent");
+                return;
             }
             MimeMessage msg = new MimeMessage(mailSession);
             if (!StringUtils.isBlank(from)) {
                 msg.setFrom(new InternetAddress(from));
             }
-            List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
+            List<InternetAddress> addressTo = new ArrayList<>();
             for (String address : to) {
                 addressTo.add(new InternetAddress(address));
             }
             msg.setRecipients(RecipientType.TO, addressTo.toArray(new InternetAddress[addressTo.size()]));
-            List<InternetAddress> replytoAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> replytoAddress = new ArrayList<>();
             if (replyTo != null && !replyTo.isEmpty()) {
                 for (String address : replyTo) {
                     replytoAddress.add(new InternetAddress(address));
                 }
                 msg.setReplyTo(replytoAddress.toArray(new InternetAddress[replytoAddress.size()]));
             }
-            List<InternetAddress> ccAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> ccAddress = new ArrayList<>();
             if (cc != null && !cc.isEmpty()) {
                 for (String address : cc) {
                     ccAddress.add(new InternetAddress(address));
                 }
                 msg.setRecipients(RecipientType.CC, ccAddress.toArray(new InternetAddress[ccAddress.size()]));
             }
-            List<InternetAddress> bccAddress = new ArrayList<InternetAddress>();
+            List<InternetAddress> bccAddress = new ArrayList<>();
             if (bcc != null && !bcc.isEmpty()) {
                 for (String address : bcc) {
                     bccAddress.add(new InternetAddress(address));
@@ -224,7 +222,11 @@ public class EmailSender {
             msg.setContent(multipart);
             Transport.send(msg);
         } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
+            if (failSilently) {
+                throw new UnrolledbackBusinessExceptionWoutStackTrace(e.getMessage());
+            } else {
+                throw new BusinessException(e.getMessage());
+            }
         }
     }
 }

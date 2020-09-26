@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NativePersistenceServiceTest {
 
-    private NativePersistenceService sut = new NativePersistenceService();
+    private NativePersistenceService sut = new NativePersistenceServiceMock();
 
     @Test
     public void should_request_only_select_id_and_order_by_id_when_there_is_no_field_present() {

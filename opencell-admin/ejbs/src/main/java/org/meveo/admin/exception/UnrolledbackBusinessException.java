@@ -19,24 +19,48 @@ package org.meveo.admin.exception;
 
 import javax.ejb.ApplicationException;
 
+/**
+ * A business exception that will not rollback the DB transaction
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @ApplicationException(rollback = false)
-public class UnrolledbackBusinessException extends Exception {
-	private static final long serialVersionUID = 1L;
+public class UnrolledbackBusinessException extends BusinessException {
+    private static final long serialVersionUID = 1L;
 
-	public UnrolledbackBusinessException() {
-		super();
-	}
+    /**
+     * Constructs a new exception
+     */
+    public UnrolledbackBusinessException() {
+        super();
+    }
 
-	public UnrolledbackBusinessException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * Constructs a new runtime exception with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause the cause
+     */
+    public UnrolledbackBusinessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public UnrolledbackBusinessException(String message) {
-		super(message);
-	}
+    /**
+     * Constructs a new exception with the specified detail message
+     * 
+     * @param message The detail message
+     */
+    public UnrolledbackBusinessException(String message) {
+        super(message);
+    }
 
-	public UnrolledbackBusinessException(Throwable cause) {
-		super(cause);
-	}
-
+    /**
+     * Constructs a new exception with the specified cause
+     * 
+     * @param cause the cause
+     */
+    public UnrolledbackBusinessException(Throwable cause) {
+        super(cause);
+    }
 }

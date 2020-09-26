@@ -71,6 +71,7 @@ public class CustomFieldTemplateServiceTest {
 	public void should_drop_old_and_create_new_if_constraint_changed() {
 		String oldConstraintColumns = COLUMN_NAME_1;
 		String newConstraintColumns = COLUMN_NAME_2;
+		when(cet.getUniqueContraintName()).thenReturn(oldConstraintColumns);
 		// Given
 		// When
 		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
@@ -83,6 +84,7 @@ public class CustomFieldTemplateServiceTest {
 	public void should_only_drop_constraint_if_cancelled() {
 		String oldConstraintColumns = COLUMN_NAME_1;
 		String newConstraintColumns = NO_CONSTRAINT;
+		when(cet.getUniqueContraintName()).thenReturn(oldConstraintColumns);
 		// Given
 		// When
 		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);

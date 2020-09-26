@@ -190,13 +190,13 @@ public class BillingCycle extends BusinessCFEntity {
     private boolean thresholdPerEntity;
 
     public boolean isThresholdPerEntity() {
-		return thresholdPerEntity;
+    	return thresholdPerEntity;
 	}
 
 	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-
+	
     /**
      * if true then subscriptions are grouped by paymentMethod and billed separately.
      */
