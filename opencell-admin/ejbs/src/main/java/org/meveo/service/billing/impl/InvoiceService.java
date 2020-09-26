@@ -3412,7 +3412,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return new Object[] { recalculatedTax, !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
-
+    
     /**
      * Create an invoice from an InvoiceDto
      *
@@ -3428,6 +3428,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public Invoice createInvoice(InvoiceDto invoiceDTO, Seller seller, BillingAccount billingAccount, InvoiceType invoiceType)
             throws EntityDoesNotExistsException, BusinessApiException, BusinessException, InvalidParameterException {
+    	return createInvoice(invoiceDTO, seller, billingAccount, invoiceType, null);
+    }
+
+    /**
+     * Create an invoice from an InvoiceDto
+     *
+     * @param invoiceDTO
+     * @param seller
+     * @param billingAccount
+     * @param invoiceType
+     * @param subscription 
+     * @return invoice
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessApiException
+     * @throws BusinessException
+     * @throws InvalidParameterException
+     */
+    public Invoice createInvoice(InvoiceDto invoiceDTO, Seller seller, BillingAccount billingAccount, InvoiceType invoiceType,Subscription subscription)
+            throws EntityDoesNotExistsException, BusinessApiException, BusinessException, InvalidParameterException {
 
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
         boolean isEnterprise = appProvider.isEntreprise();
@@ -3439,7 +3458,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap = extractMappedRatedTransactionsTolink(invoiceDTO, billingAccount);
         Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap = existingRtsTolinkMap.isEmpty() ? new HashMap<InvoiceCategory, List<InvoiceSubCategory>>()
                 : existingRtsTolinkMap.keySet().stream().collect(Collectors.groupingBy(InvoiceSubCategory::getInvoiceCategory));
-        Invoice invoice = this.initInvoice(invoiceDTO, billingAccount, invoiceType, seller);
+        Invoice invoice = this.initInvoice(invoiceDTO, billingAccount, invoiceType, seller,subscription);
 
         for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
             UserAccount userAccount = extractUserAccount(billingAccount, catInvAgrDto);
@@ -3794,8 +3813,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return new HashMap<InvoiceSubCategory, List<RatedTransaction>>();
     }
 
-    private Invoice initInvoice(InvoiceDto invoiceDTO, BillingAccount billingAccount, InvoiceType invoiceType, Seller seller) throws BusinessException, EntityDoesNotExistsException, BusinessApiException {
+    private Invoice initInvoice(InvoiceDto invoiceDTO, BillingAccount billingAccount, InvoiceType invoiceType, Seller seller,Subscription subscription) throws BusinessException, EntityDoesNotExistsException, BusinessApiException {
         Invoice invoice = new Invoice();
+        invoice.setSubscription(subscription);
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());

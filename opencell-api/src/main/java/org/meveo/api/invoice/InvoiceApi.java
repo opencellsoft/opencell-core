@@ -73,6 +73,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
@@ -172,9 +173,17 @@ public class InvoiceApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
         }
         
+        Subscription subscription = null;
+        if(!StringUtils.isBlank(invoiceDTO.getSubscriptionCode())) {
+        	subscription = subscriptionService.findByCode(invoiceDTO.getSubscriptionCode());
+        	if(subscription == null) {
+        		throw new EntityDoesNotExistsException(Subscription.class, invoiceDTO.getSubscriptionCode());
+        	}
+        }
+        
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
-        Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
+        Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType,subscription);
 
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());

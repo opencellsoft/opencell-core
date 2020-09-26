@@ -162,7 +162,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
 
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
       	InvoiceDto invoiceDTO = new InvoiceDto();
-        	
+      	    invoiceDTO.setSubscriptionCode(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getCode());
         	invoiceDTO.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
         	invoiceDTO.setInvoiceType(invoiceType.getCode());
         	invoiceDTO.setBillingAccountCode(billingAccount.getCode());
@@ -188,11 +188,14 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         	categoryInvoiceAgregateDto.setListSubCategoryInvoiceAgregateDto(listSubCategoryInvoiceAgregateDto);        	
         	categoryInvoiceAgregates.add(categoryInvoiceAgregateDto);        	
         	invoiceDTO.setCategoryInvoiceAgregates(categoryInvoiceAgregates);
-        	invoice = invoiceService.createInvoice(invoiceDTO, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), billingAccount, invoiceType);        	        	
+        	invoice = invoiceService.createInvoice(invoiceDTO, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), billingAccount, invoiceType, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription());        	        	
         }
 
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
         aoIdsToPay.add(recordedInvoicePS.getId());
+        if(invoice != null) {
+        	invoice.setRecordedInvoice(recordedInvoicePS);
+        }
 
         paymentScheduleInstanceItem.setRecordedInvoice(recordedInvoicePS);
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isDoPayment()) {
