@@ -124,13 +124,15 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
     public CountryDto(TradingCountry tradingCountry, Country country) {
         countryCode = tradingCountry.getCountryCode();
         name = tradingCountry.getDescription();
-
-        if(country.getCurrency() != null) {
-            currencyCode = country.getCurrency().getCurrencyCode();
-        }
         
-        if (country.getLanguage() != null) {
-            languageCode = country.getLanguage().getLanguageCode();
+        if(country != null) {
+            if(country.getCurrency() != null) {
+                currencyCode = country.getCurrency().getCurrencyCode();
+            }
+            
+            if (country.getLanguage() != null) {
+                languageCode = country.getLanguage().getLanguageCode();
+            }
         }
         disabled = tradingCountry.isDisabled();
     }
