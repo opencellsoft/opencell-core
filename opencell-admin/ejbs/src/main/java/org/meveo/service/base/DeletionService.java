@@ -23,12 +23,16 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.job.Job;
 import org.meveo.util.EntityCustomizationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeletionService {
     private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: reference to the entity exists";
     private static final String CUSTOM_ENTITY_PREFIX = "CE_";
     private static final String CUSTOM_ENTITY_CLASS_PREFIX = "org.meveo.model.customEntities.CustomEntityTemplate - %s";
     private static Map<String, Class> entitiesByName;
+    
+    static protected Logger log = LoggerFactory.getLogger(DeletionService.class);
     
     static {
         entitiesByName = ReflectionUtils.getClassesAnnotatedWith(Entity.class).stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), clazz -> clazz));
@@ -82,8 +86,11 @@ public class DeletionService {
             		} else {
             			entityClass = entitiesByName.get(customEntityTemplateService.findByCode(EntityCustomizationUtils.getEntityCode(appliesTo)));
             		}
-            		
                 }
+            	if(entityClass==null) {
+            		log.warn("entity class not found for : "+appliesTo);
+            		return false;
+            	}
             	return tryWithBusinessEntity(customField, dependency, entityClass);
             } else if(customEntityTemplate.isStoreAsTable()){
                 return existsAsRecordInCustomTable(customField, dependency);
