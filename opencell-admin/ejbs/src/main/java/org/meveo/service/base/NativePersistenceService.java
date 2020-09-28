@@ -46,7 +46,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.expressions.ExpressionFactory;
+import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
@@ -740,10 +740,10 @@ public class NativePersistenceService extends BaseService {
         Map<String, Object> filters = config.getFilters();
 
         if (filters != null && !filters.isEmpty()) {
-            ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
-            filters.keySet()
-                    .stream()
-                    .forEach(key -> expressionFactory.addFilters(filters, key));
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
         }
 

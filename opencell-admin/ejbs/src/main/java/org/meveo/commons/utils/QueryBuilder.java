@@ -72,6 +72,10 @@ public class QueryBuilder {
     
     static final String FROM = "from ";
 
+    public Class<?> getEntityClass() {
+        return clazz;
+    }
+
     public enum QueryLikeStyleEnum {
         /**
          * Field match value as provided (value already contains wildcard characters

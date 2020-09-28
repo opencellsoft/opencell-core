@@ -17,65 +17,16 @@
  */
 package org.meveo.service.base;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.InstantiateWF;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Updated;
+import org.meveo.commons.utils.*;
+import org.meveo.event.qualifier.*;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.IAuditable;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEnable;
-import org.meveo.model.IEntity;
-import org.meveo.model.ISearchable;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.UniqueEntity;
-import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -84,11 +35,27 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.*;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -894,202 +861,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
                 filters.putAll(cfFilters);
 
-                for (String key : filters.keySet()) {
-
-                    Object filterValue = filters.get(key);
-                    if (filterValue == null) {
-                        continue;
-                    }
-
-                    // Key format is: condition field1 field2 or condition-field1-field2-fieldN
-                    // example: "ne code", condition=ne, fieldName=code, fieldName2=null
-                    String[] fieldInfo = key.split(" ");
-                    String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-                    String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
-                    String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
-                    String[] fields = null;
-                    if (condition != null) {
-                        fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
-                    } else {
-                        condition = "eq";
-                    }
-                    String fieldWAlias = extractFieldWithAlias(fieldName);
-                    String fieldWAlias2 = extractFieldWithAlias(fieldName2);
-
-                    // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=fieldValue
-                    if ("fromRange".equals(condition) || "fromOptionalRange".equals(condition)) {
-                        queryBuilder.addValueIsGreaterThanField(fieldWAlias, filterValue, "fromOptionalRange".equals(condition));
-
-                        // if ranged search - field value in between from - to values. Specifies "to" value: e.g fieldValue<value or fieldValue<=value
-                    } else if ("toRange".equals(condition) || "toRangeInclusive".equals(condition) || "toOptionalRange".equals(condition) || "toOptionalRangeInclusive".equals(condition)) {
-                        queryBuilder.addValueIsLessThanField(fieldWAlias, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
-
-                        // Value, which is a list, should be in field value (list)
-                    } else if ("listInList".equals(condition)) {
-                        this.addListInListCreterion(queryBuilder, filterValue, fieldName);
-
-                        // Value is in field value (list)
-                    } else if ("list".equals(condition)) {
-                        String paramName = queryBuilder.convertFieldToParam(fieldName);
-                        queryBuilder.addSqlCriterion(":" + paramName + " in elements(" + fieldWAlias + ")", paramName, filterValue);
-
-                        // Field value is in value (list)
-                    } else if ("inList".equals(condition) || "not-inList".equals(condition)) {
-                        boolean isNot = "not-inList".equals(condition);
-
-                        // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
-                        if (isFieldCollection(fieldName)) {
-
-                            String paramName = queryBuilder.convertFieldToParam(fieldName);
-                            String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
-
-                            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead.
-                            // queryBuilder.addCollectionMember(fieldName);
-                            // queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
-
-                            String inListAlias = collectionItem + "Alias";
-                            queryBuilder.addSqlCriterion(" exists (select " + inListAlias + " from " + entityClass.getName() + " " + inListAlias + ",IN (" + inListAlias + "." + fieldName + ") as " + collectionItem
-                                    + " where " + inListAlias + "=a and " + collectionItem + (isNot ? " NOT " : "") + " IN (:" + paramName + "))",
-                                paramName, filterValue);
-
-                        } else {
-
-                            queryBuilder.addFieldInAListOfValues(fieldWAlias, filterValue, isNot, condition.endsWith("Optional"));
-                        }
-
-                        // Search by an entity type
-                    } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
-                        if (filterValue instanceof Collection && !((Collection) filterValue).isEmpty()) {
-                            List classes = new ArrayList<Class>();
-                            for (Object classNameOrClass : (Collection) filterValue) {
-                                if (classNameOrClass instanceof Class) {
-                                    classes.add((Class) classNameOrClass);
-                                } else {
-                                    try {
-                                        classes.add(Class.forName((String) classNameOrClass));
-                                    } catch (ClassNotFoundException e) {
-                                        log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
-                                    }
-                                }
-                            }
-
-                            if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                                queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
-                            } else if ("ne".equalsIgnoreCase(condition)) {
-                                queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
-                            }
-
-                        } else if (filterValue instanceof Class) {
-                            if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                                queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filterValue);
-                            } else if ("ne".equalsIgnoreCase(condition)) {
-                                queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filterValue);
-                            }
-
-                        } else if (filterValue instanceof String) {
-                            try {
-                                if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) filterValue));
-                                } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) filterValue));
-                                }
-                            } catch (ClassNotFoundException e) {
-                                log.error("Search by a type will be ignored - unknown class {}", filterValue);
-                            }
-                        }
-
-                        // The value is in between two field values with optionally either them being optional eg. field1Value<=value<field2Value or field1Value<=value<=field2Value
-                    } else if ("minmaxRange".equals(condition) || "minmaxRangeInclusive".equals(condition) || "minmaxOptionalRange".equals(condition) || "minmaxOptionalRangeInclusive".equals(condition)) {
-
-                        queryBuilder.addValueInBetweenTwoFields(fieldWAlias, fieldWAlias2, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
-
-                        // The value range is overlapping two field values with either them being optional
-                    } else if ("overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition)) {
-
-                        Object valueFrom = null;
-                        Object valueTo = null;
-
-                        if (filterValue.getClass().isArray()) {
-                            valueFrom = ((Object[]) filterValue)[0];
-                            valueTo = ((Object[]) filterValue)[1];
-
-                        } else if (filterValue instanceof List) {
-                            valueFrom = ((List) filterValue).get(0);
-                            valueTo = ((List) filterValue).get(1);
-                        }
-
-                        queryBuilder.addValueRangeOverlapTwoFieldRange(fieldWAlias, fieldWAlias2, valueFrom, valueTo, condition.endsWith("Inclusive"));
-
-                        // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
-                    } else if ("likeCriterias".equals(condition)) {
-
-                        queryBuilder.startOrClause();
-                        if (filterValue instanceof String) {
-                            String filterString = (String) filterValue;
-                            for (String field : fields) {
-                                queryBuilder.addCriterionWildcard(extractFieldWithAlias(field), filterString, true);
-                            }
-                        }
-                        queryBuilder.endOrClause();
-
-                        // Any of the multiple field values wildcard match the value (OR criteria) - a diference from "likeCriterias" is that wildcard will be appended to the value
-                        // automatically
-                    } else if (SEARCH_WILDCARD_OR.equals(condition)) {
-                        queryBuilder.startOrClause();
-                        for (String field : fields) {
-                            queryBuilder.addSql(extractFieldWithAlias(field) + " like '%" + filterValue + "%'");
-                        }
-                        queryBuilder.endOrClause();
-
-                        // Just like wildcardOr but ignoring case :
-                    } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
-                        queryBuilder.startOrClause();
-                        for (String field : fields) { // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
-                            queryBuilder.addSql("lower(" + extractFieldWithAlias(field) + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
-                        }
-                        queryBuilder.endOrClause();
-
-                        // Search by additional Sql clause with specified parameters
-                    } else if (key.startsWith(SEARCH_SQL)) {
-                        if (filterValue.getClass().isArray()) {
-                            String additionalSql = (String) ((Object[]) filterValue)[0];
-                            Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
-                            queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
-                        } else {
-                            queryBuilder.addSql((String) filterValue);
-                        }
-
-                        // Search by IS NULL
-                    } else if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
-                        if (isFieldCollection(fieldName)) {
-                            queryBuilder.addSql(fieldWAlias + " is empty ");
-                        } else {
-                            queryBuilder.addSql(fieldWAlias + " is null ");
-                        }
-
-                        // Search by IS NOT NULL
-                    } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                        if (isFieldCollection(fieldName)) {
-                            queryBuilder.addSql(fieldWAlias + " is not empty ");
-                        } else {
-                            queryBuilder.addSql(fieldWAlias + " is not null ");
-                        }
-
-                    } else if (BaseEntity.class.isAssignableFrom(filterValue.getClass()) || filterValue instanceof UniqueEntity || filterValue instanceof IEntity) {
-                        queryBuilder.addCriterionEntity(fieldWAlias, filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
-
-                    } else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
-                        QueryBuilder queryBuilderHolder = queryBuilder;
-                        ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDateTruncatedToDay("a.auditable." + k, (Date) value));
-
-                        // Search by equals/not equals to a string, date, number, boolean, enum or list value
-                    } else if (filterValue instanceof String || filterValue instanceof Date || filterValue instanceof Number || filterValue instanceof Boolean || filterValue instanceof Enum
-                            || filterValue instanceof List) {
-
-                        queryBuilder.addValueIsEqualToField(fieldWAlias, filterValue, condition.startsWith("ne"), condition.endsWith("Optional"));
-
-                    }
-                }
+                ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
+                filters.keySet().stream()
+                        .filter(key -> filters.get(key) != null)
+                        .forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
                 for (String cft : cfFilters.keySet()) {
                     filters.remove(cft);
                 }
@@ -1107,27 +882,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
-    }
-
-    /**
-     * @param fieldName
-     * @return
-     */
-    private boolean isFieldCollection(String fieldName) {
-        if (fieldName.contains(FROM_JSON_FUNCTION)) {
-            return false;
-        }
-        final Class<? extends E> entityClass = getEntityClass();
-        Field field = ReflectionUtils.getField(entityClass, fieldName);
-        Class<?> fieldClassType = field.getType();
-        return Collection.class.isAssignableFrom(fieldClassType);
-    }
-
-    private String extractFieldWithAlias(String fieldName) {
-        if (StringUtils.isBlank(fieldName)) {
-            return fieldName;
-        }
-        return fieldName.contains(FROM_JSON_FUNCTION) ? fieldName : "a." + fieldName;
     }
 
     private Map<String, Object> extractCustomFieldsFilters(Map<String, Object> filters) {

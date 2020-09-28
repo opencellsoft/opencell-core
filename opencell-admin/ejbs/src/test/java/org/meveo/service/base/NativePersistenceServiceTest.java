@@ -21,9 +21,14 @@ package org.meveo.service.base;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.billing.Invoice;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.meveo.service.base.PersistenceService.*;
@@ -281,6 +286,42 @@ public class NativePersistenceServiceTest {
                 ") Param name:a_notEqualField value:1");
     }
 
+    @Test
+    public void test_base_entity() {
+        Invoice invoice = new Invoice();
+        invoice.setId(1L);
+        filters.put("eq", invoice);
+        assertThat(getQuery()).isEqualTo("select  a.selectField from tableName a ");
+    }
+
+    @Test
+    public void test_search_att_type_class_list_class() {
+        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, List.of("org.meveo.model.billing.Invoice"));
+
+        assertThat(getQuery()).isEqualTo("select  a.selectField from tableName a  where a.type_class  in :a_type_class Param name:a_type_class value:[org.meveo.model.billing.Invoice]");
+    }
+
+    @Test
+    public void test_search_att_type_class_class() {
+        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, Invoice.class);
+
+        assertThat(getQuery()).isEqualTo("select  a.selectField from tableName a ");
+    }
+
+    @Test
+    public void test_search_att_type_class_string() {
+        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, "org.meveo.model.billing.Invoice");
+
+        assertThat(getQuery()).isEqualTo("select  a.selectField from tableName a  where lower(a.type_class) = :a_type_class Param name:a_type_class value:org.meveo.model.billing.invoice");
+    }
+
+    @Test
+    public void test_auditable_hash_map() {
+        Map<Object, Object> map = new HashMap<>();
+        map.put(1, Date.from(LocalDate.of(2020, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        filters.put("eq auditable", map);
+        assertThat(getQuery()).isEqualTo("select  a.selectField from tableName a ");
+    }
 
 
     @Test

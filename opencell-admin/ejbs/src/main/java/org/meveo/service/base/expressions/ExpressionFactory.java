@@ -1,135 +1,133 @@
 package org.meveo.service.base.expressions;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 
-import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR;
-import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS;
+import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+import static org.meveo.service.base.PersistenceService.SEARCH_ATTR_TYPE_CLASS;
 
-public class ExpressionFactory {
-
-    private QueryBuilder queryBuilder;
-    private String tableNameAlias;
+public class ExpressionFactory extends NativeExpressionFactory {
 
     public ExpressionFactory(QueryBuilder queryBuilder, String tableNameAlias) {
-
-        this.queryBuilder = queryBuilder;
-        this.tableNameAlias = tableNameAlias;
+        super(queryBuilder, tableNameAlias);
     }
 
-    public void addFilters(Map<String, Object> filters, String key) {
+    @Override
+    protected void checkOnCondition(String key, Object value, ExpressionParser exp){
 
-        Object value = filters.get(key);
-        if (value == null) {
-            return;
-        }
+        if (SEARCH_ATTR_TYPE_CLASS.equals(exp.getFieldName())) {
+            addSearchTypeClassFilters(value, exp.getCondition());
+        } else
+            super.checkOnCondition(key, value, exp);
 
-        String[] fieldInfo = key.split(" ");
+    }
 
-        String condition = "eq";
-        String fieldName = fieldInfo[0];
-        String fieldName2 = null;
+    private void addSearchTypeClassFilters(Object value, String condition) {
+        if (value instanceof Collection && !((Collection) value).isEmpty()) {
+            List classes = new ArrayList<Class>();
+            for (Object classNameOrClass : (Collection) value) {
+                if (classNameOrClass instanceof Class) {
+                    classes.add(classNameOrClass);
+                } else {
+                    try {
+                        classes.add(Class.forName((String) classNameOrClass));
+                    } catch (ClassNotFoundException e) {
+                        log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
+                    }
+                }
+            }
 
-        if (fieldInfo.length == 2) {
-            condition = fieldInfo[0];
-            fieldName = fieldInfo[1];
-        } else if (fieldInfo.length > 2) {
-            condition = fieldInfo[0];
-            fieldName = fieldInfo[1];
-            fieldName2 = fieldInfo[2];
-        }
+            if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
+            } else if ("ne".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
+            }
 
-        switch (condition) {
-            case "fromRange":
-                queryBuilder.addValueIsGreaterThanField(tableNameAlias + '.' + fieldName, value, false);
-                break;
-            case "fromOptionalRange":
-                queryBuilder.addValueIsGreaterThanField(tableNameAlias + '.' + fieldName, value, true);
-                break;
-            case "toRange":
-                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, false, false);
-                break;
-            case "toRangeInclusive":
-                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, true, false);
-                break;
-            case "toOptionalRange":
-                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, false, true);
-                break;
-            case "toOptionalRangeInclusive":
-                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, true, true);
-                break;
-            case "list":
-                queryBuilder.addListFilters(tableNameAlias, fieldName, value);
-                break;
-            case "inList":
-                queryBuilder.addFieldInAListOfValues(tableNameAlias + '.' + fieldName, value, false, false);
-                break;
-            case "not-inList":
-                queryBuilder.addFieldInAListOfValues(tableNameAlias + '.' + fieldName, value,  true, false);
-                break;
-            case "minmaxRange":
-                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, false, false);
-                break;
-            case "minmaxRangeInclusive":
-                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, true, false);
-                break;
-            case "minmaxOptionalRange":
-                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, false, true);
-                break;
-            case "minmaxOptionalRangeInclusive":
-                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, true, true);
-                break;
-            case "overlapOptionalRange":
-                queryBuilder.addValueRangeOverlapTwoFieldRange(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, fromValue(value), toValue(value), false);
-                break;
-            case "overlapOptionalRangeInclusive":
-                queryBuilder.addValueRangeOverlapTwoFieldRange(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, fromValue(value), toValue(value), true);
-                break;
-            case "likeCriterias":
-                queryBuilder.addLikeCriteriasFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
-                break;
-            case SEARCH_WILDCARD_OR:
-                queryBuilder.addSearchWildcardOrFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
-                break;
-            case SEARCH_WILDCARD_OR_IGNORE_CAS:
-                queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
-                break;
-            default: {
-                if (key.startsWith(PersistenceService.SEARCH_SQL))
-                    queryBuilder.addSearchSqlFilters(value);
-                else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value))
-                    queryBuilder.addSql(tableNameAlias + "." + fieldName + " is null ");
-                else if (value instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(value))
-                    queryBuilder.addSql(tableNameAlias + "." + fieldName + " is not null ");
-                else if (value instanceof String || value instanceof Date || value instanceof Number || value instanceof Boolean || value instanceof Enum || value instanceof List)
-                    queryBuilder.addValueIsEqualToField(tableNameAlias + "." + fieldName, value, condition.startsWith("ne"), condition.endsWith("Optional"));
+        } else if (value instanceof Class) {
+            if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", value);
+            } else if ("ne".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", value);
+            }
+
+        } else if (value instanceof String) {
+            try {
+                if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) value));
+                } else if ("ne".equalsIgnoreCase(condition)) {
+                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) value));
+                }
+            } catch (ClassNotFoundException e) {
+                log.error("Search by a type will be ignored - unknown class {}", value);
             }
         }
-
     }
 
-    private Object fromValue(Object value) {
-        if (value.getClass().isArray()) {
-            return ((Object[]) value)[0];
-
-        } else if (value instanceof List) {
-            return ((List) value).get(0);
+    @Override
+    protected String extractFieldWithAlias(String fieldName) {
+        if (StringUtils.isBlank(fieldName)) {
+            return fieldName;
         }
-        return null;
+        return fieldName.contains(FROM_JSON_FUNCTION) ? fieldName : super.extractFieldWithAlias(fieldName);
     }
 
-    private Object toValue(Object value) {
-        if (value.getClass().isArray()) {
-            return ((Object[]) value)[1];
+    @Override
+    protected void addFiltersToEntity(Object value, String condition, String fieldName) {
+        this.queryBuilder.addCriterionEntity(extractFieldWithAlias(fieldName), value, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
+    }
 
-        } else if (value instanceof List) {
-            return ((List) value).get(1);
+    @Override
+    public void addNullFilters(String fieldName, boolean isNot){
+        if (isFieldCollection(fieldName)) {
+            queryBuilder.addSql(extractFieldWithAlias(fieldName) + " is" +(isNot ? " not" : "") + " empty ");
+        } else {
+            super.addNullFilters(fieldName, isNot);
         }
-        return null;
+    }
+
+    @Override
+    protected void addAuditableFilters(Object value){
+        ((Map) value).forEach((k, mapValue) -> queryBuilder.addCriterionDateTruncatedToDay("a.auditable." + k, (Date) mapValue));
+    }
+
+    @Override
+    protected void addListFilter(Object value, String fieldName, boolean notIn){
+        // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
+        if (isFieldCollection(fieldName)) {
+
+            String paramName = queryBuilder.convertFieldToParam(fieldName);
+            String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
+
+            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead.
+            // queryBuilder.addCollectionMember(fieldName);
+            // queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
+
+            String inListAlias = collectionItem + "Alias";
+            queryBuilder.addSqlCriterion(" exists (select " + inListAlias + " from " + queryBuilder.getEntityClass().getName() + " " + inListAlias + ",IN (" + inListAlias + "." + fieldName + ") as " + collectionItem
+                            + " where " + inListAlias + "=a and " + collectionItem + (notIn ? " NOT " : "") + " IN (:" + paramName + "))",
+                    paramName, value);
+
+        } else {
+
+            queryBuilder.addFieldInAListOfValues(extractFieldWithAlias(fieldName), value, notIn, false);
+        }
+    }
+
+    /**
+     * @param fieldName
+     * @return
+     */
+    private boolean isFieldCollection(String fieldName) {
+        if (fieldName.contains(FROM_JSON_FUNCTION)) {
+            return false;
+        }
+        final Class<?> entityClass = queryBuilder.getEntityClass();
+        Field field = ReflectionUtils.getField(entityClass, fieldName);
+        Class<?> fieldClassType = field.getType();
+        return Collection.class.isAssignableFrom(fieldClassType);
     }
 }
