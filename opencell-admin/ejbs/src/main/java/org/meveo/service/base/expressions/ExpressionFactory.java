@@ -6,6 +6,7 @@ import org.meveo.service.base.PersistenceService;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR;
 import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS;
@@ -21,7 +22,12 @@ public class ExpressionFactory {
         this.tableNameAlias = tableNameAlias;
     }
 
-    public Expression from(String key, Object value) {
+    public void addFilters(Map<String, Object> filters, String key) {
+
+        Object value = filters.get(key);
+        if (value == null) {
+            return;
+        }
 
         String[] fieldInfo = key.split(" ");
 
@@ -40,53 +46,90 @@ public class ExpressionFactory {
 
         switch (condition) {
             case "fromRange":
-                return new FromRangeExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsGreaterThanField(tableNameAlias + '.' + fieldName, value, false);
+                break;
             case "fromOptionalRange":
-                return new FromOptionalRangeExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsGreaterThanField(tableNameAlias + '.' + fieldName, value, true);
+                break;
             case "toRange":
-                return new ToRangeExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, false, false);
+                break;
             case "toRangeInclusive":
-                return new ToRangeInclusiveExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, true, false);
+                break;
             case "toOptionalRange":
-                return new ToOptionalRangeExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, false, true);
+                break;
             case "toOptionalRangeInclusive":
-                return new ToOptionalRangeInclusiveExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addValueIsLessThanField(tableNameAlias + '.' + fieldName, value, true, true);
+                break;
             case "list":
-                return new ListExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addListFilters(tableNameAlias, fieldName, value);
+                break;
             case "inList":
-                return new InListExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addFieldInAListOfValues(tableNameAlias + '.' + fieldName, value, false, false);
+                break;
             case "not-inList":
-                return new NotInListExpression(tableNameAlias, fieldName, value);
+                queryBuilder.addFieldInAListOfValues(tableNameAlias + '.' + fieldName, value,  true, false);
+                break;
             case "minmaxRange":
-                return new MinMaxRangeExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, false, false);
+                break;
             case "minmaxRangeInclusive":
-                return new MinMaxRangeInclusiveExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, true, false);
+                break;
             case "minmaxOptionalRange":
-                return new MinMaxOptionalRangeExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, false, true);
+                break;
             case "minmaxOptionalRangeInclusive":
-                return new MinMaxOptionalRangeInclusiveExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueInBetweenTwoFields(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, value, true, true);
+                break;
             case "overlapOptionalRange":
-                return new OverlapOptionalRangeExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueRangeOverlapTwoFieldRange(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, fromValue(value), toValue(value), false);
+                break;
             case "overlapOptionalRangeInclusive":
-                return new OverlapOptionalRangeInclusiveExpression(tableNameAlias, fieldName, fieldName2, value);
+                queryBuilder.addValueRangeOverlapTwoFieldRange(tableNameAlias + '.' + fieldName, tableNameAlias + '.' + fieldName2, fromValue(value), toValue(value), true);
+                break;
             case "likeCriterias":
-                return new LikeCriteriasExpression(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                queryBuilder.addLikeCriteriasFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                break;
             case SEARCH_WILDCARD_OR:
-                return new SearchWildcardOrExpression(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                queryBuilder.addSearchWildcardOrFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                break;
             case SEARCH_WILDCARD_OR_IGNORE_CAS:
-                return new SearchWildcardOrIgnoreCasExpression(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length), value);
+                break;
             default: {
-                if(key.startsWith(PersistenceService.SEARCH_SQL))
-                    return new SearchSqlExpression(value);
-                if(value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value))
-                    return new SearchIsNullExpression(tableNameAlias, fieldName);
-                if(value instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(value))
-                    return new SearchIsNotNullExpression(tableNameAlias, fieldName);
-                if(value instanceof String || value instanceof Date || value instanceof Number || value instanceof Boolean || value instanceof Enum || value instanceof List)
-                    return new PrimitiveFieldExpression(tableNameAlias, fieldName, value, condition.startsWith("ne"), condition.endsWith("Optional"));
-                return new DummyExpression();
+                if (key.startsWith(PersistenceService.SEARCH_SQL))
+                    queryBuilder.addSearchSqlFilters(value);
+                else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value))
+                    queryBuilder.addSql(tableNameAlias + "." + fieldName + " is null ");
+                else if (value instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(value))
+                    queryBuilder.addSql(tableNameAlias + "." + fieldName + " is not null ");
+                else if (value instanceof String || value instanceof Date || value instanceof Number || value instanceof Boolean || value instanceof Enum || value instanceof List)
+                    queryBuilder.addValueIsEqualToField(tableNameAlias + "." + fieldName, value, condition.startsWith("ne"), condition.endsWith("Optional"));
             }
         }
 
+    }
+
+    private Object fromValue(Object value) {
+        if (value.getClass().isArray()) {
+            return ((Object[]) value)[0];
+
+        } else if (value instanceof List) {
+            return ((List) value).get(0);
+        }
+        return null;
+    }
+
+    private Object toValue(Object value) {
+        if (value.getClass().isArray()) {
+            return ((Object[]) value)[1];
+
+        } else if (value instanceof List) {
+            return ((List) value).get(1);
+        }
+        return null;
     }
 }
