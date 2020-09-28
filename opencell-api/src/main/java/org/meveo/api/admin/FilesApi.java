@@ -143,7 +143,8 @@ public class FilesApi extends BaseApi {
             ;
 
             fop.write(data);
-
+            fop.close();
+            
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
                 // get parent dir
