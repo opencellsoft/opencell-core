@@ -3232,7 +3232,7 @@ END $$;]]>
         <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
     
-    <changeSet id="#5303_20200629" author="hznibar" dbms="postgresql" >
+    <changeSet id="#5303_20200629" author="hznibar" >
         <addColumn tableName="rating_cdr">
             <column name="times_tried" type="int4"/>
             <column name="type" type="varchar(255)"/>
@@ -3499,7 +3499,7 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
-	<changeSet id="#5303_20200831" author="hznibar" dbms="postgresql" >
+	<changeSet id="#5303_20200831" author="hznibar" >
         <addColumn tableName="rating_edr">
             <column name="times_tried" type="int4"/>
         </addColumn>
@@ -3541,7 +3541,7 @@ END $$;]]>
                                  constraintName="document_ar_payment_token_id_fk" referencedTableName="document"
                                  referencedColumnNames="id"/>
     </changeSet>
-    <changeSet id="#5303_20200902" author="hznibar" dbms="postgresql" >
+    <changeSet id="#5303_20200902" author="hznibar" >
         <addColumn tableName="rating_cdr">
             <column name="source" type="text">
                 <constraints nullable="true" />
