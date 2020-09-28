@@ -19,51 +19,52 @@ public class ExpressionFactory extends NativeExpressionFactory {
     @Override
     protected void checkOnCondition(String key, Object value, Expression exp){
 
-        String condition = exp.getCondition();
-        String fieldName = exp.getFieldName();
-
-        if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
-            if (value instanceof Collection && !((Collection) value).isEmpty()) {
-                List classes = new ArrayList<Class>();
-                for (Object classNameOrClass : (Collection) value) {
-                    if (classNameOrClass instanceof Class) {
-                        classes.add(classNameOrClass);
-                    } else {
-                        try {
-                            classes.add(Class.forName((String) classNameOrClass));
-                        } catch (ClassNotFoundException e) {
-                            log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
-                        }
-                    }
-                }
-
-                if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                    queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
-                } else if ("ne".equalsIgnoreCase(condition)) {
-                    queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
-                }
-
-            } else if (value instanceof Class) {
-                if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", value);
-                } else if ("ne".equalsIgnoreCase(condition)) {
-                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", value);
-                }
-
-            } else if (value instanceof String) {
-                try {
-                    if (condition == null || "eq".equalsIgnoreCase(condition)) {
-                        queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) value));
-                    } else if ("ne".equalsIgnoreCase(condition)) {
-                        queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) value));
-                    }
-                } catch (ClassNotFoundException e) {
-                    log.error("Search by a type will be ignored - unknown class {}", value);
-                }
-            }
-        }else
+        if (SEARCH_ATTR_TYPE_CLASS.equals(exp.getFieldName())) {
+            addSearchTypeClassFilters(value, exp.getCondition());
+        } else
             super.checkOnCondition(key, value, exp);
 
+    }
+
+    private void addSearchTypeClassFilters(Object value, String condition) {
+        if (value instanceof Collection && !((Collection) value).isEmpty()) {
+            List classes = new ArrayList<Class>();
+            for (Object classNameOrClass : (Collection) value) {
+                if (classNameOrClass instanceof Class) {
+                    classes.add(classNameOrClass);
+                } else {
+                    try {
+                        classes.add(Class.forName((String) classNameOrClass));
+                    } catch (ClassNotFoundException e) {
+                        log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
+                    }
+                }
+            }
+
+            if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
+            } else if ("ne".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
+            }
+
+        } else if (value instanceof Class) {
+            if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", value);
+            } else if ("ne".equalsIgnoreCase(condition)) {
+                queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", value);
+            }
+
+        } else if (value instanceof String) {
+            try {
+                if (condition == null || "eq".equalsIgnoreCase(condition)) {
+                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) value));
+                } else if ("ne".equalsIgnoreCase(condition)) {
+                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) value));
+                }
+            } catch (ClassNotFoundException e) {
+                log.error("Search by a type will be ignored - unknown class {}", value);
+            }
+        }
     }
 
     @Override
