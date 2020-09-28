@@ -218,18 +218,38 @@ public class FlatFileProcessing {
                 }
 
                 synchronized (outputFileWriter) {
-                    outputFileWriter.println(recordContext.getLineContent());
+                    if(records.size() == 1) {
+                        outputFileWriter.println(recordContext.getLineContent());
+                        result.registerSucces();
+                    } else {
+                        for(Object record : records) {
+                            outputFileWriter.println(record.toString());
+                            result.registerSucces();
+                        }                   
+                    }
                 }
-                result.registerSucces();
-
             } catch (Exception e) {
-                String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
-                log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason, e);
-
-                synchronized (rejectFileWriter) {
-                    rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
+                if(records.size() == 1) {
+                    String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
+                    log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason,
+                            e);
+    
+                    synchronized (rejectFileWriter) {
+                        rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
+                    }
+                    result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                } else if(records.size() > 1) {
+                    for(Object record : records) {
+                        String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
+                        log.error("Failed to process a record line content:{} from file {} error {}", record != null ? record.toString() : null, fileName, errorReason,
+                                e);
+        
+                        synchronized (rejectFileWriter) {
+                            rejectFileWriter.println(record.toString() + "=>" + errorReason);
+                        }
+                        result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                    }
                 }
-                result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
 
                 if (FlatFileProcessingJob.STOP.equals(actionOnError)) {
                     log.warn("Processing of file {} will stop as error was encountered", fileName);
