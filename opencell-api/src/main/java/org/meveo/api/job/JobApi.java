@@ -193,7 +193,13 @@ public class JobApi extends BaseApi {
         }
 
         JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
-        if (!StringUtils.isBlank(code)) {
+        if (!StringUtils.isBlank(id)) {
+            jobExecutionResult = jobExecutionService.findById(id);
+            if (jobExecutionResult == null) {
+                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
+            }
+
+        } else if (!StringUtils.isBlank(code)) {
             JobInstance jobInstance = jobInstanceService.findByCode(code);
             if (jobInstance == null) {
                 throw new EntityDoesNotExistsException(JobInstance.class, code);
@@ -202,11 +208,6 @@ public class JobApi extends BaseApi {
             jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
             if (jobExecutionResult == null) {
                 throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, code);
-            }
-        } else if (!StringUtils.isBlank(id)) {
-            jobExecutionResult = jobExecutionService.findById(id);
-            if (jobExecutionResult == null) {
-                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
             }
         }
 

@@ -188,14 +188,10 @@ public interface JobRs extends IBaseRs {
     ActionStatus removeTimer(@PathParam("timerCode") String timerCode);
     
     /**
-     * Find a job execution result. 
-     * 		Can be matched by:
-     * 			JobInstance code, in that case the last execution is returned
-     * 			JobExecution id, the job execution is matched by ID.
-     *      If both code and id are provided, an InvalidParameterException is thrown.
+     * Find a job execution result.
      * 
-     * @param code The job instance code. If used,the last job execution instance is returned.
-     * @param id Job execution result identifier.
+     * @param code string to match the code of the JobInstance
+     * @param jobExecutionResultId a JobExcutionResultId
      * @return object containing the JobExecutionResultImpl
      */
     @GET
