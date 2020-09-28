@@ -181,6 +181,7 @@ public class FlatFileProcessing {
 
         RecordContext recordContext = null;
 
+        mainLoop:
         while (true) {
 
             i++;
@@ -193,7 +194,7 @@ public class FlatFileProcessing {
 
                     recordContext = fileParser.getNextRecord();
                     if (recordContext == null) {
-                        break;
+                        break mainLoop;
                     }
 
                     log.debug("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
@@ -203,25 +204,23 @@ public class FlatFileProcessing {
                     }
                     records.add(recordContext.getRecord());
                 }
-                
-                if (!records.isEmpty()) {
-                    if (nbLinesToProcess == 1) {
-                        executeParams.put(recordVariableName, records.get(0));
-                    } else {
-                        executeParams.put(recordVariableName, records);
-                    }
 
-                    if (FlatFileProcessingJob.ROLLBACK.equals(actionOnError)) {
-                        script.execute(executeParams);
-                    } else {
-                        unitFlatFileProcessingJobBean.execute(script, executeParams);
-                    }
-
-                    synchronized (outputFileWriter) {
-                        outputFileWriter.println(recordContext.getLineContent());
-                    }
-                    result.registerSucces();
+                if (nbLinesToProcess == 1) {
+                    executeParams.put(recordVariableName, records.get(0));
+                } else {
+                    executeParams.put(recordVariableName, records);
                 }
+
+                if (FlatFileProcessingJob.ROLLBACK.equals(actionOnError)) {
+                    script.execute(executeParams);
+                } else {
+                    unitFlatFileProcessingJobBean.execute(script, executeParams);
+                }
+
+                synchronized (outputFileWriter) {
+                    outputFileWriter.println(recordContext.getLineContent());
+                }
+                result.registerSucces();
 
             } catch (Exception e) {
                 String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
