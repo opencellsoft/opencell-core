@@ -46,7 +46,6 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.expressions.Expression;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -741,9 +740,10 @@ public class NativePersistenceService extends BaseService {
         Map<String, Object> filters = config.getFilters();
 
         if (filters != null && !filters.isEmpty()) {
+            ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
             filters.keySet()
                     .stream()
-                    .forEach(key -> addFilters(queryBuilder, filters, key));
+                    .forEach(key -> expressionFactory.addFilters(filters, key));
 
         }
 
@@ -753,17 +753,6 @@ public class NativePersistenceService extends BaseService {
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
-
-    }
-
-    private void addFilters(QueryBuilder queryBuilder, Map<String, Object> filters, String key) {
-        Object filterValue = filters.get(key);
-        if (filterValue == null) {
-            return;
-        }
-        Expression expression = new ExpressionFactory(queryBuilder, "a").from(key, filterValue);
-        expression.addFilters(queryBuilder);
-
 
     }
 

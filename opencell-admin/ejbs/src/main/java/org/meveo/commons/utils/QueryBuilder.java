@@ -24,7 +24,6 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.expressions.*;
 import org.primefaces.model.SortOrder;
 
 import javax.persistence.EntityManager;
@@ -232,95 +231,38 @@ public class QueryBuilder {
         return addSqlCriterion(sql, null, null);
     }
 
-    public void accept(ListExpression listExpression) {
-        String paramName = convertFieldToParam(listExpression.fieldName());
-        addSqlCriterion(":" + paramName + " in elements(" + listExpression.tableNameAlias() + '.' + listExpression.fieldName() + ")", paramName, listExpression.value());
-    }
-
-    public void accept(InListExpression inListExpression) {
-        addFieldInAListOfValues(inListExpression.tableNameAlias() + '.' + inListExpression.fieldName(), inListExpression.value(), false, false);
-    }
-
-    public void accept(NotInListExpression notInListExpression){
-        addFieldInAListOfValues(notInListExpression.tableNameAlias() + '.' + notInListExpression.fieldName(), notInListExpression.value(),  true, false);
-    }
-
-    public void accept(MinMaxRangeExpression minMaxRangeExpression) {
-        addValueInBetweenTwoFields(minMaxRangeExpression. getTableNameAlias() + '.' + minMaxRangeExpression.getFieldName(), minMaxRangeExpression. getTableNameAlias() + '.' + minMaxRangeExpression.getFieldName2(), minMaxRangeExpression.getValue(), false, false);
-    }
-
-    public void accept(MinMaxRangeInclusiveExpression minMaxRangeInclusiveExpression) {
-        addValueInBetweenTwoFields(minMaxRangeInclusiveExpression. getTableNameAlias() + '.' + minMaxRangeInclusiveExpression.getFieldName(), minMaxRangeInclusiveExpression. getTableNameAlias() + '.' + minMaxRangeInclusiveExpression.getFieldName2(), minMaxRangeInclusiveExpression.getValue(), true, false);
-    }
-
-    public void accept(MinMaxOptionalRangeExpression minMaxOptionalRangeExpression) {
-        addValueInBetweenTwoFields(minMaxOptionalRangeExpression. getTableNameAlias() + '.' + minMaxOptionalRangeExpression.getFieldName(), minMaxOptionalRangeExpression. getTableNameAlias() + '.' + minMaxOptionalRangeExpression.getFieldName2(), minMaxOptionalRangeExpression.getValue(), false, true);
-    }
-
-    public void accept(MinMaxOptionalRangeInclusiveExpression minMaxOptionalRangeInclusiveExpression) {
-        addValueInBetweenTwoFields(minMaxOptionalRangeInclusiveExpression. getTableNameAlias() + '.' + minMaxOptionalRangeInclusiveExpression.getFieldName(), minMaxOptionalRangeInclusiveExpression. getTableNameAlias() + '.' + minMaxOptionalRangeInclusiveExpression.getFieldName2(), minMaxOptionalRangeInclusiveExpression.getValue(), true, true);
-    }
-
-    public void accept(OverlapOptionalRangeExpression overlapOptionalRangeExpression) {
-        String alias = overlapOptionalRangeExpression.getTableNameAlias();
-        String fieldName = overlapOptionalRangeExpression.getFieldName();
-        String fieldName1 = overlapOptionalRangeExpression.getFieldName2();
-        addValueRangeOverlapTwoFieldRange(alias + '.' + fieldName, alias + '.' + fieldName1, overlapOptionalRangeExpression.valueFrom(), overlapOptionalRangeExpression.toValue(), false);
-    }
-
-    public void accept(OverlapOptionalRangeInclusiveExpression overlapOptionalRangeInclusiveExpression) {
-        String alias = overlapOptionalRangeInclusiveExpression.getTableNameAlias();
-        String fieldName = overlapOptionalRangeInclusiveExpression.getFieldName();
-        String fieldName1 = overlapOptionalRangeInclusiveExpression.getFieldName2();
-        addValueRangeOverlapTwoFieldRange(alias + '.' + fieldName, alias + '.' + fieldName1, overlapOptionalRangeInclusiveExpression.valueFrom(), overlapOptionalRangeInclusiveExpression.toValue(), true);
-    }
-
-    public void accept(LikeCriteriasExpression likeCriteriasExpression) {
+    public void addLikeCriteriasFilters(String tableNameAlias, String[] fields, Object value){
         startOrClause();
-        if (likeCriteriasExpression.getValue() instanceof String) {
-            String filterString = (String) likeCriteriasExpression.getValue();
-            String alias = likeCriteriasExpression.getTableNameAlias();
-            Stream.of(likeCriteriasExpression.getFields())
-                    .forEach(f -> addCriterionWildcard(alias + "." + f, filterString, true));
+        if (value instanceof String) {
+            String filterString = (String) value;
+            Stream.of(fields)
+                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
         }
         endOrClause();
     }
 
-    public void accept(SearchWildcardOrExpression searchWildcardOrExpression) {
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
         startOrClause();
-        Stream.of(searchWildcardOrExpression.getFields())
-                .forEach(field -> addSql(searchWildcardOrExpression.getTableNameAlias() + "." + field + " like '%" + searchWildcardOrExpression.getValue() + "%'"));
+        Stream.of(fields)
+                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
         endOrClause();
     }
 
-    public void accept(SearchWildcardOrIgnoreCasExpression searchWildcardOrIgnoreCasExpression) {
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
         startOrClause();
-        Stream.of(searchWildcardOrIgnoreCasExpression.getFields())
-                .forEach(field -> addSql("lower(" + searchWildcardOrIgnoreCasExpression.getTableNameAlias() + "." + field + ") like '%" + String.valueOf(searchWildcardOrIgnoreCasExpression.getValue()).toLowerCase() + "%'"));
+        Stream.of(fields)
+                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
         endOrClause();
     }
 
-    public void accept(SearchSqlExpression searchSqlExpression) {
-        Object value = searchSqlExpression.getValue();
-        if (searchSqlExpression.valueIsAnArray()) {
+    public void addSearchSqlFilters(Object value) {
+        if (value.getClass().isArray()) {
             String additionalSql = (String) ((Object[]) value)[0];
             Object[] additionalParameters = Arrays.copyOfRange(((Object[]) value), 1, ((Object[]) value).length);
             addSqlCriterionMultiple(additionalSql, additionalParameters);
         } else {
             addSql((String) value);
         }
-    }
-
-    public void accept(SearchIsNullExpression searchIsNullExpression) {
-        addSql(searchIsNullExpression.getTableNameAlias() + "." + searchIsNullExpression.getFieldName() + " is null ");
-    }
-
-    public void accept(SearchIsNotNullExpression searchIsNotNullExpression) {
-        addSql(searchIsNotNullExpression.getTableNameAlias() + "." + searchIsNotNullExpression.getFieldName() + " is not null ");
-    }
-
-    public void accept(PrimitiveFieldExpression primitiveFieldExpression) {
-        addValueIsEqualToField(primitiveFieldExpression.getTableNameAlias() + "." + primitiveFieldExpression.getFieldName(), primitiveFieldExpression.getValue(), primitiveFieldExpression.isNegate(), primitiveFieldExpression.isOptional());
     }
 
     /**
@@ -929,14 +871,6 @@ public class QueryBuilder {
         return this;
     }
 
-    public void accept(FromRangeExpression fromRangeExpression) {
-        addValueIsGreaterThanField(fromRangeExpression.tableNameAlias() + '.' + fromRangeExpression.fieldName(), fromRangeExpression.value(), false);
-    }
-
-    public void accept(FromOptionalRangeExpression fromRangeExpression) {
-        addValueIsGreaterThanField(fromRangeExpression.tableNameAlias() + '.' + fromRangeExpression.fieldName(), fromRangeExpression.value(), true);
-    }
-
     /**
      * Add a criteria to check value is less than a field value. e.g. value&lt;fieldValue or value&lt;=fieldValue
      * 
@@ -958,20 +892,9 @@ public class QueryBuilder {
         return this;
     }
 
-    public void accept(ToRangeExpression toRangeExpression) {
-        addValueIsLessThanField(toRangeExpression.tableNameAlias() + '.' + toRangeExpression.fieldName(), toRangeExpression.value(), false, false);
-    }
-
-    public void accept(ToRangeInclusiveExpression toRangeInclusiveExpression) {
-        addValueIsLessThanField(toRangeInclusiveExpression.tableNameAlias() + '.' + toRangeInclusiveExpression.fieldName(), toRangeInclusiveExpression.value(), true, false);
-    }
-
-    public void accept(ToOptionalRangeExpression toOptionalRangeExpression) {
-        addValueIsLessThanField(toOptionalRangeExpression.tableNameAlias() + '.' + toOptionalRangeExpression.fieldName(), toOptionalRangeExpression.value(), false, true);
-    }
-
-    public void accept(ToOptionalRangeInclusiveExpression toRangeExpression) {
-        addValueIsLessThanField(toRangeExpression.tableNameAlias() + '.' + toRangeExpression.fieldName(), toRangeExpression.value(), true, true);
+    public void addListFilters(String tableNameAlias, String fieldName, Object value){
+        String paramName = convertFieldToParam(fieldName);
+        addSqlCriterion(":" + paramName + " in elements(" + tableNameAlias + '.' + fieldName + ")", paramName, value);
     }
 
     /**
