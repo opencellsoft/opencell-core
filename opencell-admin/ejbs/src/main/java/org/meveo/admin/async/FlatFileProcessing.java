@@ -188,6 +188,7 @@ public class FlatFileProcessing {
             if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
+            List<RecordContext> recordContexts = new ArrayList<>();
             List<Object> records = new ArrayList<>();
             try {
                 for (int nbLine = 0; nbLine < nbLinesToProcess; nbLine++) {
@@ -202,6 +203,7 @@ public class FlatFileProcessing {
                     if (recordContext.getRecord() == null) {
                         throw recordContext.getRejectReason();
                     }
+                    recordContexts.add(recordContext);
                     records.add(recordContext.getRecord());
                 }
 
@@ -218,18 +220,37 @@ public class FlatFileProcessing {
                 }
 
                 synchronized (outputFileWriter) {
-                    outputFileWriter.println(recordContext.getLineContent());
+                    if(nbLinesToProcess == 1) {
+                        outputFileWriter.println(recordContext.getLineContent());
+                        result.registerSucces();
+                    } else {
+                        for(RecordContext rContext : recordContexts) {
+                            outputFileWriter.println(rContext.getLineContent());
+                            result.registerSucces();
+                        }                   
+                    }
                 }
-                result.registerSucces();
-
             } catch (Exception e) {
-                String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
-                log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason, e);
-
-                synchronized (rejectFileWriter) {
-                    rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
+                if(nbLinesToProcess == 1) {
+                    String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
+                    log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason,
+                            e);
+    
+                    synchronized (rejectFileWriter) {
+                        rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
+                    }
+                    result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                } else if(nbLinesToProcess > 1) {
+                    for(RecordContext rContext : recordContexts) {
+                        String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
+                        log.error("Failed to process a record line content:{} from file {} error {}", rContext != null ? rContext.getLineContent() : null, fileName, errorReason,
+                                e);
+                        synchronized (rejectFileWriter) {
+                            rejectFileWriter.println(rContext.getLineContent() + "=>" + errorReason);
+                        }
+                        result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                    }
                 }
-                result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
 
                 if (FlatFileProcessingJob.STOP.equals(actionOnError)) {
                     log.warn("Processing of file {} will stop as error was encountered", fileName);
