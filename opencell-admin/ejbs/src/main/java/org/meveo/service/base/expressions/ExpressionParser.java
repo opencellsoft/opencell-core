@@ -2,14 +2,14 @@ package org.meveo.service.base.expressions;
 
 import java.util.Arrays;
 
-public class Expression {
+public class ExpressionParser {
 
     private String condition;
     private String fieldName;
     private String fieldName2;
     private String[] fieldInfo;
 
-    public Expression(String[] fieldInfo) {
+    public ExpressionParser(String[] fieldInfo) {
         this.fieldInfo = fieldInfo;
         this.condition = "eq";
         this.fieldName = fieldInfo[0];

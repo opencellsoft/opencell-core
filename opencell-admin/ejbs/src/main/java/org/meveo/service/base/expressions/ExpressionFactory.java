@@ -17,7 +17,7 @@ public class ExpressionFactory extends NativeExpressionFactory {
     }
 
     @Override
-    protected void checkOnCondition(String key, Object value, Expression exp){
+    protected void checkOnCondition(String key, Object value, ExpressionParser exp){
 
         if (SEARCH_ATTR_TYPE_CLASS.equals(exp.getFieldName())) {
             addSearchTypeClassFilters(value, exp.getCondition());

@@ -29,10 +29,10 @@ public class NativeExpressionFactory {
     }
 
     public void addFilters(String key, Object value) {
-        checkOnCondition(key, value, new Expression(key.split(" ")));
+        checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
     }
 
-    protected void checkOnCondition(String key, Object value, Expression exp) {
+    protected void checkOnCondition(String key, Object value, ExpressionParser exp) {
 
         switch (exp.getCondition()) {
             case "fromRange":
