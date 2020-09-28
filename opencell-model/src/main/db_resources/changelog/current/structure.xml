@@ -2272,5 +2272,9 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#5510_20200923" author="anasseh">
+		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
+    </changeSet>
 
 </databaseChangeLog>

@@ -124,6 +124,10 @@ public class PagingAndFiltering implements Serializable {
      */
     private Integer totalNumberOfRecords;
 
+    /**
+	 * Depth of loading referenced custom entities, default value is 0 (only referenced entity id is shown) 
+	 * Every time this value is incremented it will show a new level of entities in details.
+	 */
     private int loadReferenceDepth;
     
     /**
