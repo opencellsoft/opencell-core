@@ -235,9 +235,8 @@ public class QueryBuilder {
         startOrClause();
         if (value instanceof String) {
             String filterString = (String) value;
-            String alias = tableNameAlias;
             Stream.of(fields)
-                    .forEach(f -> addCriterionWildcard(alias + "." + f, filterString, true));
+                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
         }
         endOrClause();
     }
