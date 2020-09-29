@@ -17,29 +17,6 @@
  */
 package org.meveo.service.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -69,9 +46,22 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -123,18 +113,18 @@ public class NativePersistenceService extends BaseService {
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
     @Inject
-	private EntityManagerProvider entityManagerProvider;
+    private EntityManagerProvider entityManagerProvider;
 
     /**
      * Find record by its identifier
      *
      * @param tableName Table name
-     * @param id Identifier
+     * @param id        Identifier
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         try {
             Session session = getEntityManager().unwrap(Session.class);
             StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
@@ -166,11 +156,11 @@ public class NativePersistenceService extends BaseService {
      * Insert values into table
      *
      * @param tableName Table name to insert values to
-     * @param values Values to insert
+     * @param values    Values to insert
      * @throws BusinessException General exception
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Long id = create(tableName, values, true, true);
 
         return id;
@@ -182,13 +172,13 @@ public class NativePersistenceService extends BaseService {
      * NOTE: The sql statement is determined by the fields passed in the first value, so its important that either all values have the same fields (order does not matter), or first
      * value has the maximum number of fields
      *
-     * @param tableName Table name to insert values to
+     * @param tableName                Table name to insert values to
      * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
-     * @param values A list of values to insert
+     * @param values                   A list of values to insert
      * @throws BusinessException General exception
      */
     public void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         if (values == null || values.isEmpty()) {
             return;
         }
@@ -284,9 +274,9 @@ public class NativePersistenceService extends BaseService {
      * @param tableName the table name
      * @return
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private Map<String, Object> getFields(String tableName) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Map<String, Object> fields = new HashedMap();
         Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
         for (String key : customFieldTemplateMap.keySet()) {
@@ -322,14 +312,14 @@ public class NativePersistenceService extends BaseService {
     /**
      * Insert a new record into a table. If returnId=True values parameter will be updated with 'id' field value.
      *
-     * @param tableName Table name to update
-     * @param values Values
-     * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     * @param tableName         Table name to update
+     * @param values            Values
+     * @param returnId          Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
      * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
     protected Long create(String tableName, Map<String, Object> values, boolean returnId, boolean fireNotifications) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         StringBuffer sql = new StringBuffer();
         try {
 
@@ -424,7 +414,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
         if (StringUtils.isNotEmpty(findIdFields)) {
             requestConstruction.append(" where " + findIdFields);
@@ -436,13 +426,13 @@ public class NativePersistenceService extends BaseService {
     /**
      * Update a record in a table. Record is identified by an "id" field value.
      *
-     * @param tableName Table name to update
-     * @param value Values. Values must contain an "id" (FIELD_ID) field.
+     * @param tableName         Table name to update
+     * @param value             Values. Values must contain an "id" (FIELD_ID) field.
      * @param fireNotifications Should notifications be fired upon record update
      * @throws BusinessException General exception
      */
     public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Number id = ((Number) value.get(FIELD_ID));
         if (id == null) {
             throw new BusinessException("'id' field value not provided to update values in native table");
@@ -491,13 +481,13 @@ public class NativePersistenceService extends BaseService {
      * Update field value in a table
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @param fieldName Field to update
-     * @param value New value
+     * @param value     New value
      * @throws BusinessException General exception
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(fieldName).append(value == null ? "= null" : "= :" + fieldName).append(" where id= :id");
         try {
             if (value == null) {
@@ -516,11 +506,11 @@ public class NativePersistenceService extends BaseService {
      * Disable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
         entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
     }
@@ -529,11 +519,11 @@ public class NativePersistenceService extends BaseService {
      * Disable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
@@ -541,11 +531,11 @@ public class NativePersistenceService extends BaseService {
      * Enable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
         entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.ENABLED));
     }
@@ -554,11 +544,11 @@ public class NativePersistenceService extends BaseService {
      * Enable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(FIELD_DISABLED).append("=0 where id in :ids");
         getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
     }
@@ -567,12 +557,12 @@ public class NativePersistenceService extends BaseService {
      * Delete a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Long id) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         this.deletionService.checkTableNotreferenced(tableName, id);
         Map<String, Object> values = findById(tableName, id);
         if (values == null) {
@@ -589,12 +579,12 @@ public class NativePersistenceService extends BaseService {
      * Delete multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to delete from
-     * @param ids A set of record identifiers
+     * @param ids       A set of record identifiers
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
     public int remove(String tableName, Set<Long> ids) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         int nrDeleted = 0;
         for (Long id : ids) {
             nrDeleted = nrDeleted + remove(tableName, id);
@@ -614,7 +604,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public int remove(String tableName) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         StringBuilder deleteQuery = new StringBuilder("delete from ").append(tableName);
         return getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
     }
@@ -626,7 +616,7 @@ public class NativePersistenceService extends BaseService {
      * @return A list of map of values with field name as map's key and field value as map's value
      */
     public List<Map<String, Object>> list(String tableName) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         return list(tableName, null);
     }
 
@@ -637,7 +627,7 @@ public class NativePersistenceService extends BaseService {
      * @return A list of map of values with field name as map's key and field value as map's value
      */
     public List<Map<String, Object>> listActive(String tableName) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Map<String, Object> filters = new HashMap<>();
         filters.put(FIELD_DISABLED, 0);
         return list(tableName, new PaginationConfiguration(filters));
@@ -736,12 +726,12 @@ public class NativePersistenceService extends BaseService {
      * </ul>
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return Query builder to filter entities according to pagination configuration data.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
         QueryBuilder queryBuilder = new QueryBuilder("select " + fieldsToRetrieve + " from " + tableName + " a ", "a");
         if (config == null) {
@@ -750,120 +740,11 @@ public class NativePersistenceService extends BaseService {
         Map<String, Object> filters = config.getFilters();
 
         if (filters != null && !filters.isEmpty()) {
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
-            for (String key : filters.keySet()) {
-
-                Object filterValue = filters.get(key);
-                if (filterValue == null) {
-                    continue;
-                }
-
-                // Key format is: condition field1 field2 or condition-field1-field2-fieldN
-                // example: "ne code", condition=ne, fieldName=code, fieldName2=null
-                String[] fieldInfo = key.split(" ");
-                String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
-                String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
-
-                String[] fields = null;
-                if (condition != null) {
-                    fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
-                } else {
-                    condition = "eq";
-                }
-
-                // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=fieldValue
-                if ("fromRange".equals(condition) || "fromOptionalRange".equals(condition)) {
-                    queryBuilder.addValueIsGreaterThanField("a." + fieldName, filterValue, "fromOptionalRange".equals(condition));
-
-                    // if ranged search - field value in between from - to values. Specifies "to" value: e.g fieldValue<value or fieldValue<=value
-                } else if ("toRange".equals(condition) || "toRangeInclusive".equals(condition) || "toOptionalRange".equals(condition) || "toOptionalRangeInclusive".equals(condition)) {
-                    queryBuilder.addValueIsLessThanField("a." + fieldName, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
-
-                    // Value is in field value (list)
-                } else if ("list".equals(condition)) {
-                    String paramName = queryBuilder.convertFieldToParam(fieldName);
-                    queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
-
-                    // Field value is in value (list)
-                } else if ("inList".equals(condition) || "not-inList".equals(condition)) {
-
-                    queryBuilder.addFieldInAListOfValues("a." + fieldName, filterValue, "not-inList".equals(condition), condition.endsWith("Optional"));
-
-                    // The value is in between two field values with optionally either them being optional eg. field1Value<=value<field2Value or field1Value<=value<=field2Value
-                } else if ("minmaxRange".equals(condition) || "minmaxRangeInclusive".equals(condition) || "minmaxOptionalRange".equals(condition) || "minmaxOptionalRangeInclusive".equals(condition)) {
-
-                    queryBuilder.addValueInBetweenTwoFields("a." + fieldName, "a." + fieldName2, filterValue, condition.endsWith("Inclusive"), condition.contains("Optional"));
-
-                    // The value range is overlapping two field values with either them being optional
-                } else if ("overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition)) {
-
-                    Object valueFrom = null;
-                    Object valueTo = null;
-
-                    if (filterValue.getClass().isArray()) {
-                        valueFrom = ((Object[]) filterValue)[0];
-                        valueTo = ((Object[]) filterValue)[1];
-
-                    } else if (filterValue instanceof List) {
-                        valueFrom = ((List) filterValue).get(0);
-                        valueTo = ((List) filterValue).get(1);
-                    }
-
-                    queryBuilder.addValueRangeOverlapTwoFieldRange("a." + fieldName, "a." + fieldName2, valueFrom, valueTo, condition.endsWith("Inclusive"));
-
-                    // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
-                } else if ("likeCriterias".equals(condition)) {
-
-                    queryBuilder.startOrClause();
-                    if (filterValue instanceof String) {
-                        String filterString = (String) filterValue;
-                        for (String field : fields) {
-                            queryBuilder.addCriterionWildcard("a." + field, filterString, true);
-                        }
-                    }
-                    queryBuilder.endOrClause();
-
-                    // Any of the multiple field values wildcard match the value (OR criteria) - a diference from "likeCriterias" is that wildcard will be appended to the value
-                    // automatically
-                } else if (PersistenceService.SEARCH_WILDCARD_OR.equals(condition)) {
-                    queryBuilder.startOrClause();
-                    for (String field : fields) {
-                        queryBuilder.addSql("a." + field + " like '%" + filterValue + "%'");
-                    }
-                    queryBuilder.endOrClause();
-
-                    // Just like wildcardOr but ignoring case :
-                } else if (PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
-                    queryBuilder.startOrClause();
-                    for (String field : fields) { // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
-                        queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
-                    }
-                    queryBuilder.endOrClause();
-
-                    // Search by additional Sql clause with specified parameters
-                } else if (key.startsWith(PersistenceService.SEARCH_SQL)) {
-                    if (filterValue.getClass().isArray()) {
-                        String additionalSql = (String) ((Object[]) filterValue)[0];
-                        Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
-                        queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
-                    } else {
-                        queryBuilder.addSql((String) filterValue);
-                    }
-
-                    // Search by IS NULL
-                } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NULL.equals(filterValue)) {
-                    queryBuilder.addSql("a." + fieldName + " is null ");
-
-                    // Search by IS NOT NULL
-                } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                    queryBuilder.addSql("a." + fieldName + " is not null ");
-
-                    // Search by equals/not equals to a string, date, number, boolean, enum or list value
-                } else if (filterValue instanceof String || filterValue instanceof Date || filterValue instanceof Number || filterValue instanceof Boolean || filterValue instanceof Enum || filterValue instanceof List) {
-                    queryBuilder.addValueIsEqualToField("a." + fieldName, filterValue, condition.startsWith("ne"), condition.endsWith("Optional"));
-                }
-            }
         }
 
         queryBuilder.addPaginationConfiguration(config, "a");
@@ -879,12 +760,12 @@ public class NativePersistenceService extends BaseService {
      * Load and return the list of the records IN A MAP format from database according to sorting and paging information in {@link PaginationConfiguration} object.
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return A list of map of values for each record
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return query.list();
@@ -895,12 +776,12 @@ public class NativePersistenceService extends BaseService {
      * In case a list of fields is provided in search and paging configuration, only that list of fields will be retrieved. Otherwise all fields will be retrieved.
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record. A full list of fields or only the ones specified in a list of fields in search and paging configuration
      */
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     public List listAsObjects(String tableName, PaginationConfiguration config) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
         return query.list();
@@ -910,11 +791,11 @@ public class NativePersistenceService extends BaseService {
      * Count number of records in a database table
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return Number of entities.
      */
     public long count(String tableName, PaginationConfiguration config) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         Query query = queryBuilder.getNativeCountQuery(getEntityManager());
         Object count = query.getSingleResult();
@@ -933,11 +814,11 @@ public class NativePersistenceService extends BaseService {
      * Create new or update existing custom table record value
      *
      * @param tableName A name of a table to query
-     * @param values Values to save
+     * @param values    Values to save
      * @throws BusinessException General exception
      */
     public void createOrUpdate(String tableName, List<Map<String, Object>> values) throws BusinessException {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         for (Map<String, Object> value : values) {
 
             // New record
@@ -963,18 +844,18 @@ public class NativePersistenceService extends BaseService {
     /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
      *
-     * @param value Value to convert
-     * @param targetClass Target data type class to convert to
+     * @param value        Value to convert
+     * @param targetClass  Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
-     *        converted accordingly. If a single value is passed, it will be added to a list.
+     *                     converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
-     *        standard date and time and then date only patterns will be applied.
+     *                     standard date and time and then date only patterns will be applied.
      * @param cft
      * @param regExp
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
@@ -1214,7 +1095,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     public boolean validateRecordExistanceByTableName(String tableName, Long id) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Session session = getEntityManager().unwrap(Session.class);
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append("=:id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
@@ -1224,24 +1105,24 @@ public class NativePersistenceService extends BaseService {
 
     @SuppressWarnings("unchecked")
     public List<BigInteger> filterExistingRecordsOnTable(String tableName, List<Long> ids) {
-    	tableName = addCurrentSchema(tableName);
+        tableName = addCurrentSchema(tableName);
         Session session = getEntityManager().unwrap(Session.class);
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append(" in (:ids)");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameterList("ids", ids);
         return (List<BigInteger>) query.list();
     }
-    
-	public String addCurrentSchema(String tableName) {
-		CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
-		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
-		if (currentproviderCode != null && tableName != null) {
-			EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
-			String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
-			if (!tableName.contains(schema)) {
-				return schema + tableName;
-			}
-		}
-		return tableName;
-	}
+
+    public String addCurrentSchema(String tableName) {
+        CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
+        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        if (currentproviderCode != null && tableName != null) {
+            EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
+            String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+            if (!tableName.contains(schema)) {
+                return schema + tableName;
+            }
+        }
+        return tableName;
+    }
 }

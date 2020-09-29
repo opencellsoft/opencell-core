@@ -187,9 +187,11 @@ public class WalletOperationAggregatorQueryBuilder {
 			} else {
 				return aggregationLine.getGroupBy() + "(varcharFromJson(op.cfValues, " + field + ", " + cf.getFieldType().name().toLowerCase() + ")), ";
 			}
-		} else {
+		}
+		if (aggregationLine.getAction().equals(WalletOperationAggregationActionEnum.KEY)) {
 			return "varcharFromJson(op.cfValues, " + field + ", " + cf.getFieldType().name().toLowerCase() + "), ";
 		}
+		return "";
 	}
 
 	private String getSelect(WalletOperationAggregationLine aggregationLine) {

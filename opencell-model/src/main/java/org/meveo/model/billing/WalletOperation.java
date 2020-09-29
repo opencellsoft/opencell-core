@@ -65,6 +65,7 @@ import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 
 /**
@@ -1408,5 +1409,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("id=%s, op date=%s, period=%s-%s, quantity=%s, unitAmount=%s, amount=%s", id, DateUtils.formatAsDate(operationDate), DateUtils.formatAsDate(startDate), DateUtils.formatAsDate(endDate),
+            quantity, unitAmountWithoutTax, amountWithoutTax);
     }
 }
