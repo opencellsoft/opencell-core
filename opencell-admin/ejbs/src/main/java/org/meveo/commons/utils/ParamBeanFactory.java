@@ -18,12 +18,12 @@
 
 package org.meveo.commons.utils;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 /**
  * 
@@ -70,6 +70,15 @@ public class ParamBeanFactory {
         } else {
             return paramBean.getChrootDir("");
         }
+    }
+
+    /**
+     * Return the system provider root directory in despite of the provider code
+     *
+     * @return path
+     */
+    public String getDefaultChrootDir(){
+        return getInstance().getChrootDir("");
     }
 
     /**
