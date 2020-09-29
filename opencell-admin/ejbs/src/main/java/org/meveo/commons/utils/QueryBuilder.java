@@ -17,22 +17,6 @@
  */
 package org.meveo.commons.utils;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -41,6 +25,15 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.primefaces.model.SortOrder;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Query builder class for building JPA queries.
@@ -78,6 +71,10 @@ public class QueryBuilder {
     private Class<?> clazz;
     
     static final String FROM = "from ";
+
+    public Class<?> getEntityClass() {
+        return clazz;
+    }
 
     public enum QueryLikeStyleEnum {
         /**
@@ -236,6 +233,40 @@ public class QueryBuilder {
      */
     public QueryBuilder addSql(String sql) {
         return addSqlCriterion(sql, null, null);
+    }
+
+    public void addLikeCriteriasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        if (value instanceof String) {
+            String filterString = (String) value;
+            Stream.of(fields)
+                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+        }
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchSqlFilters(Object value) {
+        if (value.getClass().isArray()) {
+            String additionalSql = (String) ((Object[]) value)[0];
+            Object[] additionalParameters = Arrays.copyOfRange(((Object[]) value), 1, ((Object[]) value).length);
+            addSqlCriterionMultiple(additionalSql, additionalParameters);
+        } else {
+            addSql((String) value);
+        }
     }
 
     /**
@@ -863,6 +894,11 @@ public class QueryBuilder {
             addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
+    }
+
+    public void addListFilters(String tableNameAlias, String fieldName, Object value){
+        String paramName = convertFieldToParam(fieldName);
+        addSqlCriterion(":" + paramName + " in elements(" + tableNameAlias + '.' + fieldName + ")", paramName, value);
     }
 
     /**
