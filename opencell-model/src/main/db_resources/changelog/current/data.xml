@@ -1385,7 +1385,22 @@ public class ValidateBRScript extends Script {
 			    <where>code='SALES_JOURNAL'</where>
 		</update>
 	</changeSet>
-
+    <changeSet id="#5417_20200929 - Error while running CUSTOMERS_PER_SELLER report extracts" author="Mohamed-Ali-HAMMAL">
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select ce.code AS "Seller code"
+					        , ce.description AS "Seller description"
+					        , coalesce(ce.code, '') AS "Customer code"
+					        , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+					from  crm_seller s left
+					        OUTER JOIN crm_customer c  on c.seller_id = s.id left
+					        OUTER JOIN account_entity ce  on c.id = ce.id
+					where( ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
+					order by ce.code
+			    ]]></column>
+            <where>code='CUSTOMERS_PER_SELLER'</where>
+        </update>
+    </changeSet>
     <changeSet id="#4449_20190724" author="AbdellatifBARI">
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-44" />
