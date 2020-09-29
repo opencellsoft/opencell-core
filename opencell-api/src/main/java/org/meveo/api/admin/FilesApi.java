@@ -39,10 +39,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
+
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * @author Edward P. Legaspi
@@ -58,7 +61,7 @@ public class FilesApi extends BaseApi {
     private FlatFileValidator flatFileValidator;
 
     public String getProviderRootDir() {
-        return paramBeanFactory.getChrootDir();
+        return paramBeanFactory.getDefaultChrootDir();
     }
 
     public List<FileDto> listFiles(String dir) throws BusinessApiException {
@@ -113,17 +116,23 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business exception.
      */
     public void zipDir(String dir) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + dir);
+        File file = new File(getProviderRootDir() + File.separator + (isLocalDir(dir) ? "" : dir));
         if (!file.exists()) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
-
-        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip")); ZipOutputStream zos = new ZipOutputStream(fos)) {
+        File zipFile = new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip");
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
-            fos.flush();
+            zos.flush();
+            if(isLocalDir(dir))
+                Files.move(zipFile.toPath(), Paths.get(getProviderRootDir() + File.separator + zipFile.getName()), ATOMIC_MOVE);
         } catch (IOException e) {
             throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
-        }
+        }#
+    }
+
+    private boolean isLocalDir(String dir) {
+        return dir.equals("./") || dir.equals("/.") || dir.equals(".");
     }
 
     /**
