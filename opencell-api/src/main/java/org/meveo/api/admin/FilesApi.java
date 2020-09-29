@@ -128,7 +128,7 @@ public class FilesApi extends BaseApi {
                 Files.move(zipFile.toPath(), Paths.get(getProviderRootDir() + File.separator + zipFile.getName()), ATOMIC_MOVE);
         } catch (IOException e) {
             throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
-        }#
+        }
     }
 
     private boolean isLocalDir(String dir) {
