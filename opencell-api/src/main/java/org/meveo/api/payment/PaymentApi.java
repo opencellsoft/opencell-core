@@ -161,12 +161,13 @@ public class PaymentApi extends BaseApi {
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
         payment.setReference(paymentDto.getReference());
-        payment.setDueDate(paymentDto.getDueDate());
-        payment.setTransactionDate(paymentDto.getTransactionDate());
+        payment.setDueDate(paymentDto.getDueDate() == null ? new Date()  : paymentDto.getDueDate());
+        payment.setTransactionDate(paymentDto.getTransactionDate() == null ? new Date()  : paymentDto.getTransactionDate());
         payment.setMatchingStatus(MatchingStatusEnum.O);
         payment.setPaymentOrder(paymentDto.getPaymentOrder());
         payment.setFees(paymentDto.getFees());
         payment.setComment(paymentDto.getComment());
+        payment.setBankLot(paymentDto.getBankLot());
         payment.setPaymentInfo(paymentDto.getPaymentInfo());
         payment.setPaymentInfo1(paymentDto.getPaymentInfo1());
         payment.setPaymentInfo2(paymentDto.getPaymentInfo2());
@@ -500,13 +501,13 @@ public class PaymentApi extends BaseApi {
     	 if (paymentCallbackDto == null) {
              missingParameters.add("paymentCallbackDto");
          }
-         if (StringUtils.isBlank(paymentCallbackDto.getPaymentId())) {
-             missingParameters.add("paymentId");
+         if (StringUtils.isBlank(paymentCallbackDto.getPaymentReference())) {
+             missingParameters.add("paymentReference");
          }
          if (StringUtils.isBlank(paymentCallbackDto.getPaymentStatus())) {
              missingParameters.add("paymentStatus");
          }       
          handleMissingParameters();
-    	paymentService.paymentCallback(paymentCallbackDto.getPaymentId(), paymentCallbackDto.getPaymentStatus(), paymentCallbackDto.getErrorCode(), paymentCallbackDto.getErrorMessage());
+    	paymentService.paymentCallback(paymentCallbackDto.getPaymentReference(), paymentCallbackDto.getPaymentStatus(), paymentCallbackDto.getErrorCode(), paymentCallbackDto.getErrorMessage());
     }
 }

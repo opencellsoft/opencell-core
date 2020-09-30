@@ -14,8 +14,8 @@ import org.meveo.model.payments.PaymentStatusEnum;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentCallbackDto {
 	
-	/** The payment id. */
-	private String paymentId;
+	/** The payment reference. */
+	private String paymentReference;
 	
 	/** The payment status. */
 	private PaymentStatusEnum paymentStatus;
@@ -33,21 +33,21 @@ public class PaymentCallbackDto {
 	}
 
 	/**
-	 * Gets the payment id.
+	 * Gets the payment reference.
 	 *
-	 * @return the payment id
+	 * @return the paymentReference
 	 */
-	public String getPaymentId() {
-		return paymentId;
+	public String getPaymentReference() {
+		return paymentReference;
 	}
 
 	/**
-	 * Sets the payment id.
+	 * Sets the payment reference.
 	 *
-	 * @param paymentId the new payment id
+	 * @param paymentReference the new paymentReference
 	 */
-	public void setPaymentId(String paymentId) {
-		this.paymentId = paymentId;
+	public void setPaymentReference(String paymentReference) {
+		this.paymentReference = paymentReference;
 	}
 
 	/**

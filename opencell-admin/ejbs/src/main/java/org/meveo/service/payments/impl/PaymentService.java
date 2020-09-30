@@ -521,27 +521,27 @@ public class PaymentService extends PersistenceService<Payment> {
     /**
      * Handle payment callBack, if the payment/refund is accepted then nothing to do, if it's rejected a new AO rejected payment/refund will be created.
      * 
-     * @param paymentId payment Id
+     * @param paymentReference payment reference
      * @param paymentStatus payment Status
      * @param errorCode error Code
      * @param errorMessage error Message
      * @throws BusinessException Business Exception
      */
-    public void paymentCallback(String paymentId, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {        
+    public void paymentCallback(String paymentReference, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {        
         try {
             if (paymentStatus == null) {
                 throw new BusinessException("paymentStatus is required");
             }
-            if (StringUtils.isBlank(paymentId)) {
+            if (StringUtils.isBlank(paymentReference)) {
                 throw new BusinessException("paymentId is required");
             }
-            AccountOperation accountOperation = accountOperationService.findByReference(paymentId);
+            AccountOperation accountOperation = accountOperationService.findByReference(paymentReference);
 
             if (accountOperation == null) {
-                throw new BusinessException("Payment " + paymentId + " not found");
+                throw new BusinessException("Payment " + paymentReference + " not found");
             }
             if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-                throw new BusinessException("CallBack unexpected  for payment " + paymentId);
+                throw new BusinessException("CallBack unexpected  for payment " + paymentReference);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
                 log.debug("Payment ok, nothing to do.");
@@ -561,7 +561,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setMatchingStatus(MatchingStatusEnum.O);
                 rejectedPayment.setUnMatchingAmount(accountOperation.getUnMatchingAmount());
                 rejectedPayment.setAmount(accountOperation.getUnMatchingAmount());
-                rejectedPayment.setReference("r_" + paymentId);
+                rejectedPayment.setReference("r_" + paymentReference);
                 rejectedPayment.setCustomerAccount(ca);
                 rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
                 rejectedPayment.setCode(occTemplate.getCode());
@@ -591,7 +591,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
                 matchingCodeService.matchOperations(ca.getId(), null, aos, null);
             }
-            PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(paymentId);
+            PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(paymentReference);
             if (paymentHistory != null) {
                 paymentHistory.setAsyncStatus(paymentStatus);
                 paymentHistory.setLastUpdateDate(new Date());
