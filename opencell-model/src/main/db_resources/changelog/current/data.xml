@@ -1401,9 +1401,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='CUSTOMERS_PER_SELLER'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select ce.code AS "Seller code"
@@ -1447,9 +1444,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='FULL_HIERARCHY'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
@@ -1495,9 +1489,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='INVOICED_BA_HIERARCHY'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS  Month
@@ -1526,9 +1517,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='INVOICED_S'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
@@ -1568,9 +1556,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='INVOICES'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
@@ -1631,9 +1616,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='RECORDED_BA_HIERARCHY'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
@@ -1673,9 +1655,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='RECORDED_S'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select ce.code AS "Seller code"
@@ -1699,9 +1678,6 @@ public class ValidateBRScript extends Script {
 			    ]]></column>
             <where>code='UNBILLED_S'</where>
         </update>
-    </changeSet>
-
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
         <update tableName="dwh_report_extract">
             <column name="sql_query" >
                 <![CDATA[select ce.code AS "Seller code"
