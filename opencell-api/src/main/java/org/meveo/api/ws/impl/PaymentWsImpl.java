@@ -34,6 +34,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PaymentCallbackDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -856,6 +857,19 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 			result = paymentGatewayRumSequenceApi.getNextNumber(code);
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus paymentCallback(PaymentCallbackDto paymentCallbackDto) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			paymentApi.paymentCallback(paymentCallbackDto);
+		} catch (Exception e) {
+			processException(e, result);
 		}
 
 		return result;

@@ -37,6 +37,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
+import org.meveo.api.dto.payment.PaymentCallbackDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -106,6 +107,17 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/customerPayment")
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode,  PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * paymentCallback to reject or validate a payment.
+     * 
+     * @param paymentCallbackDto paymentCallbackDto
+     * @return payment action status
+     */
+    @POST
+    @Path("/paymentCallback")
+    public ActionStatus paymentCallback(PaymentCallbackDto paymentCallbackDto);
+
 
     /************************************************************************************************/
     /**** Card Payment Method ****/

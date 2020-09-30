@@ -38,6 +38,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PaymentCallbackDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
@@ -81,7 +82,7 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Youssef IZEM
  * @author melyoussoufi
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 10.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -166,7 +167,13 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentOrder(paymentDto.getPaymentOrder());
         payment.setFees(paymentDto.getFees());
         payment.setComment(paymentDto.getComment());
-
+        payment.setPaymentInfo(paymentDto.getPaymentInfo());
+        payment.setPaymentInfo1(paymentDto.getPaymentInfo1());
+        payment.setPaymentInfo2(paymentDto.getPaymentInfo2());
+        payment.setPaymentInfo3(paymentDto.getPaymentInfo3());
+        payment.setPaymentInfo4(paymentDto.getPaymentInfo4());
+        payment.setPaymentInfo5(paymentDto.getPaymentInfo5());
+        payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         // populate customFields
         try {
             populateCustomFields(paymentDto.getCustomFields(), payment, true);
@@ -185,8 +192,7 @@ public class PaymentApi extends BaseApi {
         } else {
             log.info("no matching created ");
         }
-        log.debug("payment created for amount:" + payment.getAmount());
-
+        log.debug("payment created for amount:" + payment.getAmount());     
         return payment.getId();
 
     }
@@ -482,5 +488,25 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setListAoPaid(accountOperationsDto);
         return paymentHistoryDto;
 
+    }
+    
+    /**
+     * 
+     * @param paymentCallbackDto
+     * @throws MeveoApiException
+     */
+    public void paymentCallback(PaymentCallbackDto paymentCallbackDto) throws MeveoApiException {
+    	
+    	 if (paymentCallbackDto == null) {
+             missingParameters.add("paymentCallbackDto");
+         }
+         if (StringUtils.isBlank(paymentCallbackDto.getPaymentId())) {
+             missingParameters.add("paymentId");
+         }
+         if (StringUtils.isBlank(paymentCallbackDto.getPaymentStatus())) {
+             missingParameters.add("paymentStatus");
+         }       
+         handleMissingParameters();
+    	paymentService.paymentCallback(paymentCallbackDto.getPaymentId(), paymentCallbackDto.getPaymentStatus(), paymentCallbackDto.getErrorCode(), paymentCallbackDto.getErrorMessage());
     }
 }

@@ -527,8 +527,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param errorMessage error Message
      * @throws BusinessException Business Exception
      */
-    public void paymentCallback(String paymentId, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {
-        ParamBean paramBean = paramBeanFactory.getInstance();
+    public void paymentCallback(String paymentId, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {        
         try {
             if (paymentStatus == null) {
                 throw new BusinessException("paymentStatus is required");
@@ -541,32 +540,16 @@ public class PaymentService extends PersistenceService<Payment> {
             if (accountOperation == null) {
                 throw new BusinessException("Payment " + paymentId + " not found");
             }
-            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L) {
+            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
                 throw new BusinessException("CallBack unexpected  for payment " + paymentId);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
                 log.debug("Payment ok, nothing to do.");
             } else {
-                String occTemplateCode = null;
+                
                 List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-                if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
-                    } else {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
-                    }
-                } else if (accountOperation instanceof Payment) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
-                    } else {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
-                    }
-                }
+                OCCTemplate occTemplate = getOCCTemplateRejectPayment(accountOperation);
 
-                OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
-                if (occTemplate == null) {
-                    throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
-                }
                 CustomerAccount ca = accountOperation.getCustomerAccount();
                 Long aoPaymentIdWasRejected = accountOperation.getId();
 
@@ -622,6 +605,37 @@ public class PaymentService extends PersistenceService<Payment> {
         }
     }
 
+	private OCCTemplate getOCCTemplateRejectPayment(AccountOperation accountOperation) {
+    	ParamBean paramBean = paramBeanFactory.getInstance();
+    	String occTemplateCode = null;
+        if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
+            if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
+            } else {
+                occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
+            }
+        } else if (accountOperation instanceof Payment) {
+            if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
+            } 
+           if(PaymentMethodEnum.DIRECTDEBIT == accountOperation.getPaymentMethod()) {
+                occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
+            }
+           if(PaymentMethodEnum.CHECK == accountOperation.getPaymentMethod()) {
+               occTemplateCode = paramBean.getProperty("occ.rejectedPayment.chk", "REJ_CHK");
+           }
+           if(PaymentMethodEnum.WIRETRANSFER == accountOperation.getPaymentMethod()) {
+               occTemplateCode = paramBean.getProperty("occ.rejectedPayment.chk", "REJ_WTF");
+           }
+        }
+
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
+        }
+        return occTemplate;
+        
+    }
     /**
      * Retrieve the list account Operation that was paid.
      * 
