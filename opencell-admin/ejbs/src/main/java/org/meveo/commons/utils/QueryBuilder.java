@@ -557,7 +557,7 @@ public class QueryBuilder {
             return this;
         }
 
-        String v = value;
+        String v = caseInsensitive ? value.toLowerCase() : value;
 
         if (matchingStyle == QueryLikeStyleEnum.MATCH_BEGINNING || matchingStyle == QueryLikeStyleEnum.MATCH_ANYWHERE) {
             v = v + "%";
@@ -566,7 +566,21 @@ public class QueryBuilder {
             v = "%" + v;
         }
 
-        return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive, isFieldValueOptional);
+        StringBuffer sql = new StringBuffer();
+
+        if (caseInsensitive && (value instanceof String)) {
+            sql.append("lower(" + field + ")");
+        } else {
+            sql.append(field);
+        }
+        sql.append(addNot ? " not like " : " like ");
+        sql.append("'" + v + "'");
+
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", null, null);
+        } else {
+            return addSqlCriterion(sql.toString(), null, null);
+        }
     }
 
     /**

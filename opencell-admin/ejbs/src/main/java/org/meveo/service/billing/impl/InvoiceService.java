@@ -606,7 +606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingCycle billingCycle = defaultBillingCycle;
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
         PaymentMethod paymentMethod = defaultPaymentMethod;
-        if (defaultPaymentMethod == null) {
+        if (defaultPaymentMethod == null && billingAccount!=null) {
             defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
         }
 
@@ -619,6 +619,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine postpaid invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
+                    if (defaultPaymentMethod == null && billingAccount!=null) {
+                        defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+                    }
                     if (defaultBillingCycle == null) {
                         billingCycle = billingAccount.getBillingCycle();
                     }
