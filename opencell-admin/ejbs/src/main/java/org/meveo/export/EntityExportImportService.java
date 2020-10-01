@@ -18,17 +18,7 @@
 
 package org.meveo.export;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Serializable;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -49,6 +39,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -113,6 +104,7 @@ import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
@@ -172,6 +164,8 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
+    protected static final String CSV_EXTENTION = ".csv";
+    protected static final String ENTITY_FILE_HEADER = ".entity type, entity code";
 
     @Inject
     @CurrentUser
@@ -410,7 +404,7 @@ public class EntityExportImportService implements Serializable {
             ExportImportStatistics exportStatsSingle = exportEntitiesInternal(exportTemplate, parameters, null, null);
             exportStats.mergeStatistics(exportStatsSingle);
         }
-        return new AsyncResult<ExportImportStatistics>(exportStats);
+        return new AsyncResult<>(exportStats);
     }
 
     /**
@@ -425,12 +419,13 @@ public class EntityExportImportService implements Serializable {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Future<ExportImportStatistics> exportEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
+    public Future<ExportImportStatistics> exportEntities(ExportTemplate exportTemplate, Map<String, Object> parameters,
+                                                         DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport) {
 
         ExportImportStatistics exportStats = exportEntitiesInternal(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport);
 
-        return new AsyncResult<ExportImportStatistics>(exportStats);
+        return new AsyncResult<>(exportStats);
     }
 
     /**
@@ -447,7 +442,7 @@ public class EntityExportImportService implements Serializable {
             List<? extends IEntity> selectedEntitiesToExport) {
 
         if (parameters == null) {
-            parameters = new HashMap<String, Object>();
+            parameters = new HashMap<>();
         }
 
         ExportImportStatistics exportStats = new ExportImportStatistics();
@@ -936,6 +931,28 @@ public class EntityExportImportService implements Serializable {
         return importStats;
     }
 
+    public String generateEntitiesList(ExportTemplate template) {
+        String path = paramBeanFactory.getChrootDir();
+        if (!path.endsWith(File.separator)) {
+            path = path + File.separator;
+        }
+        String shortFilename = template.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
+        path = path + "exports";
+        String filename = path + File.separator + shortFilename + ".csv";
+        RetrievedEntities entities  = getEntitiesToExport(template, null, null, null, 0, PAGE_SIZE);
+        try (PrintWriter writer = new PrintWriter(filename)) {
+            FileUtils.forceMkdir(new File(path));
+
+            List<IEntity> entityList = entities.principalEntities;
+            List<String> output = entityList.stream()
+                                        .map(entity -> entity.getId() + "," + entity.getClass().getName())
+                                        .collect(Collectors.toList());
+            output.forEach(writer::println);
+        } catch (IOException  exception) {
+            log.info(exception.getMessage());
+        }
+        return entities.getSummary();
+    }
     /**
      * Deserialize an entity and save it to a target DB in a new transaction
      * 

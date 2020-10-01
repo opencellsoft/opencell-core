@@ -18,15 +18,19 @@
 
 package org.meveo.api.rest.importExport;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.meveo.api.dto.response.utilities.ImportExportRequestDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -36,9 +40,8 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  **/
 @Path("/importExport")
-@Consumes({ MediaType.MULTIPART_FORM_DATA })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
+@Consumes({ MULTIPART_FORM_DATA, APPLICATION_JSON })
+@Produces({ APPLICATION_JSON, APPLICATION_XML })
 public interface ImportExportRs extends IBaseRs {
 
     /**
@@ -50,8 +53,8 @@ public interface ImportExportRs extends IBaseRs {
      */
     @POST
     @Path("/importData")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ImportExportResponseDto importData(MultipartFormDataInput input);
+    @Consumes(MULTIPART_FORM_DATA)
+    ImportExportResponseDto importData(MultipartFormDataInput input);
 
     /**
      * Check for execution results for a given execution identifier
@@ -61,5 +64,21 @@ public interface ImportExportRs extends IBaseRs {
      */
     @GET
     @Path("/checkImportDataResult")
-    public ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
+    ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
+
+    @POST
+    @Path("/exportData")
+    ImportExportResponseDto exportData(ImportExportRequestDto importExportRequestDto);
+
+    /**
+     * returns an entity list CSV
+     */
+    @POST
+    @Path("/generateEntityList")
+    ImportExportResponseDto entityList(ImportExportRequestDto importExportRequestDto);
+
+    @POST
+    @Path("/exportDataFromEntityList")
+    @Consumes(MULTIPART_FORM_DATA)
+    ImportExportResponseDto exportDataFromEntityList(MultipartFormDataInput input);
 }
