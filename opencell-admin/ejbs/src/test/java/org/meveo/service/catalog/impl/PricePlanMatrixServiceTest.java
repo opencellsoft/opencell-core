@@ -2,7 +2,6 @@ package org.meveo.service.catalog.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -50,7 +49,7 @@ public class PricePlanMatrixServiceTest {
         spyPricePlanMatrixService.createPP(pricePlanMatrix3);
     }
 
-    @Test(expected = BusinessException.class)
+    @Test(expected = ExceptionInInitializerError.class)
     public void create_price_plan_overlapped_validity_date_test() throws ParseException {
         PricePlanMatrixService spyPricePlanMatrixService = spy(new PricePlanMatrixService());
         RecurringChargeTemplate recurringChargeTemplate = new RecurringChargeTemplate();

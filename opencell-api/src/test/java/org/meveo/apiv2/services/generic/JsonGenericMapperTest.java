@@ -9,11 +9,7 @@ import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -24,23 +20,16 @@ import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.io.IOException;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
 
-import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsonGenericMapperTest {
@@ -103,7 +92,7 @@ public class JsonGenericMapperTest {
         //When
         String expected = jsonGenericMapper.toJson(null, Address.class, param);
         //Then
-        String expectedFormattedJson = "{\"address1\":\"address1\",\"zipCode\":\"75002\",\"city\":\"Paris\",\"country\":{\"countryCode\":\"xxx\",\"description\":\"Very beautyfull country\",\"code\":\"xxx\"},\"countryBundle\":\"countries.Very beautyfull country\"}";
+        String expectedFormattedJson = "{\"address1\":\"address1\",\"zipCode\":\"75002\",\"city\":\"Paris\",\"country\":{\"countryCode\":\"xxx\",\"description\":\"Very beautyfull country\",\"code\":\"xxx\"}}";
         assertThat(expected).isEqualTo(expectedFormattedJson);
     }
 
@@ -167,7 +156,7 @@ public class JsonGenericMapperTest {
         fields.addAll(Arrays.asList("tax","invoiceSubCategory","endValidityDate","invoiceSubCategory.code","tradingCountry","TradingCountry.country","country.countryCode"));
         String userJson = jsonGenericMapper.toJson(fields, InvoiceSubcategoryCountry.class, invoiceSubcategoryCountry);
         //Then
-        assertThat(userJson).isEqualTo("{\"invoiceSubCategory\":{\"code\":\"invoiceCode\"},\"tradingCountry\":{\"id\":123,\"country\":{\"countryCode\":\"Monaco\",\"code\":\"Monaco\"}},\"tax\":{\"id\":456,\"code\":\"T.V.A.\"},\"endValidityDate\":1546300800000}");
+        assertThat(userJson).isEqualTo("{\"invoiceSubCategory\":{\"code\":\"invoiceCode\"},\"tradingCountry\":{\"id\":123,\"country\":{\"countryCode\":\"Monaco\",\"code\":\"Monaco\"}},\"tax\":{\"id\":456,\"code\":\"T.V.A.\"},\"endValidityDate\":1546297200000}");
     }
 
     @Test
@@ -274,7 +263,7 @@ public class JsonGenericMapperTest {
         HashSet<String> fields = new HashSet<>();
         fields.addAll(Arrays.asList("channels"));
         String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
-        assertThat(transform).isEqualTo("{\"total\":1,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[{\"id\":1,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":false},{\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":true}]}]}");
+        assertThat(transform).isEqualTo("{\"total\":1,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[{\"id\":1,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true},{\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true}]}]}");
     }
 
     @Test

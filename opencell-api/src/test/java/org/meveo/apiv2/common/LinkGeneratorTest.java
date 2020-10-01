@@ -33,7 +33,7 @@ public class LinkGeneratorTest {
     public void should_create_link_for_path_parametrized_resources() {
         LinkGenerator.SelfLinkGenerator linkGenerator = new LinkGenerator.SelfLinkGenerator(GenericResource.class);
         Link link = linkGenerator.withPostAction().withGetAction().build("customer", "13");
-        assertEquals(link.getUri().toString(), "/generic/customer/13");
+        assertEquals(link.getUri().toString(), "/generic/customer");
     }
     
     @Test(expected = IllegalArgumentException.class)

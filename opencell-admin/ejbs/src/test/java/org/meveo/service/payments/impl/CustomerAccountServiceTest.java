@@ -1,11 +1,5 @@
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,12 +12,15 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerAccountServiceTest {
@@ -47,7 +44,6 @@ public class CustomerAccountServiceTest {
     @Before
     public void init() {
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
-        when(query.setParameter(anyString(), any())).thenReturn(query);
         doReturn(queryBuilder).when(sut).getQueryBuilder(anyString());
         when(queryBuilder.getQuery(any(EntityManager.class))).thenReturn(query);
     }
