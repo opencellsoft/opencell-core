@@ -268,18 +268,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
     public UserAccountDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
-
-        if (StringUtils.isBlank(userAccountCode)) {
-            missingParameters.add("userAccountCode");
-            handleMissingParameters();
-        }
-
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
-        }
-
-        return accountHierarchyApi.userAccountToDto(userAccount, inheritCF);
+        return find(userAccountCode, inheritCF, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
