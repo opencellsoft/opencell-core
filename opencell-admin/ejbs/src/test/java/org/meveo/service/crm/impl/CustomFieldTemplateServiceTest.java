@@ -18,20 +18,21 @@
 
 package org.meveo.service.crm.impl;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.filter.Filter;
 import org.meveo.service.custom.CustomTableCreatorService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateServiceTest {
@@ -103,5 +104,19 @@ public class CustomFieldTemplateServiceTest {
 		// Then
 		verify(customTableCreatorService, never()).dropUniqueConstraint(anyString(), anyString());
 		verify(customTableCreatorService, times(1)).addUniqueConstraint(CODE, COLUMN_NAME_1);
+	}
+
+	@Test
+	public void test_calculate_applies_to_value() throws CustomFieldException {
+		Filter filter = new Filter();
+		filter.setCode("filterCode");
+		String appliesTo = CustomFieldTemplateService.calculateAppliesToValue(filter);
+		assertThat(appliesTo).isEqualTo("Filter_filterCode");
+	}
+
+	@Test(expected = CustomFieldException.class)
+	public void should_throw_exception_if_no_code_is_set() throws CustomFieldException {
+		Filter filter = new Filter();
+		CustomFieldTemplateService.calculateAppliesToValue(filter);
 	}
 }
