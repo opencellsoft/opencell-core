@@ -65,7 +65,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             }
             listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
-            listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
+            listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter, null);
         }
         return listAoToPay;
     }

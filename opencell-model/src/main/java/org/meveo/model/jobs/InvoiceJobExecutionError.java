@@ -33,10 +33,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.Invoice;
 
 /**
- * Recurring rating job execution error log
+ * Invoice related job execution error log
  * 
  * @author Andrius Karpavicius
  */
@@ -44,7 +44,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 @Table(name = "job_execution_error")
 @Immutable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "job_execution_error_seq"), })
-public class RecurringRatingJobExecutionError extends BaseEntity {
+public class InvoiceJobExecutionError extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
     /**
@@ -62,11 +62,11 @@ public class RecurringRatingJobExecutionError extends BaseEntity {
     private Date created = new Date();
 
     /**
-     * Recurring charge instance
+     * Invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entity_id")
-    private RecurringChargeInstance chargeInstance;
+    private Invoice invoice;
 
     /**
      * Period from date
@@ -117,17 +117,17 @@ public class RecurringRatingJobExecutionError extends BaseEntity {
     }
 
     /**
-     * @return Recurring charge instance
+     * @return Invoice
      */
-    public RecurringChargeInstance getChargeInstance() {
-        return chargeInstance;
+    public Invoice getInvoice() {
+        return invoice;
     }
 
     /**
-     * @param chargeInstance Recurring charge instance
+     * @param invoice Invoice
      */
-    public void setChargeInstance(RecurringChargeInstance chargeInstance) {
-        this.chargeInstance = chargeInstance;
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 
     /**

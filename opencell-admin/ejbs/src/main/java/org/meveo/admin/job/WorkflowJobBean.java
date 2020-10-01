@@ -107,7 +107,7 @@ public class WorkflowJobBean extends BaseJobBean {
             }
 
             log.debug("filter:{}", filter == null ? null : filter.getCode());
-            List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+            List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, null);
             log.debug("entities:" + entities.size());
             result.setNbItemsToProcess(entities.size());
 

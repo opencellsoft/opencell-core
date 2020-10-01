@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
@@ -42,10 +43,11 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -72,8 +74,10 @@ public class FilteringJobBean extends BaseJobBean {
     private FiltringJobAsync filtringJobAsync;
 
     @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    private BeanManager manager;
+
+    @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
 
     /**
      * Execute the jobInstance.
@@ -85,8 +89,11 @@ public class FilteringJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+
+        jobExecutionErrorService.purgeJobErrors(jobInstance);
+
         ScriptInterface scriptInterface = null;
-        Map<String, Object> context = null;
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
@@ -100,6 +107,12 @@ public class FilteringJobBean extends BaseJobBean {
             String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
             String recordVariableName = (String) this.getParamOrCFValue(jobInstance, "FilteringJob_recordVariableName");
 
+            Filter filter = filterService.findByCode(filterCode);
+            if (filter == null) {
+                result.registerError("Cant find filter : " + filterCode);
+                return;
+            }
+
             try {
                 scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
 
@@ -108,20 +121,44 @@ public class FilteringJobBean extends BaseJobBean {
                 return;
             }
 
-            context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_variables");
-            if (context == null) {
-                context = new HashMap<String, Object>();
+            Map<String, Object> scriptParams = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_variables");
+            if (scriptParams != null) {
+                Map<Object, Object> elContext = new HashMap<>();
+                elContext.put("manager", manager);
+                elContext.put("currentUser", currentUser);
+                elContext.put("appProvider", currentUser);
+
+                for (Map.Entry<String, Object> entry : scriptParams.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        scriptContext.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
+                    } else {
+                        scriptContext.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
 
-            Filter filter = filterService.findByCode(filterCode);
-            if (filter == null) {
-                result.registerError("Cant find filter : " + filterCode);
-                return;
+            scriptInterface.init(scriptContext);
+
+            Map<String, Object> sqlVariables = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_sql_variables");
+
+            Map<String, Object> sqlParams = new HashMap<String, Object>();
+
+            if (sqlVariables != null) {
+                Map<Object, Object> elContext = new HashMap<>();
+                elContext.put("manager", manager);
+                elContext.put("currentUser", currentUser);
+                elContext.put("appProvider", currentUser);
+
+                for (Map.Entry<String, Object> entry : sqlVariables.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        sqlParams.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
+                    } else {
+                        sqlParams.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
 
-            scriptInterface.init(context);
-
-            List<? extends IEntity> filtredEntities = filterService.filteredListAsObjects(filter);
+            List<? extends IEntity> filtredEntities = filterService.filteredListAsObjects(filter, sqlParams);
             int nbItemsToProcess = filtredEntities == null ? 0 : filtredEntities.size();
             result.setNbItemsToProcess(nbItemsToProcess);
             List<Future<String>> futures = new ArrayList<Future<String>>();
@@ -130,8 +167,7 @@ public class FilteringJobBean extends BaseJobBean {
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures
-                    .add(filtringJobAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(), result, scriptInterface, recordVariableName, lastCurrentUser));
+                futures.add(filtringJobAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(), result, scriptInterface, recordVariableName, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
@@ -159,7 +195,7 @@ public class FilteringJobBean extends BaseJobBean {
 
         } finally {
             try {
-                scriptInterface.terminate(context);
+                scriptInterface.terminate(scriptContext);
 
             } catch (Exception e) {
                 log.error("Error on finally execute", e);

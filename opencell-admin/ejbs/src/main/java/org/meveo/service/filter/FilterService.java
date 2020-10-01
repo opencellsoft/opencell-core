@@ -228,20 +228,27 @@ public class FilterService extends BusinessService<Filter> {
 
     }
 
-	@SuppressWarnings("unchecked")
-	public List<? extends IEntity> filteredListAsObjects(Filter filter) throws BusinessException {
+    @SuppressWarnings("unchecked")
+    /**
+     * Execute a filter query and return found data
+     * @param filter Filter to run
+     * @param params Parameters to pass to a filter query
+     * @return A list of fu=ound 
+     * @throws BusinessException
+     */
+    public List<? extends IEntity> filteredListAsObjects(Filter filter, Map<String, Object> params) throws BusinessException {
 
-		if (!StringUtils.isBlank(filter.getPollingQuery())) {
-			return (List<? extends IEntity>) executeSelectQuery(filter.getPollingQuery(), null);
-		}
-		FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
+        if (!StringUtils.isBlank(filter.getPollingQuery())) {
+            return (List<? extends IEntity>) executeSelectQuery(filter.getPollingQuery(), params);
+        }
+        FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
 
-		Query query = fqb.getQuery(getEntityManager());
-		log.debug("query={}", fqb.getSqlString());
-		List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
-		return objects;
+        Query query = fqb.getQuery(getEntityManager());
+        log.debug("query={}", fqb.getSqlString());
+        List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+        return objects;
 
-	}
+    }
 
     public String filteredList(String filterName, Integer firstRow, Integer numberOfRows) throws BusinessException {
         Filter filter = (Filter) findByCode(filterName);
@@ -288,7 +295,6 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     private void updateFilterDetails(Filter sourceFilter, Filter targetFilter) throws BusinessException {
-
 
         targetFilter.setPrimarySelector(sourceFilter.getPrimarySelector());
 
@@ -339,8 +345,7 @@ public class FilterService extends BusinessService<Filter> {
         }
     }
 
-    private void extractCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, List<CustomFieldTemplate> customFieldTemplates)
-            throws CustomFieldException {
+    private void extractCustomFields(ICustomFieldEntity entity, FilterCondition filterCondition, List<CustomFieldTemplate> customFieldTemplates) throws CustomFieldException {
         if (filterCondition != null) {
             if (filterCondition instanceof OrCompositeFilterCondition) {
                 OrCompositeFilterCondition orCondition = (OrCompositeFilterCondition) filterCondition;
@@ -361,8 +366,7 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void extractCustomField(List<CustomFieldTemplate> customFields, String appliesTo, PrimitiveFilterCondition primitiveFilterCondition)
-            throws CustomFieldException {
+    private void extractCustomField(List<CustomFieldTemplate> customFields, String appliesTo, PrimitiveFilterCondition primitiveFilterCondition) throws CustomFieldException {
         String operand = primitiveFilterCondition.getOperand();
         String[] typeAndCode = null;
         String code = null;
@@ -434,7 +438,7 @@ public class FilterService extends BusinessService<Filter> {
         if (filter == null) {
             return;
         }
-        
+
         if (filter != null) {
             Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
             if (!violations.isEmpty()) {
@@ -527,7 +531,7 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     private FilteredQueryBuilder getFilteredQueryBuilder(Filter filter) throws BusinessException {
-        if (filter == null ) {
+        if (filter == null) {
             throw new BusinessException("filter is null");
         }
         String clazzName = filter.getPrimarySelector().getTargetEntity();
@@ -537,9 +541,9 @@ public class FilterService extends BusinessService<Filter> {
         if (obj == null) {
             throw new BusinessException("Target entity " + clazzName + " is invalid");
         }
-        
+
         filteredQueryBuilder = new FilteredQueryBuilder(retrieveIfNotManaged(filter));
-        
+
         return filteredQueryBuilder;
     }
 }

@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
@@ -81,6 +82,9 @@ public class CrmAccountBean extends BaseBean<AccountEntity> {
         }
         if (type.equals(UserAccount.ACCOUNT_TYPE)) {
             return "userAccountId";
+        }
+        if (type.equals(Seller.ACCOUNT_TYPE)) {
+            return "objectId";
         }
         return "customerId";
     }

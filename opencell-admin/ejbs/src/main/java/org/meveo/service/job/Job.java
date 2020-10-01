@@ -324,6 +324,16 @@ public abstract class Job {
         return value;
     }
 
+    /**
+     * What is a job's target entity class - an entity that job iterates through and error logs can be traced to that entity
+     * 
+     * @param jobInstance Job instance definition
+     * @return Entity class
+     */
+    public Class getTargetEntityClass(JobInstance jobInstance) {
+        return null;
+    }
+
     /*
      * those methods will be used later for asynchronous jobs
      * 

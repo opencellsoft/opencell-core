@@ -25,31 +25,26 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.NotifiableEntity;
+import org.meveo.model.billing.RecurringChargeInstance;
 
 /**
- * Job execution error log
+ * Recurring charge related execution error log
  * 
  * @author Andrius Karpavicius
  */
 @Entity
 @Table(name = "job_execution_error")
-@NotifiableEntity
+@Immutable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "job_execution_error_seq"), })
-@NamedQueries({ @NamedQuery(name = "JobExecutionError.purgeByJobInstance", query = "delete JobExecutionError err WHERE err.jobInstance=:jobInstance") })
-
-public class JobExecutionError extends BaseEntity {
+public class RecurringChargeJobExecutionError extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
     /**
@@ -67,10 +62,11 @@ public class JobExecutionError extends BaseEntity {
     private Date created = new Date();
 
     /**
-     * Entity identifier
+     * Recurring charge instance
      */
-    @Column(name = "entity_id")
-    private Long entityId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entity_id")
+    private RecurringChargeInstance chargeInstance;
 
     /**
      * Period from date
@@ -89,16 +85,9 @@ public class JobExecutionError extends BaseEntity {
     /**
      * Error reason
      */
-    @Column(name = "error_reason", length = 2000)
+    @Column(name = "error_reason")
     private String errorReason;
 
-    
-    /**
-     * Entity - looked up by entity Id
-     */
-    @Transient
-    private IEntity entity;
-    
     /**
      * @return Job instance
      */
@@ -128,17 +117,17 @@ public class JobExecutionError extends BaseEntity {
     }
 
     /**
-     * @return Entity identifier
+     * @return Recurring charge instance
      */
-    public Long getEntityId() {
-        return entityId;
+    public RecurringChargeInstance getChargeInstance() {
+        return chargeInstance;
     }
 
     /**
-     * @param entityId Entity identifier
+     * @param chargeInstance Recurring charge instance
      */
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
+    public void setChargeInstance(RecurringChargeInstance chargeInstance) {
+        this.chargeInstance = chargeInstance;
     }
 
     /**
@@ -181,19 +170,5 @@ public class JobExecutionError extends BaseEntity {
      */
     public void setErrorReason(String errorReason) {
         this.errorReason = errorReason;
-    }
-
-    /**
-     * @return Entity - looked up by entity Id
-     */
-    public IEntity getEntity() {
-        return entity;
-    }
-    
-    /**
-     * @param entity Entity - looked up by entity Id
-     */
-    public void setEntity(IEntity entity) {
-        this.entity = entity;
     }
 }

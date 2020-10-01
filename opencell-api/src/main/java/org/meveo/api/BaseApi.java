@@ -1235,6 +1235,11 @@ public abstract class BaseApi {
                     (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts);
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
+
+                    // To support wildcard search in enum value
+                } else if (fieldClassType.isEnum()) {
+                    filters.put(key, value);
+                    
                 } else {
                     throw new InvalidParameterException("Filter " + key + " value " + value + " does not match " + fieldClassType.getSimpleName());
                 }

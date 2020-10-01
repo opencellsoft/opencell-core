@@ -23,10 +23,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * The Class BaseJobBean : Holding a common behaviors for all JoBbeans instances
@@ -39,6 +41,10 @@ public abstract class BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * Gets the parameter CF value if found, otherwise return CF value from job definition
@@ -74,10 +80,10 @@ public abstract class BaseJobBean {
     /**
      * Gets the Enum value from text.
      *
-     * @param <T>         an Enum status
+     * @param <T> an Enum status
      * @param jobInstance a job instance
-     * @param clazz       an enum class
-     * @param cfCode      a name of the enum
+     * @param clazz an enum class
+     * @param cfCode a name of the enum
      * @return a list of an enum status
      */
     protected <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {

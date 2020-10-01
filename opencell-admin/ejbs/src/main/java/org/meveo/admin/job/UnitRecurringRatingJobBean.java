@@ -67,16 +67,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
             }
         } catch (Exception e) {
 
-            Map<String, Object> errorContext = null;
-            if (e instanceof BusinessException) {
-                ((BusinessException) e).addErrorContext(ErrorContextAttributeEnum.CHARGE_INSTANCE, chargeInstanceId);
-                errorContext = ((BusinessException) e).getErrorContext();
-            } else {
-                errorContext = new HashMap<>();
-                errorContext.put(ErrorContextAttributeEnum.CHARGE_INSTANCE.name(), chargeInstanceId);
-            }
-
-            jobExecutionErrorService.registerJobError(result.getJobInstance(), ((BusinessException) e).getErrorContext(), e);
+            jobExecutionErrorService.registerJobError(result.getJobInstance(), chargeInstanceId, e);
 
             result.registerError(chargeInstanceId, e.getMessage());
             throw e;

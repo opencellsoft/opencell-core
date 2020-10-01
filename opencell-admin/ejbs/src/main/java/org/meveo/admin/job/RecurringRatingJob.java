@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -59,6 +60,11 @@ public class RecurringRatingJob extends Job {
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.RATING;
+    }
+
+    @Override
+    public Class getTargetEntityClass(JobInstance jobInstance) {
+        return RecurringChargeInstance.class;
     }
 
     @Override

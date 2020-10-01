@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -37,10 +38,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
 
 /**
- * The Class FilteringJob  execute the given script for each entity returned from the given filter.
+ * The Class FilteringJob execute the given script for each entity returned from the given filter.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -51,6 +54,9 @@ public class FilteringJob extends Job {
     @Inject
     private FilteringJobBean filteringJobBean;
 
+    @Inject
+    private FilterService filterService;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
@@ -60,6 +66,29 @@ public class FilteringJob extends Job {
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.MEDIATION;
+    }
+
+    /**
+     * Get entity class associated with a Filter, specified as job instance configuration parameters
+     */
+    @Override
+    public Class getTargetEntityClass(JobInstance jobInstance) {
+        EntityReferenceWrapper filterCF = (EntityReferenceWrapper) jobInstance.getCfValue("FilteringJob_filter");
+        if (filterCF != null) {
+            Filter filter = filterService.findByCode(filterCF.getCode());
+
+            if (filter != null) {
+                String className = filter.getEntityClass();
+                if (className != null) {
+                    try {
+                        return Class.forName(className);
+                    } catch (ClassNotFoundException e) {
+                        log.error("Class {}, specified in filter {}, was not found", className, filter.getCode());
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -123,6 +152,19 @@ public class FilteringJob extends Job {
         variablesCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put("FilteringJob_variables", variablesCF);
 
+        CustomFieldTemplate variablesSqlCF = new CustomFieldTemplate();
+        variablesSqlCF.setCode("FilteringJob_sql_variables");
+        variablesSqlCF.setAppliesTo("JobInstance_FilteringJob");
+        variablesSqlCF.setActive(true);
+        variablesSqlCF.setDescription("SQL parameters");
+        variablesSqlCF.setFieldType(CustomFieldTypeEnum.STRING);
+        variablesSqlCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
+        variablesSqlCF.setValueRequired(false);
+        variablesSqlCF.setMaxValue(256L);
+        variablesSqlCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        variablesSqlCF.setGuiPosition("tab:Configuration:0;field:5");
+        result.put("FilteringJob_sql_variables", variablesSqlCF);
+
         CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
         recordVariableName.setCode("FilteringJob_recordVariableName");
         recordVariableName.setAppliesTo("JobInstance_FilteringJob");
@@ -132,7 +174,7 @@ public class FilteringJob extends Job {
         recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
         recordVariableName.setValueRequired(false);
         recordVariableName.setMaxValue(256L);
-        recordVariableName.setGuiPosition("tab:Configuration:0;field:5");
+        recordVariableName.setGuiPosition("tab:Configuration:0;field:6");
         result.put("FilteringJob_recordVariableName", recordVariableName);
 
         return result;
