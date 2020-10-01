@@ -84,11 +84,15 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     }
 
     @Override
-    public GetUserAccountResponseDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF) {
+    public GetUserAccountResponseDto find(String userAccountCode, boolean includeSubscriptions, CustomFieldInheritanceEnum inheritCF) {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, inheritCF));
+        	final UserAccountDto userAccountDto = userAccountApi.find(userAccountCode, inheritCF);
+            if(!includeSubscriptions) {
+            	userAccountDto.setSubscriptions(null);
+            }
+            result.setUserAccount(userAccountDto);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
