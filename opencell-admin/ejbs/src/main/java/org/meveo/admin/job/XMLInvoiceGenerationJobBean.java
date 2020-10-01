@@ -39,6 +39,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -54,13 +55,14 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
     private InvoicingAsync invoicingAsync;
 
     @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    private JobExecutionErrorService jobExecutionErrorService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
+
+        jobExecutionErrorService.purgeJobErrors(jobInstance);
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {

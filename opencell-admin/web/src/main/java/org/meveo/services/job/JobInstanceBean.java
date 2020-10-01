@@ -32,23 +32,28 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.EnumBuilder;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionError;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.RecurringRatingJobExecutionError;
+import org.meveo.model.jobs.RecurringChargeJobExecutionError;
+import org.meveo.service.base.IEntityService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.job.RecurringRatingJobExecutionErrorService;
+import org.meveo.service.job.RecurringChargeJobExecutionErrorService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 
 /**
@@ -69,14 +74,22 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     private JobExecutionService jobExecutionService;
 
     @Inject
-    private RecurringRatingJobExecutionErrorService recurringRatingJobExecutionErrorService;
+    private RecurringChargeJobExecutionErrorService recurringRatingJobExecutionErrorService;
+
+    @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    @Inject
+    private IEntityService iEntityService;
+
     private ServiceBasedLazyDataModel<JobExecutionResultImpl> executionHistoryDM = null;
 
-    private ServiceBasedLazyDataModel<RecurringRatingJobExecutionError> executionErrorDM = null;
+    private ServiceBasedLazyDataModel<JobExecutionError> executionErrorDM = null;
+
+    private Class entityClassForErrorLog;
 
     public JobInstanceBean() {
         super(JobInstance.class);
@@ -302,15 +315,15 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Get execution error for recurring rating job
+     * Get execution error for other job types
      *
-     * @return Recurring rating job execution lazy data model
+     * @return Job execution error lazy data model
      */
-    public ServiceBasedLazyDataModel<RecurringRatingJobExecutionError> getRecurringRatingJobExecutionErrors() {
+    public ServiceBasedLazyDataModel<JobExecutionError> getJobExecutionErrors() {
 
         if (executionErrorDM == null) {
 
-            executionErrorDM = new ServiceBasedLazyDataModel<RecurringRatingJobExecutionError>() {
+            executionErrorDM = new ServiceBasedLazyDataModel<JobExecutionError>() {
 
                 private static final long serialVersionUID = 87900L;
 
@@ -328,18 +341,51 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
                 }
 
                 @Override
-                protected IPersistenceService<RecurringRatingJobExecutionError> getPersistenceServiceImpl() {
-                    return recurringRatingJobExecutionErrorService;
+                protected IPersistenceService<JobExecutionError> getPersistenceServiceImpl() {
+                    return jobExecutionErrorService;
                 }
 
                 @Override
                 protected ElasticClient getElasticClientImpl() {
                     return null;
                 }
+
+                @Override
+                protected List<JobExecutionError> loadData(PaginationConfiguration paginationConfig) {
+
+                    List<JobExecutionError> errorList = super.loadData(paginationConfig);
+
+                    Class entityClassForErrorLog = getTargetEntityClassForErrorLog();
+                    iEntityService.setEntityClass(entityClassForErrorLog);
+
+                    // Supplement error information - convert entity id to an entity
+                    errorList.stream().forEach(execError -> {
+                        execError.setEntity((IEntity) iEntityService.findById(execError.getEntityId()));
+                    });
+
+                    return errorList;
+                }
             };
 
         }
 
         return executionErrorDM;
+    }
+
+    /**
+     * Get a corresponding job implementation to a job template
+     * 
+     * @return Job implementation
+     */
+    public Job getJob() {
+        return jobInstanceService.getJobByName(entity.getJobTemplate());
+    }
+
+    public Class getTargetEntityClassForErrorLog() {
+        if (entityClassForErrorLog == null) {
+            entityClassForErrorLog = getJob().getTargetEntityClass(entity);
+        }
+
+        return entityClassForErrorLog;
     }
 }

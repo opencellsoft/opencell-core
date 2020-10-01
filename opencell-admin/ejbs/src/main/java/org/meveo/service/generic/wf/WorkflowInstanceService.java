@@ -94,7 +94,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             List<BusinessEntity> listAllEntitiesWithoutWFInstance = (List<BusinessEntity>) executeSelectQuery(query, params);
 
             Filter filter = gwf.getFilter();
-            List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+            List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, null);
 
             List<Long> listIdAllEntitiesWithoutWFInstance = new ArrayList<Long>();
             Map<Long, BusinessEntity> mapAllEntitiesWithoutWFInstance = new HashMap<Long, BusinessEntity>();

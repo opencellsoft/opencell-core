@@ -120,7 +120,7 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             
             List<BusinessEntity> entities = null;
             if (filter != null) {
-            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, null);
             } else {
             	entities = workflowInstanceService.findEntitiesForWorkflow(genericWf, false);
             }

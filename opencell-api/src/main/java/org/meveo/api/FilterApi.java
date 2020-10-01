@@ -18,16 +18,19 @@
 
 package org.meveo.api;
 
+import java.util.function.BiFunction;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
 
@@ -53,7 +56,8 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         handleMissingParametersAndValidate(postData);
 
-        Filter filter = mapDtoToFilter(postData, null);
+        Filter filter = new Filter();
+        dtoToEntity(postData, filter);
         filterService.create(filter);
 
         return filter;
@@ -77,47 +81,60 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
             throw new EntityDoesNotExistsException(Filter.class, postData.getCode());
         }
 
-        filter = mapDtoToFilter(postData, filter);
+        filter = dtoToEntity(postData, filter);
         filter = filterService.update(filter);
 
         return filter;
     }
 
-    private Filter mapDtoToFilter(FilterDto dto, Filter filterToUpdate) {
-        Filter filter = filterToUpdate;
+    private Filter dtoToEntity(FilterDto dto, Filter filter) {
 
-        if (filter == null) {
-            filter = new Filter();
+        boolean isNew = filter.getId() == null;
+
+        if (isNew) {
             filter.setCode(dto.getCode());
-            filter.clearUuid();
-
             if (dto.isDisabled() != null) {
                 filter.setDisabled(dto.isDisabled());
             }
+        } else if (!StringUtils.isBlank(dto.getUpdatedCode())) {
+            filter.setCode(dto.getUpdatedCode());
         }
 
-        filter.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
-        filter.setDescription(dto.getDescription());
-        filter.setInputXml(dto.getInputXml());
-        filter.setPollingQuery(dto.getPollingQuery());
-        filter.setShared(dto.getShared());
+        if (dto.getDescription() != null) {
+            filter.setDescription(StringUtils.isEmpty(dto.getDescription()) ? null : dto.getDescription());
+        }
+        if (dto.getInputXml() != null) {
+            filter.setInputXml(StringUtils.isEmpty(dto.getInputXml()) ? null : dto.getInputXml());
+        }
+        if (dto.getPollingQuery() != null) {
+            filter.setPollingQuery(StringUtils.isEmpty(dto.getPollingQuery()) ? null : dto.getPollingQuery());
+        }
+
+        if (dto.getEntityClass() != null) {
+            filter.setEntityClass(StringUtils.isEmpty(dto.getEntityClass()) ? null : dto.getEntityClass());
+        }
+
+        if (dto.getShared() != null) {
+            filter.setShared(dto.getShared());
+        }
+
+        // populate customFields
+        try {
+            populateCustomFields(dto.getCustomFields(), filter, isNew, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
         return filter;
     }
 
     @Override
-    public FilterDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
-
-        Filter filter = filterService.findByCode(code);
-
-        if (filter == null) {
-            throw new EntityDoesNotExistsException(Filter.class, code);
-        }
-
-        return new FilterDto(filter);
+    protected BiFunction<Filter, CustomFieldsDto, FilterDto> getEntityToDtoFunction() {
+        return FilterDto::new;
     }
 }

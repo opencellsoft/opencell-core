@@ -734,8 +734,14 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<redirect />
 	</navigation-case>
     <navigation-case>
-        <from-outcome>recurringRatingJobErrors</from-outcome>
-        <to-view-id>/pages/admin/job/recurringRatingJobErrors.xhtml
+        <from-outcome>recurringChargeJobErrors</from-outcome>
+        <to-view-id>/pages/admin/job/recurringChargeJobErrors.xhtml
+        </to-view-id>
+        <redirect />
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>invoiceJobErrors</from-outcome>
+        <to-view-id>/pages/admin/job/invoiceJobErrors.xhtml
         </to-view-id>
         <redirect />
     </navigation-case>

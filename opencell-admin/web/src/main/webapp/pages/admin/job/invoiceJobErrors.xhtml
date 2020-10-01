@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{invoiceJobExecutionErrorBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.jobErrorManagement']}" disabled="true" />
+                <p:menuitem outcome="invoiceJobErrors" value="#{messages['menu.invoiceJobExecutionErrors']}" />
+            </p:breadCrumb>
+        </h:form>
+
+
+        <hftl:entityPopup id="billingAccountPopup" header="#{messages['billingAccount.popup.header']}" backingBean="#{billingAccountBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
+            column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+            selection="#{invoiceJobExecutionErrorBean.filters['chargeInstance.userAccount.billingAccount']}" updateField=":searchForm:billingAccountId">
+        </hftl:entityPopup>
+
+        <hftl:searchPanel renderNewButton="false" label="#{messages['recurringRatingJobExecutionErrors.search']}" backingBean="#{invoiceJobExecutionErrorBean}">
+
+            <hftl:searchField label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber" />
+            <hftl:searchField label="#{messages['invoice.invoiceDate']}" field="invoice.invoiceDate" />
+
+            <hftl:searchField label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance" listElements="#{invoiceJobExecutionErrorBean.getJobs()}"
+                valueLabelField="code" />
+            <hftl:searchField label="#{messages['walletOperation.billingAccount']}" id="billingAccountId" field="chargeInstance.userAccount.billingAccount" valueLabelField="code"
+                popup="true" popupId="billingAccountPopup" />
+        </hftl:searchPanel>
+
+        <h:panelGroup id="resultsDatatable">
+            <hftl:dataList backingBean="#{invoiceJobExecutionErrorBean}" exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
+                <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
+                <hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber" entityView="invoiceDetail" backView="invoiceJobErrors"
+                    valueIdField="invoice.id" width="15%" />
+                <hftl:column label="#{messages['invoice.invoiceDate']}" field="invoice.invoiceDate" width="15%" />
+                <hftl:column label="#{messages['walletOperation.billingAccount']}" field="invoice.billingAccount.code" width="15%" entityView="billingAccountDetail"
+                    objectIdParamName="billingAccountId" backView="invoiceJobErrors" valueIdField="invoice.billingAccount.id" />
+                <hftl:column label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance.code" entityView="jobInstanceDetail" backView="invoiceJobErrors"
+                    valueIdField="jobInstance.id" width="10%" />
+                <hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="75" />
+            </hftl:dataList>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

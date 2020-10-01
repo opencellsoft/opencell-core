@@ -1566,7 +1566,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter, int rtPageSize) throws BusinessException {
 
         if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
+            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
 
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())

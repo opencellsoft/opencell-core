@@ -27,6 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -37,6 +38,7 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class XMLInvoiceGenerationJob generate XML for all valid invoices that dont have it..
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -46,7 +48,6 @@ public class XMLInvoiceGenerationJob extends Job {
     /** The xml invoice generation job bean. */
     @Inject
     private XMLInvoiceGenerationJobBean xmlInvoiceGenerationJobBean;
-
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -60,9 +61,14 @@ public class XMLInvoiceGenerationJob extends Job {
     }
 
     @Override
+    public Class getTargetEntityClass(JobInstance jobInstance) {
+        return Invoice.class;
+    }
+
+    @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
-        
+
         final String APPLIES_TO = "JobInstance_XMLInvoiceGenerationJob";
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
@@ -86,25 +92,25 @@ public class XMLInvoiceGenerationJob extends Job {
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, customFieldNbWaiting);
-        
+
         CustomFieldTemplate customFieldInvToProcess = new CustomFieldTemplate();
-		final String cfInvToProcessCode = "invoicesToProcess";
-		
-		Map<String, String> invoicesToProcessValues = new HashMap<String, String>();
-		invoicesToProcessValues.put(InvoicesToProcessEnum.FinalOnly.name(), InvoicesToProcessEnum.FinalOnly.name());
-		invoicesToProcessValues.put(InvoicesToProcessEnum.DraftOnly.name(), InvoicesToProcessEnum.DraftOnly.name());
-		invoicesToProcessValues.put(InvoicesToProcessEnum.All.name(), InvoicesToProcessEnum.All.name());
-		
-		customFieldInvToProcess.setCode(cfInvToProcessCode);
-		customFieldInvToProcess.setAppliesTo(APPLIES_TO);
-		customFieldInvToProcess.setActive(true);
-		customFieldInvToProcess.setDefaultValue(InvoicesToProcessEnum.FinalOnly.name());
-		customFieldInvToProcess.setDescription(resourceMessages.getString("InvoicesToProcessEnum.label"));
-		customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.LIST);
-		customFieldInvToProcess.setValueRequired(true);
-		customFieldInvToProcess.setListValues(invoicesToProcessValues);
-		customFieldInvToProcess.setGuiPosition("tab:Configuration:0;field:2");
-		result.put(cfInvToProcessCode, customFieldInvToProcess);
+        final String cfInvToProcessCode = "invoicesToProcess";
+
+        Map<String, String> invoicesToProcessValues = new HashMap<String, String>();
+        invoicesToProcessValues.put(InvoicesToProcessEnum.FinalOnly.name(), InvoicesToProcessEnum.FinalOnly.name());
+        invoicesToProcessValues.put(InvoicesToProcessEnum.DraftOnly.name(), InvoicesToProcessEnum.DraftOnly.name());
+        invoicesToProcessValues.put(InvoicesToProcessEnum.All.name(), InvoicesToProcessEnum.All.name());
+
+        customFieldInvToProcess.setCode(cfInvToProcessCode);
+        customFieldInvToProcess.setAppliesTo(APPLIES_TO);
+        customFieldInvToProcess.setActive(true);
+        customFieldInvToProcess.setDefaultValue(InvoicesToProcessEnum.FinalOnly.name());
+        customFieldInvToProcess.setDescription(resourceMessages.getString("InvoicesToProcessEnum.label"));
+        customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.LIST);
+        customFieldInvToProcess.setValueRequired(true);
+        customFieldInvToProcess.setListValues(invoicesToProcessValues);
+        customFieldInvToProcess.setGuiPosition("tab:Configuration:0;field:2");
+        result.put(cfInvToProcessCode, customFieldInvToProcess);
 
         return result;
     }
