@@ -17,15 +17,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
@@ -34,33 +25,20 @@ import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AutomatedRefund;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.PaymentErrorEnum;
-import org.meveo.model.payments.PaymentErrorTypeEnum;
-import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.payments.PaymentHistory;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentStatusEnum;
-import org.meveo.model.payments.Refund;
-import org.meveo.model.payments.RejectedPayment;
-import org.meveo.model.payments.RejectedType;
+import org.meveo.model.payments.*;
 import org.meveo.service.base.PersistenceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Payment service implementation.
- * 
+ *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Said Ramli
@@ -135,7 +113,7 @@ public class PaymentService extends PersistenceService<Payment> {
     /**
      * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
      * will be used (and marked as preferred).
-     * 
+     *
      * @param customerAccount Customer account
      * @param ctsAmount Amount to pay in cent
      * @param aoIdsToPay list of account operations's id
@@ -154,7 +132,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Pay by card. A new card payment type is registered as token if payment was successfull.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param cardNumber card's number
@@ -181,7 +159,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Pay by sepa.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param aoIdsToPay list of account operation's id to pay
@@ -200,7 +178,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Refund by sepa.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param aoIdsToPay list of account operation's id to refund
@@ -220,7 +198,7 @@ public class PaymentService extends PersistenceService<Payment> {
     /**
      * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
      * will be used (and marked as preferred)
-     * 
+     *
      * @param customerAccount Customer account
      * @param ctsAmount Amount to refund
      * @param aoIdsToRefund list of account operations ids to be refund
@@ -239,7 +217,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Refund by card. A new card payment type is registered as token if refund was successfull.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param cardNumber card's number
@@ -426,7 +404,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Create the payment account operation for the payment that was processed.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
@@ -448,8 +426,8 @@ public class PaymentService extends PersistenceService<Payment> {
         if (paymentMethodType == PaymentMethodEnum.PAYPAL) {
             occTemplateCode = paramBean.getProperty("occ.payment.pal", "PAY_PAL");
         }
-        
-        
+
+
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
@@ -470,6 +448,13 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setTransactionDate(new Date());
         payment.setMatchingStatus(MatchingStatusEnum.O);
         payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
+        setSumAndOrdersNumber(payment, aoIdsToPay);
+        create(payment);
+        return payment.getId();
+
+    }
+
+    public void setSumAndOrdersNumber(Payment payment, List<Long> aoIdsToPay) {
         BigDecimal sumTax = BigDecimal.ZERO;
         BigDecimal sumWithoutTax = BigDecimal.ZERO;
 //        String orderNums = "";
@@ -487,9 +472,6 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setAmountWithoutTax(sumWithoutTax);
         String orderNums = orderNumsSB.toString();
         payment.setOrderNumber(orderNums);
-        create(payment);
-        return payment.getId();
-
     }
 
     /**
