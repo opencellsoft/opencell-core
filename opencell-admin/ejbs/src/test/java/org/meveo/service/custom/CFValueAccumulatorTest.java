@@ -1,8 +1,6 @@
 package org.meveo.service.custom;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.meveo.model.admin.Seller;
@@ -12,6 +10,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -42,7 +43,9 @@ public class CFValueAccumulatorTest {
         Assert.assertTrue(rule.getPropagateTo().containsKey(OfferTemplate.class));
         Assert.assertEquals(rule.getPropagateTo().size(), 5);
         Assert.assertArrayEquals(new Class[] { Seller.class }, rule.getPropagateTo().get(Provider.class).toArray());
-        Assert.assertArrayEquals(new Class[] { Customer.class, Seller.class }, rule.getPropagateTo().get(Seller.class).toArray());
+        Assertions.assertThat(rule.getPropagateTo().get(Seller.class).size()).isEqualTo(2);
+        Assertions.assertThat(rule.getPropagateTo().get(Seller.class).toArray()).contains(Seller.class);
+        Assertions.assertThat(rule.getPropagateTo().get(Seller.class).toArray()).contains(Customer.class);
         Assert.assertArrayEquals(new Class[] { BillingAccount.class }, rule.getPropagateTo().get(Customer.class).toArray());
         Assert.assertArrayEquals(new Class[] { Subscription.class }, rule.getPropagateTo().get(BillingAccount.class).toArray());
         Assert.assertArrayEquals(new Class[] { Subscription.class }, rule.getPropagateTo().get(OfferTemplate.class).toArray());

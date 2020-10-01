@@ -53,9 +53,6 @@ public class CustomTableServiceTest {
 
 	@Before
 	public void init() {
-		doReturn(queryBuilder).when(sut).getQuery(anyString(), eq(null));
-		doReturn(sqlQuery).when(queryBuilder).getNativeQuery(any(EntityManager.class), anyBoolean());
-		when(emWrapper.getEntityManager()).thenReturn(mock(EntityManager.class));
 		Map<String, CustomFieldTemplate> cfts = new HashMap<String, CustomFieldTemplate>() {
 			{
 				CustomFieldTemplate cft = mock(CustomFieldTemplate.class);
@@ -71,7 +68,6 @@ public class CustomTableServiceTest {
 	public void should_convert_table_data_to_records_holding_values_as_map_and_having_id() {
 		// Given
 		List<Map<String, Object>> givenData = buildListMap(3);
-		when(sqlQuery.list()).thenReturn(givenData);
 		// When
 		String tableName = "flirtikit";
 		String wildCode = "";

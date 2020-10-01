@@ -41,7 +41,11 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
                 ).orderItems((entity.getOrderItems() == null) ?
                         null :
                         entity.getOrderItems().stream()
-                                .map(orderItem -> ImmutableOrderItem.builder().id(orderItem.getId()).build())
+                                .map(orderItem -> ImmutableOrderItem.builder().
+                                        id(orderItem.getId())
+                                        .itemId(orderItem.getItemId())
+                                        .status(orderItem.getStatus())
+                                        .build())
                                 .collect(Collectors.toList())
                 ).build();
     }
