@@ -26,7 +26,7 @@ public class OfferPoolRatingAsync {
 
     private static final String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
             "  FROM billing_wallet_operation wo \n" +
-            "  WHERE wo.offer_id = :offerId \n" +
+            "  WHERE wo.offer_id = :offerId AND wo.status = 'OPEN' \n" +
             "   AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
             "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
 

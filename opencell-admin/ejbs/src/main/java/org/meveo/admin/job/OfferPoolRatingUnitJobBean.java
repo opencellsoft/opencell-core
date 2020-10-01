@@ -104,7 +104,7 @@ public class OfferPoolRatingUnitJobBean {
             walletOperation.setParameter2("DEDUCTED_FROM_POOL");
             walletOperationService.update(walletOperation);
 
-            cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, new Date());
+            cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, walletOperation.getOperationDate());
             serviceTemplateService.update(serviceTemplate);
 
             result.registerSucces();
