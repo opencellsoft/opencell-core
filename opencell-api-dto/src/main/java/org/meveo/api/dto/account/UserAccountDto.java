@@ -123,12 +123,18 @@ public class UserAccountDto extends AccountDto {
         }
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
-        if(e.getSubscriptions() != null && !e.getSubscriptions().isEmpty()) {
-        	SubscriptionsDto subDtos = new SubscriptionsDto();
-        	subDtos.setSubscription(e.getSubscriptions().stream().map(s -> new SubscriptionDto(s)).collect(Collectors.toList()));
-        	setSubscriptions(subDtos);
-        }
     }
+	
+	public UserAccountDto(UserAccount e, boolean includeSubscription) {
+		this(e);
+        if(includeSubscription && e.getSubscriptions() != null && !e.getSubscriptions().isEmpty()) {
+        	SubscriptionsDto subDtos = new SubscriptionsDto();
+        	subDtos.setSubscription(e.getSubscriptions().stream().map(SubscriptionDto::new).collect(Collectors.toList()));
+        	setSubscriptions(subDtos);
+        }else {
+        	setSubscriptions(null);
+        }
+	}
 	
 
     /**

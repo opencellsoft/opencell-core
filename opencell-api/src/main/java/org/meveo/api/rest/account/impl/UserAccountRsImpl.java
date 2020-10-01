@@ -87,11 +87,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-        	final UserAccountDto userAccountDto = userAccountApi.find(userAccountCode, inheritCF);
-            if(!includeSubscriptions) {
-            	userAccountDto.setSubscriptions(null);
-            }
-            result.setUserAccount(userAccountDto);
+            result.setUserAccount(userAccountApi.find(userAccountCode, inheritCF, includeSubscriptions));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
