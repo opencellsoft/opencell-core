@@ -51,9 +51,9 @@ public class BusinessException extends RuntimeException {
         RATING_PERIOD,
 
         /**
-         * Charge instance
+         * Entity
          */
-        CHARGE_INSTANCE;
+        ENTITY;
     }
 
     /**
@@ -159,7 +159,9 @@ public class BusinessException extends RuntimeException {
         if (errorContext == null) {
             errorContext = new HashMap<>();
         }
-        errorContext.put(attribute, value);
+        if (!errorContext.containsKey(attribute)) {
+            errorContext.put(attribute, value);
+        }
 
         return errorContext;
     }

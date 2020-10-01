@@ -36,8 +36,10 @@ import org.meveo.model.IEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInterface;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -56,6 +58,13 @@ public class FiltringJobAsync {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
+    @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
+
+    /** The log. */
+    @Inject
+    protected Logger log;
+
     /**
      * Run script on filtered entities one entity at a time in a separate transaction.
      * 
@@ -69,16 +78,29 @@ public class FiltringJobAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<? extends IEntity> filtredEntities, JobExecutionResultImpl result, ScriptInterface scriptInterface, String recordVariableName,
-            MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<? extends IEntity> filtredEntities, JobExecutionResultImpl result, ScriptInterface scriptInterface, String recordVariableName, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (Object filtredEntity : filtredEntities) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+        int i = 0;
+        for (IEntity filtredEntity : filtredEntities) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);
+
+            try {
+
+                unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);
+                result.registerSucces();
+
+            } catch (Exception e) {
+
+                jobExecutionErrorService.registerJobError(result.getJobInstance(), (Long) filtredEntity.getId(), e);
+
+                result.registerError(filtredEntity.getId(), e.getMessage());
+                log.error("Failed to run script on filtered entity {}", filtredEntity.getId(), e);
+            }
         }
         return new AsyncResult<String>("OK");
     }

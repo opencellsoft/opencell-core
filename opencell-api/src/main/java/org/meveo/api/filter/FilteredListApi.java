@@ -48,19 +48,19 @@ public class FilteredListApi extends BaseApi {
         return getFilterFromDto(filter, null);
     }
 
-    public Filter getFilterFromDto(FilterDto filter, Map<String, String> parameters) throws MeveoApiException {
-        Filter result = null;
-        if (StringUtils.isBlank(filter.getCode()) && StringUtils.isBlank(filter.getInputXml())) {
+    public Filter getFilterFromDto(FilterDto filterDto, Map<String, String> parameters) throws MeveoApiException {
+        Filter filter = null;
+        if (StringUtils.isBlank(filterDto.getCode()) && StringUtils.isBlank(filterDto.getInputXml())) {
             throw new MissingParameterException("code or inputXml");
         }
-        if (!StringUtils.isBlank(filter.getCode())) {
-            result = filterService.findByCode(filter.getCode());
-            if (result == null && StringUtils.isBlank(filter.getInputXml())) {
-                throw new EntityDoesNotExistsException(Filter.class, filter.getCode());
+        if (!StringUtils.isBlank(filterDto.getCode())) {
+            filter = filterService.findByCode(filterDto.getCode());
+            if (filter == null && StringUtils.isBlank(filterDto.getInputXml())) {
+                throw new EntityDoesNotExistsException(Filter.class, filterDto.getCode());
             }
             // check if user own the filter
-            if (result != null && (result.getShared() == null || !result.getShared())) {
-                if (!result.getAuditable().isCreator(currentUser)) {
+            if (filter != null && !filter.getShared()) {
+                if (!filter.getAuditable().isCreator(currentUser)) {
                     throw new MeveoApiException("INVALID_FILTER_OWNER");
                 }
             }
@@ -68,12 +68,12 @@ public class FilteredListApi extends BaseApi {
 
         // if there are parameters we recreate a transient filter by replacing the parameter
         // values in the xml
-        if (parameters != null && result != null) {
-            String filterXmlInput = replaceCFParameters(result.getInputXml(), parameters);
-            result = filterService.parse(filterXmlInput);
+        if (parameters != null && filter != null) {
+            String filterXmlInput = replaceCFParameters(filter.getInputXml(), parameters);
+            filter = filterService.parse(filterXmlInput);
         }
 
-        return result;
+        return filter;
     }
 
     private String replaceCFParameters(String xmlInput, Map<String, String> parameters) {
@@ -111,7 +111,7 @@ public class FilteredListApi extends BaseApi {
         }
 
         // check if user owned the filter
-        if (filter.getShared() == null || !filter.getShared()) {
+        if (!filter.getShared()) {
             if (!filter.getAuditable().isCreator(currentUser)) {
                 throw new MeveoApiException("INVALID_FILTER_OWNER");
             }
@@ -135,7 +135,7 @@ public class FilteredListApi extends BaseApi {
             Filter filter = filterService.parse(postData.getXmlInput());
 
             // check if user owned the filter
-            if (filter.getShared() == null || !filter.getShared()) {
+            if (!filter.getShared()) {
                 if (filter.getAuditable() != null) {
                     if (!filter.getAuditable().isCreator(currentUser)) {
                         throw new MeveoApiException("INVALID_FILTER_OWNER");

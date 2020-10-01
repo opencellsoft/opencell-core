@@ -17,6 +17,7 @@
  */
 package org.meveo.service.job;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -24,6 +25,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.jobs.JobExecutionError;
@@ -40,9 +42,25 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class JobExecutionErrorService extends PersistenceService<JobExecutionError> {
 
+    /**
+     * Register job execution error
+     * 
+     * @param jobInstance Job instance
+     * @param entityId Identifier fo an entity that failed processing during job execution
+     * @param e Exception
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void registerJobError(JobInstance jobInstance, Map<String, Object> errorContext, Exception e) {
+    public void registerJobError(JobInstance jobInstance, Long entityId, Exception e) {
+
+        Map<String, Object> errorContext = null;
+        if (e instanceof BusinessException) {
+            ((BusinessException) e).addErrorContext(ErrorContextAttributeEnum.ENTITY, entityId);
+            errorContext = ((BusinessException) e).getErrorContext();
+        } else {
+            errorContext = new HashMap<>();
+            errorContext.put(ErrorContextAttributeEnum.ENTITY.name(), entityId);
+        }
 
         JobExecutionError jobError = new JobExecutionError();
         jobError.setJobInstance(jobInstance);
@@ -57,8 +75,8 @@ public class JobExecutionErrorService extends PersistenceService<JobExecutionErr
             jobError.setPeriodTo(((DatePeriod) errorContext.get(BusinessException.ErrorContextAttributeEnum.RATING_PERIOD.name())).getTo());
         }
 
-        if (errorContext.containsKey(BusinessException.ErrorContextAttributeEnum.CHARGE_INSTANCE.name())) {
-            jobError.setEntityId((Long) errorContext.get(BusinessException.ErrorContextAttributeEnum.CHARGE_INSTANCE.name()));
+        if (errorContext.containsKey(BusinessException.ErrorContextAttributeEnum.ENTITY.name())) {
+            jobError.setEntityId((Long) errorContext.get(BusinessException.ErrorContextAttributeEnum.ENTITY.name()));
         }
 
         getEntityManager().persist(jobError);

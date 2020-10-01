@@ -30,6 +30,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -38,6 +39,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
+import org.meveo.validation.constraint.ClassName;
 
 /**
  * @author anasseh
@@ -51,13 +53,11 @@ import org.meveo.model.ModuleItem;
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "Filter", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "meveo_filter")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "meveo_filter_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_filter_seq"), })
 public class Filter extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -6150352877726034654L;
-    private static final String FILTER_CODE_PREFIX = "FILTER_";
-   
+
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "filter_condition_id")
     private FilterCondition filterCondition;
@@ -79,10 +79,18 @@ public class Filter extends EnableBusinessCFEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "shared")
-    private Boolean shared = true;
-    
+    private boolean shared = true;
+
     @Column(name = "polling_query", columnDefinition = "TEXT")
     private String pollingQuery;
+
+    /**
+     * Target entity full classname. Used together with pollingQuery. Must match the query result.
+     */
+    @Column(name = "entity_class", length = 255)
+    @Size(max = 255)
+    @ClassName
+    private String entityClass;
 
     public FilterCondition getFilterCondition() {
         return filterCondition;
@@ -124,24 +132,33 @@ public class Filter extends EnableBusinessCFEntity {
         this.inputXml = inputXml;
     }
 
-    public Boolean getShared() {
+    public boolean getShared() {
         return shared;
     }
 
-    public void setShared(Boolean shared) {
+    public void setShared(boolean shared) {
         this.shared = shared;
     }
 
-    public String getAppliesTo() {
-        return FILTER_CODE_PREFIX + getCode();
+    public String getPollingQuery() {
+        return pollingQuery;
     }
 
-	public String getPollingQuery() {
-		return pollingQuery;
-	}
+    public void setPollingQuery(String pollingQuery) {
+        this.pollingQuery = pollingQuery;
+    }
 
-	public void setPollingQuery(String pollingQuery) {
-		this.pollingQuery = pollingQuery;
-	}
-    
+    /**
+     * @return Target entity full classname. Used together with pollingQuery. Must match the query result
+     */
+    public String getEntityClass() {
+        return entityClass;
+    }
+
+    /**
+     * @param entityClass Target entity full classname. Used together with pollingQuery. Must match the query result
+     */
+    public void setEntityClass(String entityClass) {
+        this.entityClass = entityClass;
+    }
 }

@@ -3,26 +3,26 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{recurringRatingJobExecutionErrorBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{recurringChargeJobExecutionErrorBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
-                <p:menuitem outcome="recurringRatingJobErrors" value="#{messages['menu.recurringRatingJobExecutionErrors']}" />
+                <p:menuitem value="#{messages['menu.jobErrorManagement']}" disabled="true" />
+                <p:menuitem outcome="recurringChargeJobErrors" value="#{messages['menu.recurringChargeJobExecutionErrors']}" />
             </p:breadCrumb>
         </h:form>
 
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['subscription.popup.header']}" backingBean="#{subscriptionBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
             column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            selection="#{recurringRatingJobExecutionErrorBean.filters['chargeInstance.subscription']}" updateField=":searchForm:subscriptionId">
+            selection="#{recurringChargeJobExecutionErrorBean.filters['chargeInstance.subscription']}" updateField=":searchForm:subscriptionId">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="searchServiceInstancePopup" header="#{messages['walletOperation.service']}" updateField=":searchForm:serviceInstance"
-            selection="#{recurringRatingJobExecutionErrorBean.filters['chargeInstance.serviceInstance.serviceTemplate']}" backingBean="#{serviceTemplateBean}"
+            selection="#{recurringChargeJobExecutionErrorBean.filters['chargeInstance.serviceInstance.serviceTemplate']}" backingBean="#{serviceTemplateBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
             column2Label="#{messages['BusinessEntity.description']}" column2="description">
         </hftl:entityPopup>
@@ -30,15 +30,15 @@
         <hftl:entityPopup id="billingAccountPopup" header="#{messages['billingAccount.popup.header']}" backingBean="#{billingAccountBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
             column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            selection="#{recurringRatingJobExecutionErrorBean.filters['chargeInstance.userAccount.billingAccount']}" updateField=":searchForm:billingAccountId">
+            selection="#{recurringChargeJobExecutionErrorBean.filters['chargeInstance.userAccount.billingAccount']}" updateField=":searchForm:billingAccountId">
         </hftl:entityPopup>
 
-        <hftl:searchPanel renderNewButton="false" label="#{messages['recurringRatingJobExecutionErrors.search']}" backingBean="#{recurringRatingJobExecutionErrorBean}">
+        <hftl:searchPanel renderNewButton="false" label="#{messages['recurringRatingJobExecutionErrors.search']}" backingBean="#{recurringChargeJobExecutionErrorBean}">
 
-            <hftl:searchField label="#{messages['jobInstance.error.charge']}" field="chargeInstance.code" />
+            <hftl:searchField label="#{messages['charge.label']}" field="chargeInstance.code" />
             <hftl:searchField label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance"
-                listElements="#{recurringRatingJobExecutionErrorBean.getRecurringChargeRatingJobs()}" valueLabelField="code" />
-            <hftl:searchField label="#{messages['jobInstance.error.subscription']}" id="subscriptionId" field="chargeInstance.subscription" valueLabelField="code" popup="true"
+                listElements="#{recurringChargeJobExecutionErrorBean.getJobs()}" valueLabelField="code" />
+            <hftl:searchField label="#{messages['subscription.label']}" id="subscriptionId" field="chargeInstance.subscription" valueLabelField="code" popup="true"
                 popupId="subscriptionPopup" />
             <hftl:searchField label="#{messages['walletOperation.service']}" id="serviceInstance" field="chargeInstance.serviceInstance.serviceTemplate" valueLabelField="code"
                 popup="true" popupId="searchServiceInstancePopup" />
@@ -47,25 +47,24 @@
         </hftl:searchPanel>
 
         <h:panelGroup id="resultsDatatable">
-            <hftl:dataList backingBean="#{recurringRatingJobExecutionErrorBean}" exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
+            <hftl:dataList backingBean="#{recurringChargeJobExecutionErrorBean}" exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
                 <f:facet name="header">
                     <p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size()==0?'true':'false'}" icon="ui-icon-calculator" />
                     <p:columnToggler datasource="datatable_results" trigger="toggler" />
                 </f:facet>
                 <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" toggleable="true" toggleIndex="0" />
-                <hftl:column label="#{messages['jobInstance.error.charge']}" field="chargeInstance.code" entityView="subscriptionDetailRecChargeTab"
-                    objectIdParamName="subscriptionId" backView="recurringRatingJobErrors" valueIdField="chargeInstance.subscription.id" width="20%" />
-                <hftl:column label="#{messages['jobInstance.error.subscription']}" field="chargeInstance.subscription.code" entityView="subscriptionDetail"
-                    objectIdParamName="subscriptionId" backView="recurringRatingJobErrors" valueIdField="chargeInstance.subscription.id" width="15%" toggleable="true"
-                    toggleIndex="1" />
+                <hftl:column label="#{messages['charge.label']}" field="chargeInstance.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId"
+                    backView="recurringChargeJobErrors" valueIdField="chargeInstance.subscription.id" width="20%" />
+                <hftl:column label="#{messages['subscription.label']}" field="chargeInstance.subscription.code" entityView="subscriptionDetail" objectIdParamName="subscriptionId"
+                    backView="recurringChargeJobErrors" valueIdField="chargeInstance.subscription.id" width="15%" toggleable="true" toggleIndex="1" />
                 <hftl:column label="#{messages['walletOperation.service']}" field="chargeInstance.serviceInstance.serviceTemplate.code" width="15%" toggleable="true"
                     toggleIndex="2" />
                 <hftl:column label="#{messages['walletOperation.billingAccount']}" field="chargeInstance.userAccount.billingAccount.code" width="15%" toggleable="true"
-                    toggleIndex="3" entityView="billingAccountDetail" objectIdParamName="billingAccountId" backView="recurringRatingJobErrors"
+                    toggleIndex="3" entityView="billingAccountDetail" objectIdParamName="billingAccountId" backView="recurringChargeJobErrors"
                     valueIdField="chargeInstance.userAccount.billingAccount.id" />
                 <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%" toggleable="true" toggleIndex="4" />
                 <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%" toggleable="true" toggleIndex="5" />
-                <hftl:column label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance.code" entityView="jobInstanceDetail" backView="recurringRatingJobErrors"
+                <hftl:column label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance.code" entityView="jobInstanceDetail" backView="recurringChargeJobErrors"
                     valueIdField="jobInstance.id" width="10%" toggleable="true" toggleIndex="6" />
                 <hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="75" />
             </hftl:dataList>

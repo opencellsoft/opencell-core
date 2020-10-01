@@ -248,12 +248,10 @@
 			rendered="#{currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="walletOperations" outcome="walletOperations"
 				value="#{messages['menu.walletOperations']}" />
-            <p:menuitem id="recurringRatingJobErrors" outcome="recurringRatingJobErrors"
-                value="#{messages['menu.recurringRatingJobExecutionErrors']}" />
+            <p:menuitem id="ratedTransactions" outcome="ratedTransactions"
+                value="#{messages['menu.ratedTransactions']}"
+                rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
 		</p:submenu>
-		<p:menuitem id="ratedTransactions" outcome="ratedTransactions"
-			value="#{messages['menu.ratedTransactions']}"
-			rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
 		<p:submenu id="billingRun" label="#{messages['menu.billingRun']}"
 			rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="billingRuns" outcome="billingRuns"
@@ -371,6 +369,12 @@
 				value="#{messages['menu.jobInstances']}" />
 			<p:menuitem id="timers" outcome="timerEntities"
 				value="#{messages['menu.timerEntities']}" />
+            <p:submenu id="jobErrors" label="#{messages['menu.jobErrorManagement']}">                  
+                <p:menuitem id="recurringChargeJobErrors" outcome="recurringChargeJobErrors"
+                    value="#{messages['menu.recurringChargeJobExecutionErrors']}" />          
+                <p:menuitem id="invoiceJobErrors" outcome="invoiceJobErrors"
+                    value="#{messages['menu.invoiceJobExecutionErrors']}" />
+            </p:submenu>
 		</p:submenu>
 		<p:menuitem id="MeveoInstances" outcome="meveoInstances"
 			value="#{messages['menu.meveoInstance']}" />

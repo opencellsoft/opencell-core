@@ -19,17 +19,17 @@ package org.meveo.service.job;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.jobs.RecurringRatingJobExecutionError;
+import org.meveo.model.jobs.RecurringChargeJobExecutionError;
 import org.meveo.service.base.PersistenceService;
 
 /**
- * Persistence service for RecurringRatingJobExecutionError entity
+ * Persistence service for RecurringChargeJobExecutionError entity
  * 
  * @author Andrius Karpavicius
  * @lastModifiedVersion 10.0
  * 
  */
 @Stateless
-public class RecurringRatingJobExecutionErrorService extends PersistenceService<RecurringRatingJobExecutionError> {
+public class RecurringChargeJobExecutionErrorService extends PersistenceService<RecurringChargeJobExecutionError> {
 
 }

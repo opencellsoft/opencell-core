@@ -137,19 +137,26 @@
             <!-- ===================================== JOB ERROR DETAILS ===================================== -->
 
 
-            <h:panelGroup id="jobErrors" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.entity.jobTemplate=='RecurringRatingJob'}">
+            <h:panelGroup id="jobErrors" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null}">
 
                 <p:fieldset legend="#{messages['jobInstance.jobErrors']}" styleClass="clearLeft">
 
-                    <hftl:dataList backingBean="#{recurringRatingJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getRecurringRatingJobExecutionErrors()}"
-                        resultsId="error_list_results" exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
+
+                    <hftl:dataList backingBean="#{recurringRatingJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getJobExecutionErrors()}" resultsId="error_list_results"
+                        exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
                         <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
-                        <hftl:column label="#{messages['jobInstance.error.charge']}" field="chargeInstance.code" entityView="subscriptionDetailRecChargeTab"
-                            objectIdParamName="subscriptionId" backView="jobInstanceDetail" valueIdField="chargeInstance.subscription.id" width="20%" />
-                        <hftl:column label="#{messages['jobInstance.error.subscription']}" field="chargeInstance.subscription.code" entityView="subscriptionDetail"
-                            objectIdParamName="subscriptionId" backView="jobInstanceDetail" valueIdField="chargeInstance.subscription.id" width="15%" />
-                        <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%" />
-                        <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%" />
+                        <hftl:column label="#{messages['charge.label']}" field="entity.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId"
+                            backView="jobInstances" valueIdField="entity.subscription.id" width="20%"
+                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                        <hftl:column label="#{messages['subscription.label']}" field="entity.subscription.code" entityView="subscriptionDetail" objectIdParamName="subscriptionId"
+                            backView="jobInstances" valueIdField="entity.subscription.id" width="15%"
+                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                        <hftl:column label="#{messages['invoice.label']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
+                            valueIdField="entity.id" width="20%" rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+                        <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%"
+                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                        <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%"
+                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="120" />
                     </hftl:dataList>
                 </p:fieldset>

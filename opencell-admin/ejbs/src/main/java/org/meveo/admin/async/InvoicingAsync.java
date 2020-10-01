@@ -46,6 +46,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -85,6 +86,9 @@ public class InvoicingAsync {
 
     @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    private JobExecutionErrorService jobExecutionErrorService;
 
     /**
      * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
@@ -322,7 +326,11 @@ public class InvoicingAsync {
             try {
                 invoiceService.produceInvoicePdfInNewTransaction(invoiceId);
                 result.registerSucces();
+                
             } catch (Exception e) {
+
+                jobExecutionErrorService.registerJobError(result.getJobInstance(), invoiceId, e);
+                
                 result.registerError(invoiceId, e.getMessage());
                 log.error("Failed to create PDF invoice for invoice {}", invoiceId, e);
             }
@@ -358,6 +366,9 @@ public class InvoicingAsync {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
             } catch (Exception e) {
+
+                jobExecutionErrorService.registerJobError(result.getJobInstance(), invoiceId, e);
+                
                 result.registerError(invoiceId, e.getMessage());
                 allOk = false;
                 log.error("Failed to create XML invoice for invoice {}", invoiceId, e);

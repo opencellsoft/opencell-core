@@ -41,8 +41,19 @@ public class FilterDto extends EnableBusinessDto {
 
     /** The input xml. */
     private String inputXml;
-    
+
+    /**
+     * JPQL query
+     */
     private String pollingQuery;
+
+    /**
+     * Target entity full classname. Used together with pollingQuery. Must match the query result.
+     */
+    private String entityClass;
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiate a new Filter Dto
@@ -54,13 +65,18 @@ public class FilterDto extends EnableBusinessDto {
     /**
      * Convert Filter entity to DTO
      * 
-     * @param filter Entity to convert
+     * @param filter Filter to convert
+     * @param customFieldInstances the custom field instances
      */
-    public FilterDto(Filter filter) {
+    public FilterDto(Filter filter, CustomFieldsDto customFieldInstances) {
         super(filter);
 
         shared = filter.getShared();
         inputXml = filter.getInputXml();
+        pollingQuery = filter.getPollingQuery();
+        entityClass = filter.getEntityClass();
+
+        customFields = customFieldInstances;
     }
 
     /**
@@ -99,19 +115,48 @@ public class FilterDto extends EnableBusinessDto {
         this.inputXml = inputXml;
     }
 
-	public String getPollingQuery() {
-		return pollingQuery;
-	}
+    public String getPollingQuery() {
+        return pollingQuery;
+    }
 
-	public void setPollingQuery(String pollingQuery) {
-		this.pollingQuery = pollingQuery;
-	}
+    public void setPollingQuery(String pollingQuery) {
+        this.pollingQuery = pollingQuery;
+    }
 
-	@Override
-	public String toString() {
-		return "FilterDto [shared=" + shared + ", inputXml=" + inputXml + ", pollingQuery=" + pollingQuery + "]";
-	}
+    /**
+     * @return Target entity full classname. Used together with pollingQuery. Must match the query result
+     */
+    public String getEntityClass() {
+        return entityClass;
+    }
 
-    
-  
+    /**
+     * @param entityClass Target entity full classname. Used together with pollingQuery. Must match the query result
+     */
+    public void setEntityClass(String entityClass) {
+        this.entityClass = entityClass;
+    }
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    @Override
+    public String toString() {
+        return "FilterDto [shared=" + shared + ", inputXml=" + inputXml + ", pollingQuery=" + pollingQuery + "]";
+    }
 }

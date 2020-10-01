@@ -20,6 +20,8 @@ package org.meveo.services.job;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -27,11 +29,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.jobs.InvoiceJobExecutionError;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.RecurringRatingJobExecutionError;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.job.InvoiceJobExecutionErrorService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.job.RecurringRatingJobExecutionErrorService;
 
 /**
  * @author Andrius Karpavicius
@@ -39,37 +42,61 @@ import org.meveo.service.job.RecurringRatingJobExecutionErrorService;
  */
 @Named
 @ViewScoped
-public class RecurringRatingJobExecutionErrorBean extends BaseBean<RecurringRatingJobExecutionError> {
+public class InvoiceJobExecutionErrorBean extends BaseBean<InvoiceJobExecutionError> {
 
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private RecurringRatingJobExecutionErrorService recurringRatingJobExecutionErrorService;
+    private InvoiceJobExecutionErrorService invoiceJobExecutionErrorService;
 
     @Inject
     private JobInstanceService jobInstanceService;
 
     private List<Boolean> columnVisibilitylist;
 
-    public RecurringRatingJobExecutionErrorBean() {
-        super(RecurringRatingJobExecutionError.class);
+    private List<JobInstance> jobs;
+
+    public InvoiceJobExecutionErrorBean() {
+        super(InvoiceJobExecutionError.class);
     }
 
     @Override
-    protected IPersistenceService<RecurringRatingJobExecutionError> getPersistenceService() {
-        return recurringRatingJobExecutionErrorService;
+    protected IPersistenceService<InvoiceJobExecutionError> getPersistenceService() {
+        return invoiceJobExecutionErrorService;
     }
 
     /**
-     * @return A list of recurring charge rating job instances
+     * @return A list of invoice related job instances
      */
-    public List<JobInstance> getRecurringChargeRatingJobs() {
-        return jobInstanceService.listByJobType("RecurringRatingJob");
+    public List<JobInstance> getJobs() {
+
+        if (jobs == null) {
+            jobs = jobInstanceService.list();
+
+            jobs = jobs.stream().filter(jobInstance -> {
+
+                Class entityClassForErrorLog = jobInstanceService.getJobByName(jobInstance.getJobTemplate()).getTargetEntityClass(jobInstance);
+                return entityClassForErrorLog != null && Invoice.class.isAssignableFrom(entityClassForErrorLog);
+
+            }).collect(Collectors.toList());
+        }
+        return jobs;
+    }
+
+    /**
+     * Add additional criteria for limiting only by Invoice related job instances
+     */
+    @Override
+    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+
+        searchCriteria.put("inList jobInstance", getJobs());
+
+        return searchCriteria;
     }
 
     @PostConstruct
     public void init() {
-        columnVisibilitylist = Arrays.asList(true, true, false, false, true, true, true);
+        columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, true);
     }
 
     public List<Boolean> getColumnVisibilitylist() {
