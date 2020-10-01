@@ -1386,348 +1386,6 @@ public class ValidateBRScript extends Script {
 		</update>
 	</changeSet>
 
-    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select ce.code AS "Seller code"
-					        , ce.description AS "Seller description"
-					        , coalesce(ce.code, '') AS "Customer code"
-					        , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
-					from  crm_seller s left
-					        OUTER JOIN crm_customer c  on c.seller_id = s.id left
-					        OUTER JOIN account_entity ce  on c.id = ce.id
-					where( ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
-					order by ce.code
-			    ]]></column>
-            <where>code='CUSTOMERS_PER_SELLER'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select ce.code AS "Seller code"
-                    , ce.description AS "Seller description"
-                    , coalesce(ce.code, '') AS "Customer code"
-                    , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
-                    , coalesce(cae.code, '') AS "Customer Account code"
-                    , coalesce(replace(cae.description, ',', ' '), '') AS "Customer Account description"
-                    , coalesce(bae.code, '') AS "Billing Account code"
-                    , coalesce(replace(bae.description, ',', ' '), '') AS "Billing Account description"
-                    , coalesce(uae.code, '') AS "User Account code"
-                    , coalesce(replace(uae.description, ',', ' '), '') AS "User Account description"
-                    , coalesce(su.code, '') AS "Subscription code"
-                    , coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
-                    , coalesce(ap.acces_user_id, '') AS "Access Point id"
-                from  crm_seller s full
-                    OUTER JOIN crm_customer c  on c.seller_id = s.id full
-                    OUTER JOIN account_entity ce  on c.id = ce.id full
-                    OUTER JOIN ar_customer_account ca  on ca.customer_id = c.id full
-                    OUTER JOIN account_entity cae  on ca.id = cae.id full
-                    OUTER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id full
-                    OUTER JOIN account_entity bae  on ba.id = bae.id full
-                    OUTER JOIN billing_user_account ua  on ua.billing_account_id = ba.id full
-                    OUTER JOIN account_entity uae  on ua.id = uae.id full
-                    OUTER JOIN billing_subscription su  on su.user_account_id = ua.id full
-                    OUTER JOIN medina_access ap  on ap.subscription_id = su.id
-                where ce.code ilike '%' || :SEARCH_CRITERION
-                    || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%'
-                    || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%'
-                    || :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION
-                    || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%'
-                    || :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'
-                order by ce.code
-                    ,cae.code
-                    ,bae.code
-                    ,uae.code
-                    ,su.code
-                    ,ap.acces_user_id
-			    ]]></column>
-            <where>code='FULL_HIERARCHY'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                    , ce.code AS "Seller code"
-                    , ce.description AS "Seller description"
-                    , ce.code AS "Customer code"
-                    , ce.description AS "Customer description"
-                    , cae.code AS "Customer Account code"
-                    , cae.description AS "Customer Account description"
-                    , bae.code AS "Billing Account code"
-                    , bae.description AS "Billing Account description"
-                    , it.code AS "Invoice type code"
-                    , it.description AS "Invoice type description"
-                    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
-                    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
-                from crm_seller s
-                    INNER JOIN crm_customer c  on c.seller_id = s.id
-                    INNER JOIN account_entity ce  on c.id = ce.id
-                    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-                    INNER JOIN account_entity cae  on ca.id = cae.id
-                    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-                    INNER JOIN account_entity bae  on ba.id = bae.id
-                    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-                    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
-                where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
-                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  )  group by date_trunc('month', i.invoice_date)
-                    , it.code
-                    , it.description
-                    , ce.code
-                    , ce.description
-                    , cae.code
-                    , cae.description
-                    , bae.code
-                    , bae.description order by date_trunc('month', i.invoice_date) DESC
-                    , it.code DESC
-                    , ce.code
-                    , cae.code
-                    , bae.code
-			    ]]></column>
-            <where>code='INVOICED_BA_HIERARCHY'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS  Month
-                        , ce.code AS  "Seller code"
-                        , ce.description AS  "Seller description"
-                        , it.code AS  "Invoice type code"
-                        , it.description AS  "Invoice type description"
-                        , to_char(sum(i.amount_without_tax), '9999999990.00') AS  "Amount without tax"
-                        , to_char(sum(i.amount_with_tax), '9999999990.00') AS  "Amount with tax"
-                    from crm_seller s
-                        INNER JOIN crm_customer c  on c.seller_id = s.id
-                        INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-                        INNER JOIN account_entity ce  on c.id = ce.id
-                        INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-                        INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-                        INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
-                    where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || 'month' AS INTERVAL))
-                    and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
-                    group by date_trunc('month', i.invoice_date)
-                        , it.code
-                        , it.description
-                        , ce.code
-                        , ce.description order by date_trunc('month', i.invoice_date) DESC
-                        , it.code DESC
-                        , ce.code
-			    ]]></column>
-            <where>code='INVOICED_S'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                    , to_char(i.invoice_date, 'YYYY-MM-DD') AS "Invoice date"
-                    , i.invoice_number AS "Invoice number"
-                    , to_char(i.amount_without_tax, '9999999990.00') AS "Amount without tax"
-                    , to_char(i.amount_with_tax, '9999999990.00') AS "Amount with tax"
-                    , it.code AS "Invoice type code"
-                    , it.description AS "Invoice type description"
-                    , ce.code AS "Seller code"
-                    , ce.description AS "Seller description"
-                    , ce.code AS "Customer code"
-                    , ce.description AS "Customer description"
-                    , cae.code AS "Customer Account code"
-                    , cae.description AS "Customer Account description"
-                    , bae.code AS "Billing Account code"
-                    , bae.description AS "Billing Account description"
-                from crm_seller s
-                    INNER JOIN crm_customer c  on c.seller_id = s.id
-                    INNER JOIN account_entity ce  on c.id = ce.id
-                    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-                    INNER JOIN account_entity cae  on ca.id = cae.id
-                    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-                    INNER JOIN account_entity bae  on ba.id = bae.id
-                    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-                    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
-                where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
-                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION
-                    || '%'  )
-                order by date_trunc('month', i.invoice_date) DESC
-                    , i.invoice_date DESC
-                    , it.code
-                    , i.invoice_number
-			    ]]></column>
-            <where>code='INVOICES'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,ce.code AS "Customer code"
-                ,ce.description AS "Customer description"
-                ,cae.code AS "Customer Account code"
-                ,cae.description AS "Customer Account description"
-                ,bae.code AS "Billing Account code"
-                ,bae.description AS "Billing Account description"
-                ,to_char(sum(CASE
-                            WHEN ao.transaction_category = 'DEBIT'
-                                THEN ao.amount
-                            ELSE 0
-                            END), '99999999990.00') AS "Amount DEBIT"
-                ,to_char(sum(CASE
-                            WHEN ao.transaction_category = 'CREDIT'
-                                THEN ao.amount
-                            ELSE 0
-                            END), '99999999990.00') AS "Amount CREDIT"
-                ,to_char(sum(CASE
-                            WHEN ao.transaction_category = 'DEBIT'
-                                THEN ao.amount
-                            ELSE - ao.amount
-                            END), '99999999990.00') AS "Balance"
-            FROM crm_seller s
-                INNER JOIN crm_customer c ON c.seller_id = s.id
-                INNER JOIN account_entity ce ON c.id = ce.id
-                INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-                INNER JOIN account_entity cae ON ca.id = cae.id
-                INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
-                INNER JOIN account_entity bae ON ba.id = bae.id
-                INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
-                INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
-                    AND ao.reference = i.invoice_number
-                    AND ao.invoice_date = i.invoice_date
-                    AND ao.amount = abs(i.amount_with_tax)
-            WHERE ao.invoice_date IS NOT NULL
-                AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
-                AND (
-                    ce.code ilike '%' || :SEARCH_CRITERION || '%'
-                    OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
-                    OR cae.code ilike '%' || :SEARCH_CRITERION || '%'
-                    OR cae.description ilike '%' || :SEARCH_CRITERION || '%'
-                    OR bae.code ilike '%' || :SEARCH_CRITERION || '%'
-                    OR bae.description ilike '%' || :SEARCH_CRITERION || '%'
-                    )
-            GROUP BY date_trunc('month', ao.invoice_date)
-                ,ce.code
-                ,ce.description
-                ,cae.code
-                ,cae.description
-                ,bae.code
-                ,bae.description
-            ORDER BY date_trunc('month', ao.invoice_date) DESC
-                ,ce.code
-                ,cae.code
-                ,bae.code
-			    ]]></column>
-            <where>code='RECORDED_BA_HIERARCHY'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                        ,ce.code AS "Seller code"
-                        ,ce.description AS "Seller description"
-                        ,to_char(sum(CASE
-                                    WHEN ao.transaction_category = 'DEBIT'
-                                        THEN ao.amount
-                                    ELSE 0
-                                    END), '99999999990.00') AS "Amount DEBIT"
-                        ,to_char(sum(CASE
-                                    WHEN ao.transaction_category = 'CREDIT'
-                                        THEN ao.amount
-                                    ELSE 0
-                                    END), '99999999990.00') AS "Amount CREDIT"
-                        ,to_char(sum(CASE
-                                    WHEN ao.transaction_category = 'DEBIT'
-                                        THEN ao.amount
-                                    ELSE - ao.amount
-                                    END), '99999999990.00') AS "Balance"
-                    FROM crm_seller s
-                        INNER JOIN crm_customer c ON c.seller_id = s.id
-                        INNER JOIN account_entity ce on c.id = ce.id
-                        INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-                        INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
-                    WHERE ao.invoice_date IS NOT NULL
-                        AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
-                        AND (
-                            ce.code ilike '%' || :SEARCH_CRITERION || '%'
-                            OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
-                            )
-                    GROUP BY date_trunc('month', ao.invoice_date)
-                        ,ce.code
-                        ,ce.description
-                    ORDER BY date_trunc('month', ao.invoice_date) DESC
-                        ,ce.code
-			    ]]></column>
-            <where>code='RECORDED_S'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select ce.code AS "Seller code"
-                    , ce.description AS "Seller description"
-                    , count(DISTINCT wo.id) AS "Transaction count"
-                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
-                from  billing_wallet_operation wo
-                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
-                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
-                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
-                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
-                    INNER JOIN crm_customer c  on c.id = ca.customer_id
-                    INNER JOIN crm_seller s  on s.id = c.seller_id
-                    INNER JOIN account_entity ce  on c.id = ce.id
-                where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED'
-                    and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )
-                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
-                group by ce.code, ce.description
-                order by ce.code
-			    ]]></column>
-            <where>code='UNBILLED_S'</where>
-        </update>
-        <update tableName="dwh_report_extract">
-            <column name="sql_query" >
-                <![CDATA[select ce.code AS "Seller code"
-                        , ce.description AS "Seller description"
-                        , ce.code AS "Customer code"
-                        , ce.description AS "Customer description"
-                        , cae.code AS "Customer Account code"
-                        , cae.description AS "Customer Account description"
-                        , bae.code AS "Billing Account code"
-                        , bae.description AS "Billing Account description"
-                        , uae.code AS "User Account code"
-                        , uae.description AS "User Account description"
-                        , count(DISTINCT wo.id) AS "Transaction count"
-                        , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-                        , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
-                    from  billing_wallet_operation wo
-                        INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
-                        INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
-                        INNER JOIN account_entity uae  on ua.id = uae.id
-                        INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
-                        INNER JOIN account_entity bae  on ba.id = bae.id
-                        INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
-                        INNER JOIN account_entity cae  on ca.id = cae.id
-                        INNER JOIN crm_customer c  on c.id = ca.customer_id
-                        INNER JOIN account_entity ce  on c.id = ce.id
-                        INNER JOIN crm_seller s  on s.id = c.seller_id
-                    where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED'
-                        and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )
-                    and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%'
-                        || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%'
-                        || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%'
-                        || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%'
-                        || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )
-                    group by ce.code
-                        , ce.description
-                        , cae.code
-                        , cae.description
-                        , bae.code
-                        , bae.description
-                        , uae.code
-                        , uae.description order by ce.code
-                        , ce.code
-                        , cae.code
-                        , bae.code
-                        , uae.code
-			    ]]></column>
-            <where>code='UNBILLED_UA_HIERARCHY'</where>
-        </update>
-    </changeSet>
-
     <changeSet id="#4449_20190724" author="AbdellatifBARI">
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-44" />
@@ -2079,6 +1737,348 @@ public class ValidateBRScript extends Script {
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-121"></column>
         </insert>    
-	</changeSet>    
+	</changeSet>
+
+    <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select ce.code AS "Seller code"
+					        , ce.description AS "Seller description"
+					        , coalesce(ce.code, '') AS "Customer code"
+					        , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+					from  crm_seller s left
+					        OUTER JOIN crm_customer c  on c.seller_id = s.id left
+					        OUTER JOIN account_entity ce  on c.id = ce.id
+					where( ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
+					order by ce.code
+			    ]]></column>
+            <where>code='CUSTOMERS_PER_SELLER'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select ce.code AS "Seller code"
+                    , ce.description AS "Seller description"
+                    , coalesce(ce.code, '') AS "Customer code"
+                    , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+                    , coalesce(cae.code, '') AS "Customer Account code"
+                    , coalesce(replace(cae.description, ',', ' '), '') AS "Customer Account description"
+                    , coalesce(bae.code, '') AS "Billing Account code"
+                    , coalesce(replace(bae.description, ',', ' '), '') AS "Billing Account description"
+                    , coalesce(uae.code, '') AS "User Account code"
+                    , coalesce(replace(uae.description, ',', ' '), '') AS "User Account description"
+                    , coalesce(su.code, '') AS "Subscription code"
+                    , coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
+                    , coalesce(ap.acces_user_id, '') AS "Access Point id"
+                from  crm_seller s full
+                    OUTER JOIN crm_customer c  on c.seller_id = s.id full
+                    OUTER JOIN account_entity ce  on c.id = ce.id full
+                    OUTER JOIN ar_customer_account ca  on ca.customer_id = c.id full
+                    OUTER JOIN account_entity cae  on ca.id = cae.id full
+                    OUTER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id full
+                    OUTER JOIN account_entity bae  on ba.id = bae.id full
+                    OUTER JOIN billing_user_account ua  on ua.billing_account_id = ba.id full
+                    OUTER JOIN account_entity uae  on ua.id = uae.id full
+                    OUTER JOIN billing_subscription su  on su.user_account_id = ua.id full
+                    OUTER JOIN medina_access ap  on ap.subscription_id = su.id
+                where ce.code ilike '%' || :SEARCH_CRITERION
+                    || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%'
+                    || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%'
+                    || :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION
+                    || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%'
+                    || :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'
+                order by ce.code
+                    ,cae.code
+                    ,bae.code
+                    ,uae.code
+                    ,su.code
+                    ,ap.acces_user_id
+			    ]]></column>
+            <where>code='FULL_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+                    , ce.code AS "Seller code"
+                    , ce.description AS "Seller description"
+                    , ce.code AS "Customer code"
+                    , ce.description AS "Customer description"
+                    , cae.code AS "Customer Account code"
+                    , cae.description AS "Customer Account description"
+                    , bae.code AS "Billing Account code"
+                    , bae.description AS "Billing Account description"
+                    , it.code AS "Invoice type code"
+                    , it.description AS "Invoice type description"
+                    , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                    , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
+                from crm_seller s
+                    INNER JOIN crm_customer c  on c.seller_id = s.id
+                    INNER JOIN account_entity ce  on c.id = ce.id
+                    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+                    INNER JOIN account_entity cae  on ca.id = cae.id
+                    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+                    INNER JOIN account_entity bae  on ba.id = bae.id
+                    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+                    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
+                where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  )  group by date_trunc('month', i.invoice_date)
+                    , it.code
+                    , it.description
+                    , ce.code
+                    , ce.description
+                    , cae.code
+                    , cae.description
+                    , bae.code
+                    , bae.description order by date_trunc('month', i.invoice_date) DESC
+                    , it.code DESC
+                    , ce.code
+                    , cae.code
+                    , bae.code
+			    ]]></column>
+            <where>code='INVOICED_BA_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS  Month
+                        , ce.code AS  "Seller code"
+                        , ce.description AS  "Seller description"
+                        , it.code AS  "Invoice type code"
+                        , it.description AS  "Invoice type description"
+                        , to_char(sum(i.amount_without_tax), '9999999990.00') AS  "Amount without tax"
+                        , to_char(sum(i.amount_with_tax), '9999999990.00') AS  "Amount with tax"
+                    from crm_seller s
+                        INNER JOIN crm_customer c  on c.seller_id = s.id
+                        INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+                        INNER JOIN account_entity ce  on c.id = ce.id
+                        INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+                        INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+                        INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
+                    where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || 'month' AS INTERVAL))
+                    and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
+                    group by date_trunc('month', i.invoice_date)
+                        , it.code
+                        , it.description
+                        , ce.code
+                        , ce.description order by date_trunc('month', i.invoice_date) DESC
+                        , it.code DESC
+                        , ce.code
+			    ]]></column>
+            <where>code='INVOICED_S'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+                    , to_char(i.invoice_date, 'YYYY-MM-DD') AS "Invoice date"
+                    , i.invoice_number AS "Invoice number"
+                    , to_char(i.amount_without_tax, '9999999990.00') AS "Amount without tax"
+                    , to_char(i.amount_with_tax, '9999999990.00') AS "Amount with tax"
+                    , it.code AS "Invoice type code"
+                    , it.description AS "Invoice type description"
+                    , ce.code AS "Seller code"
+                    , ce.description AS "Seller description"
+                    , ce.code AS "Customer code"
+                    , ce.description AS "Customer description"
+                    , cae.code AS "Customer Account code"
+                    , cae.description AS "Customer Account description"
+                    , bae.code AS "Billing Account code"
+                    , bae.description AS "Billing Account description"
+                from crm_seller s
+                    INNER JOIN crm_customer c  on c.seller_id = s.id
+                    INNER JOIN account_entity ce  on c.id = ce.id
+                    INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
+                    INNER JOIN account_entity cae  on ca.id = cae.id
+                    INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
+                    INNER JOIN account_entity bae  on ba.id = bae.id
+                    INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
+                    INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id
+                where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION
+                    || '%'  )
+                order by date_trunc('month', i.invoice_date) DESC
+                    , i.invoice_date DESC
+                    , it.code
+                    , i.invoice_number
+			    ]]></column>
+            <where>code='INVOICES'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+                ,ce.code AS "Customer code"
+                ,ce.description AS "Customer description"
+                ,cae.code AS "Customer Account code"
+                ,cae.description AS "Customer Account description"
+                ,bae.code AS "Billing Account code"
+                ,bae.description AS "Billing Account description"
+                ,to_char(sum(CASE
+                            WHEN ao.transaction_category = 'DEBIT'
+                                THEN ao.amount
+                            ELSE 0
+                            END), '99999999990.00') AS "Amount DEBIT"
+                ,to_char(sum(CASE
+                            WHEN ao.transaction_category = 'CREDIT'
+                                THEN ao.amount
+                            ELSE 0
+                            END), '99999999990.00') AS "Amount CREDIT"
+                ,to_char(sum(CASE
+                            WHEN ao.transaction_category = 'DEBIT'
+                                THEN ao.amount
+                            ELSE - ao.amount
+                            END), '99999999990.00') AS "Balance"
+            FROM crm_seller s
+                INNER JOIN crm_customer c ON c.seller_id = s.id
+                INNER JOIN account_entity ce ON c.id = ce.id
+                INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+                INNER JOIN account_entity cae ON ca.id = cae.id
+                INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
+                INNER JOIN account_entity bae ON ba.id = bae.id
+                INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
+                INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+                    AND ao.reference = i.invoice_number
+                    AND ao.invoice_date = i.invoice_date
+                    AND ao.amount = abs(i.amount_with_tax)
+            WHERE ao.invoice_date IS NOT NULL
+                AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+                AND (
+                    ce.code ilike '%' || :SEARCH_CRITERION || '%'
+                    OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
+                    OR cae.code ilike '%' || :SEARCH_CRITERION || '%'
+                    OR cae.description ilike '%' || :SEARCH_CRITERION || '%'
+                    OR bae.code ilike '%' || :SEARCH_CRITERION || '%'
+                    OR bae.description ilike '%' || :SEARCH_CRITERION || '%'
+                    )
+            GROUP BY date_trunc('month', ao.invoice_date)
+                ,ce.code
+                ,ce.description
+                ,cae.code
+                ,cae.description
+                ,bae.code
+                ,bae.description
+            ORDER BY date_trunc('month', ao.invoice_date) DESC
+                ,ce.code
+                ,cae.code
+                ,bae.code
+			    ]]></column>
+            <where>code='RECORDED_BA_HIERARCHY'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+                        ,ce.code AS "Seller code"
+                        ,ce.description AS "Seller description"
+                        ,to_char(sum(CASE
+                                    WHEN ao.transaction_category = 'DEBIT'
+                                        THEN ao.amount
+                                    ELSE 0
+                                    END), '99999999990.00') AS "Amount DEBIT"
+                        ,to_char(sum(CASE
+                                    WHEN ao.transaction_category = 'CREDIT'
+                                        THEN ao.amount
+                                    ELSE 0
+                                    END), '99999999990.00') AS "Amount CREDIT"
+                        ,to_char(sum(CASE
+                                    WHEN ao.transaction_category = 'DEBIT'
+                                        THEN ao.amount
+                                    ELSE - ao.amount
+                                    END), '99999999990.00') AS "Balance"
+                    FROM crm_seller s
+                        INNER JOIN crm_customer c ON c.seller_id = s.id
+                        INNER JOIN account_entity ce on c.id = ce.id
+                        INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+                        INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+                    WHERE ao.invoice_date IS NOT NULL
+                        AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+                        AND (
+                            ce.code ilike '%' || :SEARCH_CRITERION || '%'
+                            OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
+                            )
+                    GROUP BY date_trunc('month', ao.invoice_date)
+                        ,ce.code
+                        ,ce.description
+                    ORDER BY date_trunc('month', ao.invoice_date) DESC
+                        ,ce.code
+			    ]]></column>
+            <where>code='RECORDED_S'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select ce.code AS "Seller code"
+                    , ce.description AS "Seller description"
+                    , count(DISTINCT wo.id) AS "Transaction count"
+                    , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                    , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                from  billing_wallet_operation wo
+                    INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+                    INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+                    INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+                    INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+                    INNER JOIN crm_customer c  on c.id = ca.customer_id
+                    INNER JOIN crm_seller s  on s.id = c.seller_id
+                    INNER JOIN account_entity ce  on c.id = ce.id
+                where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED'
+                    and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )
+                and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )
+                group by ce.code, ce.description
+                order by ce.code
+			    ]]></column>
+            <where>code='UNBILLED_S'</where>
+        </update>
+        <update tableName="dwh_report_extract">
+            <column name="sql_query" >
+                <![CDATA[select ce.code AS "Seller code"
+                        , ce.description AS "Seller description"
+                        , ce.code AS "Customer code"
+                        , ce.description AS "Customer description"
+                        , cae.code AS "Customer Account code"
+                        , cae.description AS "Customer Account description"
+                        , bae.code AS "Billing Account code"
+                        , bae.description AS "Billing Account description"
+                        , uae.code AS "User Account code"
+                        , uae.description AS "User Account description"
+                        , count(DISTINCT wo.id) AS "Transaction count"
+                        , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+                        , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                    from  billing_wallet_operation wo
+                        INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+                        INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+                        INNER JOIN account_entity uae  on ua.id = uae.id
+                        INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+                        INNER JOIN account_entity bae  on ba.id = bae.id
+                        INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+                        INNER JOIN account_entity cae  on ca.id = cae.id
+                        INNER JOIN crm_customer c  on c.id = ca.customer_id
+                        INNER JOIN account_entity ce  on c.id = ce.id
+                        INNER JOIN crm_seller s  on s.id = c.seller_id
+                    where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED'
+                        and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )
+                    and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%'
+                        || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%'
+                        || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%'
+                        || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%'
+                        || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )
+                    group by ce.code
+                        , ce.description
+                        , cae.code
+                        , cae.description
+                        , bae.code
+                        , bae.description
+                        , uae.code
+                        , uae.description order by ce.code
+                        , ce.code
+                        , cae.code
+                        , bae.code
+                        , uae.code
+			    ]]></column>
+            <where>code='UNBILLED_UA_HIERARCHY'</where>
+        </update>
+    </changeSet>
     
 </databaseChangeLog>
