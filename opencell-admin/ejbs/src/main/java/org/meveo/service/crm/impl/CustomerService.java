@@ -139,7 +139,7 @@ public class CustomerService extends AccountService<Customer> {
         }
     }
     
-	public void anonymizeGpdr(Customer entity, String randomCode) {
+	public void anonymizeGdpr(Customer entity, String randomCode) {
     	entity.anonymize(randomCode);
 	}
 	

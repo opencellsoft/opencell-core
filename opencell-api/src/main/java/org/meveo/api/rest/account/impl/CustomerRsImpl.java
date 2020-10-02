@@ -294,96 +294,96 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return result;
     }
 
-	@Override
-	public ActionStatus exportCustomerHierarchy(String customerCode) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus exportCustomerHierarchy(String customerCode) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus anonymizeGpdr(String customerCode) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus anonymizeGdpr(String customerCode) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerApi.anonymizeGpdr(customerCode);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerApi.anonymizeGdpr(customerCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerApi.updateCustomerNumberSequence(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerApi.updateCustomerNumberSequence(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GenericSequenceValueResponseDto getNextCustomerNumber() {
-		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+    @Override
+    public GenericSequenceValueResponseDto getNextCustomerNumber() {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		try {
-			result = customerApi.getNextCustomerNumber();
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result = customerApi.getNextCustomerNumber();
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerSequenceApi.createCustomerSequence(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerSequenceApi.createCustomerSequence(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerSequenceApi.updateCustomerSequence(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerSequenceApi.updateCustomerSequence(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
-		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+    @Override
+    public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		try {
-			result = customerSequenceApi.getNextNumber(code);
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result = customerSequenceApi.getNextNumber(code);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
     @Override
     public GetCountersInstancesResponseDto filterCustomerCountersByPeriod(String customerCode, Date date) {
