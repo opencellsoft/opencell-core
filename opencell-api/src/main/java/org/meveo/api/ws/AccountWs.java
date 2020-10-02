@@ -589,7 +589,7 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
+    ActionStatus anonymizeGdpr(@WebParam(name = "customerCode") String customerCode);
 
     // Sequences
 
