@@ -802,7 +802,7 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
-    public void anonymizeGpdr(String customerCode) throws BusinessException {
+    public void anonymizeGdpr(String customerCode) throws BusinessException {
         Customer entity = customerService.findByCode(customerCode);
         gdprService.anonymize(entity);
     }

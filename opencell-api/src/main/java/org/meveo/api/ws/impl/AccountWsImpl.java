@@ -1222,11 +1222,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public ActionStatus anonymizeGpdr(String customerCode) {
+    public ActionStatus anonymizeGdpr(String customerCode) {
         ActionStatus result = new ActionStatus();
 
         try {
-            customerApi.anonymizeGpdr(customerCode);
+            customerApi.anonymizeGdpr(customerCode);
         } catch (Exception e) {
             processException(e, result);
         }

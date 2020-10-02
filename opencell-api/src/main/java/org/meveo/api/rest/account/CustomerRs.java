@@ -245,8 +245,8 @@ public interface CustomerRs extends IBaseRs {
      * @return Request processing status
      */
     @GET
-    @Path("/anonymizeGpdr")
-    ActionStatus anonymizeGpdr(@QueryParam("customerCode") String customerCode);
+    @Path("/anonymizeGdpr")
+    ActionStatus anonymizeGdpr(@QueryParam("customerCode") String customerCode);
 
     /**
 	 * Update the Provider's customer number sequence configuration.
