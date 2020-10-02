@@ -46,7 +46,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * 
  * @author anasseh
  * @author Mounir Bahije
- * @author Mbarek Ait-yaazza
+ * @author Mbarek-Ay
  * @lastModifiedVersion 10.0.0
  */
 @Stateless
@@ -82,10 +82,14 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             }
             obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
         }else if (paymentMethod instanceof DDPaymentMethod) {
-        	DDPaymentMethod ddPayment = (DDPaymentMethod) paymentMethod; 
-            obtainAndSetSepaToken(ddPayment, ddPayment.getCustomerAccount());
-            createMandate(ddPayment);
-        } 
+	        DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod; 
+	        CustomerAccount customerAccount=ddpaymentMethod.getCustomerAccount();
+	        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+	        if (paymentGateway != null) { 
+	        obtainAndSetSepaToken(ddpaymentMethod, customerAccount);
+	        createMandate(ddpaymentMethod);
+	        }      
+	    }  
         super.create(paymentMethod);
 
         // Mark other payment methods as not preferred
@@ -302,7 +306,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (ddpaymentMethod.getBankCoordinates() == null) {
 			throw new BusinessException("Bank Coordinate is absent for Payment method " +alias);
 		}
-        String iban = ddpaymentMethod.getBankCoordinates().getBankCode();
+        String iban = ddpaymentMethod.getBankCoordinates().getIban();
         String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner(); 
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
