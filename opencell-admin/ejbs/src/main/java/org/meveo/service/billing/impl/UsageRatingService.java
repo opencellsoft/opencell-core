@@ -652,8 +652,7 @@ public class UsageRatingService implements Serializable {
 
         UsageChargeTemplate chargeTemplate = null;
         for (UsageChargeInstance usageChargeInstance : charges) {
-
-            chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+        	chargeTemplate=usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
             log.trace("Try  templateCache {}", chargeTemplate.getCode());
             try {
                 if (isChargeMatch(usageChargeInstance, edr, true)) {
