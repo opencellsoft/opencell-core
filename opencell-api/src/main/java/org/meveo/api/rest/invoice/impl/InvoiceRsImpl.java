@@ -40,6 +40,7 @@ import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -285,7 +286,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             result.setMessage("INVOICE_SENT_BY_EMAIL");
             if (!response) {
                 result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage("INVOICE_NOT_SENT_BY_EMAIL");
+                throw new MeveoApiException("INVOICE_NOT_SENT_BY_EMAIL");
             }
 
         } catch (Exception e) {

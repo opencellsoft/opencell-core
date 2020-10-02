@@ -268,6 +268,11 @@ public class UserAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
     public UserAccountDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+        return find(userAccountCode, inheritCF, false);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
+    public UserAccountDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF, boolean includeSubscriptions) throws MeveoApiException {
 
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
@@ -279,7 +284,7 @@ public class UserAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
         }
 
-        return accountHierarchyApi.userAccountToDto(userAccount, inheritCF);
+        return accountHierarchyApi.userAccountToDto(userAccount, inheritCF, includeSubscriptions);
     }
 
     public void remove(String userAccountCode) throws MeveoApiException, BusinessException {

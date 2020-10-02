@@ -47,6 +47,7 @@ public class OrderMapperTest implements ResourceMapperTest {
         OrderMapper orderMapper = new OrderMapper();
         Order baseEntity = (Order) generateEntity();
         org.meveo.apiv2.ordering.order.Order order = orderMapper.toResource(baseEntity);
+
         Order orderFromResource = orderMapper.toEntity(order);
 
         assertSame(orderFromResource.getId(), baseEntity.getId());

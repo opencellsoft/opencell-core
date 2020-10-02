@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * The Class UserAccountDto.
@@ -122,6 +124,18 @@ public class UserAccountDto extends AccountDto {
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
     }
+	
+	public UserAccountDto(UserAccount e, boolean includeSubscription) {
+		this(e);
+        if(includeSubscription && e.getSubscriptions() != null && !e.getSubscriptions().isEmpty()) {
+        	SubscriptionsDto subDtos = new SubscriptionsDto();
+        	subDtos.setSubscription(e.getSubscriptions().stream().map(SubscriptionDto::new).collect(Collectors.toList()));
+        	setSubscriptions(subDtos);
+        }else {
+        	setSubscriptions(null);
+        }
+	}
+	
 
     /**
      * Gets the billing account.
