@@ -147,16 +147,17 @@
                         <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
                         <hftl:column label="#{messages['charge.label']}" field="entity.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId"
                             backView="jobInstances" valueIdField="entity.subscription.id" width="20%"
-                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['subscription.label']}" field="entity.subscription.code" entityView="subscriptionDetail" objectIdParamName="subscriptionId"
                             backView="jobInstances" valueIdField="entity.subscription.id" width="15%"
-                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
-                        <hftl:column label="#{messages['invoice.label']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
-                            valueIdField="entity.id" width="20%" rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                        <hftl:column label="#{messages['invoice.invoiceNumber']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
+                            valueIdField="entity.id" width="20%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+                        <hftl:column label="#{messages['invoice.invoiceDate']}" field="entity.invoiceDate" isDate="true" width="10%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
                         <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%"
-                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%"
-                            rendered="#{jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="120" />
                     </hftl:dataList>
                 </p:fieldset>
