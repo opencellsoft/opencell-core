@@ -51,6 +51,7 @@ import org.meveo.model.finance.RevenueRecognitionRule;
  */
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
     @Inject

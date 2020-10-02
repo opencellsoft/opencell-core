@@ -30,6 +30,7 @@ import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.ws.IBaseWs;
 
 @WebService
+@Deprecated
 public interface WorkflowWs extends IBaseWs {
 
     @WebMethod

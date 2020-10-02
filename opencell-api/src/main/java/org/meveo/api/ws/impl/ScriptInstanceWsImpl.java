@@ -33,6 +33,7 @@ import org.meveo.api.ws.ScriptInstanceWs;
 
 @WebService(serviceName = "ScriptInstanceWs", endpointInterface = "org.meveo.api.ws.ScriptInstanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class ScriptInstanceWsImpl extends BaseWs implements ScriptInstanceWs {
 
     @Inject

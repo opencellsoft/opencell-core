@@ -32,6 +32,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
  * 
  **/
 @WebService
+@Deprecated
 public interface ModuleWs extends IBaseWs {
 
     @WebMethod

@@ -53,6 +53,7 @@ import org.meveo.api.ws.SuperAdminSettingsWs;
  **/
 @WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs", targetNamespace = "http://superAdmin.ws.api.meveo.org/")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettingsWs {
 
     @Inject

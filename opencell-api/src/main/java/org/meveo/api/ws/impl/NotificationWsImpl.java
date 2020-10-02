@@ -49,6 +49,7 @@ import org.meveo.model.notification.WebHook;
  */
 @WebService(serviceName = "NotificationWs", endpointInterface = "org.meveo.api.ws.NotificationWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class NotificationWsImpl extends BaseWs implements NotificationWs {
 
     @Inject

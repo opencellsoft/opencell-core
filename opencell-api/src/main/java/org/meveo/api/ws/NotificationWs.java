@@ -36,6 +36,7 @@ import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
  * @author Edward P. Legaspi
  **/
 @WebService
+@Deprecated
 public interface NotificationWs extends IBaseWs {
 
     // notification

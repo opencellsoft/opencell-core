@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
+@Deprecated
 public class ExceptionProcessorWs {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());

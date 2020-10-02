@@ -35,6 +35,7 @@ import org.meveo.api.ws.wf.WorkflowWs;
 
 @WebService(serviceName = "WorkflowWs", endpointInterface = "org.meveo.api.ws.wf.WorkflowWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class WorkflowWsImpl extends BaseWs implements WorkflowWs {
 
     @Inject

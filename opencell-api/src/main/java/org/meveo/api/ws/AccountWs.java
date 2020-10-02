@@ -81,6 +81,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @lastModifiedVersion 5.2
  **/
 @WebService
+@Deprecated
 public interface AccountWs extends IBaseWs {
 
     // customer

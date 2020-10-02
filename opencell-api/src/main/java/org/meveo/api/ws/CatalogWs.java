@@ -81,6 +81,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
+@Deprecated
 public interface CatalogWs extends IBaseWs {
 
     // counter template

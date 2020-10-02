@@ -34,6 +34,7 @@ import org.meveo.api.ws.CommunicationWs;
  **/
 @WebService(serviceName = "CommunicationWs", endpointInterface = "org.meveo.api.ws.CommunicationWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class CommunicationWsImpl extends BaseWs implements CommunicationWs {
 
     @Inject
