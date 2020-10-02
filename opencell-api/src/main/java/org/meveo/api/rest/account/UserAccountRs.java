@@ -81,6 +81,7 @@ public interface UserAccountRs extends IBaseRs {
     @GET
     @Path("/")
     GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode,
+    		@DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
