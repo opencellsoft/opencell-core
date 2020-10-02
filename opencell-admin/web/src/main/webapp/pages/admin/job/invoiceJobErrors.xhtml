@@ -38,7 +38,7 @@
                 <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
                 <hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber" entityView="invoiceDetail" backView="invoiceJobErrors"
                     valueIdField="invoice.id" width="15%" />
-                <hftl:column label="#{messages['invoice.invoiceDate']}" field="invoice.invoiceDate" width="15%" />
+                <hftl:column label="#{messages['invoice.invoiceDate']}" field="invoice.invoiceDate" isDate="true" width="15%" />
                 <hftl:column label="#{messages['walletOperation.billingAccount']}" field="invoice.billingAccount.code" width="15%" entityView="billingAccountDetail"
                     objectIdParamName="billingAccountId" backView="invoiceJobErrors" valueIdField="invoice.billingAccount.id" />
                 <hftl:column label="#{messages['jobExecutionError.jobInstance']}" field="jobInstance.code" entityView="jobInstanceDetail" backView="invoiceJobErrors"
