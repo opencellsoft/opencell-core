@@ -30,6 +30,7 @@ import org.meveo.api.dto.response.GetFilterResponseDto;
  * @author Edward P. Legaspi
  **/
 @WebService
+@Deprecated
 public interface FilterWs extends IBaseWs {
 
     @WebMethod

@@ -41,6 +41,7 @@ import org.meveo.model.billing.AccountingCode;
  */
 @WebService(serviceName = "AccountingWs", endpointInterface = "org.meveo.api.ws.AccountingWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class AccountingWsImpl extends BaseWs implements AccountingWs {
 
     @Inject

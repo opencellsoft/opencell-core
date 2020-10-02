@@ -116,6 +116,7 @@ import org.meveo.model.shared.DateUtils;
  */
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
     @Inject

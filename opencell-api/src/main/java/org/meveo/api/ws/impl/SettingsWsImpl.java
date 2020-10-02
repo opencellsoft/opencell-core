@@ -136,6 +136,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  */
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject

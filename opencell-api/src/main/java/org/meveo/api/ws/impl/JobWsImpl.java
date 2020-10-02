@@ -48,6 +48,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
  */
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class JobWsImpl extends BaseWs implements JobWs {
 
     @Inject

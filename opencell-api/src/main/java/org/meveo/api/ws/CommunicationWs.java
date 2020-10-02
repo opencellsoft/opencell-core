@@ -30,6 +30,7 @@ import org.meveo.api.dto.communication.CommunicationRequestDto;
  * @author Nasseh
  **/
 @WebService
+@Deprecated
 public interface CommunicationWs extends IBaseWs {
 
 	@WebMethod

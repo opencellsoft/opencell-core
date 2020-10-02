@@ -35,6 +35,7 @@ import org.meveo.api.ws.FilterWs;
  **/
 @WebService(serviceName = "FilterWs", endpointInterface = "org.meveo.api.ws.FilterWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class FilterWsImpl extends BaseWs implements FilterWs {
 
     @Inject

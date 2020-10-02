@@ -46,6 +46,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 @WebService
+@Deprecated
 public interface SubscriptionWs extends IBaseWs {
 
     @WebMethod

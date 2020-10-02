@@ -30,6 +30,7 @@ import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 
 @WebService
+@Deprecated
 public interface FilteredListWs extends IBaseWs {
 
     /**

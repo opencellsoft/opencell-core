@@ -100,6 +100,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  * @lastModifiedVersion 6.0
  */
 @WebService
+@Deprecated
 public interface SettingsWs extends IBaseWs {
 
     // provider

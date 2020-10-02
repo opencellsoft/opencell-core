@@ -28,6 +28,7 @@ import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 
 @WebService
+@Deprecated
 public interface ScriptInstanceWs extends IBaseWs {
 
     @WebMethod

@@ -45,6 +45,7 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
  **/
 @WebService(serviceName = "ReportingWs", endpointInterface = "org.meveo.api.ws.ReportingWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class ReportingWsImpl extends BaseWs implements ReportingWs {
 
     @Inject

@@ -30,6 +30,7 @@ import org.meveo.api.dto.usage.UsageResponseDto;
  * @author Mbarek
  **/
 @WebService
+@Deprecated
 public interface UsageWs extends IBaseWs {
 
 

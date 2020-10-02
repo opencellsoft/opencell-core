@@ -43,6 +43,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
  * @author Andrius Karpavicius
  **/
 @WebService
+@Deprecated
 public interface EntityCustomizationWs extends IBaseWs {
 
     // Custom entity templates

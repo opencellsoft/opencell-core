@@ -52,6 +52,7 @@ import org.meveo.api.ws.EntityCustomizationWs;
  **/
 @WebService(serviceName = "EntityCustomizationWs", endpointInterface = "org.meveo.api.ws.EntityCustomizationWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomizationWs {
 
     @Inject

@@ -38,6 +38,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
  * @author Edward P. Legaspi
  **/
 @WebService
+@Deprecated
 public interface InvoiceWs extends IBaseWs {
 
     /**

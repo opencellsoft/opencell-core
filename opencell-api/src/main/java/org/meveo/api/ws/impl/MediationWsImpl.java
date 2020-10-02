@@ -45,6 +45,7 @@ import org.meveo.commons.utils.StringUtils;
  */
 @WebService(serviceName = "MediationWs", endpointInterface = "org.meveo.api.ws.MediationWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class MediationWsImpl extends BaseWs implements MediationWs {
 
     @Inject
