@@ -36,6 +36,7 @@ import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
  * @lastModifiedVersion 5.0
  **/
 @WebService
+@Deprecated
 public interface AccountingWs extends IBaseWs {
 
     /**

@@ -34,6 +34,7 @@ import org.meveo.api.ws.UsageWs;
  **/
 @WebService(serviceName = "UsageWs", endpointInterface = "org.meveo.api.ws.UsageWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class UsageWsImpl extends BaseWs implements UsageWs {
 
 	@Inject

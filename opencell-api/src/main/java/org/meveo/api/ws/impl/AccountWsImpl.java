@@ -109,6 +109,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class AccountWsImpl extends BaseWs implements AccountWs {
 
     @Inject

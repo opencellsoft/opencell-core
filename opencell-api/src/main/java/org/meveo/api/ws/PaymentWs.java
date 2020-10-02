@@ -68,6 +68,7 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  */
 @SuppressWarnings("deprecation")
 @WebService
+@Deprecated
 public interface PaymentWs extends IBaseWs {
 
     /**

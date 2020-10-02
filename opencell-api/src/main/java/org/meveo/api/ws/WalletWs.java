@@ -43,6 +43,7 @@ import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
  * @lastModifiedVersion 5.0.1
  **/
 @WebService
+@Deprecated
 public interface WalletWs extends IBaseWs {
 
     @WebMethod

@@ -39,6 +39,7 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
  * @author Edward P. Legaspi
  **/
 @WebService
+@Deprecated
 public interface ReportingWs extends IBaseWs {
 
     @WebMethod

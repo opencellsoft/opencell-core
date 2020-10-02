@@ -78,9 +78,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
-@SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
     @Inject

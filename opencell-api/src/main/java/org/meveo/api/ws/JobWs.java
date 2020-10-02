@@ -39,6 +39,7 @@ import org.meveo.api.dto.response.job.TimerEntityResponseDto;
  * @lastModifiedVersion 5.0
  */
 @WebService
+@Deprecated
 public interface JobWs extends IBaseWs {
 
     // job instance
