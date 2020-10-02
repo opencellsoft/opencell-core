@@ -306,7 +306,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (ddpaymentMethod.getBankCoordinates() == null) {
 			throw new BusinessException("Bank Coordinate is absent for Payment method " +alias);
 		}
-        String iban = ddpaymentMethod.getBankCoordinates().getBankCode();
+        String iban = ddpaymentMethod.getBankCoordinates().getIban();
         String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner(); 
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
