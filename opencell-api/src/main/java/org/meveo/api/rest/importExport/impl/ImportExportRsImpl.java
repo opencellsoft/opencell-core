@@ -224,14 +224,14 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
     public ImportExportResponseDto entityList(ImportExportRequestDto importExportRequestDto) {
         var template = new ExportTemplate();
         template.setName(importExportRequestDto.getFileName());
-        Class entityToExport = null;
+        Class entityToExport;
         try {
             entityToExport = Class.forName(importExportRequestDto.getEntityToExport());
         } catch (ClassNotFoundException exception) {
-            exception.printStackTrace();
+            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, "Failed to load Entity");
         }
         template.setEntityToExport(entityToExport);
-        var result = entityExportImportService.generateEntitiesList(template);
+        String result = entityExportImportService.generateEntitiesList(template);
         return new ImportExportResponseDto(result);
     }
 
