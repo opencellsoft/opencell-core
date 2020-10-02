@@ -1972,6 +1972,13 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setLoaded(true);
         return dto;
     }
+    public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF, boolean includeSubscription) {
+        UserAccountDto dto = new UserAccountDto(ua, includeSubscription);
+        accountEntityToDto(dto, ua, inheritCF);
+
+        dto.setLoaded(true);
+        return dto;
+    }
 
     public void terminateCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
         String accountType = postData.getCrmAccountType();
