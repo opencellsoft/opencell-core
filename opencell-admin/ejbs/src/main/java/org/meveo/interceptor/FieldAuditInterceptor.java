@@ -98,23 +98,4 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
         auditableFieldService.resetChangedEntities();
     }
     
-    // Commented out for an issue:
-    // super.findDirty() returns null - which acording to that method javadoc means that its up to hibernate to do dirty checking.  
-    // AND then you check if CFs are dirty and add cfValue to the list of dirty parameters if applicable.
-    // So as result, if any CF value was changed, all that it would return is ["cfValues"] as dirty fieldnames. That means that all other field changes are ignored.
-//    @Override
-//    public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-//
-//    	int[] dirtyProps = super.findDirty(entity, id, currentState, previousState, propertyNames, types);
-//    	
-//    	if(entity instanceof ICustomFieldEntity) {
-//        	ICustomFieldEntity customFieldEntity = (ICustomFieldEntity) entity;
-//            if(customFieldEntity.isDirtyCF()) {
-//            	List<String> propertyNamesList = Arrays.asList(propertyNames);
-//            	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
-//            }
-//        }
-//    	
-//		return dirtyProps;
-//    }
 }
