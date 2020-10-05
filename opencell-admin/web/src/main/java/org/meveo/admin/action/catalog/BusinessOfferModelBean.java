@@ -18,23 +18,10 @@
 
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.module.GenericModuleBean;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.BusinessProductModel;
-import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.admin.impl.MeveoModuleService;
@@ -45,6 +32,14 @@ import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Named
 @ViewScoped
@@ -174,7 +169,6 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
     }
 
     public void onCreateOfferFromBOM(SelectEvent event) {
-        System.out.println("test");
     }
 
     public String getServiceCodePrefix() {
