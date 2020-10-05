@@ -461,7 +461,6 @@
                 </p:tabView>
             </h:panelGroup>
         </h:panelGroup>
-
         <p:dialog id="billingAccountTerminationPopup" header="#{messages['billingAccount.accountTermination']}" widgetVar="dlg_billingAccountTerminationPopup" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="600">
             <hftl:formPanel edit="true" backingBean="#{billingAccountBean}" styleClass="formPanel" formId="termFrm" showFormButtons="false" useCustomIdParam="true">
@@ -482,7 +481,7 @@
         <p:dialog id="instantiateDiscountPlanDialog" header="#{messages['discountPlan.instantiation']}" widgetVar="dlg_instantiateDiscountPlanDialog" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="600">
             <hftl:formPanel formId="formDPI" edit="true" backingBean="#{billingAccountBean}" entity="#{billingAccountBean.entity.discountPlan}" styleClass="formPanel"
-                showFormButtons="false">
+                showFormButtons="false" useCustomIdParam="true">
                 <p:tabView>
                     <p:tab title="#{messages['commons.information']}">
                         <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
@@ -492,6 +491,7 @@
                         <p:panel styleClass="action-buttons">
                             <p:commandButton action="#{billingAccountBean.instantiateDiscountPlan()}" value="#{messages['button.instanciateButton']}"
                                 update=":#{p:component('discountPanel')}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+    								<f:param name="billingAccountId" value="#{billingAccountBean.objectId}" />
                             </p:commandButton>
                             <p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
                         </p:panel>

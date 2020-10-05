@@ -18,26 +18,19 @@
 
 package org.meveo.model.crm;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.shared.DateUtils;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -60,18 +53,27 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Custom field template
@@ -981,13 +983,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             values = new HashMap<>();
         }
 
-        // Multi-value values are concatenated when stored - split them and set as separate map key/values
+        // Multi-value values are concatenated when stored - split them and set as separate map key/values.
+        // Unescape a | character inside a string value that was saved as html &#124 value
         String[] splitValues = multiValue.split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
         for (int i = 0; i < splitValues.length && i < matrixValueColumns.size(); i++) {
             CustomFieldMapKeyEnum dataType = matrixValueColumns.get(i).getKeyType();
             if (!StringUtils.isBlank(splitValues[i])) {
                 if (dataType == CustomFieldMapKeyEnum.STRING) {
-                    values.put(matrixValueColumns.get(i).getCode(), splitValues[i]);
+                    String splitValue = splitValues[i];
+                    if (!StringUtils.isBlank(splitValue)) {
+                        splitValue = splitValue.replaceAll(Pattern.quote("&#124;"), "|");
+                    }
+                    values.put(matrixValueColumns.get(i).getCode(), splitValue);
 
                 } else {
                     try {
@@ -1028,6 +1035,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             valueSet = true;
             CustomFieldMapKeyEnum dataType = column.getKeyType();
             if (dataType == CustomFieldMapKeyEnum.STRING) {
+
+                if (!StringUtils.isBlank((String) columnValue)) {
+                    columnValue = ((String) columnValue).replaceAll(Pattern.quote("|"), "&#124;");
+                }
                 valBuilder.append((String) columnValue);
             } else if (dataType == CustomFieldMapKeyEnum.LONG || dataType == CustomFieldMapKeyEnum.DOUBLE) {
                 // Case of String value
