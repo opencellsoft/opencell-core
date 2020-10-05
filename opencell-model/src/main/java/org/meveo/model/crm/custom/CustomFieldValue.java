@@ -631,22 +631,22 @@ public class CustomFieldValue implements Serializable, Cloneable {
         if (itemClass == String.class) {
             mapStringValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
-                mapStringValue.put(mapItem.getKey(), mapItem.getValue().toString());
+                mapStringValue.put(mapItem.getKey(), mapItem.getValue() == null ? "" : mapItem.getValue().toString());
             }
 
         } else if (itemClass == Date.class) {
             mapDateValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
-                mapDateValue.put(mapItem.getKey(), (Date) mapItem.getValue());
+                mapDateValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : (Date) mapItem.getValue());
             }
 
         } else if (itemClass == Integer.class || itemClass == Long.class) {
             mapLongValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 if (mapItem.getValue() instanceof Integer) {
-                    mapLongValue.put(mapItem.getKey(), ((Integer) mapItem.getValue()).longValue());
+                    mapLongValue.put(mapItem.getKey(), mapItem.getValue() == null ? 0 : ((Integer) mapItem.getValue()).longValue());
                 } else if (mapItem.getValue() instanceof Long) {
-                    mapLongValue.put(mapItem.getKey(), (Long) mapItem.getValue());
+                    mapLongValue.put(mapItem.getKey(), mapItem.getValue() == null ? 0L : (Long) mapItem.getValue());
                 }
             }
 
@@ -654,7 +654,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
             mapDoubleValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 if (mapItem.getValue() instanceof BigDecimal) {
-                    mapDoubleValue.put(mapItem.getKey(), ((BigDecimal) mapItem.getValue()).doubleValue());
+                    mapDoubleValue.put(mapItem.getKey(), mapItem.getValue() == null ? 0 : ((BigDecimal) mapItem.getValue()).doubleValue());
                 } else if (mapItem.getValue() instanceof Double) {
                     mapDoubleValue.put(mapItem.getKey(), (Double) mapItem.getValue());
                 }
@@ -663,14 +663,14 @@ public class CustomFieldValue implements Serializable, Cloneable {
             mapBooleanValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 if (mapItem.getValue() instanceof Boolean) {
-                    mapBooleanValue.put(mapItem.getKey(), ((Boolean) mapItem.getValue()).booleanValue());
+                	mapBooleanValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : ((Boolean) mapItem.getValue()).booleanValue());
                 }
             }
 
         } else if (itemClass == EntityReferenceWrapper.class) {
             mapEntityValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
-                mapEntityValue.put(mapItem.getKey(), (EntityReferenceWrapper) mapItem.getValue());
+                mapEntityValue.put(mapItem.getKey(), mapItem.getValue() == null ? null :(EntityReferenceWrapper) mapItem.getValue());
             }
         }
     }
