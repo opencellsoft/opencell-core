@@ -83,19 +83,4 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
         auditableFieldService.resetChangedEntities();
     }
     
-    @Override
-    public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-
-    	int[] dirtyProps = super.findDirty(entity, id, currentState, previousState, propertyNames, types);
-    	
-    	if(entity instanceof ICustomFieldEntity) {
-        	ICustomFieldEntity customFieldEntity = (ICustomFieldEntity) entity;
-            if(customFieldEntity.isDirtyCF()) {
-            	List<String> propertyNamesList = Arrays.asList(propertyNames);
-            	dirtyProps=ArrayUtils.add(dirtyProps, propertyNamesList.indexOf("cfValues"));
-            }
-        }
-    	
-		return dirtyProps;
-    }
 }
