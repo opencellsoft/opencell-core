@@ -305,12 +305,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         		try {
 					Class clazz = Class.forName(cft.getEntityClazz());
 					String referenceTable= customTableService.getTableNameForClass(clazz);
-					customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getCode(), referenceTable, "id");
+					customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), referenceTable, "id");
 				} catch (ClassNotFoundException e) {
 					throw new BusinessException("Cannot find referenced clazz "+cft.getEntityClazz(), e);
 				}
         	} else if(relatedEntity.isStoreAsTable()) {
-        		customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getCode(), cft.tableName(), "id");
+        		customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), cft.tableName(), "id");
         	}
         }
 	}
