@@ -3597,4 +3597,7 @@ END $$;]]>
         </addColumn>    
     </changeSet>
     
+    <changeSet id="#5556_20201006" author="AndriusKarpavicius">
+        <modifyDataType tableName="account_entity" columnName="email" newDataType="varchar(2000)"/>
+    </changeSet>
 </databaseChangeLog>
