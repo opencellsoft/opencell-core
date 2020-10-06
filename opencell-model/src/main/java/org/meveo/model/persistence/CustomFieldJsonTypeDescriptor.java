@@ -21,6 +21,7 @@ package org.meveo.model.persistence;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
@@ -98,4 +99,14 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         }
         throw unknownWrap(value.getClass());
     }
+    
+    @Override
+	public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {
+		boolean equals = super.areEqual(one, another);
+		if (equals && one != null && 
+				(CollectionUtils.isNotEmpty(one.getDirtyCfPeriods()) || CollectionUtils.isNotEmpty(one.getDirtyCfValues()))) {
+			return false;
+		}
+		return equals;
+	}
 }
