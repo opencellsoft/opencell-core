@@ -906,7 +906,7 @@
         <p:dialog id="instantiateDiscountPlanDialog" header="#{messages['discountPlan.instantiation']}" widgetVar="dlg_instantiateDiscountPlanDialog" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="600">
             <hftl:formPanel formId="formDPI" edit="true" backingBean="#{subscriptionBean}" entity="#{subscriptionBean.entity.discountPlan}" styleClass="formPanel"
-                showFormButtons="false">
+                showFormButtons="false" useCustomIdParam="true">
                 <p:tabView>
                     <p:tab title="#{messages['commons.information']}">
                         <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
@@ -916,6 +916,7 @@
                         <p:panel styleClass="action-buttons">
                             <p:commandButton action="#{subscriptionBean.instantiateDiscountPlan()}" value="#{messages['button.instanciateButton']}"
                                 update=":#{p:component('discountPanel')}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+                                	<f:param name="subscriptionId" value="#{subscriptionBean.objectId}" />
                             </p:commandButton>
                             <p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
                         </p:panel>
