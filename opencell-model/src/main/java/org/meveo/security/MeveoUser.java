@@ -66,6 +66,11 @@ public abstract class MeveoUser implements Serializable {
      * Roles/permissions held by a user. Contains both role, composite role child role and permission names
      */
     protected Set<String> roles = new HashSet<>();
+    
+    /**
+     * user email address
+     */
+    protected String email;
 
     protected String locale;
 
@@ -203,4 +208,18 @@ public abstract class MeveoUser implements Serializable {
             private static final long serialVersionUID = 1864122036421892838L;
         };
     }
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }
