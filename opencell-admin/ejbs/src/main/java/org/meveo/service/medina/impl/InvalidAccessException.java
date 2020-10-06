@@ -33,4 +33,8 @@ public class InvalidAccessException extends CDRParsingException {
     public InvalidAccessException(Serializable cdr, String message) {
         super(cdr, CDRRejectionCauseEnum.INVALID_ACCESS, message);
     }
+    
+    public InvalidAccessException(Serializable cdr, CDRRejectionCauseEnum cause) {
+        super(cdr, cause, "");
+    }
 }
