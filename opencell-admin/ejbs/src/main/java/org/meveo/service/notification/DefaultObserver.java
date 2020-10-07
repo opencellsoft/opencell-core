@@ -42,23 +42,7 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.EndOfTerm;
-import org.meveo.event.qualifier.InboundRequestReceived;
-import org.meveo.event.qualifier.InstantiateWF;
-import org.meveo.event.qualifier.InvoiceNumberAssigned;
-import org.meveo.event.qualifier.LoggedIn;
-import org.meveo.event.qualifier.LowBalance;
-import org.meveo.event.qualifier.PDFGenerated;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.event.qualifier.Rejected;
-import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Terminated;
-import org.meveo.event.qualifier.Updated;
-import org.meveo.event.qualifier.XMLGenerated;
+import org.meveo.event.qualifier.*;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -73,6 +57,7 @@ import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.generic.wf.GenericWorkflowService;
@@ -209,6 +194,16 @@ public class DefaultObserver {
     public void loggedIn(@Observes @LoggedIn User e) throws BusinessException {
         log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
+    }
+
+    public void toR1(@Observes @ToR1 CustomerAccount e) throws BusinessException {
+        log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
+        checkEvent(NotificationEventTypeEnum.TO_R1, e);
+    }
+
+    public void toR0(@Observes @ToR0 CustomerAccount e) throws BusinessException {
+        log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
+        checkEvent(NotificationEventTypeEnum.TO_R0, e);
     }
 
     @MeveoAudit

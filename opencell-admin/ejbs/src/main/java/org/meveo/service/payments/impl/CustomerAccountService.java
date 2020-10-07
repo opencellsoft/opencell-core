@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -36,6 +39,9 @@ import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.ToR0;
+import org.meveo.event.qualifier.ToR1;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -85,6 +91,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     @Inject
     private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    @ToR1
+    private Event<CustomerAccount> toR1Status;
+
+    @Inject
+    @ToR0
+    private Event<CustomerAccount> toR0Status;
     
 
     /**
@@ -209,6 +223,18 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date toDate) {
         return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), toDate);
     }
+
+    /**
+     * Calculate Customer account balance due up to now
+     *
+     * @param customerAccountId customer account id
+     * @return A balance amount
+     */
+    public BigDecimal customerAccountBalanceDue(Long customerAccountId) {
+        return customerAccountBalanceDue(findById(customerAccountId), new Date());
+    }
+
+
 
     /**
      * Calculate Customer account balance due up to a given date without litigation, or a total balance amount without litigation if no date is provided.
@@ -739,5 +765,22 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("The recipient customer account with code : " + toCustomerAccountCode + " is not found");
         }
         transferAccount(fromCustomerAccount, toCustomerAccount, amount);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum){
+        customerAccount = refreshOrRetrieve(customerAccount);
+        if(customerAccount.getDunningLevel() == dunningLevelEnum)
+            return;
+        customerAccount.setDunningLevel(dunningLevelEnum);
+        customerAccount = update(customerAccount);
+        if(dunningLevelEnum == DunningLevelEnum.R0) {
+            toR0Status.fire(customerAccount);
+        }
+        else if(dunningLevelEnum == DunningLevelEnum.R1) {
+            customerAccount.setDueBalance(customerAccountBalanceDue(customerAccount, new Date()));
+            toR1Status.fire(customerAccount);
+        }
     }
 }
