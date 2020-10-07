@@ -91,17 +91,15 @@ public class OfferPoolRatingUnitJobBean {
             BigDecimal woQuantity = walletOperation.getQuantity();
             BigDecimal newAgencyCounter = BigDecimal.valueOf(agencyCounter).subtract(woQuantity);
 
-            String overageWOId;
             if (newAgencyCounter.compareTo(BigDecimal.ZERO) < 0) {
                 BigDecimal overageQuantity = newAgencyCounter.negate();
-                overageWOId = createOverageWalletOperation(walletOperation, overageQuantity, overageUnit, overagePrice, multiplier).toString();
+                createOverageWalletOperation(walletOperation, overageQuantity, overageUnit, overagePrice, multiplier);
                 offerAgenciesCountersMap.put(agencyCounterKey, 0D);
             } else {
-                overageWOId = "";
                 offerAgenciesCountersMap.put(agencyCounterKey, newAgencyCounter.doubleValue());
             }
 
-            walletOperation.setParameter2("DEDUCTED_FROM_POOL_" + overageWOId);
+            walletOperation.setParameter2("DEDUCTED_FROM_POOL");
             walletOperationService.update(walletOperation);
 
             cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, walletOperation.getOperationDate());
@@ -115,7 +113,7 @@ public class OfferPoolRatingUnitJobBean {
         }
     }
 
-    private Long createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
+    private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
                                               String overageUnit, Double overagePrice, Double multiplier) {
         WalletOperation overageWO = new WalletOperation();
 
@@ -140,11 +138,11 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setPriceplan(overPricePlanList.get(0));
 
         // WO's amounts
-        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), BaseEntity.NB_DECIMALS, RoundingMode.HALF_EVEN);
+        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), 6, RoundingMode.HALF_UP);
         BigDecimal taxPercent = wo.getTaxPercent();
 
         BigDecimal unitAmountWithoutTax = BigDecimal.valueOf(overagePrice);
-        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), BaseEntity.NB_DECIMALS, RoundingMode.HALF_EVEN);
+        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
         BigDecimal unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
         BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal amountTax = unitAmountTax.multiply(quantity);
@@ -191,15 +189,12 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setParameter1(wo.getParameter1());
         overageWO.setParameter2(wo.getParameter2());
         overageWO.setParameter3(wo.getParameter3());
+        overageWO.setEdr(wo.getEdr());
         overageWO.setStatus(WalletOperationStatusEnum.OPEN);
         overageWO.setBillingAccount(wo.getBillingAccount());
         overageWO.setUpdated(new Date());
 
         walletOperationService.create(overageWO);
         log.debug("Pool shared over usage WO created={}", overageWO);
-
-        walletOperationService.refresh(overageWO);
-        return overageWO.getId();
-
     }
 }

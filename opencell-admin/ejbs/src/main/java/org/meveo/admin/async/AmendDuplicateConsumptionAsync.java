@@ -29,7 +29,7 @@ public class AmendDuplicateConsumptionAsync {
             "where wo.offer_id = :offerId\n" +
             " and (wo.code like 'CH_M2M_USG_%_IN' and wo.code not like '%FREE%' and wo.parameter_1 not like '%_NUM_SPE') \n" +
             " and (wo.status='CANCELED' and wo.parameter_extra='DUPLICATE WO') \n" +
-            " and (wo.parameter_2 like 'DEDUCTED_FROM_POOL%' or wo.counter_id is not null) \n" +
+            " and (wo.parameter_2 = 'DEDUCTED_FROM_POOL' or wo.counter_id is not null) \n" +
             " and wo.parameter_3 != 'AMENDED_FROM_POOL' \n" +
             "order by wo.counter_id, wo.id ";
 
