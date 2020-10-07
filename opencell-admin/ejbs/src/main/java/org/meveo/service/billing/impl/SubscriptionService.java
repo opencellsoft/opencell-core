@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -62,6 +63,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -75,6 +77,7 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
+
 
 /**
  * @author Edward P. Legaspi
@@ -385,6 +388,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list subscription by user account", e);
+            return null;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Subscription> listByCustomer(Customer customer) {
+        try {
+            return getEntityManager().createNamedQuery("Subscription.listByCustomer").setParameter("customer", customer).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list subscription by customer", e);
             return null;
         }
     }
