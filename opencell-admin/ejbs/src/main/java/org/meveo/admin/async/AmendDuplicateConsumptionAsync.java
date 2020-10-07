@@ -3,7 +3,7 @@
  */
 package org.meveo.admin.async;
 
-import org.meveo.admin.job.OfferPoolRatingUnitJobBean;
+import org.meveo.admin.job.AmendDuplicateConsumptionUnitJobBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -22,13 +22,16 @@ import java.util.concurrent.Future;
  * @author Mounir BOUKAYOUA
  */
 @Stateless
-public class OfferPoolRatingAsync {
+public class AmendDuplicateConsumptionAsync {
 
-    private static final String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
-            "  FROM billing_wallet_operation wo \n" +
-            "  WHERE wo.offer_id = :offerId AND wo.status != 'CANCELED' \n" +
-            "   AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
-            "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 not like 'DEDUCTED_FROM_POOL%')";
+    private static final String DUPLICATED_WO_TO_AMEND_QUERY = "select wo.id \n" +
+            "from billing_wallet_operation wo\n" +
+            "where wo.offer_id = :offerId\n" +
+            " and (wo.code like 'CH_M2M_USG_%_IN' and wo.code not like '%FREE%' and wo.parameter_1 not like '%_NUM_SPE') \n" +
+            " and (wo.status='CANCELED' and wo.parameter_extra='DUPLICATE WO') \n" +
+            " and (wo.parameter_2 like 'DEDUCTED_FROM_POOL%' or wo.counter_id is not null) \n" +
+            " and wo.parameter_3 != 'AMENDED_FROM_POOL' \n" +
+            "order by wo.counter_id, wo.id ";
 
     @Inject
     private Logger log;
@@ -44,31 +47,31 @@ public class OfferPoolRatingAsync {
     private CurrentUserProvider currentUserProvider;
 
     @Inject
-    private OfferPoolRatingUnitJobBean offerPoolRatingUnitJobBean;
+    private AmendDuplicateConsumptionUnitJobBean amendDuplicateConsumptionUnitJobBean;
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        log.info("Start new offer pool rating thread to process workSet of offerIds={}", offerIds.size());
+        log.info("Start amend new group of canceled duplicated WO thread to process. WorkSet of offers={}", offerIds.size());
 
         int i = 0;
         for (BigInteger offerId : offerIds) {
             i++;
             @SuppressWarnings("unchecked")
-            List<BigInteger> walletOperations = emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_QUERY)
+            List<BigInteger> walletOperations = emWrapper.getEntityManager().createNativeQuery(DUPLICATED_WO_TO_AMEND_QUERY)
                     .setParameter("offerId", offerId.longValue())
                     .getResultList();
 
-            log.info("Start rating overage usage for offerId={}. nbr of WO={}", offerId, walletOperations.size());
+            log.info("Start amend canceled duplicated WO for offerId={}. nbr of WO={}", offerId, walletOperations.size());
 
             for (BigInteger walletOperationId : walletOperations) {
                 i++;
                 if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                offerPoolRatingUnitJobBean.execute(result, walletOperationId.longValue());
+                amendDuplicateConsumptionUnitJobBean.execute(result, walletOperationId.longValue());
             }
 
         }

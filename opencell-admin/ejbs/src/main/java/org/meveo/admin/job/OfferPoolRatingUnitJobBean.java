@@ -91,17 +91,17 @@ public class OfferPoolRatingUnitJobBean {
             BigDecimal woQuantity = walletOperation.getQuantity();
             BigDecimal newAgencyCounter = BigDecimal.valueOf(agencyCounter).subtract(woQuantity);
 
+            String overageWOId;
             if (newAgencyCounter.compareTo(BigDecimal.ZERO) < 0) {
                 BigDecimal overageQuantity = newAgencyCounter.negate();
-
-                createOverageWalletOperation(walletOperation, overageQuantity, overageUnit, overagePrice, multiplier);
-
+                overageWOId = createOverageWalletOperation(walletOperation, overageQuantity, overageUnit, overagePrice, multiplier).toString();
                 offerAgenciesCountersMap.put(agencyCounterKey, 0D);
             } else {
+                overageWOId = "";
                 offerAgenciesCountersMap.put(agencyCounterKey, newAgencyCounter.doubleValue());
             }
 
-            walletOperation.setParameter2("DEDUCTED_FROM_POOL");
+            walletOperation.setParameter2("DEDUCTED_FROM_POOL_" + overageWOId);
             walletOperationService.update(walletOperation);
 
             cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, walletOperation.getOperationDate());
@@ -115,8 +115,8 @@ public class OfferPoolRatingUnitJobBean {
         }
     }
 
-    private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
-                                                         String overageUnit, Double overagePrice, Double multiplier) {
+    private Long createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
+                                              String overageUnit, Double overagePrice, Double multiplier) {
         WalletOperation overageWO = new WalletOperation();
 
         // check and find over usage charge instance
@@ -176,7 +176,6 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setInputUnitDescription(wo.getInputUnitDescription());
         overageWO.setSubscriptionDate(wo.getSubscriptionDate());
         overageWO.setType(wo.getType());
-        overageWO.setEdr(wo.getEdr());
         overageWO.setSubscription(wo.getSubscription());
         overageWO.setServiceInstance(wo.getServiceInstance());
         overageWO.setSeller(wo.getSeller());
@@ -185,7 +184,6 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setInvoiceSubCategory(wo.getInvoiceSubCategory());
         overageWO.setTax(wo.getTax());
         overageWO.setWallet(wo.getWallet());
-        overageWO.setVersion(wo.getVersion());
         overageWO.setOrderNumber(wo.getOrderNumber());
         overageWO.setCurrency(wo.getCurrency());
         overageWO.setOfferTemplate(wo.getOfferTemplate());
@@ -198,6 +196,10 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setUpdated(new Date());
 
         walletOperationService.create(overageWO);
-        log.info("Pool shared over usage WO created={}", overageWO);
+        log.debug("Pool shared over usage WO created={}", overageWO);
+
+        walletOperationService.refresh(overageWO);
+        return overageWO.getId();
+
     }
 }

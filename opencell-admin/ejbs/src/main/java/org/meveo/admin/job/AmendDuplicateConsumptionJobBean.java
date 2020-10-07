@@ -1,6 +1,6 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.async.OfferPoolRatingAsync;
+import org.meveo.admin.async.AmendDuplicateConsumptionAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -26,23 +26,25 @@ import java.util.concurrent.Future;
  * @author Mounir BOUKAYOUA
  */
 @Stateless
-public class OfferPoolRatingJobBean extends BaseJobBean {
+public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
 
-    private static final String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id)\n" +
-            "  FROM billing_wallet_operation wo\n" +
-            "   INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
-            "  WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            "   AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' " +
-            "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 not like 'DEDUCTED_FROM_POOL%' ) \n" +
-            "   AND wo.status != 'CANCELED' ";
+    private static final String OFFERS_WITH_DUPLICATED_WO_QUERY = "select distinct wo.offer_id\n" +
+            "from billing_wallet_operation wo\n" +
+            "where \n" +
+            " (wo.code like 'CH_M2M_USG_%_IN' and wo.code not like '%FREE%' and wo.parameter_1 not like '%_NUM_SPE') \n" +
+            " and (wo.status='CANCELED' and wo.parameter_extra='DUPLICATE WO') \n" +
+            " and (wo.parameter_2 like 'DEDUCTED_FROM_POOL%' or wo.counter_id is not null) \n" +
+            " and wo.parameter_3 != 'AMENDED_FROM_POOL' \n" +
+            "order by wo.offer_id";
 
-    private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id\n" +
-            "FROM billing_wallet_operation wo\n" +
-            " INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
-            "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            " AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE'\n" +
-            " AND (wo.parameter_2 IS NULL OR wo.parameter_2 not like 'DEDUCTED_FROM_POOL%') \n" +
-            " AND wo.status != 'CANCELED' ";
+    private static final String COUNT_DUPLICATED_WO_QUERY = "select count(wo.id) \n" +
+            "from billing_wallet_operation wo\n" +
+            "where \n" +
+            " (wo.code like 'CH_M2M_USG_%_IN' and wo.code not like '%FREE%' and wo.parameter_1 not like '%_NUM_SPE') \n" +
+            " and (wo.status='CANCELED' and wo.parameter_extra='DUPLICATE WO') \n" +
+            " and (wo.parameter_2 like 'DEDUCTED_FROM_POOL%' or wo.counter_id is not null) \n" +
+            " and wo.parameter_3 != 'AMENDED_FROM_POOL'";
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -51,10 +53,11 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
     private Logger log;
 
     @Inject
-    private OfferPoolRatingAsync offerPoolRatingAsync;
+    private AmendDuplicateConsumptionAsync amendDuplicateConsumptionAsync;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @SuppressWarnings("unchecked")
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
 
@@ -65,15 +68,15 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
-            BigInteger offersWOsCount = (BigInteger) emWrapper.getEntityManager()
-                    .createNativeQuery(OFFER_OPENED_WO_COUNT_QUERY)
+            BigInteger WOsCount = (BigInteger) emWrapper.getEntityManager()
+                    .createNativeQuery(COUNT_DUPLICATED_WO_QUERY)
                     .getSingleResult();
 
-            log.info("Total of WOs with offers shared pools to check: {}", offersWOsCount.longValue());
-            result.setNbItemsToProcess(offersWOsCount.longValue());
+            log.info("Total of WOs with offers shared pools to check: {}", WOsCount.longValue());
+            result.setNbItemsToProcess(WOsCount.longValue());
 
             @SuppressWarnings("unchecked")
-            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFER_WITH_SHARED_POOL)
+            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_WITH_DUPLICATED_WO_QUERY)
                     .getResultList();
 
             log.info("Total of offers with shared pools to process: {}", offerIds.size());
@@ -83,7 +86,7 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures.add(offerPoolRatingAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(amendDuplicateConsumptionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -91,7 +94,6 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
                     log.error("", e);
                 }
             }
-
             // Wait for all async methods to finish
             for (Future<String> future : futures) {
                 try {
@@ -111,7 +113,7 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
             result.setDone(true);
 
         } catch (Exception e) {
-            log.error("Failed to check overage usage for walletOperations using offer sharing level ", e);
+            log.error("Failed to amend canceled duplicated WOs from Pools", e);
         }
     }
 }
