@@ -61,6 +61,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
@@ -104,6 +105,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
+import org.postgresql.util.PSQLException;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1630,14 +1632,22 @@ public abstract class BaseApi {
         dto.setAuditableFields(auditableFieldsDto);
     }
 
-    public boolean isRootCause(Throwable e, Class<?> clazz) {
+    public Throwable isRootCause(Throwable e, Class<?> clazz) {
         while (e != null) {
             if (e.getClass().equals(clazz)) {
-                return true;
+                return e;
             }
             e = e.getCause();
         }
-        return false;
+        return null;
+    }
+
+    public MeveoApiException getMeveoApiException(Throwable e) {
+    	Throwable rootCause = isRootCause(e, ConstraintViolationException.class);
+        if (rootCause != null) {
+            return new ConstraintViolationApiException(rootCause.getCause().getMessage());
+        }
+        return new MeveoApiException(e);
     }
 
     public String getCustomFieldDataType(Class clazz) {
