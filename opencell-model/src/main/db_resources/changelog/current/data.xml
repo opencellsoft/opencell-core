@@ -1756,6 +1756,7 @@ public class ValidateBRScript extends Script {
 
     <changeSet id="#5532_20201006 - Dunning workflow" author="NabilOuachi">
 
+
         <sql><![CDATA[
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-25, 0, 0, now(), 'org.meveo.service.script.SimpleDunning', 'Simple Dunning script', 'JAVA', '
 			package org.meveo.service.script;
@@ -1813,11 +1814,21 @@ public class ValidateBRScript extends Script {
             <column name="subject" value="You have unpaid invoices"></column>
             <column name="textcontent" value="Hi #{event.name.title.description} #{event.name.lastName},
 
+            Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}.
+
+            Regards,
+
+            Accounting Team">
+            </column>
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
+
 Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}.
 
 Regards,
 
-Accounting Team">
+Accounting Team"
+                ]]>
             </column>
         </insert>
 
@@ -1832,21 +1843,21 @@ Accounting Team">
             <column name="tag_end" value="}"></column>
             <column name="description" value="to R0 status email template"></column>
             <column name="subject" value="All invoices have been paid"></column>
-            <column name="textcontent"
-                    value="Hi #{event.name.title.description} #{event.name.lastName},
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
 
 All unpaid invoices for your account #{event.code} have been paid.
 Your dunning status has been reset to normal.
 
 Best regards,
-
-Accounting Team">
+Accounting Team"
+                ]]>
             </column>
         </insert>
 
         <insert tableName="adm_notification">
-            <column name="id" valueNumeric="-4"></column>
-            <column name="uuid" valueNumeric="-4"></column>
+            <column name="id" valueNumeric="-11"></column>
+            <column name="uuid" valueNumeric="-11"></column>
             <column name="version" value="0"></column>
             <column name="disabled" value="0"></column>
             <column name="created" valueDate="now()"></column>
@@ -1859,15 +1870,15 @@ Accounting Team">
         </insert>
 
         <insert tableName="adm_notif_email">
-            <column name="id" valueNumeric="-4"></column>
+            <column name="id" valueNumeric="-11"></column>
             <column name="email_from" value="no-reply@opencellsoft.com"></column>
             <column name="email_to_el" value="#{event.contactInformation.email}"></column>
             <column name="email_template_id" value="-1"></column>
         </insert>
 
         <insert tableName="adm_notification">
-            <column name="id" valueNumeric="-5"></column>
-            <column name="uuid" valueNumeric="-5"></column>
+            <column name="id" valueNumeric="-12"></column>
+            <column name="uuid" valueNumeric="-12"></column>
             <column name="version" value="0"></column>
             <column name="disabled" value="0"></column>
             <column name="created" valueDate="now()"></column>
@@ -1880,7 +1891,7 @@ Accounting Team">
         </insert>
 
         <insert tableName="adm_notif_email">
-            <column name="id" valueNumeric="-5"></column>
+            <column name="id" valueNumeric="-12"></column>
             <column name="email_from" value="no-reply@opencellsoft.com"></column>
             <column name="email_to_el" value="#{event.contactInformation.email}"></column>
             <column name="email_template_id" value="-2"></column>

@@ -18,6 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -779,7 +780,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             toR0Status.fire(customerAccount);
         }
         else if(dunningLevelEnum == DunningLevelEnum.R1) {
-            customerAccount.setDueBalance(customerAccountBalanceDue(customerAccount, new Date()));
+            BigDecimal dueBalance = customerAccountBalanceDue(customerAccount, new Date());
+            customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
             toR1Status.fire(customerAccount);
         }
     }

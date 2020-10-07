@@ -261,7 +261,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     private boolean thresholdPerEntity;
 
     @Transient
-    private BigDecimal dueBalance;
+    private String dueBalance;
 
     /**
      * This method is called implicitly by hibernate, used to enable encryption for custom fields of this entity
@@ -774,11 +774,11 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
         this.minimumTargetAccount = minimumTargetAccount;
     }
 
-    public void setDueBalance(BigDecimal dueBalance){
+    public void setDueBalance(String dueBalance){
         this.dueBalance = dueBalance;
     }
 
-    public BigDecimal getDueBalance() {
+    public String getDueBalance() {
         return dueBalance;
     }
 }
