@@ -2459,10 +2459,38 @@ END $$;]]>
     </changeSet> 
     
     <changeSet id="#4156_20120719" author="anasseh">
-		<addColumn tableName="meveo_job_instance">
+		<addColumn tableName="meveo_filter">
 			<column name="polling_query" type="text"/>
 		</addColumn>
 		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
     </changeSet>
+    
+    <changeSet id="#5416_20120809" author="anasseh">
+		<createTable tableName="ar_ao_payment_histories">
+			<column name="ao_id" type="bigint" />
+			<column name="history_id" type="bigint" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="ar_account_operation" />
+		<addForeignKeyConstraint
+			baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
+			constraintName="fk_histo_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="ar_payment_history" />
+
+        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
+	    <dropColumn tableName="ar_account_operation">
+            <column name="payment_history_id"></column>
+        </dropColumn>
+	</changeSet>    
+    
+    <changeSet id="#5510_20200923" author="anasseh">
+		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
+    </changeSet>
+    
+    
 </databaseChangeLog>
 

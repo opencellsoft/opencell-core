@@ -41,7 +41,7 @@ public class UnitPaymentJobBean {
     private PaymentService paymentService;
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)// TODO : nbr of method arguments is disturbing , refactor it by using a dedicated bean/dto
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long customerAccountId, List<Long> listAOids, Long amountToPay, boolean createAO, boolean matchingAO,
             OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethodEnum paymentMethodType, AccountOperationFilterScript aoFilterScript) {
         
@@ -68,17 +68,16 @@ public class UnitPaymentJobBean {
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
                 result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
-                result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
+                result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
             } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
-                result.registerSucces();
-                result.registerSucces();
+                result.registerSucces();               
             }            
 
         } catch (Exception e) {
-            log.error("Failed to pay recorded invoice id:" + customerAccountId, e);
-            result.registerError(customerAccountId, e.getMessage());
-            result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + e.getMessage());
+            log.error("Failed to pay recorded AccountOperation id:{} customerAccountId:{}, " + listAOids,customerAccountId, e);
+            result.registerError(listAOids.toString(), e.getMessage());
+            result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + e.getMessage());
         }
 
     }
