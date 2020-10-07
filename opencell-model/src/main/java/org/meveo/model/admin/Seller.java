@@ -25,7 +25,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -51,12 +50,9 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.shared.Address;
-import org.meveo.model.shared.ContactInformation;
 
 /**
  * Seller
@@ -77,8 +73,7 @@ import org.meveo.model.shared.ContactInformation;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_S")
 @Table(name = "crm_seller")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
 public class Seller extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = Seller.class.getAnnotation(DiscriminatorValue.class).value();
@@ -104,25 +99,6 @@ public class Seller extends AccountEntity implements IWFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
-
-    /**
-     * Address
-     */
-    @Embedded
-    private Address address;
-
-    /**
-     * Contact information
-     */
-    @Embedded
-    private ContactInformation contactInformation;
-
-    /**
-     * The seller VAT No
-     */
-    @Size(max = 100)
-    @Column(name = "vat_no", length = 100)
-    private String vatNo;
 
     /**
      * The seller registration No
@@ -159,18 +135,11 @@ public class Seller extends AccountEntity implements IWFEntity {
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<>();
 
     /**
-     * Business account model that created this Seller
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bam_id")
-    private BusinessAccountModel businessAccountModel;
-
-    /**
      * Customer invoice numbering sequences
      */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomerSequence> customerSequences = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentGateway> paymentGateways = new ArrayList<>();
 
@@ -207,33 +176,6 @@ public class Seller extends AccountEntity implements IWFEntity {
 
     public void setTradingLanguage(TradingLanguage tradingLanguage) {
         this.tradingLanguage = tradingLanguage;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    /**
-     * Gets the seller's VAT No
-     * 
-     * @return a VAT No
-     *
-     */
-    public String getVatNo() {
-        return vatNo;
-    }
-
-    /**
-     * Sets the seller's VAT No
-     * 
-     * @param vatNo new VAT No
-     */
-    public void setVatNo(String vatNo) {
-        this.vatNo = vatNo;
     }
 
     /**
@@ -305,28 +247,6 @@ public class Seller extends AccountEntity implements IWFEntity {
         this.seller = seller;
     }
 
-    /**
-     * Get contact informations
-     * 
-     * @return contactInformation
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    /**
-     * Set contact informations
-     * 
-     * @param contactInformation contactInformation
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
-    }
-
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         if (seller != null) {
@@ -341,14 +261,6 @@ public class Seller extends AccountEntity implements IWFEntity {
 
     public void setInvoiceTypeSequence(List<InvoiceTypeSellerSequence> invoiceTypeSequence) {
         this.invoiceTypeSequence = invoiceTypeSequence;
-    }
-
-    public BusinessAccountModel getBusinessAccountModel() {
-        return businessAccountModel;
-    }
-
-    public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
-        this.businessAccountModel = businessAccountModel;
     }
 
     @Override
@@ -419,7 +331,6 @@ public class Seller extends AccountEntity implements IWFEntity {
     public void setPaymentGateways(List<PaymentGateway> paymentGateways) {
         this.paymentGateways = paymentGateways;
     }
-    
 
     public GeneralLedger getGeneralLedger() {
         return generalLedger;

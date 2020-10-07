@@ -439,12 +439,12 @@ public class FilterService extends BusinessService<Filter> {
             return;
         }
 
-        if (filter != null) {
-            Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
-            if (!violations.isEmpty()) {
-                throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-            }
-        }
+//        if (filter != null) {
+//            Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
+//            if (!violations.isEmpty()) {
+//                throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+//            }
+//        }
         if (filter.getOrderCondition() != null) {
             Set<ConstraintViolation<OrderCondition>> violations = validator.validate(filter.getOrderCondition());
             if (!violations.isEmpty()) {
