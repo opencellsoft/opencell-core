@@ -51,7 +51,8 @@
 		            <hftl:formField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" textArea="true" rows="1" maxlength="1000" required="true" componentWidth="50" />
 		            <hftl:formField label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
 		            <hftl:formField id="emailsList" label="#{messages['entity.emailNotification.emails']}" autocomplete="new-password" field="emails" showButtonAddNew="true" componentWidth="50"/>
-		          	<hftl:formField id="emailSubject" label="#{messages['entity.emailNotification.subject']}" field="emailTemplate" childField="subject" required="true" size="100" />
+				    <hftl:formField id="description" label="#{messages['entity.emailNotification.description']}" field="description" size="100" />
+				    <hftl:formField id="emailSubject" label="#{messages['entity.emailNotification.subject']}" field="emailTemplate" childField="subject" required="true" size="100" />
 		            <hftl:formField label="#{messages['entity.emailNotification.body']}" field="emailTemplate" childField="textContent" textArea="true" maxlength="20000" componentWidth="100" />
 		            <hftl:formField label="#{messages['entity.emailNotification.htmlBody']}" field="emailTemplate" childField="htmlContent" textArea="true" maxlength="20000" componentWidth="100" />
 		            <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"

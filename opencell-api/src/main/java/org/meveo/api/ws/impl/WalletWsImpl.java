@@ -52,6 +52,7 @@ import org.meveo.model.catalog.WalletTemplate;
  */
 @WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class WalletWsImpl extends BaseWs implements WalletWs {
 
     @Inject

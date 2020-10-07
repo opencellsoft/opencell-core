@@ -18,9 +18,13 @@
 
 package org.meveo.api.rest.importExport.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.meveo.api.MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -35,6 +39,7 @@ import java.util.concurrent.Future;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.io.FileUtils;
@@ -44,13 +49,19 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
+import org.meveo.api.dto.response.utilities.ImportExportRequestDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.importExport.ImportExportRs;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
+import org.meveo.export.ExportTemplate;
 import org.meveo.export.RemoteAuthenticationException;
+import org.meveo.model.IEntity;
+import org.meveo.model.communication.MeveoInstance;
+import org.meveo.service.communication.impl.MeveoInstanceService;
 
 /**
  * @author Andrius Karpavicius
@@ -63,7 +74,10 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
     @Inject
     private EntityExportImportService entityExportImportService;
 
-    private LinkedHashMap<String, Future<ExportImportStatistics>> executionResults = new LinkedHashMap<String, Future<ExportImportStatistics>>();
+    @Inject
+    private MeveoInstanceService meveoInstanceService;
+
+    private LinkedHashMap<String, Future<ExportImportStatistics>> executionResults = new LinkedHashMap<>();
 
     @Override
     public ImportExportResponseDto importData(MultipartFormDataInput input) {
@@ -79,12 +93,12 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
             List<InputPart> inputParts = uploadForm.get("file");
             if (inputParts == null) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
+                return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
             }
             InputPart inputPart = inputParts.get(0);
             String fileName = getFileName(inputPart.getHeaders());
             if (fileName == null) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file name");
+                return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file name");
             }
 
             // Convert the uploaded file from inputstream to a file
@@ -97,7 +111,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
             } catch (IOException e) {
                 log.error("Failed to save uploaded {} file to temp file {}", fileName, tempFile, e);
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
+                return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
             }
             String executionId = (new Date()).getTime() + "_" + fileName;
 
@@ -109,11 +123,11 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         } catch (RemoteAuthenticationException e) {
             log.error("Failed to authenticate for a rest call {}", e.getMessage());
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
+            return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
 
         } catch (Exception e) {
             log.error("Failed to import data from rest call", e);
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
+            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
         }
 
     }
@@ -143,7 +157,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         Future<ExportImportStatistics> future = executionResults.get(executionId);
         if (future == null) {
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.INVALID_PARAMETER, "Execution with id " + executionId + " has expired");
+            return new ImportExportResponseDto(FAIL, MeveoApiErrorCodeEnum.INVALID_PARAMETER, "Execution with id " + executionId + " has expired");
         }
 
         if (future.isDone()) {
@@ -152,13 +166,140 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
                 return exportImportStatisticsToDto(executionId, future.get());
 
             } catch (InterruptedException | ExecutionException e) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName()
+                return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName()
                         + " " + e.getMessage());
             }
         } else {
             log.info("Remote import execution {} status is still in progress", executionId);
             return new ImportExportResponseDto(executionId);
         }
+    }
+
+    @Override
+    public ImportExportResponseDto exportData(ImportExportRequestDto importExportRequestDto) {
+        Map<String, Object> parameters = buildParamFrom(importExportRequestDto);
+        var template = new ExportTemplate();
+        var fileName = importExportRequestDto.getFileName();
+        template.setName(fileName);
+        var executionId = (new Date()).getTime() + "_" + fileName;
+        Future<ExportImportStatistics> exportImportFuture =
+                entityExportImportService.exportEntities(List.of(template), parameters);
+        executionResults.put(executionId, exportImportFuture);
+        return buildResponse(importExportRequestDto.getExportType(), executionId, exportImportFuture);
+    }
+
+    private Map<String, Object> buildParamFrom(ImportExportRequestDto exportData) {
+        Map<String, Object> parameters = new HashMap<>();
+
+        if(exportData.getExportType().equalsIgnoreCase("zip")) {
+            parameters.put("zip", true);
+        }
+        if (exportData.getExportType().equalsIgnoreCase("remoteInstance")) {
+            parameters.put("remoteInstance", retrieveInstance(exportData.getInstanceCode()));
+        }
+        return parameters;
+    }
+
+    private MeveoInstance retrieveInstance(String instanceCode) {
+        return ofNullable(meveoInstanceService.findByCode(instanceCode))
+                    .orElseThrow(() -> new EntityNotFoundException("Instance not found instance code : " + instanceCode));
+    }
+
+    private ImportExportResponseDto buildResponse(String responseType, String executionId,
+                                                  Future<ExportImportStatistics> exportImportStatistics) {
+        if(responseType.equalsIgnoreCase("API_Response") && exportImportStatistics.isDone()) {
+            try {
+                return exportImportStatisticsToDto(executionId, exportImportStatistics.get());
+            } catch (InterruptedException | ExecutionException exception) {
+                return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION,
+                        "Failed while executing export " + exception.getClass().getName()
+                                + " " + exception.getMessage());
+            }
+        } else {
+            return new ImportExportResponseDto(executionId);
+        }
+    }
+
+    @Override
+    public ImportExportResponseDto entityList(ImportExportRequestDto importExportRequestDto) {
+        var template = new ExportTemplate();
+        template.setName(importExportRequestDto.getFileName());
+        Class entityToExport;
+        try {
+            entityToExport = Class.forName(importExportRequestDto.getEntityToExport());
+        } catch (ClassNotFoundException exception) {
+            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, "Failed to load Entity");
+        }
+        template.setEntityToExport(entityToExport);
+        String result = entityExportImportService.generateEntitiesList(template);
+        return new ImportExportResponseDto(result);
+    }
+
+    @Override
+    public ImportExportResponseDto exportDataFromEntityList(MultipartFormDataInput input) {
+        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        var template = new ExportTemplate();
+        var requestDto = new ImportExportRequestDto();
+
+        InputPart inputPart = buildInputPart(uploadForm, "file");
+        InputPart parameter = buildInputPart(uploadForm, "exportType");
+        template.setName(getFileName(inputPart.getHeaders()));
+        var executionId = (new Date()).getTime() + "_" + template.getName();
+        try {
+            InputStream inputStream = inputPart.getBody(InputStream.class, null);
+            InputStream inputParam = parameter.getBody(InputStream.class, null);
+            String exportType = readParameters(inputParam);
+            requestDto.setExportType(exportType);
+            if(exportType.equalsIgnoreCase("remoteInstance")) {
+                InputPart remoteInstance = buildInputPart(uploadForm, "instanceCode");
+                InputStream instanceStream = remoteInstance.getBody(InputStream.class, null);
+                requestDto.setInstanceCode(readParameters(instanceStream));
+            }
+            Map<String, Object> parameters = buildParamFrom(requestDto);
+            List<String> entitiesFromFile = readFile(inputStream);
+            template.setClassesToExportAsFull(entitiesToExport(entitiesFromFile));
+            Future<ExportImportStatistics> exportImportFuture =
+                    entityExportImportService.exportEntities(List.of(template), parameters);
+            executionResults.put(executionId, exportImportFuture);
+            return buildResponse(exportType, executionId, exportImportFuture);
+        } catch (IOException exception) {
+            log.error(exception.getMessage());
+            return new ImportExportResponseDto(FAIL, GENERIC_API_EXCEPTION, exception.getMessage());
+        }
+    }
+
+    private InputPart buildInputPart(Map<String, List<InputPart>> uploadForm, String param) {
+        List<InputPart> inputParts = uploadForm.get(param);
+        return ofNullable(inputParts.get(0))
+                    .orElseThrow(() -> new MeveoApiException("Missing a file. File is expected as part name 'file'"));
+    }
+
+    private String readParameters(InputStream body) {
+        return new BufferedReader(new InputStreamReader(body))
+                                            .lines()
+                                            .collect(joining());
+    }
+
+    private List<String> readFile(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        return reader.lines()
+                    .map(line -> line.split(","))
+                    .map(array -> array[1])
+                    .collect(toList());
+    }
+
+    private List<Class<? extends IEntity>> entitiesToExport(List<String> entities) {
+        List<Class<? extends IEntity>> entitiesToExport = new ArrayList<>();
+        Class entityToExport;
+        for (String entity: entities) {
+            try {
+                entityToExport = Class.forName(entity);
+                entitiesToExport.add(entityToExport);
+            } catch (ClassNotFoundException exception) {
+                log.error(exception.getMessage());
+            }
+        }
+        return entitiesToExport;
     }
 
     /**
@@ -193,12 +334,12 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
         dto.setFailureMessageKey(statistics.getErrorMessageKey());
 
         if (!statistics.getFieldsNotImported().isEmpty()) {
-            dto.setFieldsNotImported(new HashMap<String, FieldsNotImportedStringCollectionDto>());
+            dto.setFieldsNotImported(new HashMap<>());
             for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
                 dto.getFieldsNotImported().put(entry.getKey(), new FieldsNotImportedStringCollectionDto(entry.getValue()));
             }
         }
-        dto.setSummary(new HashMap<String, Integer>());
+        dto.setSummary(new HashMap<>());
         for (Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
             dto.getSummary().put(summaryInfo.getKey().getName(), summaryInfo.getValue());
         }

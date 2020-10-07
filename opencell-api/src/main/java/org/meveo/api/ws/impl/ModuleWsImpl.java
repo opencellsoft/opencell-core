@@ -38,6 +38,7 @@ import org.meveo.model.module.MeveoModule;
  **/
 @WebService(serviceName = "ModuleWs", endpointInterface = "org.meveo.api.ws.ModuleWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class ModuleWsImpl extends BaseWs implements ModuleWs {
 
     @Inject

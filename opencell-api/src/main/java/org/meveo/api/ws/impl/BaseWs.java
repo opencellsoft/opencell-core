@@ -37,6 +37,7 @@ import javax.xml.ws.handler.MessageContext;
 /**
  * @author Edward P. Legaspi
  **/
+@Deprecated
 public abstract class BaseWs {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());

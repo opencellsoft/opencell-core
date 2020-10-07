@@ -213,6 +213,9 @@ public class DefaultNotificationService {
         if (notif == null) {
             return false;
         }
+        Map<Object, Object> userMap = new HashMap<>();
+        userMap.put("event", entityOrEvent);
+        userMap.put("manager", manager);
 
         try {
             if (!matchExpression(notif.getElFilter(), entityOrEvent)) {
@@ -264,14 +267,23 @@ public class DefaultNotificationService {
             } else if (notif instanceof EmailNotification) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
                 EmailNotification  emailNotification = (EmailNotification) notif;
-                context.put("EMAIL_FROM", evaluateExpression(emailNotification.getEmailFrom(), new HashMap<>(), String.class));
-                context.put("EMAIL_TO_LIST", evaluateExpression(emailNotification.getEmailToEl(), new HashMap<>(), String.class));
-                addParamsTo(context, emailNotification.getParams());
+                context.put("EMAIL_FROM", evaluateExpression(emailNotification.getEmailFrom(), userMap, String.class));
+                context.put("EMAIL_TO_LIST", evaluateExpression(emailNotification.getEmailToEl(), userMap, String.class));
+                addParamsTo(context, emailNotification.getParams(), userMap);
                 if(notif.getScriptInstance() != null) {
                     // script context overwrite
                     context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context));
                 }
-                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
+                String emailFrom = (String)context.get("EMAIL_FROM");
+                String emailToEl  = (String)context.get("EMAIL_TO_LIST");
+                if(emailFrom != null) {
+                    emailNotification.setEmailFrom(emailFrom);
+                }
+                if(emailToEl != null) {
+                    emailNotification.setEmailToEl(emailToEl);
+                }
+
+                emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -308,9 +320,9 @@ public class DefaultNotificationService {
         return true;
     }
 
-    private void addParamsTo(Map<String, Object> context, Map<String, String> params) {
+    private void addParamsTo(Map<String, Object> context, Map<String, String> params, Map<Object, Object> userMap) {
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            context.put(entry.getKey(), evaluateExpression(entry.getValue(),new HashMap<>(), String.class));
+            context.put(entry.getKey(), evaluateExpression(entry.getValue(), userMap, String.class));
         }
     }
 

@@ -25,6 +25,7 @@ import org.meveo.api.dto.ActionStatus;
 /**
  * @author Edward P. Legaspi
  **/
+@Deprecated
 public interface IBaseWs {
 
     /**

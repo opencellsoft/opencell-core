@@ -37,6 +37,7 @@ import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
  * @author Andrius Karpavicius
  */
 @WebService
+@Deprecated
 public interface MediationWs extends IBaseWs {
 
     /**

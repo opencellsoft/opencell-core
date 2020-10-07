@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ae8ddf88-ac41-48ef-a918-3143c755f44a",
+		"_postman_id": "3b52c9c2-a7ae-4455-8297-166d37d9a5df",
 		"name": "Non-Regression.Tests-Settings",
 		"description": "\r\nHere are all core API tests and the essential CRUD requests when available as well as exceptions that might occure, to assure that everything works as intended.\r\n\r\n### Typical execution\r\n\r\nThe typical test consists of:\r\n1. A successful createOrUpdate(POST) - remplace with create when createOrUpdate is unavailable\r\n2. A successful read (GET) - check if entity created in point 1 is retreived\r\n3. A failed Create (POST) - due to entity already created\r\n4. A failed update (PUT) - due to a non existant entity\r\n5. A succesfull update (PUT) - update entity created in point 1\r\n6. A succesfull createOrUpdate(POST) - update entity created in point 1 - skip this if createOrUpdate is unavailable\r\n7. A successful read (GET) - check if updated entity from point 5 and 6 have been correctly updated\r\n\r\nPlease ensure that tests are correctly asserted in the Tests tab.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -18,7 +18,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "55835391-e55a-4d0a-b8bf-dd217addff74",
+										"id": "b7b3f14f-f683-4311-be8a-6a01ee4f68c0",
 										"exec": [
 											""
 										],
@@ -82,7 +82,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "817ff4e1-8de9-4abd-82e9-b974910d47aa",
+										"id": "b0fc8b76-993e-4ba3-8c72-b40ba91f7982",
 										"exec": [
 											""
 										],
@@ -154,7 +154,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "44cfa519-e6b6-4daa-a33c-68c78705a518",
+										"id": "ab763c72-be59-4eaf-b633-62a4c54019fa",
 										"exec": [
 											""
 										],
@@ -217,7 +217,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3325470c-0818-4122-bc42-1e67a24b8083",
+										"id": "79973b80-42eb-4a58-8c72-f6b8cef1e64a",
 										"exec": [
 											""
 										],
@@ -288,7 +288,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "bacc7242-4187-472e-9c85-9f092b950d56",
+								"id": "6d94edc2-8021-421a-84c4-b8e0764ed388",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"titleDto\");"
@@ -298,7 +298,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "82c8061c-7f2c-4492-b73a-c8c7e244d594",
+								"id": "7056200d-10d9-4e87-b95c-f1c437c030a7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -318,7 +318,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "96661a42-4588-40fe-bcac-85528e20c3e7",
+										"id": "2eabe4dd-6447-4a99-a30e-0438b1f0145a",
 										"exec": [
 											""
 										],
@@ -381,7 +381,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "20e91472-1d07-4686-a52f-7735e83f65dc",
+										"id": "d5132848-84f7-4601-8cbc-21d8359d7ab3",
 										"exec": [
 											""
 										],
@@ -453,7 +453,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c43749a7-45c2-455d-81f8-53d0989bac2c",
+										"id": "263d666e-e4ed-424b-b2cd-c02d75559909",
 										"exec": [
 											""
 										],
@@ -515,7 +515,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c02918fb-9ea7-4e1c-95ef-e18a06059566",
+										"id": "25b66fd5-18fb-4057-9594-69a7bb39abfb",
 										"exec": [
 											""
 										],
@@ -594,7 +594,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "78485193-f1e4-4430-934d-e68639e6dce5",
+										"id": "0a30e63d-ed71-4651-9555-8ae207692c2a",
 										"exec": [
 											""
 										],
@@ -658,7 +658,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "70466b81-f6bc-44eb-b08f-b1b0a5c8b969",
+										"id": "0c6677d3-4cce-4ee6-99ae-4f22a6f88cf5",
 										"exec": [
 											""
 										],
@@ -730,7 +730,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "02faa93e-e0b7-4452-a756-b19b384da27e",
+										"id": "a75945bd-ef28-48d2-bf8f-dc54247d11b5",
 										"exec": [
 											""
 										],
@@ -793,7 +793,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b01ad945-8e55-4b07-97dc-434b3faba711",
+										"id": "894f370d-4352-4d4c-9827-8dbc8b135855",
 										"exec": [
 											""
 										],
@@ -872,7 +872,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d6b0221d-5331-4825-a071-87aefabaf608",
+										"id": "6d015f64-7e02-47ee-8eff-d73197db8406",
 										"exec": [
 											""
 										],
@@ -930,12 +930,12 @@
 							"response": []
 						},
 						{
-							"name": "Read|Country|TS|SUCCESS",
+							"name": "Read|Country|FR|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "09d88144-8e83-4293-8537-bb69f233b155",
+										"id": "338cbb4f-e1ce-457f-8bbc-898a39e6bc9d",
 										"exec": [
 											""
 										],
@@ -1006,7 +1006,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b909e1d1-fc63-40fd-9f2d-e7e4e4f5c6d5",
+										"id": "e7bae23d-d95b-470d-9221-1fb54b336eff",
 										"exec": [
 											""
 										],
@@ -1068,7 +1068,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c64e696f-36ce-4cda-9ffa-8b21bd6031a6",
+										"id": "699fde88-9359-48d6-9aa1-6f48757d0888",
 										"exec": [
 											""
 										],
@@ -1138,7 +1138,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f0873b63-05a7-4e63-8a91-fb93364efcab",
+								"id": "c6b930ad-bf0a-4366-b4c1-3c58edc91618",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));",
@@ -1149,7 +1149,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "521af32b-e640-4239-a689-9ffc19eba73d",
+								"id": "5f701d1b-8e35-4765-9de6-63c56f60bd4c",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1169,7 +1169,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c0f5d5d5-cd34-4c94-a4d2-ae4cbefa7a3a",
+										"id": "a8e906a1-0d71-4a1a-8f1e-b0a03b8d70e2",
 										"exec": [
 											""
 										],
@@ -1232,7 +1232,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "83fd0584-93ad-47ec-9648-cd9a91c68e07",
+										"id": "37f7e7bd-6f66-4b53-83f6-38acf55e4648",
 										"exec": [
 											""
 										],
@@ -1303,7 +1303,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2f67f788-31f0-48ed-9ac6-1f83307d5749",
+										"id": "d7666366-62e3-4569-9895-0ce27933f769",
 										"exec": [
 											""
 										],
@@ -1365,7 +1365,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4bc17ca7-2c88-411d-b84a-992d433eebad",
+										"id": "78e59fdb-e428-4e88-a514-d63df4a85658",
 										"exec": [
 											""
 										],
@@ -1435,7 +1435,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b9642a6d-f4ec-466c-8151-c2f205ebac11",
+								"id": "b8ed7576-120a-47fc-9120-fbe412de5765",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
@@ -1445,7 +1445,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "35d5dee9-40d6-4995-98af-4350d010afa2",
+								"id": "63c29255-20fe-4b1c-8bf8-459ed3f600ed",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1465,7 +1465,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fd7815ed-ca6b-4d56-9acb-7f9ae086ba71",
+										"id": "11081264-7f3b-43fa-956a-3dba337dfbaa",
 										"exec": [
 											""
 										],
@@ -1523,12 +1523,12 @@
 							"response": []
 						},
 						{
-							"name": "Read|Language|TST|SUCCESS",
+							"name": "Read|Languages|TST|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a91fffe-b64c-4383-99ba-e7fa3166b83e",
+										"id": "17829d15-d05c-43e0-980d-c3b033cfa407",
 										"exec": [
 											""
 										],
@@ -1599,7 +1599,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e40848e9-a242-4c67-b207-83e4d9b92c5e",
+										"id": "94362c3d-aad8-445d-9d53-8f75cfc84966",
 										"exec": [
 											""
 										],
@@ -1661,7 +1661,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "97023c23-221f-4d87-8d66-a67353229934",
+										"id": "af8cd787-6c0a-41a4-8b1a-da66fa5cc63d",
 										"exec": [
 											""
 										],
@@ -1731,7 +1731,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e15256f0-2f22-4f1c-83ba-454ab519bd03",
+								"id": "b46acece-a8f6-4104-9c6f-48ca383228b6",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
@@ -1741,7 +1741,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce814f17-4c52-4aa6-9520-aa2184340b68",
+								"id": "7e3df4e9-344d-41f8-b053-6f84eb6b1560",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1761,7 +1761,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "07a28b68-775c-4e5e-ad7a-ad0c2a5b09e1",
+										"id": "9309e530-6bd3-4f91-aaca-630c8d9cedbd",
 										"exec": [
 											""
 										],
@@ -1824,7 +1824,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "af54a885-5a19-4c9c-a123-e92d5d8f2279",
+										"id": "cdc36ddc-b6b6-43e1-b612-21aa2277924d",
 										"exec": [
 											""
 										],
@@ -1895,7 +1895,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "bf69b01a-fe8e-42e2-a84e-6833bc074562",
+										"id": "3ea3d799-159b-4bf2-b2ef-79daaeedcf0c",
 										"exec": [
 											""
 										],
@@ -1957,7 +1957,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d5d0839b-0f4b-493b-b5de-1fa6ff68988e",
+										"id": "6e2b4239-e50e-40f6-92fe-8f0eae3c0699",
 										"exec": [
 											""
 										],
@@ -2027,7 +2027,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "382846d1-1987-470a-96b8-9df42da88a16",
+								"id": "fe9504d9-ca05-4840-b8d0-27c830ac9707",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"roleDto\");",
@@ -2038,7 +2038,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2ef3a100-fab0-49c1-83a3-7350d268bdf3",
+								"id": "c8cf086f-8fc0-4d8c-990f-64ebeb06eb64",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2058,7 +2058,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e0507a2d-8d98-46ba-b6b8-d781a82f3a4c",
+										"id": "6cfb1d5e-f22d-4be3-9b92-ee5ef7d5f3cf",
 										"exec": [
 											""
 										],
@@ -2121,7 +2121,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1980ede4-2550-440b-b5e9-5093f0bd4d4d",
+										"id": "41720e43-dda7-4ef5-953d-f57202f2fda4",
 										"exec": [
 											""
 										],
@@ -2192,7 +2192,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3f1955f6-249d-4138-abb0-9715fa8256d0",
+										"id": "8b4572ac-1dcc-4ce0-a3fe-7dec2dfdb007",
 										"exec": [
 											""
 										],
@@ -2254,7 +2254,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "02adee0d-4f02-4732-a40d-8afed2674af3",
+										"id": "bd338153-a189-4fe3-870e-c44ba3e08625",
 										"exec": [
 											""
 										],
@@ -2332,7 +2332,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8709d780-b7bd-4c17-9ce6-16135afb7525",
+										"id": "1fa577e0-759a-4202-8548-e36d6e2f2f78",
 										"exec": [
 											""
 										],
@@ -2395,7 +2395,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "61216b49-50c1-4069-80f8-179f1e1399b3",
+										"id": "88bace2c-7171-44d5-89db-75fc01c4e341",
 										"exec": [
 											""
 										],
@@ -2405,7 +2405,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "d2e28d20-66b8-481b-b948-5c73051a140c",
+										"id": "573c3998-939d-431b-acfc-a28b9286d3e3",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -2476,7 +2476,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "eb246248-769e-4b52-b53b-49762c026b7d",
+										"id": "0e0298d9-6e9c-4ea2-a139-07f53f6f984e",
 										"exec": [
 											""
 										],
@@ -2538,7 +2538,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6af77a2b-4053-41d6-835e-7552ac8bf396",
+										"id": "a3934363-6876-4bf7-bd8a-178a48a935ae",
 										"exec": [
 											""
 										],
@@ -2548,7 +2548,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "f3b3d7cb-9c7e-40ae-bedc-2135eb74e9b3",
+										"id": "26907dbd-4760-45d3-96ca-789534746287",
 										"exec": [
 											"pm.variables.set(\"message\", \"\");"
 										],
@@ -2618,7 +2618,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6de4e103-11fa-4398-821a-367ef42975f6",
+								"id": "2d4d3837-cca8-4bd1-926e-3fbb06ad7591",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"invoiceTypeDto\");"
@@ -2628,7 +2628,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "915ce627-dc91-4aeb-82cb-d30f9aa0ee78",
+								"id": "00e7acb9-a606-47ec-971e-0631c80cf7e7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2648,7 +2648,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9e0fb3d3-e86c-4299-936f-0990b81221a2",
+										"id": "2b6f0fd5-f26e-473b-a480-1865bc4a17f9",
 										"exec": [
 											""
 										],
@@ -2711,7 +2711,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cff082f8-d965-46ef-a7ec-9ed64864b643",
+										"id": "74f34b93-b7bf-4ab6-a96b-70b4df467bb9",
 										"exec": [
 											""
 										],
@@ -2782,7 +2782,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "eb284b58-8af0-4001-9094-9dd2d9605278",
+										"id": "3e624df6-74b9-4a7d-a7fa-da25bbc3b2dd",
 										"exec": [
 											""
 										],
@@ -2844,7 +2844,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cbdce6b2-e6f3-482c-9f9d-9bf52490f36e",
+										"id": "26a2830f-40f6-4d37-98e0-db5106bec09e",
 										"exec": [
 											""
 										],
@@ -2914,7 +2914,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "275706be-2e02-4a45-8ee5-f9bf305d75a1",
+								"id": "e63bffec-ab83-46c6-8a43-38d872ebc987",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"billingCycleCode\", pm.variables.get(\"entityCode\"));"
@@ -2924,7 +2924,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1aeb99a9-bc31-42f9-8fd6-aea3cc9e1ae8",
+								"id": "44a3c0b6-709d-45b2-a88c-26fd7c466480",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -2944,7 +2944,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "31a2566b-d40b-4736-b5af-b25b6e3801f4",
+										"id": "c1d307fd-dd9f-4df0-9e11-a217e506175a",
 										"exec": [
 											""
 										],
@@ -3007,7 +3007,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b8c8ae67-ce6d-469e-871b-e91153669629",
+										"id": "50e05be4-8f17-461c-9caf-f6b5df72f0d4",
 										"exec": [
 											""
 										],
@@ -3078,7 +3078,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cf573f8f-6019-412e-acfa-5698d2c8e04a",
+										"id": "45eb6fe4-69fe-4884-ae5f-20ca7cb3e4ea",
 										"exec": [
 											""
 										],
@@ -3140,7 +3140,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "15618a45-8dc3-40b0-8544-5ccf9aba4c00",
+										"id": "98200bae-cdc5-4969-89bd-266692aebede",
 										"exec": [
 											""
 										],
@@ -3210,7 +3210,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "cc9853eb-3dfa-4413-bd47-f7e2ae939b37",
+								"id": "988ea229-f5c3-4fac-9358-45196f4809a3",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3220,7 +3220,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3b0ac8df-f717-441b-941a-2ff5e1fe78f9",
+								"id": "04f83fd3-d6f3-4688-a30a-292a5e0b8ed7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3240,7 +3240,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8b7bd9f3-7b45-44c7-90dc-398007c2b269",
+										"id": "baaf91c1-b3ed-4a3d-bdcc-de3d3ed42d08",
 										"exec": [
 											"console.log(\"TEST Body Content\",pm.response.json());\r",
 											"console.log(\"Entity code is \",pm.variables.get(\"entityCode\"));\r",
@@ -3252,7 +3252,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "d2917aa8-5d73-41d1-a3a1-ae94beaff914",
+										"id": "3fd58230-2187-48f8-a608-683e82b183c7",
 										"exec": [
 											""
 										],
@@ -3316,7 +3316,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "82ad0708-a335-4e91-951b-dc10f6436ce2",
+										"id": "a4ec8070-72fc-4910-ba10-fb2e980e426d",
 										"exec": [
 											""
 										],
@@ -3371,7 +3371,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c0a86f44-328e-4974-b3c3-ebe0cdae6561",
+										"id": "66a93d36-4df8-43a0-b7b5-db8ae86299ec",
 										"exec": [
 											""
 										],
@@ -3435,7 +3435,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a17c2a48-12b4-46d5-8c41-e991144b12a8",
+										"id": "4037c958-1451-4ad5-a48e-4716f4365e54",
 										"exec": [
 											""
 										],
@@ -3506,7 +3506,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0d8eb67b-6784-4943-b921-5d3be0b06b59",
+								"id": "31618eab-195f-484f-9ee6-7ca58836190c",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerBrandCode\", pm.variables.get(\"entityCode\"));"
@@ -3516,7 +3516,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8cfcf3b0-abce-44a6-a205-8692658c524a",
+								"id": "184fe45d-0e93-4c25-986d-5075232c2176",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3536,7 +3536,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fc9855ed-9379-4cd4-a00d-e4a5aa7bf1fa",
+										"id": "ca8bc6ed-7f9f-421a-be13-2b5d59d0e6e6",
 										"exec": [
 											""
 										],
@@ -3600,7 +3600,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "43275ab7-df6b-4e00-a900-03e5e5875c7c",
+										"id": "95099d09-478e-4e9c-891e-2ff03f08a96f",
 										"exec": [
 											""
 										],
@@ -3668,7 +3668,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f50c8e20-39c3-49b6-b124-9f1b497e98ea",
+										"id": "63b1fee6-65af-43f9-ba48-1917dc206556",
 										"exec": [
 											""
 										],
@@ -3732,7 +3732,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "26f3c3fd-5f1b-43a0-b701-d64b1e1bf42f",
+										"id": "36cf8161-95f9-4622-a269-47e1b1092864",
 										"exec": [
 											""
 										],
@@ -3799,7 +3799,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "3b3348af-7953-474b-bac5-fffe346ddd4f",
+								"id": "fac147f7-49a8-4f57-86b5-52f7d365fddd",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerCategoryCode\", pm.variables.get(\"entityCode\"));"
@@ -3809,7 +3809,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "71915a4a-bf7c-4f00-8002-fe2bc5bc9c3d",
+								"id": "8790f37e-07c1-480b-b8af-16e1712ec504",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -3829,7 +3829,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f063c838-ea4e-4262-ae20-a4f32e19d5fd",
+										"id": "0ac6daf2-ba1b-459b-af4c-579333bb82af",
 										"exec": [
 											""
 										],
@@ -3892,7 +3892,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5716edc1-783d-4412-adf2-8323fd459c1a",
+										"id": "d13d5015-32cf-4db4-853a-68702247f878",
 										"exec": [
 											""
 										],
@@ -3902,7 +3902,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "97f4eb78-f8be-46ba-b728-4af375fe0100",
+										"id": "5a7c8896-b7f3-4193-8830-db308c6f4ba8",
 										"exec": [
 											""
 										],
@@ -3973,7 +3973,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "da1b1297-aa42-4aff-9720-4fe955585dfc",
+										"id": "41e11f46-dc50-4370-93bf-69ffb31f808b",
 										"exec": [
 											""
 										],
@@ -4035,7 +4035,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "637e44b7-9503-4a90-9d54-755c5a074ee6",
+										"id": "64391680-6b64-47bd-8582-c9835d3a96cb",
 										"exec": [
 											""
 										],
@@ -4098,7 +4098,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f9cc3b33-436e-4aea-8d2c-5fad5d8de56d",
+										"id": "696dcd8b-9f98-4d37-a76c-2ca5f47d851d",
 										"exec": [
 											""
 										],
@@ -4168,7 +4168,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5ca38d25-ea2c-4a54-a0fc-39cb02e52363",
+								"id": "37d659fc-e83b-479f-907f-de0d479ad4b3",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"dto\");",
@@ -4179,7 +4179,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ba9aae8d-2e60-48a0-8cd1-f2201b5a2401",
+								"id": "e4825b2b-5d68-4ca6-8975-a9bbe08a8971",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -4199,7 +4199,17 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "94250a46-1d6d-4a28-97e8-59e78485b9f1",
+										"id": "267b3db1-be1c-42f8-bd5d-020231b9c407",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3c138767-1619-4ebe-a498-fd4f42f531dc",
 										"exec": [
 											""
 										],
@@ -4263,7 +4273,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9d4adb42-68ea-4d08-a4f7-51abc2f95d3c",
+										"id": "e2a2848b-e1ab-4f09-ab30-b9eb74d7c48e",
 										"exec": [
 											""
 										],
@@ -4326,7 +4336,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ef0e6ec5-fbc5-49bb-9abe-5aa0ce19c54b",
+										"id": "71cf3229-9dfa-4583-a7b0-5c6946104e2e",
 										"exec": [
 											""
 										],
@@ -4390,14 +4400,87 @@
 							"response": []
 						},
 						{
+							"name": "Delete|BillingCycle|BC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ddf5b39e-67e3-4191-bdf6-771512093cf5",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete|Country|FR|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "c2a5d527-2114-4618-a77e-bdcdec35cf41",
+										"id": "f280f43a-563a-4011-8291-e95dc5e3b036",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "07f2a1f4-4495-42d1-afdf-72ef6b940b87",
+										"exec": [
+											"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -4458,7 +4541,17 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f088161a-1a70-4045-a2e0-343895a54933",
+										"id": "2ae89fe5-914e-4513-8aa0-aba3e95e4927",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "373590c2-1bc4-4a30-ac8c-8cd7fae7d8c8",
 										"exec": [
 											""
 										],
@@ -4521,9 +4614,19 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d6c26cfa-6866-482d-abcb-653151ff4bf4",
+										"id": "945d7d0c-70dd-4050-a1b3-21cb9a545755",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3aa6c458-9e36-4c8d-883b-aea3b67a5ab7",
+										"exec": [
+											"pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -4584,7 +4687,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "30bbcad8-84e0-4d84-94b1-51b18e026f08",
+										"id": "7624ab2b-190c-471f-8468-e5d86f04176d",
 										"exec": [
 											""
 										],
@@ -4647,7 +4750,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3f49ab43-8ba6-4a25-8b10-12c2942bebda",
+										"id": "c66b5549-339c-4536-b093-5196c20bd034",
 										"exec": [
 											""
 										],
@@ -4710,7 +4813,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "137d9b5f-8607-4a3f-ac18-36ff69a90753",
+										"id": "f79de23e-a059-4232-8d9b-cab7911bf5a8",
 										"exec": [
 											""
 										],
@@ -4768,75 +4871,12 @@
 							"response": []
 						},
 						{
-							"name": "Delete|BillingCycle|BC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "42f55ed7-ac9d-4a0e-b90d-54e03b6dbf99",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Delete|Seller|SELLER|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "ba6709f6-724b-4b58-93e3-63b71cd84938",
+										"id": "a7449a0e-65ec-49cd-b17e-c425e632c9a0",
 										"exec": [
 											""
 										],
@@ -4899,7 +4939,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6ec9ec9f-8f5d-4603-a549-41df0a275600",
+										"id": "6985e79f-3650-4154-a252-11d1936eb4a4",
 										"exec": [
 											""
 										],
@@ -4964,7 +5004,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ef28e131-6c4f-44e4-a298-1f4b183da80d",
+										"id": "545041c2-a3a6-452f-bd7f-18c2c4a782ec",
 										"exec": [
 											""
 										],
@@ -5022,6 +5062,29 @@
 							"response": []
 						}
 					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e9a19bda-7ea0-401a-a3f7-fe1011169b2e",
+								"type": "text/javascript",
+								"exec": [
+									"//pm.variables.set(\"entityCode\", pm.variables.get(\"suffix\"));",
+									"pm.variables.set(\"entityCode\", \"TEST_\"+pm.variables.get(\"suffix\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "785e61bb-a4c0-4dbf-878b-85374c7c1ab5",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				}
@@ -5037,7 +5100,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9b88108e-f753-4f89-a03b-61ff762f9317",
+								"id": "1de21541-0b34-4b6d-8ed8-71f20207d965",
 								"exec": [
 									""
 								],
@@ -5099,7 +5162,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c00e0bc8-71f5-4c52-8a05-a8e385cf4571",
+								"id": "f8a36997-463b-4ad1-ac05-bbe5cbdea6b7",
 								"exec": [
 									""
 								],
@@ -5164,7 +5227,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ca77a25e-8c1a-45aa-a440-be073dc8a356",
+								"id": "9ec3c40d-8d04-418d-8c92-d86e68fc2405",
 								"exec": [
 									""
 								],
@@ -5226,7 +5289,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "45715230-77f9-42a9-b75b-5f6295492026",
+								"id": "e560cda5-6983-444d-833c-95f60d5b6c97",
 								"exec": [
 									""
 								],
@@ -5290,7 +5353,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "31277b36-2f4e-4cee-80f6-13b250c12455",
+						"id": "fc012c7b-444f-4255-8ee0-4d49f31bbd02",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -5300,7 +5363,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "a6fec159-f003-48a6-b4c2-cb717ae8b060",
+						"id": "76b06393-476d-4cc1-9654-8a889e250597",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -5322,7 +5385,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e59d607f-dd93-4b48-bbb3-c3c2da307d6c",
+										"id": "f6cf424b-7a23-49ba-9cf5-6df0baa8a5b5",
 										"exec": [
 											""
 										],
@@ -5388,7 +5451,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "359c65a6-e823-4212-bda3-433f6201dfaf",
+										"id": "1e2b3829-34be-437e-85be-05adf0b56f60",
 										"exec": [
 											""
 										],
@@ -5460,7 +5523,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0093845e-6142-4d39-acb1-066b3598bba1",
+										"id": "e634c712-1fbc-4d89-8f53-7369fe1a3829",
 										"exec": [
 											""
 										],
@@ -5523,7 +5586,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "66f5e03e-5815-4f0b-8177-33834a60d207",
+										"id": "a7ba2897-dab3-453a-b63d-3e2c08ddc9b5",
 										"exec": [
 											""
 										],
@@ -5594,7 +5657,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "228e4e96-9ee1-4fde-bd95-65ae2c1d9c65",
+								"id": "87f6d3ca-30c8-41a0-abe9-1d74df248f6e",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"accountingCodeCode\", pm.variables.get(\"entityCode\"));"
@@ -5604,7 +5667,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "71e7e495-8d13-4534-8346-5c420b7a6bc5",
+								"id": "5fa00fcb-b862-474c-8457-947c8787a1a7",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5624,7 +5687,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c1fcf3dd-ebda-4369-9456-028ee4ffff01",
+										"id": "f42e38a7-ab6a-43b3-b60b-55db6898a5b4",
 										"exec": [
 											""
 										],
@@ -5663,7 +5726,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"accountingCode\": \"DEBIT\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"accountingCode\": \"{{accountingCodeCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -5725,7 +5788,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "25ac5a91-e37a-4f67-83ee-792be76dce72",
+										"id": "51c14a43-e57c-4330-be1c-c55daead9f84",
 										"exec": [
 											""
 										],
@@ -5764,7 +5827,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"accountingCode\": \"DEBIT\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"accountingCode\": \"{{accountingCodeCode}}\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -5824,7 +5887,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "bd87eca8-b15e-4bb0-9b14-828616178c54",
+								"id": "8a9e10ce-6b28-4485-b7b4-4a094816348d",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5834,7 +5897,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "36a7c7db-4e11-484d-9148-3b929fc1758f",
+								"id": "46ad932a-09fe-43db-b35d-1a498bc9d1ab",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -5860,7 +5923,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "61fbc85e-da2a-40c3-a371-9eb5f75ba70f",
+										"id": "8fc7b0e4-2f13-4517-ba22-60b4f60b2b6d",
 										"exec": [
 											""
 										],
@@ -5924,7 +5987,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "389a9d89-db32-478f-9480-aa25a6cccc57",
+										"id": "d63f9232-4d64-4f8d-93b1-3f62943d147d",
 										"exec": [
 											""
 										],
@@ -5996,7 +6059,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "776fe2a0-85ad-4178-bb0c-015cd4132975",
+										"id": "18dd530b-8f70-4d6b-b204-1fc3d437cde5",
 										"exec": [
 											""
 										],
@@ -6059,7 +6122,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "83590f81-2265-4635-9621-75e29c05b2ac",
+										"id": "9406f8ef-32e2-4650-ba36-fec67731c6c9",
 										"exec": [
 											""
 										],
@@ -6130,7 +6193,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "002aa5a5-9b75-4c6b-9ff8-18c739b59d99",
+								"id": "980aadeb-0bd1-46af-b438-ade492fc0706",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerCode\", pm.variables.get(\"entityCode\"));"
@@ -6140,7 +6203,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8923e334-f8ff-475e-81ee-96ab6fe2addb",
+								"id": "89cf92de-57e0-441e-b731-53e3f3864105",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6160,7 +6223,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a64d18ad-b4a0-4592-b7e8-f8a675a64e8b",
+										"id": "fd269f87-d948-474a-8a03-3a078e2e5aab",
 										"exec": [
 											""
 										],
@@ -6224,7 +6287,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8b43292e-2929-4cd6-8437-cb0ad8073693",
+										"id": "dc71e3b5-5dda-461d-96ff-5d0f61edd477",
 										"exec": [
 											""
 										],
@@ -6296,7 +6359,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7a9402d8-652d-4a0e-b381-1488c5b87d85",
+										"id": "6d12a998-43cf-4faf-afad-298487b8311f",
 										"exec": [
 											""
 										],
@@ -6335,7 +6398,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"DEMO.CLASSIC\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -6359,7 +6422,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7a33dd47-555e-41de-93db-e0b055e2b52a",
+										"id": "f80bc008-b6c5-4ca7-9344-f232655354b7",
 										"exec": [
 											""
 										],
@@ -6430,7 +6493,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "133c3fed-736f-4ee7-914c-eff3b91762fc",
+								"id": "4701c694-84b7-4d14-abae-18cece1d90b7",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"customerAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -6440,7 +6503,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "11e18631-233b-4dfe-9bba-d0ec71a2cb13",
+								"id": "7bbea2c1-baf0-4a5e-a392-ddd9be406b7d",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6460,7 +6523,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3c640646-c601-46fa-b879-ecf0454414c7",
+										"id": "f1e13f9c-0f45-478e-8f15-1bde957c10d3",
 										"exec": [
 											""
 										],
@@ -6499,7 +6562,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customerAccount\": \"{{customerAccountCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"country\": \"{{counrty_code}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"billingCycle\": \"{{biilingCycle}}\"\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customerAccount\": \"{{customerAccountCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"country\": \"{{counrty_code}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"billingCycle\": \"{{biilingCycle}}\",\r\n  \"minimumAmountEl\" : \"123\",\r\n  \"minimumLabelEl\" : \"\",\r\n  \"email\":\"brahim@opencell.com\",\r\n  \"minimumTargetAccount\" : \"\",\r\n  \"electronicBilling\" : true,\r\n  \"status\" : \"CLOSED\",\r\n  \"terminationReason\" : \"\",\r\n  \"minimumChargeTemplate\" : \"\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -6524,7 +6587,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5d5264fa-a0be-4b58-b755-8b4c1a3aa21d",
+										"id": "8f3c6e8e-5376-4299-a664-7102b50e5c12",
 										"exec": [
 											""
 										],
@@ -6596,7 +6659,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3a540a77-642f-4f2f-b024-0722196df1ce",
+										"id": "a8a5f446-2d55-47f0-91eb-43dd4d8c25bc",
 										"exec": [
 											""
 										],
@@ -6659,7 +6722,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ac1068ba-b7c6-4f9e-9a40-331516765e69",
+										"id": "54569bc0-c1da-4e17-9930-0675e727500d",
 										"exec": [
 											""
 										],
@@ -6730,7 +6793,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dccfa784-a302-4eb2-8f2b-af52c9415892",
+								"id": "443248d6-0239-4f4f-8bdb-0633ad3f2163",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"billingAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -6740,7 +6803,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a92b25ce-c9c0-4fa2-a35c-df170b3617eb",
+								"id": "3bd8d71a-cd6d-443a-bbc2-f2278dec0e3e",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -6760,7 +6823,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c2838883-669f-45ae-9c6e-196fd14728f5",
+										"id": "872adb39-ec4a-4d31-8806-e6d24cc6b54e",
 										"exec": [
 											""
 										],
@@ -6824,7 +6887,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7ee0bd39-867a-47cf-be7d-b169f2b453fd",
+										"id": "fa6cea1e-0d41-4519-bfab-3633f9010122",
 										"exec": [
 											""
 										],
@@ -6896,7 +6959,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8cef08d0-f1bc-4159-8b72-f9b5c85b7011",
+										"id": "f2c54fdd-f47e-4c99-9fae-ad3645846d19",
 										"exec": [
 											""
 										],
@@ -6959,7 +7022,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "384eb1d0-2eaf-46ff-90e6-70ca96b0b581",
+										"id": "f6748792-8b00-4a66-80ab-587e2f96bc6e",
 										"exec": [
 											""
 										],
@@ -7030,7 +7093,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "12db3a9a-822c-4f02-91a7-f4f61d732c97",
+								"id": "ec6c4acf-8ef2-41bf-9443-7faf72181a24",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"userAccountCode\", pm.variables.get(\"entityCode\"));"
@@ -7040,7 +7103,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "44a22218-f538-46b3-acf5-7b998e1c9818",
+								"id": "fcbc36b6-d356-4231-b200-84087add58eb",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7060,7 +7123,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "aa2b5fe4-5d04-42c1-be5e-d8a1acdedcf5",
+										"id": "5b5c17a8-a68f-409a-b436-25223e0b3e4b",
 										"exec": [
 											""
 										],
@@ -7124,7 +7187,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "dfa668ae-8f41-4696-87d8-666a2130714c",
+										"id": "b0788e7c-151c-451d-a743-e41fce95302b",
 										"exec": [
 											""
 										],
@@ -7196,7 +7259,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d93a876f-2b10-4800-aa4e-b9a43a3fb282",
+										"id": "943db2ea-1ee9-4fdd-9762-86469c5fd51d",
 										"exec": [
 											""
 										],
@@ -7259,7 +7322,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5d6604a9-524c-4cb8-b5ed-88380e7bc775",
+										"id": "dbb0a51c-60f7-47dd-b849-a1c710e801a8",
 										"exec": [
 											""
 										],
@@ -7330,7 +7393,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6a47ddd9-aec9-48d4-b32f-d3bc599f1338",
+								"id": "08cf7460-b8f1-4374-ae53-c6f08c31ea1c",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7340,7 +7403,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "07092eb6-4840-49ea-9252-6fb9990201d7",
+								"id": "1e75b444-a5a8-41cb-b413-a7cad1679b8a",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7360,7 +7423,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3cdadeb9-5a7a-4d88-9d8d-1d0787a6e781",
+										"id": "85136524-8415-46bd-a46e-edc5de4105a2",
 										"exec": [
 											""
 										],
@@ -7370,7 +7433,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "ab78f8cd-fb9f-42a8-a483-195022ce0a54",
+										"id": "d2d4f048-2b99-4300-9344-e099eeb2eb12",
 										"exec": [
 											""
 										],
@@ -7409,7 +7472,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\t\"email\": \"{{email}}\",\r\n\t\"customerCode\": \"{{entityCode}}\",\r\n\t\"sellerCode\": \"{{seller}}\",\r\n\t\"customerBrandCode\": \"{{customerBrandCode}}\",\r\n\t\"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n\t\"currencyCode\": \"{{currency}}\",\r\n\t\"countryCode\": \"{{counrty_code}}\",\r\n\t\"languageCode\": \"{{language}}\",\r\n\t\"billingCycleCode\": \"BC_CLASSIC_MONTHLY_1ST\",\r\n\t\"titleCode\": \"{{customer_title}}\",\r\n\t\"firstName\": \"{{first_name}}\",\r\n\t\"lastName\": \"{{last_name}}\",\r\n\t\"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n\t\"address1\": \"{{address}}\",\r\n\t\"address2\": \"{{adrdress2}}\",\r\n\t\"zipCode\": \"{{zip_code}}\",\r\n\t\"city\": \"{{city}}\"\r\n}",
+									"raw": "{\r\n\t\"customerCode\": \"{{customerCode}}\",\r\n\t\"sellerCode\": \"{{seller}}\",\r\n    \"email\": \"{{email}}\",\r\n\t\"customerBrandCode\": \"{{customerBrandCode}}\",\r\n\t\"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n\t\"currencyCode\": \"{{currency}}\",\r\n\t\"countryCode\": \"{{counrty_code}}\",\r\n\t\"languageCode\": \"{{language}}\",\r\n\t\"billingCycleCode\": \"{{biilingCycle}}\",\r\n\t\"titleCode\": \"{{customer_title}}\",\r\n\t\"firstName\": \"{{first_name}}\",\r\n\t\"lastName\": \"{{last_name}}\",\r\n\t\"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n\t\"address1\": \"{{address}}\",\r\n\t\"address2\": \"{{adrdress2}}\",\r\n\t\"zipCode\": \"{{zip_code}}\",\r\n\t\"city\": \"{{city}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -7434,7 +7497,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "795c720a-5998-46fc-89e9-2a377cdfcbfb",
+										"id": "c5079d81-4273-4109-ae2a-2ff2420158f7",
 										"exec": [
 											""
 										],
@@ -7444,7 +7507,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "9f5f8f14-4e51-4df3-8086-818562861f85",
+										"id": "b3a8f491-4abe-4a3a-8ce0-a121194be839",
 										"exec": [
 											""
 										],
@@ -7516,7 +7579,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "abcf05d8-0f45-4bfe-a5e9-effefd215d93",
+										"id": "d23f78cf-09d7-489c-b99e-8c5b78fcc58f",
 										"exec": [
 											""
 										],
@@ -7579,7 +7642,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8a1d2e39-8f7f-4733-a68b-b3576c5e477d",
+										"id": "6e1249ee-1725-4253-94e4-29d05c761c82",
 										"exec": [
 											""
 										],
@@ -7589,7 +7652,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "04db574e-e108-4602-a73d-9e69199eb698",
+										"id": "d6fb61d1-baff-4c0c-879b-e67429d543f0",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);"
 										],
@@ -7660,7 +7723,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "af94d91d-23ba-4ade-8e4e-2441811c48cc",
+								"id": "3528d31c-dab5-4908-b8eb-835c8245f3dd",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"customer\");",
@@ -7672,7 +7735,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a17c7ee4-e86d-4870-b960-95f914a0eace",
+								"id": "487fac46-8ef0-4bd6-a288-6517a48ab626",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -7698,7 +7761,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "09d48193-8be1-43b7-8351-90fce7344961",
+										"id": "8e4e3d25-7d8f-4ce4-9540-4038c353a402",
 										"exec": [
 											""
 										],
@@ -7761,7 +7824,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "38661d86-78ec-4b51-a75d-838425c371c9",
+										"id": "815bf853-ea7f-44a1-aad2-2b7402fa7e46",
 										"exec": [
 											""
 										],
@@ -7832,7 +7895,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "72669649-4812-430c-afb6-4921ef4e821d",
+										"id": "b5dd7edd-4258-4fc5-91ef-2bab1316348e",
 										"exec": [
 											""
 										],
@@ -7894,7 +7957,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1529f01a-7317-401b-93d6-1176131be3e8",
+										"id": "5d608a1c-7329-4dab-9229-256fa5c168eb",
 										"exec": [
 											""
 										],
@@ -7957,7 +8020,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "46d88e88-7ab8-4932-9951-9487651fde4a",
+										"id": "0fb78ebe-a0d1-4b02-9dd4-2f3409098b1a",
 										"exec": [
 											""
 										],
@@ -8027,7 +8090,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7d712602-0558-49e5-a6b2-d8192698f7c6",
+								"id": "90810c00-7927-476b-898e-870d8ec9aa77",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8037,7 +8100,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e803b0fb-ecea-4c15-be34-83e9c71a8ee1",
+								"id": "e83a6e38-c0ca-46c6-809a-76a357a45ba6",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8057,7 +8120,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "48af8ad1-887d-4079-a303-37933e2f78ed",
+										"id": "935af109-4774-4fda-8f1d-90c7280a2b14",
 										"exec": [
 											""
 										],
@@ -8120,7 +8183,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "95f97ce2-35bc-47a6-9797-c896ce6d1ff3",
+										"id": "2e3f8a8b-7f27-4ca2-87e4-43fdd92f7363",
 										"exec": [
 											""
 										],
@@ -8191,7 +8254,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "83eeac97-cc4d-455d-a602-2655acf11261",
+										"id": "25f74a21-6663-4e1d-b96f-2467a120f92f",
 										"exec": [
 											""
 										],
@@ -8254,7 +8317,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "964dc01e-1c39-41d9-98f7-ad23fd315d7c",
+										"id": "f09a5e8f-37fe-4d31-ad85-e1225dacb0a2",
 										"exec": [
 											""
 										],
@@ -8324,7 +8387,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "33cdb2cf-c69e-4063-a4b9-37ed57cf2244",
+								"id": "712ddd80-1122-4ee7-aff8-b7eca58b7eae",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"jobInstanceDto\");",
@@ -8335,7 +8398,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e947bbc6-4484-45cc-a1e0-a42be0df65e8",
+								"id": "18da3eca-4b81-4d6e-87e2-3afaf67296af",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -8361,7 +8424,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d3da9377-6676-4eb6-9ef8-df80e60f4f14",
+										"id": "5f0b7ae2-3816-4b4a-a35d-fb8807095ca2",
 										"exec": [
 											""
 										],
@@ -8425,7 +8488,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cc244a52-a8e7-4ec6-b567-a41ebe0fd046",
+										"id": "71a67ebe-b0bd-4144-a445-0ca5018ece85",
 										"exec": [
 											"var data = pm.response.json();",
 											"pm.test(request.name + \" - Check Data\", function () {",
@@ -8509,7 +8572,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a5c5f616-e686-4be4-b2fc-e39558505367",
+										"id": "97ac6892-29a4-4032-b12a-6015561571b5",
 										"exec": [
 											""
 										],
@@ -8572,7 +8635,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fe035cc3-a418-49f8-85ee-dd4da7acb5f2",
+										"id": "9f5d9366-5831-49c1-a814-61e5f12f99e6",
 										"exec": [
 											"pm.test(request.name + \" - Check Data \", function () {",
 											"    var jsonData = pm.response.json();",
@@ -8663,7 +8726,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "addf08f2-36b0-408b-b7af-3a2744bb3fca",
+										"id": "15f32d6f-b11c-40e4-b1eb-16b300018958",
 										"exec": [
 											""
 										],
@@ -8727,7 +8790,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5cffa1d-6d6b-483b-84ad-f530e3f09ad6",
+										"id": "0f84b374-94b7-4b5b-9dab-e8f55dfa05ec",
 										"exec": [
 											""
 										],
@@ -8799,7 +8862,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d20815d9-62b2-47dc-80c4-3256a1a12caa",
+										"id": "195d371d-f6ca-4982-93d4-75b657e689de",
 										"exec": [
 											""
 										],
@@ -8862,7 +8925,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cea7a226-bdb9-4145-a712-ad13143e11f2",
+										"id": "8f236c3f-6f00-4fe0-aadf-a53279183aaa",
 										"exec": [
 											""
 										],
@@ -8926,7 +8989,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2076f1dc-339b-4a18-970f-b0391de33ee4",
+										"id": "cd9f3eaf-140a-45ad-bcaa-1ed09fd92121",
 										"exec": [
 											""
 										],
@@ -8997,7 +9060,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6e6c12f9-b4af-4ac1-9fee-88c36c3aa7f8",
+								"id": "2eecbe9a-208c-4d1b-be05-40226d99abd1",
 								"type": "text/javascript",
 								"exec": [
 									"pm.globals.set(\"recurringChargeTemplateCode\", pm.variables.get(\"entityCode\"));"
@@ -9007,7 +9070,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "43e8335d-ccd7-4219-9384-7136f0cd35c5",
+								"id": "3cf7ebbc-dbc6-4018-bab6-2ec9d2fdbd37",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9027,7 +9090,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3be69ac3-14f6-4129-b940-154d27b19c72",
+										"id": "efed86da-bad3-4c50-8f24-37dcdf61f051",
 										"exec": [
 											""
 										],
@@ -9091,7 +9154,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2d5500e0-efaa-42ad-aaac-211033fc4b7f",
+										"id": "f39cdf51-2eaf-415d-afa2-b7d39b5b3519",
 										"exec": [
 											""
 										],
@@ -9163,7 +9226,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "97344931-8fae-49b4-908c-904f81164756",
+										"id": "ca0c279c-aa3b-42af-a5b2-88f9fb6a1396",
 										"exec": [
 											""
 										],
@@ -9226,7 +9289,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a14a19fb-0e41-43a4-ac79-25139a2588c4",
+										"id": "482c1b7a-7bd1-4856-8c28-714e1ae7a466",
 										"exec": [
 											""
 										],
@@ -9297,7 +9360,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a4b898fa-e854-435e-b3c3-b06f71335685",
+								"id": "eacd607c-45a6-49bb-83e1-f6c974aa1ac8",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"pricePlan\");",
@@ -9308,7 +9371,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9cfcf2f3-ee15-4c92-af32-f17b0832fb4a",
+								"id": "7b108424-e2f4-43a1-acdb-e6b8c4ef0c5e",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9328,7 +9391,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "def2afc4-5b6e-4a05-92f5-4149adb3136d",
+										"id": "2570f2ac-efd2-493c-b8ec-9586d441cf20",
 										"exec": [
 											""
 										],
@@ -9392,7 +9455,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "10d31490-14d7-4c8b-acd4-ab410e3275fc",
+										"id": "6a2f2bf9-88d3-4f6f-8851-c90a6d99dbbd",
 										"exec": [
 											""
 										],
@@ -9464,7 +9527,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0c99dc80-43ee-4727-a05c-e6fcb5303463",
+										"id": "b49816ed-5736-4f53-93fe-d7949cece9db",
 										"exec": [
 											""
 										],
@@ -9527,7 +9590,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8a4002be-397e-4871-a976-8fb164b8bd53",
+										"id": "2d882e2f-9def-4e29-919e-2a4faefb5b3b",
 										"exec": [
 											""
 										],
@@ -9598,7 +9661,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a904b815-93d2-42e6-a07e-3abee97412dd",
+								"id": "00ce1373-d331-412d-8208-7e9b9cbba716",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9608,7 +9671,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bb548720-0aaf-4e01-862b-d756d2eb3b76",
+								"id": "e1e410f9-7095-4542-91bc-d09f833265a5",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -9628,7 +9691,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "32ff33f1-b51b-46dc-aebf-960b8d6e1895",
+										"id": "c7b1ebd2-1701-4a4d-a32f-6340f63b1618",
 										"exec": [
 											""
 										],
@@ -9692,7 +9755,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a89d8b61-d7c0-4bc8-8bea-8a6f939846d0",
+										"id": "1d5a1615-def6-499a-b14f-f5a1e0e53cdb",
 										"exec": [
 											""
 										],
@@ -9764,7 +9827,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b5e9ea01-4cc9-4f14-bd71-8e9af77ea60d",
+										"id": "392729f8-64a3-41be-bdf1-658bfae48b01",
 										"exec": [
 											""
 										],
@@ -9827,7 +9890,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6759866d-58f8-4ee6-a16f-9b9fcd625e32",
+										"id": "f3db5554-9522-4f73-9783-87b9d38e0954",
 										"exec": [
 											""
 										],
@@ -9898,7 +9961,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "16f547ae-2c51-43bd-b8c7-9aa481056a2b",
+								"id": "b63cbf10-24ab-4df6-adc3-ae4edc582f5a",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"discountPlanDto\");",
@@ -9909,1011 +9972,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "38f3abd4-a320-4252-8de8-fe2720f0940e",
+								"id": "1af9c5b5-a294-4b14-80a0-265690756109",
 								"type": "text/javascript",
 								"exec": [
 									""
 								]
 							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Billing",
-			"item": [
-				{
-					"name": "Invoice Category",
-					"item": [
-						{
-							"name": "CreateOrUpdate|InvoiceCategory|IC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4fc6d8ce-8ed1-4314-9e19-aff3ca936b8c",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceCategory/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceCategory",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|InvoiceCategory|IC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "bda16d60-8492-47f0-a8ff-116de9c67737",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceCategory?invoiceCategoryCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceCategory"
-									],
-									"query": [
-										{
-											"key": "invoiceCategoryCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|InvoiceCategory|IC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6a3a01a8-8045-4259-b30b-52c1b6ce1bf8",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceCategory",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceCategory"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|InvoiceCategory|IC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6dcf00f3-7d3d-4804-bee9-13545ca6251b",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceCategory?invoiceCategoryCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceCategory"
-									],
-									"query": [
-										{
-											"key": "invoiceCategoryCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "66c45ff7-a5ad-4236-82af-76862c6007c3",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"invoiceCategoryCode\", pm.variables.get(\"entityCode\"));"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "6f08e5a2-f24d-4aa4-a60f-ef4f90290fba",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Invoice SubCategory",
-					"item": [
-						{
-							"name": "CreateOrUpdate|InvoiceSubCategory|ISC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "532bbd42-3cd2-4ec7-a00e-bb3acb6816be",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"invoiceCategory\": \"{{invoiceSubCat}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSubCategory/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSubCategory",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|InvoiceSubCategory|ISC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "a22439a2-f1a2-4ea1-bd2b-27fd2ee78ca2",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSubCategory?invoiceSubCategoryCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSubCategory"
-									],
-									"query": [
-										{
-											"key": "invoiceSubCategoryCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|InvoiceSubCategory|ISC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6fc4f7d2-a38f-4363-8483-7faf6753bfeb",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceCategory\": \"{{invoiceSubCat}}\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSubCategory",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSubCategory"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|InvoiceSubCategory|ISC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "dac72af9-19ce-47c8-8e19-1cec772ec163",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSubCategory?invoiceSubCategoryCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSubCategory"
-									],
-									"query": [
-										{
-											"key": "invoiceSubCategoryCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "7637a091-137e-456a-8167-bba717f24d7f",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"invoiceSubCategoryCode\", pm.variables.get(\"entityCode\"));"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "6046c150-682c-4291-adfe-7a9f8b04a60a",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Invoice Sequence",
-					"item": [
-						{
-							"name": "CreateOrUpdate|InvoiceSequence|IS|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "84e08025-73c6-4764-88f9-af7894dace69",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"sequenceSize\": \"14\",\r\n    \"currentInvoiceNb\": \"0\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSequence/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSequence",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|InvoiceSequence|IS|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "0bff3065-73f6-4e36-86ba-1dc522f00a50",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "3f52dbed-a8b9-40ce-8327-3f7c939b6977",
-										"exec": [
-											"pm.variables.set(\"message\", \"\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSequence?invoiceSequenceCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSequence"
-									],
-									"query": [
-										{
-											"key": "invoiceSequenceCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|InvoiceSequence|IS|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "abf52299-7c87-4f11-ab85-5a6d6a365881",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"sequenceSize\": \"14\",\r\n    \"currentInvoiceNb\": \"0\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSequence",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSequence"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|InvoiceSequence|IS|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "33eb9be4-839a-4dac-8864-32f72a57cd5c",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "4c4d9102-fc08-41d7-ad09-415a3f3ade59",
-										"exec": [
-											"pm.variables.set(\"message\", \"\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceSequence?invoiceSequenceCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceSequence"
-									],
-									"query": [
-										{
-											"key": "invoiceSequenceCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "f802da53-d458-47a9-89a6-040ade100f1c",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"invoiceSequenceCode\", pm.variables.get(\"entityCode\"));",
-									"pm.variables.set(\"entityRead\", \"invoiceSequenceDto\");"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "5c19badf-d0ee-4ae6-9648-6de647432c50",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Wallet Operation",
-					"item": [
-						{
-							"name": "Create|WalletOperation|WLT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ba5d8da0-c7ba-4128-9fe3-f5d87a2f30ae",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "1492a72e-5393-436e-9188-6950e87db15c",
-										"exec": [
-											"var inc = pm.collectionVariables.get(\"inc\");\r",
-											"if(!null){\r",
-											"pm.collectionVariables.set(\"inc\",inc+1);\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}{{inc}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"ben.ohara\",\r\n    \"chargeInstance\": \"CH_CLASSIC_REC_FLAT\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billing/wallet/operation",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billing",
-										"wallet",
-										"operation"
-									]
-								}
-							},
-							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -10931,7 +9995,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a2dc8ff6-707f-4bfc-a664-0762b566b698",
+								"id": "591e4d75-04e2-4e31-8bd1-2e70a9a98d1b",
 								"exec": [
 									""
 								],
@@ -10941,7 +10005,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1e6fc5a4-a60f-45b4-bece-20da9ebcfa9e",
+								"id": "e4a9ac4c-1078-44e6-b489-7fa30a128392",
 								"exec": [
 									""
 								],
@@ -10980,7 +10044,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{subCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"DEMO.CLASSIC\",\r\n    \"offerTemplate\": \"OF_CLASSIC_TEMPLATE\",\r\n    \"subscriptionDate\": \"2020-01-01\"\r\n}\t\r\n",
+							"raw": "{\r\n    \"code\": \"{{subCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"{{userAccountCode}}\",\r\n    \"offerTemplate\": \"OF_CLASSIC_TEMPLATE\",\r\n    \"subscriptionDate\": \"2020-01-01\"\r\n}\t\r\n",
 							"options": {
 								"raw": {}
 							}
@@ -11005,7 +10069,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f8c04743-b5bf-4283-8957-17a8144b448d",
+								"id": "4e02b2e1-ff26-4c8c-944c-d5a69356ff9e",
 								"exec": [
 									""
 								],
@@ -11077,7 +10141,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "abb04987-b5df-45f3-9e69-3a0a5b0c822b",
+								"id": "991c4db5-57a3-4cf2-8401-b0c1d271ae45",
 								"exec": [
 									""
 								],
@@ -11140,7 +10204,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1ae2f465-3722-47bc-9a61-8bad90fc0b02",
+								"id": "ce2746a7-5bb0-4de8-902b-1b039f4769b8",
 								"exec": [
 									""
 								],
@@ -11210,6 +10274,1005 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Billing",
+			"item": [
+				{
+					"name": "Invoice Category",
+					"item": [
+						{
+							"name": "CreateOrUpdate|InvoiceCategory|IC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "daea298e-3f59-4419-ba77-d9e215ce78f2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|InvoiceCategory|IC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9c9ebcd9-98ce-411e-8b98-581bdcb4b2fa",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceCategory?invoiceCategoryCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceCategory"
+									],
+									"query": [
+										{
+											"key": "invoiceCategoryCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|InvoiceCategory|IC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d2557eb7-a0b7-406b-8dd1-9b4612618e16",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceCategory",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceCategory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|InvoiceCategory|IC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fb4bdd10-c0ea-4bae-8816-e8094d4dbf7d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceCategory?invoiceCategoryCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceCategory"
+									],
+									"query": [
+										{
+											"key": "invoiceCategoryCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a5212beb-af58-4c2b-a69c-857f7b27e4cf",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"invoiceCategoryCode\", pm.variables.get(\"entityCode\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "6302af25-c338-438b-b1e6-3bd1625b11b7",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Invoice SubCategory",
+					"item": [
+						{
+							"name": "CreateOrUpdate|InvoiceSubCategory|ISC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "edd38e53-dafb-415a-b575-8ed0ace11ccb",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"invoiceCategory\": \"{{invoiceSubCat}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSubCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSubCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|InvoiceSubCategory|ISC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c0aaf413-355c-4a66-9a80-61ff8f49e906",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSubCategory?invoiceSubCategoryCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSubCategory"
+									],
+									"query": [
+										{
+											"key": "invoiceSubCategoryCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|InvoiceSubCategory|ISC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "39cfeccb-e065-4cbd-9e1f-2766757bd7d4",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceCategory\": \"{{invoiceSubCat}}\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSubCategory",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSubCategory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|InvoiceSubCategory|ISC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "587163a0-8905-49e9-80a0-b688d256fb6b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSubCategory?invoiceSubCategoryCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSubCategory"
+									],
+									"query": [
+										{
+											"key": "invoiceSubCategoryCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ed56481d-3fa4-42a1-b934-f2db5e9bb60c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"invoiceSubCategoryCode\", pm.variables.get(\"entityCode\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "53fba916-6789-4f2a-be97-300c5f9d8f8c",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Invoice Sequence",
+					"item": [
+						{
+							"name": "CreateOrUpdate|InvoiceSequence|IS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "85d7e209-92d4-4927-b6d9-4031981cee88",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"sequenceSize\": \"14\",\r\n    \"currentInvoiceNb\": \"0\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSequence/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSequence",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|InvoiceSequence|IS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8c48968c-1d15-44e2-8092-364d58523d2b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2dc19199-e841-4327-acfa-57656876be6b",
+										"exec": [
+											"pm.variables.set(\"message\", \"\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSequence?invoiceSequenceCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSequence"
+									],
+									"query": [
+										{
+											"key": "invoiceSequenceCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|InvoiceSequence|IS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6a69ee75-8e49-484d-a9f8-b65902a183fd",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"sequenceSize\": \"14\",\r\n    \"currentInvoiceNb\": \"0\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSequence",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSequence"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|InvoiceSequence|IS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ac95285b-3f44-47a4-b1bc-d01d132757ad",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "ae0e187f-25e4-4cce-aab1-da29d7f3c3ca",
+										"exec": [
+											"pm.variables.set(\"message\", \"\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceSequence?invoiceSequenceCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceSequence"
+									],
+									"query": [
+										{
+											"key": "invoiceSequenceCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ab9bb7d6-d657-4f34-acfb-a9caac5e6469",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"invoiceSequenceCode\", pm.variables.get(\"entityCode\"));",
+									"pm.variables.set(\"entityRead\", \"invoiceSequenceDto\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "da944187-92ab-4e1c-90b7-d0ef1464b196",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Wallet Operation",
+					"item": [
+						{
+							"name": "Create|WalletOperation|WLT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0dcfe632-81f1-4477-8c30-df5e0d8efb55",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "01911e5a-f0e6-4a4a-a9e2-37c6823e0728",
+										"exec": [
+											"var inc = pm.collectionVariables.get(\"inc\");\r",
+											"if(!null){\r",
+											"pm.collectionVariables.set(\"inc\",inc+1);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}{{inc}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"ben.ohara\",\r\n    \"chargeInstance\": \"CH_CLASSIC_REC_FLAT\",\r\n    \"currency\": \"EUR\",\r\n    \"taxCode\": \"TAX_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billing/wallet/operation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billing",
+										"wallet",
+										"operation"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Payments",
 			"item": [
 				{
@@ -11221,7 +11284,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0733417d-4659-47c7-aa91-eed0bdd35ce8",
+										"id": "92d42057-366c-4b1a-a04e-aef1f09b700a",
 										"exec": [
 											""
 										],
@@ -11285,7 +11348,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e81494fe-2fb3-46d3-ad43-c94f100576b4",
+										"id": "8c3db4fe-e231-4ddf-8192-d3c5ba0d90bc",
 										"exec": [
 											""
 										],
@@ -11295,7 +11358,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "489d7feb-3740-43c8-8357-a22a14b295e7",
+										"id": "f5d84913-f15e-46bf-9728-3ea14445399d",
 										"exec": [
 											""
 										],
@@ -11367,7 +11430,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a2ee5dfc-8c8d-4e2b-b42e-30bdc916b660",
+										"id": "6468d4d9-346a-4126-a9c2-1e45bd5d97d5",
 										"exec": [
 											""
 										],
@@ -11430,7 +11493,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ee189fdf-3990-4704-8ae3-93467aa5d366",
+										"id": "e6ce9bcc-dbc3-4242-93fe-bc00c431686a",
 										"exec": [
 											""
 										],
@@ -11501,7 +11564,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46c9c9b4-e228-44d2-b01c-fe69360b84c7",
+								"id": "2daeb47f-c17e-44e0-9198-b61b331813e6",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11511,7 +11574,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "72e3bb33-8a70-427f-a89f-f77a39fbdf9e",
+								"id": "4e297441-1307-40c4-ad1e-392d123912aa",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11531,7 +11594,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d60190ac-a6ed-47dd-9545-3e8f4121e94d",
+										"id": "d9c2ee29-7d27-41d7-9e3e-842d18e77569",
 										"exec": [
 											""
 										],
@@ -11541,7 +11604,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "4d22f818-e3b1-4e0f-88e0-295209ff955a",
+										"id": "2e73d4ca-1951-4cc7-bdd6-2243f3fe5010",
 										"exec": [
 											"pm.variables.set(\"message\", );"
 										],
@@ -11605,7 +11668,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6c93e7ee-fab9-4f9e-a8d8-7ac6e0f529c5",
+										"id": "71251abf-b05c-4c25-9d76-cad2a307c42f",
 										"exec": [
 											""
 										],
@@ -11615,7 +11678,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "ec61e46e-09aa-450b-a187-9f9a2f8afccf",
+										"id": "2c622a51-246d-4bfd-88c5-09f8757978c9",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);\r",
 											"pm.variables.set(\"haveCode\", false);"
@@ -11688,7 +11751,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e84df292-796d-4868-9176-ae65da25bb7a",
+										"id": "3d409844-aca4-4ff3-b5c3-9196e59e7877",
 										"exec": [
 											""
 										],
@@ -11751,7 +11814,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "43f6f671-4855-4acf-aefa-4abb0600edfd",
+										"id": "3e488703-2dfa-44e2-a855-04a0b6188c56",
 										"exec": [
 											""
 										],
@@ -11761,7 +11824,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "b54fcaba-7111-4b8c-ac40-a6e06d78dfbc",
+										"id": "6ffea93e-43b7-4001-9d1d-70438c15c377",
 										"exec": [
 											"pm.variables.set(\"haveDescription\", false);\r",
 											"pm.variables.set(\"haveCode\", false);"
@@ -11833,7 +11896,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c85e1646-f7b3-45ea-8f26-d457e3557f6a",
+								"id": "97b9aad8-c5af-47a6-9cde-0969b7712fae",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11843,7 +11906,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "681065c5-fae6-42f4-8f6c-c533f0210769",
+								"id": "05488e71-5023-4960-a525-38de53a18756",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -11863,7 +11926,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "141e632b-fdcf-4901-99fa-f5fe4e87391d",
+										"id": "0baf7009-99c8-4857-a8c5-72b8179d3e7c",
 										"exec": [
 											"var jsonData = pm.response.json();",
 											"pm.globals.set(\"id_PST\", jsonData.message);",
@@ -11875,7 +11938,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "313e61ba-697c-438f-8fb4-52d88168aff1",
+										"id": "67d2ab91-5b01-4469-a2dd-006d95a1b3bc",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);"
 										],
@@ -11939,7 +12002,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c0efcda6-865e-49a2-9a05-44f3d011b694",
+										"id": "34b8e8af-c45c-49e7-8572-dd1020d1fabc",
 										"exec": [
 											"",
 											"pm.test(request.name + \" - Id is equal \"+pm.globals.get(\"id_PST\"), function () {",
@@ -12015,7 +12078,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "55de2a33-c281-4dc5-ab1d-692012545a6f",
+										"id": "ed8d9d71-0aef-4976-afc8-ff58364b3b8a",
 										"exec": [
 											""
 										],
@@ -12025,7 +12088,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "e00de098-4e93-479a-b069-0e9049830ed5",
+										"id": "f48e4926-4fde-4796-8e10-dd7ed654353b",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);"
 										],
@@ -12088,7 +12151,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "96b13e41-afd4-4588-9eac-1419c203685f",
+										"id": "a69e623a-a7e5-43f7-a78c-096b9d47c941",
 										"exec": [
 											"pm.test(request.name + \" - Id is equal \"+pm.globals.get(\"id_PST\"), function () {",
 											"    var jsonData = pm.response.json();",
@@ -12162,7 +12225,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "6137a54c-a122-44d0-aafe-ab6bacbfafc0",
+								"id": "337ca2da-8771-4da7-b9fe-8df445200952",
 								"type": "text/javascript",
 								"exec": [
 									"pm.variables.set(\"entityRead\", \"paymentScheduleTemplateDto\");"
@@ -12172,7 +12235,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9dc24b40-b56e-4a97-a268-b711a4f76cae",
+								"id": "eed553b7-af09-4399-9dd2-1a7a8836e084",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -12190,76 +12253,12 @@
 			"name": "Clean Up",
 			"item": [
 				{
-					"name": "Delete|AccountingCode|AC|SUCCESS",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a46ce93d-e73d-4f8e-83f9-4f505f02ce73",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "{{opencell.password}}",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{opencell.username}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\t\"description\": \"123\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULARXX\"\r\n}",
-							"options": {
-								"raw": {}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/accountingCode/{{entityCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"accountingCode",
-								"{{entityCode}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Delete|OCCTemplate|OCCT|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "c9a22b91-a77d-42ff-a2de-8642c22ed0ec",
+								"id": "13371227-7879-4146-b633-a4370da55f59",
 								"exec": [
 									""
 								],
@@ -12317,12 +12316,76 @@
 					"response": []
 				},
 				{
+					"name": "Delete|AccountingCode|AC|SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2c867996-7279-4193-b6db-4831e11af433",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULARXX\"\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/billing/accountingCode/{{entityCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"accountingCode",
+								"{{entityCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete|UserAccount|UA|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "4dfec0a9-ffcc-491b-93a3-f8022cffbfcf",
+								"id": "29d98caa-1c24-429e-bf6c-2eb3b3d86046",
 								"exec": [
 									""
 								],
@@ -12381,140 +12444,12 @@
 					"response": []
 				},
 				{
-					"name": "Delete|Customer|C|SUCCESS",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "4df42c3c-4daf-4707-b655-fac0a7ad4f56",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "{{opencell.password}}",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{opencell.username}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"account",
-								"customer",
-								"{{entityCode}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete|CustomerAccount|CA|SUCCESS",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "1410ff98-cbf5-463e-a0a0-8f3594d20f3c",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "{{opencell.password}}",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{opencell.username}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/account/customerAccount/{{entityCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"account",
-								"customerAccount",
-								"{{entityCode}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Delete|BillingAccount|BA|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "3ea9b850-3c7b-4dc0-9024-a3b46177876c",
+								"id": "c1ce6d67-68e9-4f8e-9756-8a26ba12beed",
 								"exec": [
 									""
 								],
@@ -12573,12 +12508,140 @@
 					"response": []
 				},
 				{
+					"name": "Delete|CustomerAccount|CA|SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "16ba2502-daad-4bf0-bdb3-d72707955316",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/customerAccount/{{entityCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"customerAccount",
+								"{{entityCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete|Customer|C|SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "68312c23-5444-42b1-a18e-b0747911f267",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/customer/{{entityCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"customer",
+								"{{entityCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete|ProviderContact|PC|SUCCESS",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "792058b3-7872-428a-8c20-cc6d9393ffcb",
+								"id": "03d70a9e-1afd-4076-a083-7ea8abc36a03",
 								"exec": [
 									""
 								],
@@ -12642,7 +12705,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0acee3f4-39b0-411e-aa56-fd05e4ed365f",
+								"id": "6ecdfbf5-81be-4675-aaa2-d383cb1bfffe",
 								"exec": [
 									""
 								],
@@ -12706,7 +12769,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f96fc26d-537c-4adf-8a9d-0a51d39a6dfb",
+								"id": "60653435-bc5f-44e6-96c0-f90553dd8c48",
 								"exec": [
 									""
 								],
@@ -12769,7 +12832,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cc3d2abd-5185-4aa5-ab5f-789085869731",
+								"id": "f97a355e-ea64-434b-bf44-1e1c85fd09f6",
 								"exec": [
 									""
 								],
@@ -12832,7 +12895,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "29c24ecb-1cef-4804-99d0-a120e61494be",
+								"id": "6a06cae4-80f3-401e-a280-b1092795945b",
 								"exec": [
 									""
 								],
@@ -12906,7 +12969,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c4f55614-0e9f-42c7-a034-117c6acb706b",
+								"id": "9835b342-025b-47c1-9aea-cd38bbfafa36",
 								"exec": [
 									""
 								],
@@ -12970,7 +13033,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ed2aa95c-c4dd-4d08-86ca-2696b28c9ad0",
+								"id": "4671fa9b-4b9a-438d-b95d-ee56f73c60e5",
 								"exec": [
 									""
 								],
@@ -13034,7 +13097,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "be13caf0-c506-4a69-9e1e-2040c690d0b2",
+								"id": "ff381a54-abaa-4842-b59d-8ff3189093cd",
 								"exec": [
 									""
 								],
@@ -13098,7 +13161,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "06d418bc-7cef-4e3b-849f-0338b379eb9c",
+								"id": "f5b52c79-2f88-42fe-8d08-2a999b9e82f3",
 								"exec": [
 									""
 								],
@@ -13167,7 +13230,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "979e3e9a-1127-4a47-8cbe-443fbdc8a0df",
+								"id": "93d941ef-9521-448c-9b9a-5fb7914b669e",
 								"exec": [
 									""
 								],
@@ -13230,7 +13293,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1828a93b-f8f2-4e4d-96a1-b258cfc384bb",
+								"id": "ad2a1886-00c7-474d-b7fe-ccfff2ad13ad",
 								"exec": [
 									""
 								],
@@ -13293,7 +13356,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5a418cd8-24d8-4035-a2f4-80ab1bc0670e",
+								"id": "2f24e5d5-70b7-48fd-9803-74f94bf4632a",
 								"exec": [
 									""
 								],
@@ -13357,7 +13420,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "768ca47f-a2cf-4f4b-a420-83a124b0cc2e",
+								"id": "27d64bd7-bcc9-4844-b774-1cba6eb80cc9",
 								"exec": [
 									""
 								],
@@ -13426,7 +13489,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "98f38bbb-f236-438f-a511-b706f994cb47",
+								"id": "b6b25a62-91cb-49d9-a822-d204b593a7d2",
 								"exec": [
 									""
 								],
@@ -13494,7 +13557,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "a9640be8-c437-48f1-b9f8-91be1fe92508",
+						"id": "2d465ff0-e22e-443f-8cf5-8f54d0ae7180",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -13504,7 +13567,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "dc297352-880a-407b-84a1-9254a6496f93",
+						"id": "4ed0e70a-d808-4cf8-8ac8-4684f455cf5d",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -13515,11 +13578,26 @@
 			"protocolProfileBehavior": {}
 		}
 	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{opencell.password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{opencell.username}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "2293ae14-3c6c-42a2-a797-f3af3fa9a978",
+				"id": "26c09ad8-785d-4641-bbc4-45e329ae1691",
 				"type": "text/javascript",
 				"exec": [
 					"var parts = pm.info.requestName.split(\"|\");",
@@ -13619,7 +13697,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "521acbd5-7db1-45ad-a67f-0493596249b5",
+				"id": "c140eed2-b2d6-48be-b8a1-38b35442fa90",
 				"type": "text/javascript",
 				"exec": [
 					"var jsonData = pm.response.json();",
@@ -13665,272 +13743,272 @@
 	],
 	"variable": [
 		{
-			"id": "528572be-b498-440d-a3d1-c685666b6897",
+			"id": "dab8b5e4-4c7f-4ae5-b0a6-f06c1e52dd4e",
 			"key": "opencell.base",
 			"value": "https://vnn.d2.opencell.work/opencell"
 		},
 		{
-			"id": "1e66b68e-171c-4ca8-a825-1f9c460ab454",
+			"id": "13ed33b1-3c6d-4930-badc-912defdb37dc",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "bc3a2645-3e18-49b3-bdc4-2a24b41adc65",
+			"id": "d379d194-ba41-44f1-9bd9-ba0c55c631c7",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "41b89aef-8141-4b92-9cdc-e26529e91a6b",
+			"id": "6fff38c1-b44e-4731-a10f-5a66333c62c3",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "d4d95f8e-c88f-48c7-abae-617863cb0b56",
+			"id": "30b6a702-1e70-492a-9cb2-8411868c334d",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "a498e261-8d80-4b3e-9a50-04dc2265a730",
+			"id": "c3a6f2a3-6b6b-4b00-a449-e1b0cde7ec47",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "c3307a02-8153-41e6-a62b-4f1d90f97e23",
+			"id": "86c39216-9757-4d88-86f7-0074af409cd3",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "24f5da84-8beb-455e-8afe-0795162047ac",
+			"id": "114f992e-bdc8-4fab-a597-62a5a99219ae",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "61360d7c-c168-4500-89de-8956f8588cc8",
+			"id": "3623a15e-2fca-420f-8bcf-08eff5e8fbeb",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "5ae0d5f6-9799-4e3c-9631-39ef4222c1fc",
+			"id": "332edc0e-6f2e-4f14-a6c6-a3843117bcfa",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "c9b11f0e-11b8-43c1-859e-0d5ec030c56e",
+			"id": "03ae8b37-ae27-44fa-aa84-978b84ca0251",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "015f5f26-85f1-4323-8949-330036c4181c",
+			"id": "2ac7212f-bc64-4c22-a690-d138c7cc73e1",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "7148a607-aa38-4a44-89a6-9d40b355e455",
+			"id": "8d0c7e56-b682-48db-9a8f-1e5684a83f8b",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "25f61fb0-480b-47e5-8c03-b33cb26263d4",
+			"id": "aee4e7e9-0930-4e1c-9525-583b8a622174",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "34c790e0-29bb-4198-80fe-a8466c4ab360",
+			"id": "f1037478-537b-4f84-ba11-281f858a9046",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "4123d0ed-d39a-4aae-a298-868259068696",
+			"id": "c60a30ff-9933-4456-af68-69500aada909",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "6a2925f9-6898-4e9d-85ac-338716de9172",
+			"id": "c1faa50b-d67e-48e6-a15c-0449bf7c2352",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "89969ce3-c8a8-4a98-bbe4-e66df49ef737",
+			"id": "b18246e4-e6d1-4a2e-a08a-64b078b2a965",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "344096f6-e426-4ac6-9367-138b4bb68e2e",
+			"id": "54e69212-637e-4230-95d4-81740ada4f98",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "19592354-6bc9-455e-972c-0aed5f2973ff",
+			"id": "fefef43a-a282-4b4f-87c9-815720c12708",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "2c039fe0-ba7c-4824-9d46-ab9b0bb2fbb4",
+			"id": "c8f84e30-81be-4f0b-8dfa-1f20c24b1a21",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "42975491-f684-4a59-aa1f-88a1b286087e",
+			"id": "087a5f30-c6d4-4505-a050-4276b8fac764",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "636f0066-eab2-445b-b2a4-964e659d37d7",
+			"id": "f94c75ef-da6d-46d9-af03-eb5457fd9c67",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "bc28c236-78d4-4689-ae7b-4092fa51c756",
+			"id": "3b174bcf-29ed-4a1b-9d5a-d8f33441f0a1",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "4eaf3028-c9f1-4de1-a3f6-35d79156d20b",
+			"id": "8abce387-b433-4e4c-8701-a17c60e18b42",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "cb4bbb47-8d65-4548-af97-dc2411371053",
+			"id": "8bc1e4bd-9e08-4baf-af73-6a4556c2d1dc",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "511b7be2-163b-4432-b598-21f839d9dcdb",
+			"id": "d4750cb8-ac9f-4165-a04b-fb2e7e32d5fb",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "1bba2672-c3f9-48c3-911b-cc2677362da0",
+			"id": "24448678-f248-4694-86a8-8a416d348dfb",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "660dfed7-ea58-491a-a745-a2c973c3acec",
+			"id": "93c37cad-5bc4-40cb-b20a-69af407144c5",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "e7ded495-b7dc-4b49-9718-dcfbd13aaa92",
+			"id": "fa4e1073-fb3e-4116-9646-d346e6f0e263",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "c09922b1-885a-4b10-9af4-7f1030cb97f1",
+			"id": "cc4d8834-f920-44ad-b649-e79bd6f73260",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "feb64c48-c6f1-4223-8afd-65b5c37859f4",
+			"id": "565917f9-bca7-49b8-8884-c198c8fbf72a",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "622d841f-b576-4edd-ba1a-098356cb49bd",
+			"id": "e3d8acd9-4acc-45a7-93ed-15b050bc4411",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "8efe9eca-36c9-400c-9b60-5636f30a2fc2",
+			"id": "ebe4ac93-9fdd-4f06-8e30-c8cb908da257",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "7944548c-fa31-41dd-8362-1bbfc7d42c0e",
+			"id": "abd66f39-1ed9-4832-b1cd-1d467097fb2a",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "809786f3-7399-42a9-8060-7f1e17214320",
+			"id": "67fecedd-57ca-49c4-a390-3a84df8b201e",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "d3824ce9-1d59-4e9b-ab1b-54d7c2ec163b",
+			"id": "68607411-0ade-419b-abef-e81405dc42fc",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "73f3a332-e173-4d27-b9b8-994c85fde565",
+			"id": "2227b0d3-9354-4266-8434-7a4d9a65fb81",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "8ce4e61d-2558-4de9-a37f-0e1b9358b01a",
+			"id": "4613e756-7442-4018-ace1-18dfd22c2d6e",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "59df8003-7c9c-460f-b4d5-4561c0b43b63",
+			"id": "2fa20b9b-4757-4391-bf43-0d81e139ac1a",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "d4f72692-b75f-4a6c-8f48-b82599976478",
+			"id": "16abd801-68d8-4b98-bf9e-332dd0187e70",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "2b65279a-1903-4fa0-b5d5-1b8b143620d3",
+			"id": "28165e36-207c-4800-b277-1add0b19e831",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "fdef08d4-7187-49ac-a91e-cabcc5d5aef0",
+			"id": "39290548-23af-4caa-bb8b-97bc0251b110",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "0d163705-97d4-4ee1-8452-a4fab6a543ef",
+			"id": "7fdd67aa-2e2c-4eaa-986c-f537745e73f9",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "6520eb29-59fc-4598-a826-436fa7e9ef8f",
+			"id": "4f93e0d2-c3c8-476f-84a2-097ca073fa44",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "c241ca6a-4140-425c-a5e1-3d3d733c8b83",
+			"id": "e6003599-4c7c-4a7f-9ace-2437648244bf",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "83c82a1d-a5e2-475b-841d-4be4ad980dcd",
+			"id": "3e7b19a4-d4f9-4d1f-8e7b-f661ab9984b7",
 			"key": "seller",
-			"value": "FR_SELLER"
+			"value": "SELLER_FR"
 		},
 		{
-			"id": "7dd16e3e-ccd3-4c49-a209-56785d4a3da3",
+			"id": "b6fb4a66-0c8d-4305-b3c0-1243f1363b4e",
 			"key": "accCode",
 			"value": "ACC_TST"
 		},
 		{
-			"id": "0245bf50-3ff1-43a7-b8da-df492d1de4c3",
+			"id": "d9a83a70-f308-4d1f-bb97-61eca0a0ed9e",
 			"key": "invoiceSubCat",
 			"value": "CLASSIC_COMMISSION"
 		},
 		{
-			"id": "9d89677a-52be-4582-98ae-958d2470e11c",
+			"id": "ecedde54-1b47-45c7-866b-a26addac0329",
 			"key": "billingAccCode",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "4fb763ff-10b6-446d-92d3-0029b0683eea",
+			"id": "f7124d5c-8219-4faa-bcb6-0aff5c7306bd",
 			"key": "inc",
 			"value": "0"
 		},
 		{
-			"id": "78839dca-c64f-49e6-ba9c-d9f811e6a7b7",
+			"id": "c405bac3-f833-4583-86c3-d59c1cd45189",
 			"key": "subCode",
-			"value": ""
+			"value": "ben.ohara"
 		},
 		{
-			"id": "32bebeaa-a468-4d75-8bbc-c48b41e5e675",
+			"id": "d063589e-fc3b-422a-a315-2db1114aeb60",
 			"key": "biilingCycle",
 			"value": "BC_CLASSIC_MONTHLY_1ST"
 		},
 		{
-			"id": "368f2c02-d90b-45a5-beff-74f76d097ee6",
+			"id": "31db7fb1-79c1-4ba8-85b9-fd08d645f37c",
 			"key": "customerCategory",
 			"value": "CLIENT"
 		}

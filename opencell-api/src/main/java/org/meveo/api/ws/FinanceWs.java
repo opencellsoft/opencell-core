@@ -39,6 +39,7 @@ import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
  * @lastModifiedVersion 5.1
  */
 @WebService
+@Deprecated
 public interface FinanceWs extends IBaseWs {
 
     @WebMethod

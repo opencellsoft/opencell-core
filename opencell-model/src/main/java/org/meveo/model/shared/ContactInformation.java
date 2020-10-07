@@ -42,8 +42,8 @@ public class ContactInformation implements Serializable, Cloneable {
      * Email
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "email", length = 100)
-    @Size(max = 100)
+    @Column(name = "email", length = 2000)
+    @Size(max = 2000)
     protected String email;
 
     /**

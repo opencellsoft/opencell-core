@@ -61,6 +61,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  */
 @WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
     @Inject

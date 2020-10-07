@@ -34,6 +34,7 @@ import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
  * @since 03.07.2015
  **/
 @WebService
+@Deprecated
 public interface InvoicingWs extends IBaseWs {
 
 

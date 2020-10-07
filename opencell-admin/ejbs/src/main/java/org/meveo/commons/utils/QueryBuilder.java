@@ -1321,14 +1321,6 @@ public class QueryBuilder {
         }
     }
 
-    /* DEBUG */
-    public void debug() {
-        System.out.println("Requete : " + q.toString());
-        for (Map.Entry<String, Object> e : params.entrySet()) {
-            System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
-        }
-    }
-
     public String getSqlString() {
         return q.toString();
     }

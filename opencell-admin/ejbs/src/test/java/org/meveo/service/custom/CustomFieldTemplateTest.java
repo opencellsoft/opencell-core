@@ -19,6 +19,7 @@
 package org.meveo.service.custom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 public class CustomFieldTemplateTest {
 
     @Test
-    public void testCFAccumulation() {
+    public void testCFMatrix() {
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setFieldType(CustomFieldTypeEnum.MULTI_VALUE);
@@ -125,5 +126,21 @@ public class CustomFieldTemplateTest {
         Assert.assertEquals("6", values.get("six"));
         Assert.assertEquals("7", values.get("seven"));
         Assert.assertEquals(7, values.size());
+
+        values = new HashMap<String, Object>();
+        values.put("four", "4");
+        values.put("five", "5|5");
+        String serializedValue = cft.serializeMultiValue(values);
+        Assert.assertEquals("|||4|5&#124;5||", serializedValue);
+
+        values = cft.deserializeMultiValue(serializedValue, null);
+        Assert.assertNull(values.get("one"));
+        Assert.assertNull(values.get("two"));
+        Assert.assertNull(values.get("three"));
+        Assert.assertEquals("4", values.get("four"));
+        Assert.assertEquals("5|5", values.get("five"));
+        Assert.assertNull(values.get("six"));
+        Assert.assertNull(values.get("seven"));
+
     }
 }

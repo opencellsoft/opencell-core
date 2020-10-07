@@ -38,6 +38,7 @@ import org.meveo.api.ws.InvoicingWs;
  **/
 @WebService(serviceName = "InvoicingWs", endpointInterface = "org.meveo.api.ws.InvoicingWs")
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
 
     @Inject

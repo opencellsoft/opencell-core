@@ -81,6 +81,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @lastModifiedVersion 5.2
  **/
 @WebService
+@Deprecated
 public interface AccountWs extends IBaseWs {
 
     // customer
@@ -589,7 +590,7 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
+    ActionStatus anonymizeGdpr(@WebParam(name = "customerCode") String customerCode);
 
     // Sequences
 

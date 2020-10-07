@@ -41,6 +41,7 @@ import org.meveo.api.dto.response.admin.GetFilesResponseDto;
  * @author Edward P. Legaspi
  **/
 @WebService(targetNamespace = "http://superAdmin.ws.api.meveo.org/")
+@Deprecated
 public interface SuperAdminSettingsWs extends IBaseWs {
 
     // provider

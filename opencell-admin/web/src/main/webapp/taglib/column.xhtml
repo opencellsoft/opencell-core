@@ -66,9 +66,9 @@
     <c:if test="${empty isMessage}">
         <c:set var="isMessage" value="false" />
     </c:if>
-
-    <c:if test="${empty isDiabledMessage}">
-        <c:set var="isDiabledMessage}" value="false" />
+    
+    <c:if test="${empty isDisabledMessage}">
+        <c:set var="isDisabledMessage" value="false" />
     </c:if>
 
     <c:if test="${!empty messagePrefix}">
@@ -160,10 +160,10 @@
         <c:set var="entityView" value="#{editView}" />
         <c:set var="valueIdField" value="id" />
     </c:if>
-
+    
     <c:if test="#{empty showSortLinks}">
-        <c:set var="showSortLinks" value="true" />
-    </c:if>
+         <c:set var="showSortLinks" value="true" />
+	</c:if>
 
     <c:if test="${empty toggleable}">
         <c:set var="toggleable" value="false" />
@@ -206,7 +206,7 @@
         </c:if>
 
         <c:set var="fieldId" value="#{field.replaceAll('\\.','\\_')}" />
-
+        
         <!-- If field is not list, then it means it is either another entity or enum. -->
         <c:if test="#{not isList}">
             <c:if test="#{empty entityView}">
@@ -222,6 +222,7 @@
                     <h:outputText rendered="#{valueField != null and valueField.toString() != 'true' and valueField.toString() != 'false'}"
                         value="#{messages[''.concat(messagePrefix).concat(valueField)]}" />
                 </c:if>
+                
                 <c:if test="#{not isMessage and not isMap and not isDisabledMessage}">
                     <!-- If there is date field, show date in specified pattern 
                  If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true

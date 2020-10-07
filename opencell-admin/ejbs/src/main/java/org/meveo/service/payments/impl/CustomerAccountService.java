@@ -48,6 +48,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
@@ -58,6 +59,7 @@ import org.meveo.service.base.AccountService;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Abdellatif BARI
+ * @author Mbarek-Ay
  * @lastModifiedVersion 8.0.0
  */
 @Stateless
@@ -78,6 +80,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+   /** The payment gatway service. */
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
+    
 
     /**
      * Checks if is customer account with id exists.
@@ -566,8 +574,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         // Register dd payment methods in payment gateway and obtain a token id
         for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
-        	if(ddPaymentMethod.getTokenId() == null){
-        		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
+        	 PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(entity, ddPaymentMethod, null);
+             if (paymentGateway != null && ddPaymentMethod.getTokenId()==null) { 
+             paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
         	}
         }
 

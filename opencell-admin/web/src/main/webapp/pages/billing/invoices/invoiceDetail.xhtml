@@ -159,12 +159,18 @@
 																<p:column headerText="#{messages['subscription.offer']}">
 																	<h:outputText value="#{not empty rated.offerTemplate ? rated.offerTemplate.code : ''}" />
 																</p:column>
+                                                                <p:column headerText="#{messages['subscription.label']}">
+                                                                    <h:outputText value="#{not empty rated.subscription ? rated.subscription.code : ''}" />
+                                                                </p:column>
 																<p:column headerText="#{messages['walletOperation.chargeInstance']}">
                                                                     <h:outputText value="#{rated.code}" />
 <!-- 																	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop"> -->
 <!-- 																	    #{wo}#{not loop.last ? ', ' : ''} -->
 <!-- 																	</ui:repeat> -->
 																</p:column>
+                                                                <p:column headerText="#{messages['businessEntity.description']}">
+                                                                    <h:outputText value="#{rated.description}" />
+                                                                </p:column>
 																<p:column headerText="#{messages['pricePlan.panel']}">
 																	<h:outputText value="#{rated.priceplan.code}" />
 																</p:column>
@@ -202,9 +208,9 @@
                                                                 <p:column headerText="#{messages['order.number']}">
                                                                     <h:outputText value="#{rated.orderNumber}"/>
                                                                 </p:column>
-                                                                <p:column headerText="#{messages['order.number']}">
-                                                                    <h:outputText value="#{rated.sortIndex}"/>
-                                                                </p:column>
+<!--                                                                 <p:column headerText="#{messages['order.number']}"> -->
+<!--                                                                     <h:outputText value="#{rated.sortIndex}"/> -->
+<!--                                                                 </p:column> -->
                                                             </p:dataTable>
 													</p:tab>
 		                        				</p:accordionPanel>

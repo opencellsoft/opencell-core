@@ -308,11 +308,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus anonymizeGpdr(String customerCode) {
+    public ActionStatus anonymizeGdpr(String customerCode) {
         ActionStatus result = new ActionStatus();
 
         try {
-            customerApi.anonymizeGpdr(customerCode);
+            customerApi.anonymizeGdpr(customerCode);
         } catch (Exception e) {
             processException(e, result);
         }
