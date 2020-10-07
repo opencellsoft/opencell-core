@@ -21,6 +21,7 @@ import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
+import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -31,6 +32,7 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
@@ -177,6 +179,22 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             } else {
                 return subscriptionApi.list(mergedCF, pagingAndFiltering);
             }
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public SubscriptionsListResponseDto findByCustomer(String customerCodeCode) {
+        
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+
+        try {
+            List<SubscriptionDto> subscriptions = subscriptionApi.listByCustomer(customerCodeCode, false).getSubscription();
+            result.getSubscriptions().setSubscription(subscriptions);
+            result.getSubscriptions().setListSize(subscriptions.size());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
