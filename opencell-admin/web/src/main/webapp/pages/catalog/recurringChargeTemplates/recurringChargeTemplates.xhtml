@@ -63,7 +63,7 @@
 			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}"
 				field="edrTemplates" valueLabelField="code" isList="true" />
 			<hftl:column label="#{messages['enableEntity.active']}"
-				field="active" isMessage="true" />
+				field="disabled" isDisabledMessage="true" />
 			<hftl:actionsColumn renderEnableLink="true"
 				permission="#{currentUser.hasRole('catalogManagement')}"
 				renderDuplicateLink="true" />

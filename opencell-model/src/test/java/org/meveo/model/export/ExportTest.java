@@ -18,16 +18,6 @@
 
 package org.meveo.model.export;
 
-import java.io.StringWriter;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,6 +25,17 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringWriter;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExportTest {
 
@@ -60,11 +61,7 @@ public class ExportTest {
                 String converted = format(writer.toString());
                 String expected = format(IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")));
 
-                if (!converted.equals(expected)) {
-                    System.out.println("Failed to compare");
-                    System.out.println(expected);
-                    System.out.println(converted);
-                }
+                assertThat(expected).isEqualTo(converted);
                 Assert.assertEquals(changesetFile, expected, converted);
 
             } catch (Exception e) {

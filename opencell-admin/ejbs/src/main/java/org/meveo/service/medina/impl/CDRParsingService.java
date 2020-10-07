@@ -42,7 +42,9 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
@@ -264,12 +266,17 @@ public class CDRParsingService extends PersistenceService<EDR> {
 						&& (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 					foundMatchingAccess = true;
 					EDR edr = cdrToEdr(cdr, accessPoint, null);
+					if(edr.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+						throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_TERMINATED);
+					}else if(edr.getSubscription().getStatus() != SubscriptionStatusEnum.ACTIVE) {
+						throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_NOT_ACTIVATED);
+					}
 					edrs.add(edr);
 				}
 			}
 
 			if (!foundMatchingAccess) {
-				throw new InvalidAccessException(cdr);
+				throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.ACCESS_INVALID_DATE);
 			}
 
 			if (persistCDR) {
@@ -372,7 +379,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 		List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
 		if (accesses == null || accesses.size() == 0) {
 			rejectededCdrEventProducer.fire(cdr);
-			throw new InvalidAccessException(cdr);
+			throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.ACCESS_NOT_FOUND);
 		}
 		return accesses;
 	}
