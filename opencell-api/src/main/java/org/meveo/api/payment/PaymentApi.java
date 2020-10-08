@@ -67,6 +67,7 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -81,7 +82,7 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Youssef IZEM
  * @author melyoussoufi
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 10.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -160,12 +161,20 @@ public class PaymentApi extends BaseApi {
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
         payment.setReference(paymentDto.getReference());
-        payment.setDueDate(paymentDto.getDueDate());
-        payment.setTransactionDate(paymentDto.getTransactionDate());
+        payment.setDueDate(paymentDto.getDueDate() == null ? new Date()  : paymentDto.getDueDate());
+        payment.setTransactionDate(paymentDto.getTransactionDate() == null ? new Date()  : paymentDto.getTransactionDate());
         payment.setMatchingStatus(MatchingStatusEnum.O);
         payment.setPaymentOrder(paymentDto.getPaymentOrder());
         payment.setFees(paymentDto.getFees());
         payment.setComment(paymentDto.getComment());
+        payment.setBankLot(paymentDto.getBankLot());
+        payment.setPaymentInfo(paymentDto.getPaymentInfo());
+        payment.setPaymentInfo1(paymentDto.getPaymentInfo1());
+        payment.setPaymentInfo2(paymentDto.getPaymentInfo2());
+        payment.setPaymentInfo3(paymentDto.getPaymentInfo3());
+        payment.setPaymentInfo4(paymentDto.getPaymentInfo4());
+        payment.setPaymentInfo5(paymentDto.getPaymentInfo5());
+        payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
 
         // populate customFields
         try {
@@ -182,6 +191,11 @@ public class PaymentApi extends BaseApi {
 
         if (paymentDto.isToMatching()) {
             matchPayment(paymentDto, customerAccount, payment);
+            paymentHistoryService.addHistory(customerAccount,
+            		payment,
+    				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
+    				PaymentStatusEnum.ACCEPTED, null, null, null, null,
+    				null,null,paymentDto.getListAoIdsForMatching());            
         } else {
             log.info("no matching created ");
         }
