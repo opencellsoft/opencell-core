@@ -189,7 +189,6 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setParameter1(wo.getParameter1());
         overageWO.setParameter2(wo.getParameter2());
         overageWO.setParameter3(wo.getParameter3());
-        overageWO.setEdr(wo.getEdr());
         overageWO.setStatus(WalletOperationStatusEnum.OPEN);
         overageWO.setBillingAccount(wo.getBillingAccount());
         overageWO.setUpdated(new Date());

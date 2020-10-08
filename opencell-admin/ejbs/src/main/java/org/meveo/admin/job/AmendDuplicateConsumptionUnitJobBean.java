@@ -4,7 +4,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
@@ -48,6 +47,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
             "where wo.code like 'POOL%_USG_OVER' " +
             " and wo.parameter1=:chargeType \n" +
             " and wo.offerTemplate=:offer \n" +
+            " and wo.subscription.userAccount=:agency \n" +
             " and wo.status = 'OPEN' \n" +
             "order by wo.id";
 
@@ -121,6 +121,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
             return emWrapper.getEntityManager().createQuery(POOL_OVERAGE_WO_QUERY, WalletOperation.class)
                     .setParameter("chargeType", canceledWO.getParameter1())
                     .setParameter("offer", canceledWO.getOfferTemplate())
+                    .setParameter("agency", canceledWO.getSubscription().getUserAccount())
                     .getResultList();
         }
     }
