@@ -1575,19 +1575,20 @@ public abstract class BaseApi {
         dto.setAuditableFields(auditableFieldsDto);
     }
 
-    public boolean isRootCause(Throwable e, Class<?> clazz) {
+    public Throwable getRootCause(Throwable e, Class<?> clazz) {
         while (e != null) {
             if (e.getClass().equals(clazz)) {
-                return true;
+                return e;
             }
             e = e.getCause();
         }
-        return false;
+        return null;
     }
 
     public MeveoApiException getMeveoApiException(Throwable e) {
-        if (isRootCause(e, ConstraintViolationException.class)) {
-            return new ConstraintViolationApiException(e.getMessage());
+        Throwable rootCause = getRootCause(e, ConstraintViolationException.class);
+        if (rootCause != null) {
+            return new ConstraintViolationApiException(rootCause.getCause().getMessage());
         }
         return new MeveoApiException(e);
     }
