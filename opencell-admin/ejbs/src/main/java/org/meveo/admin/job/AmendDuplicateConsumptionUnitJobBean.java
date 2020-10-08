@@ -189,7 +189,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 Double multiplier = ((Map<String, Double>) cfiService
                         .getInheritedCFValueByKey(appProvider, "CF_P_USAGE_UNITS", overageUnit))
                         .get("multiplier");
-                BigDecimal newOverageQuantity = rest.divide(BigDecimal.valueOf(multiplier), 6, RoundingMode.HALF_EVEN);
+                BigDecimal newOverageQuantity = rest.divide(BigDecimal.valueOf(multiplier), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
                 overageWO.setQuantity(newOverageQuantity);
                 overageWO.setInputQuantity(rest);

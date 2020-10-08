@@ -138,11 +138,11 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setPriceplan(overPricePlanList.get(0));
 
         // WO's amounts
-        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), 6, RoundingMode.HALF_UP);
+        BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         BigDecimal taxPercent = wo.getTaxPercent();
 
         BigDecimal unitAmountWithoutTax = BigDecimal.valueOf(overagePrice);
-        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         BigDecimal unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
         BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal amountTax = unitAmountTax.multiply(quantity);
