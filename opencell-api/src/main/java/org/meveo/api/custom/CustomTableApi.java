@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -206,7 +207,7 @@ public class CustomTableApi extends BaseApi {
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
         result.getCustomTableData().setCustomTableCode(customTableCode);
-        List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        List<String> fields = extractFields(pagingAndFiltering);
         PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
 //        try {
 //            pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
@@ -221,6 +222,11 @@ public class CustomTableApi extends BaseApi {
         result.getCustomTableData().setValuesFromListofMap(list);
         return result;
     }
+
+	private List<String> extractFields(PagingAndFiltering pagingAndFiltering) {
+		return pagingAndFiltering.getFields() == null ? null :
+        	Stream.of((FIELD_ID+","+pagingAndFiltering.getFields()).split(",")).distinct().collect(Collectors.toList());
+	}
 
     /**
      * Remove records, identified by 'id' value, from a custom table. If no 'id' values are passed, will delete all the records in a table.<br/>
@@ -417,7 +423,7 @@ public class CustomTableApi extends BaseApi {
 
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
         pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        List<String> fields = extractFields(pagingAndFiltering);
         PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
