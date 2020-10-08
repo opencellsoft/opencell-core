@@ -37,6 +37,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
  * The Class CustomEntityTemplateDto.
  *
  * @author Andrius Karpavicius
+ * @author Mbarek-Ay
  */
 
 @XmlRootElement(name = "CustomEntityTemplate")
@@ -74,6 +75,11 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
     @XmlElement(name = "action")
     private List<EntityCustomActionDto> actions;
 
+    @XmlAttribute
+    private Boolean disableable;
+    
+    @XmlAttribute
+    private Boolean versioned;
     /**
      * Instantiates a new custom entity template dto.
      */
@@ -100,6 +106,12 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
             setStoreInES(false);
         }
 
+        if (!cet.isDisableable()) {
+            setDisabled(false);
+        }
+        if (!cet.isVersioned()) {
+            setVersioned(false);
+        }
         if (cetFields != null) {
             List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
             for (CustomFieldTemplate cft : cetFields) {
@@ -198,8 +210,26 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
     public void setActions(List<EntityCustomActionDto> actions) {
         this.actions = actions;
     }
+    
+    
 
-    /*
+    public Boolean getDisableable() {
+		return disableable;
+	}
+
+	public void setDisableable(Boolean disableable) {
+		this.disableable = disableable;
+	}
+
+	public Boolean getVersioned() {
+		return versioned;
+	}
+
+	public void setVersioned(Boolean versioned) {
+		this.versioned = versioned;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see java.lang.Object#toString()
