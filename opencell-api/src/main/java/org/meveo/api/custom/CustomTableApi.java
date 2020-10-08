@@ -215,7 +215,7 @@ public class CustomTableApi extends BaseApi {
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
         result.getCustomTableData().setCustomTableCode(customTableCode);
-        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
+        List<String> fields = extractFields(pagingAndFiltering);
  		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
 		try {
 			pagingAndFiltering.setFilters(
@@ -224,14 +224,6 @@ public class CustomTableApi extends BaseApi {
 			pagingAndFiltering.setTotalNumberOfRecords(0);
 			return result;
 		}
-        List<String> fields = extractFields(pagingAndFiltering);
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
-//        try {
-//            pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-//        } catch (ElementNotFoundException e) {
-//            pagingAndFiltering.setTotalNumberOfRecords(0);
-//            return result;
-//        }
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
