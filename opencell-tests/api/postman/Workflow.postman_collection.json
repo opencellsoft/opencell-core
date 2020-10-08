@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "62dbf2d2-2f66-4536-8e9b-5ddf4f307c24",
-		"name": "Workflow",
+		"_postman_id": "140dcc8a-57b6-4a43-adcf-6156640d4361",
+		"name": "Workflow Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -17,7 +17,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f93c9c9e-0e88-40c6-9e84-b10502c55e2e",
+										"id": "869a55f7-e516-48ea-a738-9395edff4893",
 										"exec": [
 											"var jsonData = JSON.parse(responseBody);",
 											"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -38,7 +38,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<ScriptInstance>\r\n        <code>org.meveo.service.script.SimpleDunning</code>\r\n        <description>{{script_desc}} {{$timestamp}}</description>\r\n        <type>JAVA</type>\r\n        <script><![CDATA[\r\n            package org.meveo.service.script;\r\n\r\n            import org.meveo.model.generic.wf.WFStatus;\r\n            import org.meveo.model.generic.wf.WorkflowInstance;\r\n            import org.meveo.model.payments.AccountOperation;\r\n            import org.meveo.model.payments.CustomerAccount;\r\n            import org.meveo.model.payments.DunningLevelEnum;\r\n            import org.meveo.service.payments.impl.CustomerAccountService;\r\n            import org.slf4j.Logger;\r\n            import org.slf4j.LoggerFactory;\r\n\r\n            import java.util.Map;\r\n\r\n            import static org.meveo.admin.job.GenericWorkflowJob.*;\r\n\r\n            public class SimpleDunning extends org.meveo.service.script.Script {\r\n\r\n                private static final Logger log = LoggerFactory.getLogger(SimpleDunning.class);\r\n\r\n                private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(\"CustomerAccountService\");\r\n\r\n                @Override\r\n                public void execute(Map<String, Object> context) {\r\n                    log.info(\">>> Method context >>>\");\r\n                    context.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {\r\n                        log.info(\"{}={}\", entry.getKey(), entry.getValue());\r\n                    });\r\n\r\n                    WorkflowInstance workflowInstance = (WorkflowInstance) context.get(WF_INS);\r\n                    CustomerAccount customerAccount = (CustomerAccount) context.get(IWF_ENTITY);\r\n                    WFStatus wfToStatus = (WFStatus) context.get(TO_STATUS);\r\n\r\n                    if (\"R0\".equals(workflowInstance.getCurrentStatus().getCode()) && \"R1\".equals(wfToStatus.getCode())) {\r\n                        customerAccountService.sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);\r\n                    } else if (\"R0\".equals(wfToStatus.getCode())) {\r\n                        customerAccountService.sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);\r\n                    }\r\n                }\r\n            }\r\n]]></script>\r\n</ScriptInstance>",
+									"raw": "<ScriptInstance>\r\n        <code>org.meveo.service.script.SimpleDunning</code>\r\n        <description>{{script_desc}} {{$timestamp}}</description>\r\n        <type>JAVA</type>\r\n        <script><![CDATA[\r\n            package org.meveo.service.script;\r\n\r\n            import org.meveo.model.generic.wf.WFStatus;\r\n            import org.meveo.model.generic.wf.WorkflowInstance;\r\n            import org.meveo.model.notification.NotificationEventTypeEnum;\r\n            import org.meveo.model.payments.CustomerAccount;\r\n            import org.meveo.model.payments.DunningLevelEnum;\r\n            import org.meveo.service.notification.DefaultNotificationService;\r\n            import org.meveo.service.notification.GenericNotificationService;\r\n            import org.meveo.service.payments.impl.CustomerAccountService;\r\n            import org.slf4j.Logger;\r\n            import org.slf4j.LoggerFactory;\r\n\r\n            import java.math.BigDecimal;\r\n            import java.math.RoundingMode;\r\n            import java.util.Date;\r\n            import java.util.Map;\r\n\r\n            import static org.meveo.admin.job.GenericWorkflowJob.*;\r\n\r\n            public class SimpleDunning extends org.meveo.service.script.Script {\r\n\r\n                private static final Logger log = LoggerFactory.getLogger(SimpleDunning.class);\r\n\r\n                private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(\"CustomerAccountService\");\r\n                private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface(\"DefaultNotificationService\");\r\n                private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface(\"GenericNotificationService\");\r\n\r\n                @Override\r\n                public void execute(Map<String, Object> context) {\r\n                    log.info(\">>> Method context >>>\");\r\n                    context.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {\r\n                        log.info(\"{}={}\", entry.getKey(), entry.getValue());\r\n                    });\r\n\r\n                    WorkflowInstance workflowInstance = (WorkflowInstance) context.get(WF_INS);\r\n                    CustomerAccount customerAccount = (CustomerAccount) context.get(IWF_ENTITY);\r\n                    WFStatus wfToStatus = (WFStatus) context.get(TO_STATUS);\r\n\r\n                    if (\"R0\".equals(workflowInstance.getCurrentStatus().getCode()) && \"R1\".equals(wfToStatus.getCode())) {\r\n                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);\r\n                    } else if (\"R0\".equals(wfToStatus.getCode())) {\r\n                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);\r\n                    }\r\n                }\r\n\r\n                private void sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {\r\n                    customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);\r\n                    if (customerAccount.getDunningLevel() == dunningLevelEnum)\r\n                        return;\r\n                    customerAccount.setDunningLevel(dunningLevelEnum);\r\n                    customerAccount = customerAccountService.update(customerAccount);\r\n\r\n                    if (dunningLevelEnum == DunningLevelEnum.R0) {\r\n                        sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);\r\n                    } else if (dunningLevelEnum == DunningLevelEnum.R1) {\r\n                        BigDecimal dueBalance = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());\r\n                        customerAccount.setDueBalance(String.format(\"%s %s\", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));\r\n                        sendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);\r\n                    }\r\n                }\r\n\r\n                private void sendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {\r\n                    genericNotificationService.getApplicableNotifications(notificationEventType, customerAccount)\r\n                            .forEach(notif -> defaultNotificationService.fireNotification(notif, customerAccount));\r\n                }\r\n            }\r\n]]></script>\r\n</ScriptInstance>",
 									"options": {
 										"raw": {
 											"language": "xml"
@@ -64,7 +64,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b96b8ac6-8a21-4ce9-8e90-5e784c9239d0",
+										"id": "512ce57e-8215-426d-ac09-2daf8f5007ff",
 										"exec": [
 											"var jsonData = JSON.parse(responseBody);",
 											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -75,7 +75,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "d5e2b5ff-6de2-4d49-9b26-c9991ba355a3",
+										"id": "45c8e3ee-d5c5-4829-8d37-eb97b7d0f38e",
 										"exec": [
 											""
 										],
@@ -121,7 +121,7 @@
 								{
 									"script": {
 										"type": "text/javascript",
-										"id": "1fa98348-a95d-4668-a9a1-62304c3e5c06",
+										"id": "b66ccc63-4f64-4965-afcd-57e9273e46d3",
 										"exec": [
 											"var jsonData = JSON.parse(responseBody);",
 											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
@@ -167,7 +167,7 @@
 							"event": [
 								{
 									"script": {
-										"id": "bdfe9d5c-cdf2-4883-9125-9b2fd8c422da",
+										"id": "f499fcfe-6202-47aa-b4cd-e8b1df75acab",
 										"exec": [
 											"var jsonData = JSON.parse(responseBody);",
 											"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
@@ -189,7 +189,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"code\":\"{{code}}_JOB\"\n}"
+									"raw": "{\n  \"code\":\"{{code}}_Job\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/job/execute",
@@ -231,7 +231,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "3342d779-37d6-479b-bbdc-1df0a49e2ff5",
+				"id": "56fc9b36-cded-4053-a866-460d1a7cda8e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -241,7 +241,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "897c94c0-ecc5-4a79-86eb-ab3d71356a64",
+				"id": "a476dbd9-778e-4476-beda-4d176920d9d5",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -251,27 +251,27 @@
 	],
 	"variable": [
 		{
-			"id": "6ee0402f-74d6-4fb1-98a9-dd82f8bba9a4",
+			"id": "c2740646-4a89-4453-b041-0a4ff122d872",
 			"key": "code",
-			"value": "DUNNING_WF"
+			"value": "WF_Dunning"
 		},
 		{
-			"id": "d0eee7b1-72a6-4224-989b-333a4d65acce",
+			"id": "90f28c37-7027-4c22-ad95-383b88e83a38",
 			"key": "description",
 			"value": "dunning workflow"
 		},
 		{
-			"id": "5a368450-8273-478b-adfc-0399198ae8a2",
+			"id": "7ba9b5eb-e2b6-4af3-b4e7-fde02bff83b4",
 			"key": "class",
 			"value": "org.meveo.model.payments.CustomerAccount"
 		},
 		{
-			"id": "7345da0b-9c09-4a0b-ac85-159775ffefe0",
+			"id": "a3e7dd55-c996-499f-8349-50c3efaa0ba5",
 			"key": "desc",
 			"value": "dunning workflow"
 		},
 		{
-			"id": "2629f809-b66a-4962-9aa1-8341d90d3a25",
+			"id": "08db7539-f43a-4631-a151-aa810b5eb9cf",
 			"key": "script_desc",
 			"value": "Simple Dunning script"
 		}
