@@ -72,7 +72,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 		paymentHistory.setErrorMessage(errorMessage);
 		paymentHistory.setErrorType(errorType);
 		paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
-		paymentHistory.setOperationCategory(operationCategory);
+		paymentHistory.setOperationCategory(payment != null ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT );
 		paymentHistory.setSyncStatus(status);
 		paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
 		paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
