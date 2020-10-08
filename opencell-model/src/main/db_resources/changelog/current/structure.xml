@@ -3596,6 +3596,77 @@ END $$;]]>
             <column name="entity_class" type="varchar(255)"/>
         </addColumn>    
     </changeSet>
+
+    <changeSet author="zbariki" id="#3402_20201007">
+        <addColumn tableName="cat_calendar">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="label_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_channel">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="adm_currency">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="adm_language">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="crm_customer_category">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="ar_credit_category">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template_category">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_business_offer_model">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_business_serv_model">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="cat_business_product_model">
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
     
     <changeSet id="#5556_20201006" author="AndriusKarpavicius">
         <modifyDataType tableName="account_entity" columnName="email" newDataType="varchar(2000)"/>

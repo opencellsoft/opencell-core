@@ -64,6 +64,7 @@ public class LanguageApi extends BaseApi {
             language = new Language();
             language.setLanguageCode(postData.getCode());
             language.setDescriptionEn(postData.getDescription());
+            language.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
             languageService.create(language);
         }
 
@@ -110,6 +111,7 @@ public class LanguageApi extends BaseApi {
         }
 
         language.setDescriptionEn(postData.getDescription());
+        language.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         tradingLanguage.setLanguage(language);
         tradingLanguage.setLanguageCode(postData.getCode());

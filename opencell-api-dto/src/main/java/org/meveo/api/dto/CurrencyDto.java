@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 
+import java.util.List;
+
 /**
  * The Class CurrencyDto.
  *
@@ -54,6 +56,9 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      */
     private Boolean disabled;
 
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new currency dto.
      */
@@ -81,6 +86,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     public CurrencyDto(Currency currency) {
         code = currency.getCurrencyCode();
         description = currency.getDescriptionEn();
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(currency.getDescriptionI18n());
     }
 
     /**
@@ -132,5 +138,13 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     @Override
     public String toString() {
         return "CurrencyDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

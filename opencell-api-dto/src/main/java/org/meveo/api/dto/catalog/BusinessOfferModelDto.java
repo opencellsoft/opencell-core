@@ -24,8 +24,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.model.module.MeveoModule;
+
+import java.util.List;
 
 /**
  * The Class BusinessOfferModelDto.
@@ -43,6 +46,8 @@ public class BusinessOfferModelDto extends MeveoModuleDto {
     @NotNull
     @XmlElement(required = true)
     private OfferTemplateDto offerTemplate;
+
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new business offer model dto.
@@ -75,6 +80,14 @@ public class BusinessOfferModelDto extends MeveoModuleDto {
      */
     public OfferTemplateDto getOfferTemplate() {
         return offerTemplate;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 
     @Override

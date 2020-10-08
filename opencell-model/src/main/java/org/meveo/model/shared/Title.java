@@ -19,6 +19,7 @@ package org.meveo.model.shared;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -111,5 +112,13 @@ public class Title extends BusinessEntity implements ISearchable {
             descriptionI18n = new HashMap<>();
         }
         return descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 }

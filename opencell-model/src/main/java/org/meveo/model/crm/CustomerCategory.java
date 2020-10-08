@@ -37,6 +37,8 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.tax.TaxCategory;
 
+import java.util.Map;
+
 /**
  * Customer category
  * 
@@ -76,7 +78,7 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     /**
      * Exoneration reason
      */
-    @Column(name = "exoneration_reason", length = 255)
+    @Column(name = "exoneration_reason")
     @Size(max = 255)
     private String exonerationReason;
 
@@ -107,6 +109,13 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     @Column(name = "tax_category_el_sp", length = 2000)
     @Size(max = 2000)
     private String taxCategoryElSpark;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     /**
      * @return True if account is exonerated from taxes
@@ -218,5 +227,21 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
      */
     public void setTaxCategoryElSpark(String taxCategoryElSpark) {
         this.taxCategoryElSpark = taxCategoryElSpark;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 }

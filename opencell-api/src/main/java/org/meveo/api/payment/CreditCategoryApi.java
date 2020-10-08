@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -60,10 +61,11 @@ public class CreditCategoryApi extends BaseApi {
 		return e;
 	}
 
-	private static CreditCategoryDto entityToDto(CreditCategory e) {
+	private static CreditCategoryDto entityToDto(CreditCategory creditCategory) {
 		CreditCategoryDto dto = new CreditCategoryDto();
-		dto.setCode(e.getCode());
-		dto.setDescription(e.getDescription());
+		dto.setCode(creditCategory.getCode());
+		dto.setDescription(creditCategory.getDescription());
+		dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(creditCategory.getDescriptionI18n()));
 
 		return dto;
 	}
@@ -80,6 +82,9 @@ public class CreditCategoryApi extends BaseApi {
         }
 
         CreditCategory creditCategory = dtoToEntity(postData, null);
+        if(postData.getLanguageDescriptions() != null) {
+			creditCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+		}
 		creditCategoryService.create(creditCategory);
 
 		return creditCategory;
@@ -96,6 +101,9 @@ public class CreditCategoryApi extends BaseApi {
 		}
 
 		creditCategory = dtoToEntity(postData, creditCategory);
+		if(postData.getLanguageDescriptions() != null) {
+			creditCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+		}
 		creditCategory = creditCategoryService.update(creditCategory);
 
 		handleMissingParameters();

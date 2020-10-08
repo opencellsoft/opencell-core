@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,6 +120,8 @@ public class CalendarDto extends BusinessEntityDto {
 
     private List<CalendarHolidayDto> holidays;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new calendar dto.
      */
@@ -131,6 +135,7 @@ public class CalendarDto extends BusinessEntityDto {
      */
     public CalendarDto(Calendar calendarEntity) {
         super(calendarEntity);
+        languageDescriptions = convertMultiLanguageFromMapOfValues(calendarEntity.getDescriptionI18n());
         calendarType = CalendarTypeEnum.valueOf(calendarEntity.getCalendarTypeWSubtypes());
 
         if (calendarEntity instanceof CalendarYearly) {
@@ -523,5 +528,13 @@ public class CalendarDto extends BusinessEntityDto {
      */
     public void setInitDateELSpark(String initDateELSpark) {
         this.initDateELSpark = initDateELSpark;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

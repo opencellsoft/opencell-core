@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -110,7 +111,7 @@ public class BillingCycle extends BusinessCFEntity {
      * Billing accounts
      */
     @OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
-    private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+    private List<BillingAccount> billingAccounts = new ArrayList<>();
 
     /**
      * Invoice amount threshold - will disregard invoices below this amount
@@ -188,6 +189,13 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
@@ -452,5 +460,21 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setSplitPerPaymentMethod(boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 }

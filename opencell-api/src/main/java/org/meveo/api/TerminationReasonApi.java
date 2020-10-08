@@ -18,6 +18,8 @@
 
 package org.meveo.api;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,8 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
         subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
         subscriptionTerminationReason.setReimburseOneshots(postData.isReimburseOneshots());
+        ofNullable(postData.getLanguageDescriptions()).ifPresent(translatedDesc
+                -> subscriptionTerminationReason.setDescriptionI18n(convertMultiLanguageToMapOfValues(translatedDesc, null)));
 
         terminationReasonService.create(subscriptionTerminationReason);
     }
@@ -100,6 +104,8 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
         subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
         subscriptionTerminationReason.setReimburseOneshots(postData.isReimburseOneshots());
+        ofNullable(postData.getLanguageDescriptions()).ifPresent(translatedDesc
+                -> subscriptionTerminationReason.setDescriptionI18n(convertMultiLanguageToMapOfValues(translatedDesc, null)));
 
         terminationReasonService.update(subscriptionTerminationReason);
     }
