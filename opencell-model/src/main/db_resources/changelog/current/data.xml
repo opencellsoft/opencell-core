@@ -1763,13 +1763,18 @@ public class ValidateBRScript extends Script {
 
             import org.meveo.model.generic.wf.WFStatus;
             import org.meveo.model.generic.wf.WorkflowInstance;
-            import org.meveo.model.payments.AccountOperation;
+            import org.meveo.model.notification.NotificationEventTypeEnum;
             import org.meveo.model.payments.CustomerAccount;
             import org.meveo.model.payments.DunningLevelEnum;
+            import org.meveo.service.notification.DefaultNotificationService;
+            import org.meveo.service.notification.GenericNotificationService;
             import org.meveo.service.payments.impl.CustomerAccountService;
             import org.slf4j.Logger;
             import org.slf4j.LoggerFactory;
 
+            import java.math.BigDecimal;
+            import java.math.RoundingMode;
+            import java.util.Date;
             import java.util.Map;
 
             import static org.meveo.admin.job.GenericWorkflowJob.*;
@@ -1779,6 +1784,8 @@ public class ValidateBRScript extends Script {
                 private static final Logger log = LoggerFactory.getLogger(SimpleDunning.class);
 
                 private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface("CustomerAccountService");
+                private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface("DefaultNotificationService");
+                private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface("GenericNotificationService");
 
                 @Override
                 public void execute(Map<String, Object> context) {
@@ -1792,14 +1799,158 @@ public class ValidateBRScript extends Script {
                     WFStatus wfToStatus = (WFStatus) context.get(TO_STATUS);
 
                     if ("R0".equals(workflowInstance.getCurrentStatus().getCode()) && "R1".equals(wfToStatus.getCode())) {
-                        customerAccountService.sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);
+                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);
                     } else if ("R0".equals(wfToStatus.getCode())) {
-                        customerAccountService.sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
+                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
                     }
+                }
+
+                private void sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
+                    customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+                    if (customerAccount.getDunningLevel() == dunningLevelEnum)
+                        return;
+                    customerAccount.setDunningLevel(dunningLevelEnum);
+                    customerAccount = customerAccountService.update(customerAccount);
+
+                    if (dunningLevelEnum == DunningLevelEnum.R0) {
+                        sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
+                    } else if (dunningLevelEnum == DunningLevelEnum.R1) {
+                        BigDecimal dueBalance = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
+                        customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
+                        sendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
+                    }
+                }
+
+                private void sendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
+                    genericNotificationService.getApplicableNotifications(notificationEventType, customerAccount)
+                            .forEach(notif -> defaultNotificationService.fireNotification(notif, customerAccount));
                 }
             }
         ');
         ]]></sql>
+
+        <insert tableName="wf_generic_workflow">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="WF_Dunning"></column>
+            <column name="description" value="dunning workflow"></column>
+            <column name="target_entity_class" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="enable_history" value="1"></column>
+            <column name="init_status" value="R0"></column>
+            <column name="uuid" value="934c4821-e56e-44d2-b4a1-4be86f922263"></column>
+        </insert>
+
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R0"></column>
+            <column name="description" value="No dunning"></column>
+            <column name="uuid" value="7cc6eaf5-8f45-4381-94f5-4c5243a3013d"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-2"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R1"></column>
+            <column name="description" value="Reminder email sent"></column>
+            <column name="uuid" value="3e82a3d5-a98e-4fb1-a232-68559d118e35"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-3"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R2"></column>
+            <column name="description" value="Account suspended"></column>
+            <column name="uuid" value="f79944eb-d08d-4520-8ca6-8d11ff256984"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-4"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R3"></column>
+            <column name="description" value="Dunning file sent to external company"></column>
+            <column name="uuid" value="29303780-37f8-4c94-bd40-979f8f89b41c"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="uuid" value="f8ac0942-686b-45d7-9707-1f6cad4f2443"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R0"></column>
+            <column name="to_status" value="R1"></column>
+            <column name="priority" value="1"></column>
+            <column name="description" value="Some amount is due"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id)  > 0}"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-2"></column>
+            <column name="uuid" value="79a9cdac-0dc6-4a96-b402-da4e7310cf69"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R1"></column>
+            <column name="to_status" value="R0"></column>
+            <column name="priority" value="2"></column>
+            <column name="description" value="All is fine again"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id) <= 0}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-3"></column>
+            <column name="uuid" value="bbad0d8c-b598-4b64-a36b-072a90802d13"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R1"></column>
+            <column name="to_status" value="R2"></column>
+            <column name="priority" value="3"></column>
+            <column name="description" value="Time is up"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el" value="#{ false }"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-4"></column>
+            <column name="uuid" value="bbae5117c-7947-4738-aab0-b0a6e188a195"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R2"></column>
+            <column name="to_status" value="R3"></column>
+            <column name="priority" value="4"></column>
+            <column name="description" value="Debt collector is in"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el" value="#{ false }"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-29"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="WF_Dunning_JOB"></column>
+            <column name="job_category" value="UTILS"></column>
+            <column name="job_template" value="GenericWorkflowJob"></column>
+            <column name="single_node" value="1"></column>
+            <column name="exclude_inv_without_amount" value="0"></column>
+            <column name="exclude_inv_without_amount" value="1"></column>
+            <column name="cf_values" value='{"gwfJob_nbRuns":[{"long":1}],"gwfJob_waitingMillis":[{"long":0}],"gwfJob_generic_wf":[{"entity":{"classname":"org.meveo.model.generic.wf.GenericWorkflow","code":"WF_Dunning"}}]}'></column>
+            <column name="uuid" value="18636982-e611-4b29-b0d2-4314464c94b2"></column>
+        </insert>
+
 
         <insert tableName="com_message_template">
             <column name="media" value="EMAIL"></column>

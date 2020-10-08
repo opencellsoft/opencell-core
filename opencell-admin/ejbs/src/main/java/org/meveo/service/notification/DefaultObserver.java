@@ -196,16 +196,6 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
-    public void toR1(@Observes @ToR1 CustomerAccount e) throws BusinessException {
-        log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
-        checkEvent(NotificationEventTypeEnum.TO_R1, e);
-    }
-
-    public void toR0(@Observes @ToR0 CustomerAccount e) throws BusinessException {
-        log.debug("Defaut observer: logged in class={} ", e.getClass().getName());
-        checkEvent(NotificationEventTypeEnum.TO_R0, e);
-    }
-
     @MeveoAudit
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) throws BusinessException {
         log.debug("Defaut observer: inbound request {} ", e.getCode());

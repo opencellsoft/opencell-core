@@ -40,8 +40,6 @@ import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.qualifier.ToR0;
-import org.meveo.event.qualifier.ToR1;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -92,14 +90,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     @Inject
     private PaymentGatewayService paymentGatewayService;
-
-    @Inject
-    @ToR1
-    private Event<CustomerAccount> toR1Status;
-
-    @Inject
-    @ToR0
-    private Event<CustomerAccount> toR0Status;
     
 
     /**
@@ -766,23 +756,5 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("The recipient customer account with code : " + toCustomerAccountCode + " is not found");
         }
         transferAccount(fromCustomerAccount, toCustomerAccount, amount);
-    }
-
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum){
-        customerAccount = refreshOrRetrieve(customerAccount);
-        if(customerAccount.getDunningLevel() == dunningLevelEnum)
-            return;
-        customerAccount.setDunningLevel(dunningLevelEnum);
-        customerAccount = update(customerAccount);
-        if(dunningLevelEnum == DunningLevelEnum.R0) {
-            toR0Status.fire(customerAccount);
-        }
-        else if(dunningLevelEnum == DunningLevelEnum.R1) {
-            BigDecimal dueBalance = customerAccountBalanceDue(customerAccount, new Date());
-            customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
-            toR1Status.fire(customerAccount);
-        }
     }
 }
