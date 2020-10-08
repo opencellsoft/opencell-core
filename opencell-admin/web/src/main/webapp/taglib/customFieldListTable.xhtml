@@ -304,12 +304,13 @@
 							rendered="#{edit and !disabled}">
 
 							<c:forEach items="#{cft.matrixColumns}" var="column">
-
 								<c:if test="#{column.keyType eq CustomFieldMapKeyEnum.STRING}">
-									<p:inputText
+									<p:inputText 
 										value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}"
 										placeholder="#{column.label}" label="#{column.label}"
-										size="30" maxlength="50" />
+										size="30" maxlength="50" validatorMessage="matrix separator character '|' may not be used">
+											<f:validateRegex  pattern="[^|]+"/>
+										</p:inputText>
 								</c:if>
 
 								<c:if test="#{column.keyType eq CustomFieldMapKeyEnum.LONG}">
