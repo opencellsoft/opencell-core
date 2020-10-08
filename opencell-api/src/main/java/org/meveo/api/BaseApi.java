@@ -37,6 +37,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -586,12 +588,20 @@ public abstract class BaseApi {
             // Add keys to matrix if not provided in DTO and it is not empty
             // (gets converted to null if map has no values)
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && valueConverted != null) {
-
                 boolean matrixColumnsPresent = false;
                 for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {
                     if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                         matrixColumnsPresent = true;
-                        break;
+                    }else {
+                    	int keySize=Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                    	int valueSize=Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+
+                    	if(cft.getMatrixKeyColumns()!=null && cft.getMatrixKeyColumns().size()<keySize) {
+                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+cft.getMatrixKeyColumns().size()+")") ;
+                    	}
+                    	if(cft.getMatrixValueColumns()!=null && cft.getMatrixValueColumns().size()<valueSize) {
+                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+cft.getMatrixValueColumns().size()+")") ;
+                    	}
                     }
                 }
 
