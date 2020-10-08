@@ -1632,7 +1632,7 @@ public abstract class BaseApi {
         dto.setAuditableFields(auditableFieldsDto);
     }
 
-    public Throwable isRootCause(Throwable e, Class<?> clazz) {
+    public Throwable getRootCause(Throwable e, Class<?> clazz) {
         while (e != null) {
             if (e.getClass().equals(clazz)) {
                 return e;
@@ -1643,7 +1643,7 @@ public abstract class BaseApi {
     }
 
     public MeveoApiException getMeveoApiException(Throwable e) {
-    	Throwable rootCause = isRootCause(e, ConstraintViolationException.class);
+    	Throwable rootCause = getRootCause(e, ConstraintViolationException.class);
         if (rootCause != null) {
             return new ConstraintViolationApiException(rootCause.getCause().getMessage());
         }
