@@ -3602,9 +3602,6 @@ END $$;]]>
             <column name="description_i18n" type="text">
                 <constraints nullable="true" />
             </column>
-            <column name="label_i18n" type="text">
-                <constraints nullable="true" />
-            </column>
         </addColumn>
         <addColumn tableName="cat_channel">
             <column name="description_i18n" type="text">
