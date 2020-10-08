@@ -85,8 +85,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	        DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod; 
 	        CustomerAccount customerAccount=ddpaymentMethod.getCustomerAccount();
 	        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
-	        if (paymentGateway != null) { 
-	        obtainAndSetSepaToken(ddpaymentMethod, customerAccount);
+	        if (paymentGateway != null) {  
 	        createMandate(ddpaymentMethod);
 	        }      
 	    }  
@@ -292,10 +291,12 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     
     /**
      * Store payment information in payment gateway and return token id in a payment gateway.
+     * Reserved to GlobalCollect platform
      * 
      * @param ddPaymentMethod Direct debit method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
+     * 
      */
     public void obtainAndSetSepaToken(DDPaymentMethod ddpaymentMethod, CustomerAccount customerAccount) throws BusinessException {
         if (!StringUtils.isBlank(ddpaymentMethod.getTokenId())) {
