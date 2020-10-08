@@ -3589,7 +3589,6 @@ END $$;]]>
     </changeSet>
     
      <changeSet id="#5501_20201007" author="MohammedELAZZOUZI">
-   		<sql>create index billing_billing_account_minimum_amount_el_index on ${db.schema.adapted}billing_billing_account(minimum_amount_el) where minimum_amount_el is not null</sql>
         <sql>create index billing_subscription_minimum_amount_el_index on ${db.schema.adapted}billing_subscription(minimum_amount_el) where minimum_amount_el is not null</sql>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
