@@ -593,14 +593,16 @@ public abstract class BaseApi {
                     if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                         matrixColumnsPresent = true;
                     }else {
-                    	int keySize=Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
-                    	int valueSize=Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                    	int keySize=mapEntry.getKey() == null ? 0 : Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                    	int valueSize=mapEntry.getValue() == null ? 0 : Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
 
-                    	if(cft.getMatrixKeyColumns()!=null && cft.getMatrixKeyColumns().size()<keySize) {
-                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+cft.getMatrixKeyColumns().size()+")") ;
+                    	int matrixKeySize = cft.getMatrixKeyColumns() != null ? cft.getMatrixKeyColumns().size() : 0;
+						if(matrixKeySize>0 && matrixKeySize<keySize) {
+                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+matrixKeySize+")") ;
                     	}
-                    	if(cft.getMatrixValueColumns()!=null && cft.getMatrixValueColumns().size()<valueSize) {
-                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+cft.getMatrixValueColumns().size()+")") ;
+                    	int matrixValueSize = cft.getMatrixValueColumns()!=null ? cft.getMatrixValueColumns().size() : 0;
+						if(matrixValueSize>0 && matrixValueSize<valueSize) {
+                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+matrixValueSize+")") ;
                     	}
                     }
                 }
