@@ -231,7 +231,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
 
     }
-    
+      /*reserved to GlobalCollect platform*/
     @Override
     public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException {
         try {
@@ -307,7 +307,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
 
     }
-    //reserved to GlobalCollect platform
+    
     @Override
     public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
     	try {
@@ -318,12 +318,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if(customerAccount.getContactInformation() != null ) {
     			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
     		}
-    		
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
     		address.setCity(customerAccount.getAddress().getCity());
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-    		address.setHouseNumber(""); 
+    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
     		address.setStreet(customerAccount.getAddress().getAddress1());
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
