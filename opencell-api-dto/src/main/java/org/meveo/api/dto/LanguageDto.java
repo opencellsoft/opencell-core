@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
 
+import java.util.List;
+
 /**
  * The Class LanguageDto.
  *
@@ -53,6 +55,9 @@ public class LanguageDto extends AuditableEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
+
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new language dto.
@@ -82,6 +87,7 @@ public class LanguageDto extends AuditableEntityDto implements IEnableDto {
         super(language);
         code = language.getLanguageCode();
         description = language.getDescriptionEn();
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(language.getDescriptionI18n());
     }
 
     /**
@@ -133,5 +139,13 @@ public class LanguageDto extends AuditableEntityDto implements IEnableDto {
     @Override
     public Boolean isDisabled() {
         return disabled;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 
+import java.util.List;
+
 /**
  * The Class TerminationReasonDto.
  *
@@ -65,6 +67,8 @@ public class TerminationReasonDto extends BusinessEntityDto {
      */
     private boolean reimburseOneshots;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new termination reason dto.
      */
@@ -84,6 +88,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
         overrideProrata = subscriptionTerminationReason.getOverrideProrata();
         reimburseOneshots = subscriptionTerminationReason.isReimburseOneshots();
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(subscriptionTerminationReason.getDescriptionI18n()));
     }
 
     /**
@@ -180,5 +185,13 @@ public class TerminationReasonDto extends BusinessEntityDto {
     public String toString() {
         return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment
                 + ", applyTerminationCharges=" + applyTerminationCharges + "]";
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

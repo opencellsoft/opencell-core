@@ -28,6 +28,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.meveo.model.module.MeveoModule;
 
+import java.util.Map;
+
 /**
  * Business service model used for service template customization
  * 
@@ -59,6 +61,12 @@ public class BusinessServiceModel extends MeveoModule {
     @Type(type = "numeric_boolean")
     @Column(name = "duplicate_price_plan")
     private boolean duplicatePricePlan;
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public ServiceTemplate getServiceTemplate() {
         return serviceTemplate;
@@ -84,4 +92,19 @@ public class BusinessServiceModel extends MeveoModule {
         this.duplicatePricePlan = duplicatePricePlan;
     }
 
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
+    }
 }

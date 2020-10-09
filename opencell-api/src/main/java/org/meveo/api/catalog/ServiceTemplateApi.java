@@ -311,6 +311,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
+        if(postData.getLanguageDescriptions() != null) {
+            serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        }
 
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
@@ -398,6 +401,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
         if (postData.getMinimumLabelElSpark() != null) {
             serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        }
+        if(postData.getLanguageDescriptions() != null) {
+            serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         }
 
         if (postData.getMinimumChargeTemplate() != null) {

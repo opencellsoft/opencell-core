@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 
+import java.util.List;
+
 /**
  * The Class CountryDto.
  *
@@ -70,6 +72,9 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
      */
     private Boolean disabled;
 
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new country dto.
      */
@@ -94,6 +99,7 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
         if (country.getLanguage() != null) {
             languageCode = country.getLanguage().getLanguageCode();
         }
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(country.getDescriptionI18n());
     }
 
     /**
@@ -134,6 +140,7 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
                 languageCode = country.getLanguage().getLanguageCode();
             }
         }
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(country.getDescriptionI18n());
         disabled = tradingCountry.isDisabled();
     }
 
@@ -222,5 +229,13 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
     @Override
     public Boolean isDisabled() {
         return disabled;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

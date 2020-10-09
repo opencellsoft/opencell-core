@@ -19,6 +19,7 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -212,6 +213,13 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     @Transient
     private String descriptionOverride;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
@@ -481,4 +489,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
+    }
 }

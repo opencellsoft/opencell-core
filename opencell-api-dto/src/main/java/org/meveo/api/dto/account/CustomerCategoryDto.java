@@ -18,13 +18,18 @@
 
 package org.meveo.api.dto.account;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.crm.CustomerCategory;
+
+import java.util.List;
 
 /**
  * The Class CustomerCategoryDto.
@@ -69,6 +74,8 @@ public class CustomerCategoryDto extends BusinessEntityDto {
      */
     private String taxCategoryElSpark;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new customer category dto.
      */
@@ -87,6 +94,7 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         exonerationReason = customerCategory.getExonerationReason();
         exonerationTaxEl = customerCategory.getExonerationTaxEl();
         exonerationTaxElSpark = customerCategory.getExonerationTaxElSpark();
+        languageDescriptions = convertMultiLanguageFromMapOfValues(customerCategory.getDescriptionI18n());
         if (customerCategory.getAccountingCode() != null) {
             accountingCode = customerCategory.getAccountingCode().getCode();
         }
@@ -213,5 +221,13 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     public String toString() {
         return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark + ", exonerationReason="
                 + exonerationReason + ", accountingCode=" + accountingCode + "]";
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

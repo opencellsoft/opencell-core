@@ -28,7 +28,8 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IReferenceEntity;
+
+import java.util.Map;
 
 /**
  * Currency entity
@@ -60,6 +61,13 @@ public class Currency extends AuditableEntity {
     @Column(name = "system_currency")
     private Boolean systemCurrency;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
+
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -78,6 +86,14 @@ public class Currency extends AuditableEntity {
 
     public Boolean getSystemCurrency() {
         return systemCurrency;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
     }
 
     @Override
@@ -126,4 +142,13 @@ public class Currency extends AuditableEntity {
     public String getDescription() {
         return descriptionEn;
     }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.descriptionEn);
+        } else {
+            return this.descriptionEn;
+        }
+    }
+
 }

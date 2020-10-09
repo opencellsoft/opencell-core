@@ -168,6 +168,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDescription() != null) {
             entity.setDescription(StringUtils.isEmpty(dto.getDescription()) ? null : dto.getDescription());
         }
+        if(dto.getLanguageDescriptions() != null) {
+           entity.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), null));
+        }
         if (!StringUtils.isBlank(dto.getBillingTemplateName()) && StringUtils.isBlank(dto.getBillingTemplateNameEL())) {
             dto.setBillingTemplateNameEL(dto.getBillingTemplateName());
         }

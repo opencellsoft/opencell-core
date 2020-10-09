@@ -56,6 +56,9 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
         Channel channel = new Channel();
         channel.setCode(postData.getCode());
         channel.setDescription(postData.getDescription());
+        if(postData.getLanguageDescriptions() != null) {
+            channel.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        }
         if (postData.isDisabled() != null) {
             channel.setDisabled(postData.isDisabled());
         }
@@ -82,6 +85,9 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
 
         channel.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         channel.setDescription(postData.getDescription());
+        if(postData.getLanguageDescriptions() != null) {
+            channel.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        }
 
         channel = channelService.update(channel);
         return channel;
@@ -100,7 +106,7 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
             handleMissingParameters();
         }
 
-        ChannelDto ChannelDto = null;
+        ChannelDto ChannelDto;
 
         Channel Channel = channelService.findByCode(code);
 
@@ -121,7 +127,7 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
      * @throws MeveoApiException meveo api exception
      */
     public List<ChannelDto> list() throws MeveoApiException {
-        List<ChannelDto> ChannelDtos = new ArrayList<ChannelDto>();
+        List<ChannelDto> ChannelDtos = new ArrayList<>();
 
         List<Channel> channels = channelService.list();
         if (channels != null && !channels.isEmpty()) {
@@ -141,7 +147,7 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
      * @throws MeveoApiException meveo api exception
      */
     public List<ChannelDto> list(Boolean active) throws MeveoApiException {
-        List<ChannelDto> ChannelDtos = new ArrayList<ChannelDto>();
+        List<ChannelDto> ChannelDtos = new ArrayList<>();
 
         List<Channel> channels = channelService.list(active);
         if (channels != null && !channels.isEmpty()) {
