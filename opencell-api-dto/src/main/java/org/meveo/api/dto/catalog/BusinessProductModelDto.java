@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.model.module.MeveoModule;
 
@@ -45,6 +47,8 @@ public class BusinessProductModelDto extends MeveoModuleDto implements Serializa
     @NotNull
     @XmlElement(required = true)
     private ProductTemplateDto productTemplate;
+
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new business product model dto.
@@ -80,4 +84,11 @@ public class BusinessProductModelDto extends MeveoModuleDto implements Serializa
         this.productTemplate = productTemplate;
     }
 
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 }

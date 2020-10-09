@@ -453,7 +453,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     private void parseModuleInfoOnlyFromDtoBOM(BusinessOfferModel bom, BusinessOfferModelDto bomDto) throws MeveoApiException, BusinessException {
-        // nothing to do for now
+        if(bomDto.getLanguageDescriptions() != null) {
+            bom.setDescriptionI18n(convertMultiLanguageToMapOfValues(bomDto.getLanguageDescriptions(), null));
+        }
     }
 
     private void unpackAndInstallBOMItems(BusinessOfferModel bom, BusinessOfferModelDto bomDto) throws MeveoApiException, BusinessException {
@@ -474,9 +476,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     private void parseModuleInfoOnlyFromDtoBSM(BusinessServiceModel bsm, BusinessServiceModelDto bsmDto) throws MeveoApiException, BusinessException {
-
         bsm.setDuplicatePricePlan(bsmDto.isDuplicatePricePlan());
         bsm.setDuplicateService(bsmDto.isDuplicateService());
+        if(bsmDto.getLanguageDescriptions() != null) {
+            bsm.setDescriptionI18n(convertMultiLanguageToMapOfValues(bsmDto.getLanguageDescriptions(), null));
+        }
     }
 
     private void unpackAndInstallBSMItems(BusinessServiceModel bsm, BusinessServiceModelDto bsmDto) throws MeveoApiException, BusinessException {
@@ -504,7 +508,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     private void parseModuleInfoOnlyFromDtoBPM(BusinessProductModel bm, BusinessProductModelDto dto) {
-        // nothing to do for now
+        if(dto.getLanguageDescriptions() != null) {
+            bm.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), null));
+        }
     }
 
     private void unpackAndInstallBPMItems(BusinessProductModel businessModel, BusinessProductModelDto dto) throws MeveoApiException, BusinessException {

@@ -34,6 +34,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 
+import java.util.Map;
+
 /**
  * Subscription termination rule
  *
@@ -88,6 +90,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     @Column(name = "reimburse_oneshots")
     private boolean reimburseOneshots;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
+
     public boolean isApplyAgreement() {
         return applyAgreement;
     }
@@ -139,5 +148,21 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
 
     public void setReimburseOneshots(boolean reimburseOneshots) {
         this.reimburseOneshots = reimburseOneshots;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 }

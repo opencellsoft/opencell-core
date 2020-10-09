@@ -474,6 +474,7 @@ public class CustomerApi extends AccountEntityApi {
         CustomerCategory customerCategory = new CustomerCategory();
         customerCategory.setCode(postData.getCode());
         customerCategory.setDescription(postData.getDescription());
+        customerCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         if (postData.isExoneratedFromTaxes() != null) {
             customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
         }
@@ -569,6 +570,10 @@ public class CustomerApi extends AccountEntityApi {
 
         if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
             customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
+            toUpdate = true;
+        }
+        if (postData.getLanguageDescriptions() != null) {
+            customerCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
             toUpdate = true;
         }
 

@@ -18,12 +18,17 @@
 
 package org.meveo.api.dto.account;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.payments.CreditCategory;
+
+import java.util.List;
 
 /**
  * The Class CreditCategoryDto.
@@ -36,6 +41,8 @@ public class CreditCategoryDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 9096295121437014513L;
+
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new credit category dto.
@@ -51,6 +58,7 @@ public class CreditCategoryDto extends BusinessEntityDto {
      */
     public CreditCategoryDto(CreditCategory creditCategory) {
         super(creditCategory);
+        languageDescriptions = convertMultiLanguageFromMapOfValues(creditCategory.getDescriptionI18n());
     }
 
     @Override
@@ -58,4 +66,11 @@ public class CreditCategoryDto extends BusinessEntityDto {
         return "CreditCategoryDto [code=" + getCode() + ", description=" + getDescription() + "]";
     }
 
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 }

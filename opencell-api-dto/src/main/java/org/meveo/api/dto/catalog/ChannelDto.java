@@ -23,7 +23,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.Channel;
+
+import java.util.List;
 
 /**
  * The Class ChannelDto.
@@ -36,6 +39,8 @@ public class ChannelDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new channel dto.
@@ -51,6 +56,15 @@ public class ChannelDto extends EnableBusinessDto {
     public ChannelDto(Channel channel) {
         super(channel);
         id = channel.getId();
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(channel.getDescriptionI18n());
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 
     @Override

@@ -25,8 +25,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+
+import java.util.Map;
 
 /**
  * Language entity
@@ -56,6 +59,13 @@ public class Language extends AuditableEntity {
     @Size(max = 100)
     private String descriptionEn;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
+
     public String getLanguageCode() {
         return languageCode;
     }
@@ -70,6 +80,14 @@ public class Language extends AuditableEntity {
 
     public void setDescriptionEn(String descriptionEn) {
         this.descriptionEn = descriptionEn;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
     }
 
     @Override
@@ -104,5 +122,13 @@ public class Language extends AuditableEntity {
 
     public String getDescription() {
         return descriptionEn;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.descriptionEn);
+        } else {
+            return this.descriptionEn;
+        }
     }
 }

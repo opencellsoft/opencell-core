@@ -18,6 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -32,6 +33,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -73,6 +75,13 @@ public abstract class Calendar extends BusinessEntity {
     @Column(name = "init_date_el_sp", length = 2000)
     @Size(max = 2000)
     private String initDateELSpark;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     /**
      * Calendar initialization date
@@ -176,6 +185,14 @@ public abstract class Calendar extends BusinessEntity {
         this.initDateELSpark = initDateELSpark;
     }
 
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
     /**
      * Is calendar initialization with a starting date required to determine calendar dates
      * 
@@ -183,5 +200,13 @@ public abstract class Calendar extends BusinessEntity {
      */
     public boolean isInitializationRequired() {
         return false;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 }
