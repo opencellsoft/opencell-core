@@ -33,19 +33,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Set;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -107,6 +107,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -126,7 +127,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
@@ -289,6 +289,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -606,7 +609,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingCycle billingCycle = defaultBillingCycle;
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
         PaymentMethod paymentMethod = defaultPaymentMethod;
-        if (defaultPaymentMethod == null && billingAccount!=null) {
+        if (defaultPaymentMethod == null && billingAccount != null) {
             defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
         }
 
@@ -619,7 +622,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine postpaid invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
-                    if (defaultPaymentMethod == null && billingAccount!=null) {
+                    if (defaultPaymentMethod == null && billingAccount != null) {
                         defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
                     }
                     if (defaultBillingCycle == null) {
@@ -668,19 +671,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private PaymentMethod resolvePaymentMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, RatedTransaction rt) {
-        if(BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())){
-            if(Objects.nonNull(rt.getSubscription().getPaymentMethod())){
+        if (BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())) {
+            if (Objects.nonNull(rt.getSubscription().getPaymentMethod())) {
                 return rt.getSubscription().getPaymentMethod();
-            } else if(Objects.nonNull(billingAccount.getPaymentMethod())){
+            } else if (Objects.nonNull(billingAccount.getPaymentMethod())) {
                 return billingAccount.getPaymentMethod();
             }
         }
-        if(BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && (!billingCycle.isSplitPerPaymentMethod() && Objects.nonNull(billingAccount.getPaymentMethod()))){
+        if (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && (!billingCycle.isSplitPerPaymentMethod() && Objects.nonNull(billingAccount.getPaymentMethod()))) {
             return billingAccount.getPaymentMethod();
         }
         return defaultPaymentMethod;
     }
-
 
     /**
      * Creates invoices and their aggregates - IN new transaction
@@ -787,7 +789,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else{
+            } else {
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
@@ -922,7 +924,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate, isDraft, rtGroup.getBillingCycle(),
-                                rtGroup.getPaymentMethod(), rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
+                            rtGroup.getPaymentMethod(), rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balance);
                         invoiceList.add(invoiceAggregateProcessingInfo.invoice);
                     }
 
@@ -2393,7 +2395,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
         incrementBAInvoiceDate(billingRun, billingAccount);
     }
-    
+
     /**
      * Increment BA invoice date by ID.
      * 
@@ -2405,8 +2407,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void incrementBAInvoiceDate(BillingRun billingRun, Long billingAccountId) throws BusinessException {
-    	BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-    	incrementBAInvoiceDate(billingRun, billingAccount);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        incrementBAInvoiceDate(billingRun, billingAccount);
     }
 
     /**
@@ -2483,7 +2485,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
             .setParameter("invoiceDate", invoiceDate).getResultList();
     }
-    
+
     /**
      * Retrieve billingAccount ids matching billing run, invoice type, seller and invoice date combination.
      *
@@ -2494,8 +2496,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of billingAccount identifiers
      */
     public List<Long> getBillingAccountIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
-        return getEntityManager().createNamedQuery("Invoice.billingAccountIdByBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId).setParameter("sellerId", sellerId)
-            .setParameter("invoiceDate", invoiceDate).getResultList();
+        return getEntityManager().createNamedQuery("Invoice.billingAccountIdByBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
+            .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
 
     /**
@@ -2821,8 +2823,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *        non-paginated invoicing cases
      * @throws BusinessException BusinessException
      */
-    private void appendInvoiceAgregates(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isInvoiceAdjustment,
+    protected void appendInvoiceAgregates(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isInvoiceAdjustment,
             InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreRatedTransactionsExpected) throws BusinessException {
+
+        boolean isAggregateByUA = paramBeanFactory.getInstance().getPropertyAsBoolean("invoice.agregateByUA", true);
 
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
@@ -2844,7 +2848,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, Object[]> taxChangeMap = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.taxChangeMap : new HashMap<>();
 
         // Subcategory aggregates mapping. Key is ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
-        Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates : new HashMap<>();
+        Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates : new LinkedHashMap<>();
 
         Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<String>();
 
@@ -2859,8 +2863,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
 
-            scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_" + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_"
-                    + invoiceSubCategory.getId();
+            scaKey = invoiceSubCategory.getId().toString();
+            if (isAggregateByUA) {
+                scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_" + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_"
+                        + scaKey;
+            }
 
             Tax tax = ratedTransaction.getTax();
 
@@ -2890,7 +2897,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
-                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, ratedTransaction.getUserAccount(), ratedTransaction.getWallet(), invoice, invoiceSubCategory.getAccountingCode());
+                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, isAggregateByUA ? ratedTransaction.getUserAccount() : null, isAggregateByUA ? ratedTransaction.getWallet() : null, invoice,
+                    invoiceSubCategory.getAccountingCode());
                 scAggregate.updateAudit(currentUser);
 
                 String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
@@ -2975,8 +2983,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
 
             // Create category aggregates or update their amounts
-
-            String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId();
+            String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId().toString();
 
             CategoryInvoiceAgregate cAggregate = categoryAggregates.get(caKey);
             if (cAggregate == null) {
@@ -3014,7 +3021,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Map<Tax, BigDecimal> amountCumulativeForTax = scAggregate.getAmountsByTax();
 
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
+
             String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId();
+
             CategoryInvoiceAgregate cAggregate = categoryAggregates.get(caKey);
 
             if ((amountCumulativeForTax != null) && !BigDecimal.ZERO.equals(sumMapValues(amountCumulativeForTax))) {
@@ -3731,12 +3740,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal amountWithTax = amounts[1];
         BigDecimal amountTax = amounts[2];
 
-        RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
-                ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED,
-                userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount, invoiceSubCategory, null, null, null,
-            null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(),
-            ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null);
+        RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
+            ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount,
+            invoiceSubCategory, null, null, null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
+            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
         // #3355 : setting params 1,2,3
