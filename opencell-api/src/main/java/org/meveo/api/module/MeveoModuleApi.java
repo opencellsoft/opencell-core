@@ -436,8 +436,10 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     private void parseModuleInfoOnlyFromDtoBOM(BusinessOfferModel bom, BusinessOfferModelDto bomDto) throws MeveoApiException, BusinessException {
-        for (BaseEntityDto dto : bomDto.getModuleItems()) {
-            bom.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), BusinessServiceModel.class.getName(), null, null));
+        if(bomDto.getModuleItems() != null) {
+            for (BaseEntityDto dto : bomDto.getModuleItems()) {
+                bom.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), BusinessServiceModel.class.getName(), null, null));
+            }
         }
     }
 
