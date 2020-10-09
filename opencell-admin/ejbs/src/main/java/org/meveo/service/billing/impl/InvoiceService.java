@@ -2357,6 +2357,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        // /!\ DO NOT REMOVE THIS LINE
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
     }
 
