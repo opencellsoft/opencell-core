@@ -101,7 +101,6 @@ public class AccountEntityApi extends BaseApi {
             accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
             accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
         }
         setMinimumAmountElSubscription(postData, accountEntity);
     }
@@ -194,9 +193,6 @@ public class AccountEntityApi extends BaseApi {
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
                 accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
-                accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
             }
         }
         setMinimumAmountElSubscription(postData, accountEntity);

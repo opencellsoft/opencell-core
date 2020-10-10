@@ -31,6 +31,7 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
@@ -508,8 +509,8 @@ public class UserAccountApi extends AccountEntityApi {
      * @param ua the selected UserAccount
      * @return DTO representation of the UserAccount
      */
-    public UserAccountDto exportUserAccountHierarchy(UserAccount ua) {
-        UserAccountDto result = new UserAccountDto(ua);
+    public UserAccountDto exportUserAccountHierarchy(UserAccount ua, List<GDPRInfoDto> userAccountGdpr) {
+        UserAccountDto result = new UserAccountDto(ua, userAccountGdpr);
 
         if (ua.getSubscriptions() != null && !ua.getSubscriptions().isEmpty()) {
             for (Subscription sub : ua.getSubscriptions()) {

@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +77,9 @@ public class UserAccountDto extends AccountDto {
     
     /** The termination reason. */
     private String terminationReason;
+    
+    /** List of GDPR information**/
+    private List<GDPRInfoDto> infoGdpr;
 
     /**
      * Use for GET / LIST only.
@@ -124,6 +129,13 @@ public class UserAccountDto extends AccountDto {
         setRegistrationNo(e.getRegistrationNo());
         setVatNo(e.getVatNo());
     }
+	
+	public UserAccountDto(UserAccount e, List<GDPRInfoDto> userAccountGdpr) {
+		this(e);
+		if(userAccountGdpr != null && !userAccountGdpr.isEmpty()) {
+			setInfoGdpr(userAccountGdpr);
+		}
+	}
 	
 	public UserAccountDto(UserAccount e, boolean includeSubscription) {
 		this(e);
@@ -359,4 +371,19 @@ public class UserAccountDto extends AccountDto {
         return "UserAccountDto [billingAccount=" + billingAccount + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status
                 + ",statusDate=" + statusDate + ", terminationReason=" + terminationReason + ", subscriptions=" + subscriptions + "]";
     }
+
+	/**
+	 * @return the infoGdpr
+	 */
+	public List<GDPRInfoDto> getInfoGdpr() {
+		return infoGdpr;
+	}
+
+	/**
+	 * @param infoGdpr the infoGdpr to set
+	 */
+	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
+		this.infoGdpr = infoGdpr;
+	}
+    
 }
