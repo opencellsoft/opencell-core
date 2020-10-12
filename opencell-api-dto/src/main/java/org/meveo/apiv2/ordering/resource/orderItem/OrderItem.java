@@ -16,27 +16,36 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.models;
+package org.meveo.apiv2.ordering.resource.orderItem;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.order.OrderStatusEnum;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Value.Immutable
-@JsonSerialize
-public interface ApiException extends Resource{
+@Value.Style(jdkOnly=true)
+@JsonDeserialize(as = ImmutableOrderItem.class)
+public interface OrderItem extends Resource {
     @Nullable
-    Long getId();
+    String getItemId();
     @Nullable
-    String getCode();
+    @Schema(description = "Action requested on a product or product offer")
+    OrderItemActionEnum getAction();
     @Nullable
-    Response.Status getStatus();
+    @Schema(description = "Order status lifecycle")
+    OrderStatusEnum getStatus();
     @Nullable
-    String getDetails();
+    Resource getUserAccount();
     @Nullable
-    List<Cause> getCauses();
+    List<ProductInstance> getProductInstance();
+    @Nullable
+    Resource getOrder();
+    @Nullable
+    Subscription getSubscription();
 }
-
