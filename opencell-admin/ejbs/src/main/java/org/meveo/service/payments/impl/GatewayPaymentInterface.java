@@ -38,7 +38,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 /**
  * @author anasseh
  * @author Mounir Bahije
- * @author Mbarek Ait-yaazza
+ * @author Mbarek-Ay
  * @lastModifiedVersion 10.0.0
  *
  */
@@ -207,7 +207,7 @@ public interface GatewayPaymentInterface {
     
     /**
      * Declare a sepa direct debit on the psp and return the token for the future uses.
-     * 
+     * Used for example for Ingenico globalCollect Platform
      * @param customerAccount customer account.
      * @param alias An alias for the token. This can be used to visually represent the token.If no alias is given in Create token calls, a payment product specific default is used, e.g. the obfuscated card number for card payment products.
               Do not include any unobfuscated sensitive data in the alias.
