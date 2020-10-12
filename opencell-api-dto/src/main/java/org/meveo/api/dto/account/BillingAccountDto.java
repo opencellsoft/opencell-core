@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -184,6 +185,11 @@ public class BillingAccountDto extends AccountDto {
      * The option on how to check the threshold.
      */
     private ThresholdOptionsEnum checkThreshold;
+    
+    /**
+     * list of GDPR related to billing account
+     */
+    private List<GDPRInfoDto> infoGdpr;
 
     /**
      * 
@@ -278,6 +284,13 @@ public class BillingAccountDto extends AccountDto {
         }
 
         // End compatibility with pre-4.6 versions
+    }
+    
+    public BillingAccountDto(BillingAccount e, List<GDPRInfoDto> billingAccountGDPR) {
+    	this(e);
+    	if(billingAccountGDPR != null && !billingAccountGDPR.isEmpty()) {
+    		setInfoGdpr(billingAccountGDPR);
+    	}
     }
 	
 	public void addDiscountPlan(DiscountPlanDto dp) {
@@ -803,4 +816,19 @@ public class BillingAccountDto extends AccountDto {
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
+
+	/**
+	 * @return the infoGdpr
+	 */
+	public List<GDPRInfoDto> getInfoGdpr() {
+		return infoGdpr;
+	}
+
+	/**
+	 * @param infoGdpr the infoGdpr to set
+	 */
+	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
+		this.infoGdpr = infoGdpr;
+	}
+
 }
