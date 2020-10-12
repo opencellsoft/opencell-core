@@ -47,7 +47,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -804,7 +803,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @SuppressWarnings("unchecked")
 	public List<GDPRInfoDto> findCFMarkAsAnonymize(ICustomFieldEntity cu) {
-    	var maps = cu.getCfValuesAsValues();
+    	Map<String, Object> maps = cu.getCfValuesAsValues();
     	if(maps == null) return new ArrayList<>();
     	return maps.keySet()
     			.stream().map(key -> {
