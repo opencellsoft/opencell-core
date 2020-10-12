@@ -18,18 +18,23 @@
 
 package org.meveo.commons.persistence;
 
-
-
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.type.DoubleType;
 import org.hibernate.type.Type;
 
+/**
+ * A search function for a Custom field of type Double
+ */
 public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
 
-	@Override
-	public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-      return DoubleType.INSTANCE;
-   }
+    @Override
+    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+        return DoubleType.INSTANCE;
+    }
 
+    @Override
+    public String getCastType() {
+        return "numeric(23,12)";
+    }
 }

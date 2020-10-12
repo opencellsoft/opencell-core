@@ -65,6 +65,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
+
 /**
  * @author Andrius Karpavicius
  * @author Mohammed ELAZZOUZI
@@ -217,16 +218,17 @@ public class CustomTableApi extends BaseApi {
 //        }
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-        List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
-        customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
-        result.getCustomTableData().setValuesFromListofMap(list);
+        if (totalCount > 0) {
+            List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
+            customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
+            result.getCustomTableData().setValuesFromListofMap(list);
+        }
         return result;
     }
 
-	private List<String> extractFields(PagingAndFiltering pagingAndFiltering) {
-		return pagingAndFiltering.getFields() == null ? null :
-        	Stream.of((FIELD_ID+","+pagingAndFiltering.getFields()).split(",")).distinct().collect(Collectors.toList());
-	}
+    private List<String> extractFields(PagingAndFiltering pagingAndFiltering) {
+        return pagingAndFiltering.getFields() == null ? null : Stream.of((FIELD_ID + "," + pagingAndFiltering.getFields()).split(",")).distinct().collect(Collectors.toList());
+    }
 
     /**
      * Remove records, identified by 'id' value, from a custom table. If no 'id' values are passed, will delete all the records in a table.<br/>

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
 
@@ -55,6 +56,11 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
      */
     private String code;
 
+    /**
+     * Entity id
+     */
+    private Long id;
+
     public EntityReferenceWrapper() {
     }
 
@@ -73,6 +79,7 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
             classnameCode = ((CustomEntityInstance) entity).getCetCode();
         }
         code = entity.getCode();
+        id = (Long) ((IEntity) entity).getId();
     }
 
     /**
@@ -90,6 +97,9 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
             classnameCode = ((CustomEntityInstance) entity).getCetCode();
         }
         code = entity.getReferenceCode();
+        if (entity instanceof IEntity) {
+            id = (Long) ((IEntity) entity).getId();
+        }
     }
 
     /**
@@ -145,6 +155,20 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+
+    /**
+     * @return Entity identifier
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id Entity identifier
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isEmpty() {

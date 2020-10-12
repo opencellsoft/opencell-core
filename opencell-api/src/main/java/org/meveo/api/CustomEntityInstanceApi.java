@@ -18,8 +18,9 @@
 
 package org.meveo.api;
 
+import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +29,12 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -38,12 +42,14 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Andrius Karpavicius
@@ -172,7 +178,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
+
         if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode)) && !currentUser.hasRole("ReadAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
@@ -185,29 +191,40 @@ public class CustomEntityInstanceApi extends BaseApi {
         return new CustomEntityInstanceDto(cei, entityToDtoConverter.getCustomFieldsDTO(cei, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public List<CustomEntityInstanceDto> list(String cetCode) throws MeveoApiException {
+    public CustomEntityInstancesResponseDto list(String cetCode, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         if (StringUtils.isBlank(cetCode)) {
             missingParameters.add("customEntityTemplateCode");
         }
 
         handleMissingParameters();
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))  && !currentUser.hasRole("ReadAllCE")) {
+        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode)) && !currentUser.hasRole("ReadAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
 
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("cetCode", cetCode);
-        PaginationConfiguration config = new PaginationConfiguration(filter);
-
-        List<CustomEntityInstance> customEntityInstances = customEntityInstanceService.list(config);
-        List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
-
-        for (CustomEntityInstance instance : customEntityInstances) {
-            customEntityInstanceDtos.add(new CustomEntityInstanceDto(instance, entityToDtoConverter.getCustomFieldsDTO(instance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
         }
 
-        return customEntityInstanceDtos;
+        CustomEntityInstancesResponseDto result = new CustomEntityInstancesResponseDto();
+        result.setPaging(pagingAndFiltering);
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, null, pagingAndFiltering, cetCode);
+        pagingAndFiltering.getFilters().put("cetCode", cetCode);
+
+        Long totalCount = customEntityInstanceService.count(paginationConfig);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        
+        if (totalCount > 0) {
+            List<CustomEntityInstance> customEntityInstances = customEntityInstanceService.list(paginationConfig);
+            List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
+
+            for (CustomEntityInstance instance : customEntityInstances) {
+                customEntityInstanceDtos.add(new CustomEntityInstanceDto(instance, entityToDtoConverter.getCustomFieldsDTO(instance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+            result.setCustomEntityInstances(customEntityInstanceDtos);
+        }
+        return result;
     }
 
     public void createOrUpdate(CustomEntityInstanceDto dto) throws MeveoApiException, BusinessException {
@@ -245,8 +262,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei);
 
-        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields() != null ? ceiDto.getCustomFields().getCustomField() : new ArrayList<CustomFieldDto>(), true,
-            isNew, cei);
+        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields() != null ? ceiDto.getCustomFields().getCustomField() : new ArrayList<CustomFieldDto>(), true, isNew, cei);
     }
 
     /**
@@ -260,7 +276,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         CustomEntityInstance cei = ceiToUpdate;
         if (ceiToUpdate == null) {
-            cei = new CustomEntityInstance();            
+            cei = new CustomEntityInstance();
         }
         cei.setCode(dto.getCode());
         cei.setCetCode(dto.getCetCode());
@@ -283,8 +299,7 @@ public class CustomEntityInstanceApi extends BaseApi {
      * @throws BusinessException A general business exception
      * @throws ActionForbiddenException User does not have sufficient right to perform operation
      */
-    public void enableOrDisable(String cetCode, String code, boolean enable)
-            throws EntityDoesNotExistsException, MissingParameterException, BusinessException, ActionForbiddenException {
+    public void enableOrDisable(String cetCode, String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException, ActionForbiddenException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");

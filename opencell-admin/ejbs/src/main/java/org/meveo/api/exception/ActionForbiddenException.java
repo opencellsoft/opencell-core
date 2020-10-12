@@ -45,11 +45,19 @@ public class ActionForbiddenException extends MeveoApiException {
         super("Action '" + action + "' on entity '" + entityClass.getName() + "' with code '" + entityCode + "' is not allowed  for reason: " + reason + "'");
 
         this.reason = reason;
-        
+
         setErrorCode(MeveoApiErrorCodeEnum.ACTION_FORBIDDEN);
     }
 
     public String getReason() {
         return reason;
+    }
+
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
     }
 }
