@@ -572,13 +572,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
-        // Register dd payment methods in payment gateway and obtain a token id
-        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
-        	 PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(entity, ddPaymentMethod, null);
-             if (paymentGateway != null && ddPaymentMethod.getTokenId() == null) {
-                 paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
-        	}
-        }
 
         entity.ensureOnePreferredPaymentMethod();
         super.create(entity);
@@ -601,16 +594,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
-        }
-        
-        // Register dd payment methods in payment gateway and obtain a token id
-        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
-        	if(ddPaymentMethod.getTokenId() == null){
-        		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
-        	}
-        }
-        
-
+        }  
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
     }
