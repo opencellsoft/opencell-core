@@ -16,27 +16,21 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.models;
+package org.meveo.apiv2.ordering.resource.order;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Value.Immutable
-@JsonSerialize
-public interface ApiException extends Resource{
+@Value.Style(jdkOnly=true)
+@JsonDeserialize(as = ImmutablePaymentMethod.class)
+public interface PaymentMethod extends Resource {
     @Nullable
-    Long getId();
-    @Nullable
-    String getCode();
-    @Nullable
-    Response.Status getStatus();
-    @Nullable
-    String getDetails();
-    @Nullable
-    List<Cause> getCauses();
+    @Schema(description = "Payment Method types")
+    PaymentMethodEnum getType();
 }
-

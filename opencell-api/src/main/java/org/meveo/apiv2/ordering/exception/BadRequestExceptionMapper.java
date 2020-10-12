@@ -16,27 +16,26 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.models;
+package org.meveo.apiv2.ordering.exception;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.immutables.value.Value;
+import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+import javax.ws.rs.ext.ExceptionMapper;
 
-@Value.Immutable
-@JsonSerialize
-public interface ApiException extends Resource{
-    @Nullable
-    Long getId();
-    @Nullable
-    String getCode();
-    @Nullable
-    Response.Status getStatus();
-    @Nullable
-    String getDetails();
-    @Nullable
-    List<Cause> getCauses();
+public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final ExceptionSerializer exceptionSerializer = new ExceptionSerializer("400");
+
+    @Override
+    public Response toResponse(BadRequestException exception) {
+        log.error("A bad request exception occurred ", exception);
+        return Response.status(Response.Status.BAD_REQUEST).entity(exceptionSerializer.toApiError(exception))
+                .type(MediaType.APPLICATION_JSON).header(Validation.VALIDATION_HEADER, "true")
+                .build();
+    }
 }
-

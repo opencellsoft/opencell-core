@@ -16,27 +16,26 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.models;
+package org.meveo.apiv2.ordering.exception;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.immutables.value.Value;
+import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+import javax.ws.rs.ext.ExceptionMapper;
 
-@Value.Immutable
-@JsonSerialize
-public interface ApiException extends Resource{
-    @Nullable
-    Long getId();
-    @Nullable
-    String getCode();
-    @Nullable
-    Response.Status getStatus();
-    @Nullable
-    String getDetails();
-    @Nullable
-    List<Cause> getCauses();
+public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final ExceptionSerializer exceptionSerializer = new ExceptionSerializer("404");
+
+    @Override
+    public Response toResponse(NotFoundException exception) {
+        log.error("A not found exception occurred ", exception);
+        return Response.status(Response.Status.NOT_FOUND).entity(exceptionSerializer.toApiError(exception))
+                .type(MediaType.APPLICATION_JSON).header(Validation.VALIDATION_HEADER, "true")
+                .build();
+    }
 }
-
