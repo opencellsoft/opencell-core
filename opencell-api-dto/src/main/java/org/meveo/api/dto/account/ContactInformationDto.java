@@ -19,12 +19,10 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
@@ -47,10 +45,8 @@ public class ContactInformationDto implements Serializable {
     /** The mobile. */
     protected String mobile;
     
-    /** address **/
-    protected AddressDto address;
-    
-    
+    /** The fax. */
+    protected String fax;
 
     /**
      * Instantiates a new contact information dto.
@@ -68,14 +64,7 @@ public class ContactInformationDto implements Serializable {
         email = contactInformation.getEmail();
         phone = contactInformation.getPhone();
         mobile = contactInformation.getMobile();
-        
-    }
-    
-    public ContactInformationDto(ContactInformation contactInformation, Address address) {
-    	this(contactInformation);
-    	if(address != null) {
-    		this.address  = new AddressDto(address);
-    	}
+        fax = contactInformation.getFax();
     }
 
     /**
@@ -132,23 +121,27 @@ public class ContactInformationDto implements Serializable {
         this.mobile = mobile;
     }
 
+    /**
+     * Gets the fax.
+     *
+     * @return the fax
+     */
+    public String getFax() {
+        return fax;
+    }
+
+    /**
+     * Sets the fax.
+     *
+     * @param fax the new fax
+     */
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
     @Override
     public String toString() {
-        return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + "]";
+        return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + "]";
     }
 
-	/**
-	 * @return the address
-	 */
-	public AddressDto getAddress() {
-		return address;
-	}
-
-	/**
-	 * @param address the address to set
-	 */
-	public void setAddress(AddressDto address) {
-		this.address = address;
-	}
 }

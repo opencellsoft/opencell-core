@@ -18,37 +18,13 @@
 
 package org.meveo.api.account;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletResponse;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.AuditableEntityDto;
-import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
@@ -76,17 +52,15 @@ import org.meveo.api.sequence.GenericSequenceApi;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -96,7 +70,6 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -107,8 +80,26 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Edward P. Legaspi
@@ -167,9 +158,6 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private TaxCategoryService taxCategoryService;
-    
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -815,6 +803,9 @@ public class CustomerApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(customerDto.getContactInformation().getMobile())) {
                     existedCustomerDto.getContactInformation().setMobile(customerDto.getContactInformation().getMobile());
                 }
+                if (!StringUtils.isBlank(customerDto.getContactInformation().getFax())) {
+                    existedCustomerDto.getContactInformation().setFax(customerDto.getContactInformation().getFax());
+                }
             }
             if (!StringUtils.isBlank(customerDto.getVatNo())) {
                 existedCustomerDto.setVatNo(customerDto.getVatNo());
@@ -830,7 +821,6 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
-    
     /**
      * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
      * zipped file along with the pdf invoices.
@@ -843,16 +833,14 @@ public class CustomerApi extends AccountEntityApi {
         CustomerDto result;
 
         Customer customer = customerService.findByCode(customerCode);
-        if (customer == null){
+        if (customer == null) {
             throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }
-        
-        List<GDPRInfoDto> customerGdpr = customFieldTemplateService.findCFMarkAsAnonymize(customer);
-        result = new CustomerDto(customer, customerGdpr);
+
+        result = new CustomerDto(customer);
         if (customer.getCustomerAccounts() != null && !customer.getCustomerAccounts().isEmpty()) {
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                List<GDPRInfoDto> customerAccountGdpr = customFieldTemplateService.findCFMarkAsAnonymize(ca);
-                result.getCustomerAccounts().getCustomerAccount().add(customerAccountApi.exportCustomerAccountHierarchy(ca, customerAccountGdpr));
+                result.getCustomerAccounts().getCustomerAccount().add(customerAccountApi.exportCustomerAccountHierarchy(ca));
             }
         }
 

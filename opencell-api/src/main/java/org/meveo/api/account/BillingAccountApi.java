@@ -30,7 +30,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
@@ -83,7 +82,6 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.tax.TaxCategoryService;
@@ -148,8 +146,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private TaxCategoryService taxCategoryService;
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
     
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -897,8 +893,8 @@ public class BillingAccountApi extends AccountEntityApi {
      * @param ba the selected BillingAccount
      * @return DTO representation of BillingAccount
      */
-    public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba, List<GDPRInfoDto> billingAccountGDPR) {
-        BillingAccountDto result = new BillingAccountDto(ba, billingAccountGDPR);
+    public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
+        BillingAccountDto result = new BillingAccountDto(ba);
 
         if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
             for (Invoice invoice : ba.getInvoices()) {
@@ -908,8 +904,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (ba.getUsersAccounts() != null && !ba.getUsersAccounts().isEmpty()) {
             for (UserAccount ua : ba.getUsersAccounts()) {
-            	List<GDPRInfoDto> userAccountGdpr = customFieldTemplateService.findCFMarkAsAnonymize(ua);
-                result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua, userAccountGdpr));
+                result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua));
             }
         }
 

@@ -18,18 +18,6 @@
 
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -38,6 +26,16 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Customer Account DTO.
@@ -155,9 +153,6 @@ public class CustomerAccountDto extends AccountDto {
     @XmlElement
     private Boolean thresholdPerEntity;
 
-    /** information GDPR **/
-    private List<GDPRInfoDto> infoGdpr;
-
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
@@ -237,13 +232,6 @@ public class CustomerAccountDto extends AccountDto {
         if (e.getCheckThreshold() != null) {
             setCheckThreshold(e.getCheckThreshold());
         }
-    }
-    
-    public CustomerAccountDto(CustomerAccount e, List<GDPRInfoDto> gdpr) {
-    	this(e);
-    	if(gdpr != null && !gdpr.isEmpty()) {
-    		setInfoGdpr(gdpr);
-    	}
     }
 
     /**
@@ -666,18 +654,4 @@ public class CustomerAccountDto extends AccountDto {
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
-
-	/**
-	 * @return the infoGdpr
-	 */
-	public List<GDPRInfoDto> getInfoGdpr() {
-		return infoGdpr;
-	}
-
-	/**
-	 * @param infoGdpr the infoGdpr to set
-	 */
-	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
-		this.infoGdpr = infoGdpr;
-	}
 }

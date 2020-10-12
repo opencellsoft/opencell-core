@@ -18,19 +18,8 @@
 
 package org.meveo.api.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -66,11 +55,19 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -116,9 +113,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
-
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
 
     public CustomerAccount create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -696,6 +690,9 @@ public class CustomerAccountApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getMobile())) {
                     existedCustomerAccountDto.getContactInformation().setMobile(customerAccountDto.getContactInformation().getMobile());
                 }
+                if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getFax())) {
+                    existedCustomerAccountDto.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
+                }
             }
             if (!StringUtils.isBlank(customerAccountDto.getVatNo())) {
                 existedCustomerAccountDto.setVatNo(customerAccountDto.getVatNo());
@@ -717,8 +714,8 @@ public class CustomerAccountApi extends AccountEntityApi {
      * @param ca the selected CustomerAccount
      * @return DTO representation of a CustomerAccount
      */
-    public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca, List<GDPRInfoDto> customerAccountGdpr) {
-        CustomerAccountDto result = new CustomerAccountDto(ca, customerAccountGdpr);
+    public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
+        CustomerAccountDto result = new CustomerAccountDto(ca);
 
         if (ca.getAccountOperations() != null && !ca.getAccountOperations().isEmpty()) {
             for (AccountOperation ao : ca.getAccountOperations()) {
@@ -728,8 +725,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
             for (BillingAccount ba : ca.getBillingAccounts()) {
-            	List<GDPRInfoDto> billingAccountGDPR = customFieldTemplateService.findCFMarkAsAnonymize(ba);
-                result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba, billingAccountGDPR));
+                result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba));
             }
         }
 

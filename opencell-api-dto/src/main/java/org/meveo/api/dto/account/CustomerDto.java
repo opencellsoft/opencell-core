@@ -20,15 +20,12 @@ package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
@@ -88,10 +85,6 @@ public class CustomerDto extends AccountDto {
      */
     @XmlElement
     private Boolean thresholdPerEntity;
-    
-
-    /** information GDPR **/
-    private List<GDPRInfoDto> infoGdpr;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -132,7 +125,7 @@ public class CustomerDto extends AccountDto {
 		}
 
         if (e.getContactInformation() != null) {
-            setContactInformation(new ContactInformationDto(e.getContactInformation(), e.getAddress()));
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
         }
 
         if (e.getAdditionalDetails() != null) {
@@ -157,13 +150,6 @@ public class CustomerDto extends AccountDto {
         }
          
     }
-	
-	public CustomerDto(Customer e, List<GDPRInfoDto> customField) {
-		this(e);
-		if(customField != null &&!customField.isEmpty()) {
-			setInfoGdpr(customField);
-		}
-	}
 
     /**
      * Gets the customer category.
@@ -313,20 +299,6 @@ public class CustomerDto extends AccountDto {
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
-
-	/**
-	 * @return the infoGdpr
-	 */
-	public List<GDPRInfoDto> getInfoGdpr() {
-		return infoGdpr;
-	}
-
-	/**
-	 * @param infoGdpr the infoGdpr to set
-	 */
-	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
-		this.infoGdpr = infoGdpr;
-	}
 
     @Override
     public String toString() {
