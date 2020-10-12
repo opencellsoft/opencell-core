@@ -2356,6 +2356,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void assignInvoiceNumber(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         Invoice invoice = findById(invoiceId);
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
+
+        BillingAccount billingAccount = invoice.getBillingAccount();
+
+        billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         invoice = update(invoice);
     }
 
@@ -2398,10 +2404,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Increment BA invoice date by ID.
-     * 
+     *
      * @param billingRun
      * @param billingAccount
-     * 
+     *
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
