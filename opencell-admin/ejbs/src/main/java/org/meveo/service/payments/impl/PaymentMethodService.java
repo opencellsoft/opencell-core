@@ -311,19 +311,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner(); 
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
-        if (paymentGateway == null) {
-            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
-        }
-        try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-        } catch (Exception e) { 
-            log.warn("Cant find payment gateway");
-        }
+        if (paymentGateway != null) {
+            try {
+                gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
+            } catch (Exception e) {
+                log.warn("Cant find payment gateway");
+            }
 
-        if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)){
-            String tockenID = gatewayPaymentInterface.createSepaDirectDebitToken(customerAccount, alias, accountHolderName, iban); 
-            ddpaymentMethod.setTokenId(tockenID);
-        } 
+            if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban) && !StringUtils.isBlank(accountHolderName)){
+                String tockenID = gatewayPaymentInterface.createSepaDirectDebitToken(customerAccount, alias, accountHolderName, iban);
+                ddpaymentMethod.setTokenId(tockenID);
+            }
+        } else {
+            log.error("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
     }
     
     /**
