@@ -17,22 +17,35 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.toPlainString;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.*;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
+import org.meveo.model.payments.*;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -45,78 +58,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.PersistenceUtils;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.order.Order;
-import org.meveo.model.order.OrderItem;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.shared.ContactInformation;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.script.Script;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
+import static org.meveo.commons.utils.NumberUtils.toPlainString;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
@@ -314,7 +262,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
         String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
-        List<RatedTransaction> ratedTransactions = null;
+        List<RatedTransaction> ratedTransactions = invoice.getDraftRatedTransactions();
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
         if (!isVirtual) {
@@ -629,7 +577,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         if (!isVirtual && displayDetail) {
-            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
+            ratedTransactions.addAll(ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice()));
         }
         
         addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual, invoiceAgregates, hasInvoiceAgregates, ratedTransactions,

@@ -80,6 +80,7 @@ import org.meveo.model.tax.TaxClass;
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
+        @NamedQuery(name = "WalletOperation.listByIds", query = "SELECT o FROM WalletOperation o where o.id IN :idList"),
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT o.id FROM WalletOperation o join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND o.id IN :walletIdList"),
         @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.id=:ratedTransactionId"),
 

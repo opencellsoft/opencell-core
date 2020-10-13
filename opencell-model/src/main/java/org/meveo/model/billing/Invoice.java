@@ -442,6 +442,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private String description;
 
     /**
+     *
+     */
+    @Transient
+    private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
+
+    /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
@@ -1086,6 +1092,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setExternalRef(String externalRef) {
 		this.externalRef = externalRef;
 	}
-    
-    
+
+
+    public void setDraftRatedTransactions(List<RatedTransaction> draftRatedTransactions) {
+        this.draftRatedTransactions = draftRatedTransactions;
+    }
+
+    public List<RatedTransaction> getDraftRatedTransactions() {
+        return draftRatedTransactions;
+    }
 }
