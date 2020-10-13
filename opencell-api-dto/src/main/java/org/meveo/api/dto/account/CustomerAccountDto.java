@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -161,6 +162,9 @@ public class CustomerAccountDto extends AccountDto {
     @XmlElement
     private Boolean thresholdPerEntity;
 
+    /** information GDPR **/
+    private List<GDPRInfoDto> infoGdpr;
+
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
@@ -240,6 +244,13 @@ public class CustomerAccountDto extends AccountDto {
             setCheckThreshold(e.getCheckThreshold());
             setThresholdPerEntity(e.isThresholdPerEntity());
         }
+    }
+    
+    public CustomerAccountDto(CustomerAccount e, List<GDPRInfoDto> gdpr) {
+    	this(e);
+    	if(gdpr != null && !gdpr.isEmpty()) {
+    		setInfoGdpr(gdpr);
+    	}
     }
 
     /**
@@ -677,4 +688,18 @@ public class CustomerAccountDto extends AccountDto {
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
     }
+
+	/**
+	 * @return the infoGdpr
+	 */
+	public List<GDPRInfoDto> getInfoGdpr() {
+		return infoGdpr;
+	}
+
+	/**
+	 * @param infoGdpr the infoGdpr to set
+	 */
+	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
+		this.infoGdpr = infoGdpr;
+	}
 }

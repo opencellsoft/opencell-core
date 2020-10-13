@@ -819,7 +819,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         List resultList = query.getResultList();
 		return resultList;
 	}
-
+	
 	/**
      * loop for each custom field and check if it mark as anonymized 
      * @param cu
