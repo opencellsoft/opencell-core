@@ -42,7 +42,6 @@ import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
-import org.meveo.security.UserEvent;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
