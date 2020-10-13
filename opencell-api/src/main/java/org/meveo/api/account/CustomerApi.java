@@ -45,6 +45,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.AuditableEntityDto;
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
@@ -89,6 +90,7 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -159,6 +161,9 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private TaxCategoryService taxCategoryService;
+    
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -740,9 +745,6 @@ public class CustomerApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(customerDto.getContactInformation().getMobile())) {
                     existedCustomerDto.getContactInformation().setMobile(customerDto.getContactInformation().getMobile());
                 }
-                if (!StringUtils.isBlank(customerDto.getContactInformation().getFax())) {
-                    existedCustomerDto.getContactInformation().setFax(customerDto.getContactInformation().getFax());
-                }
             }
             if (!StringUtils.isBlank(customerDto.getVatNo())) {
                 existedCustomerDto.setVatNo(customerDto.getVatNo());
@@ -758,6 +760,7 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
+    
     /**
      * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
      * zipped file along with the pdf invoices.
@@ -770,14 +773,16 @@ public class CustomerApi extends AccountEntityApi {
         CustomerDto result;
 
         Customer customer = customerService.findByCode(customerCode);
-        if (customer == null) {
+        if (customer == null){
             throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }
-
-        result = new CustomerDto(customer);
+        
+        List<GDPRInfoDto> customerGdpr = customFieldTemplateService.findCFMarkAsAnonymize(customer);
+        result = new CustomerDto(customer, customerGdpr);
         if (customer.getCustomerAccounts() != null && !customer.getCustomerAccounts().isEmpty()) {
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                result.getCustomerAccounts().getCustomerAccount().add(customerAccountApi.exportCustomerAccountHierarchy(ca));
+                List<GDPRInfoDto> customerAccountGdpr = customFieldTemplateService.findCFMarkAsAnonymize(ca);
+                result.getCustomerAccounts().getCustomerAccount().add(customerAccountApi.exportCustomerAccountHierarchy(ca, customerAccountGdpr));
             }
         }
 
