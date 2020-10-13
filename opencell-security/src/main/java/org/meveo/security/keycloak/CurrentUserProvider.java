@@ -263,7 +263,9 @@ public class CurrentUserProvider {
 	 * @param user
 	 */
 	private void triggerNewUserNotification(User user) {
-		userEventProducer.fire(user);
+		if(user!=null && user.getUserName()!=null && !user.getUserName().equalsIgnoreCase(getForcedUsername())) {
+			userEventProducer.fire(user);
+		}
 	}
 
 
