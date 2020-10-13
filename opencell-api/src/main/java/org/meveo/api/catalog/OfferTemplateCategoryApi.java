@@ -68,6 +68,9 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         offerTemplateCategory.setCode(postData.getCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
+        if(postData.getLanguageDescriptions() != null) {
+            offerTemplateCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        }
         if (postData.isActive() != null) {
             offerTemplateCategory.setActive(postData.isActive());
         } else if (postData.isDisabled() != null) {
@@ -137,6 +140,9 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
+        if(postData.getLanguageDescriptions() != null) {
+            offerTemplateCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        }
 
         try {
             saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64());

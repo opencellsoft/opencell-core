@@ -24,6 +24,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -43,6 +44,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -271,6 +273,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getCounterValue", MeveoFunctionMapper.class.getMethod("getCounterValue", ICounterEntity.class, String.class));
             addFunction("mv", "getCounterValueByDate", MeveoFunctionMapper.class.getMethod("getCounterValueByDate", ICounterEntity.class, String.class, Date.class));
+            addFunction("mv", "getLocalizedDescription", MeveoFunctionMapper.class.getMethod("getLocalizedDescription", IEntity.class, String.class));
 
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1840,4 +1843,14 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return getCounterPeriodService().getCounterValueByDate(entity, counterCode, date);
     }
 
+    public static String getLocalizedDescription(IEntity entity, String lang) {
+        String result = "";
+        try {
+            Method method = entity.getClass().getMethod("getLocalizedDescription", String.class);
+            result = (String) method.invoke(entity, lang);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
+            log.error(exception.getMessage());
+        }
+        return result;
+    }
 }

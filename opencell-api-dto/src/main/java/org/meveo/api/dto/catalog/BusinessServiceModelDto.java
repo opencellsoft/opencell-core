@@ -24,8 +24,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.model.module.MeveoModule;
+
+import java.util.List;
 
 /**
  * The Class BusinessServiceModelDto.
@@ -49,6 +52,8 @@ public class BusinessServiceModelDto extends MeveoModuleDto {
 
     /** The duplicate price plan. */
     private boolean duplicatePricePlan;
+
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new business service model dto.
@@ -123,5 +128,13 @@ public class BusinessServiceModelDto extends MeveoModuleDto {
     public String toString() {
         return "BusinessServiceModelDto [serviceTemplate=" + serviceTemplate + ", duplicateService=" + duplicateService + ", duplicatePricePlan=" + duplicatePricePlan
                 + ", toString()=" + super.toString() + "]";
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

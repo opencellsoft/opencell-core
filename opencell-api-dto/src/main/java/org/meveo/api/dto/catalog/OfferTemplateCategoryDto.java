@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
@@ -74,6 +76,11 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
+    private List<LanguageDescriptionDto> languageLabels;
+
+
     /**
      * Instantiates a new offer template category dto.
      */
@@ -106,6 +113,8 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
             this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
             this.setActive(offerTemplateCategory.isActive());
             this.imagePath = offerTemplateCategory.getImagePath();
+            this.languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(offerTemplateCategory.getDescriptionI18n());
+            this.languageLabels = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(offerTemplateCategory.getDescriptionI18n());
 
             customFields = customFieldInstances;
 
@@ -309,6 +318,22 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageLabels() {
+        return languageLabels;
+    }
+
+    public void setLanguageLabels(List<LanguageDescriptionDto> languageLabels) {
+        this.languageLabels = languageLabels;
     }
 
     @Override

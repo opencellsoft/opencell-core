@@ -38,4 +38,12 @@ public class AccessDeniedException extends MeveoApiException {
         super("Insufficient permissions to access " + clazz.getSimpleName() + " with code=" + code);
         setErrorCode(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION);
     }
+
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
+    }
 }

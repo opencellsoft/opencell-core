@@ -920,4 +920,12 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setParameter3El(String parameter3El) {
         this.parameter3El = parameter3El;
     }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
+    }
 }

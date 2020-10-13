@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
@@ -36,6 +37,8 @@ import org.meveo.model.catalog.WalletTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.util.List;
 
 /**
  * The Class ServiceTemplateDto.
@@ -125,6 +128,9 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     @JsonInclude(Include.NON_NULL)
     private SubscriptionRenewalDto renewalRule;
 
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Instantiates a new service template dto.
      */
@@ -148,7 +154,8 @@ public class ServiceTemplateDto extends EnableBusinessDto {
         minimumAmountElSpark = serviceTemplate.getMinimumAmountElSpark();
         minimumLabelEl = serviceTemplate.getMinimumLabelEl();
         minimumLabelElSpark = serviceTemplate.getMinimumLabelElSpark();
-        
+        languageDescriptions = (LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(serviceTemplate.getDescriptionI18n()));
+
         if(serviceTemplate.getMinimumInvoiceSubCategory() != null) {
             minimumInvoiceSubCategory = serviceTemplate.getMinimumInvoiceSubCategory().getCode();
         }
@@ -575,5 +582,13 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

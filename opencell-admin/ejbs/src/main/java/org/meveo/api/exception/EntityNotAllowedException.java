@@ -26,12 +26,18 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  **/
 public class EntityNotAllowedException extends MeveoApiException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public EntityNotAllowedException(Class<?> clazz, Class<?> clazz2, String code) {
-		super(clazz.getSimpleName() + " with code=" + code
-				+ " not allowed on "+clazz2.getSimpleName());
-		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_NOT_ALLOWED_EXCEPTION);
-	}
+    public EntityNotAllowedException(Class<?> clazz, Class<?> clazz2, String code) {
+        super(clazz.getSimpleName() + " with code=" + code + " not allowed on " + clazz2.getSimpleName());
+        setErrorCode(MeveoApiErrorCodeEnum.ENTITY_NOT_ALLOWED_EXCEPTION);
+    }
 
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
+    }
 }

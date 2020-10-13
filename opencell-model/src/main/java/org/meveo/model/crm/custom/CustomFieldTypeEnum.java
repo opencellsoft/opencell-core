@@ -49,7 +49,7 @@ public enum CustomFieldTypeEnum {
     /**
      * Double value
      */
-    DOUBLE(false, Double.class, "numeric(23, 12)"),
+    DOUBLE(false, Double.class, "numeric(23,12)"),
 
     /**
      * String value picked from a list of values
@@ -69,7 +69,7 @@ public enum CustomFieldTypeEnum {
     /**
      * A long string value
      */
-    TEXT_AREA(false, String.class, StringUtils.EMPTY),
+    TEXT_AREA(false, String.class, "text"),
 
     /**
      * An embedded entity data

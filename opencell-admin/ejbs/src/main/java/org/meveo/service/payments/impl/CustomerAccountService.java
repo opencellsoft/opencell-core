@@ -575,8 +575,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         // Register dd payment methods in payment gateway and obtain a token id
         for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
         	 PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(entity, ddPaymentMethod, null);
-             if (paymentGateway != null && ddPaymentMethod.getTokenId()==null) { 
-             paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
+             if (paymentGateway != null && ddPaymentMethod.getTokenId() == null) {
+                 paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
         	}
         }
 

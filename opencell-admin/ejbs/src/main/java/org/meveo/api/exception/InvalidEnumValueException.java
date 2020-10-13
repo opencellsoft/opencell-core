@@ -25,13 +25,21 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  **/
 public class InvalidEnumValueException extends MeveoApiException {
 
-	private static final long serialVersionUID = 6948986026477833086L;
+    private static final long serialVersionUID = 6948986026477833086L;
 
-	public InvalidEnumValueException() {
-	}
+    public InvalidEnumValueException() {
+    }
 
-	public InvalidEnumValueException(String enumType, String value) {
-		super("Enum of type=" + enumType + " doesn't have a value=" + value);
-		setErrorCode(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE);
-	}
+    public InvalidEnumValueException(String enumType, String value) {
+        super("Enum of type=" + enumType + " doesn't have a value=" + value);
+        setErrorCode(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE);
+    }
+
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
+    }
 }

@@ -65,6 +65,7 @@ public class CurrencyApi extends BaseApi {
             currency = new Currency();
             currency.setCurrencyCode(postData.getCode());
             currency.setDescriptionEn(postData.getDescription());
+            currency.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
             currencyService.create(currency);
         }
 
@@ -125,6 +126,7 @@ public class CurrencyApi extends BaseApi {
             throw new EntityDoesNotExistsException(Currency.class, postData.getCode());
         }
         currency.setDescriptionEn(postData.getDescription());
+        currency.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         currency = currencyService.update(currency);
 
         tradingCurrency.setCurrency(currency);

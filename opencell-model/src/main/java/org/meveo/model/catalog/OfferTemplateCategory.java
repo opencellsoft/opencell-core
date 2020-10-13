@@ -19,6 +19,7 @@
 package org.meveo.model.catalog;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -39,6 +40,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -113,6 +115,13 @@ public class OfferTemplateCategory extends EnableBusinessCFEntity implements Com
      */
     @Transient
     private String parentCategoryCode;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
@@ -209,6 +218,22 @@ public class OfferTemplateCategory extends EnableBusinessCFEntity implements Com
 
     public void setParentCategoryCode(String parentCategoryCode) {
         this.parentCategoryCode = parentCategoryCode;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    public String getLocalizedDescription(String lang) {
+        if(descriptionI18n != null) {
+            return descriptionI18n.getOrDefault(lang, this.description);
+        } else {
+            return this.description;
+        }
     }
 
     @Override

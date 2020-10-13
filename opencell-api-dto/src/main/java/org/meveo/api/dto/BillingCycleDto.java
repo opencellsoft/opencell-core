@@ -19,6 +19,7 @@
 package org.meveo.api.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -183,6 +184,8 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement
     private Boolean thresholdPerEntity;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
@@ -237,6 +240,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             if(billingCycleEntity.getCheckThreshold()!=null) {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
+            languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(billingCycleEntity.getDescriptionI18n());
         }
     }
 
@@ -616,5 +620,13 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setSplitPerPaymentMethod(Boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

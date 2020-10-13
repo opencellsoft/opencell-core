@@ -38,6 +38,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -48,6 +50,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.AuditableEntityDto;
@@ -61,6 +64,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
@@ -88,6 +92,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -103,6 +108,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
@@ -132,6 +138,9 @@ public abstract class BaseApi {
 
     @EJB
     private CustomEntityInstanceApi customEntityInstanceApi;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     protected EntityToDtoConverter entityToDtoConverter;
@@ -586,12 +595,22 @@ public abstract class BaseApi {
             // Add keys to matrix if not provided in DTO and it is not empty
             // (gets converted to null if map has no values)
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && valueConverted != null) {
-
                 boolean matrixColumnsPresent = false;
                 for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {
                     if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                         matrixColumnsPresent = true;
-                        break;
+                    }else {
+                    	int keySize=mapEntry.getKey() == null ? 0 : Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                    	int valueSize=mapEntry.getValue() == null ? 0 : Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+
+                    	int matrixKeySize = cft.getMatrixKeyColumns() != null ? cft.getMatrixKeyColumns().size() : 0;
+						if(matrixKeySize>0 && matrixKeySize<keySize) {
+                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+matrixKeySize+")") ;
+                    	}
+                    	int matrixValueSize = cft.getMatrixValueColumns()!=null ? cft.getMatrixValueColumns().size() : 0;
+						if(matrixValueSize>0 && matrixValueSize<valueSize) {
+                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+matrixValueSize+")") ;
+                    	}
                     }
                 }
 
@@ -1148,6 +1167,34 @@ public abstract class BaseApi {
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
      * @param pagingAndFiltering Paging and filtering criteria
+     * @param cetCodeOrDbTableName Custom entity template code or DB table name
+     * @return Pagination configuration
+     * @throws InvalidParameterException invalid parameter exception.
+     */
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, String cetCodeOrDbTableName)
+            throws InvalidParameterException {
+
+        if (pagingAndFiltering != null && cetCodeOrDbTableName != null) {
+
+            CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(cetCodeOrDbTableName);
+            if (cet == null) {
+                throw new EntityDoesNotExistsException(CustomEntityTemplate.class, cetCodeOrDbTableName);
+            }
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+
+            pagingAndFiltering.setFilters(convertFilters(cet.isStoreAsTable() ? null : CustomEntityInstance.class, pagingAndFiltering.getFilters(), cfts));
+        }
+        PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
+        return paginationConfig;
+    }
+
+    /**
+     * Convert pagination and filtering DTO to a pagination configuration used in services.
+     * 
+     * @param defaultSortBy A default value to sortBy
+     * @param defaultSortOrder A default sort order
+     * @param fetchFields Fields to fetch
+     * @param pagingAndFiltering Paging and filtering criteria
      * @param targetClass class which is used for pagination.
      * @return Pagination configuration
      * @throws InvalidParameterException invalid parameter exception.
@@ -1193,7 +1240,7 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes" })
     private Map<String, Object> convertFilters(Class targetClass, Map<String, Object> filtersToConvert, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
-        log.debug("Converting filters {}", filtersToConvert);
+//        log.debug("Converting filters {}", filtersToConvert);
 
         Map<String, Object> filters = new HashMap<>();
         if (filtersToConvert == null) {
@@ -1229,17 +1276,17 @@ public abstract class BaseApi {
 
                 Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
                 if (fieldClassType == null) {
-                    throw new BusinessException("Field '" + fieldName + "' is not a valid field name");
+                    throw new InvalidParameterException("Field '" + fieldName + "' is not a valid field name");
                 }
                 Object valueConverted = castFilterValue(value, fieldClassType,
-                    (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts);
+                    (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts, false);
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
 
                     // To support wildcard search in enum value
                 } else if (fieldClassType.isEnum()) {
                     filters.put(key, value);
-                    
+
                 } else {
                     throw new InvalidParameterException("Filter " + key + " value " + value + " does not match " + fieldClassType.getSimpleName());
                 }
@@ -1281,12 +1328,13 @@ public abstract class BaseApi {
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *        converted accordingly. If a single value is passed, it will be added to a list.
-     * @param cfts
+     * @param cfts Custom field templates for target class
+     * @param castEntityReferenceAsObject Shall value be converted to EntityWrapper or a primitive (long/string) when target class is entity reference field
      * @return A converted data type
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object castFilterValue(Object value, Class targetClass, boolean expectedList, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
+    private Object castFilterValue(Object value, Class targetClass, boolean expectedList, Map<String, CustomFieldTemplate> cfts, boolean castEntityReferenceAsObject) throws InvalidParameterException {
 
         log.trace("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
@@ -1316,7 +1364,7 @@ public abstract class BaseApi {
                     while (valueIterator.hasNext()) {
                         Object valueItem = valueIterator.next();
                         try {
-                            Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
+                            Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts, castEntityReferenceAsObject);
                             if (valueConverted != null) {
                                 valuesConverted.add(valueConverted);
                             } else {
@@ -1342,7 +1390,7 @@ public abstract class BaseApi {
                 boolean invalidReference = false;
                 for (String valueItem : valueItems) {
                     try {
-                        Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
+                        Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts, castEntityReferenceAsObject);
                         if (valueConverted != null) {
                             valuesConverted.add(valueConverted);
                         } else {
@@ -1360,7 +1408,7 @@ public abstract class BaseApi {
 
                 // A single value list
             } else {
-                Object valueConverted = castFilterValue(value, targetClass, false, cfts);
+                Object valueConverted = castFilterValue(value, targetClass, false, cfts, castEntityReferenceAsObject);
                 if (valueConverted != null) {
                     return Arrays.asList(valueConverted);
                 } else {
@@ -1467,8 +1515,10 @@ public abstract class BaseApi {
                 }
 
             } else if (targetClass == Double.class || (targetClass.isPrimitive() && targetClass.getName().equals("double"))) {
-                if (numberVal != null || bdVal != null || listVal != null) {
+                if (bdVal != null || listVal != null) {
                     return value;
+                } else if (numberVal != null) {
+                    return numberVal.doubleValue();
                 } else if (stringVal != null) {
                     return Double.parseDouble(stringVal);
                 }
@@ -1490,11 +1540,23 @@ public abstract class BaseApi {
                 }
 
             } else if (targetClass == EntityReferenceWrapper.class) {
-                if (numberVal != null) {
+
+                if (castEntityReferenceAsObject && numberVal != null) {
+                    EntityReferenceWrapper wrapper = new EntityReferenceWrapper();
+                    wrapper.setCode(numberVal.toString());
+                    wrapper.setId(numberVal.longValue());
+                    return wrapper;
+
+                } else if (castEntityReferenceAsObject && stringVal != null) {
+                    EntityReferenceWrapper wrapper = new EntityReferenceWrapper();
+                    wrapper.setCode(stringVal);
+                    return wrapper;
+
+                } else if (numberVal != null) {
                     return numberVal.longValue();
 
                 } else if (stringVal != null) {
-                    return Long.parseLong(stringVal);
+                    return Long.valueOf(stringVal);
                 }
 
             } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
@@ -1552,7 +1614,7 @@ public abstract class BaseApi {
                                 }
                             }
                         }
-                        Object valueConverted = castFilterValue(cfValue, dataClass, expectedList, cfts);
+                        Object valueConverted = castFilterValue(cfValue, dataClass, expectedList, cfts, true);
                         if (valueConverted == null) {
                             if (!CustomFieldStorageTypeEnum.SINGLE.equals(storageType)) {
                                 throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '" + key + "'");
@@ -1635,14 +1697,22 @@ public abstract class BaseApi {
         dto.setAuditableFields(auditableFieldsDto);
     }
 
-    public boolean isRootCause(Throwable e, Class<?> clazz) {
+    public Throwable getRootCause(Throwable e, Class<?> clazz) {
         while (e != null) {
             if (e.getClass().equals(clazz)) {
-                return true;
+                return e;
             }
             e = e.getCause();
         }
-        return false;
+        return null;
+    }
+
+    public MeveoApiException getMeveoApiException(Throwable e) {
+        Throwable rootCause = getRootCause(e, ConstraintViolationException.class);
+        if (rootCause != null) {
+            return new ConstraintViolationApiException(rootCause.getCause().getMessage());
+        }
+        return new MeveoApiException(e);
     }
 
     public String getCustomFieldDataType(Class clazz) {
