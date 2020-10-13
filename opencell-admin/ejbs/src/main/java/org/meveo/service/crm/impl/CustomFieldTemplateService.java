@@ -813,7 +813,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 	 */
 	public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
-        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity,null)","=",code,true);
+        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity)","=",code,true);
         Query query = queryBuilder.getQuery(getEntityManager());
         List resultList = query.getResultList();
 		return resultList;
