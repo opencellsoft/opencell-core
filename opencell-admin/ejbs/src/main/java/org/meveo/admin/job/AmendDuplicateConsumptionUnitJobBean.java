@@ -98,6 +98,13 @@ public class AmendDuplicateConsumptionUnitJobBean {
             }
             restoreQuantityToCounterOrPool(canceledWO, quantityToRestore);
 
+            // in case of WO deducted from counter
+            // also reajuste canceled WO's quantity and put it to OPEN
+            if (canceledWO.getCounter() != null) {
+                canceledWO.setQuantity(canceledWO.getQuantity().subtract(quantityToRestore));
+                canceledWO.setStatus(WalletOperationStatusEnum.OPEN);
+            }
+
             canceledWO.setParameter3("AMENDED_FROM_POOL");
             walletOperationService.update(canceledWO);
 
