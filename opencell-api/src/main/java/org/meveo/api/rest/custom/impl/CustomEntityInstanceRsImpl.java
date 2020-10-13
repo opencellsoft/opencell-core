@@ -28,6 +28,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomEntityInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -108,17 +109,21 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
     @Override
     public CustomEntityInstancesResponseDto list(String customEntityTemplateCode) {
-        CustomEntityInstancesResponseDto result = new CustomEntityInstancesResponseDto();
+        return list(customEntityTemplateCode, null);
+    }
+
+    @Override
+    public CustomEntityInstancesResponseDto list(String customEntityTemplateCode, PagingAndFiltering pagingAndFiltering) {
 
         try {
 
-            result.setCustomEntityInstances(customEntityInstanceApi.list(customEntityTemplateCode));
+            return customEntityInstanceApi.list(customEntityTemplateCode, pagingAndFiltering);
 
         } catch (Exception e) {
+            CustomEntityInstancesResponseDto result = new CustomEntityInstancesResponseDto();
             processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override

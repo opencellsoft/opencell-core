@@ -18,8 +18,6 @@
 
 package org.meveo.commons.persistence;
 
-
-
 import java.util.List;
 
 import org.hibernate.QueryException;
@@ -31,41 +29,50 @@ import org.hibernate.type.Type;
 
 public class PostgreSQLJsonSearchFunction implements SQLFunction {
 
-	@Override
-	public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+    @Override
+    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
 
         if (args.size() < 3) {
-            throw new IllegalArgumentException("The function parseJson must be passed 4 arguments");
+            throw new IllegalArgumentException("The function parseJson requires at least 3 arguments");
         }
-        String columnName = (String) args.get(0);
-        String fieldName = (String) args.get(1);
-        String type = (String) args.get(2);
-        String fragment = "";
-        if (args.size() == 3) {
-            fragment = columnName + "::json ->'" + fieldName + "'->0->>'" + type + "'";
-        } else {
+        String entityColumnName = (String) args.get(0);
+        String customFieldName = (String) args.get(1);
+        String customFieldValueProperty = (String) args.get(2);
+        String fragment = entityColumnName + "::json ->'" + customFieldName + "'->0->>'" + customFieldValueProperty + "'";
+
+        if (args.size() > 3) {
             String castType = (String) args.get(3);
-            fragment = "(" + columnName + "::json ->'" + fieldName + "'->0->>'" + type + "')::" + castType;
+            fragment = "(" + fragment + ")::" + castType;
+
+        } else if (getCastType() != null) {
+            fragment = "(" + fragment + ")::" + getCastType();
         }
 
         return fragment;
 
     }
-	@Override
-	public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-      return StringType.INSTANCE;
-   }
 
-   @Override
-   public boolean hasArguments() {
-      return true;
-   }
+    @Override
+    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+        return StringType.INSTANCE;
+    }
 
-   @Override
-   public boolean hasParenthesesIfNoArguments() {
-      return false;
-   }
+    @Override
+    public boolean hasArguments() {
+        return true;
+    }
 
+    @Override
+    public boolean hasParenthesesIfNoArguments() {
+        return false;
+    }
 
-
+    /**
+     * Get data cast type
+     * 
+     * @return Cast type
+     */
+    public String getCastType() {
+        return null;
+    }
 }

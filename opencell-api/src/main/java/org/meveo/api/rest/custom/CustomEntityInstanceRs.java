@@ -30,8 +30,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomEntityInstanceDto;
+import org.meveo.api.dto.custom.CustomTableDataResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -98,6 +100,17 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     @GET
     @Path("/list/{customEntityTemplateCode}")
     CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
+
+    /**
+     * Search in custom entity instances.
+     * 
+     * @param customEntityTemplateCode The custom entity instance's code
+     * @param pagingAndFiltering Paging and search criteria
+     * @return Custom table data
+     */
+    @POST
+    @Path("/list/{customEntityTemplateCode}")
+    CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, PagingAndFiltering pagingAndFiltering);
 
     /**
      * Create new or update an existing custom entity instance with a given code.

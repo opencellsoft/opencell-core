@@ -49,4 +49,11 @@ public class EntityAlreadyExistsException extends MeveoApiException {
 		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
+    }
 }

@@ -37,4 +37,11 @@ public class InvalidImageData extends MeveoApiException {
 		setErrorCode(MeveoApiErrorCodeEnum.INVALID_IMAGE_DATA);
 	}
 
+    /**
+     * Stacktrace is not of interest here
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return null;
+    }
 }
