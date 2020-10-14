@@ -67,21 +67,21 @@ public class ContactInformation implements Serializable, Cloneable {
      */
     @Column(name = "fax", length = 50)
     @Size(max = 50)
-    @Deprecated
     protected String fax;
 
     public ContactInformation() {
     }
 
     public ContactInformation(ContactInformation contactInformation) {
-        this(contactInformation.email, contactInformation.phone, contactInformation.mobile);
+        this(contactInformation.email, contactInformation.phone, contactInformation.mobile, contactInformation.fax);
     }
 
-    public ContactInformation(String email, String phone, String mobile) {
+    public ContactInformation(String email, String phone, String mobile, String fax) {
         super();
         this.email = email;
         this.phone = phone;
         this.mobile = mobile;
+        this.fax = fax;
     }
 
     public String getEmail() {

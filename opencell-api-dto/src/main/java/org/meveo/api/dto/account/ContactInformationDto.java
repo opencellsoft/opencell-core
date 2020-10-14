@@ -47,6 +47,9 @@ public class ContactInformationDto implements Serializable {
     /** The mobile. */
     protected String mobile;
     
+    /** The fax. */
+    protected String fax;
+    
     /** address **/
     protected AddressDto address;
     
@@ -68,7 +71,7 @@ public class ContactInformationDto implements Serializable {
         email = contactInformation.getEmail();
         phone = contactInformation.getPhone();
         mobile = contactInformation.getMobile();
-        
+        fax = contactInformation.getFax();
     }
     
     public ContactInformationDto(ContactInformation contactInformation, Address address) {
@@ -132,10 +135,27 @@ public class ContactInformationDto implements Serializable {
         this.mobile = mobile;
     }
 
+    /**
+     * Gets the fax.
+     *
+     * @return the fax
+     */
+    public String getFax() {
+        return fax;
+    }
+
+    /**
+     * Sets the fax.
+     *
+     * @param fax the new fax
+     */
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
     @Override
     public String toString() {
-        return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + "]";
+        return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + "]";
     }
 
 	/**

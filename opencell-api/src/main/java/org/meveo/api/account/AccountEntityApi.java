@@ -218,6 +218,9 @@ public class AccountEntityApi extends BaseApi {
             if (postData.getContactInformation().getMobile() != null) {
                 accountEntity.getContactInformation().setMobile(StringUtils.isEmpty(postData.getContactInformation().getMobile()) ? null : postData.getContactInformation().getMobile());
             }
+            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+                accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
+            }
         }
         setMinimumAmountElSubscription(postData, accountEntity);
 
