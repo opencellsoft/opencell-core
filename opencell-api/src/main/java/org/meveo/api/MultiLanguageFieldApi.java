@@ -305,9 +305,11 @@ public class MultiLanguageFieldApi extends BaseApi {
             filters.put(PersistenceService.SEARCH_SQL, new Object[] { sql, "one", 1 });
             PaginationConfiguration paginationConfig = new PaginationConfiguration(filters);
             List<IEntity> entities = persistenceService.list(paginationConfig);
-            for (IEntity entity : entities) {
-                List<CatMessagesDto> messageDtos = convertEntity(entity, fields, languageCodes);
-                catMessagesListDto.getCatMessage().addAll(messageDtos);
+            if(entities != null) {
+                for (IEntity entity : entities) {
+                    List<CatMessagesDto> messageDtos = convertEntity(entity, fields, languageCodes);
+                    catMessagesListDto.getCatMessage().addAll(messageDtos);
+                }
             }
         }
 
