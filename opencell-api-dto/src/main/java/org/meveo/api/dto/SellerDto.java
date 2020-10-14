@@ -147,6 +147,7 @@ public class SellerDto extends BusinessEntityDto {
             contactInformation.setEmail(sellerContactInformation.getEmail());
             contactInformation.setPhone(sellerContactInformation.getPhone());
             contactInformation.setMobile(sellerContactInformation.getMobile());
+            contactInformation.setFax(sellerContactInformation.getFax());
         }
 
         Address sellerAddress = seller.getAddress();

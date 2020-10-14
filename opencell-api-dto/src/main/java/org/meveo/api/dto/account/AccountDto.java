@@ -52,7 +52,7 @@ public abstract class AccountDto extends BusinessEntityDto {
     private NameDto name;
     
     /** The address. */
-    private AddressDto address = new AddressDto();
+    private AddressDto address;
     
     /** The job title. */
     private String jobTitle;
