@@ -767,14 +767,14 @@ public class EntityExportImportService implements Serializable {
 
             // Convert the file and initiate import again
             if (conversionRequired) {
-                reader.close();
-                inputStream.close();
                 File convertedFile = actualizeVersionOfExportFile(fileToImport, filename, version);
                 String name = null;
                 if (convertedFile != null) {
                     name = convertedFile.getName();
                 }
 
+                reader.close();
+                inputStream.close();
                 return importEntities(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
             }
 
@@ -2211,14 +2211,12 @@ public class EntityExportImportService implements Serializable {
         log.debug("Actualizing the version of export file {}. Current version is {}", sourceFilename, sourceVersion);
 
         Source source = null;
+        ZipInputStream zis = null;
         // Handle zip file
         if (sourceFilename.endsWith(".zip")) {
-            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile))) {
-                zis.getNextEntry();
-                source = new StreamSource(zis);
-            } catch (Exception ex) {
-                log.error("failed to work with stream", ex);
-            }
+        	zis = new ZipInputStream(new FileInputStream(sourceFile));
+            zis.getNextEntry();
+            source = new StreamSource(zis);
         } else {
             source = new StreamSource(sourceFile);
         }
@@ -2255,6 +2253,7 @@ public class EntityExportImportService implements Serializable {
                 log.error("Failed to delete a temp file {}", file.getAbsolutePath(), e);
             }
         }
+        if(zis != null) zis.close();
         log.info("Actualized the version of export file {} from {} to {} version", sourceFilename, sourceVersion, finalVersion);
 
         return finalFile;
