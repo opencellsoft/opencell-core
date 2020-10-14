@@ -132,7 +132,7 @@ public class CustomerDto extends AccountDto {
 		}
 
         if (e.getContactInformation() != null) {
-            setContactInformation(new ContactInformationDto(e.getContactInformation(), e.getAddress()));
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
         }
 
         if (e.getAdditionalDetails() != null) {
