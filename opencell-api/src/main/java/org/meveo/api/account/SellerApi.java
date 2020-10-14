@@ -310,7 +310,11 @@ public class SellerApi extends AccountEntityApi {
             if (mobile != null) {
                 contactInformation.setMobile(mobile);
             }
-
+            
+            final String fax = contactInformationDto.getFax();
+            if (fax != null) {
+                contactInformation.setFax(fax);
+            }
         }
     }
 
