@@ -73,13 +73,6 @@ public class ContactInformationDto implements Serializable {
         mobile = contactInformation.getMobile();
         fax = contactInformation.getFax();
     }
-    
-    public ContactInformationDto(ContactInformation contactInformation, Address address) {
-    	this(contactInformation);
-    	if(address != null) {
-    		this.address  = new AddressDto(address);
-    	}
-    }
 
     /**
      * Gets the email.
