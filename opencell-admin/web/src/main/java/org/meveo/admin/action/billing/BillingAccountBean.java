@@ -17,19 +17,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.faces.context.ExternalContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
@@ -38,11 +25,7 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
@@ -57,6 +40,18 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.DualListModel;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -311,7 +306,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             generateInvoiceRequestDto.setLastTransactionDate(new Date());
             List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null);
             for (Invoice invoice : invoices) {
-                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true);
+                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true, new ArrayList<>());
                 String fileName = invoiceService.getFullPdfFilePath(invoice, false);
                 Faces.sendFile(new File(fileName), true);
             }
