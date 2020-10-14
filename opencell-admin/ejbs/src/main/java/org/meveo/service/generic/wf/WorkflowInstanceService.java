@@ -55,7 +55,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
 
     public WorkflowInstance findByEntityIdAndGenericWorkflow(Long entityInstanceId, GenericWorkflow genericWorkflow) throws BusinessException {
         TypedQuery<WorkflowInstance> query = getEntityManager()
-            .createQuery("select be from " + entityClass.getSimpleName() + " wi where wi.entityInstanceId = :entityInstanceId and wi.genericWorkflow = :genericWorkflow",
+            .createQuery("select wi from " + entityClass.getSimpleName() + " wi where wi.entityInstanceId = :entityInstanceId and wi.genericWorkflow = :genericWorkflow",
                 WorkflowInstance.class)
             .setParameter("entityInstanceId", entityInstanceId).setParameter("genericWorkflow", genericWorkflow).setMaxResults(1);
 
