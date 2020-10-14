@@ -134,7 +134,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * Values for selection from a picklist
      */
     @ElementCollection(fetch = FetchType.EAGER)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
@@ -142,7 +142,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * Matrix columns. Contains both key and value columns.
      */
     @ElementCollection(fetch = FetchType.EAGER)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @OrderBy("columnUse ASC, position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
     @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
