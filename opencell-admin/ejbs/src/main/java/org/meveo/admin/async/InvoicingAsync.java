@@ -324,7 +324,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.produceInvoicePdfInNewTransaction(invoiceId);
+                invoiceService.produceInvoicePdfInNewTransaction(invoiceId, new ArrayList<>());
                 result.registerSucces();
                 
             } catch (Exception e) {
@@ -363,7 +363,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
+                invoiceService.produceInvoiceXmlInNewTransaction(invoiceId, new ArrayList<>());
                 result.registerSucces();
             } catch (Exception e) {
 
