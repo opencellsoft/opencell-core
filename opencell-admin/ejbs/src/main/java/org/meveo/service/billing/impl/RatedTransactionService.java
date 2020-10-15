@@ -206,6 +206,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    public List<WalletOperation> getWalletOperations(IBillableEntity entityToInvoice, Date invoicingDate) {
+        return walletOperationService.listToRate(entityToInvoice, invoicingDate);
+    }
+
+    public List<WalletOperation> getWalletOperations(List<Long> ids){
+        return walletOperationService.listByIds(ids);
+    }
+
     /**
      * Create Rated transaction from wallet operation.
      * 
@@ -1586,10 +1594,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Get a list of invoiceable Rated transactions for a given BllingAccount and a list of ids
-     * 
+     *
      * @param billingAccountId
      * @param ids
-     * 
+     *
      * @return A list of RT entities
      * @throws BusinessException General exception
      */
@@ -1597,7 +1605,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountAndIDs", RatedTransaction.class)
 				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).getResultList();
 	}
-    
+
     /**
      * Determine if minimum RT transactions functionality is used at service level
      * 
