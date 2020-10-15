@@ -27,9 +27,18 @@ import org.hibernate.type.Type;
 
 public class LongPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunction {
 
-	@Override
-	public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-      return LongType.INSTANCE;
-   }
+    @Override
+    public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
+        return LongType.INSTANCE;
+    }
 
+    @Override
+    public String getCastType() {
+        return "bigInt";
+    }
+
+    @Override
+    public String getValuePropertyName() {
+        return "long";
+    }
 }
