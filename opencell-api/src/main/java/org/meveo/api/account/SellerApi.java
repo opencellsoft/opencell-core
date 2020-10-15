@@ -39,9 +39,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
@@ -310,7 +313,7 @@ public class SellerApi extends AccountEntityApi {
             if (mobile != null) {
                 contactInformation.setMobile(mobile);
             }
-            
+
             final String fax = contactInformationDto.getFax();
             if (fax != null) {
                 contactInformation.setFax(fax);
@@ -528,6 +531,8 @@ public class SellerApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "seller", itemPropertiesToFilter = {@FilterProperty(property = "code", entityClass = Seller.class) })
     public SellersDto list() {
         SellersDto result = new SellersDto();
 
@@ -541,6 +546,8 @@ public class SellerApi extends AccountEntityApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "sellerCodes", itemPropertiesToFilter = {@FilterProperty(property = "code", entityClass = Seller.class) })
     public SellerCodesResponseDto listSellerCodes() {
         SellerCodesResponseDto result = new SellerCodesResponseDto();
 
