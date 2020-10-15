@@ -125,7 +125,7 @@ public abstract class AccountDto extends BusinessEntityDto {
         setVatNo(e.getVatNo());
         setRegistrationNo(e.getVatNo());
         if (e.getContactInformation() != null) {
-            setContactInformation(new ContactInformationDto(e.getContactInformation(), e.getAddress()));
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
         }
         if (e.getMinimumChargeTemplate() != null){
             setMinimumChargeTemplate(e.getMinimumChargeTemplate().getCode());
