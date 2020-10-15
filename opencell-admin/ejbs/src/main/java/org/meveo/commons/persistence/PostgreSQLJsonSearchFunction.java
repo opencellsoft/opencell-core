@@ -30,14 +30,17 @@ import org.hibernate.type.Type;
 public class PostgreSQLJsonSearchFunction implements SQLFunction {
 
     @Override
-    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+    public String render(Type firstArgumentType, @SuppressWarnings("rawtypes") List args, SessionFactoryImplementor factory) throws QueryException {
 
-        if (args.size() < 3) {
-            throw new IllegalArgumentException("The function parseJson requires at least 3 arguments");
+        if (args.size() < 2) {
+            throw new IllegalArgumentException("The function parseJson requires at least 2 arguments");
         }
         String entityColumnName = (String) args.get(0);
         String customFieldName = (String) args.get(1);
-        String customFieldValueProperty = (String) args.get(2);
+        String customFieldValueProperty = getValuePropertyName();
+        if (args.size() > 2) {
+            customFieldValueProperty = (String) args.get(2);
+        }
         String fragment = entityColumnName + "::json ->'" + customFieldName + "'->0->>'" + customFieldValueProperty + "'";
 
         if (args.size() > 3) {
@@ -74,5 +77,14 @@ public class PostgreSQLJsonSearchFunction implements SQLFunction {
      */
     public String getCastType() {
         return null;
+    }
+
+    /**
+     * Get CustomFieldValue property name
+     * 
+     * @return CustomFieldValue property name
+     */
+    public String getValuePropertyName() {
+        return "string";
     }
 }

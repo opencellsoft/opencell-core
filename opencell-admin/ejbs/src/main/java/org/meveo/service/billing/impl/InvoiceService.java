@@ -794,9 +794,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
                 boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.includeLitigation", false);
                 if (isBalanceLitigation) {
-                    balance = customerAccountService.customerAccountBalanceDue(null, ba.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                    balance = customerAccountService.customerAccountBalanceDue(ba.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                 } else {
-                    balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, ba.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                    balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(ba.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                 }
 
                 invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
@@ -907,9 +907,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.due", true);
                             boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
                             if (isBalanceLitigation) {
-                                balance = customerAccountService.customerAccountBalanceDue(null, billingAccount.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                                balance = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                             } else {
-                                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, billingAccount.getCustomerAccount().getCode(), isBalanceDue ? invoiceDate : null);
+                                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation( billingAccount.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                             }
                         }
                     }
@@ -3585,9 +3585,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             boolean isBalanceLitigation = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.litigation", false);
             BigDecimal balance = null;
             if (isBalanceLitigation) {
-                balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), isBalanceDue ? invoice.getDueDate() : null);
+                balance = customerAccountService.customerAccountBalanceDue(invoice.getBillingAccount().getCustomerAccount(), isBalanceDue ? invoice.getDueDate() : null);
             } else {
-                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(null, invoice.getBillingAccount().getCustomerAccount().getCode(), isBalanceDue ? invoice.getDueDate() : null);
+                balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(invoice.getBillingAccount().getCustomerAccount(), isBalanceDue ? invoice.getDueDate() : null);
             }
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");

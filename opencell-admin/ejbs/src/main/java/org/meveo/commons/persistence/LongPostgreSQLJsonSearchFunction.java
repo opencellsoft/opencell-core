@@ -32,9 +32,14 @@ public class LongPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFuncti
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
         return LongType.INSTANCE;
     }
+
     @Override
     public String getCastType() {
         return "bigInt";
     }
 
+    @Override
+    public String getValuePropertyName() {
+        return "long";
+    }
 }

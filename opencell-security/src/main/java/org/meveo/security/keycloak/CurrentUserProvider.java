@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -62,6 +63,9 @@ public class CurrentUserProvider {
 
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
+    
+    @Inject
+    private Event<User> userEventProducer;
 
     @Inject
     private Logger log;
@@ -244,17 +248,26 @@ public class CurrentUserProvider {
                 em.persist(user);
                 em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
-
+                //triggerNewUserNotification(user);
             } catch (ContextNotActiveException e) {
                 // Commented out as no context is available for scheduled jobs to retrieve userAuthTimeProducer instance
                 // log.error("No session context={}", e.getMessage());
             }
-
+            
         } catch (Exception e) {
             log.error("Failed to supplement current user information from db and/or create new user in db", e);
         }
-
     }
+    
+    /**
+	 * @param user
+	 */
+	private void triggerNewUserNotification(User user) {
+		if(user!=null && user.getUserName()!=null && !user.getUserName().equalsIgnoreCase(getForcedUsername())) {
+			userEventProducer.fire(user);
+		}
+	}
+
 
     /**
      * Return and load if necessary a mapping between roles and permissions

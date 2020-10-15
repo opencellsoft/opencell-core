@@ -129,7 +129,7 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
 	public List<CustomEntityInstance> listByReferencedEntity(String cetCode, String cftCode, String entityCode) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
         qb.addCriterion("cei.cetCode", "=", cetCode, true);
-        qb.addCriterion("entityFromJson(cf_values,"+cftCode+",entity,null)","=",entityCode,true);
+        qb.addCriterion("entityFromJson(cf_values,"+cftCode+",entity)","=",entityCode,true);
         Query query = qb.getQuery(getEntityManager());
         return (List<CustomEntityInstance>) qb.getQuery(getEntityManager()).getResultList();
 	}

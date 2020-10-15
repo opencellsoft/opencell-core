@@ -47,6 +47,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
@@ -813,10 +814,45 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 	 */
 	public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
-        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity,null)","=",code,true);
+        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity)","=",code,true);
         Query query = queryBuilder.getQuery(getEntityManager());
         List resultList = query.getResultList();
 		return resultList;
 	}
-    
+	
+	/**
+     * loop for each custom field and check if it mark as anonymized 
+     * @param cu
+     * @return list of custom field as key value
+     */
+    @SuppressWarnings("unchecked")
+	public List<GDPRInfoDto> findCFMarkAsAnonymize(ICustomFieldEntity cu) {
+    	Map<String, Object> maps = cu.getCfValuesAsValues();
+    	if(maps == null) return new ArrayList<>();
+    	return maps.keySet()
+    			.stream().map(key -> {
+		    		CustomFieldTemplate template = this.findByCodeAndAppliesTo(key, cu);
+		    		if(template.isAnonymizeGdpr()) {
+		    			String value = "";
+		    			if(template.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST) {
+		    				List<String> values = (ArrayList<String>) maps.get(key);
+		    				for (String val: values) {
+								if(template.getListValues().containsKey(val)) {
+									value += template.getListValues().get(val) + "|";
+								}
+							}
+		    				if(value.charAt(value.length() - 1 ) == '|') {
+		    					value = value.substring(0, value.length() - 1);
+		    				}
+		    			}else {
+		           		 value = CustomFieldValue.convertValueToString(template, maps.get(key));
+		    			}
+		        		return new GDPRInfoDto(key, value);
+		    		}
+					return new GDPRInfoDto();
+		    		})
+    			.filter(g -> g.getKey() != null)
+    			.collect(Collectors.toList());
+    	
+    }
 }
