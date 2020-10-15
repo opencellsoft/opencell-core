@@ -55,10 +55,10 @@ public class CustomFieldMapper extends FilterMapper {
     private CustomFieldValue resolveCFValue(Map value, Map<String, CustomFieldTemplate> customFieldTemplates, Object key) {
         String resolvedCode = resolveCfCode((String) key);
         Object cfValue = ((Map) ((List) value.get(key)).get(0)).get("value");
-        //if(((String) key).contains("List ")){
+        if(((String) key).contains("List ")){
             return toCustomFieldValue(CustomFieldTypeEnum.STRING, ""+cfValue);
-        //}
-        //return toCustomFieldValue(customFieldTemplates.get(resolvedCode).getFieldType(), cfValue);
+        }
+        return toCustomFieldValue(customFieldTemplates.get(resolvedCode).getFieldType(), cfValue);
     }
 
     private String resolveCfCode(String key) {
