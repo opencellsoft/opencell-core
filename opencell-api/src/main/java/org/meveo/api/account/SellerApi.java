@@ -543,8 +543,6 @@ public class SellerApi extends AccountEntityApi {
         return result;
     }
 
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "sellerCodes", itemPropertiesToFilter = {@FilterProperty(property = "code", entityClass = Seller.class) })
     public SellerCodesResponseDto listSellerCodes() {
         SellerCodesResponseDto result = new SellerCodesResponseDto();
 

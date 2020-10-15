@@ -77,11 +77,7 @@ public class ListFilter extends SecureMethodResultFilter {
                 try {
 
                     Collection resolvedValues = new ArrayList<>();
-                    Object resolvedValue = null;
-                    if(itemToFilter instanceof String){
-                        resolvedValue = itemToFilter;
-                    }else
-                        resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
+                    Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
                     if (resolvedValue == null) {
                         if (filterProperty.allowAccessIfNull()) {
                             log.debug("Adding item {} to filtered list.", itemToFilter);
