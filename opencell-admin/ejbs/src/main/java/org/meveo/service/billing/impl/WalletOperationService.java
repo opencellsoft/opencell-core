@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.emptyList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
@@ -559,12 +560,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     }
                 }
 
-                boolean chargeDatesAlreadyAdvanced = false; 
-                
+                boolean chargeDatesAlreadyAdvanced = false;
+
                 boolean filterExpression=isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression()) ;
                 List<WalletOperation> woList =chargeInstance.getWalletOperations();
                 log.debug("chargeApplication mode={}={}, chargeInstanceID={}, filterExpression={} ",chargeMode.name(),chargeInstance.getId(),filterExpression);
-                // If charge is not applicable for current period, skip it 
+                // If charge is not applicable for current period, skip it
                 if ((!filterExpression && woList.isEmpty()) || (filterExpression && woList.isEmpty() && chargeMode.isReimbursement())) {
                     log.debug("IPIEL: not rating chargeInstance with id={}, chargeApplication mode={}", chargeInstance.getId(),chargeMode.name());
 
@@ -668,7 +669,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Shall termination or reimbursement charges be prorated
-     * 
+     *
      * @param chargeInstance Recurring charge instance
      * @return True if termination charges should be prorated
      */
@@ -748,6 +749,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         int lengthOfMonth = 30;
         double days = DateUtils.daysBetween(computedApplyChargeOnDate, computedNextChargeDate);
         return days > lengthOfMonth ? 1 : days / lengthOfMonth;
+    }
+
+    /**
+     *
+     * @param ids
+     * @return list of walletOperations by ids
+     */
+    public List<WalletOperation> listByIds(List<Long> ids){
+        if(ids.isEmpty())
+            return emptyList();
+        return getEntityManager().createNamedQuery("WalletOperation.listByIds", WalletOperation.class).setParameter("idList", ids)
+                .getResultList();
     }
 
     /**
@@ -994,18 +1007,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     /**
      * Rerate existing wallet operation. Executed in new transaction. <br/>
      * <br/>
-     * 
+     *
      * <b>When rerateInvoiced = false:</b><br/>
-     * 
+     *
      * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
      * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
      * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
      * <p/>
      * <b>When rerateInvoiced = true:</b> <br/>
-     * 
+     *
      * Billed wallet operations will be refunded and new wallet operations with status TO_RERATE will be created. For the unbilled wallet operations the logic of
      * includeinvoiced=false applies.
-     * 
+     *
      * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
      * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
      * @return Number of wallet operations marked for re-rating.
@@ -1019,18 +1032,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     /**
      * Rerate existing wallet operation. <br/>
      * <br/>
-     * 
+     *
      * <b>When rerateInvoiced = false:</b><br/>
-     * 
+     *
      * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
      * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
      * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
      * <p/>
      * <b>When includeInvoiced = true:</b> <br/>
-     * 
+     *
      * Billed wallet operations will be refunded and new wallet operations with status TO_RERATE will be created. For the unbilled wallet operations the logic of
      * rerateInvoiced=false applies.
-     * 
+     *
      * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
      * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded
      * @return Number of wallet operations marked for re-rating.
@@ -1364,7 +1377,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Mark Wallet operation as failed to re-rate
-     * 
+     *
      * @param id Wallet operation identifier
      * @param e Exception
      */
@@ -1379,10 +1392,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     /**
      * Update Wallet operations to status Canceled and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
      * Rated transaction, all OTHER related wallet operations to the same Rated transaction, will be marked as Open (only the related ones).
-     * 
+     *
      * Note, that a number of Wallet operation ids passed and a number of Wallet operations marked as Canceled and Opened might not match if aggregation was used, or Wallet
      * operation status were invalid.
-     * 
+     *
      * @param walletOperationIds A list of Wallet operation ids to mark as Canceled
      * @return Number of wallet operations marked for Canceled
      */
@@ -1419,7 +1432,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Refund already billed wallet operations by creating an identical wallet operation with a negated amount and status OPEN
-     * 
+     *
      * @param ids A list of wallet operation identifiers to refund
      * @return A list of newly created wallet operations with a negated amount and status OPEN
      */

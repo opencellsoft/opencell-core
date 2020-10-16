@@ -590,7 +590,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     protected RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
             Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod) throws BusinessException {
 
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
+        List<RatedTransaction> ratedTransactions = getRatedTransactions(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
 
         // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
         boolean moreRts = ratedTransactions.size() == rtPaginationSize;
@@ -681,6 +681,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return defaultPaymentMethod;
     }
 
+    private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
+        // if draft add unrated wallet operation
+        if (isDraft) {
+            ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate));
+        }
+        return ratedTransactions;
+    }
+
+    private List<RatedTransaction> getDraftRatedTransactions(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate) {
+        return ratedTransactionService.getWalletOperations(entityToInvoice, lastTransactionDate).stream()
+                .filter(wo -> wo.getOperationDate().before(lastTransactionDate) && (wo.getOperationDate().after(firstTransactionDate) || wo.getOperationDate().equals(firstTransactionDate)))
+                .map(RatedTransaction::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> getDrafWalletOperationIds(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate) {
+        return ratedTransactionService.getWalletOperations(entityToInvoice, lastTransactionDate).stream()
+                .filter(wo -> wo.getOperationDate().before(lastTransactionDate) && (wo.getOperationDate().after(firstTransactionDate) || wo.getOperationDate().equals(firstTransactionDate)))
+                .map(BaseEntity::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<RatedTransaction> getDraftRatedTransactions(List<Long> walletOperationsIds) {
+        return ratedTransactionService.getWalletOperations(walletOperationsIds)
+                .stream()
+                .map(RatedTransaction::new)
+                .collect(Collectors.toList());
+    }
 
     /**
      * Creates invoices and their aggregates - IN new transaction
@@ -1158,8 +1187,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void produceInvoicePdfInNewTransaction(Long invoiceId) throws BusinessException {
+    public void produceInvoicePdfInNewTransaction(Long invoiceId, List<Long> walletOperationIds) throws BusinessException {
         Invoice invoice = findById(invoiceId);
+        invoice.setDraftRatedTransactions(getDraftRatedTransactions(walletOperationIds));
         produceInvoicePdf(invoice);
     }
 
@@ -1785,13 +1815,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Produce invoice xml in new transaction.
      *
-     * @param invoiceId invoice's id
+     * @param invoiceId         invoice's id
+     * @param draftWalletOperationsId
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
+    public void produceInvoiceXmlInNewTransaction(Long invoiceId, List<Long> draftWalletOperationsId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
+        invoice.setDraftRatedTransactions(getDraftRatedTransactions(draftWalletOperationsId));
         produceInvoiceXml(invoice);
     }
 
@@ -2036,7 +2068,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 continue;
             }
             try {
-                produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft);
+                List<Long> drafWalletOperationIds;
+                if(isDraft)
+                   drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate());
+                else
+                    drafWalletOperationIds = new ArrayList<>();
+                produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
             }
@@ -2110,13 +2147,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws InvoiceExistException Invoice already exist exception
      * @throws ImportInvoiceException Import invoice exception
      */
-    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Long invoiceId, boolean isDraft) throws BusinessException, InvoiceExistException, ImportInvoiceException {
+    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Long invoiceId, boolean isDraft, List<Long> draftWalletOperationIds) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
         if (produceXml) {
-            invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
+            invoiceService.produceInvoiceXmlInNewTransaction(invoiceId, draftWalletOperationIds);
         }
         if (producePdf) {
-            invoiceService.produceInvoicePdfInNewTransaction(invoiceId);
+            invoiceService.produceInvoicePdfInNewTransaction(invoiceId, draftWalletOperationIds);
         }
         if (generateAO && !isDraft) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
@@ -2304,7 +2341,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine a date to use in calendar to calculate the next invoice date
-     * 
+     *
      * @param billingRun Billing run
      * @param billingAccount Billing account
      * @return Reference date
@@ -2362,7 +2399,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param billingRun
      * @param billingAccount Billing account
-     * 
+     *
      * @throws BusinessException business exception
      */
     private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
@@ -2380,7 +2417,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Increment BA invoice date.
-     * 
+     *
      * @param billingRun Billing run
      * @param billingAccountId Billing account identifier
      * 
@@ -3402,7 +3439,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice production date delay for a given billing run
-     * 
+     *
      * @param el EL expression to resolve
      * @param billingRun Billing run
      * @return An integer value
@@ -4013,7 +4050,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice production date delay for a given billing run
-     * 
+     *
      * @param el EL expression to resolve
      * @param billingRun Billing run
      * @return An integer value
@@ -4024,7 +4061,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice date delay for given parameters
-     * 
+     *
      * @param el EL expression to resolve
      * @param parameters A list of parameters
      * @return An integer value

@@ -681,6 +681,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             messages.error("Error generating xml / pdf invoice=" + e.getMessage());
         }
 
+        if("DRAFT".equals(entity.getInvoiceType().getCode())){
+            for (RatedTransaction rt : rts) {
+                ratedTransactionService.remove(rt);
+            }
+        }
+
+
         return getListViewName();
     }
 

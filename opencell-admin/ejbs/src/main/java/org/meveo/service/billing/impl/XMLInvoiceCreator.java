@@ -314,7 +314,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
         String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
-        List<RatedTransaction> ratedTransactions = null;
+        List<RatedTransaction> ratedTransactions = invoice.getDraftRatedTransactions();
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
         if (!isVirtual) {
@@ -629,7 +629,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         if (!isVirtual && displayDetail) {
-            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
+            ratedTransactions.addAll(ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice()));
         }
         
         addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual, invoiceAgregates, hasInvoiceAgregates, ratedTransactions,
