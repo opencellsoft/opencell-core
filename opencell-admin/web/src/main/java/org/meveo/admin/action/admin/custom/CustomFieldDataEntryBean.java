@@ -86,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1117,7 +1118,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                         // Existing value update
                     } else {
-                        serializeFromGUI(cfValue, cft);
+                    		serializeFromGUI(cfValue, cft);
 
                         if (!newValuesByCode.containsKey(cft.getCode())) {
                             newValuesByCode.put(cft.getCode(), new ArrayList<>());
@@ -1318,16 +1319,19 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 // Multi-value values need to be concatenated and stored as string
                 if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
-
+                	
                     value = cft.serializeMultiValue(mapItem);
                     if (value == null) {
-                        continue;
+                    	java.util.ResourceBundle bundle = facesContext.getApplication().getResourceBundle(facesContext, "messages");
+                    	String message = bundle.getString("customFieldTemplate.matrix.key.valuesNotSpecified");
+                        //facesContext.validationFailed();
+                    	throw new BusinessException(MessageFormat.format(message, new Object [] {mapItem.get(cft.getMatrixColumnByIndex(0).getLabel())}));
                     }
 
                 } else {
                     value = mapItem.get(CustomFieldValue.MAP_VALUE);
                     if (StringUtils.isBlank(value)) {
-                        continue;
+                    	continue;
                     }
 
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
