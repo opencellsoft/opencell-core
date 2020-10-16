@@ -149,6 +149,11 @@ public class DefaultObserver {
         log.debug("Defaut observer : CustomEntity {} with id {} created", e.getClass().getName());
         checkEvent(e.getType(), e);
     }
+    
+    public void createUserChange(@Observes User e) throws BusinessException {
+        log.debug("Defaut observer: UserEvent with id {} created", e);
+        checkEvent(NotificationEventTypeEnum.CREATED, e);
+    }
 
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
