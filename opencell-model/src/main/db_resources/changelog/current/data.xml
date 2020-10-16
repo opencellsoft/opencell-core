@@ -1792,7 +1792,6 @@ public class ValidateBRScript extends Script {
                 private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface("DefaultNotificationService");
                 private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface("GenericNotificationService");
                 private DunningDocumentService dunningDocumentService = (DunningDocumentService) getServiceInterface("DunningDocumentService");
-                private RecordedInvoiceService recordedInvoiceService = (RecordedInvoiceService) getServiceInterface("RecordedInvoiceService");
 
                 @Override
                 public void execute(Map<String, Object> context) {
@@ -1807,7 +1806,9 @@ public class ValidateBRScript extends Script {
 
                     if ("R0".equals(workflowInstance.getCurrentStatus().getCode()) && "R1".equals(wfToStatus.getCode())) {
                         sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);
-                    } else if ("R0".equals(wfToStatus.getCode())) {
+                    } else if("R1".equals(workflowInstance.getCurrentStatus().getCode()) && "R2".equals(wfToStatus.getCode())){
+                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R2);
+                    }else if ("R0".equals(wfToStatus.getCode())) {
                         sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
                     }
                 }
@@ -1817,6 +1818,7 @@ public class ValidateBRScript extends Script {
                     if (customerAccount.getDunningLevel() == dunningLevelEnum)
                         return;
                     customerAccount.setDunningLevel(dunningLevelEnum);
+                    customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
                     customerAccount.setDateDunningLevel(new Date());
                     createDunningDocuments(customerAccount);
                     customerAccount = customerAccountService.update(customerAccount);
@@ -1824,9 +1826,9 @@ public class ValidateBRScript extends Script {
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
                     } else if (dunningLevelEnum == DunningLevelEnum.R1) {
-                        BigDecimal dueBalance = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
-                        customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
-                        sendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
+                        computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
+                    } else if (dunningLevelEnum == DunningLevelEnum.R2){
+                        computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R2);
                     }
                 }
 
@@ -1856,6 +1858,12 @@ public class ValidateBRScript extends Script {
                     return ao instanceof RecordedInvoice && ao.getDueDate().after(new Date()) && dueAmount.doubleValue() > 0;
                 }
 
+                private void computeDueBalanceAndSendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
+                    BigDecimal dueBalance = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
+                    customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
+                    sendEmail(customerAccount, notificationEventType);
+                }
+
                 private void sendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
                     genericNotificationService.getApplicableNotifications(notificationEventType, customerAccount)
                             .forEach(notif -> defaultNotificationService.fireNotification(notif, customerAccount));
@@ -1875,6 +1883,7 @@ public class ValidateBRScript extends Script {
             <column name="target_entity_class" value="org.meveo.model.payments.CustomerAccount"></column>
             <column name="enable_history" value="1"></column>
             <column name="init_status" value="R0"></column>
+            <column name="cf_values" value='{"dunningJob_daysToWait":[{"long":30}]}'></column>
             <column name="uuid" value="934c4821-e56e-44d2-b4a1-4be86f922263"></column>
         </insert>
 
@@ -1928,7 +1937,7 @@ public class ValidateBRScript extends Script {
             <column name="priority" value="1"></column>
             <column name="description" value="Some amount is due"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id)  > 0}"></column>
+            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now())  > 0}"></column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
         <insert tableName="wf_generic_transition">
@@ -1941,7 +1950,7 @@ public class ValidateBRScript extends Script {
             <column name="description" value="All is fine again"></column>
             <column name="action_script_id" value="-25"></column>
             <column name="condition_el">
-                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id) <= 0}]]>
+                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
             </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
@@ -1954,7 +1963,7 @@ public class ValidateBRScript extends Script {
             <column name="priority" value="3"></column>
             <column name="description" value="Time is up"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{ false }"></column>
+            <column name="condition_el" value="#{mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getBean('GenericWorkflowService').findByCode('WF_Dunning').getCfValue('dunningJob_daysToWait')))}"></column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
         <insert tableName="wf_generic_transition">
@@ -1982,7 +1991,7 @@ public class ValidateBRScript extends Script {
             <column name="single_node" value="1"></column>
             <column name="exclude_inv_without_amount" value="0"></column>
             <column name="exclude_inv_without_amount" value="1"></column>
-            <column name="cf_values" value='{"gwfJob_nbRuns":[{"long":1}],"gwfJob_waitingMillis":[{"long":0}],"gwfJob_generic_wf":[{"entity":{"classname":"org.meveo.model.generic.wf.GenericWorkflow","code":"WF_Dunning"}}]}'></column>
+            <column name="cf_values" value='{"gwfJob_nbRuns":[{"long":1}], "gwfJob_waitingMillis":[{"long":0}],"gwfJob_generic_wf":[{"entity":{"classname":"org.meveo.model.generic.wf.GenericWorkflow","code":"WF_Dunning"}}]}'></column>
             <column name="uuid" value="18636982-e611-4b29-b0d2-4314464c94b2"></column>
         </insert>
 
@@ -1998,14 +2007,6 @@ public class ValidateBRScript extends Script {
             <column name="tag_end" value="}"></column>
             <column name="description" value="to R1 status email template"></column>
             <column name="subject" value="You have unpaid invoices"></column>
-            <column name="textcontent" value="Hi #{event.name.title.description} #{event.name.lastName},
-
-            Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}.
-
-            Regards,
-
-            Accounting Team">
-            </column>
             <column name="textcontent">
                 <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
 
@@ -2013,7 +2014,7 @@ Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance
 
 Regards,
 
-Accounting Team"
+Accounting Team
                 ]]>
             </column>
         </insert>
@@ -2036,7 +2037,35 @@ All unpaid invoices for your account #{event.code} have been paid.
 Your dunning status has been reset to normal.
 
 Best regards,
-Accounting Team"
+
+Accounting Team
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL"></column>
+            <column name="id" valueNumeric="-3"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="code" value="TO_R2_MAIL_TEMPLATE"></column>
+            <column name="type" value="DUNNING"></column>
+            <column name="tag_start" value="#{"></column>
+            <column name="tag_end" value="}"></column>
+            <column name="description" value="to R2 status email template"></column>
+            <column name="subject" value="All invoices have been paid"></column>
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
+
+Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}, since #{event.previousDunningDate}.
+
+A registered letter with acknowledgement of receipt has been sent to your address:
+#{ event.address.address1 }
+#{ event.address.zipCode } #{ event.address.city }
+
+Regards,
+
+Accounting Team
                 ]]>
             </column>
         </insert>
@@ -2081,6 +2110,27 @@ Accounting Team"
             <column name="email_from" value="no-reply@opencellsoft.com"></column>
             <column name="email_to_el" value="#{event.contactInformation.email}"></column>
             <column name="email_template_id" value="-2"></column>
+        </insert>
+
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-13"></column>
+            <column name="uuid" valueNumeric="-13"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="TO_R2_NOTIFICATION"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="event_type_filter" value="TO_R2"></column>
+
+        </insert>
+
+        <insert tableName="adm_notif_email">
+            <column name="id" valueNumeric="-13"></column>
+            <column name="email_from" value="no-reply@opencellsoft.com"></column>
+            <column name="email_to_el" value="#{event.contactInformation.email}"></column>
+            <column name="email_template_id" value="-3"></column>
         </insert>
 
     </changeSet>

@@ -147,7 +147,12 @@ public enum NotificationEventTypeEnum {
     /**
      * Dunning workflow status to R1
      */
-    TO_R1;
+    TO_R1,
+
+    /**
+     * Dunning workflow status to R2
+     */
+    TO_R2;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
