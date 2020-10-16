@@ -38,6 +38,8 @@ import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.BusinessService;
@@ -46,7 +48,8 @@ import org.meveo.service.index.ElasticClient;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Mbarek-Ay
+ * @lastModifiedVersion 11.0
  *
  */
 @Stateless
@@ -68,6 +71,28 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     private CustomTableCreatorService customTableCreatorService;
 
     private static boolean useCETCache = true;
+    
+    /**
+     * Valid from field name
+     */
+    public static final String FIELD_VALID_FROM = "valid_from";
+
+    /**
+     * Validity priority field name
+     */
+    public static final String FIELD_VALID_PRIORITY = "valid_priority";
+    
+    
+    /**
+     * Valid to field name
+     */
+    public static final String FIELD_VALID_TO = "valid_to";
+    
+
+    /**
+     * Disabled field name
+     */
+    public static final String FIELD_DISABLED = "disabled";
 
     @PostConstruct
     private void init() {
@@ -79,10 +104,58 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
-        customFieldsCache.addUpdateCustomEntityTemplate(cet);
-
+        customFieldsCache.addUpdateCustomEntityTemplate(cet); 
         if (cet.isStoreAsTable()) {
-            customTableCreatorService.createTable(cet.getDbTablename());
+        	customTableCreatorService.createTable(cet.getDbTablename());
+        	CustomFieldTemplate disabled=null;
+        	if(cet.isDisableable()) {  
+        		disabled=new CustomFieldTemplate();
+        		disabled.setCode(FIELD_DISABLED);
+        		disabled.setDefaultValue("1");
+        		disabled.setValueRequired(false);
+        		disabled.setActive(true);
+        		disabled.setDescription(FIELD_DISABLED);
+        		disabled.setAppliesTo("CE_"+cet.getDbTablename());
+        		disabled.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        		disabled.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        		disabled.setGuiPosition("tab:"+cet.getName()+":0;field:0");
+        		cet.setDisabled(true); 
+        		customFieldTemplateService.create(disabled); 
+        	} 
+        	if (cet.isVersioned()) {
+        		CustomFieldTemplate validFrom=new CustomFieldTemplate();
+        		validFrom.setCode(FIELD_VALID_FROM); 
+        		validFrom.setValueRequired(false);
+        		validFrom.setActive(true);
+        		validFrom.setDescription(FIELD_VALID_FROM);
+        		validFrom.setAppliesTo("CE_"+cet.getDbTablename());
+        		validFrom.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        		validFrom.setFieldType(CustomFieldTypeEnum.DATE);
+        		validFrom.setGuiPosition("tab:"+cet.getName()+":0;field:1");
+        		customFieldTemplateService.create(validFrom);
+
+        		CustomFieldTemplate validTo=new CustomFieldTemplate();
+        		validTo.setCode(FIELD_VALID_TO); 
+        		validTo.setValueRequired(false);
+        		validTo.setActive(true);
+        		validTo.setDescription(FIELD_VALID_TO);
+        		validTo.setAppliesTo("CE_"+cet.getDbTablename());
+        		validTo.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        		validTo.setFieldType(CustomFieldTypeEnum.DATE);
+        		validTo.setGuiPosition("tab:"+cet.getName()+":0;field:2");
+        		customFieldTemplateService.create(validTo);
+
+        		CustomFieldTemplate priority=new CustomFieldTemplate();
+        		priority.setCode(FIELD_VALID_PRIORITY); 
+        		priority.setValueRequired(false);
+        		priority.setActive(true);
+        		priority.setDescription(FIELD_VALID_PRIORITY);
+        		priority.setAppliesTo("CE_"+cet.getDbTablename());
+        		priority.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        		priority.setFieldType(CustomFieldTypeEnum.LONG);
+        		priority.setGuiPosition("tab:"+cet.getName()+":0;field:3");
+        		customFieldTemplateService.create(priority); 	
+        	}
         }
 
         if (cet.isStoreInES()) {

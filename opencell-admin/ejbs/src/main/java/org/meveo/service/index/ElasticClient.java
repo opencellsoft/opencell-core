@@ -1182,7 +1182,7 @@ public class ElasticClient {
                 int totalProcessed = 0;
                 while (recordsRemaining > 0) {
 
-                    Object[] processedInfo = esPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId, recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+                    Object[] processedInfo = esPopulationService.populateIndexFromNativeTable(cet, fromId, recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
 
                     totalProcessed = totalProcessed + (int) processedInfo[0];
                     fromId = processedInfo[1];
