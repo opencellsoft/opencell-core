@@ -15,14 +15,17 @@ import org.hibernate.type.Type;
 public class EntityReferencePostgreSQLJsonSearchFunction implements SQLFunction {
 
     @Override
-    public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+    public String render(Type firstArgumentType, @SuppressWarnings("rawtypes") List args, SessionFactoryImplementor factory) throws QueryException {
 
-        if (args.size() != 3) {
-            throw new IllegalArgumentException("The function parseJson for Entity requires 3 arguments");
+        if (args.size() < 2) {
+            throw new IllegalArgumentException("The function parseJson for Entity ty CF field requires at least 2 arguments");
         }
         String entityColumnName = (String) args.get(0);
         String customFieldName = (String) args.get(1);
-        String customFieldValueProperty = (String) args.get(2);
+        String customFieldValueProperty = getValuePropertyName();
+        if (args.size() > 2) {
+            customFieldValueProperty = (String) args.get(2);
+        }
         String fragment = " (((" + entityColumnName + "::json->>'" + customFieldName + "')::json->0->>'" + customFieldValueProperty + "')::json->>'code')";
         return fragment;
     }
@@ -40,5 +43,9 @@ public class EntityReferencePostgreSQLJsonSearchFunction implements SQLFunction 
     @Override
     public boolean hasParenthesesIfNoArguments() {
         return false;
+    }
+
+    public String getValuePropertyName() {
+        return "entity";
     }
 }

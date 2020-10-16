@@ -248,7 +248,7 @@ public class CurrentUserProvider {
                 em.persist(user);
                 em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
-                //triggerNewUserNotification(user);
+                triggerNewUserNotification(user);
             } catch (ContextNotActiveException e) {
                 // Commented out as no context is available for scheduled jobs to retrieve userAuthTimeProducer instance
                 // log.error("No session context={}", e.getMessage());

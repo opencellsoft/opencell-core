@@ -37,4 +37,9 @@ public class DatePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFuncti
     public String getCastType() {
         return "timestamp";
     }
+
+    @Override
+    public String getValuePropertyName() {
+        return "date";
+    }
 }
