@@ -18,6 +18,8 @@
 
 package org.meveo.service.billing.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -457,10 +459,21 @@ public class UsageRatingService implements Serializable {
             List<UsageChargeInstance> usageChargeInstances = null;
 
             // Charges should be already ordered by priority and id (why id??)
-            usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
-            if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
+            if (edr.getSubscription().getId() != null) {
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription().getId(), edr.getEventDate());
+                if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
+                    throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
+                }
+            } else if(edr.getSubscription().getServiceInstances() != null) {
+                usageChargeInstances = edr.getSubscription().getServiceInstances()
+                                            .stream()
+                                            .flatMap(si -> si.getUsageChargeInstances().stream())
+                                            .collect(toList());
+                if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
+                    throw new NoChargeException("No usage charges are associated with subscription " + edr.getSubscription().getId());
+                }
             }
+
 
             boolean foundPricePlan = true;
 
