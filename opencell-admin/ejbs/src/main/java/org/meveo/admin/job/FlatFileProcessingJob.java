@@ -337,7 +337,7 @@ public class FlatFileProcessingJob extends Job {
         nbLinesToProcessCF.setDefaultValue("1");
         nbLinesToProcessCF.setValueRequired(false);
         nbLinesToProcessCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:7");
-        result.put(FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS, nbLinesToProcessCF);
+        result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION, nbLinesToProcessCF);
 
         CustomFieldTemplate mappingConf = new CustomFieldTemplate();
         mappingConf.setCode(FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);
