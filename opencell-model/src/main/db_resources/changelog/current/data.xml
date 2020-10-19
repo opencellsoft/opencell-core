@@ -1792,7 +1792,6 @@ public class ValidateBRScript extends Script {
                 private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface("DefaultNotificationService");
                 private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface("GenericNotificationService");
                 private DunningDocumentService dunningDocumentService = (DunningDocumentService) getServiceInterface("DunningDocumentService");
-                private RecordedInvoiceService recordedInvoiceService = (RecordedInvoiceService) getServiceInterface("RecordedInvoiceService");
 
                 @Override
                 public void execute(Map<String, Object> context) {
@@ -1818,8 +1817,8 @@ public class ValidateBRScript extends Script {
                         return;
                     customerAccount.setDunningLevel(dunningLevelEnum);
                     customerAccount.setDateDunningLevel(new Date());
-                    createDunningDocuments(customerAccount);
-                    customerAccount = customerAccountService.update(customerAccount);
+                    //createDunningDocuments(customerAccount);
+
 
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
@@ -1828,6 +1827,8 @@ public class ValidateBRScript extends Script {
                         customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
                     }
+
+                    customerAccountService.update(customerAccount);
                 }
 
                 private List<DunningDocument> createDunningDocuments(CustomerAccount customerAccount) {
@@ -1928,7 +1929,7 @@ public class ValidateBRScript extends Script {
             <column name="priority" value="1"></column>
             <column name="description" value="Some amount is due"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id)  > 0}"></column>
+            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now())  > 0}"></column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
         <insert tableName="wf_generic_transition">
@@ -1941,7 +1942,7 @@ public class ValidateBRScript extends Script {
             <column name="description" value="All is fine again"></column>
             <column name="action_script_id" value="-25"></column>
             <column name="condition_el">
-                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity.id) <= 0}]]>
+                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
             </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
@@ -1998,14 +1999,6 @@ public class ValidateBRScript extends Script {
             <column name="tag_end" value="}"></column>
             <column name="description" value="to R1 status email template"></column>
             <column name="subject" value="You have unpaid invoices"></column>
-            <column name="textcontent" value="Hi #{event.name.title.description} #{event.name.lastName},
-
-            Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}.
-
-            Regards,
-
-            Accounting Team">
-            </column>
             <column name="textcontent">
                 <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
 

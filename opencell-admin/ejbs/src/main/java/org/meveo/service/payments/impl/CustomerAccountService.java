@@ -195,17 +195,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), toDate);
     }
 
-    /**
-     * Calculate Customer account balance due up to now
-     *
-     * @param customerAccountId customer account id
-     * @return A balance amount
-     */
-    public BigDecimal customerAccountBalanceDue(Long customerAccountId) {
-        return customerAccountBalanceDue(findById(customerAccountId), new Date());
-    }
-
-
 
     /**
      * Calculate Customer account balance due up to a given date without litigation, or a total balance amount without litigation if no date is provided.
