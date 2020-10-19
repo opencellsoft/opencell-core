@@ -1882,9 +1882,10 @@ public class ValidateBRScript extends Script {
             <column name="creator" value="applicationInitializer"></column>
             <column name="code" value="dunningJob_R1TimesUp"></column>
             <column name="description" value="Days to wait before dunning transition R1 - R2 fires up"></column>
+            <column name="applicable_on_el" value='#{entity.code.equals("WF_Dunning")}'></column>
             <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R1 - R2","ENG":"Days to wait before dunning transition R1 - R2 fires up"}'></column>
             <column name="field_type" value="LONG"></column>
-            <column name="value_required" value="1"></column>
+            <column name="value_required" value="0"></column>
             <column name="default_value" value="30"></column>
             <column name="storage_type" value="SINGLE"></column>
             <column name="applies_to" value="GenericWorkflow"></column>
