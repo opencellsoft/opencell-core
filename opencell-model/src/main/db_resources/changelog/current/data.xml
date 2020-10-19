@@ -1820,8 +1820,8 @@ public class ValidateBRScript extends Script {
                     customerAccount.setDunningLevel(dunningLevelEnum);
                     customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
                     customerAccount.setDateDunningLevel(new Date());
-                    createDunningDocuments(customerAccount);
-                    customerAccount = customerAccountService.update(customerAccount);
+                    //createDunningDocuments(customerAccount);
+
 
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
@@ -1830,6 +1830,8 @@ public class ValidateBRScript extends Script {
                     } else if (dunningLevelEnum == DunningLevelEnum.R2){
                         computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R2);
                     }
+
+                    customerAccountService.update(customerAccount);
                 }
 
                 private List<DunningDocument> createDunningDocuments(CustomerAccount customerAccount) {
@@ -2053,11 +2055,11 @@ Accounting Team
             <column name="tag_start" value="#{"></column>
             <column name="tag_end" value="}"></column>
             <column name="description" value="to R2 status email template"></column>
-            <column name="subject" value="All invoices have been paid"></column>
+            <column name="subject" value="You still have unpaid invoices"></column>
             <column name="textcontent">
                 <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
 
-Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}, since #{event.previousDunningDate}.
+Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}, since #{event.previousDunningDateLevel}.
 
 A registered letter with acknowledgement of receipt has been sent to your address:
 #{ event.address.address1 }
