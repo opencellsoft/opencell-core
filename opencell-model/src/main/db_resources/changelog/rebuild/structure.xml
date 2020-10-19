@@ -180,7 +180,25 @@
         <createSequence sequenceName="dunning_document_seq" />
         <createSequence sequenceName="wf_generic_transition_seq" />
         <createSequence sequenceName="adm_custom_generic_entity_code_seq" startValue="3" />
+<!--         <createSequence sequenceName="cpq_service_type_seq" /> -->
     </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="current-str-seq">
+        <createSequence sequenceName="cpq_product_seq" /> 
+        <createSequence sequenceName="cpq_product_line_seq" />
+        <createSequence sequenceName="cpq_product_version_seq" />
+        <createSequence sequenceName="cpq_tag_seq" /> 
+        <createSequence sequenceName="cpq_tag_filter_seq" />
+        <createSequence sequenceName="cpq_tag_type_seq" /> 
+        <createSequence sequenceName="cpq_attribute_type_seq" /> 
+        <createSequence sequenceName="cpq_media_seq" /> 
+        <createSequence sequenceName="cpq_product_attribute_seq" /> 
+        <createSequence sequenceName="cpq_commercial_offer_seq" /> 
+        <createSequence sequenceName="cpq_offer_component_seq" /> 
+        <createSequence sequenceName="cpq_trade_rule_header_seq" /> 
+        <createSequence sequenceName="cpq_trade_rule_item_seq" /> 
+        <createSequence sequenceName="cpq_trade_rule_line_seq" /> 
+     </changeSet>  
 
 
     <changeSet id="rebuild-str-seq-2" author="AndriusKarpavicius" dbms="mysql">
@@ -9997,7 +10015,553 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <!-- end procedure -->
+	<!--  For Media post -->
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-01">
+        <createTable tableName="cpq_product">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+            
+            <column name="status" type="varchar(255)" />
+            <column name="statusDate" type="datetime" />
+            <column name="product_line_id" type="bigint" />
+            <column name="customer_brand_id" type="bigint" />
+            <column name="reference" type="varchar(50)"/>
+            <column name="model" type="varchar(20)"/>
+            <column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
+              <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+     
+     <changeSet author="Mbarek-Ay" id="current-str-tbl-02">
+        <createTable tableName="cpq_product_model_children">
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="model_chlidren" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="product_id,model_chlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
+    </changeSet> 
+     
+    
+    <changeSet author="Mbarek-Ay" id="current-str-tbl-03">
+    <createTable tableName="cpq_product_discount_plan">
+        <column name="product_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+        <column name="discount_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
+   </changeSet>
+   
+   
+   <changeSet author="Mbarek-Ay" id="current-str-tbl-04">
+        <createTable tableName="cpq_product_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" /> 
+             <column name="long_description" type="varchar(255)" /> 
 
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />  
+            <column name="seller_id" type="bigint" />
+            <column name="parent_line" type="bigint" /> 
+        </createTable>
+    </changeSet>
+     
+     <changeSet author="Mbarek-Ay" id="current-str-tbl-05">
+        <createTable tableName="cpq_product_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
+            </column>
+            <column name="version" type="int4" />  
+            <column name="status" type="varchar(255)" />
+             <column name="statusDate" type="datetime" />
+            
+            <column name="short_description" type="varchar(255)" /> 
+            <column name="long_description" type="varchar(255)" /> 
+            <column name="start_date" type="DATE" />
+            <column name="end_date" type="DATE" />
+            <column name="product_id" type="bigint" />  
+        </createTable>
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-tbl-06">
+        <createTable tableName="cpq_tag">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="seller_id" type="bigint" />
+            <column name="name" type="varchar(255)" /> 
+            <column name="tag_type_id" type="bigint" />
+            <column name="parent_tag_id" type="bigint" />
+            <column name="filter_el" type="varchar(2000)"/> 
+        </createTable>
+    </changeSet>
+    
+    
+    
+      <changeSet author="Mbarek-Ay" id="current-str-tbl-07">
+        <createTable tableName="cpq_filter_tag">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_filter_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+            
+            <column name="operator" type="varchar(255)" />
+            <column name="entity" type="varchar(255)" />
+            <column name="field" type="varchar(255)" />
+            <column name="comparaison" type="varchar(255)" />
+            <column name="value" type="varchar(255)" /> 
+        </createTable>
+    </changeSet>
+    
+    
+    <changeSet author="Mbarek-Ay" id="current-str-tbl-08">
+        <createTable tableName="cpq_tag_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_type_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="seller_id" type="bigint" /> 
+        </createTable>
+    </changeSet>
+
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-09">
+		<createTable tableName="cpq_attribute_type">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_attribute_type_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="attribute_type" type="varchar(20)" />
+			<column name="label" type="varchar(255)" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-10">
+		<createTable tableName="cpq_media">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_media_pkey" />
+			</column>
+			<column name="version" type="int4" />  
+			<column name="product_id" type="bigint" />
+			<column name="product_attribute_id" type="bigint" />
+			<column name="media_name" type="varchar(50)" />
+			<column name="label" type="varchar(255)" />
+			 <column name="main" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="media_type" type="varchar(50)" />
+             <column name="media_path" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-11">
+		<createTable tableName="cpq_product_attribute">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_product_attribute_pkey" />
+			</column>
+			<column name="version" type="int4" />  
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="commercial_offer_id" type="bigint" />
+			<column name="attribute_type_id" type="bigint" />
+			<column name="attribute_name" type="varchar(20)" />
+			<column name="status" type="varchar(255)" />
+			 <column name="mandatory" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="priority" type="int" />
+            <column name="title" type="varchar(50)" />
+            <column name="param" type="varchar(2000)" />
+             <column name="material" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+		</createTable>
+	</changeSet>
+	
+	 
+   
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-12">
+		<createTable tableName="cpq_commercial_offer">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_commercial_offer_pkey" />
+			</column>
+			 <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="seller_id" type="bigint" /> 
+            <column name="status" type="varchar(50)" />
+            <column name="begin_date" type="DATE" />
+            <column name="end_date" type="DATE" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-13">
+		<createTable tableName="cpq_offer_component">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_offer_component_pkey" />
+			</column>
+			 <column name="version" type="int4" /> 
+            <column name="commercial_offer_id" type="bigint" /> 
+            <column name="product_id" type="bigint" />   
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-14">
+		<createTable tableName="cpq_trade_rule_header">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_trade_rule_header_pkey" />
+			</column>
+			 <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />    
+            <column name="rule_type" type="varchar(50)" />  
+            <column name="cpq_commercial_offer_id" type="bigint" /> 
+            <column name="cpq_product_id" type="bigint" />  
+            <column name="cpq_product_version_id" type="bigint" /> 
+            <column name="target_attribute_name" type="varchar(20)" />  
+            <column name="target_attribute_value" type="varchar(255)" />
+            <column name="cpq_tag_id" type="bigint" />  
+            <column name="rule_el" type="varchar(2000)" />  
+		</createTable>
+	</changeSet>
+	
+	   <changeSet author="Mbarek-Ay" id="current-str-tbl-15">
+		<createTable tableName="cpq_trade_rule_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_trade_rule_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="cpq_commercial_offer_id" type="bigint" />
+			<column name="rule_item_el" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	
+	  <changeSet author="Mbarek-Ay" id="current-str-tbl-16">
+		<createTable tableName="cpq_trade_rule_line">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_trade_rule_line_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			
+			<column name="commercial_offer_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="tag_id" type="bigint" />
+			<column name="operator" type="int" />
+			<column name="value" type="varchar(255)" /> 
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="current-str-tbl-17">
+    <createTable tableName="cpq_product_tags">
+        <column name="product_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+        <column name="tag_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addUniqueConstraint columnNames="product_id,tag_id" constraintName="cpq_product_tags_pkey" tableName="cpq_product_tags" />
+   </changeSet>
+	
+	 <changeSet author="Mbarek-Ay" id="current-str-tbl-18">
+    <createTable tableName="cpq_commercial_offer_tags">
+        <column name="commercial_offer_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+        <column name="tag_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addUniqueConstraint columnNames="commercial_offer_id,tag_id" constraintName="cpq_commercial_offer_tags_pkey" tableName="cpq_commercial_offer_tags" />
+   </changeSet>
+   
+   <changeSet author="Mbarek-Ay" id="current-str-tbl-19">
+    <createTable tableName="cpq_offer_component_tags">
+        <column name="offer_component_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+        <column name="tag_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_offer_component_tags_pkey" tableName="cpq_offer_component_tags" />
+   </changeSet>
+	
+	
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-01">
+        <addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cpq_product" constraintName="fk_1y8p1q0o8tw5u0vcodfukdbez" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+    </changeSet>
+     <changeSet author="Mbarek-Ay" id="current-str-fk-02">
+        <addForeignKeyConstraint baseColumnNames="customer_brand_id" baseTableName="cpq_product" constraintName="fk_5iap1p3o8tw5u0vcodazokdub" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_brand" />
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-03">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_product_line" constraintName="fk_1ykj5q0o8tw5u0vcodpoqljca" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="current-str-fk-04">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag_type" constraintName="fk_9axk5q0o8nddo2vcodpoqlopq" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+    
+    <changeSet author="Mbarek-Ay" id="current-str-fk-05">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag" constraintName="fk_oop625q0o8tw5u0vcodospq5c" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="current-str-fk-06">
+        <addForeignKeyConstraint baseColumnNames="parent_line" baseTableName="cpq_product_line" constraintName="fk_bnrqyk9sqqcnt5m298cpbfrqo3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+    </changeSet>
+    
+    <changeSet author="Mbarek-Ay" id="current-str-fk-07">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_version" constraintName="fk_pomyp8vq0o8t5u0vcodpoaopq" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+    
+       <changeSet author="Mbarek-Ay" id="current-str-fk-08">
+        <addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-09">
+        <addForeignKeyConstraint baseColumnNames="parent_tag_id" baseTableName="cpq_tag" constraintName="fk_pomjqq6n5u0vcodkopm" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-10">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovooi1" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+    
+    <changeSet author="Mbarek-Ay" id="current-str-fk-11">
+        <addForeignKeyConstraint baseColumnNames="product_attribute_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_attribute" />
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-12">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_attribute" constraintName="fk_vv62po85asdabcipq5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="current-str-fk-13">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_attribute" constraintName="fk_ro62ppqqzsqdabdp5a" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+     </changeSet>
+     
+       <changeSet author="Mbarek-Ay" id="current-str-fk-15">
+        <addForeignKeyConstraint baseColumnNames="attribute_type_id" baseTableName="cpq_product_attribute" constraintName="fk_vosp81qazsqdabciaao" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute_type" />
+     </changeSet>
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-14">
+        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_product_attribute" constraintName="fk_vv62ppqazsqdabcipqc" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+     </changeSet>
+    
+   
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-16">
+        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_offer_component" constraintName="fk_ks2qo1jjo5oaciaao" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+     </changeSet>
+     
+        <changeSet author="Mbarek-Ay" id="current-str-fk-17">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_offer_component" constraintName="fk_sspl5q1jj6jdakklqp" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+     </changeSet>
+     
+     <changeSet author="Mbarek-Ay" id="current-str-fk-18">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_commercial_offer" constraintName="fk_sqolc5q1qzsqdaoopak" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+     </changeSet> 
+      
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-19">
+        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_trade_rule_line" constraintName="fk_iw510u1o6ndaphf4" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+     </changeSet> 
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-20">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_trade_rule_line" constraintName="fk_ii50ihu1qzsqikh2bo" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+     </changeSet> 
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-21">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_trade_rule_line" constraintName="fk_nh50ihuoo32sqijo5v" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+     </changeSet>
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-22">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_trade_rule_line" constraintName="fk_oluu50oo32sqiun5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+     </changeSet> 
+     
+     
+          <changeSet author="Mbarek-Ay" id="current-str-fk-23">
+        <addForeignKeyConstraint baseColumnNames="cpq_commercial_offer_id" baseTableName="cpq_trade_rule_header" constraintName="fk_nhi85o6nnipl087" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+     </changeSet> 
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-24">
+        <addForeignKeyConstraint baseColumnNames="cpq_product_id" baseTableName="cpq_trade_rule_header" constraintName="fk_ggi871iihn0ii77" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+     </changeSet> 
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-25">
+        <addForeignKeyConstraint baseColumnNames="cpq_product_version_id" baseTableName="cpq_trade_rule_header" constraintName="fk_omk25ihukik058ijj20" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+     </changeSet>
+     
+      <changeSet author="Mbarek-Ay" id="current-str-fk-26">
+        <addForeignKeyConstraint baseColumnNames="cpq_tag_id" baseTableName="cpq_trade_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+     </changeSet>   
+     
+        <changeSet author="Mbarek-Ay" id="current-str-fk-27">
+        <addForeignKeyConstraint baseColumnNames="cpq_commercial_offer_id" baseTableName="cpq_trade_rule_item" constraintName="fk_jj000oi0ndahhi55" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+     </changeSet> 
+     
+<!--     <changeSet id="540-15_20201019_servicetype" author="TarikF"> -->
+<!--     	<createTable tableName="cpq_service_type"> -->
+<!--     		<column name="id" type="bigint" autoIncrement="${id.auto}"> -->
+<!--                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" /> -->
+<!--             </column> -->
+<!--             <column name="code" type="varchar(255)"> -->
+<!--                 <constraints nullable="false" /> -->
+<!--             </column> -->
+<!--             <column name="description" type="varchar(255)" />   -->
+<!--             <column name="version" type="int4" /> -->
+<!--             <column name="creator" type="varchar(100)" /> -->
+<!--             <column name="created" type="datetime"> -->
+<!--                 <constraints nullable="false" /> -->
+<!--             </column> -->
+<!--             <column name="updated" type="datetime" /> -->
+<!--             <column name="updater" type="varchar(100)" />  -->
+<!--             <column name="service_type" type="varchar(100)"> -->
+<!--                 <constraints nullable="false" /> -->
+<!--             </column> -->
+<!--     	</createTable> -->
+<!--     </changeSet> -->
+    
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
