@@ -97,6 +97,20 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
         genericWorkflow = new GenericWorkflow();
         genericWorkflow = fromDTO(genericWorkflowDto, genericWorkflow);
+        
+        FilterDto filterDto = genericWorkflowDto.getFilter();
+        if (filterDto != null && filterDto.getCode() != null) {
+            Filter filter = filterService.findByCode(filterDto.getCode());
+            if (filter == null) {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filterService.create(filter);
+                genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
+            } else {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                genericWorkflow.setFilter(filterService.update(filter));
+            }
+        }
+        
         genericWorkflowService.create(genericWorkflow);
 
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
@@ -143,8 +157,22 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
 
         genericWorkflow = fromDTO(genericWorkflowDto, genericWorkflow);
+        
+        FilterDto filterDto = genericWorkflowDto.getFilter();
+        if (filterDto != null && filterDto.getCode() != null) {
+            Filter filter = filterService.findByCode(filterDto.getCode());
+            if (filter == null) {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filterService.create(filter);
+                genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
+            } else {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                genericWorkflow.setFilter(filterService.update(filter));
+            }
+        }
+        
         genericWorkflow = genericWorkflowService.update(genericWorkflow);
-
+        
         // Update Transitions
         List<GWFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(genericWorkflowDto.getTransitions())) {
@@ -227,13 +255,6 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         if (dto.isDisabled() != null) {
             genericWorkflow.setDisabled(dto.isDisabled());
         }
-        if (dto.getFilter() != null && dto.getFilter().getCode() != null) {
-            Filter filter = filterService.findByCode(dto.getFilter().getCode());
-            if (filter == null) {
-                filter = createFilter(dto.getFilter());
-            }
-            genericWorkflow.setFilter(filter);
-        }
         if (dto.getFilter() != null && dto.getFilter().getCode() == null) {
             genericWorkflow.setFilter(null);
         }
@@ -246,7 +267,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         return genericWorkflow;
     }
 
-    private Filter createFilter(FilterDto filterDto) {
+    private Filter filterFromDto(FilterDto filterDto) {
         if (filterDto == null) {
             return null;
         }
@@ -257,8 +278,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         filter.setInputXml(filterDto.getInputXml());
         filter.setShared(filterDto.getShared());
         filter.setPollingQuery(filterDto.getPollingQuery());
-        filterService.create(filter);
-        return filterService.findByCode(filter.getCode());
+        return filter;
     }
 
     /**

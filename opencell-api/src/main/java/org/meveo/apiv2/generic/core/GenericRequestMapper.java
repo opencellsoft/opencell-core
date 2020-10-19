@@ -5,6 +5,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
+import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
@@ -42,8 +43,13 @@ public class GenericRequestMapper {
                     String keyObject = (String) key;
                     if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
 
-                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                        return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                    	String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
+                    	String[] fields=fieldName.split(" ");
+                    	FilterMapper filterMapper=null;
+                    	for(String field:fields) {
+                    		filterMapper=new FactoryFilterMapper().create(field, filters.get(key), entity, serviceFunction);
+                    	}
+                    	return Collections.singletonMap(keyObject, filterMapper.map());
                     }
                     return Collections.singletonMap(keyObject, filters.get(key));
                 })

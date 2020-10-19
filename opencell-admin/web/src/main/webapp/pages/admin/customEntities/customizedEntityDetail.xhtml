@@ -44,6 +44,8 @@
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customEntityTemplateBean.entity.transient}">
                     <h:outputText value="#{customEntityTemplateBean.partOfModules}" styleClass="field-value" />
                 </hftl:decorateFormField>
+                 <hftl:formField label="#{messages['customizedEntities.disableable']}" field="disableable" allowEdit="false" />
+                 <hftl:formField label="#{messages['customizedEntities.versioned']}" field="versioned" allowEdit="false" />
             </hftl:formPanel>
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">

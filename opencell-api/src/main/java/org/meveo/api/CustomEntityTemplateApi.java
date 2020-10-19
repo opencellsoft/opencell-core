@@ -60,7 +60,8 @@ import org.meveo.util.EntityCustomizationUtils;
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Mbarek-Ay
+ * @lastModifiedVersion 11.0
  */
 @Stateless
 public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, CustomEntityTemplateDto> {
@@ -101,6 +102,14 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         if (dto.getStoreInES() == null) {
             dto.setStoreInES(Boolean.TRUE);
+        }
+          
+        if (dto.getDisableable() == null) {
+            dto.setDisableable(Boolean.FALSE);
+        }
+        
+        if (dto.getVersioned()== null) {
+            dto.setVersioned(Boolean.FALSE);
         }
 
         if (customEntityTemplateService.findByCode(dto.getCode()) != null) {
@@ -512,6 +521,14 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         if (dto.getStoreInES() != null) {
             cet.setStoreInES(dto.getStoreInES());
+        }
+        
+        if (dto.getDisableable() != null) {
+            cet.setDisableable(dto.getDisableable());
+        }
+        
+        if (dto.getVersioned() != null) {
+            cet.setVersioned(dto.getVersioned());
         }
 
         return cet;
