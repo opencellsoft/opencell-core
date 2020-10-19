@@ -15,15 +15,14 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveocrm.admin.action.reporting;
 
-package org.meveo.model.dwh;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
 
-@Deprecated
-public enum MeasurementPeriodEnum {
-    DAILY, WEEKLY, MONTHLY, YEARLY;
+@Named
+@ConversationScoped
+public class DataCollectorListBean extends DataCollectorBean {
 
-    public String getLabel() {
-        return "enum.measurementperiod." + name();
-    }
-
+    private static final long serialVersionUID = -3037867704912696056L;
 }
