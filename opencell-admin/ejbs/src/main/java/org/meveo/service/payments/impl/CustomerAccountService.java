@@ -17,19 +17,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
@@ -40,18 +27,16 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.base.AccountService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Customer Account service implementation.
@@ -209,6 +194,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date toDate) {
         return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), toDate);
     }
+
 
     /**
      * Calculate Customer account balance due up to a given date without litigation, or a total balance amount without litigation if no date is provided.
