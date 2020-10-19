@@ -168,6 +168,9 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDunningLevel;
 
+    @Transient
+    private Date previousDunningDateLevel;
+
     /**
      * Parent customer
      */
@@ -362,6 +365,14 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
     public void setDateDunningLevel(Date dateDunningLevel) {
         this.dateDunningLevel = dateDunningLevel;
+    }
+
+    public Date getPreviousDunningDateLevel() {
+        return previousDunningDateLevel;
+    }
+
+    public void setPreviousDunningDateLevel(Date previousDunningDateLevel) {
+        this.previousDunningDateLevel = previousDunningDateLevel;
     }
 
     public String getPassword() {
