@@ -17,16 +17,11 @@
  */
 package org.meveo.service.generic.wf;
 
-import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
-import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
-import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,6 +46,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
+
+import static org.meveo.admin.job.GenericWorkflowJob.*;
 
 @Stateless
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
@@ -161,6 +158,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             workflowInstanceHistoryService.create(wfHistory);
                         }
 
+                        WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
+
                         if (gWFTransition.getActionScript() != null) {
                             ScriptInstance scriptInstance = gWFTransition.getActionScript();
                             String scriptCode = scriptInstance.getCode();
@@ -170,6 +169,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             methodContext.put(WF_INS, workflowInstance);
                             methodContext.put(IWF_ENTITY, iwfEntity);
                             methodContext.put(Script.CONTEXT_ACTION, scriptCode);
+                            methodContext.put(TO_STATUS, toStatus);
                             if (script == null) {
                                 log.error("Script is null");
                                 throw new BusinessException("script is null");
@@ -177,7 +177,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             script.execute(methodContext);
                         }
 
-                        WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
+
                         workflowInstance.setCurrentStatus(toStatus);
 
                         log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
