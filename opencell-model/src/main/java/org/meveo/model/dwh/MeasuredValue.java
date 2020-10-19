@@ -51,6 +51,7 @@ import org.meveo.model.BaseEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_measured_value_seq"), })
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class MeasuredValue extends BaseEntity {
 
     private static final long serialVersionUID = -3343485468990186936L;
