@@ -3250,305 +3250,10 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b6a85dcb-06dc-427d-bdde-a23d6061103c",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "905cf38b-e3de-4c64-a791-70c19637a7b2",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/createOrUpdateBrand",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"createOrUpdateBrand"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|CustomerBrand|CB|SUCCESS",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "7504f535-b38f-4814-bf00-6aecdfa4b862",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "opencell.admin",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "opencell.admin",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/account/customer?code={{entityCode}}&customerCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{entityCode}}"
-										},
-										{
-											"key": "customerCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|CustomerBrand|CB|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "71b32b70-43b3-46d9-9d11-7edd5c83d4c8",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/updateBrand",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"updateBrand"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|CustomerBrand|CB|SUCCESS|updated",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "178eae2d-93ec-41ed-8ef4-409db8c34ba4",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer?customerCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer"
-									],
-									"query": [
-										{
-											"key": "customerCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "a3a51352-624f-4528-9c62-6329a4c1ef05",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"customerBrandCode\", pm.variables.get(\"entityCode\"));"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "a608c475-fea2-41a9-8c47-f76a028b246d",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "CustomerBrand GApi",
-					"item": [
-						{
-							"name": "CreateOrUpdate|CustomerBrand|CB|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
 										"id": "c8588f85-3a5e-46f5-a69d-72e686cc7bc2",
 										"exec": [
 											"pm.collectionVariables.set(\"entity_id\",pm.response.json().id);\r",
-											"console.log(\"(i) value is: \",pm.collectionVariables.get(\"int\"));\r",
-											"console.log(\"entity_id: \",pm.variables.get(\"entity_id\"));"
+											"//console.log(\"(i) value: \",pm.collectionVariables.get(\"i\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -3620,7 +3325,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "b053fc36-1337-44b6-83b9-57f0c797751d",
+										"id": "bf2348e9-96cd-4028-ac8b-3497c2e94e64",
 										"exec": [
 											""
 										],
@@ -10395,7 +10100,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"{{userAccountCode}}\",\r\n    \"offerTemplate\": \"OF_CLASSIC_TEMPLATE\",\r\n    \"subscriptionDate\": \"2020-01-01\"\r\n}\t\r\n",
+							"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"userAccount\": \"{{userAccountCode}}\",\r\n    \"offerTemplate\": \"OF_CLASSIC_TEMPLATE\",\r\n    \"subscriptionDate\": \"2020-01-01\"\r\n}",
 							"options": {
 								"raw": {}
 							}
@@ -11557,6 +11262,80 @@
 									"script": {
 										"id": "eeec8764-ccce-445a-85cf-3d7e97a12c88",
 										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": { \"id\": {{subscriptionCode}} },\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": {{currency}},\r\n    \"taxCode\": {\"code\":\"TAX_CLASS_CLASSIC_HIGH\"},\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/v2/generic/walletOperation",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"v2",
+										"generic",
+										"walletOperation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|WalletOperation|WLT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a52fc5cc-a6ad-46f7-b80a-5d1563915ecf",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "cb36e69c-3290-4301-852b-414582ab6054",
+										"exec": [
 											"var inc = pm.collectionVariables.get(\"inc\");\r",
 											"if(!null){\r",
 											"pm.collectionVariables.set(\"inc\",inc+1);\r",
@@ -11603,14 +11382,171 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/wallet/operation",
+									"raw": "{{opencell.url}}/v2/generic/walletOperation/{{entity_id}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"billing",
-										"wallet",
-										"operation"
+										"v2",
+										"generic",
+										"walletOperation",
+										"{{entity_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|WalletOperation|WLT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c250ab80-c5ba-44ac-bd56-fd5210b09fee",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "4d579a48-987c-4b55-9046-9d48f0d6e4f8",
+										"exec": [
+											"var inc = pm.collectionVariables.get(\"inc\");\r",
+											"if(!null){\r",
+											"pm.collectionVariables.set(\"inc\",inc+1);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}{{inc}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"{{subscriptionCode}}\",\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"taxCode\": \"TAX_CLASS_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/v2/generic/walletOperation/{{entity_id}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"v2",
+										"generic",
+										"walletOperation",
+										"{{entity_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|WalletOperation|WLT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9cf65bb7-6768-4da0-833a-d7d5495aeb9b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2af2feb8-04a5-4838-b72a-c5f571bc5137",
+										"exec": [
+											"var inc = pm.collectionVariables.get(\"inc\");\r",
+											"if(!null){\r",
+											"pm.collectionVariables.set(\"inc\",inc+1);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}{{inc}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"{{subscriptionCode}}\",\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"taxCode\": \"TAX_CLASS_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/v2/generic/walletOperation/{{entity_id}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"v2",
+										"generic",
+										"walletOperation",
+										"{{entity_id}}"
 									]
 								}
 							},
@@ -13702,6 +13638,84 @@
 					"response": []
 				},
 				{
+					"name": "Delete|WalletOperation|WLT|SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8e261711-32be-4b68-80ab-288897bfb627",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5acaf31f-2d06-4114-b852-5db12a08cdcd",
+								"exec": [
+									"var inc = pm.collectionVariables.get(\"inc\");\r",
+									"if(!null){\r",
+									"pm.collectionVariables.set(\"inc\",inc+1);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{entityCode}}{{inc}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": \"{{subscriptionCode}}\",\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"taxCode\": \"TAX_CLASS_CLASSIC_HIGH\",\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/walletOperation/{{entity_id}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"walletOperation",
+								"{{entity_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete|CreditCategory|CrCat|SUCCESS",
 					"event": [
 						{
@@ -14095,268 +14109,273 @@
 	],
 	"variable": [
 		{
-			"id": "5cacae5e-b499-4e7d-9282-ab1420db13ac",
+			"id": "8d11011a-6c06-465d-bf2e-f7eee1f88795",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work"
 		},
 		{
-			"id": "416a85ce-b603-41e1-975a-fdf5e10225b9",
+			"id": "4bcfbf8a-9b7d-4369-a663-3dda0de30f51",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/opencell/api/rest"
 		},
 		{
-			"id": "8f65f42a-2bac-45df-a349-d8e2d72a9c51",
+			"id": "b1c39caf-a7ce-4be2-ad9c-8f1cb19507a6",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "e44377af-b689-4a4e-9602-560211e68734",
+			"id": "4174da2b-e606-4191-bbc6-53cd99459167",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c21dec5d-8fcc-4e7b-956c-f5d610ba89fd",
+			"id": "f900b710-2745-4ad5-a104-895dd9a4d2b8",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "d5d50c24-ecd1-46e5-8d2d-04dd70abb8fe",
+			"id": "8d7a8715-fb12-4852-b6ca-455b57031fe5",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "3a6b8e48-d838-43f1-9ef1-8330575704c2",
+			"id": "3e62bfa7-776a-4c81-b874-67d3feda62d5",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "c545f967-6bd6-49fd-a19e-f368ee71ec26",
+			"id": "ceff2d82-2f9a-46f2-80d6-e85084afc322",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "2abf6247-0cb5-4ca0-a7c0-fa6256cb8d77",
+			"id": "65e97d02-80ba-43d2-b3dd-a126d314cd0e",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "1d9b1bf1-8471-420f-aba9-cd0e8c2ed62d",
+			"id": "43c1b023-14a7-455a-a6ea-fee88ffdb47b",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "d9bf8284-c1a5-4e99-a290-ee7dd15fa444",
+			"id": "e9591ce2-96dd-4993-9721-f81c2ad8de60",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "7449681a-728d-45d8-bd19-d334964d6206",
+			"id": "0118d193-4369-446e-b628-98aafe4c3966",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "8ccd4dd8-c390-4b19-ac8d-2b58fcfb0842",
+			"id": "1e2bc020-11f4-4509-a55a-2a17db59e0ee",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "7b22ae9c-e4d0-482b-b78d-658d24608128",
+			"id": "9c11d54f-c862-4422-a659-5cd7b5188ef3",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "170ef2cb-a26f-4875-b759-e7993c4c2e96",
+			"id": "3bf809d0-f61d-45b5-9264-eedf73bec270",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "f97ca150-c3b2-44e0-a21a-4e486b9c33ed",
+			"id": "24ce76cf-6209-47ab-949a-fafb8e60f8d6",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "5f214e7d-00c1-4a44-8c5f-8b0815e96725",
+			"id": "f24c494d-6aa4-4e46-a275-dbd425688d2e",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "1d906140-abeb-41fa-9aca-19c747af9daf",
+			"id": "bdaf2a81-7253-4c74-9db3-82fd032367e4",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "b1a25b24-8c15-4e0b-b647-4a7c741958cb",
+			"id": "5eb123a8-fb4a-4919-8c81-a5ffbfb26c53",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "6c4604cf-60ce-4c01-8b26-517653ec2407",
+			"id": "a47f2545-7778-4037-bf94-c10879480b9a",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "530ac3c0-948f-43aa-984b-a378ed207460",
+			"id": "2df4a25e-5a13-45bd-a410-74025856a1db",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "7129d468-9039-492f-8fa0-57f612ecc6c3",
+			"id": "59fb21d4-3bb6-4c3b-a1cf-5d9860485c57",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "5c7a18ae-e2a7-4f9c-abe8-1471413f82e0",
+			"id": "9e897d46-862b-4afd-8677-98cb85d98498",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "28bbba0f-4536-4d17-8ea7-2306c1224435",
+			"id": "16b96878-b07c-43a9-9fb1-c04b946b9ddd",
 			"key": "email",
 			"value": "brahim@opencellsoft.com"
 		},
 		{
-			"id": "06636940-e44c-4389-8120-6bf50b875fa9",
+			"id": "3b23ee24-efc4-4fc0-bc99-0325e2675264",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "42d04882-00c1-4d7e-8392-f9a056575aa5",
+			"id": "b1b55553-5772-4c76-b8f1-25253fef5607",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "74708245-53df-4df4-9139-6ef9a7f937da",
+			"id": "186c028d-e20c-4813-9f74-e768df214867",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "44a9627c-3108-463b-90a3-daf76982c076",
+			"id": "7fe18793-ccfd-4e67-a96c-d0e9d1bf37ac",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "d9a92ad4-c74a-4d80-9fb5-42d254314f6a",
+			"id": "c54d5e18-375e-4c68-bdd6-27153c189eae",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "1bfa112e-a9a6-4983-b891-fd26f08405a1",
+			"id": "1233eadf-f29e-4623-a4ce-b44deb4e1ce6",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "9cb9335c-e875-4c64-b6cd-e3d8a482c6c8",
+			"id": "63ffa5f8-e7c2-4c6d-9956-ebc51409edeb",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "089bf295-1fbd-4d48-8ffe-ea2dedab2aa1",
+			"id": "27c69cdb-c2ec-4798-93e2-3b7d4946563d",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "9884a463-19ca-4088-8ea8-9c8622ae7d16",
+			"id": "645ca5d4-7e08-4a00-b767-62a0775231d9",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "f3e6701f-810d-462e-9033-af05fdcd7434",
+			"id": "e3c44087-7a83-4370-952d-d8864f13f6e0",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "1a862ab7-f631-4c27-91db-18f8b4132177",
+			"id": "af8805d0-4144-44a4-a0e2-42e6e8cef2b9",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "9f141f26-db73-4abf-9d93-4f7d9bf16b08",
+			"id": "3e5346c2-9046-4560-8720-c7e8eb49174a",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "7de87047-ba1f-457e-87e0-0518ee56a714",
+			"id": "7f29a08b-9546-41cf-b063-418133837d3b",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "f29d3748-06cb-4067-9631-1bd179120b37",
+			"id": "50e60acf-f6a2-4f70-a92a-f6ce51168c8c",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "6c2f8bd9-fa8f-4686-b77e-dc993377ed8c",
+			"id": "0d916551-ecf5-480a-bbfe-8311f1edbdf8",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "22a4d8b8-781f-45a0-9639-fff6c425239a",
+			"id": "ba73a6d5-7b9b-4098-969c-3f0ed4225d88",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "849503ef-594c-4315-a83b-a436af4a1068",
+			"id": "526d515d-857d-49ec-ba7e-758fc43ac0aa",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "e47fbe47-00e2-44f3-b20f-85b7f8f79d46",
+			"id": "1480ef53-3b02-4f7d-beb5-2f814ce49adc",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "75da49a2-8b4e-4acf-acba-90e1805ee471",
+			"id": "7a800755-0b52-4289-af8c-5e550b0d2aff",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "80994110-67a8-400c-aeb6-9c1029f82425",
+			"id": "2e5562f2-1853-415d-b570-7b547f0e34fa",
 			"key": "accCode",
 			"value": "ACC_TST"
 		},
 		{
-			"id": "884bb80d-b233-4f3e-9be0-b02ceb7b9231",
+			"id": "d735eb54-682d-4135-97e9-002631b1140d",
 			"key": "invoiceSubCat",
 			"value": "CLASSIC_COMMISSION"
 		},
 		{
-			"id": "f52163cf-0903-41cc-a8da-0887215e0316",
+			"id": "06584183-9199-4e80-a709-7258b0439a68",
 			"key": "billingAccCode",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "7a57b3b5-4b08-47ec-a148-1c67f38acb4e",
+			"id": "d451c427-c1fc-4896-a1b5-0741d480a851",
 			"key": "subCode",
 			"value": "ben.ohara"
 		},
 		{
-			"id": "25150dd5-ddfd-4bb6-ab73-0d42b0645593",
+			"id": "3585f7e4-a090-4dda-9527-fef4b3bed789",
 			"key": "biilingCycle",
 			"value": "BC_CLASSIC_MONTHLY_1ST"
 		},
 		{
-			"id": "b8e89bc3-cfcf-4762-adf5-c6839d8c4a53",
+			"id": "18a5c03a-106b-4e7a-9f8a-990531d4bae4",
 			"key": "customerCategory",
 			"value": "CLIENT"
 		},
 		{
-			"id": "9c022351-4a84-4b35-b67e-8a661a1ae475",
+			"id": "2fa8a2a2-1d22-466c-8496-dc647737a4cc",
 			"key": "i",
 			"value": "0"
 		},
 		{
-			"id": "0bba4637-85b0-4324-bb30-b26f325b81a0",
+			"id": "4b3a7e58-530f-49f4-991f-211790101a7e",
 			"key": "entityCode",
 			"value": ""
 		},
 		{
-			"id": "388b7cde-7ed1-4926-be80-33af828d6121",
+			"id": "8b154f5e-de17-4367-b568-f1ad8a0102da",
 			"key": "entity_code",
 			"value": "CB_TST"
 		},
 		{
-			"id": "c3f91084-de43-4cb0-b1c2-ffcf66db8b4f",
+			"id": "ebde9f49-9d47-4b20-9ac4-3397dd03fd77",
 			"key": "entity_id",
+			"value": ""
+		},
+		{
+			"id": "aa89172e-ead8-4515-a2c7-4785337c0f45",
+			"key": "inc",
 			"value": ""
 		}
 	],
