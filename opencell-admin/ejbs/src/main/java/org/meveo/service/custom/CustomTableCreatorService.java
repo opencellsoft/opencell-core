@@ -75,7 +75,7 @@ public class CustomTableCreatorService implements Serializable {
 
     @Inject
     private EntityManagerProvider entityManagerProvider;
-    
+
     @Inject
     private CurrentUserProvider currentUserProvider;
 
@@ -136,10 +136,9 @@ public class CustomTableCreatorService implements Serializable {
         dbLog.addChangeSet(mysqlChangeSet);
 
         EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
-        
+
         Session hibernateSession = em.unwrap(Session.class);
-        
-        
+
         hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
             @Override
@@ -153,7 +152,7 @@ public class CustomTableCreatorService implements Serializable {
             }
         });
     }
-    
+
     /**
      * Add a field to a db table. Creates a liquibase changeset to add a field to a table and executes it
      *
@@ -181,7 +180,7 @@ public class CustomTableCreatorService implements Serializable {
         setColumnType(cft, column);
 
         if (cft.getDefaultValue() != null) {
-                column.setDefaultValue(cft.getDefaultValue());
+            column.setDefaultValue(cft.getDefaultValue());
         }
 
         addColumnChange.addColumn(column);
@@ -192,87 +191,89 @@ public class CustomTableCreatorService implements Serializable {
         EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
 
         Session hibernateSession = em.unwrap(Session.class);
-        
+
         hibernateSession.doWork(connection -> {
-            
+
             try {
-            	liquibaseUpdate(dbLog, connection);
+                liquibaseUpdate(dbLog, connection);
             } catch (Exception e) {
                 log.error("Failed to add a field {} to a custom table {}", dbTableName, dbFieldname, e);
                 throw new SQLException(e);
             }
         });
     }
-    
-     void setColumnType(CustomFieldTemplate cft, AddColumnConfig column) {
-        column.setType(cft.getFieldType().getDataType().replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString())
-                .replaceAll("default false", ""));
+
+    void setColumnType(CustomFieldTemplate cft, AddColumnConfig column) {
+        column.setType(cft.getFieldType().getDataType().replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()).replaceAll("default false", ""));
     }
-    
+
     /**
      * Add a field to a db table. Creates a liquibase changeset to add a field to a table and executes it
      *
      * @param dbTableName DB Table name
      * @param cft Field definition
+     * @param oldCft Old custom field definition
      */
-    public void updateField(String dbTableName, CustomFieldTemplate cft) {
+    public void updateField(String dbTableName, CustomFieldTemplate cft, CustomFieldTemplate oldCft) {
 
         String dbFieldname = cft.getDbFieldname();
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
         // Drop not null constraint and add again if needed - a better way would be to check if valueRequired field value was changed
-        ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_RNN_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
-        changeSet.setFailOnError(false);
+        if (oldCft.isValueRequired() && !cft.isValueRequired()) {
+            ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_RNN_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+            changeSet.setFailOnError(false);
 
-        DropNotNullConstraintChange dropNotNullChange = new DropNotNullConstraintChange();
-        dropNotNullChange.setTableName(dbTableName);
-        dropNotNullChange.setColumnName(dbFieldname);
-        dropNotNullChange.setColumnDataType(cft.getFieldType().getDataType()
-                .replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()));
-        
-        changeSet.addChange(dropNotNullChange);
-        dbLog.addChangeSet(changeSet);
+            DropNotNullConstraintChange dropNotNullChange = new DropNotNullConstraintChange();
+            dropNotNullChange.setTableName(dbTableName);
+            dropNotNullChange.setColumnName(dbFieldname);
+            dropNotNullChange.setColumnDataType(cft.getFieldType().getDataType().replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()));
 
-        // Add not null constraint if needed
-        if (cft.isValueRequired()) {
-            changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_ANN_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+            changeSet.addChange(dropNotNullChange);
+            dbLog.addChangeSet(changeSet);
+
+            // Add not null constraint if needed
+        } else if (!oldCft.isValueRequired() && cft.isValueRequired()) {
+            ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_ANN_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
             AddNotNullConstraintChange addNotNullChange = new AddNotNullConstraintChange();
 
             addNotNullChange.setTableName(dbTableName);
             addNotNullChange.setColumnName(dbFieldname);
-            addNotNullChange.setColumnDataType(cft.getFieldType().getDataType()
-                    .replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()));
-            
+            addNotNullChange.setColumnDataType(cft.getFieldType().getDataType().replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()));
+
             changeSet.addChange(addNotNullChange);
             dbLog.addChangeSet(changeSet);
-
         }
 
-        // Drop default value and add it again if needed - a better way would be to check if defaultValue field value was changed
+        // Drop default value and add it again if needed
         // Default value does not apply to date type field
         if (cft.getFieldType() != CustomFieldTypeEnum.DATE) {
-            changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_RD_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
-            changeSet.setFailOnError(false);
 
-            DropDefaultValueChange dropDefaultValueChange = new DropDefaultValueChange();
-            dropDefaultValueChange.setTableName(dbTableName);
-            dropDefaultValueChange.setColumnName(dbFieldname);
+            // Default value was removed or has changed
+            if ((oldCft.getDefaultValue() != null && cft.getDefaultValue() == null)) {
 
-            if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                dropDefaultValueChange.setColumnDataType("numeric(23, 12)");
-            } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
-                dropDefaultValueChange.setColumnDataType("bigInt");
-            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST) {
-                dropDefaultValueChange.setColumnDataType("varchar(" + (cft.getMaxValue() == null ? CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING : cft.getMaxValue()) + ")");
-            }
+                ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_RD_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+                changeSet.setFailOnError(false);
 
-            changeSet.addChange(dropDefaultValueChange);
-            dbLog.addChangeSet(changeSet);
+                DropDefaultValueChange dropDefaultValueChange = new DropDefaultValueChange();
+                dropDefaultValueChange.setTableName(dbTableName);
+                dropDefaultValueChange.setColumnName(dbFieldname);
 
-            // Add default value if needed
-            if (cft.getDefaultValue() != null) {
-                changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_AD_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                    dropDefaultValueChange.setColumnDataType("numeric(23, 12)");
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+                    dropDefaultValueChange.setColumnDataType("bigInt");
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST) {
+                    dropDefaultValueChange.setColumnDataType("varchar(" + (cft.getMaxValue() == null ? CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING : cft.getMaxValue()) + ")");
+                }
+
+                changeSet.addChange(dropDefaultValueChange);
+                dbLog.addChangeSet(changeSet);
+
+                // Add default value if needed
+            } else if (cft.getDefaultValue() != null && !cft.getDefaultValue().equals(oldCft.getDefaultValue())) {
+                ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_AD_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
                 AddDefaultValueChange addDefaultValueChange = new AddDefaultValueChange();
 
                 addDefaultValueChange.setTableName(dbTableName);
@@ -296,8 +297,9 @@ public class CustomTableCreatorService implements Serializable {
         }
 
         // Update field length for String type fields.
-        if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST) {
-            changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_M_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
+        if ((cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST)
+                && !oldCft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).equals(cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING))) {
+            ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + dbFieldname + "_M_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
             changeSet.setFailOnError(false);
 
             ModifyDataTypeChange modifyDataTypeChange = new ModifyDataTypeChange();
@@ -309,19 +311,21 @@ public class CustomTableCreatorService implements Serializable {
             dbLog.addChangeSet(changeSet);
         }
 
-        EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
+        if (!dbLog.getChangeSets().isEmpty()) {
+            EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
 
-        Session hibernateSession = em.unwrap(Session.class);
-        
-        hibernateSession.doWork(connection -> {
-            
-            try {
-            	liquibaseUpdate(dbLog, connection);
-            } catch (Exception e) {
-                log.error("Failed to update a field {} in a custom table {}", dbTableName, dbFieldname, e);
-                throw new SQLException(e);
-            }
-        });
+            Session hibernateSession = em.unwrap(Session.class);
+
+            hibernateSession.doWork(connection -> {
+
+                try {
+                    liquibaseUpdate(dbLog, connection);
+                } catch (Exception e) {
+                    log.error("Failed to update a field {} in a custom table {}", dbTableName, dbFieldname, e);
+                    throw new SQLException(e);
+                }
+            });
+        }
     }
 
     /**
@@ -356,7 +360,7 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a field {} to a custom table {}", dbTableName, dbFieldname, e);
                     throw new SQLException(e);
@@ -406,7 +410,7 @@ public class CustomTableCreatorService implements Serializable {
             public void execute(Connection connection) throws SQLException {
 
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to drop a custom table {}", dbTableName, e);
                     throw new SQLException(e);
@@ -414,8 +418,7 @@ public class CustomTableCreatorService implements Serializable {
             }
         });
     }
-    
-    
+
     /**
      * Remove a field from a table
      *
@@ -424,14 +427,12 @@ public class CustomTableCreatorService implements Serializable {
      */
     public void dropUniqueConstraint(String dbTableName, String constraintName) {
 
-
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
-		// Remove field
+        // Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
 
-        
         DropUniqueConstraintChange dropUniqueConstraintStatement = new DropUniqueConstraintChange();
         dropUniqueConstraintStatement.setTableName(dbTableName);
         dropUniqueConstraintStatement.setConstraintName(constraintName);
@@ -449,7 +450,7 @@ public class CustomTableCreatorService implements Serializable {
             public void execute(Connection connection) throws SQLException {
 
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -457,7 +458,7 @@ public class CustomTableCreatorService implements Serializable {
             }
         });
     }
-    
+
     /**
      * Add a unique constraint to table
      *
@@ -466,14 +467,12 @@ public class CustomTableCreatorService implements Serializable {
      */
     public String addUniqueConstraint(String dbTableName, String columnNames) {
 
-
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
         String constraintName = extractUniqueConstraintName(dbTableName);
         // Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
 
-        
         AddUniqueConstraintChange addUniqueConstraintStatement = new AddUniqueConstraintChange();
         addUniqueConstraintStatement.setTableName(dbTableName);
         addUniqueConstraintStatement.setConstraintName(constraintName);
@@ -491,7 +490,7 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to add a constraint {} to a custom table {}", constraintName, dbTableName, e);
                     throw new SQLException(e);
@@ -500,7 +499,7 @@ public class CustomTableCreatorService implements Serializable {
         });
         return constraintName;
     }
-    
+
     /**
      * Add a foreingKey constraint to table
      *
@@ -509,14 +508,12 @@ public class CustomTableCreatorService implements Serializable {
      */
     public String addForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
 
-
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
         String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
-        
+
         ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_CFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
 
-        
         AddForeignKeyConstraintChange addFKConstraintStatement = new AddForeignKeyConstraintChange();
         addFKConstraintStatement.setConstraintName(constraintName);
         addFKConstraintStatement.setBaseTableName(baseTable);
@@ -536,7 +533,7 @@ public class CustomTableCreatorService implements Serializable {
             @Override
             public void execute(Connection connection) throws SQLException {
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to add a constraint {} to a custom table {}", constraintName, baseTable, e);
                     throw new SQLException(e);
@@ -545,7 +542,7 @@ public class CustomTableCreatorService implements Serializable {
         });
         return constraintName;
     }
-    
+
     /**
      * Remove a ForeingKay from a table
      *
@@ -554,15 +551,13 @@ public class CustomTableCreatorService implements Serializable {
      */
     public void dropForeingKeyConstraint(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
 
-
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
         String constraintName = extractFKConstraintName(baseTable, baseColumn, referencedTable, referencedColumn);
-        
+
         ChangeSet changeSet = new ChangeSet(baseTable + "_CT_" + constraintName + "_DFK_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(true);
 
-        
         DropForeignKeyConstraintChange dropForeignKeyConstraintChange = new DropForeignKeyConstraintChange();
         dropForeignKeyConstraintChange.setBaseTableName(baseTable);
         dropForeignKeyConstraintChange.setConstraintName(constraintName);
@@ -580,7 +575,7 @@ public class CustomTableCreatorService implements Serializable {
             public void execute(Connection connection) throws SQLException {
 
                 try {
-                	liquibaseUpdate(dbLog, connection);
+                    liquibaseUpdate(dbLog, connection);
                 } catch (Exception e) {
                     log.error("Failed to remove a constraint {} to a custom table {}", constraintName, baseTable, e);
                     throw new SQLException(e);
@@ -589,24 +584,24 @@ public class CustomTableCreatorService implements Serializable {
         });
     }
 
-	public String extractUniqueConstraintName(String dbTableName) {
-		String constraintName = "CT_UniqueConstraint_"+dbTableName;
-		return constraintName;
-	}
-	
-	public String extractFKConstraintName(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
-		String constraintName = "CT_FOREING_KEY_CONSTRAINT_"+baseTable+"__"+baseColumn+"__"+referencedTable+"__"+referencedColumn;
-		return constraintName;
-	}
-	
+    public String extractUniqueConstraintName(String dbTableName) {
+        String constraintName = "CT_UniqueConstraint_" + dbTableName;
+        return constraintName;
+    }
+
+    public String extractFKConstraintName(String baseTable, String baseColumn, String referencedTable, String referencedColumn) {
+        String constraintName = "CT_FOREING_KEY_CONSTRAINT_" + baseTable + "__" + baseColumn + "__" + referencedTable + "__" + referencedColumn;
+        return constraintName;
+    }
+
     private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
-		Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-		String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
-		if(currentproviderCode!=null) {
-			database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
-		}
-		
-		Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
-		liquibase.update(new Contexts(), new LabelExpression());
-	}
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        if (currentproviderCode != null) {
+            database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
+        }
+
+        Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);
+        liquibase.update(new Contexts(), new LabelExpression());
+    }
 }
