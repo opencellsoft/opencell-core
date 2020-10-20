@@ -1821,7 +1821,7 @@ public class ValidateBRScript extends Script {
                     customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
                     customerAccount.setDateDunningLevel(new Date());
                     //createDunningDocuments(customerAccount);
-
+                    customerAccountService.update(customerAccount);
 
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
@@ -1831,7 +1831,7 @@ public class ValidateBRScript extends Script {
                         computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R2);
                     }
 
-                    customerAccountService.update(customerAccount);
+
                 }
 
                 private List<DunningDocument> createDunningDocuments(CustomerAccount customerAccount) {
