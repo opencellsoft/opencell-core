@@ -1123,7 +1123,8 @@ public class SubscriptionApi extends BaseApi {
     }
     
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "subscription", itemPropertiesToFilter = { @FilterProperty(property = "customer", entityClass = Customer.class) }, totalRecords = "listSize")
+    @FilterResults(propertyToFilter = "subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class), 
+            @FilterProperty(property = "userAccount", entityClass = UserAccount.class) }, totalRecords = "listSize")
     public SubscriptionsDto listByCustomer(String customerCode, boolean mergedCF) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerCode)) {
