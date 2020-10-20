@@ -195,9 +195,11 @@ public class FlatFileProcessing {
                 for (int nbLine = 0; nbLine < nbLinesToProcess; nbLine++) {
 
                     recordContext = fileParser.getNextRecord();
-                    if (recordContext == null) {
+                    if (recordContext == null && nbLinesToProcess > 1) {
                         scannedAllRecords = true;
                         break;
+                    } else if(recordContext == null && nbLinesToProcess == 1) {
+                        break mainLoop;
                     }
 
                     log.debug("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
