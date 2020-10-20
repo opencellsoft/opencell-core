@@ -18,8 +18,10 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -35,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -48,8 +51,14 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ServiceType;
+import org.meveo.model.cpq.offer.CommercialOffer;
+import org.meveo.model.cpq.tags.Tag;
 
 /**
  * This represents a service that is part of an offer. It contains charges of different types.
@@ -221,6 +230,92 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+
+
+    /**
+     * associated product
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
+    @NotNull
+    private Product product;
+	
+    
+	/**
+	 * commercial offer
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name =  "commercial_offer_id", referencedColumnName = "id")
+	@NotNull
+	private CommercialOffer commercialOffer;
+	
+	
+	/**
+	 * the grouped service
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "groupedService_id", referencedColumnName = "id")
+	private GroupedService groupedService;
+	
+	 
+	
+	
+	/**
+	 * service type
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name =  "service_type_id", referencedColumnName = "id")
+	@NotNull
+	private ServiceType serviceType;
+	
+	
+	  /**
+     * Mandatory
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "mandatory")
+    @NotNull
+    protected Boolean mandatory;
+    
+    
+    /**
+     * The lower number, the higher the priority is
+     */
+    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
+    private int priority = 0;
+     
+	
+    @Column(name = "param", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String param;
+    
+    
+    /**
+     * list of tag attached
+     */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "tag_id")
+    private Set<Tag> tagList = new HashSet<>();
+    
+    
+	  /**
+     *Indicates whether the service is a material (physical) component of the product or not
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "material")
+    @NotNull
+    protected Boolean material=false;
+    
+    
+    /**
+     * Accounting code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_id",referencedColumnName = "id")
+    private AccountingCode accountingCode;
+    
+    
+    
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
         for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
@@ -505,4 +600,151 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
             return this.description;
         }
     }
+
+	/**
+	 * @return the product
+	 */
+	public Product getProduct() {
+		return product;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	/**
+	 * @return the commercialOffer
+	 */
+	public CommercialOffer getCommercialOffer() {
+		return commercialOffer;
+	}
+
+	/**
+	 * @param commercialOffer the commercialOffer to set
+	 */
+	public void setCommercialOffer(CommercialOffer commercialOffer) {
+		this.commercialOffer = commercialOffer;
+	}
+
+	/**
+	 * @return the serviceType
+	 */
+	public ServiceType getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	/**
+	 * @return the mandatory
+	 */
+	public Boolean getMandatory() {
+		return mandatory;
+	}
+
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(Boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	/**
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+ 
+
+	/**
+	 * @return the param
+	 */
+	public String getParam() {
+		return param;
+	}
+
+	/**
+	 * @param param the param to set
+	 */
+	public void setParam(String param) {
+		this.param = param;
+	}
+
+	/**
+	 * @return the tagList
+	 */
+	public Set<Tag> getTagList() {
+		return tagList;
+	}
+
+	/**
+	 * @param tagList the tagList to set
+	 */
+	public void setTagList(Set<Tag> tagList) {
+		this.tagList = tagList;
+	}
+
+	/**
+	 * @return the material
+	 */
+	public Boolean getMaterial() {
+		return material;
+	}
+
+	/**
+	 * @param material the material to set
+	 */
+	public void setMaterial(Boolean material) {
+		this.material = material;
+	}
+
+	/**
+	 * @return the accountingCode
+	 */
+	public AccountingCode getAccountingCode() {
+		return accountingCode;
+	}
+
+	/**
+	 * @param accountingCode the accountingCode to set
+	 */
+	public void setAccountingCode(AccountingCode accountingCode) {
+		this.accountingCode = accountingCode;
+	}
+
+	/**
+	 * @return the groupedService
+	 */
+	public GroupedService getGroupedService() {
+		return groupedService;
+	}
+
+	/**
+	 * @param groupedService the groupedService to set
+	 */
+	public void setGroupedService(GroupedService groupedService) {
+		this.groupedService = groupedService;
+	}
+    
+    
+    
+    
+    
 }
+
