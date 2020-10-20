@@ -1761,25 +1761,24 @@ public class ValidateBRScript extends Script {
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-25, 0, 0, now(), 'org.meveo.service.script.SimpleDunning', 'Simple Dunning script', 'JAVA', '
 			package org.meveo.service.script;
 
+            import org.meveo.model.billing.Subscription;
             import org.meveo.model.dunning.DunningDocument;
             import org.meveo.model.generic.wf.WFStatus;
             import org.meveo.model.generic.wf.WorkflowInstance;
             import org.meveo.model.notification.NotificationEventTypeEnum;
             import org.meveo.model.payments.*;
+            import org.meveo.service.billing.impl.SubscriptionService;
             import org.meveo.service.notification.DefaultNotificationService;
             import org.meveo.service.notification.GenericNotificationService;
             import org.meveo.service.payments.impl.CustomerAccountService;
             import org.meveo.service.payments.impl.DunningDocumentService;
-            import org.meveo.service.payments.impl.RecordedInvoiceService;
             import org.slf4j.Logger;
             import org.slf4j.LoggerFactory;
 
             import java.math.BigDecimal;
             import java.math.RoundingMode;
-            import java.util.ArrayList;
-            import java.util.Date;
-            import java.util.List;
-            import java.util.Map;
+            import java.util.*;
+            import java.util.stream.Collectors;
 
             import static java.math.BigDecimal.valueOf;
             import static org.meveo.admin.job.GenericWorkflowJob.*;
@@ -1792,6 +1791,7 @@ public class ValidateBRScript extends Script {
                 private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface("DefaultNotificationService");
                 private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface("GenericNotificationService");
                 private DunningDocumentService dunningDocumentService = (DunningDocumentService) getServiceInterface("DunningDocumentService");
+                private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
 
                 @Override
                 public void execute(Map<String, Object> context) {
@@ -1806,10 +1806,24 @@ public class ValidateBRScript extends Script {
 
                     if ("R0".equals(workflowInstance.getCurrentStatus().getCode()) && "R1".equals(wfToStatus.getCode())) {
                         sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);
-                    } else if("R1".equals(workflowInstance.getCurrentStatus().getCode()) && "R2".equals(wfToStatus.getCode())){
+                    } else if ("R1".equals(workflowInstance.getCurrentStatus().getCode()) && "R2".equals(wfToStatus.getCode())) {
                         sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R2);
-                    }else if ("R0".equals(wfToStatus.getCode())) {
+                    } else if ("R2".equals(workflowInstance.getCurrentStatus().getCode()) && "R3".equals(wfToStatus.getCode())) {
+                        createDunningDocuments(customerAccount);
+                        suspendSubscription(customerAccount);
+                        sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R3);
+                    } else if ("R0".equals(wfToStatus.getCode())) {
                         sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
+                    }
+                }
+
+                private void suspendSubscription(CustomerAccount customerAccount) {
+                    Set<Subscription> subscriptions = customerAccount.getAccountOperations().stream()
+                            .filter(ao -> isDueRecordedInvoice(ao))
+                            .map(ao -> ao.getSubscription())
+                            .collect(Collectors.toSet());
+                    for (Subscription sub : subscriptions) {
+                        subscriptionService.subscriptionSuspension(sub, new Date());
                     }
                 }
 
@@ -1820,14 +1834,13 @@ public class ValidateBRScript extends Script {
                     customerAccount.setDunningLevel(dunningLevelEnum);
                     customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
                     customerAccount.setDateDunningLevel(new Date());
-                    //createDunningDocuments(customerAccount);
 
 
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
                     } else if (dunningLevelEnum == DunningLevelEnum.R1) {
                         computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
-                    } else if (dunningLevelEnum == DunningLevelEnum.R2){
+                    } else if (dunningLevelEnum == DunningLevelEnum.R2) {
                         computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R2);
                     }
 
