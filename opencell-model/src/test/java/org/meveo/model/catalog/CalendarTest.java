@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
