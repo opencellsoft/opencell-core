@@ -2160,6 +2160,7 @@ public class ValidateBRScript extends Script {
                     customerAccount.setDunningLevel(dunningLevelEnum);
                     customerAccount.setDateDunningLevel(new Date());
                     //createDunningDocuments(customerAccount);
+                    customerAccountService.update(customerAccount);
 
 
                     if (dunningLevelEnum == DunningLevelEnum.R0) {
@@ -2170,7 +2171,7 @@ public class ValidateBRScript extends Script {
                         sendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
                     }
 
-                    customerAccountService.update(customerAccount);
+
                 }
 
                 private List<DunningDocument> createDunningDocuments(CustomerAccount customerAccount) {
