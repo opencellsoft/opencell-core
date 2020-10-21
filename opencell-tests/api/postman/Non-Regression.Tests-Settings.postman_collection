@@ -7528,7 +7528,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n\t\"customerCode\": \"{{entityCode}}\",\r\n\t\"sellerCode\": \"{{seller}}\",\r\n    \"email\": \"{{email}}\",\r\n\t\"customerBrandCode\": \"{{customerBrandCode}}\",\r\n\t\"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n\t\"currencyCode\": \"{{currency}}\",\r\n\t\"countryCode\": \"{{counrty_code}}\",\r\n\t\"languageCode\": \"{{language}}\",\r\n\t\"billingCycleCode\": \"{{biilingCycle}}\",\r\n\t\"titleCode\": \"{{customer_title}}\",\r\n\t\"firstName\": \"{{first_name}}\",\r\n\t\"lastName\": \"{{last_name}}\",\r\n\t\"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n\t\"address1\": \"{{address}}\",\r\n\t\"address2\": \"{{adrdress2}}\",\r\n\t\"zipCode\": \"{{zip_code}}\",\r\n\t\"city\": \"{{city}}\"\r\n}",
+									"raw": "{\r\n\t\"customerCode\": \"{{entityCode}}\",\r\n\t\"sellerCode\": \"{{seller}}\",\r\n    \"email\": \"{{email}}\",\r\n\t\"customerBrandCode\": \"{{customerBrandCode}}\",\r\n\t\"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n\t\"currencyCode\": \"{{currency}}\",\r\n\t\"countryCode\": \"{{counrty_code}}\",\r\n\t\"languageCode\": \"{{language}}\",\r\n\t\"billingCycleCode\": \"{{biilingCycle}}\",\r\n\t\"titleCode\": \"{{customer_title}}\",\r\n\t\"firstName\": \"{{first_name}}\",\r\n\t\"lastName\": \"{{last_name}}\",\r\n\t\"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n\t\"address1\": \"{{address}}\",\r\n\t\"address2\": \"\",\r\n\t\"zipCode\": 50400,\r\n\t\"city\": \"{{city}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -11245,6 +11245,82 @@
 					"name": "Wallet Operation",
 					"item": [
 						{
+							"name": "Get Subscription ID|WalletOperation|WLT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4d611cb3-8bf3-4a16-ba93-f864ba5a5599",
+										"exec": [
+											"pm.collectionVariables.set(\"sub_id\",pm.response.json().data[0].id);\r",
+											"console.log(\"sub_id\",pm.collectionVariables.get(\"sub_id\"));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5d8eb461-2660-452e-870a-5a92f5965d8b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filters\": {\"code\":\"{{subscriptionCode}}\"},\r\n    \"genericFields\": [\"id\", \"code\", \"description\"]\r\n}\r\n\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/v2/generic/all/subscription",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"v2",
+										"generic",
+										"all",
+										"subscription"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Create|WalletOperation|WLT|SUCCESS",
 							"event": [
 								{
@@ -11299,7 +11375,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": { \"id\": {{subscriptionCode}} },\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": {{currency}},\r\n    \"taxCode\": {\"code\":\"TAX_CLASS_CLASSIC_HIGH\"},\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": { \"id\": {{sub_id}} },\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": {{currency}},\r\n    \"taxCode\": {\"code\":\"TAX_CLASS_CLASSIC_HIGH\"},\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -14109,273 +14185,278 @@
 	],
 	"variable": [
 		{
-			"id": "8d11011a-6c06-465d-bf2e-f7eee1f88795",
+			"id": "24307b3e-3c75-4730-8897-9a0bb544f84b",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work"
 		},
 		{
-			"id": "4bcfbf8a-9b7d-4369-a663-3dda0de30f51",
+			"id": "480cc877-fdc3-43d6-bc6b-c0e21485bdf5",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/opencell/api/rest"
 		},
 		{
-			"id": "b1c39caf-a7ce-4be2-ad9c-8f1cb19507a6",
+			"id": "73f6150d-dfb4-4623-9a72-295c452dd897",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "4174da2b-e606-4191-bbc6-53cd99459167",
+			"id": "6deb6167-3654-4eb0-b0b1-078aa7657bb8",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "f900b710-2745-4ad5-a104-895dd9a4d2b8",
+			"id": "b2d33b31-3e10-4a93-a75c-534261e81648",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "8d7a8715-fb12-4852-b6ca-455b57031fe5",
+			"id": "ec8712ce-0d5f-4656-aad2-f74b74c46eb6",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "3e62bfa7-776a-4c81-b874-67d3feda62d5",
+			"id": "90c05673-9f5a-4da6-a94a-2eb243f311ad",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "ceff2d82-2f9a-46f2-80d6-e85084afc322",
+			"id": "48cb69f7-f2e5-47d3-a46f-8859106467b3",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "65e97d02-80ba-43d2-b3dd-a126d314cd0e",
+			"id": "8caa23c6-7d4b-493a-8a37-7dc256ba65c4",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "43c1b023-14a7-455a-a6ea-fee88ffdb47b",
+			"id": "cc363db7-5829-42f9-b4b0-fa7f4bfeaad7",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "e9591ce2-96dd-4993-9721-f81c2ad8de60",
+			"id": "b180f43b-0149-4c84-97c2-77d41d1edd09",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "0118d193-4369-446e-b628-98aafe4c3966",
+			"id": "816db1da-b116-4f6e-916b-a3d2fa54a3a9",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "1e2bc020-11f4-4509-a55a-2a17db59e0ee",
+			"id": "6248ed7a-49d0-45b4-9519-6dcef5b02b64",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "9c11d54f-c862-4422-a659-5cd7b5188ef3",
+			"id": "4bad2d61-d966-43b6-8142-7a78299cd991",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "3bf809d0-f61d-45b5-9264-eedf73bec270",
+			"id": "82c86d33-fd4e-44e0-abb5-6034e00e87aa",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "24ce76cf-6209-47ab-949a-fafb8e60f8d6",
+			"id": "b6a2f734-5279-40b5-b488-531144445090",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "f24c494d-6aa4-4e46-a275-dbd425688d2e",
+			"id": "c58ecb1d-a27d-4410-9495-be17c5c7db6b",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "bdaf2a81-7253-4c74-9db3-82fd032367e4",
+			"id": "655d0c5d-91da-43ff-a129-8f88c2ebd362",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "5eb123a8-fb4a-4919-8c81-a5ffbfb26c53",
+			"id": "29a96531-9318-4ca3-a23f-48e13e051701",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "a47f2545-7778-4037-bf94-c10879480b9a",
+			"id": "618bfab9-2764-4156-ab25-d887aa9ae331",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "2df4a25e-5a13-45bd-a410-74025856a1db",
+			"id": "52c89dd9-f639-4a3b-8898-b5dc9dc5d26c",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "59fb21d4-3bb6-4c3b-a1cf-5d9860485c57",
+			"id": "6323d81f-9e5c-426a-aac7-f7791f549eb0",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "9e897d46-862b-4afd-8677-98cb85d98498",
+			"id": "d09511bc-f229-465f-b7e1-2fedc050f3d2",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "16b96878-b07c-43a9-9fb1-c04b946b9ddd",
+			"id": "6ef49203-578a-4924-b367-079fef4aaa3b",
 			"key": "email",
 			"value": "brahim@opencellsoft.com"
 		},
 		{
-			"id": "3b23ee24-efc4-4fc0-bc99-0325e2675264",
+			"id": "7e24bc9c-c83e-4c68-bd57-0385dadca59c",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "b1b55553-5772-4c76-b8f1-25253fef5607",
+			"id": "e1ae27f9-b2e3-4b76-97b2-9060472422e7",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "186c028d-e20c-4813-9f74-e768df214867",
+			"id": "4b9eefed-ba92-4537-962c-400663e70d69",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "7fe18793-ccfd-4e67-a96c-d0e9d1bf37ac",
+			"id": "86fa4878-21c2-4388-85df-576bd423412f",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "c54d5e18-375e-4c68-bdd6-27153c189eae",
+			"id": "221d17f4-7816-4e22-be91-adf8118335a9",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "1233eadf-f29e-4623-a4ce-b44deb4e1ce6",
+			"id": "77e3e09b-d28d-45fe-8b36-13edaf34ec14",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "63ffa5f8-e7c2-4c6d-9956-ebc51409edeb",
+			"id": "669e50fb-d95b-45fd-80d3-3f399014e49d",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "27c69cdb-c2ec-4798-93e2-3b7d4946563d",
+			"id": "31de2e0b-00de-4b21-81e0-52006af147f6",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "645ca5d4-7e08-4a00-b767-62a0775231d9",
+			"id": "26ee81ed-6a2e-4aa9-8ec4-d86ea12a8879",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "e3c44087-7a83-4370-952d-d8864f13f6e0",
+			"id": "445c82cf-425c-4044-8c96-af49a397b070",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "af8805d0-4144-44a4-a0e2-42e6e8cef2b9",
+			"id": "e19d397a-f097-4b66-b1fa-eb139137e39b",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "3e5346c2-9046-4560-8720-c7e8eb49174a",
+			"id": "f1133526-81f5-4ee5-84fa-5713dcdf1e47",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "7f29a08b-9546-41cf-b063-418133837d3b",
+			"id": "79dcf0e9-983f-42d9-85ed-c448748cc374",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "50e60acf-f6a2-4f70-a92a-f6ce51168c8c",
+			"id": "ddce1757-6d2e-44fd-aa11-0345f2120d3e",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "0d916551-ecf5-480a-bbfe-8311f1edbdf8",
+			"id": "3c829536-8a1b-45f5-8540-973de9ad66c6",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "ba73a6d5-7b9b-4098-969c-3f0ed4225d88",
+			"id": "33be4ea6-ff6f-43c3-adaa-f6aaae11797b",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "526d515d-857d-49ec-ba7e-758fc43ac0aa",
+			"id": "421f88a2-9b35-47a1-bf56-12e03300e08a",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "1480ef53-3b02-4f7d-beb5-2f814ce49adc",
+			"id": "1065c415-0431-465a-9354-03d110269a71",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "7a800755-0b52-4289-af8c-5e550b0d2aff",
+			"id": "3d900c1e-b144-4766-a0f0-486c77e22fb0",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "2e5562f2-1853-415d-b570-7b547f0e34fa",
+			"id": "4daf48a0-0f77-40a0-aa94-8fb71eb58df6",
 			"key": "accCode",
 			"value": "ACC_TST"
 		},
 		{
-			"id": "d735eb54-682d-4135-97e9-002631b1140d",
+			"id": "b7368ee8-cd7c-4f06-a7c0-ae1e091f4497",
 			"key": "invoiceSubCat",
 			"value": "CLASSIC_COMMISSION"
 		},
 		{
-			"id": "06584183-9199-4e80-a709-7258b0439a68",
+			"id": "4ad2454d-5a1b-4dd5-96c3-914ddb87b4d4",
 			"key": "billingAccCode",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "d451c427-c1fc-4896-a1b5-0741d480a851",
+			"id": "a049094c-e733-4440-b65f-891e05a1d5c3",
 			"key": "subCode",
 			"value": "ben.ohara"
 		},
 		{
-			"id": "3585f7e4-a090-4dda-9527-fef4b3bed789",
+			"id": "56cc279f-e47a-400b-b6db-90925122f72c",
 			"key": "biilingCycle",
 			"value": "BC_CLASSIC_MONTHLY_1ST"
 		},
 		{
-			"id": "18a5c03a-106b-4e7a-9f8a-990531d4bae4",
+			"id": "e891f849-866c-4619-9b74-4dc1394ff98e",
 			"key": "customerCategory",
 			"value": "CLIENT"
 		},
 		{
-			"id": "2fa8a2a2-1d22-466c-8496-dc647737a4cc",
+			"id": "f59356e6-3d72-491f-92cd-94c8c1b67eb0",
 			"key": "i",
 			"value": "0"
 		},
 		{
-			"id": "4b3a7e58-530f-49f4-991f-211790101a7e",
+			"id": "474317ae-bf6a-4e63-829c-1d7145162e77",
 			"key": "entityCode",
 			"value": ""
 		},
 		{
-			"id": "8b154f5e-de17-4367-b568-f1ad8a0102da",
+			"id": "4639a6fc-cbbb-4a44-b381-68e26a32ee57",
 			"key": "entity_code",
 			"value": "CB_TST"
 		},
 		{
-			"id": "ebde9f49-9d47-4b20-9ac4-3397dd03fd77",
+			"id": "23926a97-31e2-4607-b04a-074298a03518",
 			"key": "entity_id",
 			"value": ""
 		},
 		{
-			"id": "aa89172e-ead8-4515-a2c7-4785337c0f45",
+			"id": "e77d58c4-8757-4360-b85b-7101eede6754",
 			"key": "inc",
+			"value": ""
+		},
+		{
+			"id": "74a1fd89-7b7a-45a8-b83d-69c9da0eeb39",
+			"key": "sub_id",
 			"value": ""
 		}
 	],
