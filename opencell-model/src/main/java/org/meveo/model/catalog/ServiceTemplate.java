@@ -57,7 +57,6 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.GroupedService;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ServiceType;
-import org.meveo.model.cpq.offer.CommercialOffer;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -245,9 +244,9 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	 * commercial offer
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name =  "commercial_offer_id", referencedColumnName = "id")
+	@JoinColumn(name =  "offer_template_id", referencedColumnName = "id")
 	@NotNull
-	private CommercialOffer commercialOffer;
+	private OfferTemplate offerTemplate;
 	
 	
 	/**
@@ -618,15 +617,15 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	/**
 	 * @return the commercialOffer
 	 */
-	public CommercialOffer getCommercialOffer() {
-		return commercialOffer;
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
 	}
 
 	/**
 	 * @param commercialOffer the commercialOffer to set
 	 */
-	public void setCommercialOffer(CommercialOffer commercialOffer) {
-		this.commercialOffer = commercialOffer;
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
 	}
 
 	/**

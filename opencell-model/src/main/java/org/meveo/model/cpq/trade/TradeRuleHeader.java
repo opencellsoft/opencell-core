@@ -18,10 +18,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
-import org.meveo.model.cpq.offer.CommercialOffer;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -52,8 +52,8 @@ public class TradeRuleHeader extends BusinessEntity {
 	 * offer code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_commercial_offer_id", referencedColumnName = "id")
-	private CommercialOffer targetCommercialOffer;
+	@JoinColumn(name = "offer_template_id", referencedColumnName = "id")
+	private OfferTemplate targetOfferTemplate;
 
 	/**
 	 * product code
@@ -115,15 +115,15 @@ public class TradeRuleHeader extends BusinessEntity {
 	/**
 	 * @return the targetCommercialOffer
 	 */
-	public CommercialOffer getTargetCommercialOffer() {
-		return targetCommercialOffer;
+	public OfferTemplate getTargetOfferTemplate() {
+		return targetOfferTemplate;
 	}
 
 	/**
 	 * @param targetCommercialOffer the targetCommercialOffer to set
 	 */
-	public void setTargetCommercialOffer(CommercialOffer targetCommercialOffer) {
-		this.targetCommercialOffer = targetCommercialOffer;
+	public void setTargetOfferTemplate(OfferTemplate offerTemplate) {
+		this.targetOfferTemplate = offerTemplate;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class TradeRuleHeader extends BusinessEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(ruleEl, ruleType, tagTarget, targetAttributeName, targetAttributeValue,
-				targetCommercialOffer, targetProduct, targetProductVersion);
+				targetProduct, targetProductVersion);
 		return result;
 	}
 
@@ -232,7 +232,6 @@ public class TradeRuleHeader extends BusinessEntity {
 				&& Objects.equals(tagTarget, other.tagTarget)
 				&& Objects.equals(targetAttributeName, other.targetAttributeName)
 				&& Objects.equals(targetAttributeValue, other.targetAttributeValue)
-				&& Objects.equals(targetCommercialOffer, other.targetCommercialOffer)
 				&& Objects.equals(targetProduct, other.targetProduct)
 				&& Objects.equals(targetProductVersion, other.targetProductVersion);
 	}

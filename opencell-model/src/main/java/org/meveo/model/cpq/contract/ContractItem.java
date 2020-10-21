@@ -16,11 +16,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.attribute.ProductAttribute;
-import org.meveo.model.cpq.offer.CommercialOffer;
 
 /**
  * @author Tarik FAKHOURI
@@ -42,14 +41,14 @@ public class ContractItem extends BaseEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_contract_id")
-	private Contract contarct;
+	private Contract contract;
 
 	/**
 	 * commercial offer
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_commercial_offer_id")
-	private CommercialOffer commercialOffer;
+	private OfferTemplate offerTemplate;
 
 	/**
 	 * product
@@ -57,14 +56,6 @@ public class ContractItem extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_product_id")
 	private Product product;
-
-	/**
-	 * product attribute
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_attribute_id", nullable = false)
-	@NotNull
-	private ProductAttribute productAttribute;
 
 	/**
 	 * price plan
@@ -106,32 +97,32 @@ public class ContractItem extends BaseEntity {
 	/**
 	 * @return the contarct
 	 */
-	public Contract getContarct() {
-		return contarct;
+	public Contract getContract() {
+		return contract;
 	}
 
 
 	/**
 	 * @param contarct the contarct to set
 	 */
-	public void setContarct(Contract contarct) {
-		this.contarct = contarct;
+	public void setContract(Contract contarct) {
+		this.contract = contarct;
 	}
 
 
 	/**
 	 * @return the commercialOffer
 	 */
-	public CommercialOffer getCommercialOffer() {
-		return commercialOffer;
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
 	}
 
 
 	/**
-	 * @param commercialOffer the commercialOffer to set
+	 * @param offerTemplate the commercialOffer to set
 	 */
-	public void setCommercialOffer(CommercialOffer commercialOffer) {
-		this.commercialOffer = commercialOffer;
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
 	}
 
 
@@ -148,22 +139,6 @@ public class ContractItem extends BaseEntity {
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
-	}
-
-
-	/**
-	 * @return the productAttribute
-	 */
-	public ProductAttribute getProductAttribute() {
-		return productAttribute;
-	}
-
-
-	/**
-	 * @param productAttribute the productAttribute to set
-	 */
-	public void setProductAttribute(ProductAttribute productAttribute) {
-		this.productAttribute = productAttribute;
 	}
 
 
@@ -251,8 +226,8 @@ public class ContractItem extends BaseEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(amountWithoutTax, chargeTemplate, commercialOffer, contarct, pricePlan,
-				product, productAttribute, rate, serviceTemplate);
+		result = prime * result + Objects.hash(amountWithoutTax, chargeTemplate, offerTemplate, contract, pricePlan,
+				product, rate, serviceTemplate);
 		return result;
 	}
 
@@ -268,9 +243,9 @@ public class ContractItem extends BaseEntity {
 		ContractItem other = (ContractItem) obj;
 		return Objects.equals(amountWithoutTax, other.amountWithoutTax)
 				&& Objects.equals(chargeTemplate, other.chargeTemplate)
-				&& Objects.equals(commercialOffer, other.commercialOffer) && Objects.equals(contarct, other.contarct)
+				&& Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(contract, other.contract)
 				&& Objects.equals(pricePlan, other.pricePlan) && Objects.equals(product, other.product)
-				&& Objects.equals(productAttribute, other.productAttribute) && rate == other.rate
+			    && rate == other.rate
 				&& Objects.equals(serviceTemplate, other.serviceTemplate);
 	}
 

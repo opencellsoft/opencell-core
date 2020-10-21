@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -40,7 +41,7 @@ public class OfferComponent extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "commercial_offer_id", nullable = false)
 	@NotNull
-	private CommercialOffer commercialOffer;
+	private OfferTemplate offerTemplate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
@@ -62,16 +63,16 @@ public class OfferComponent extends BaseEntity {
 	/**
 	 * @return the commercialOffer
 	 */
-	public CommercialOffer getCommercialOffer() {
-		return commercialOffer;
+	public OfferTemplate getCommercialOffer() {
+		return offerTemplate;
 	}
 
 
 	/**
 	 * @param commercialOffer the commercialOffer to set
 	 */
-	public void setCommercialOffer(CommercialOffer commercialOffer) {
-		this.commercialOffer = commercialOffer;
+	public void setCommercialOffer(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
 	}
 
 
@@ -111,7 +112,7 @@ public class OfferComponent extends BaseEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(commercialOffer, product, tagsList);
+		result = prime * result + Objects.hash(offerTemplate, product, tagsList);
 		return result;
 	}
 
@@ -125,7 +126,7 @@ public class OfferComponent extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		OfferComponent other = (OfferComponent) obj;
-		return Objects.equals(commercialOffer, other.commercialOffer) && Objects.equals(product, other.product)
+		return Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(product, other.product)
 				&& Objects.equals(tagsList, other.tagsList);
 	}
 

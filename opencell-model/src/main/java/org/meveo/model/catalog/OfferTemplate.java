@@ -19,8 +19,10 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -49,6 +51,7 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
+import org.meveo.model.cpq.tags.Tag;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -144,6 +147,14 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
+    
+    
+    /**
+     * list of tag attached
+     */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "tag_id")
+    private Set<Tag> tagList = new HashSet<>();
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -433,5 +444,23 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+
+	public Set<Tag> getTagList() {
+		return tagList;
+	}
+
+	public void setTagList(Set<Tag> tagList) {
+		this.tagList = tagList;
+	}
+
+	public void setServiceTemplatesByChargeType(Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType) {
+		this.serviceTemplatesByChargeType = serviceTemplatesByChargeType;
+	}
+
+	public void setProductTemplates(List<ProductTemplate> productTemplates) {
+		this.productTemplates = productTemplates;
+	}
+    
+    
 
 }

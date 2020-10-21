@@ -46,13 +46,7 @@ public class Media extends BaseEntity{
 	@NotNull
 	private Product product;
 	
-	/**
-	 * name of the attribute if the product is associated to attribute
-	 */
-	@Column(name = "attribute_name", length = 20)
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_attribute_id", referencedColumnName = "id" )
-	private ProductAttribute productAttribute;
+
 
 	/**
 	 * short name of the media
@@ -105,19 +99,6 @@ public class Media extends BaseEntity{
 		this.product = product;
 	}
 
-	/**
-	 * @return the productAttribute
-	 */
-	public ProductAttribute getProductAttribute() {
-		return productAttribute;
-	}
-
-	/**
-	 * @param productAttribute the productAttribute to set
-	 */
-	public void setProductAttribute(ProductAttribute productAttribute) {
-		this.productAttribute = productAttribute;
-	}
 
 	/**
 	 * @return the mediaName
@@ -193,7 +174,7 @@ public class Media extends BaseEntity{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(label, main, mediaName, mediaPath, mediaType, product, productAttribute);
+		result = prime * result + Objects.hash(label, main, mediaName, mediaPath, mediaType, product);
 		return result;
 	}
 
@@ -208,8 +189,7 @@ public class Media extends BaseEntity{
 		Media other = (Media) obj;
 		return Objects.equals(label, other.label) && Objects.equals(main, other.main)
 				&& Objects.equals(mediaName, other.mediaName) && Objects.equals(mediaPath, other.mediaPath)
-				&& mediaType == other.mediaType && Objects.equals(product, other.product)
-				&& Objects.equals(productAttribute, other.productAttribute);
+				&& mediaType == other.mediaType && Objects.equals(product, other.product);
 	}
 	
 	

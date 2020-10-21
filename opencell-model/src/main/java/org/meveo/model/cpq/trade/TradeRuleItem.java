@@ -1,7 +1,5 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,11 +14,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.enums.OperatorEnum;
-import org.meveo.model.cpq.offer.CommercialOffer;
 
 /**
  * @author Tarik FAKHOURI.
  *  @author Mbarek-Ay
+ *  @author Rachid.AIT
  *	@version 10.0
  */
 @Entity
@@ -35,11 +33,12 @@ public class TradeRuleItem extends BusinessEntity {
 	private static final long serialVersionUID = 6013887131795900749L;
 	
 	/**
-	 * offer commercial code
+	 * Trade rule header
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_commercial_offer_id", referencedColumnName = "id")
-	private CommercialOffer ruleCommercialCode;
+	@JoinColumn(name = "trade_rule_header_id")
+	private TradeRuleHeader tradeRuleHeader;
+
 	
 	/**
 	 * rule operator
@@ -54,20 +53,6 @@ public class TradeRuleItem extends BusinessEntity {
 	@Column(name = "rule_item_el")
 	@Lob
 	private String ruleItemEl;
-
-	/**
-	 * @return the ruleCommercialCode
-	 */
-	public CommercialOffer getRuleCommercialCode() {
-		return ruleCommercialCode;
-	}
-
-	/**
-	 * @param ruleCommercialCode the ruleCommercialCode to set
-	 */
-	public void setRuleCommercialCode(CommercialOffer ruleCommercialCode) {
-		this.ruleCommercialCode = ruleCommercialCode;
-	}
 
 	/**
 	 * @return the operator
@@ -97,11 +82,20 @@ public class TradeRuleItem extends BusinessEntity {
 		this.ruleItemEl = ruleItemEl;
 	}
 
+	public TradeRuleHeader getTradeRuleHeader() {
+		return tradeRuleHeader;
+	}
+
+	public void setTradeRuleHeader(TradeRuleHeader tradeRuleHeader) {
+		this.tradeRuleHeader = tradeRuleHeader;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(operator, ruleCommercialCode, ruleItemEl);
+		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
+		result = prime * result + ((tradeRuleHeader == null) ? 0 : tradeRuleHeader.hashCode());
 		return result;
 	}
 
@@ -114,9 +108,17 @@ public class TradeRuleItem extends BusinessEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		TradeRuleItem other = (TradeRuleItem) obj;
-		return operator == other.operator && Objects.equals(ruleCommercialCode, other.ruleCommercialCode)
-				&& Objects.equals(ruleItemEl, other.ruleItemEl);
+		if (operator != other.operator)
+			return false;
+		if (tradeRuleHeader == null) {
+			if (other.tradeRuleHeader != null)
+				return false;
+		} else if (!tradeRuleHeader.equals(other.tradeRuleHeader))
+			return false;
+		return true;
 	}
+
+
 	
 	
 

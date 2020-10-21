@@ -14,14 +14,15 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.offer.CommercialOffer;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
  *  @author Tarik FAKHOURI.
  *  @author Mbarek-Ay
+ *   @author Rachid.AIT
  *	@version 10.0
  */
 @Entity
@@ -40,7 +41,7 @@ public class TradeRuleLine extends BusinessEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "commercial_offer_id", referencedColumnName = "id")
-	private CommercialOffer sourceCommercialOffer;
+	private OfferTemplate sourceOfferTemplate;
 	
 
 	/**
@@ -85,17 +86,17 @@ public class TradeRuleLine extends BusinessEntity {
 	private String value;
 
 	/**
-	 * @return the sourceCommercialOffer
+	 * @return the sourceOfferTemplate
 	 */
-	public CommercialOffer getSourceCommercialOffer() {
-		return sourceCommercialOffer;
+	public OfferTemplate getSourceOfferTemplate() {
+		return sourceOfferTemplate;
 	}
 
 	/**
-	 * @param sourceCommercialOffer the sourceCommercialOffer to set
+	 * @param sourceOfferTemplate the sourceOfferTemplate to set
 	 */
-	public void setSourceCommercialOffer(CommercialOffer sourceCommercialOffer) {
-		this.sourceCommercialOffer = sourceCommercialOffer;
+	public void setSourceOfferTemplate(OfferTemplate sourceOfferTemplate) {
+		this.sourceOfferTemplate = sourceOfferTemplate;
 	}
 
 	/**
@@ -186,7 +187,7 @@ public class TradeRuleLine extends BusinessEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(operator, sourceAttributeName, sourceCommercialOffer, sourceProduct,
+		result = prime * result + Objects.hash(operator, sourceAttributeName, sourceOfferTemplate, sourceProduct,
 				sourceProductVersion, sourceTag, value);
 		return result;
 	}
@@ -201,7 +202,7 @@ public class TradeRuleLine extends BusinessEntity {
 			return false;
 		TradeRuleLine other = (TradeRuleLine) obj;
 		return operator == other.operator && Objects.equals(sourceAttributeName, other.sourceAttributeName)
-				&& Objects.equals(sourceCommercialOffer, other.sourceCommercialOffer)
+				&& Objects.equals(sourceOfferTemplate, other.sourceOfferTemplate)
 				&& Objects.equals(sourceProduct, other.sourceProduct)
 				&& Objects.equals(sourceProductVersion, other.sourceProductVersion)
 				&& Objects.equals(sourceTag, other.sourceTag) && Objects.equals(value, other.value);
