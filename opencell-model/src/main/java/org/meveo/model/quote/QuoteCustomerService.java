@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.quote;
+package org.meveo.model.quote;
 
 import java.util.Date;
 import java.util.Objects;
@@ -18,7 +18,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.quote.Quote;
 
 @SuppressWarnings("serial")
 @Entity

@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.quote;
+package org.meveo.model.quote;
 
 import java.util.Date;
 import java.util.Objects;
@@ -26,7 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.quote.Quote;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

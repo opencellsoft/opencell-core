@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.quote;
+package org.meveo.model.quote;
 
 import java.math.BigDecimal;
 
@@ -19,14 +19,13 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.enums.OneShotTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
-import org.meveo.model.quote.QuoteItem;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "cpq_quote_tarif", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_tarif_seq"), })
-public class QuoteTarif extends BusinessEntity  {
+public class QuotePrice extends BusinessEntity  {
 
 
     /**

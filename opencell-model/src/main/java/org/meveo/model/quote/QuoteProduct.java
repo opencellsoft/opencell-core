@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.quote;
+package org.meveo.model.quote;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,6 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.quote.Quote;
 
 @SuppressWarnings("serial")
 @Entity
