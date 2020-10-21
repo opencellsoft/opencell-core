@@ -43,7 +43,7 @@ import javax.persistence.ManyToOne;
 public class CalendarJoin extends Calendar {
 
     public enum CalendarJoinTypeEnum {
-        UNION, INTERSECT;
+        UNION, INTERSECT, APPEND;
 
         public String getLabel() {
             return "CalendarJoinTypeEnum." + this.name();
@@ -105,36 +105,33 @@ public class CalendarJoin extends Calendar {
         if (date1 == null && date2 == null) {
             return null;
         }
-
         // Get the farthest date
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
-
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
 
@@ -160,30 +157,29 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
 
@@ -210,29 +206,28 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
-
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
 
         return null;
@@ -261,30 +256,29 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
 

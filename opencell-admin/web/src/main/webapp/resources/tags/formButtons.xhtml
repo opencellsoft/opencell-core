@@ -123,11 +123,11 @@
             partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
             update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
+            <f:param name="objectId" value="#{cc.attrs.backingBean.objectId}" />
             <c:if test="#{cc.attrs.submitActionListener}">
             	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
             </c:if>
         </p:commandButton>
-        
         <p:commandButton id="ExecuteButtonAjax"
             rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"

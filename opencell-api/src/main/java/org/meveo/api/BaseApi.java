@@ -38,6 +38,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -61,6 +63,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
@@ -104,6 +107,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
+import org.postgresql.util.PSQLException;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -586,12 +590,22 @@ public abstract class BaseApi {
             // Add keys to matrix if not provided in DTO and it is not empty
             // (gets converted to null if map has no values)
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && valueConverted != null) {
-
                 boolean matrixColumnsPresent = false;
                 for (Entry<String, Object> mapEntry : ((Map<String, Object>) valueConverted).entrySet()) {
                     if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                         matrixColumnsPresent = true;
-                        break;
+                    }else {
+                    	int keySize=mapEntry.getKey() == null ? 0 : Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                    	int valueSize=mapEntry.getValue() == null ? 0 : Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+
+                    	int matrixKeySize = cft.getMatrixKeyColumns() != null ? cft.getMatrixKeyColumns().size() : 0;
+						if(matrixKeySize>0 && matrixKeySize<keySize) {
+                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+matrixKeySize+")") ;
+                    	}
+                    	int matrixValueSize = cft.getMatrixValueColumns()!=null ? cft.getMatrixValueColumns().size() : 0;
+						if(matrixValueSize>0 && matrixValueSize<valueSize) {
+                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+matrixValueSize+")") ;
+                    	}
                     }
                 }
 
@@ -1630,14 +1644,22 @@ public abstract class BaseApi {
         dto.setAuditableFields(auditableFieldsDto);
     }
 
-    public boolean isRootCause(Throwable e, Class<?> clazz) {
+    public Throwable getRootCause(Throwable e, Class<?> clazz) {
         while (e != null) {
             if (e.getClass().equals(clazz)) {
-                return true;
+                return e;
             }
             e = e.getCause();
         }
-        return false;
+        return null;
+    }
+
+    public MeveoApiException getMeveoApiException(Throwable e) {
+    	Throwable rootCause = getRootCause(e, ConstraintViolationException.class);
+        if (rootCause != null) {
+            return new ConstraintViolationApiException(rootCause.getCause().getMessage());
+        }
+        return new MeveoApiException(e);
     }
 
     public String getCustomFieldDataType(Class clazz) {

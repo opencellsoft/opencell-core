@@ -53,6 +53,54 @@ public class AccountEntityApi extends BaseApi {
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
 
+    public void populate(AccountDto postData, AccountEntity accountEntity) throws MeveoApiException {
+        Address address = new Address();
+        if (postData.getAddress() != null) {
+            address.setAddress1(postData.getAddress().getAddress1());
+            address.setAddress2(postData.getAddress().getAddress2());
+            address.setAddress3(postData.getAddress().getAddress3());
+            address.setZipCode(postData.getAddress().getZipCode());
+            address.setCity(postData.getAddress().getCity());
+            if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
+                address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
+            }
+            address.setState(postData.getAddress().getState());
+        }
+
+        Name name = new Name();
+        if (postData.getName() != null) {
+            name.setFirstName(postData.getName().getFirstName());
+            name.setLastName(postData.getName().getLastName());
+            if (!StringUtils.isBlank(postData.getName().getTitle())) {
+                Title title = titleService.findByCode(postData.getName().getTitle());
+                if (title == null) {
+                    throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
+                } else {
+                    name.setTitle(title);
+                }
+            }
+        }
+        accountEntity.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        accountEntity.setDescription(postData.getDescription());
+        accountEntity.setExternalRef1(postData.getExternalRef1());
+        accountEntity.setExternalRef2(postData.getExternalRef2());
+        accountEntity.setAddress(address);
+        accountEntity.setName(name);
+        accountEntity.setJobTitle(postData.getJobTitle());
+        accountEntity.setVatNo(postData.getVatNo());
+        accountEntity.setRegistrationNo(postData.getRegistrationNo());
+        
+        if (postData.getContactInformation() != null) {
+            if (accountEntity.getContactInformation() == null) {
+            	accountEntity.setContactInformation(new ContactInformation());
+            }
+            accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+            accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+            accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+        }
+        setMinimumAmountElSubscription(postData, accountEntity);
+    }
+
     public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
         updateAccount(accountEntity, postData, true);
     }
@@ -170,10 +218,9 @@ public class AccountEntityApi extends BaseApi {
             if (postData.getContactInformation().getMobile() != null) {
                 accountEntity.getContactInformation().setMobile(StringUtils.isEmpty(postData.getContactInformation().getMobile()) ? null : postData.getContactInformation().getMobile());
             }
-            if (postData.getContactInformation().getFax() != null) {
-                accountEntity.getContactInformation().setFax(StringUtils.isEmpty(postData.getContactInformation().getFax()) ? null : postData.getContactInformation().getFax());
+            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+                accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
             }
-
         }
         setMinimumAmountElSubscription(postData, accountEntity);
 
