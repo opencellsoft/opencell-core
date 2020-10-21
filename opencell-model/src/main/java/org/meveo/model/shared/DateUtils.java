@@ -472,6 +472,9 @@ public class DateUtils {
     }
 
     public static double daysBetween(Date start, Date end) {
+    	if(start == null || end == null) {
+    		return 0;
+    	}
         DateTime dateTimeStart = new DateTime(start.getTime());
         DateTime dateTimeEnd = new DateTime(end.getTime());
         return Days.daysBetween(dateTimeStart, dateTimeEnd).getDays();
