@@ -158,7 +158,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             workflowInstanceHistoryService.create(wfHistory);
                         }
 
-                        WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
 
                         if (gWFTransition.getActionScript() != null) {
                             ScriptInstance scriptInstance = gWFTransition.getActionScript();
@@ -169,7 +168,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             methodContext.put(WF_INS, workflowInstance);
                             methodContext.put(IWF_ENTITY, iwfEntity);
                             methodContext.put(Script.CONTEXT_ACTION, scriptCode);
-                            methodContext.put(TO_STATUS, toStatus);
+                            methodContext.put(WF_ACTUAL_TRANSITION, gWFTransition);
                             if (script == null) {
                                 log.error("Script is null");
                                 throw new BusinessException("script is null");
@@ -177,7 +176,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                             script.execute(methodContext);
                         }
 
-
+                        WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
                         workflowInstance.setCurrentStatus(toStatus);
 
                         log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
