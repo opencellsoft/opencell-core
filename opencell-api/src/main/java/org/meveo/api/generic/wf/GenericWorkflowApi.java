@@ -106,7 +106,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
                 filterService.create(filter);
                 genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
             } else {
-                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
                 genericWorkflow.setFilter(filterService.update(filter));
             }
         }
@@ -166,7 +166,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
                 filterService.create(filter);
                 genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
             } else {
-                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
                 genericWorkflow.setFilter(filterService.update(filter));
             }
         }
@@ -276,7 +276,22 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         filter.setCode(filterDto.getCode());
         filter.setDescription(filterDto.getDescription());
         filter.setInputXml(filterDto.getInputXml());
-        filter.setShared(filterDto.getShared());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
+        filter.setPollingQuery(filterDto.getPollingQuery());
+        return filter;
+    }
+    
+    private Filter filterFromDto(FilterDto filterDto, Filter filter) {
+        if (filterDto == null) {
+            return filter;
+        }
+        filter.setDescription(filterDto.getDescription());
+        filter.setInputXml(filterDto.getInputXml());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
         filter.setPollingQuery(filterDto.getPollingQuery());
         return filter;
     }
