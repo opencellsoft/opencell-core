@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,15 +34,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.cpq.quote.QuoteCpqItem;
 
 /**
  * Quote item
@@ -50,10 +54,10 @@ import org.meveo.model.catalog.ProductOffering;
  */
 @Entity
 @ExportIdentifier({ "quote.code", "itemId" })
-@Table(name = "ord_quote_item")
+@Table(name = "ord_quote_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
-public class QuoteItem extends BaseEntity {
+public class QuoteItem extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -112,6 +116,9 @@ public class QuoteItem extends BaseEntity {
      */
     @Transient
     private ProductOffering mainOffering;
+    
+    @Embedded
+    private QuoteCpqItem quoteCpqItem;
 
     public Quote getQuote() {
         return quote;
@@ -214,4 +221,18 @@ public class QuoteItem extends BaseEntity {
 
         return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
+
+	/**
+	 * @return the quoteCpqItem
+	 */
+	public QuoteCpqItem getQuoteCpqItem() {
+		return quoteCpqItem;
+	}
+
+	/**
+	 * @param quoteCpqItem the quoteCpqItem to set
+	 */
+	public void setQuoteCpqItem(QuoteCpqItem quoteCpqItem) {
+		this.quoteCpqItem = quoteCpqItem;
+	}
 }

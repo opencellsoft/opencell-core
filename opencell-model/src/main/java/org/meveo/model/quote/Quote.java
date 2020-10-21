@@ -55,6 +55,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.cpq.quote.QuoteCpq;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
@@ -63,7 +64,9 @@ import org.meveo.model.order.Order;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
+ * @author Tarik FAKHOURI
  * @lastModifiedVersion 7.0
+ * @lastModiedVersion 10.0 
  */
 @Entity
 @WorkflowedEntity
@@ -201,6 +204,9 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 
     @Transient
     private boolean isVirtual = false;
+    
+    @Embedded
+    private QuoteCpq quoteCpq;
 
     public String getExternalId() {
         return externalId;
@@ -381,4 +387,18 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     public void setVirtual(boolean virtual) {
         isVirtual = virtual;
     }
+
+	/**
+	 * @return the quoteCpq
+	 */
+	public QuoteCpq getQuoteCpq() {
+		return quoteCpq;
+	}
+
+	/**
+	 * @param quoteCpq the quoteCpq to set
+	 */
+	public void setQuoteCpq(QuoteCpq quoteCpq) {
+		this.quoteCpq = quoteCpq;
+	}
 }
