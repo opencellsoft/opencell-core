@@ -43,6 +43,7 @@ import org.meveo.model.crm.CustomerBrand;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })
 @NamedNativeQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id")
+@NamedNativeQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
 public class Product extends BusinessEntity {
 
 	/**

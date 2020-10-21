@@ -42,7 +42,7 @@ public enum ProductStatusEnum {
 	 * @param value
 	 * @return current product status name  by its value
 	 */
-	public Optional<ProductStatusEnum> getCurrentStatus(int value) {
+	public static Optional<ProductStatusEnum> getCurrentStatus(int value) {
 		return Stream.of(ProductStatusEnum.values()).filter(v -> v.value == value).findFirst();
 	}
 }
