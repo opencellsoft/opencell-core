@@ -98,7 +98,8 @@ public class CalendarJoin extends Calendar {
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
-
+    	
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextCalendarDate(date);
         Date date2 = joinCalendar2.nextCalendarDate(date);
         
@@ -153,7 +154,9 @@ public class CalendarJoin extends Calendar {
      * @return Previous calendar date.
      */
     public Date previousCalendarDate(Date date) {
-
+    	
+    	initChildCalendarsDate();
+    	
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
         
@@ -199,6 +202,15 @@ public class CalendarJoin extends Calendar {
         return null;
     }
 
+	private void initChildCalendarsDate() {
+		if(joinCalendar1.getInitDate()==null) {
+    		joinCalendar1.setInitDate(getInitDate());
+    	}
+    	if(joinCalendar2.getInitDate()==null) {
+    		joinCalendar2.setInitDate(getInitDate());
+    	}
+	}
+
     /**
      * Determines a previous period end date by joining previousPeriodEndDate result from two calendars. Result depends on a join type:
      * 
@@ -211,6 +223,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date previousPeriodEndDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.previousPeriodEndDate(date);
         Date date2 = joinCalendar2.previousPeriodEndDate(date);
 
@@ -261,6 +274,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date nextPeriodStartDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextPeriodStartDate(date);
         Date date2 = joinCalendar2.nextPeriodStartDate(date);
 
