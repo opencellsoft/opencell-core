@@ -143,29 +143,17 @@ public class CalendarPeriod extends Calendar {
     }
     
 	public Date getLimitOfNextDate() {
-		if (getPeriodLength() <= 0) {
+		if (getNbPeriods() <= 0) {
 			return null;
 		}
 		Date current = getInitDate();
 		int i = 0;
-		while (i++ < getPeriodLength()) {
+		while (i++ < getNbPeriods()) {
 			current = nextCalendarDate(current);
 		}
 		return current;
 	}
 	
-	public Date getLimitOfPreviousDate() {
-		if (getPeriodLength() <= 0) {
-			return null;
-		}
-		Date current = getInitDate();
-		int i = 0;
-		while (i++ < getPeriodLength()) {
-			current = previousCalendarDate(current);
-		}
-		return current;
-	}
-
     /**
      * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      *

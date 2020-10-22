@@ -101,6 +101,14 @@ public class CalendarJoin extends Calendar {
 
         Date date1 = joinCalendar1.nextCalendarDate(date);
         Date date2 = joinCalendar2.nextCalendarDate(date);
+        
+        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+        	Date endOfNextDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
+    		if(endOfNextDate!=null) {
+				joinCalendar2.setInitDate(endOfNextDate);
+        		date2 = joinCalendar2.nextCalendarDate(date);
+    		}
+    	}
 
         if (date1 == null && date2 == null) {
             return null;
@@ -126,13 +134,6 @@ public class CalendarJoin extends Calendar {
                 return date2;
             }
         } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if(joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
-	        	Date endOfNextDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
-	    		if(endOfNextDate!=null) {
-					joinCalendar2.setInitDate(endOfNextDate);
-	        		date2 = joinCalendar2.nextCalendarDate(date);
-	    		}
-        	}
         	if (date1 != null) {
         		return date1;
         	} else {
@@ -155,6 +156,14 @@ public class CalendarJoin extends Calendar {
 
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
+        
+        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+    		Date endOfPreviousDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
+    		if(endOfPreviousDate!=null) {
+				joinCalendar2.setInitDate(endOfPreviousDate);
+        		date2 = joinCalendar2.previousCalendarDate(date);
+    		}
+    	}
 
         if (date1 == null && date2 == null) {
             return null;
@@ -181,13 +190,6 @@ public class CalendarJoin extends Calendar {
                 return date2;
             }
         } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if(joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
-        		Date endOfPreviousDate = ((CalendarPeriod)joinCalendar1).getLimitOfPreviousDate();
-        		if(endOfPreviousDate!=null) {
-					joinCalendar2.setInitDate(endOfPreviousDate);
-	        		date2 = joinCalendar2.previousCalendarDate(date);
-        		}
-        	}
         	if (date1 != null) {
         		return date1;
         	} else {
