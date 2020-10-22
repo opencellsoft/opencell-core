@@ -11326,9 +11326,9 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "24a65f2b-ade2-414d-a61f-d1aebe9ae17c",
+										"id": "95f1ef45-bf34-4e3c-9797-0473325156f9",
 										"exec": [
-											""
+											"// taxPercent chargeInstance quantity NOT NUULL"
 										],
 										"type": "text/javascript"
 									}
@@ -11336,7 +11336,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "eeec8764-ccce-445a-85cf-3d7e97a12c88",
+										"id": "fa7805f4-c5c4-4cdb-b1fc-dff14780619b",
 										"exec": [
 											""
 										],
@@ -11375,7 +11375,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"subscription\": { \"id\": {{sub_id}} },\r\n    \"chargeInstance\": \"CH_CLASSIC_OSS_UNIT\",\r\n    \"currency\": {{currency}},\r\n    \"taxCode\": {\"code\":\"TAX_CLASS_CLASSIC_HIGH\"},\r\n    \"status\": \"TREATED\",\r\n    \"quantity\": 1\r\n}",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"chargeInstance\": {\"id\":48, \"type\":\"UsageChargeInstance\"},\r\n    \"tax\": { \"id\": 6 },\r\n    \"quantity\": 1\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -14185,277 +14185,277 @@
 	],
 	"variable": [
 		{
-			"id": "24307b3e-3c75-4730-8897-9a0bb544f84b",
+			"id": "73e5b6bb-7fe6-4a31-bc29-c26b8f5ef338",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work"
 		},
 		{
-			"id": "480cc877-fdc3-43d6-bc6b-c0e21485bdf5",
+			"id": "9f67cfcb-6d7a-4398-91c4-970b68f78453",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/opencell/api/rest"
 		},
 		{
-			"id": "73f6150d-dfb4-4623-9a72-295c452dd897",
+			"id": "3430c99a-f6ba-400b-88a6-b6b3a0e1906d",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "6deb6167-3654-4eb0-b0b1-078aa7657bb8",
+			"id": "6891fb18-d855-4dfe-9cc2-5fa3993e3258",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "b2d33b31-3e10-4a93-a75c-534261e81648",
+			"id": "f2a5396d-9975-4918-a3c3-4694609c69dc",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "ec8712ce-0d5f-4656-aad2-f74b74c46eb6",
+			"id": "9fb80917-70cb-4480-a6a0-165d8f484282",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "90c05673-9f5a-4da6-a94a-2eb243f311ad",
+			"id": "0b9a56ec-bda0-48eb-b61e-a772d5b9ef6f",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "48cb69f7-f2e5-47d3-a46f-8859106467b3",
+			"id": "e753ce33-2c09-41e6-912d-e77f04c1c441",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "8caa23c6-7d4b-493a-8a37-7dc256ba65c4",
+			"id": "fc2420aa-a032-44fc-b967-02f36c1c6d7b",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "cc363db7-5829-42f9-b4b0-fa7f4bfeaad7",
+			"id": "db3d893b-b5e6-44d8-9371-db8d6ddbd306",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "b180f43b-0149-4c84-97c2-77d41d1edd09",
+			"id": "cc857339-6cfc-4966-ab68-03faf9e0f2fb",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "816db1da-b116-4f6e-916b-a3d2fa54a3a9",
+			"id": "4fe51fd1-fa65-4444-ae08-3c3b3d384845",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "6248ed7a-49d0-45b4-9519-6dcef5b02b64",
+			"id": "3b32bdfe-070d-4d3f-a48a-6f5d8c518a40",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "4bad2d61-d966-43b6-8142-7a78299cd991",
+			"id": "0dad903c-98d5-4e9c-a47b-f9990a1e5ea9",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "82c86d33-fd4e-44e0-abb5-6034e00e87aa",
+			"id": "b882dccf-0500-46f4-97b3-b286735e4366",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "b6a2f734-5279-40b5-b488-531144445090",
+			"id": "d6b97863-4098-4de4-8990-01cd615672fe",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "c58ecb1d-a27d-4410-9495-be17c5c7db6b",
+			"id": "eaa1e903-5664-44c7-9141-4008aa3002a0",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "655d0c5d-91da-43ff-a129-8f88c2ebd362",
+			"id": "bc7023a1-2e70-4233-afb3-94e834331fdd",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "29a96531-9318-4ca3-a23f-48e13e051701",
+			"id": "4932861e-baeb-4c88-b0e7-4c03eca85958",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "618bfab9-2764-4156-ab25-d887aa9ae331",
+			"id": "8ffab783-ee17-40f7-8155-dc71a0197907",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "52c89dd9-f639-4a3b-8898-b5dc9dc5d26c",
+			"id": "04566118-4f47-4704-8428-96a8d95b3a6a",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "6323d81f-9e5c-426a-aac7-f7791f549eb0",
+			"id": "ccf19ccd-c1ed-4480-9af8-904ff30b170a",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "d09511bc-f229-465f-b7e1-2fedc050f3d2",
+			"id": "e7fb0888-0633-407f-9560-9ce913dee380",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "6ef49203-578a-4924-b367-079fef4aaa3b",
+			"id": "71817b40-f968-455c-8ed2-3c7ead3890d6",
 			"key": "email",
 			"value": "brahim@opencellsoft.com"
 		},
 		{
-			"id": "7e24bc9c-c83e-4c68-bd57-0385dadca59c",
+			"id": "4e79ad96-187b-4f48-ae89-d6d9d8ddc609",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "e1ae27f9-b2e3-4b76-97b2-9060472422e7",
+			"id": "d7278ef0-d971-4f58-b98e-7485cf286ad7",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "4b9eefed-ba92-4537-962c-400663e70d69",
+			"id": "99360535-fba3-4cc0-b3b3-35390299ea00",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "86fa4878-21c2-4388-85df-576bd423412f",
+			"id": "9ef9d5b2-e29b-43e5-8e40-71ca20cee29f",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "221d17f4-7816-4e22-be91-adf8118335a9",
+			"id": "50a6560e-a439-4a52-88cb-caf45e55ba8d",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "77e3e09b-d28d-45fe-8b36-13edaf34ec14",
+			"id": "3c3d6c2d-6075-4bd2-8d6b-260a92990e35",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "669e50fb-d95b-45fd-80d3-3f399014e49d",
+			"id": "d0b968e4-dd0e-4525-a299-9b7e2f9e94ad",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "31de2e0b-00de-4b21-81e0-52006af147f6",
+			"id": "f2a6ef47-a45b-4031-af13-0532829e9b72",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "26ee81ed-6a2e-4aa9-8ec4-d86ea12a8879",
+			"id": "645348b3-fbb0-4c1b-a042-de524bfce146",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "445c82cf-425c-4044-8c96-af49a397b070",
+			"id": "d42d8cce-bc51-4260-a1bb-0689108ccd58",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "e19d397a-f097-4b66-b1fa-eb139137e39b",
+			"id": "e7da3b05-082a-45a7-ba60-a73d9a50799a",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "f1133526-81f5-4ee5-84fa-5713dcdf1e47",
+			"id": "3b04e7e5-5545-42ac-9151-36f210511461",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "79dcf0e9-983f-42d9-85ed-c448748cc374",
+			"id": "aeabb11f-a2c9-4847-a830-50412c7b4c3a",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "ddce1757-6d2e-44fd-aa11-0345f2120d3e",
+			"id": "fb1e3aa7-e551-4dca-bd2b-862bdbb807b4",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "3c829536-8a1b-45f5-8540-973de9ad66c6",
+			"id": "d5d59d0c-03b9-415f-ae4e-f5ebf66d747e",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "33be4ea6-ff6f-43c3-adaa-f6aaae11797b",
+			"id": "1d999d61-d3f6-4d50-ae42-215edb3a85e8",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "421f88a2-9b35-47a1-bf56-12e03300e08a",
+			"id": "dc7e64f7-c9da-4d69-9692-0066ae10ae6e",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "1065c415-0431-465a-9354-03d110269a71",
+			"id": "bb363c5b-d9ca-4148-b099-db56c883d995",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "3d900c1e-b144-4766-a0f0-486c77e22fb0",
+			"id": "4d9085b3-5b9b-4eb2-9a03-7d7ba0a48c29",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "4daf48a0-0f77-40a0-aa94-8fb71eb58df6",
+			"id": "69b11b21-86b9-4deb-8148-f5683fff8a24",
 			"key": "accCode",
 			"value": "ACC_TST"
 		},
 		{
-			"id": "b7368ee8-cd7c-4f06-a7c0-ae1e091f4497",
+			"id": "dad5f703-b8df-4b8b-8cf4-820e69663b9b",
 			"key": "invoiceSubCat",
 			"value": "CLASSIC_COMMISSION"
 		},
 		{
-			"id": "4ad2454d-5a1b-4dd5-96c3-914ddb87b4d4",
+			"id": "24b5d0b8-03b4-491b-bb4c-be0124eed6ad",
 			"key": "billingAccCode",
 			"value": "DEMO.CLASSIC"
 		},
 		{
-			"id": "a049094c-e733-4440-b65f-891e05a1d5c3",
+			"id": "a3c18840-1a57-462a-b3ac-3837653156e4",
 			"key": "subCode",
 			"value": "ben.ohara"
 		},
 		{
-			"id": "56cc279f-e47a-400b-b6db-90925122f72c",
+			"id": "0c853de7-2831-4691-b704-133c76f04458",
 			"key": "biilingCycle",
 			"value": "BC_CLASSIC_MONTHLY_1ST"
 		},
 		{
-			"id": "e891f849-866c-4619-9b74-4dc1394ff98e",
+			"id": "ae15daf4-3a37-45b6-9708-09ffacb9acf4",
 			"key": "customerCategory",
 			"value": "CLIENT"
 		},
 		{
-			"id": "f59356e6-3d72-491f-92cd-94c8c1b67eb0",
+			"id": "174416c2-6231-4dd9-8f80-cbef4d174891",
 			"key": "i",
 			"value": "0"
 		},
 		{
-			"id": "474317ae-bf6a-4e63-829c-1d7145162e77",
+			"id": "2ed00806-2272-427e-8aff-fd72175cb98f",
 			"key": "entityCode",
 			"value": ""
 		},
 		{
-			"id": "4639a6fc-cbbb-4a44-b381-68e26a32ee57",
+			"id": "b4568a85-45e2-4e49-bd8a-90c74df9357f",
 			"key": "entity_code",
 			"value": "CB_TST"
 		},
 		{
-			"id": "23926a97-31e2-4607-b04a-074298a03518",
+			"id": "d0373271-aa67-4256-9e6b-6ad081b5f4b5",
 			"key": "entity_id",
 			"value": ""
 		},
 		{
-			"id": "e77d58c4-8757-4360-b85b-7101eede6754",
+			"id": "e04b52fb-a160-404b-adac-c6f86b88c161",
 			"key": "inc",
 			"value": ""
 		},
 		{
-			"id": "74a1fd89-7b7a-45a8-b83d-69c9da0eeb39",
+			"id": "a809c421-7ea5-49f2-b930-04c611c60493",
 			"key": "sub_id",
 			"value": ""
 		}
