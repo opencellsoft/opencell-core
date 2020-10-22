@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
     <property name="type.blob" value="blob" dbms="postgresql" />
     <property name="type.blob" value="longblob" dbms="mysql" />
@@ -18,12 +18,10 @@
     <property name="cast.long" value="UNSIGNED " dbms="mysql" />
     <property name="id.auto" value="false" dbms="postgresql" />
     <property name="id.auto" value="true" dbms="mysql" />
-    <property name="migration" value="true" />
-    
+
     <property name="db.schema.adapted" value="${db.schema}." dbms="postgresql"/>
     <property name="db.schema.adapted" value="" dbms="mysql"/>
 
-    <include file="current/structure.xml" relativeToChangelogFile="true" />
-    <include file="current/data.xml" relativeToChangelogFile="true" />
     <include file="dunning/data.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>
