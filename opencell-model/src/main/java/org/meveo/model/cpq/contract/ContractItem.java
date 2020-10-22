@@ -47,7 +47,7 @@ public class ContractItem extends BaseEntity {
 	 * commercial offer
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_commercial_offer_id")
+	@JoinColumn(name = "offer_template_id")
 	private OfferTemplate offerTemplate;
 
 	/**
