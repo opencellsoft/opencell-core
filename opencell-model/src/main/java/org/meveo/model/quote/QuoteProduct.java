@@ -68,4 +68,88 @@ public class QuoteProduct extends BusinessEntity {
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     private BigDecimal quantity = BigDecimal.ONE;
+
+	/**
+	 * @return the quote
+	 */
+	public Quote getQuote() {
+		return quote;
+	}
+
+	/**
+	 * @param quote the quote to set
+	 */
+	public void setQuote(Quote quote) {
+		this.quote = quote;
+	}
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
+	}
+
+	/**
+	 * @return the quoteCustomer
+	 */
+	public QuoteCustomerService getQuoteCustomer() {
+		return quoteCustomer;
+	}
+
+	/**
+	 * @param quoteCustomer the quoteCustomer to set
+	 */
+	public void setQuoteCustomer(QuoteCustomerService quoteCustomer) {
+		this.quoteCustomer = quoteCustomer;
+	}
+
+	/**
+	 * @return the offerComponent
+	 */
+	public OfferComponent getOfferComponent() {
+		return offerComponent;
+	}
+
+	/**
+	 * @param offerComponent the offerComponent to set
+	 */
+	public void setOfferComponent(OfferComponent offerComponent) {
+		this.offerComponent = offerComponent;
+	}
+
+	/**
+	 * @return the product
+	 */
+	public Product getProduct() {
+		return product;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	/**
+	 * @return the quantity
+	 */
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
 }

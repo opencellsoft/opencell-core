@@ -37,16 +37,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class QuoteVersion extends BaseEntity{
 
 
-	/**
-     * Record/entity identifier
-     */
-    @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
-    @JsonProperty
-    protected Long id;
-
     /**
      * quote
      */
@@ -180,19 +170,6 @@ public class QuoteVersion extends BaseEntity{
 		this.billingPlanCode = billingPlanCode;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the quote
