@@ -21,6 +21,8 @@ package org.meveo.api.payment;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
@@ -222,9 +225,26 @@ public class PaymentApi extends BaseApi {
 		        }
 		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
 		    }
+		}				
+		List<AccountOperation> aosToPaid = new ArrayList<AccountOperation>();
+		for(Long id : listReferenceToMatch ) {
+			AccountOperation ao = accountOperationService.findById(id);
+			if(ao == null) {
+				 throw new BusinessApiException("Cannot find account operation with id:" + id );
+			}
+			aosToPaid.add(ao);
 		}
-		listReferenceToMatch.add(payment.getId());
-		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
+		 Collections.sort(aosToPaid, Comparator.comparing(AccountOperation::getDueDate));
+
+		for(AccountOperation ao :aosToPaid ) {			
+			if(BigDecimal.ZERO.compareTo(payment.getUnMatchingAmount()) == 0) {
+				break;
+			}
+			List<Long> aosIdsToMatch = new ArrayList<Long>();
+			aosIdsToMatch.add(ao.getId());
+			aosIdsToMatch.add(payment.getId());
+			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);			
+		}		
 	}
 
 
