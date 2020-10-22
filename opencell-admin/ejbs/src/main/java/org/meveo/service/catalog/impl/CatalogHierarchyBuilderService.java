@@ -438,7 +438,15 @@ public class CatalogHierarchyBuilderService {
                 newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
             }
             duplicateCharges(newServiceTemplate);
+            if (newServiceTemplate.getServiceUsageCharges() != null) {
+            	for(ServiceChargeTemplateUsage s : newServiceTemplate.getServiceUsageCharges()) {
+            		ArrayList<CounterTemplate> newCounterTemplates = new ArrayList<>();
+            		s.getAccumulatorCounterTemplates().stream().forEach(x->newCounterTemplates.add(x));
+					s.setAccumulatorCounterTemplates(newCounterTemplates);
+            	}
+            }
             serviceTemplateService.create(newServiceTemplate);
+            serviceTemplateService.commit();
 
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException(e.getMessage());
@@ -485,7 +493,6 @@ public class CatalogHierarchyBuilderService {
         });
         entity.setServiceUsageCharges(new ArrayList<>(entity.getServiceUsageCharges()));
         entity.getServiceUsageCharges().forEach(sctUsageCharge -> {
-        	sctUsageCharge.setAccumulatorCounterTemplates(new ArrayList<>(sctUsageCharge.getAccumulatorCounterTemplates()));
             serviceChargeTemplateUsageService.detach(sctUsageCharge);
             linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge);
         });

@@ -169,7 +169,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     private Date dateDunningLevel;
 
     /**
-     * Parent customer
+     * Parent cusg
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -259,6 +259,9 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
+
+    @Transient
+    private String dueBalance;
 
     /**
      * This method is called implicitly by hibernate, used to enable encryption for custom fields of this entity
@@ -769,5 +772,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
     public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
         this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public void setDueBalance(String dueBalance){
+        this.dueBalance = dueBalance;
+    }
+
+    public String getDueBalance() {
+        return dueBalance;
     }
 }
