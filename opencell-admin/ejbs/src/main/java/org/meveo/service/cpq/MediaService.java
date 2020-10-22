@@ -2,7 +2,7 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.cpq.attribute.Media;
+import org.meveo.model.cpq.Media;
 import org.meveo.service.base.PersistenceService;
 
 /**

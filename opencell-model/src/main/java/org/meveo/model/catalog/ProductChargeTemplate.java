@@ -55,5 +55,10 @@ public class ProductChargeTemplate extends ChargeTemplate {
     public void setProductTemplates(List<ProductTemplate> productTemplates) {
         this.productTemplates = productTemplates;
     }
+    
+    @Override
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.PRODUCT;
+    }
 
 }
