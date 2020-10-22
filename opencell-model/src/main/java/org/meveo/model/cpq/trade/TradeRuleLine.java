@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
@@ -35,6 +36,14 @@ public class TradeRuleLine extends BusinessEntity {
 	 * 
 	 */
 	private static final long serialVersionUID = -7531793312686419097L;
+	
+	
+	/**
+	 * Trade rule header
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "trade_rule_item_id")
+	private TradeRuleItem tradeRuleItem;
 	
 	/**
 	 * 
@@ -63,7 +72,7 @@ public class TradeRuleLine extends BusinessEntity {
 	 */
 	@Column(name = "source_attribute_name", length = 20)
 	@Size(max = 20)
-	private String sourceAttributeName;
+	private ServiceTemplate sourceService;
 	
 	/**
 	 * tag source
@@ -127,18 +136,13 @@ public class TradeRuleLine extends BusinessEntity {
 		this.sourceProductVersion = sourceProductVersion;
 	}
 
-	/**
-	 * @return the sourceAttributeName
-	 */
-	public String getSourceAttributeName() {
-		return sourceAttributeName;
+
+	public ServiceTemplate getSourceService() {
+		return sourceService;
 	}
 
-	/**
-	 * @param sourceAttributeName the sourceAttributeName to set
-	 */
-	public void setSourceAttributeName(String sourceAttributeName) {
-		this.sourceAttributeName = sourceAttributeName;
+	public void setSourceService(ServiceTemplate sourceService) {
+		this.sourceService = sourceService;
 	}
 
 	/**
@@ -182,12 +186,22 @@ public class TradeRuleLine extends BusinessEntity {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	
+
+	public TradeRuleItem getTradeRuleItem() {
+		return tradeRuleItem;
+	}
+
+	public void setTradeRuleItem(TradeRuleItem tradeRuleItem) {
+		this.tradeRuleItem = tradeRuleItem;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(operator, sourceAttributeName, sourceOfferTemplate, sourceProduct,
+		result = prime * result + Objects.hash(operator, sourceService, sourceOfferTemplate, sourceProduct,
 				sourceProductVersion, sourceTag, value);
 		return result;
 	}
@@ -201,7 +215,7 @@ public class TradeRuleLine extends BusinessEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		TradeRuleLine other = (TradeRuleLine) obj;
-		return operator == other.operator && Objects.equals(sourceAttributeName, other.sourceAttributeName)
+		return operator == other.operator && Objects.equals(sourceService, other.sourceService)
 				&& Objects.equals(sourceOfferTemplate, other.sourceOfferTemplate)
 				&& Objects.equals(sourceProduct, other.sourceProduct)
 				&& Objects.equals(sourceProductVersion, other.sourceProductVersion)

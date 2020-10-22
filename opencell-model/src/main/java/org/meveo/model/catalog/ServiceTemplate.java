@@ -294,7 +294,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tag_id")
-    private Set<Tag> tagList = new HashSet<>();
+    private Set<Tag> tagList = new HashSet<>(); 
     
     
 	  /**

@@ -19,10 +19,18 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -30,11 +38,19 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.cpq.ProductLine;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.crm.CustomerBrand;
 
 /**
  * @author Edward P. Legaspi
@@ -70,6 +86,81 @@ public class ProductTemplate extends ProductOffering {
     @JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "indx")
     private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
+    
+    
+	/**
+	 * status of product type of {@link ProductStatusEnum}
+	 */
+	@Column(name = "status", nullable = false)
+	@NotNull
+	@Enumerated(EnumType.ORDINAL)
+	private ProductStatusEnum status;
+	
+	/**
+	 * status date : modified automatically when the status change
+	 */
+	@Column(name = "status_date", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
+	private Date statusDate;
+	
+	
+	/**
+	 * family of the product
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_line_id", referencedColumnName = "id")
+	private ProductLine productLine;
+	
+	/**
+	 * brand of the product
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_brand_id", referencedColumnName = "id")
+	private CustomerBrand brand;
+	
+	/**
+	 * reference: unique for product if it has a reference
+	 */
+	@Column(name = "reference", length = 50)
+	@Size(max = 50)
+	private String reference;
+	
+	/**
+	 * model : it is an upgrade for the product
+	 */
+	@Column(name = "model", length = 50)
+	@Size(max = 20)
+	private String model;
+	
+	/**
+	 * model children : display all older model 
+	 */
+	@ElementCollection
+	@Column(name = "model_chlidren")
+	@CollectionTable(name = "cpq_product_model_children", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
+	private Set<String> modelChlidren;
+	
+
+	/**
+	 * list of discount attached to this product
+	 */
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_product_discount_plan",
+				joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "discount_id", referencedColumnName = "id")				
+			)
+	private Set<DiscountPlan> discountList = new HashSet<>();
+	
+	
+	/**
+	 * flag that indicate if true  discount list will have a specific 
+	 * list otherwise all available discount attached to this product will be displayed
+	 */
+	@Column(name = "discount_flag", nullable = false)
+	@NotNull
+	private boolean discountFlag;
 
     public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
         if (getProductChargeTemplates() == null) {

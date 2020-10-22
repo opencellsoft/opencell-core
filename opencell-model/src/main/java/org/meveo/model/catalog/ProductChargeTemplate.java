@@ -56,8 +56,4 @@ public class ProductChargeTemplate extends ChargeTemplate {
         this.productTemplates = productTemplates;
     }
 
-    @Override
-    public ChargeMainTypeEnum getChargeMainType() {
-        return ChargeMainTypeEnum.PRODUCT;
-    }
 }
