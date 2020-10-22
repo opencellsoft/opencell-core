@@ -3,18 +3,14 @@ package org.meveo.model.quote;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,13 +23,13 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "code" , "quoteVersion"}))
+@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "quote.code" , "quoteVersion"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
+@NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.code=:code and q.quoteVersion=:quoteVersion")
+@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and p.status=1")
 public class QuoteVersion extends BaseEntity{
 
 
