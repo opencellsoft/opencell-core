@@ -3086,5 +3086,16 @@ END $$;]]>
 		<sql>CREATE INDEX IF NOT EXISTS ar_matching_amount_account_operation_id_index ON public.ar_matching_amount USING btree (account_operation_id ASC NULLS LAST)</sql>
 		<sql>CREATE INDEX IF NOT EXISTS adm_user_lower_username_index ON adm_user USING btree (lower(username))</sql>
     </changeSet>
+    
+    <changeSet id="#5546_20201023" author="AbdelmounaimAkadid" dbms="postgresql">
+        <sql>DROP INDEX IF EXISTS agregate_index_category_invoice_agregate</sql>
+        <sql>DROP INDEX IF EXISTS billing_user_account_id_index</sql>
+        <sql>DROP INDEX IF EXISTS cat_st_serv_mod_id_index</sql>
+        <sql>DROP INDEX IF EXISTS ar_credit_category_id_key</sql>
+		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
+		<sql>DROP INDEX IF EXISTS adm_file_type_code_index</sql>
+		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
+		<sql>DROP INDEX IF EXISTS customer_code</sql>
+    </changeSet>
 
 </databaseChangeLog>
