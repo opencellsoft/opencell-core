@@ -39,7 +39,7 @@ public class OfferComponent extends BaseEntity {
 	private static final long serialVersionUID = 7201295614290975063L;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "commercial_offer_id", nullable = false)
+	@JoinColumn(name = "offer_template_id", nullable = false)
 	@NotNull
 	private OfferTemplate offerTemplate;
 	

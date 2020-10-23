@@ -19,7 +19,12 @@ public enum RuleTypeEnum {
 	/**
 	 * incompatibilité
 	 */
-	INCOMPATIBILITY(1);
+	INCOMPATIBILITY(1),
+	
+	/**
+     * Replacement
+     */
+     REPLACEMENT(2);
 	
 	private RuleTypeEnum(int value) {
 		this.value = value;

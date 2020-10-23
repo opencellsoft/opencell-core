@@ -125,6 +125,15 @@ public class Product extends BusinessEntity {
 	@Column(name = "discount_flag", nullable = false)
 	@NotNull
 	private boolean discountFlag;
+	
+	
+    /**
+     * indicates whether or not the product detail should be displayed in the quote.
+     */
+    @Column(name = "package_flag", nullable = false)
+    @NotNull
+    private boolean packageFlag;
+    
 
 
 	/**
@@ -270,6 +279,23 @@ public class Product extends BusinessEntity {
 		this.discountFlag = discountFlag;
 	}
 
+	
+
+	/**
+	 * @return the packageFlag
+	 */
+	public boolean isPackageFlag() {
+		return packageFlag;
+	}
+
+
+	/**
+	 * @param packageFlag the packageFlag to set
+	 */
+	public void setPackageFlag(boolean packageFlag) {
+		this.packageFlag = packageFlag;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -294,7 +320,7 @@ public class Product extends BusinessEntity {
 				&& Objects.equals(discountList, other.discountList) && Objects.equals(model, other.model)
 				&& Objects.equals(modelChlidren, other.modelChlidren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
-				&& Objects.equals(statusDate, other.statusDate);
+				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
 	}
 	
 	
