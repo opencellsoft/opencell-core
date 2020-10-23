@@ -31,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -58,6 +59,7 @@ import org.meveo.model.cpq.offer.OfferComponent;
 @Table(name = "ord_quote_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
+@NamedQuery(name = "QuoteItem.findByCode", query = "select q from QuoteItem q where q.code=:code")
 public class QuoteItem extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;

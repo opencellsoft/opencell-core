@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,6 +25,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "quoteVersion"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_customer_service_seq"), })
+@NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
 public class QuoteCustomerService extends BusinessEntity {
 
 

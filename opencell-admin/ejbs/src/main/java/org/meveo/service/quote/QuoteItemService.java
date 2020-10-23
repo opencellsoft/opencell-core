@@ -19,6 +19,7 @@
 package org.meveo.service.quote;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.service.base.PersistenceService;
@@ -26,4 +27,14 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class QuoteItemService extends PersistenceService<QuoteItem> {
 
+	public QuoteItem findByCode(String code) {
+		try {
+			return (QuoteItem) this.getEntityManager()
+										.createNamedQuery("QuoteItem.findByCode")
+											.setParameter("code", code)
+												.getSingleResult();
+		}catch(NoResultException e) {
+			return null;
+		}
+	}
 }

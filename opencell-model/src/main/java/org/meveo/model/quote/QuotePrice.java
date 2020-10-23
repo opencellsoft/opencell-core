@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 @Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
+@NamedQuery(name = "QuotePrice.findByCode", query = "select q from QuotePrice where q.code=:code")
 public class QuotePrice extends BusinessEntity  {
 
 
