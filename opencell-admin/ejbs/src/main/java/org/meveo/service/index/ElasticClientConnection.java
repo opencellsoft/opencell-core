@@ -79,7 +79,7 @@ public class ElasticClientConnection {
 
         try {
 
-            String restUri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+            String restUri = paramBean.getProperty("elasticsearch.restUri", null);
             hosts = restUri.split(";");
 
             if (StringUtils.isBlank(restUri) || hosts.length == 0) {
