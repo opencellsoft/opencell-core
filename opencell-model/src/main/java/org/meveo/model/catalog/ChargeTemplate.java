@@ -83,6 +83,35 @@ import org.meveo.model.tax.TaxClass;
 public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -6619927605555822610L;
+    
+    public enum ChargeTypeEnum {
+        RECURRING, USAGE, SUBSCRIPTION, TERMINATION
+    }
+
+    /**
+     * Main charge types
+     */
+    public enum ChargeMainTypeEnum {
+        /**
+         * Recurring charges
+         */
+        RECURRING,
+
+        /**
+         * One shot charges
+         */
+        ONESHOT,
+
+        /**
+         * Usage charges
+         */
+        USAGE,
+
+        /**
+         * Product charges
+         */
+        PRODUCT;
+    }
 
     /**
      * Operation type - Credit/Debit
@@ -495,6 +524,13 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setOutputUnitEL(String outputUnitEL) {
         this.outputUnitEL = outputUnitEL;
     }
+    
+    /**
+     * Get a charge main type
+     * 
+     * @return Charge main type
+     */
+    public abstract ChargeMainTypeEnum getChargeMainType();
 
     public OperationTypeEnum getType() {
         return type;
