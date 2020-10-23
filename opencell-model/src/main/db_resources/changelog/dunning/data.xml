@@ -10,12 +10,14 @@
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-25, 0, 0, now(), 'org.meveo.service.script.SimpleDunning', 'Simple Dunning script', 'JAVA', '
         package org.meveo.service.script;
 
-        import org.meveo.model.billing.Subscription;
+        import org.meveo.model.billing.InvoiceStatusEnum;
         import org.meveo.model.dunning.DunningDocument;
         import org.meveo.model.generic.wf.GWFTransition;
-        import org.meveo.model.generic.wf.WorkflowInstance;
         import org.meveo.model.notification.NotificationEventTypeEnum;
-        import org.meveo.model.payments.*;
+        import org.meveo.model.payments.AccountOperation;
+        import org.meveo.model.payments.CustomerAccount;
+        import org.meveo.model.payments.DunningLevelEnum;
+        import org.meveo.model.payments.RecordedInvoice;
         import org.meveo.service.billing.impl.SubscriptionService;
         import org.meveo.service.notification.DefaultNotificationService;
         import org.meveo.service.notification.GenericNotificationService;
@@ -26,11 +28,13 @@
 
         import java.math.BigDecimal;
         import java.math.RoundingMode;
-        import java.util.*;
-        import java.util.stream.Collectors;
+        import java.util.ArrayList;
+        import java.util.Date;
+        import java.util.List;
+        import java.util.Map;
 
-        import static java.math.BigDecimal.valueOf;
-        import static org.meveo.admin.job.GenericWorkflowJob.*;
+        import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
+        import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
 
         public class SimpleDunning extends org.meveo.service.script.Script {
 
@@ -49,7 +53,6 @@
                     log.info("{}={}", entry.getKey(), entry.getValue());
                 });
 
-                WorkflowInstance workflowInstance = (WorkflowInstance) context.get(WF_INS);
                 CustomerAccount customerAccount = (CustomerAccount) context.get(IWF_ENTITY);
                 GWFTransition gwfTransition = (GWFTransition) context.get(WF_ACTUAL_TRANSITION);
 
@@ -58,26 +61,21 @@
                 } else if ("R1".equals(gwfTransition.getFromStatus()) && "R2".equals(gwfTransition.getToStatus())) {
                     sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R2);
                 } else if ("R2".equals(gwfTransition.getFromStatus()) && "R3".equals(gwfTransition.getToStatus())) {
+                    customerAccount = updateDunningLevel(customerAccount, DunningLevelEnum.R3);
+                    suspendSubsciptions(customerAccount);
                     createDunningDocuments(customerAccount);
-                    suspendSubscription(customerAccount);
-                    updateDunningLevel(customerAccount, DunningLevelEnum.R3);
-                } else if ("R0".equals(gwfTransition.getToStatus())) {
+                } else if ("REND".equals(gwfTransition.getToStatus())) {
                     sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
                 }
             }
 
-            private void suspendSubscription(CustomerAccount customerAccount) {
-                Set<Subscription> subscriptions = customerAccount.getAccountOperations().stream()
-                        .filter(ao -> isDueRecordedInvoice(ao))
-                        .map(ao -> ao.getSubscription())
-                        .collect(Collectors.toSet());
-                for (Subscription sub : subscriptions) {
-                    subscriptionService.subscriptionSuspension(sub, new Date());
-                }
+            private void suspendSubsciptions(CustomerAccount customerAccount) {
+                subscriptionService.listByCustomer(customerAccount.getCustomer())
+                        .forEach(sub -> subscriptionService.subscriptionSuspension(sub, new Date()));
             }
 
             private void sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
-                updateDunningLevel(customerAccount, dunningLevelEnum);
+                customerAccount = updateDunningLevel(customerAccount, dunningLevelEnum);
                 if (dunningLevelEnum == DunningLevelEnum.R0) {
                     sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
                 } else if (dunningLevelEnum == DunningLevelEnum.R1) {
@@ -87,38 +85,12 @@
                 }
             }
 
-            private void updateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
+            private CustomerAccount updateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
                 customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
                 customerAccount.setDunningLevel(dunningLevelEnum);
                 customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
                 customerAccount.setDateDunningLevel(new Date());
-                customerAccountService.update(customerAccount);
-            }
-
-            private List<DunningDocument> createDunningDocuments(CustomerAccount customerAccount) {
-                List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
-                return List.of(createNewDunningDocument(customerAccount, accountOperations));
-            }
-
-            private DunningDocument createNewDunningDocument(CustomerAccount customerAccount, List<AccountOperation> accountOperations) {
-                DunningDocument dunningDocument = new DunningDocument();
-                dunningDocument.setCustomerAccount(customerAccount);
-                if (accountOperations != null) {
-                    List<RecordedInvoice> ris = new ArrayList<>();
-                    for (AccountOperation accountOperation : accountOperations) {
-                        ((RecordedInvoice) accountOperation).setDunningDocument(dunningDocument);
-                        ris.add((RecordedInvoice) accountOperation);
-                    }
-                    dunningDocument.setDueInvoices(ris);
-                }
-
-                dunningDocumentService.create(dunningDocument);
-                return dunningDocument;
-            }
-
-            private boolean isDueRecordedInvoice(AccountOperation ao) {
-                BigDecimal dueAmount = ao.getTransactionCategory() == OperationCategoryEnum.DEBIT ? ao.getUnMatchingAmount() : ao.getUnMatchingAmount().multiply(valueOf(-1));
-                return ao instanceof RecordedInvoice && ao.getDueDate().after(new Date()) && dueAmount.doubleValue() > 0;
+                return customerAccountService.update(customerAccount);
             }
 
             private void computeDueBalanceAndSendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
@@ -130,6 +102,28 @@
             private void sendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
                 genericNotificationService.getApplicableNotifications(notificationEventType, customerAccount)
                         .forEach(notif -> defaultNotificationService.fireNotification(notif, customerAccount));
+            }
+
+            private void createDunningDocuments(CustomerAccount customerAccount) {
+                List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
+                DunningDocument dunningDocument = new DunningDocument();
+                dunningDocument.setCustomerAccount(customerAccount);
+
+                if (accountOperations != null) {
+                    List<RecordedInvoice> ris = new ArrayList<>();
+                    for (AccountOperation accountOperation : accountOperations) {
+                        if(accountOperation instanceof RecordedInvoice) {
+                            if(accountOperation instanceof RecordedInvoice) {
+                                ((RecordedInvoice) accountOperation).setDunningDocument(dunningDocument);
+                                ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.DISPUTED);
+                                ris.add((RecordedInvoice) accountOperation);
+                            }
+                        }
+                    }
+                    dunningDocument.setDueInvoices(ris);
+                }
+
+                dunningDocumentService.create(dunningDocument);
             }
         }
         ');
@@ -192,7 +186,7 @@
             <column name="target_entity_class" value="org.meveo.model.payments.CustomerAccount"></column>
             <column name="enable_history" value="1"></column>
             <column name="init_status" value="R0"></column>
-            <column name="cf_values" value='{"dunningJob_R1TimesUp":[{"long":30}]}'></column>
+            <column name="cf_values" value='{"dunningJob_R1TimesUp":[{"long":30}],"dunningJob_R2TimesUp":[{"long":30}]}'></column>
             <column name="uuid" value="934c4821-e56e-44d2-b4a1-4be86f922263"></column>
         </insert>
 
@@ -236,6 +230,16 @@
             <column name="uuid" value="29303780-37f8-4c94-bd40-979f8f89b41c"></column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-5"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="REND"></column>
+            <column name="description" value="Dunning file sent to external company"></column>
+            <column name="uuid" value="34b3d2be-1525-11eb-adc1-0242ac120002"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
 
         <insert tableName="wf_generic_transition">
             <column name="id" valueNumeric="-1"></column>
@@ -246,7 +250,9 @@
             <column name="priority" value="1"></column>
             <column name="description" value="Some amount is due"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now())  > 0}"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R0' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now())  > 0}]]>
+            </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
         <insert tableName="wf_generic_transition">
@@ -254,12 +260,12 @@
             <column name="uuid" value="79a9cdac-0dc6-4a96-b402-da4e7310cf69"></column>
             <column name="version" value="0"></column>
             <column name="from_status" value="R1"></column>
-            <column name="to_status" value="R0"></column>
+            <column name="to_status" value="REND"></column>
             <column name="priority" value="2"></column>
             <column name="description" value="All is fine again"></column>
             <column name="action_script_id" value="-25"></column>
             <column name="condition_el">
-                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+                <![CDATA[#{entity.dunningLevel == 'R1' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
             </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
@@ -272,7 +278,9 @@
             <column name="priority" value="3"></column>
             <column name="description" value="Time is up"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R1TimesUp')))}"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R1' && mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R1TimesUp')))}]]>
+            </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
         <insert tableName="wf_generic_transition">
@@ -280,12 +288,12 @@
             <column name="uuid" value="7d2ef938-e4bc-415c-aa2d-4f27ad9cfe82"></column>
             <column name="version" value="0"></column>
             <column name="from_status" value="R2"></column>
-            <column name="to_status" value="R0"></column>
+            <column name="to_status" value="REND"></column>
             <column name="priority" value="4"></column>
             <column name="description" value="All is fine again"></column>
             <column name="action_script_id" value="-25"></column>
             <column name="condition_el">
-                <![CDATA[#{mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+                <![CDATA[#{entity.dunningLevel == 'R2' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
             </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
@@ -298,7 +306,23 @@
             <column name="priority" value="5"></column>
             <column name="description" value="Debt collector is in"></column>
             <column name="action_script_id" value="-25"></column>
-            <column name="condition_el" value="#{mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R2TimesUp')))}"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R2' && mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R2TimesUp')))}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-6"></column>
+            <column name="uuid" value="9a93fb94-1521-11eb-adc1-0242ac120002"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R3"></column>
+            <column name="to_status" value="REND"></column>
+            <column name="priority" value="6"></column>
+            <column name="description" value="All is fine again"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R3' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+            </column>
             <column name="generic_wf_id" valueNumeric="-1"></column>
         </insert>
 
