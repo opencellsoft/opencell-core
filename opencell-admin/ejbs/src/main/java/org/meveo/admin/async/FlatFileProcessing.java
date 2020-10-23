@@ -210,7 +210,11 @@ public class FlatFileProcessing {
                     recordContexts.add(recordContext);
                     records.add(recordContext.getRecord());
                 }
-
+                
+                if(records.isEmpty()) {
+                    break mainLoop;
+                }
+                
                 if (nbLinesToProcess == 1) {
                     executeParams.put(recordVariableName, records.get(0));
                 } else {
@@ -248,20 +252,13 @@ public class FlatFileProcessing {
                     }
                     result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
                 } else if(nbLinesToProcess > 1) {
-                    String[] errorReason = e.getMessage().split("\n");
-                    for(String reason : errorReason) {
-                        result.registerError(reason);
-                        synchronized (rejectFileWriter) {
-                            rejectFileWriter.println(reason);
-                        }
-                    } 
-                    long nbLinesSuccess = nbLinesToProcess - errorReason.length;
-                    if(nbLinesToProcess > recordContexts.size()){
-                        nbLinesSuccess = recordContexts.size() - errorReason.length;
+                    synchronized (rejectFileWriter) {                   
+                        for(RecordContext rContext : recordContexts) {
+                            rejectFileWriter.println(rContext.getLineContent());
+                            result.registerError();
+                        }      
                     }
-                    for(i = 0; i < nbLinesSuccess; i++) {
-                        result.registerSucces();                                         
-                    }                     
+                    result.getErrors().add("--> " + e.getMessage());
                 }
 
                 if (FlatFileProcessingJob.STOP.equals(actionOnError)) {
