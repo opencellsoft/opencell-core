@@ -8735,7 +8735,7 @@
 									"script": {
 										"id": "a486665e-8108-4522-84a2-7fa9c631badd",
 										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: invoiceDateDelay.\");"
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: calendar.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -8772,7 +8772,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}_MISSING\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"dueDateDelay\": \"30\",\r\n  \"invoiceDateProductionDelay\": \"0\",\r\n  \"calendar\": \"MONTHLY\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}_MISSING\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"dueDateDelay\": \"30\"\r\n}\r\n  ",
 									"options": {
 										"raw": {}
 									}
@@ -9089,68 +9089,6 @@
 							"response": []
 						},
 						{
-							"name": "Update|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "64b10497-46b0-476d-b19b-9ff0171f3957",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{   \r\n    \"code\":\"{{not_exist}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"parentSeller\":\"{{seller}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    }\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/seller",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"seller"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Update|Seller|SELLER|SUCCESS",
 							"event": [
 								{
@@ -9213,12 +9151,12 @@
 							"response": []
 						},
 						{
-							"name": "CreateOrUpdate|Seller|SELLER|SUCCESS",
+							"name": "Update|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "d3a71f12-6924-4d04-b696-6f6e25c20599",
+										"id": "64b10497-46b0-476d-b19b-9ff0171f3957",
 										"exec": [
 											""
 										],
@@ -9242,7 +9180,7 @@
 										}
 									]
 								},
-								"method": "POST",
+								"method": "PUT",
 								"header": [
 									{
 										"key": "Authorization",
@@ -9257,19 +9195,18 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{   \r\n    \"code\":\"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"parentSeller\":\"{{seller}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    }\r\n}",
+									"raw": "{   \r\n    \"code\":\"{{not_exist}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"parentSeller\":\"{{seller}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    }\r\n}",
 									"options": {
 										"raw": {}
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"raw": "{{opencell.url}}/seller",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"seller",
-										"createOrUpdate"
+										"seller"
 									]
 								}
 							},
@@ -9341,6 +9278,69 @@
 											"key": "sellerCode",
 											"value": "{{entityCode}}"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|Seller|SELLER|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d3a71f12-6924-4d04-b696-6f6e25c20599",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{   \r\n    \"code\":\"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"parentSeller\":\"{{seller}}\",\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    }\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"createOrUpdate"
 									]
 								}
 							},
@@ -11146,24 +11146,14 @@
 					"name": "Clear data",
 					"item": [
 						{
-							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
+							"name": "Delete|CustomerBrand|CB|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "d56e98d0-8b5a-45ec-8250-2477e75ff25f",
+										"id": "329e9b36-7d04-4b33-8b81-c76d1ba41113",
 										"exec": [
 											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "d66055e4-2c95-4bc2-aba0-3e503f9361dd",
-										"exec": [
-											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" is referenced.\")"
 										],
 										"type": "text/javascript"
 									}
@@ -11296,14 +11286,24 @@
 							"response": []
 						},
 						{
-							"name": "Delete|CustomerBrand|CB|SUCCESS",
+							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "329e9b36-7d04-4b33-8b81-c76d1ba41113",
+										"id": "d56e98d0-8b5a-45ec-8250-2477e75ff25f",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "d66055e4-2c95-4bc2-aba0-3e503f9361dd",
+										"exec": [
+											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" is referenced.\")"
 										],
 										"type": "text/javascript"
 									}
@@ -11424,12 +11424,75 @@
 							"response": []
 						},
 						{
-							"name": "Delete|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"name": "Delete|Seller|SELLER|SUCCESS",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"id": "37682281-fbbb-497d-bd19-75997da46708",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2abdcdcd-ab74-4f6c-9015-4939ff917628",
 										"exec": [
 											""
 										],
@@ -12435,7 +12498,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{not_exist}}\",\r\n  \"accountingCode\": \"{{accountingCodeCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{not_exist}}\",\r\n  \"accountingCode\": \"{{accountingCodeCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"CREDIT\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -12632,7 +12695,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}_Missing\",\r\n  \"description\": \"{{testDescription}} missing\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}_Missing\",\r\n  \"description\": \"{{testDescription}} - missing\",\r\n  \"occCategory\": \"{{oc_category}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -12705,7 +12768,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{entityCode}}_INVALID\",\r\n  \"description\": \"{{testDescription}} invalid\",\r\n  \"occCategory\": \"IN{{oc_category}}\"\r\n}",
+									"raw": "{\r\n  \"code\": \"{{entityCode}}\",\r\n  \"description\": \"{{testDescription}} - invalid\",\r\n  \"occCategory\": \"{{oc_category}}_INVALID\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -12755,718 +12818,6 @@
 		{
 			"name": "Accounts",
 			"item": [
-				{
-					"name": "UserAccount",
-					"item": [
-						{
-							"name": "CreateOrUpdate|UserAccount|UA|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "b91d5df1-0770-41f8-bf24-dbb1e0a4b6e8",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\" : \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{status}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|UserAccount|UA|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "83e27849-5653-483b-90f9-8bae403a1606",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount?userAccountCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount"
-									],
-									"query": [
-										{
-											"key": "userAccountCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create|UserAccount|UA|ENTITY_ALREADY_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "fba01fa7-5e30-43f5-8e77-3372320ba038",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\" : \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{status}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|UserAccount|UA|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "b2027323-5079-4e65-8fe6-6a47918e89c7",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{not_exist}}\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{status}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|UserAccount|UA|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "19590c74-deee-448a-9294-db9e81e69da7",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|UserAccount|UA|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e5f80c7a-2d25-4072-922d-49fc0a639fbe",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|UserAccount|UA|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4b66550f-49ad-4066-afc0-609a8fca2bd0",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount?userAccountCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount"
-									],
-									"query": [
-										{
-											"key": "userAccountCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|UserAccount|UA|MISSING_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f4bfd37c-d1ad-451a-a515-9cfef315567a",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "f7f7d447-7284-4fd2-900c-ae7ffe7a479d",
-										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: billingAccount.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{ \r\n\t\"code\": \"{{entityCode}}_MISSING\"\r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|UserAccount|UA|INVALID_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "24b04a31-a28c-4fa0-bc09-67866cc815be",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "925539ce-2efc-4025-b59a-a387fd9bdc05",
-										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize value of type `org.meveo.model.billing.AccountStatusEnum` from String\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{ \r\n\t\"code\": \"{{entityCode}}\", \r\n\t\"billingAccount\":\"{{billingAccountCode}}\",\r\n\t\"terminationReason\":\"{{terminate_reason}}\",\r\n\t\"terminationDate\":\"{{terminate_date}}\",\r\n\t\"status\" : \"IN{{status}}\" \r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|UserAccount|UA|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ddf540bc-dd94-485c-8c54-6e01caaee7c9",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "7ae6f741-0cf6-42ed-bf0c-248a5add0f8a",
-										"exec": [
-											"pm.variables.set(\"message\", \"BillingAccount with code=NOT_EXIST does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{ \r\n\t\"code\": \"{{entityCode}}\", \r\n\t\"billingAccount\":\"{{not_exist}}\",\r\n\t\"terminationReason\":\"{{terminate_reason}}\",\r\n\t\"terminationDate\":\"{{terminate_date}}\",\r\n\t\"status\" : \"{{status}}\" \r\n}",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"userAccount",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "dc07b93e-aaf8-47d5-a843-25a7c1a68529",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"userAccountCode\", pm.variables.get(\"entityCode\"));"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "391ba4ff-c93b-48c0-89b1-c1a761c3145f",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
 				{
 					"name": "Customer",
 					"item": [
@@ -15730,6 +15081,718 @@
 							"listen": "test",
 							"script": {
 								"id": "92931027-557f-4f7f-b13e-c5f68bf5134e",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "UserAccount",
+					"item": [
+						{
+							"name": "CreateOrUpdate|UserAccount|UA|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b91d5df1-0770-41f8-bf24-dbb1e0a4b6e8",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\" : \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{entity_status}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|UserAccount|UA|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "83e27849-5653-483b-90f9-8bae403a1606",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount?userAccountCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									],
+									"query": [
+										{
+											"key": "userAccountCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create|UserAccount|UA|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fba01fa7-5e30-43f5-8e77-3372320ba038",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\" : \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{entity_status}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|UserAccount|UA|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "19590c74-deee-448a-9294-db9e81e69da7",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|UserAccount|UA|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b2027323-5079-4e65-8fe6-6a47918e89c7",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{not_exist}}\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\",\r\n\t\"terminationReason\": \"{{terminate_reason}}\",\r\n\t\"terminationDate\": \"{{terminate_date}}\",\r\n\t\"status\": \"{{entity_status}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|UserAccount|UA|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e5f80c7a-2d25-4072-922d-49fc0a639fbe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\": \"{{entityCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"billingAccount\": \"{{billingAccountCode}}\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|UserAccount|UA|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4b66550f-49ad-4066-afc0-609a8fca2bd0",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount?userAccountCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									],
+									"query": [
+										{
+											"key": "userAccountCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|UserAccount|UA|MISSING_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f4bfd37c-d1ad-451a-a515-9cfef315567a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f7f7d447-7284-4fd2-900c-ae7ffe7a479d",
+										"exec": [
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: billingAccount.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n\t\"code\": \"{{entityCode}}_MISSING\"\r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|UserAccount|UA|INVALID_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "24b04a31-a28c-4fa0-bc09-67866cc815be",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "925539ce-2efc-4025-b59a-a387fd9bdc05",
+										"exec": [
+											"pm.variables.set(\"message\", \"Cannot deserialize value of type `org.meveo.model.billing.AccountStatusEnum` from String\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n\t\"code\": \"{{entityCode}}\", \r\n\t\"billingAccount\":\"{{billingAccountCode}}\",\r\n\t\"terminationReason\":\"{{terminate_reason}}\",\r\n\t\"terminationDate\":\"{{terminate_date}}\",\r\n\t\"status\" : \"IN{{entity_status}}\" \r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|UserAccount|UA|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ddf540bc-dd94-485c-8c54-6e01caaee7c9",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7ae6f741-0cf6-42ed-bf0c-248a5add0f8a",
+										"exec": [
+											"pm.variables.set(\"message\", \"BillingAccount with code=NOT_EXIST does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n\t\"code\": \"{{entityCode}}\", \r\n\t\"billingAccount\":\"{{not_exist}}\",\r\n\t\"terminationReason\":\"{{terminate_reason}}\",\r\n\t\"terminationDate\":\"{{terminate_date}}\",\r\n\t\"status\" : \"{{entity_status}}\" \r\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dc07b93e-aaf8-47d5-a843-25a7c1a68529",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"userAccountCode\", pm.variables.get(\"entityCode\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "391ba4ff-c93b-48c0-89b1-c1a761c3145f",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -30602,239 +30665,244 @@
 	],
 	"variable": [
 		{
-			"id": "4b930606-12f6-487b-a5c6-43ac2a83145a",
+			"id": "69eab496-ffc5-4879-b83f-2146f2e7a753",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
-			"id": "2aba0e06-b864-484f-8bff-c39f4463c9d0",
+			"id": "bb3ad4ef-8b75-41ae-ab8e-3f55cae3d8b6",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "edcaaf24-4c6b-4f50-b09b-a9ab4d7c199f",
+			"id": "d95c63f7-6379-495d-8fe6-e493dc5b03f5",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "89fea2a8-792c-4cd9-8c20-8273be89131f",
+			"id": "12748206-f8f9-4e5c-b872-27c4527f45d4",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "84872957-3f67-4c91-a7e2-2380fcb9ca33",
+			"id": "1fe5f14e-2f6b-4972-8d8c-92da949102f7",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "e6943ef2-e4bc-4e33-a9f0-b59ee548d9bb",
+			"id": "775d1e49-8f85-47d5-ab45-1f1a0cd08823",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "661a390c-6ce8-4049-8937-47945959cdc5",
+			"id": "a9229057-cefd-42d0-9fb5-e92a9c0181f5",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "50456a1e-f05f-4089-a766-e87795e07adf",
+			"id": "c3abbfb5-2c87-487d-aec7-6d84cbae01dd",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "8e6c9c44-2fb4-42c8-9fa8-c799ba0d6c88",
+			"id": "a6604594-7289-439b-aea2-64978b7a11ff",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "a6de8419-a1ca-40d6-84ed-82d3cfc68797",
+			"id": "815d5312-89b4-4b75-b7d0-5da862393af9",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "c3e8faa4-b036-45ba-800f-d972213cd366",
+			"id": "b886c8be-ad14-4822-acf1-e6255608e93e",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "0a538c38-359e-49f3-be64-d0480ac3c5a6",
+			"id": "fe013d42-c05e-44b2-a5d1-4e2b95b7eb2a",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "d2f8df2c-ca3b-42b6-ae77-59df7e688db8",
+			"id": "f31a47e0-f543-410c-bc8d-4dcfc385fe0a",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "686e3d42-87da-4e20-95c3-37a6879ba659",
+			"id": "c89fcfb0-aa17-4a07-8d07-6199c61c3bcb",
 			"key": "oc_category",
 			"value": "VALID"
 		},
 		{
-			"id": "c46cdbd0-c234-4eda-8976-e19a94dc5f0a",
+			"id": "b667f31a-3000-4a20-ab29-609d60853eb6",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "733a4b9d-0a70-4212-b0ba-5da2c1e22f70",
+			"id": "4bf403f0-3430-4238-939c-57b27c97cf12",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "68fe840c-a3ca-4ac2-98e0-3e332b1be6d9",
+			"id": "85edf29f-bb12-41e6-a5fe-c7397f6824fb",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "7ea9ff31-04b9-40a5-b229-279188e628a2",
+			"id": "766c072e-f15d-4615-8110-ead9fc8ad25c",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "8405b40b-3dbd-4c8d-9e3d-58bb187e67f5",
+			"id": "090115ff-24fd-49e9-8265-cee8666050f8",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "f03ac610-6718-413e-914b-5b2aa9ce4211",
+			"id": "da87eb66-0fea-4eee-b5bc-15aba4665f4f",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "9ab7cb9e-ec1c-4998-8cb4-adf15bd8a18f",
+			"id": "dc5ee643-0310-4a31-a93d-e6f50d48f339",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "66ace367-1261-4267-b553-f4ad5757ba83",
+			"id": "3ff01092-5aeb-44be-877d-e0c04336222f",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "b86afe8b-14d4-46d7-a827-86ed7cec96a7",
+			"id": "3b857ba6-b722-430f-9c0d-be824552ac81",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "3ed77dda-c1c2-418a-bc62-d9dd7845bd33",
+			"id": "35ac76a3-958d-45a9-bd2e-587c277dbed9",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "f649cf36-8bff-41da-be5e-ee03d0162041",
+			"id": "9ec0f951-19f2-4fdd-a9cb-0f529960f80e",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "474683d5-1c38-4fef-8a7d-0e5a8f37c9e8",
+			"id": "d07bbeea-34dc-4ae2-a7b5-71d8c12f4486",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "014f0197-a66b-4239-b268-c954ae56c978",
+			"id": "02b9c1ad-5e7c-42dd-bb90-565c290265e4",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "279930cf-9b34-422f-9804-c11699ea6deb",
+			"id": "74f301fd-7b3a-443c-ab5f-d76f13b4c2dc",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "49c4f247-c7cc-4b9f-8954-56aab4be3eb4",
+			"id": "c1e43e5c-9839-4dde-8436-0859383779ca",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "57824d44-eb0f-4201-93b3-5a878a66b1c2",
+			"id": "16b734d0-9d4d-4efe-9ede-6bdbcc6a85e4",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "f7ec1eca-584c-4e51-a1f6-90780a925cff",
+			"id": "98ea9d49-c32c-4edd-a2e1-4e6ab4c6689d",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "c318580a-c041-48e8-a6dc-d5421b9f56ac",
+			"id": "9c85f026-7d6c-4d51-97bc-46cb72b91fd9",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "357ff8fb-4117-48b2-a045-acd378874d49",
+			"id": "c55c4ae6-3c26-47bb-a668-520e9ffd20d2",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "1e295fb8-27a6-4c13-8d45-a69257a9f556",
+			"id": "4fbe236d-ed6c-4043-981e-8322544abd66",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "06b99b6d-423a-4e5d-8a52-7735c879e443",
+			"id": "8579e171-847f-4df3-8af9-a8e63bee5fb7",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "3a8871c3-2fd1-4954-be66-493cfe32ea39",
+			"id": "79e36790-daf4-4c2e-bef7-a184a097553c",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "56104d8c-8bf7-4077-b11b-3255689aef94",
+			"id": "2831e711-563f-410a-b7c3-29dad2ab9dba",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "f4681133-988b-4f2f-a76a-baf47308e504",
+			"id": "3fb05f74-b026-486b-8ac8-5c7effff8ff3",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "74dda55b-c47c-4cd6-8fde-fc79926efdc8",
+			"id": "6db84368-717a-49e2-8832-8e5450d60083",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "2514d5d2-d31a-4c90-9aaa-76f982f76804",
+			"id": "5fc8f25f-f171-4dfe-9c30-38f76ff5b37b",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "76ff69c3-affa-4d43-a68a-5ff29e4ba29d",
+			"id": "b4bf3a28-e3f2-4a0c-9e35-bfec14aa2be8",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "f08fd5e1-8de5-424b-8858-bdde1d9c05e0",
+			"id": "ba6afeb7-f9be-42c3-83ce-bc4b17f761a9",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "b63a630f-7756-452c-9fe2-1131373cee40",
+			"id": "aca0fde9-0d48-4d4b-b7e3-4ba3db8a867d",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "eff3b94d-b5ee-4364-942a-5f1352c03b70",
+			"id": "8fe6f772-a8c1-495b-b936-783b91b41904",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "d43cf821-4398-4539-9c76-bad8005a724f",
+			"id": "5d590b28-87e4-4736-a5ad-41c4e0fdbbf4",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "50ddc289-da78-4a66-b742-2f2f58580887",
+			"id": "54e3e754-ab79-42fd-89c2-23b8c678d582",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "392333c7-dbab-4778-ae48-c7f1d87588af",
+			"id": "dedf1075-0f2a-4672-9938-b17e03a9a3b2",
 			"key": "seller",
 			"value": "FR_SELLER"
+		},
+		{
+			"id": "3c75a19e-3019-439f-8e23-6076182605da",
+			"key": "entity_status",
+			"value": ""
 		}
 	],
 	"protocolProfileBehavior": {}
