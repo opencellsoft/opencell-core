@@ -72,7 +72,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         try {
             result = invoiceApi.create(invoiceDto);
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-            if (invoiceDto.isSendByEmail() && invoiceDto.isReturnPdf() != null && invoiceDto.isReturnPdf() && !invoiceDto.isDraft()) {
+            if (invoiceDto.getSendByEmail()!=null && invoiceDto.getSendByEmail() && invoiceDto.isReturnPdf() != null && invoiceDto.isReturnPdf() && !invoiceDto.isDraft()) {
                 invoiceDto.setCheckAlreadySent(true);
                 invoiceDto.setInvoiceId(result.getInvoiceId());
                 boolean res = invoiceApi.sendByEmail(invoiceDto, MailingTypeEnum.AUTO);
