@@ -3009,9 +3009,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("subCategoryAggregates.total={}", subCategoryAggregates != null ? subCategoryAggregates.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
-        }
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
         Map<String, CategoryInvoiceAgregate> categoryAggregates = new HashMap<>();
@@ -3132,10 +3129,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
 
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("taxAggregate.grantTotal={}", taxAggregates != null ? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
         }
 
         // Calculate derived tax aggregate amounts
