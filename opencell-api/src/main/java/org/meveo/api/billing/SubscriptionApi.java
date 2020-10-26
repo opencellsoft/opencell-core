@@ -391,6 +391,13 @@ public class SubscriptionApi extends BaseApi {
             subscription.setBillingCycle(billingCycle);
         }
 
+        if(StringUtils.isNotBlank(postData.getSeller())){
+            Seller seller = sellerService.findByCode(postData.getSeller());
+            if(seller == null)
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            subscription.setSeller(seller);
+        }
+
         MailingTypeEnum mailingType = null;
         if (postData.getMailingType() != null) {
             mailingType = MailingTypeEnum.valueOf(postData.getMailingType());
