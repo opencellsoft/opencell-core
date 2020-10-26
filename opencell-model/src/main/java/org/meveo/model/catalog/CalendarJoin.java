@@ -44,7 +44,7 @@ import javax.persistence.ManyToOne;
 public class CalendarJoin extends Calendar {
 
     public enum CalendarJoinTypeEnum {
-        UNION, INTERSECT;
+        UNION, INTERSECT, APPEND;
 
         public String getLabel() {
             return "CalendarJoinTypeEnum." + this.name();
@@ -99,43 +99,49 @@ public class CalendarJoin extends Calendar {
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
-
+    	
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextCalendarDate(date);
         Date date2 = joinCalendar2.nextCalendarDate(date);
+        
+        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+        	Date endOfNextDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
+    		if(endOfNextDate!=null) {
+				joinCalendar2.setInitDate(endOfNextDate);
+        		date2 = joinCalendar2.nextCalendarDate(date);
+    		}
+    	}
 
         if (date1 == null && date2 == null) {
             return null;
         }
-
         // Get the farthest date
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
-
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
 
@@ -149,9 +155,19 @@ public class CalendarJoin extends Calendar {
      * @return Previous calendar date.
      */
     public Date previousCalendarDate(Date date) {
-
+    	
+    	initChildCalendarsDate();
+    	
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
+        
+        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+    		Date endOfPreviousDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
+    		if(endOfPreviousDate!=null) {
+				joinCalendar2.setInitDate(endOfPreviousDate);
+        		date2 = joinCalendar2.previousCalendarDate(date);
+    		}
+    	}
 
         if (date1 == null && date2 == null) {
             return null;
@@ -161,32 +177,40 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
+
+	private void initChildCalendarsDate() {
+		if(joinCalendar1.getInitDate()==null) {
+    		joinCalendar1.setInitDate(getInitDate());
+    	}
+    	if(joinCalendar2.getInitDate()==null) {
+    		joinCalendar2.setInitDate(getInitDate());
+    	}
+	}
 
     /**
      * Determines a previous period end date by joining previousPeriodEndDate result from two calendars. Result depends on a join type:
@@ -200,6 +224,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date previousPeriodEndDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.previousPeriodEndDate(date);
         Date date2 = joinCalendar2.previousPeriodEndDate(date);
 
@@ -211,29 +236,28 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
-
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
 
         return null;
@@ -251,6 +275,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date nextPeriodStartDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextPeriodStartDate(date);
         Date date2 = joinCalendar2.nextPeriodStartDate(date);
 
@@ -262,30 +287,29 @@ public class CalendarJoin extends Calendar {
         if (joinType == CalendarJoinTypeEnum.UNION) {
             if (date1 == null && date2 != null) {
                 return date2;
-
             } else if (date1 != null && date2 == null) {
                 return date1;
-
             } else if (date1.before(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
-
             // Get the closest date
         } else if (joinType == CalendarJoinTypeEnum.INTERSECT) {
             if (date1 == null || date2 == null) {
                 return null;
-
             } else if (date1.after(date2)) {
                 return date1;
-
             } else {
                 return date2;
             }
+        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
+        	if (date1 != null) {
+        		return date1;
+        	} else {
+        		return date2;
+        	}
         }
-
         return null;
     }
 
