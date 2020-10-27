@@ -127,9 +127,8 @@ public class PaymentJobBean extends BaseJobBean {
                 caIds = customerAccountService.getCAidsForRefund(paymentMethodType, fromDueDate, toDueDate);
                 log.debug("nb CA for refund:" + caIds.size());
             }
-
-            result.setNbItemsToProcess(caIds.size());
-
+            result.setNbItemsToProcess(0);
+        
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(caIds, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());

@@ -68,17 +68,17 @@ public class UnitPaymentJobBean {
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
                 result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
-                result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
+                result.addReport("customerAccountId id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
             } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
                 result.registerSucces();
-                result.registerSucces();
+                
             }            
 
         } catch (Exception e) {
             log.error("Failed to pay recorded invoice id:" + customerAccountId, e);
             result.registerError(customerAccountId, e.getMessage());
-            result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + e.getMessage());
+            result.addReport("customerAccountId id : " + customerAccountId + " RejectReason : " + e.getMessage());
         }
 
     }

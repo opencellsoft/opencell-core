@@ -102,15 +102,18 @@ public class PaymentAsync {
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
-                log.info("listAoToPay size before filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
+                log.info("listAoToPay size before filter :"+(listAoToPay==null?"null":listAoToPay.size()));
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
                 log.info("listAoToPay size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             } else {
                 List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
-                log.info("listAoToRefund size before filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
+                log.info("listAoToRefund size before filter :"+(listAoToRefund==null?"null":listAoToRefund.size()));
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
                 log.info("listAoToRefund size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             }
+            
+            result.setNbItemsToProcess(result.getNbItemsToProcess() + (listAoToPayOrRefund==null?0:listAoToPayOrRefund.size()));
+            
             if ("CA".equals(paymentPerAOorCA)) {
                 List<Long> aoIds = new ArrayList<Long>();
                 BigDecimal amountToPay = BigDecimal.ZERO;
