@@ -42,6 +42,7 @@ import org.meveo.model.ModuleItem;
  * Custom entity template
  * 
  * @author Andrius Karpavicius
+ * @author Mbarek-Ay
  */
 @Entity
 @ModuleItem
@@ -89,6 +90,22 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
      */
     @Transient
     private String dbTablename;
+    
+    /**
+     * Is field value versioned
+     */
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "versioned")
+    private boolean versioned;
+    
+    /**
+     * Is field value disableable
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disableable")
+    private boolean disableable=false;
+    
 
     public String getName() {
         return name;
@@ -184,4 +201,24 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     public void setUniqueContraintName(String uniqueContraintName) {
         this.uniqueContraintName = uniqueContraintName;
     }
+
+	 
+
+	public boolean isVersioned() {
+		return versioned;
+	}
+
+	public void setVersioned(boolean versioned) {
+		this.versioned = versioned;
+	}
+
+	public boolean isDisableable() {
+		return disableable;
+	}
+
+	public void setDisableable(boolean disableable) {
+		this.disableable = disableable;
+	}
+    
+    
 }

@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -77,11 +78,9 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "Invoice")
-@NamedQueries({
-        @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+@NamedQueries({ @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
 
@@ -105,9 +104,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.status = org.meveo.model.billing.InvoiceStatusEnum.UNPAID"
                 + " WHERE inv.dueDate <= NOW() AND inv.status IN (org.meveo.model.billing.InvoiceStatusEnum.CREATED, org.meveo.model.billing.InvoiceStatusEnum.GENERATED, org.meveo.model.billing.InvoiceStatusEnum.SENT)"),
-        @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
-                "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
-                        + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query = "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
+                + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -139,7 +137,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Invoice aggregates
      */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
+    private List<InvoiceAgregate> invoiceAgregates = new LinkedList<>();
 
     /**
      * Invoice number
@@ -167,7 +165,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
-    
+
     /**
      * Invoice status
      */
@@ -402,15 +400,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "prepaid", nullable = false)
     @NotNull
     protected boolean prepaid;
-    
+
     /**
      * External reference
      */
     @Column(name = "external_ref", length = 255)
     @Size(max = 255)
     private String externalRef;
-    
-    
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -440,6 +436,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Transient
     private String description;
+
+    /**
+     *
+     */
+    @Transient
+    private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -694,15 +696,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
         this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
     }
-    
+
     public InvoiceStatusEnum getStatus() {
         return status;
     }
-    
+
     public InvoiceStatusEnum getRealTimeStatus() {
-    	if(dueDate!=null && dueDate.before( new Date()) && (status==InvoiceStatusEnum.CREATED || status==InvoiceStatusEnum.GENERATED || status==InvoiceStatusEnum.SENT)) {
-    		return InvoiceStatusEnum.UNPAID;
-    	}
+        if (dueDate != null && dueDate.before(new Date()) && (status == InvoiceStatusEnum.CREATED || status == InvoiceStatusEnum.GENERATED || status == InvoiceStatusEnum.SENT)) {
+            return InvoiceStatusEnum.UNPAID;
+        }
         return status;
     }
 
@@ -1086,13 +1088,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.prepaid = prepaid;
     }
 
-	public String getExternalRef() {
-		return externalRef;
-	}
+    public String getExternalRef() {
+        return externalRef;
+    }
 
-	public void setExternalRef(String externalRef) {
-		this.externalRef = externalRef;
-	}
-    
-    
+    public void setExternalRef(String externalRef) {
+        this.externalRef = externalRef;
+    }
+
+    public void setDraftRatedTransactions(List<RatedTransaction> draftRatedTransactions) {
+        this.draftRatedTransactions = draftRatedTransactions;
+    }
+
+    public List<RatedTransaction> getDraftRatedTransactions() {
+        return draftRatedTransactions;
+    }
 }

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -75,6 +76,7 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
@@ -314,7 +316,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
         String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
-        List<RatedTransaction> ratedTransactions = null;
+        List<RatedTransaction> ratedTransactions = invoice.getDraftRatedTransactions();
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
         if (!isVirtual) {
@@ -629,7 +631,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         if (!isVirtual && displayDetail) {
-            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
+            ratedTransactions.addAll(ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice()));
         }
         
         addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual, invoiceAgregates, hasInvoiceAgregates, ratedTransactions,
@@ -2041,6 +2043,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory.setAttribute("amountWithoutTax", toPlainString(subCatInvoiceAgregate.getAmountWithoutTax()));
                     subCategory.setAttribute("sortIndex", subCatInvoiceAgregate != null && subCatInvoiceAgregate.getInvoiceSubCategory() != null
                             && subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() != null ? subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() + "" : "");
+                    if (subCatInvoiceAgregate.getAmountsByTax() != null && !subCatInvoiceAgregate.getAmountsByTax().isEmpty()) {
+                        Element amountsByTaxXml = doc.createElement("amountsByTax");
+                        subCategory.appendChild(amountsByTaxXml);
+                        
+                        for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax : subCatInvoiceAgregate.getAmountsByTax().entrySet()) {
+
+                            Element amountByTaxXml = doc.createElement("amountByTax");
+                            amountByTaxXml.setAttribute("amountWithoutTax", toPlainString(amountByTax.getValue().getAmountWithoutTax()));
+                            amountByTaxXml.setAttribute("amountWithTax", toPlainString(amountByTax.getValue().getAmountWithTax()));
+                            amountByTaxXml.setAttribute("amountTax", toPlainString(amountByTax.getValue().getAmountTax()));
+                            amountByTaxXml.setAttribute("taxCode", amountByTax.getKey().getCode());
+                            amountByTaxXml.setAttribute("taxDescription", amountByTax.getKey().getDescription());
+                            amountByTaxXml.setAttribute("taxPercent", toPlainString(amountByTax.getKey().getPercent()));
+                            amountsByTaxXml.appendChild(amountByTaxXml);
+                        }
+                    }
                 }
             }
         }

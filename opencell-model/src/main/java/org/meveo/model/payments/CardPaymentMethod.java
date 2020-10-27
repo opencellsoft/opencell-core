@@ -272,6 +272,10 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Override
     public boolean isExpired() {
+        if(yearExpiration == null || monthExpiration == null) {
+            return false;
+        }
+        
         Calendar now = Calendar.getInstance();
 
         Calendar expiration = Calendar.getInstance();

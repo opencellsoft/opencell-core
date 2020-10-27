@@ -546,7 +546,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+    	String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
 
@@ -816,9 +816,13 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Object[] populateIndexFromNativeTable(String tableName, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException {
-
+    public Object[] populateIndexFromNativeTable(CustomEntityTemplate cet, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException { 
+    	
+    	if(cet.isDisabled()) {
+    		return new Object[] { 0, null };
+    	} 
         Session session = getEntityManager().unwrap(Session.class);
+        String tableName=cet.getDbTablename();
         StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where e.id >").append(" :fromId").append(" order by e.id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameter("fromId", ((Number) fromId).longValue());

@@ -111,7 +111,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private CustomTableCreatorService customTableCreatorService;
-    
+
     @Inject
     private CustomTableService customTableService;
 
@@ -175,27 +175,26 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo) {
 
-        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
-            .setParameter("appliesTo", appliesTo).getResultList();
+        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class).setParameter("appliesTo", appliesTo).getResultList();
 
         Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
 
         return cftMap;
     }
-    
+
     /**
      * Find a list of custom field templates referencing a given entity - always do a lookup in DB
      * 
-     * @param referencedEntity Entity full name 
+     * @param referencedEntity Entity full name
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByReferencedEntityNoCache(String referencedEntity) {
-    	Map<String, CustomFieldTemplate> cftMap = new TreeMap<>();
-    	if(referencedEntity!=null) {
-	        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
-	            .setParameter("referencedEntity", referencedEntity.toUpperCase()).getResultList();
-	        cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getAppliesTo() + cft.getCode(), cft -> cft));
-    	}
+        Map<String, CustomFieldTemplate> cftMap = new TreeMap<>();
+        if (referencedEntity != null) {
+            List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
+                .setParameter("referencedEntity", referencedEntity.toUpperCase()).getResultList();
+            cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getAppliesTo() + cft.getCode(), cft -> cft));
+        }
         return cftMap;
     }
 
@@ -247,46 +246,44 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public CustomFieldTemplate findByCodeAndAppliesToNoCache(String code, String appliesTo) {
 
         try {
-            return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByCodeAndAppliesTo", CustomFieldTemplate.class).setParameter("code", code)
-                .setParameter("appliesTo", appliesTo).getSingleResult();
+            return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByCodeAndAppliesTo", CustomFieldTemplate.class).setParameter("code", code).setParameter("appliesTo", appliesTo).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     public void createWithoutUniqueConstraint(CustomFieldTemplate cft) {
-    	create(cft, false);
+        create(cft, false);
     }
-    
+
     private void create(CustomFieldTemplate cft, Boolean updateUniqueConstraint) {
-	   if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-                || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_SEQUENCE".equals(cft.getCode())
+                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
-        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-                || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode())
+                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         String oldConstraintColumns = "";
         Map<String, CustomFieldTemplate> cetFields = new TreeMap<>();
         CustomEntityTemplate cet = findCETbyCFT(cft);
-       
-        boolean isCustomTable = cet!=null && cet.isStoreAsTable();
-		if (isCustomTable) {
-        	// Check if its a custom table field we need to get previous constraint state
-        	cetFields = findByAppliesToNoCache(cet.getAppliesTo());
-            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-    				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
+
+        boolean isCustomTable = cet != null && cet.isStoreAsTable();
+        if (isCustomTable) {
+            // Check if its a custom table field we need to get previous constraint state
+            cetFields = findByAppliesToNoCache(cet.getAppliesTo());
+            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
         }
-        
+
         super.create(cft);
 
-        //  if its a custom table field update table structure in DB
+        // if its a custom table field update table structure in DB
         if (isCustomTable) {
             customTableCreatorService.addField(cet.getDbTablename(), cft);
             cetFields.put(cft.getCode(), cft);
         }
-		
+
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
 
@@ -294,127 +291,124 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (reaccumulateCFValues) {
 
             clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-             cfValueAccumulator.cftCreated(cft);
+            cfValueAccumulator.cftCreated(cft);
         }
-        if(updateUniqueConstraint) {
-			updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
+        if (updateUniqueConstraint) {
+            updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
         }
-        
-        if (isCustomTable && CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType()) ) {
-        	CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(cft.tableName());
-        	if(relatedEntity == null) {
-        		try {
-					Class clazz = Class.forName(cft.getEntityClazz());
-					String referenceTable= customTableService.getTableNameForClass(clazz);
-					customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), referenceTable, "id");
-				} catch (ClassNotFoundException e) {
-					throw new BusinessException("Cannot find referenced clazz "+cft.getEntityClazz(), e);
-				}
-        	} else if(relatedEntity.isStoreAsTable()) {
-        		customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), cft.tableName(), "id");
-        	}
+
+        if (isCustomTable && CustomFieldTypeEnum.ENTITY.equals(cft.getFieldType())) {
+            CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(cft.tableName());
+            if (relatedEntity == null) {
+                try {
+                    Class clazz = Class.forName(cft.getEntityClazz());
+                    String referenceTable = customTableService.getTableNameForClass(clazz);
+                    customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), referenceTable, "id");
+                } catch (ClassNotFoundException e) {
+                    throw new BusinessException("Cannot find referenced clazz " + cft.getEntityClazz(), e);
+                }
+            } else if (relatedEntity.isStoreAsTable()) {
+                customTableCreatorService.addForeingKeyConstraint(cet.getDbTablename(), cft.getDbFieldname(), cft.tableName(), "id");
+            }
         }
-	}
-	
-    @Override
-    public void create(CustomFieldTemplate cft) throws BusinessException {
-    	create(cft, true);
     }
 
-	public void updateConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String oldConstraintColumns,
-			String newConstraintColumns, boolean keyColumnRemoved) {
-		if (!keyColumnRemoved && !StringUtils.isBlank(oldConstraintColumns)) {
-			if (oldConstraintColumns.equals(newConstraintColumns)) {
-				return;
-			}
-			String cetConstraintName = customEntityTemplate.getUniqueContraintName();
-			String constraintName = !StringUtils.isBlank(cetConstraintName) ? cetConstraintName
-					: customTableCreatorService.extractUniqueConstraintName(customEntityTemplate.getDbTablename());
-			removeConstraintFromCET(customEntityTemplate, constraintName);
-		}
-		addConstraintByColumnsName(customEntityTemplate, newConstraintColumns);
-	}
-    
-	public void addConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String columnNames) {
-		if(!StringUtils.isBlank(columnNames)) {
-			String dbTablename = customEntityTemplate.getDbTablename();
-			String constraintName = customTableCreatorService.addUniqueConstraint(dbTablename, columnNames);
-			customEntityTemplate.setUniqueContraintName(constraintName);
-		}
-	}
-	
-	public void removeConstraintFromCET(CustomEntityTemplate customEntityTemplate, String oldConstraintColumns) {
-		if(!StringUtils.isBlank(oldConstraintColumns)) {
-			String dbTablename = customEntityTemplate.getDbTablename();
-			customTableCreatorService.dropUniqueConstraint(dbTablename, oldConstraintColumns);
-			customEntityTemplate.setUniqueContraintName(null);
-		}
-	}
+    @Override
+    public void create(CustomFieldTemplate cft) throws BusinessException {
+        create(cft, true);
+    }
+
+    public void updateConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String oldConstraintColumns, String newConstraintColumns, boolean keyColumnRemoved) {
+        if (!keyColumnRemoved && !StringUtils.isBlank(oldConstraintColumns)) {
+            if (oldConstraintColumns.equals(newConstraintColumns)) {
+                return;
+            }
+            String cetConstraintName = customEntityTemplate.getUniqueContraintName();
+            String constraintName = !StringUtils.isBlank(cetConstraintName) ? cetConstraintName : customTableCreatorService.extractUniqueConstraintName(customEntityTemplate.getDbTablename());
+            removeConstraintFromCET(customEntityTemplate, constraintName);
+        }
+        addConstraintByColumnsName(customEntityTemplate, newConstraintColumns);
+    }
+
+    public void addConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String columnNames) {
+        if (!StringUtils.isBlank(columnNames)) {
+            String dbTablename = customEntityTemplate.getDbTablename();
+            String constraintName = customTableCreatorService.addUniqueConstraint(dbTablename, columnNames);
+            customEntityTemplate.setUniqueContraintName(constraintName);
+        }
+    }
+
+    public void removeConstraintFromCET(CustomEntityTemplate customEntityTemplate, String oldConstraintColumns) {
+        if (!StringUtils.isBlank(oldConstraintColumns)) {
+            String dbTablename = customEntityTemplate.getDbTablename();
+            customTableCreatorService.dropUniqueConstraint(dbTablename, oldConstraintColumns);
+            customEntityTemplate.setUniqueContraintName(null);
+        }
+    }
 
     @Override
     public CustomFieldTemplate update(CustomFieldTemplate cft) throws BusinessException {
         return update(cft, true);
     }
-    
+
     public CustomFieldTemplate updateWithoutUniqueConstraint(CustomFieldTemplate cft) throws BusinessException {
         return update(cft, false);
     }
 
-	private CustomFieldTemplate update(CustomFieldTemplate cft, boolean updateUniqueConstraint) {
-		if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-                || !cft.isVersionable() || cft.getCalendar() == null)) {
+    private CustomFieldTemplate update(CustomFieldTemplate cft, boolean updateUniqueConstraint) {
+        if ("INVOICE_SEQUENCE".equals(cft.getCode())
+                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
-        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-                || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode())
+                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         String oldConstraintColumns = "";
         Map<String, CustomFieldTemplate> cetFields = new TreeMap<>();
         CustomEntityTemplate cet = findCETbyCFT(cft);
         // Check if its a custom table field we need to get previous constraint state
-        if (cet!=null && cet.isStoreAsTable()) {
-        	cetFields = findByAppliesToNoCache(cet.getAppliesTo());
-            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-    				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
+        if (cet != null && cet.isStoreAsTable()) {
+            cetFields = findByAppliesToNoCache(cet.getAppliesTo());
+            oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
 
         }
-        
-        CustomFieldTemplate cftUpdated = super.update(cft);
-        //  if its a custom table field update table structure in DB
-        if (cet!=null && cet.isStoreAsTable()) {
-            customTableCreatorService.updateField(cet.getDbTablename(), cft);
+
+        // if its a custom table field update table structure in DB
+        if (cet != null && cet.isStoreAsTable()) {
+            CustomFieldTemplate cftOld = getEntityManager().find(CustomFieldTemplate.class, cft.getId());
+            customTableCreatorService.updateField(cet.getDbTablename(), cft, cftOld);
             cetFields.put(cft.getCode(), cft);
         }
-		
+
+        CustomFieldTemplate cftUpdated = super.update(cft);
+
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
-        
-		if(updateUniqueConstraint) {
-			updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
+
+        if (updateUniqueConstraint) {
+            updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
         }
         return cftUpdated;
-	}
+    }
 
-	public CustomEntityTemplate findCETbyCFT(CustomFieldTemplate cft) {
-		CustomEntityTemplate cet = null;
-		if (cft.getAppliesTo().startsWith(CustomEntityInstance.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+    public CustomEntityTemplate findCETbyCFT(CustomFieldTemplate cft) {
+        CustomEntityTemplate cet = null;
+        if (cft.getAppliesTo().startsWith(CustomEntityInstance.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
             String entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
             cet = customEntityTemplateService.findByCode(entityCode);
             if (cet == null) {
                 log.warn("Custom entity template {} was not found", entityCode);
-            } 
+            }
         }
-		return cet;
-	}
+        return cet;
+    }
 
-	private void updateConstraintByOldColumnsAndCet(String oldConstraintColumns, CustomEntityTemplate cet,
-			Map<String, CustomFieldTemplate> cetFields) {
-		String newConstraintColumns = CollectionUtils.isEmpty(cetFields.values()) ? ""
-				: cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-						.map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
-		updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
-	}
+    private void updateConstraintByOldColumnsAndCet(String oldConstraintColumns, CustomEntityTemplate cet, Map<String, CustomFieldTemplate> cetFields) {
+        String newConstraintColumns = CollectionUtils.isEmpty(cetFields.values()) ? ""
+                : cetFields.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
+        updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
+    }
 
     @Override
     public void remove(CustomFieldTemplate cft) throws BusinessException {
@@ -546,8 +540,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException business exception.
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting,
-            boolean removeOrphans) throws BusinessException {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
         try {
             return createMissingTemplates(calculateAppliesToValue(entity), templates, updateExisting, removeOrphans);
         } catch (CustomFieldException e) {
@@ -566,8 +559,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException business exception.
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans)
-            throws BusinessException {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans) throws BusinessException {
 
         // Get templates corresponding to an entity type
         Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo);
@@ -622,8 +614,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public CustomFieldTemplate copyCustomFieldTemplate(CustomFieldTemplate cft, String targetAppliesTo) throws BusinessException {
 
         if (findByCodeAndAppliesTo(cft.getCode(), targetAppliesTo) != null) {
-            throw new ValidationException("Custom field template " + cft.getCode() + " already exists in targe entity " + targetAppliesTo,
-                "customFieldTemplate.copyCFT.alreadyExists");
+            throw new ValidationException("Custom field template " + cft.getCode() + " already exists in targe entity " + targetAppliesTo, "customFieldTemplate.copyCFT.alreadyExists");
         }
 
         // Load calendar for lazy loading
@@ -680,8 +671,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates
      */
     public List<CustomFieldTemplate> getCustomFieldsForAcumulation(Set<String> appliesToValues) {
-        return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTsForAccumulation", CustomFieldTemplate.class).setParameter("appliesTo", appliesToValues)
-            .getResultList();
+        return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTsForAccumulation", CustomFieldTemplate.class).setParameter("appliesTo", appliesToValues).getResultList();
     }
 
     /**
@@ -799,60 +789,58 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         return values;
     }
-    
-    
-    public Map<String, CustomFieldTemplate> findCFTsByDbTbleName(String dbTableName){
-    	CustomEntityTemplate cet = customEntityTemplateService.findByDbTablename(dbTableName);
-    	return findByAppliesTo(cet.getAppliesTo());
+
+    public Map<String, CustomFieldTemplate> findCFTsByDbTbleName(String dbTableName) {
+        CustomEntityTemplate cet = customEntityTemplateService.findByDbTablename(dbTableName);
+        return findByAppliesTo(cet.getAppliesTo());
     }
 
-	/**
-	 * @param customField
-	 * @param code
-	 * @param entityClass
-	 * @return
-	 */
-	public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
-        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity)","=",code,true);
+    /**
+     * @param customField
+     * @param code
+     * @param entityClass
+     * @return
+     */
+    public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
+        queryBuilder.addCriterion("entityFromJson(cf_values," + customField.getCode() + ",entity)", "=", code, true);
         Query query = queryBuilder.getQuery(getEntityManager());
         List resultList = query.getResultList();
-		return resultList;
-	}
-	
-	/**
-     * loop for each custom field and check if it mark as anonymized 
+        return resultList;
+    }
+
+    /**
+     * loop for each custom field and check if it mark as anonymized
+     * 
      * @param cu
      * @return list of custom field as key value
      */
     @SuppressWarnings("unchecked")
-	public List<GDPRInfoDto> findCFMarkAsAnonymize(ICustomFieldEntity cu) {
-    	Map<String, Object> maps = cu.getCfValuesAsValues();
-    	if(maps == null) return new ArrayList<>();
-    	return maps.keySet()
-    			.stream().map(key -> {
-		    		CustomFieldTemplate template = this.findByCodeAndAppliesTo(key, cu);
-		    		if(template.isAnonymizeGdpr()) {
-		    			String value = "";
-		    			if(template.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST) {
-		    				List<String> values = (ArrayList<String>) maps.get(key);
-		    				for (String val: values) {
-								if(template.getListValues().containsKey(val)) {
-									value += template.getListValues().get(val) + "|";
-								}
-							}
-		    				if(value.charAt(value.length() - 1 ) == '|') {
-		    					value = value.substring(0, value.length() - 1);
-		    				}
-		    			}else {
-		           		 value = CustomFieldValue.convertValueToString(template, maps.get(key));
-		    			}
-		        		return new GDPRInfoDto(key, value);
-		    		}
-					return new GDPRInfoDto();
-		    		})
-    			.filter(g -> g.getKey() != null)
-    			.collect(Collectors.toList());
-    	
+    public List<GDPRInfoDto> findCFMarkAsAnonymize(ICustomFieldEntity cu) {
+        Map<String, Object> maps = cu.getCfValuesAsValues();
+        if (maps == null)
+            return new ArrayList<>();
+        return maps.keySet().stream().map(key -> {
+            CustomFieldTemplate template = this.findByCodeAndAppliesTo(key, cu);
+            if (template.isAnonymizeGdpr()) {
+                String value = "";
+                if (template.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST) {
+                    List<String> values = (ArrayList<String>) maps.get(key);
+                    for (String val : values) {
+                        if (template.getListValues().containsKey(val)) {
+                            value += template.getListValues().get(val) + "|";
+                        }
+                    }
+                    if (value.charAt(value.length() - 1) == '|') {
+                        value = value.substring(0, value.length() - 1);
+                    }
+                } else {
+                    value = CustomFieldValue.convertValueToString(template, maps.get(key));
+                }
+                return new GDPRInfoDto(key, value);
+            }
+            return new GDPRInfoDto();
+        }).filter(g -> g.getKey() != null).collect(Collectors.toList());
+
     }
 }

@@ -20,17 +20,23 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
@@ -47,15 +53,12 @@ import org.meveo.model.catalog.DiscountPlanItem;
 @Entity
 @DiscriminatorValue("F")
 @NamedQueries({ @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount", query =
-                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id ,ia.billingAccount.id,  ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"
-                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.id, ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"),
-        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomerAccount", query =
-                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.id"
-                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.id"),
-        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomer", query =
-                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.customer.id"
-                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id ,ia.billingAccount.id,  ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"
+                + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.id, ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomerAccount", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.id"
+                + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomer", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.customer.id"
+                + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByInvoiceIds", query = "delete from SubCategoryInvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)") })
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
@@ -137,8 +140,13 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     /**
      * Tracks cumulative amounts by tax
      */
-    @Transient
-    private Map<Tax, BigDecimal> amountsByTax;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_invoice_agr_amount", joinColumns = { @JoinColumn(name = "aggr_id") })
+    @MapKeyJoinColumn(name = "tax_id")
+//    @AttributeOverrides(value = { @AttributeOverride(name = "amountWithoutTax", column = @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)),
+//            @AttributeOverride(name = "amountTax", column = @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)),
+//            @AttributeOverride(name = "amountWithTax", column = @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)) })
+    private Map<Tax, SubcategoryInvoiceAgregateAmount> amountsByTax;
 
     /**
      * Instantiates a new sub category invoice aggregate.
@@ -235,29 +243,29 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param isEnterprise Is it enterprise/b2b installation - interested to track
      */
     public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean addAmounts) {
-        
-    	if (this.itemNumber == null) {
+
+        if (this.itemNumber == null) {
             this.itemNumber = 0;
         }
         this.itemNumber++;
         this.ratedtransactionsToAssociate.add(ratedTransaction);
-        
-        BigDecimal amount = isEnterprise?ratedTransaction.getAmountWithoutTax():ratedTransaction.getAmountWithTax();
-        if(addAmounts) {
-	        if (isEnterprise) {
-	            addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
-	        } else {
-	            addAmountWithTax(ratedTransaction.getAmountWithTax());
-	        }
-	        addAmountTax(ratedTransaction.getAmountTax());
+
+        BigDecimal amount = isEnterprise ? ratedTransaction.getAmountWithoutTax() : ratedTransaction.getAmountWithTax();
+        if (addAmounts) {
+            if (isEnterprise) {
+                addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+            } else {
+                addAmountWithTax(ratedTransaction.getAmountWithTax());
+            }
+            addAmountTax(ratedTransaction.getAmountTax());
         }
         if (amountsByTax == null) {
-            amountsByTax = new HashMap<>();
+            amountsByTax = new LinkedHashMap<>();
         }
         if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
-            amountsByTax.put(ratedTransaction.getTax(), amount);
+            amountsByTax.put(ratedTransaction.getTax(), new SubcategoryInvoiceAgregateAmount(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
         } else {
-            amountsByTax.put(ratedTransaction.getTax(), amountsByTax.get(ratedTransaction.getTax()).add(amount));
+            amountsByTax.get(ratedTransaction.getTax()).addAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax());
         }
     }
 
@@ -538,32 +546,82 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same
-     * (whichone, depending on isEnterprise value)
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
+     * one, depending on isEnterprise value)
      * 
      * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
-     * @param rounding Rounding precision to apply
-     * @param roundingMode Rounding mode to apply
+     * @param rounding Rounding precision to apply for amounts by tax amounts
+     * @param roundingMode Rounding mode to apply for amounts by tax amounts
+     * @param invoiceRounding Rounding precision to apply for category aggregate amounts
+     * @param invoiceRoundingMode Rounding mode to apply for category aggregate amounts
      */
-    public void computeDerivedAmounts(boolean isEnterprise, int invoiceRounding, RoundingMode roundingMode) {
+    public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingMode roundingMode, int invoiceRounding, RoundingMode invoiceRoundingMode) {
+        if (amountsByTax != null) {
+            setAmountWithoutTax(BigDecimal.ZERO);
+            setAmountWithTax(BigDecimal.ZERO);
+            setAmountTax(BigDecimal.ZERO);
 
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(getAmountWithoutTax(), getAmountWithTax(), getAmountTax(), isEnterprise, invoiceRounding, roundingMode);
-        setAmountWithoutTax(amounts[0]);
-        setAmountWithTax(amounts[1]);
-        setAmountTax(amounts[2]);
+            for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amountInfo : amountsByTax.entrySet()) {
+
+                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountInfo.getValue().getAmountWithoutTax(), amountInfo.getValue().getAmountWithTax(), amountInfo.getKey().getPercent(), isEnterprise, rounding,
+                    roundingMode);
+                amountInfo.getValue().setAmountWithoutTax(amounts[0]);
+                amountInfo.getValue().setAmountWithTax(amounts[1]);
+                amountInfo.getValue().setAmountTax(amounts[2]);
+
+                amounts = NumberUtils.computeDerivedAmounts(amountInfo.getValue().getAmountWithoutTax(), amountInfo.getValue().getAmountWithTax(), amountInfo.getKey().getPercent(), isEnterprise, invoiceRounding,
+                    invoiceRoundingMode);
+
+                addAmountWithoutTax(amounts[0]);
+                addAmountWithTax(amounts[1]);
+                addAmountTax(amounts[2]);
+            }
+
+        } else {
+            BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(getAmountWithoutTax(), getAmountWithTax(), getAmountTax(), isEnterprise, invoiceRounding, invoiceRoundingMode);
+            setAmountWithoutTax(amounts[0]);
+            setAmountWithTax(amounts[1]);
+            setAmountTax(amounts[2]);
+        }
     }
 
     /**
      * @return Cumulative amounts by tax
      */
-    public Map<Tax, BigDecimal> getAmountsByTax() {
+    public Map<Tax, SubcategoryInvoiceAgregateAmount> getAmountsByTax() {
         return amountsByTax;
+    }
+
+    /**
+     * @return Cumulative amounts by tax as a list of Amounts objects
+     */
+    public List<Amounts> getAmountByTaxAsList() {
+        List<Amounts> amountsByTaxAsList = new ArrayList<Amounts>();
+        for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amountEntry : getAmountsByTax().entrySet()) {
+            amountsByTaxAsList.add(new Amounts(amountEntry.getValue().getAmountWithoutTax(), amountEntry.getValue().getAmountWithTax(), amountEntry.getValue().getAmountTax(), amountEntry.getKey()));
+        }
+
+        return amountsByTaxAsList;
     }
 
     /**
      * @param amountsByTax Cumulative amounts by tax
      */
-    public void setAmountsByTax(Map<Tax, BigDecimal> amountsByTax) {
+    public void setAmountsByTax(Map<Tax, SubcategoryInvoiceAgregateAmount> amountsByTax) {
         this.amountsByTax = amountsByTax;
+    }
+
+    /**
+     * Set cumulative amounts by tax
+     * 
+     * @param amountsByTax Amounts by tax - just as number
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     */
+    public void setAmountsByTax(Map<Tax, BigDecimal> amountsByTax, boolean isEnterprise) {
+        this.amountsByTax = new LinkedHashMap<Tax, SubcategoryInvoiceAgregateAmount>();
+
+        for (Entry<Tax, BigDecimal> amountInfo : amountsByTax.entrySet()) {
+            this.amountsByTax.put(amountInfo.getKey(), new SubcategoryInvoiceAgregateAmount(isEnterprise ? amountInfo.getValue() : null, isEnterprise ? null : amountInfo.getValue()));
+        }
     }
 }

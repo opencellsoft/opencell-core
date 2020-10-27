@@ -124,7 +124,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null ) {
             return context.proceed();
         }
-        String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "false");
+        String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "true");
         boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
         // if not, immediately return.
         if (!secureEntitesEnabled) {

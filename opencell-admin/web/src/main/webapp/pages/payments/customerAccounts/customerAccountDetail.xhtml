@@ -382,9 +382,10 @@
                                     rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" includeViewParams="true">
                                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 </p:button>
-                                <p:commandButton value="#{messages['customerAccount.addPaymentCheck']}"
-                                    action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
-                                    rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" />
+                                <p:commandButton value="#{messages['customerAccount.addPaymentCheck']}" action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
+                                    rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" >
+                                    	<f:param name="customerAccountId" value="#{customerAccountBean.objectId}" />
+                                  </p:commandButton>
                                 <p:button outcome="transferAccount" value="#{messages['customerAccount.buttonTransfert']}"
                                     rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}">
                                     <f:param name="objectId" value="#{customerAccountBean.entity.id}" />

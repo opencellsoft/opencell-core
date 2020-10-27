@@ -47,7 +47,7 @@ public class TaxDto extends BusinessEntityDto {
 
     /** The accounting code. */
     private String accountingCode;
-    
+
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
 
@@ -66,15 +66,22 @@ public class TaxDto extends BusinessEntityDto {
      *
      * @param tax the tax
      * @param customFieldInstances the custom field instances
+     * @param isShort If true only shot version of tax will be set
      */
-    public TaxDto(Tax tax, CustomFieldsDto customFieldInstances) {
+    public TaxDto(Tax tax, CustomFieldsDto customFieldInstances, boolean isShort) {
         super(tax);
         percent = tax.getPercent();
-        if (tax.getAccountingCode() != null) {
-            accountingCode = tax.getAccountingCode().getCode();
+        if (!isShort) {
+            if (tax.getAccountingCode() != null) {
+                accountingCode = tax.getAccountingCode().getCode();
+            }
+            customFields = customFieldInstances;
+            setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(tax.getDescriptionI18n()));
+
+        } else {
+            setAuditableFields(null);
+            setAuditable((AuditableDto) null);
         }
-        customFields = customFieldInstances;
-        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(tax.getDescriptionI18n()));
     }
 
     /**
@@ -151,7 +158,7 @@ public class TaxDto extends BusinessEntityDto {
 
     @Override
     public String toString() {
-        return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions="
-                + languageDescriptions + ", customFields=" + customFields + "]";
+        return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields="
+                + customFields + "]";
     }
 }

@@ -18,7 +18,15 @@
 
 package org.meveo.api.generic.wf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.FilterDto;
@@ -46,12 +54,6 @@ import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WFStatusService;
 import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The Class GenericWorkflowApi
@@ -97,6 +99,20 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
         genericWorkflow = new GenericWorkflow();
         genericWorkflow = fromDTO(genericWorkflowDto, genericWorkflow);
+        
+        FilterDto filterDto = genericWorkflowDto.getFilter();
+        if (filterDto != null && filterDto.getCode() != null) {
+            Filter filter = (Filter) Hibernate.unproxy(filterService.findByCode(filterDto.getCode()));
+            if (filter == null) {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filterService.create(filter);
+                genericWorkflow.setFilter(filter);
+            } else {
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
+                genericWorkflow.setFilter(filterService.update(filter));
+            }
+        }
+        
         genericWorkflowService.create(genericWorkflow);
 
         for (WFStatusDto wfStatusDto : genericWorkflowDto.getStatuses()) {
@@ -143,8 +159,22 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
 
         genericWorkflow = fromDTO(genericWorkflowDto, genericWorkflow);
+        
+        FilterDto filterDto = genericWorkflowDto.getFilter();
+        if (filterDto != null && filterDto.getCode() != null) {
+            Filter filter = (Filter) Hibernate.unproxy(filterService.findByCode(filterDto.getCode()));
+            if (filter == null) {
+                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filterService.create(filter);
+                genericWorkflow.setFilter(filter);
+            } else {
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
+                genericWorkflow.setFilter(filterService.update(filter));
+            }
+        }
+        
         genericWorkflow = genericWorkflowService.update(genericWorkflow);
-
+        
         // Update Transitions
         List<GWFTransition> listUpdate = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(genericWorkflowDto.getTransitions())) {
@@ -227,13 +257,6 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         if (dto.isDisabled() != null) {
             genericWorkflow.setDisabled(dto.isDisabled());
         }
-        if (dto.getFilter() != null && dto.getFilter().getCode() != null) {
-            Filter filter = filterService.findByCode(dto.getFilter().getCode());
-            if (filter == null) {
-                filter = createFilter(dto.getFilter());
-            }
-            genericWorkflow.setFilter(filter);
-        }
         if (dto.getFilter() != null && dto.getFilter().getCode() == null) {
             genericWorkflow.setFilter(null);
         }
@@ -246,7 +269,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         return genericWorkflow;
     }
 
-    private Filter createFilter(FilterDto filterDto) {
+    private Filter filterFromDto(FilterDto filterDto) {
         if (filterDto == null) {
             return null;
         }
@@ -255,10 +278,24 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         filter.setCode(filterDto.getCode());
         filter.setDescription(filterDto.getDescription());
         filter.setInputXml(filterDto.getInputXml());
-        filter.setShared(filterDto.getShared());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
         filter.setPollingQuery(filterDto.getPollingQuery());
-        filterService.create(filter);
-        return filterService.findByCode(filter.getCode());
+        return filter;
+    }
+    
+    private Filter filterFromDto(FilterDto filterDto, Filter filter) {
+        if (filterDto == null) {
+            return filter;
+        }
+        filter.setDescription(filterDto.getDescription());
+        filter.setInputXml(filterDto.getInputXml());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
+        filter.setPollingQuery(filterDto.getPollingQuery());
+        return filter;
     }
 
     /**

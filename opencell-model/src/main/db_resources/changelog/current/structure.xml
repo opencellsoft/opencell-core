@@ -3674,4 +3674,43 @@ END $$;]]>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
     
+    
+     <changeSet id="#5155_20200928" author="Mbarek-Ay">
+        <addColumn tableName="cust_cet">
+            <column name="disableable" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>
+        <addColumn tableName="cust_cet">
+            <column name="versioned" type="${type.boolean}" defaultValueNumeric="0">
+            </column>
+        </addColumn>  
+    </changeSet>
+    
+    <changeSet id="#5546_20201023" author="AbdelmounaimAkadid" dbms="postgresql">
+        <sql>DROP INDEX IF EXISTS agregate_index_category_invoice_agregate</sql>
+        <sql>DROP INDEX IF EXISTS billing_user_account_id_index</sql>
+        <sql>DROP INDEX IF EXISTS cat_st_serv_mod_id_index</sql>
+        <sql>DROP INDEX IF EXISTS ar_credit_category_id_key</sql>
+		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
+		<sql>DROP INDEX IF EXISTS adm_file_type_code_index</sql>
+		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
+		<sql>DROP INDEX IF EXISTS customer_code</sql>
+    </changeSet>
+    
+    
+    <changeSet id="#5599_20201029" author="AndriusKarpavicius">
+        <createTable tableName="billing_invoice_agr_amount">
+            <column name="aggr_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="tax_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="amountwithouttax" type="numeric(23, 12)" />
+            <column name="amounttax" type="numeric(23, 12)" />
+            <column name="amountwithtax" type="numeric(23, 12)" />   
+        </createTable>
+    
+    </changeSet>
+    
 </databaseChangeLog>

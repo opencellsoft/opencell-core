@@ -156,7 +156,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    private boolean sendByEmail = true;
+    private Boolean sendByEmail;
 
     /**
      * A request-only parameter. True if currently due balance should be returned
@@ -649,14 +649,14 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * @return A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    public boolean isSendByEmail() {
+    public Boolean getSendByEmail() {
         return sendByEmail;
     }
 
     /**
      * @param sendByEmail A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    public void setSendByEmail(boolean sendByEmail) {
+    public void setSendByEmail(Boolean sendByEmail) {
         this.sendByEmail = sendByEmail;
     }
 
