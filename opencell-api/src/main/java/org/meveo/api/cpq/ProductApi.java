@@ -21,7 +21,7 @@ import org.meveo.service.cpq.exception.ProductException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 
 /**
- * @author Khairi
+ * @author Tarik FAKHOURI
  * @version 10.0
  */
 @Stateless

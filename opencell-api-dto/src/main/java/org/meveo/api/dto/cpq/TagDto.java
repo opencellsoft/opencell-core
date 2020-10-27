@@ -1,9 +1,6 @@
 package org.meveo.api.dto.cpq;
 
-import org.meveo.api.dto.SellerDto;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.cpq.tags.TagType;
 
 public class TagDto {
 
