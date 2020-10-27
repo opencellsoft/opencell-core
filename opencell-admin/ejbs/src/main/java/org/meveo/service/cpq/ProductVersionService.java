@@ -1,10 +1,12 @@
 package org.meveo.service.cpq;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -126,6 +128,12 @@ public class ProductVersionService extends
 			throw new ProductVersionException(String.format(PRODUCT_VERSION_MISSING, id));
 		}
 		return productVersion;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<ProductVersion> findByTags(List<Long> tagIds) {
+		return this.getEntityManager().createNamedQuery("ProductVersion.findByTags").setParameter("tagIds", tagIds).getResultList();
 	}
 	
 	

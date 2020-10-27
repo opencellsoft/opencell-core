@@ -196,7 +196,7 @@ public class ProductService extends
 	 */
 	public Product findByCode(String code) throws ProductException {
 		try {
-			return(Product) getEntityManager().createNamedQuery("Product.findByCode").getSingleResult();
+			return(Product) getEntityManager().createNamedQuery("Product.findByCode").setParameter("code", code).getSingleResult();
 		}catch(NoResultException e) {
 			throw new ProductException(String.format(PRODUCT_UNKWON, code));
 		}

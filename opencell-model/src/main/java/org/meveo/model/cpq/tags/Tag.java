@@ -32,6 +32,7 @@ import org.meveo.model.crm.Customer;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_tag_seq"), })
 @NamedNativeQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
+@NamedNativeQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
 public class Tag extends BusinessEntity {
 
 	/**
@@ -133,6 +134,20 @@ public class Tag extends BusinessEntity {
 		return Objects.equals(filterEl, other.filterEl) && Objects.equals(name, other.name)
 				&& Objects.equals(parentTag, other.parentTag) && Objects.equals(seller, other.seller)
 				&& Objects.equals(tagType, other.tagType);
+	}
+
+	/**
+	 * @return the seller
+	 */
+	public Seller getSeller() {
+		return seller;
+	}
+
+	/**
+	 * @param seller the seller to set
+	 */
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 
