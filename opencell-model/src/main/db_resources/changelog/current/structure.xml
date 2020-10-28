@@ -3686,4 +3686,60 @@ END $$;]]>
         </addColumn>  
     </changeSet>
     
+    <!-- for MediaPost -->
+    
+		   <changeSet id="#5595_20201023" author="Mbarek-Ay">
+			<addColumn tableName="cat_service_template">
+				<column name="offer_template_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="product_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="grouped_service_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="service_type_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="mandatory" type="${type.boolean}" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="priority" type="begint" defaultValueNumeric="0" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="param" type="text" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="material" type="${type.boolean}" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="accounting_article_id" type="bigint" />
+			</addColumn> 
+			 
+		   <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_service_template" constraintName="fk-product-service_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" /> 
+		       
+		   <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_service_template" constraintName="fk-product-offer_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />   
+		       
+		   <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cat_service_template" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" /> 
+		       
+		       
+		    <addForeignKeyConstraint baseColumnNames="service_type_id" baseTableName="cat_service_template" constraintName="fk-product-service_type" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_service_type" />  
+		       
+		    <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_service_template" constraintName="fk-product-accounting_article" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />     
+		               
+		           
+		   </changeSet>
+    
+    <!-- end MediaPost -->
+    
 </databaseChangeLog>
