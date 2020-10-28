@@ -23,6 +23,8 @@ import static java.util.Optional.ofNullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -60,6 +62,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.GroupedService;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
@@ -74,6 +77,8 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.cpq.GroupedServiceService;
+import org.meveo.service.cpq.ProductService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -130,6 +135,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     @Inject
     private SubscriptionApi subscriptionApi;
+    
+	@Inject
+	private GroupedServiceService groupedServiceService;
 
     /**
      * Sets the service charge template.
@@ -598,4 +606,34 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
 
     }
+
+	/**
+	 * <ul>
+	 *  <li>check if groupedServiceCode already exist if no throw an exception</li>
+	 *	<li>check if all serviceTemplateCodes exist , if no throw an exception</li>
+	 *	<li>check if  serviceTemplate passed in params is already assigned to a group, if no throw an exception</li>
+	 *	<li>assign the group to all services templates passed in params (groupedService field)</li>
+	 *</ul>
+	 * @param groupedServiceCode
+	 * @param serviceTemplateCodes
+	 */
+	public void groupeServices(String groupedServiceCode, String... serviceTemplateCodes) {
+		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
+		if(groupedService == null)
+            throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
+		
+		var templates = Stream.of(serviceTemplateCodes).map(code -> {
+							final ServiceTemplate template = serviceTemplateService.findByCode(code);
+							if(template == null) 
+								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
+							if(template.getGroupedService() != null)
+								throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
+							return template;
+						}).collect(Collectors.toList());
+		
+		templates.stream().forEach(template -> {
+			template.setGroupedService(groupedService);
+			serviceTemplateService.update(template);
+		});
+	}
 }
