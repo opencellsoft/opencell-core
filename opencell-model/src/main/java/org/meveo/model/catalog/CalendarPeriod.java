@@ -101,8 +101,12 @@ public class CalendarPeriod extends Calendar {
      */
     @Override
     public Date nextCalendarDate(Date date) {
+        return nextCalendarDate(date, getInitDate());
+    }
 
-        if (periodLength == null || periodUnit == null || getInitDate() == null || date.before(getInitDate())) {
+    @Override
+    protected Date nextCalendarDate(Date date, Date initDate) {
+        if (periodLength == null || periodUnit == null || initDate == null || date == null|| date.before(initDate)) {
             return null;
         }
         if (nbPeriods == null) {
@@ -115,16 +119,16 @@ public class CalendarPeriod extends Calendar {
         // calendar.setTime(cleanDate);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(getInitDate());
+        calendar.setTime(initDate);
 
         int i = 1;
         while (date.compareTo(calendar.getTime()) >= 0) {
 
-            calendar.setTime(getInitDate());
+            calendar.setTime(initDate);
 
             GregorianCalendar calendarOld = new GregorianCalendar();
-            calendarOld.setTime(getInitDate());
-            calendarOld.add(periodUnit, (i-1) * periodLength);
+            calendarOld.setTime(initDate);
+            calendarOld.add(periodUnit, (i - 1) * periodLength);
             Date oldDate = calendarOld.getTime();
 
             calendar.add(periodUnit, i * periodLength);
@@ -140,20 +144,21 @@ public class CalendarPeriod extends Calendar {
         }
 
         return null;
+
     }
-    
-	public Date getLimitOfNextDate() {
-		if (getNbPeriods() <= 0) {
-			return null;
-		}
-		Date current = getInitDate();
-		int i = 0;
-		while (i++ < getNbPeriods()) {
-			current = nextCalendarDate(current);
-		}
-		return current;
-	}
-	
+
+    public Date getLimitOfNextDate() {
+        if (getNbPeriods() <= 0) {
+            return null;
+        }
+        Date current = getInitDate();
+        int i = 0;
+        while (i++ < getNbPeriods()) {
+            current = nextCalendarDate(current);
+        }
+        return current;
+    }
+
     /**
      * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      *
