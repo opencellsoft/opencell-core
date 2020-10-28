@@ -659,4 +659,19 @@ public class ParamBean {
         }
         return false;
     }
+    
+	public Boolean getBooleanValue(String PropertyName) {
+		if (getProperty(PropertyName, "").equalsIgnoreCase("true")) {
+			return true;
+		}
+		if (getProperty(PropertyName, "").equalsIgnoreCase("false")) {
+			return false;
+		}
+		return null;
+	}
+	
+	public Boolean getBooleanValue(String PropertyName, boolean defaultValue) {
+		return getBooleanValue(PropertyName) != null ? getBooleanValue(PropertyName) : defaultValue;
+	}
+	
 }
