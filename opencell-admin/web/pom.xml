@@ -86,39 +86,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <!-- <include>${project.build.directory}/**/persistence.xml</include> -->
-                        <!--<include>${project.build.directory}/**/layout/*.xhtml</include> -->
-                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
-                        <include>${project.build.directory}/opencell/about.xhtml</include>
-                        <include>${project.build.outputDirectory}/version.json</include>
-                    </includes>
-                    <replacements>
-                        <replacement>
-                            <token>@VERSION_NUMBER@</token>
-                            <value>${project.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>@BUILD_NUMBER@</token>
-                            <value>${buildNumber}</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -238,11 +205,22 @@
                 <configuration>
                     <includes>
                         <include>${project.build.directory}/opencell/pages/docs/index.html</include>
+                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
+                        <include>${project.build.directory}/opencell/about.xhtml</include>
+                        <include>${project.build.outputDirectory}/version.json</include>
                     </includes>
                     <replacements>
                         <replacement>
                             <token>https://petstore.swagger.io/v2/swagger.json</token>
                             <value>/opencell/api/rest/v2/openapi.json</value>
+                        </replacement>
+                        <replacement>
+                            <token>@VERSION_NUMBER@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@BUILD_NUMBER@</token>
+                            <value>${buildNumber}</value>
                         </replacement>
                     </replacements>
                 </configuration>
