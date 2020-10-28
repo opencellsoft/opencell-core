@@ -84,77 +84,44 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<includes>
-						<!-- <include>${project.build.directory}/**/persistence.xml</include> -->
-						<!--<include>${project.build.directory}/**/layout/*.xhtml</include> -->
-						<include>${project.build.directory}/opencell/layout/*.xhtml</include>
-						<include>${project.build.directory}/opencell/about.xhtml</include>
-						<include>${project.build.outputDirectory}/version.json</include>
-					</includes>
-					<replacements>
-						<replacement>
-							<token>@VERSION_NUMBER@</token>
-							<value>${project.version}</value>
-						</replacement>
-						<replacement>
-							<token>@BUILD_NUMBER@</token>
-							<value>${buildNumber}</value>
-						</replacement>
-					</replacements>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>prepare-package</id>
-						<phase>prepare-package</phase>
-						<configuration>
-							<target>
-								<copy file="src/main/resources/import-${dbtype}.sql" tofile="${project.build.directory}/opencell/WEB-INF/classes/import.sql" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>install</id>
-						<phase>install</phase>
-						<configuration>
-							<target>
-								<copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
-								<copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-package</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="src/main/resources/import-${dbtype}.sql" tofile="${project.build.directory}/opencell/WEB-INF/classes/import.sql" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
+                                <copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
 
 			<!--
 			<plugin>
@@ -237,11 +204,22 @@
                 <configuration>
                     <includes>
                         <include>${project.build.directory}/opencell/pages/docs/index.html</include>
+                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
+                        <include>${project.build.directory}/opencell/about.xhtml</include>
+                        <include>${project.build.outputDirectory}/version.json</include>
                     </includes>
                     <replacements>
                         <replacement>
                             <token>https://petstore.swagger.io/v2/swagger.json</token>
                             <value>/opencell/api/rest/v2/openapi.json</value>
+                        </replacement>
+                        <replacement>
+                            <token>@VERSION_NUMBER@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@BUILD_NUMBER@</token>
+                            <value>${buildNumber}</value>
                         </replacement>
                     </replacements>
                 </configuration>
