@@ -2,11 +2,19 @@ package org.meveo.api.dto.cpq;
 
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.model.cpq.ProductLine;
+
 /**
  * 
- * @author Khairi
+ * @author Tarik F.
  * @version 10.0
  */
+@XmlRootElement(name = "ProductLineDto")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ProductLineDto {
 	
 	private Long id;
@@ -24,6 +32,15 @@ public class ProductLineDto {
 		this.codeSeller = codeSeller;
 		this.longDescription = longDescription;
 		this.idCodeParentLine = idCodeParentLine;
+	}
+	
+	public ProductLineDto(ProductLine p) {
+		this.id = p.getId();
+		this.codeProductLine = p.getCode();
+		this.label = p.getDescription();
+		this.codeSeller = p.getSeller() != null ? p.getSeller().getCode() : null;
+		this.longDescription = p.getLongDescription();
+		this.idCodeParentLine = p.getParentLine() != null ? p.getParentLine().getId() : null;
 	}
 	public ProductLineDto() {
 	}

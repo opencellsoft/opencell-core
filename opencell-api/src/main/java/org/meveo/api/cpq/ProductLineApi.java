@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.model.cpq.ProductLine;
@@ -63,12 +64,16 @@ public class ProductLineApi extends BaseApi {
 		return productLineService.findByCodeLike(code);
 	}
 	
-	public ProductLine findOne(String code) throws ProductLineException {
+	public ProductLineDto findOne(String code) {
 		if(code == null || code.strip().equals("") ) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		return productLineService.findByCode(code);
+		try {
+			return new ProductLineDto(productLineService.findByCode(code));
+		} catch (ProductLineException e) {
+			throw new BusinessException(e);
+		}
 	}
 	public ProductLine findOne(Long id) {
 		if(id == null) {
