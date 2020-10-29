@@ -95,7 +95,7 @@ public class ProductMapping extends BusinessEntity {
      * Accounting article
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id",referencedColumnName = "id")
+    @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
     private AccountingArticle accountingArticle;
 	
 	
