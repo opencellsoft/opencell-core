@@ -49,8 +49,8 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
             return null;
         }
 
-        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(code)=:code", entityClass)
-            .setParameter("code", code.toUpperCase()).setMaxResults(1);
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
+            .setParameter("code", code.toLowerCase()).setMaxResults(1);
 
         try {
             return query.getSingleResult();
@@ -70,8 +70,8 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
         if (codes == null || codes.isEmpty()) {
             return null;
         }
-        codes = codes.stream().map(s -> s.toUpperCase()).collect(Collectors.toList());
-        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(be.code) IN :codes", entityClass)
+        codes = codes.stream().map(s -> s.toLowerCase()).collect(Collectors.toList());
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(be.code) IN :codes", entityClass)
                 .setParameter("codes", codes);
         try {
             return query.getResultList();
