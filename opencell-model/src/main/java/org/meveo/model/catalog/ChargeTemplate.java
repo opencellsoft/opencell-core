@@ -353,7 +353,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * usage service
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_template_id",referencedColumnName = "id")
+    @JoinColumn(name = "usage_service_template_id",referencedColumnName = "id")
     protected ServiceTemplate  usageService;
     
     
@@ -371,7 +371,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * price matrix
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "priceMatrix")
+    @Column(name = "price_matrix")
     @NotNull
     protected Boolean priceMatrix;
     
