@@ -95,7 +95,7 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getReferencedCFTByEntity", query = "SELECT cft from CustomFieldTemplate cft where cft.fieldType='ENTITY' and upper(cft.entityClazz)=:referencedEntity order by cft.code", hints = {
+        @NamedQuery(name = "CustomFieldTemplate.getReferencedCFTByEntity", query = "SELECT cft from CustomFieldTemplate cft where cft.fieldType='ENTITY' and lower(cft.entityClazz)=:referencedEntity order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code"),
         @NamedQuery(name = "CustomFieldTemplate.getUniqueFromTable", query = "SELECT cft from CustomFieldTemplate cft where cft.uniqueConstraint = true and lower(cft.appliesTo) = :appliesTo") })
