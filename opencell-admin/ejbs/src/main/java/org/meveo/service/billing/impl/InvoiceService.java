@@ -20,6 +20,8 @@ package org.meveo.service.billing.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -1006,7 +1008,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
             }
             if (orderNums != null && !orderNums.isEmpty()) {
-                List<Order> orders = new ArrayList<Order>();
+                List<Order> orders = new ArrayList<>();
                 for (String orderNum : orderNums) {
                     orders.add(orderService.findByCodeOrExternalId(orderNum));
                 }
@@ -2001,7 +2003,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = invoiceService.createInvoice(entityToInvoice, generateInvoiceRequestDto, ratedTxFilter, isDraft);
 
-        List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
+        List<Invoice> invoicesWNumber = new ArrayList<>();
         for (Invoice invoice : invoices) {
             if (customFieldValues != null) {
                 invoice.setCfValues(customFieldValues);
@@ -2782,10 +2784,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates
                 : new HashMap<>();
 
-        Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<String>();
+        Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<>();
 
-        String scaKey = null;
-        String scaKeyWithoutTax = null;
+        String scaKey;
+        String scaKeyWithoutTax;
 
         if (log.isTraceEnabled()) {
             log.trace("ratedTransactions.totalAmountWithoutTax={}",
@@ -2895,6 +2897,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
+        if (subscription == null && billingAccount != null) {
+            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
+            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
+            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
+        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3062,9 +3069,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
-                invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
-                invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
-                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : discountAggregate.getAmountTax());
+                invoice.addAmountWithoutTax(discountAggregate != null ? discountAggregate.getAmountWithoutTax() : BigDecimal.ZERO);
+                invoice.addAmountWithTax(discountAggregate != null ? discountAggregate.getAmountWithTax() : BigDecimal.ZERO);
+                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : discountAggregate != null ? discountAggregate.getAmountTax() : BigDecimal.ZERO);
             }
         }
 
@@ -3079,6 +3086,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+    }
+
+    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
+        return billingAccount.getUsersAccounts().stream()
+                        .map(userAccount -> userAccount.getSubscriptions())
+                        .map(this::addSubscriptionDiscountPlan)
+                        .flatMap(Collection::stream)
+                        .collect(toList());
+    }
+
+    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
+        return subscriptions.stream()
+                .map(Subscription::getDiscountPlanInstances)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding,
