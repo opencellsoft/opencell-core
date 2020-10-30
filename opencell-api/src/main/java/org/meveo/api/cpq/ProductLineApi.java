@@ -60,11 +60,11 @@ public class ProductLineApi extends BaseApi {
 		return productLineService.update(line);
 	}
 	
-	public List<ProductLine> findByCode(String code) {
+	public List<ProductLine> findByCodeLike(String code) {
 		return productLineService.findByCodeLike(code);
 	}
 	
-	public ProductLineDto findOne(String code) {
+	public ProductLineDto findByCode(String code) {
 		if(code == null || code.strip().equals("") ) {
 			missingParameters.add("code");
 		}
@@ -75,11 +75,5 @@ public class ProductLineApi extends BaseApi {
 			throw new BusinessException(e);
 		}
 	}
-	public ProductLine findOne(Long id) {
-		if(id == null) {
-			missingParameters.add("id");
-		}
-		handleMissingParameters();
-		return productLineService.findById(id);
-	}
+
 }

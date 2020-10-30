@@ -28,7 +28,6 @@ import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.exception.ProductException;
-import org.meveo.service.cpq.exception.ProductLineException;
 import org.meveo.service.cpq.exception.ProductVersionException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 
@@ -109,16 +108,15 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 * @throws ProductException when the status is unknown and the status 
 	 */
-	public ProductDto updateStatus(String codeProduct, int status) throws ProductException {
+	public ProductDto updateStatus(String codeProduct, ProductStatusEnum status) throws ProductException {
 		if(Strings.isEmpty(codeProduct)) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		ProductStatusEnum productStatus = ProductStatusEnum.getCurrentStatus(status).get();
-		if(productStatus == null)
+		if(status == null)
 			throw new ProductException(String.format(PRODUCT_STATUS_NOT_FOUND, status));
 		final Product product = productService.findByCode(codeProduct);
-		return new ProductDto(productService.updateStatus(product, productStatus));
+		return new ProductDto(productService.updateStatus(product, status));
 	}
 	
 	/**
@@ -138,56 +136,7 @@ public class ProductApi extends BaseApi {
 		}
 	}
 	
-	/**
-	 * @param id
-	 */
-	public void removeProductLine(Long id){
-		try {
-			productLineApi.removeProductLine(id);
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-		}
-	}
 	
-
-	/**
-	 * @param dto
-	 * @return
-	 */
-	public ProductLineDto createProductLine(ProductLineDto dto){
-		try {
-			return new ProductLineDto(productLineApi.createProductLine(dto));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
-	}
-
-	/**
-	 * @param dto
-	 * @return
-	 */
-	public ProductLineDto updateProductLine(ProductLineDto dto){
-		try {
-			return new ProductLineDto(productLineApi.updateProductLine(dto));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
-	}
-
-	/**
-	 * @param code
-	 * @return
-	 */
-	public ProductLineDto findProductLineByCode(String code) {
-		try {
-			return new ProductLineDto(productLineApi.findOne(code));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
-	}
 	
 	
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException, ProductException {

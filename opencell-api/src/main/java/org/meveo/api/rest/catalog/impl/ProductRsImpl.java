@@ -1,6 +1,4 @@
-package org.meveo.api.rest.cpq.impl;
-
-import java.util.Set;
+package org.meveo.api.rest.catalog.impl;
 
 import javax.inject.Inject;
 
@@ -12,15 +10,16 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
-import org.meveo.api.rest.cpq.ProductRs;
+import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Inject
 	private ProductApi productApi;
 	@Inject
-	private ProductLineApi productLineApi;
+	private ProductLineApi productLineApi; 
 	
 	@Override
 	public ActionStatus addNewProduct(ProductDto productDto) {
@@ -45,7 +44,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public ActionStatus updateStatus(String codeProduct, int status) {
+	public ActionStatus updateStatus(String codeProduct, ProductStatusEnum status) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
 	        	productApi.updateStatus(codeProduct, status);
@@ -97,7 +96,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-        	result.setProductLineDto(productLineApi.findOne(code));
+        	result.setProductLineDto(productLineApi.findByCode(code));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
