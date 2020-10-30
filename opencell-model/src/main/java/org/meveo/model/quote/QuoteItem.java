@@ -18,6 +18,7 @@
 
 package org.meveo.model.quote;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,20 +29,25 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * Quote item
@@ -50,10 +56,11 @@ import org.meveo.model.catalog.ProductOffering;
  */
 @Entity
 @ExportIdentifier({ "quote.code", "itemId" })
-@Table(name = "ord_quote_item")
+@Table(name = "ord_quote_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
-public class QuoteItem extends BaseEntity {
+@NamedQuery(name = "QuoteItem.findByCode", query = "select q from QuoteItem q where q.code=:code")
+public class QuoteItem extends BusinessEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
@@ -112,7 +119,134 @@ public class QuoteItem extends BaseEntity {
      */
     @Transient
     private ProductOffering mainOffering;
+    
+    /**
+     * Quote version
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_version_id", nullable = false, updatable = false)
+    @NotNull
+    private QuoteVersion quoteVersion;
+    
 
+    /**
+     * customer service
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_customer_service_id", updatable = false)
+    private QuoteCustomerService customerService;
+    
+
+    /**
+     * quote product
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_product_id", updatable = false)
+    private QuoteProduct quoteProduct;
+
+    /**
+     * offer component
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_component_id", nullable = false, updatable = false)
+    @NotNull
+    private OfferComponent offerComponent;
+    
+    @Column(name = "service_code", nullable = false, length = 20)
+    @Size(max = 20)
+    private String serviceCode;
+
+    /**
+     * Quantity subscribed
+     */
+    @Column(name = "quantity", precision = 23, scale = 12, nullable = false)
+    @NotNull
+    private BigDecimal quantity = BigDecimal.ONE;
+    
+    /**
+     * service type
+     */
+    @Column(name = "service_type", nullable = false)
+    private Integer serviceType;
+    
+    /**
+     * value
+     */
+    @Column(name = "value")
+    @Lob
+    private String value;
+    
+    /**
+     * OS_UNIT_PRICE_WITHOUT_TAX
+     */
+    @Column(name = "os_unite_price_without_tax", precision = 23, scale = 12)
+    private BigDecimal osUnitPriceWithoutTax;
+
+    /**
+     * OS_PRICE_WITHOUT_TAX
+     */
+    @Column(name = "os_price_without_tax", precision = 23, scale = 12)
+    private BigDecimal osPriceWithoutTax;
+    
+    /**
+     * OS_TAX_CODE
+     */
+    @Column(name = "os_tax_code", precision = 23, scale = 12)
+    private BigDecimal osTAxCode;
+    
+    /**
+     * OS_TAX_RATE
+     */
+    @Column(name = "os_tax_rate")
+    private int osTAxRate;
+    
+    /**
+     * OS_PRICE_WITH_TAX
+     */
+    @Column(name = "os_price_with_tax", precision = 23, scale = 12)
+    private BigDecimal osPriceWithTax;
+
+    /**
+     * RECURRENCE_DURATION
+     */
+    @Column(name = "recurrence_duration")
+    private int recurrenceDuration;
+    /**
+     * RECURRENCE_PERIODICITY
+     */
+    @Column(name = "recurrence_periodicity")
+    private int recurrencePeriodicity;
+    
+
+    /**
+     * RC_UNIT_PRICE_WITHOUT_TAX
+     */
+    @Column(name = "rc_unite_price_without_tax", precision = 23, scale = 12)
+    private BigDecimal rcUnitPriceWithoutTax;
+
+    /**
+     * RC_PRICE_WITHOUT_TAX
+     */
+    @Column(name = "rc_price_without_tax", precision = 23, scale = 12)
+    private BigDecimal rcPriceWithoutTax;
+    
+    /**
+     * RC_TAX_CODE
+     */
+    @Column(name = "rc_tax_code", precision = 23, scale = 12)
+    private BigDecimal rcTAxCode;
+    
+    /**
+     * RC_TAX_RATE
+     */
+    @Column(name = "rc_tax_rate")
+    private int rcTAxRate;
+    
+    /**
+     * RC_PRICE_WITH_TAX
+     */
+    @Column(name = "rc_price_with_tax", precision = 23, scale = 12)
+    private BigDecimal rcPriceWithTax;
     public Quote getQuote() {
         return quote;
     }
@@ -214,4 +348,285 @@ public class QuoteItem extends BaseEntity {
 
         return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
+	}
+
+	/**
+	 * @return the customerService
+	 */
+	public QuoteCustomerService getCustomerService() {
+		return customerService;
+	}
+
+	/**
+	 * @param customerService the customerService to set
+	 */
+	public void setCustomerService(QuoteCustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+	/**
+	 * @return the quoteProduct
+	 */
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
+	}
+
+	/**
+	 * @param quoteProduct the quoteProduct to set
+	 */
+	public void setQuoteProduct(QuoteProduct quoteProduct) {
+		this.quoteProduct = quoteProduct;
+	}
+
+	/**
+	 * @return the offerComponent
+	 */
+	public OfferComponent getOfferComponent() {
+		return offerComponent;
+	}
+
+	/**
+	 * @param offerComponent the offerComponent to set
+	 */
+	public void setOfferComponent(OfferComponent offerComponent) {
+		this.offerComponent = offerComponent;
+	}
+
+	/**
+	 * @return the serviceCode
+	 */
+	public String getServiceCode() {
+		return serviceCode;
+	}
+
+	/**
+	 * @param serviceCode the serviceCode to set
+	 */
+	public void setServiceCode(String serviceCode) {
+		this.serviceCode = serviceCode;
+	}
+
+	/**
+	 * @return the quantity
+	 */
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	/**
+	 * @return the serviceType
+	 */
+	public Integer getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(Integer serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	/**
+	 * @return the osUnitPriceWithoutTax
+	 */
+	public BigDecimal getOsUnitPriceWithoutTax() {
+		return osUnitPriceWithoutTax;
+	}
+
+	/**
+	 * @param osUnitPriceWithoutTax the osUnitPriceWithoutTax to set
+	 */
+	public void setOsUnitPriceWithoutTax(BigDecimal osUnitPriceWithoutTax) {
+		this.osUnitPriceWithoutTax = osUnitPriceWithoutTax;
+	}
+
+	/**
+	 * @return the osPriceWithoutTax
+	 */
+	public BigDecimal getOsPriceWithoutTax() {
+		return osPriceWithoutTax;
+	}
+
+	/**
+	 * @param osPriceWithoutTax the osPriceWithoutTax to set
+	 */
+	public void setOsPriceWithoutTax(BigDecimal osPriceWithoutTax) {
+		this.osPriceWithoutTax = osPriceWithoutTax;
+	}
+
+	/**
+	 * @return the osTAxCode
+	 */
+	public BigDecimal getOsTAxCode() {
+		return osTAxCode;
+	}
+
+	/**
+	 * @param osTAxCode the osTAxCode to set
+	 */
+	public void setOsTAxCode(BigDecimal osTAxCode) {
+		this.osTAxCode = osTAxCode;
+	}
+
+	/**
+	 * @return the osTAxRate
+	 */
+	public int getOsTAxRate() {
+		return osTAxRate;
+	}
+
+	/**
+	 * @param osTAxRate the osTAxRate to set
+	 */
+	public void setOsTAxRate(int osTAxRate) {
+		this.osTAxRate = osTAxRate;
+	}
+
+	/**
+	 * @return the osPriceWithTax
+	 */
+	public BigDecimal getOsPriceWithTax() {
+		return osPriceWithTax;
+	}
+
+	/**
+	 * @param osPriceWithTax the osPriceWithTax to set
+	 */
+	public void setOsPriceWithTax(BigDecimal osPriceWithTax) {
+		this.osPriceWithTax = osPriceWithTax;
+	}
+
+	/**
+	 * @return the recurrenceDuration
+	 */
+	public int getRecurrenceDuration() {
+		return recurrenceDuration;
+	}
+
+	/**
+	 * @param recurrenceDuration the recurrenceDuration to set
+	 */
+	public void setRecurrenceDuration(int recurrenceDuration) {
+		this.recurrenceDuration = recurrenceDuration;
+	}
+
+	/**
+	 * @return the recurrencePeriodicity
+	 */
+	public int getRecurrencePeriodicity() {
+		return recurrencePeriodicity;
+	}
+
+	/**
+	 * @param recurrencePeriodicity the recurrencePeriodicity to set
+	 */
+	public void setRecurrencePeriodicity(int recurrencePeriodicity) {
+		this.recurrencePeriodicity = recurrencePeriodicity;
+	}
+
+	/**
+	 * @return the rcUnitPriceWithoutTax
+	 */
+	public BigDecimal getRcUnitPriceWithoutTax() {
+		return rcUnitPriceWithoutTax;
+	}
+
+	/**
+	 * @param rcUnitPriceWithoutTax the rcUnitPriceWithoutTax to set
+	 */
+	public void setRcUnitPriceWithoutTax(BigDecimal rcUnitPriceWithoutTax) {
+		this.rcUnitPriceWithoutTax = rcUnitPriceWithoutTax;
+	}
+
+	/**
+	 * @return the rcPriceWithoutTax
+	 */
+	public BigDecimal getRcPriceWithoutTax() {
+		return rcPriceWithoutTax;
+	}
+
+	/**
+	 * @param rcPriceWithoutTax the rcPriceWithoutTax to set
+	 */
+	public void setRcPriceWithoutTax(BigDecimal rcPriceWithoutTax) {
+		this.rcPriceWithoutTax = rcPriceWithoutTax;
+	}
+
+	/**
+	 * @return the rcTAxCode
+	 */
+	public BigDecimal getRcTAxCode() {
+		return rcTAxCode;
+	}
+
+	/**
+	 * @param rcTAxCode the rcTAxCode to set
+	 */
+	public void setRcTAxCode(BigDecimal rcTAxCode) {
+		this.rcTAxCode = rcTAxCode;
+	}
+
+	/**
+	 * @return the rcTAxRate
+	 */
+	public int getRcTAxRate() {
+		return rcTAxRate;
+	}
+
+	/**
+	 * @param rcTAxRate the rcTAxRate to set
+	 */
+	public void setRcTAxRate(int rcTAxRate) {
+		this.rcTAxRate = rcTAxRate;
+	}
+
+	/**
+	 * @return the rcPriceWithTax
+	 */
+	public BigDecimal getRcPriceWithTax() {
+		return rcPriceWithTax;
+	}
+
+	/**
+	 * @param rcPriceWithTax the rcPriceWithTax to set
+	 */
+	public void setRcPriceWithTax(BigDecimal rcPriceWithTax) {
+		this.rcPriceWithTax = rcPriceWithTax;
+	}
+
 }
