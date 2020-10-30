@@ -12389,7 +12389,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n       \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\":\"{{currency}}\",\r\n    \"language\":\"{{language}}\",\r\n    \"name\": {\r\n       \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -13442,6 +13442,18 @@
 										"id": "0f1233a5-b441-4fe6-995f-97bab65dccd1",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c1e33b14-5c6e-466a-a9ab-f6bb3df0fa91",
+										"exec": [
+											"pm.variables.set(\"code\",500);\r",
+											"pm.variables.set(\"errorCode\",\"BUSINESS_API_EXCEPTION\");\r",
+											"pm.variables.set(\"message\",\"account already exist code=\"+pm.variables.get(\"entityCode\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -15395,7 +15407,7 @@
 									"script": {
 										"id": "2d02b643-38ad-4ec9-a48c-b341a7631c8b",
 										"exec": [
-											"pm.variables.set(\"message\", \"Currency with code=NOT_EXIST does not exists.\");"
+											"pm.variables.set(\"message\", \"Seller with code=NOT_EXIST does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -15432,7 +15444,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"customerCode\": \"{{entityCode}}_NOT_EXIST1\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\"\r\n}",
+									"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"customerCode\": \"{{entityCode}}1\",\r\n    \"sellerCode\": \"{{not_exist}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -15505,7 +15517,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"customerCode\": \"{{entityCode}}_NOT_EXIST2\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\"\r\n}",
+									"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"customerCode\": \"{{entityCode}}2\",\r\n    \"sellerCode\": \"{{not_exist}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\"\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -15541,7 +15553,7 @@
 									"script": {
 										"id": "c12fb1e5-b0f3-4b5e-a3ef-44a81a9aa1c3",
 										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize value of type `java.util.Date` from String\");"
+											"pm.variables.set(\"message\", \"Cannot deserialize value of type `org.meveo.model.payments.PaymentMethodEnum` from String\");"
 										],
 										"type": "text/javascript"
 									}
@@ -15578,19 +15590,20 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"customerCode\": \"{{entityCode}}_INVALID\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\"\r\n}",
+									"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"customerCode\": \"{{entityCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"customerBrandCode\": \"{{customerBrandCode}}\",\r\n    \"customerCategoryCode\": \"{{customerCategoryCode}}\",\r\n    \"currencyCode\": \"{{currency}}\",\r\n    \"countryCode\": \"{{counrty_code}}\",\r\n    \"languageCode\": \"{{language}}\",\r\n    \"billingCycleCode\": \"{{billingCycleCode}}\",\r\n    \"titleCode\": \"{{customer_title}}\",\r\n    \"firstName\": \"{{first_name}}\",\r\n    \"lastName\": \"{{last_name}}\",\r\n    \"phoneNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"address1\": \"{{address}}\",\r\n    \"address2\": \"{{adrdress2}}\",\r\n    \"zipCode\": \"{{zip_code}}\",\r\n    \"city\": \"{{city}}\",\r\n    \"methodOfPayment\" : [ {\r\n    \"paymentMethodType\" : \"INVALID\"\r\n    }]\r\n}",
 									"options": {
 										"raw": {}
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/account/accountHierarchy",
+									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"account",
-										"accountHierarchy"
+										"accountHierarchy",
+										"createOrUpdate"
 									]
 								}
 							},
@@ -16335,6 +16348,16 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7ec48e47-8ff3-4037-b590-05c46d0780b4",
+										"exec": [
+											"pm.variables.set(\"message\",\"JobTemplate with code 'NOT_EXIST' doesn't exist.\")"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -16368,7 +16391,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{not_exist}}\",\r\n    \"jobTemplate\": \"{{job_template}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"jobTemplate\": \"{{not_exist}}\",\r\n    \"jobCategory\": \"{{job_category}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"{{job_temp_code}}\",\r\n                \"entityReferenceValue\": {\r\n                    \"classname\": \"{{job_class}}\",\r\n                    \"code\": \"{{job_refer_code}}\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -26586,6 +26609,16 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bdb264aa-22f6-461e-97ba-d697f9dae90d",
+										"exec": [
+											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -26655,7 +26688,7 @@
 									"script": {
 										"id": "53680415-5c26-4b2c-bd3c-288140ec5986",
 										"exec": [
-											"pm.variables.set(\"message\", \"Currency with code=TST does not exists.\");"
+											"pm.variables.set(\"message\", \"Currency with code=TEST_TST does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -26719,6 +26752,16 @@
 										"id": "33b4db69-35a2-4dc8-8c69-f8ae672e1aa2",
 										"exec": [
 											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f94df9d9-f9b4-48a0-a472-c00185a3e55c",
+										"exec": [
+											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -26791,7 +26834,7 @@
 									"script": {
 										"id": "7e5c50a4-0230-4292-9840-2d16a9beadf0",
 										"exec": [
-											"pm.variables.set(\"message\", \"Language with code=TST does not exists.\");"
+											"pm.variables.set(\"message\", \"Language with code=TEST_TST does not exists.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -30536,242 +30579,242 @@
 	],
 	"variable": [
 		{
-			"id": "233b9114-333c-43f2-ba8f-d83730c3c729",
+			"id": "98870513-e2bb-459e-8a02-12b1ece60562",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
-			"id": "559b51a7-9328-484a-a08d-94fbca5cbd74",
+			"id": "2ce80897-da27-4086-a5bf-679d82816eca",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "23baeedb-6014-4400-b25f-4aa719627a4a",
+			"id": "5b522faa-b4b9-40cf-be71-a725d681e627",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c067b990-27f6-4e3b-8472-f73fad556bfb",
+			"id": "e7a715b0-750d-4733-a502-b413e7a72a0b",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "f9e62c28-6e54-4118-95a3-839a7daea325",
+			"id": "d3e7a069-504e-4a0d-b6fb-dd02b749cc12",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "805bd00f-c7c4-489c-829e-96ebc71187fe",
+			"id": "8c97c7ba-aa54-4a27-800d-1751fcce8db2",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "e5eddfc5-db5b-45f9-92df-fb94137af3bc",
+			"id": "0d98826c-4b84-45a5-a2d9-4cb7331f2504",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "fc8db70f-23ad-4823-ad9f-37d73046b35a",
+			"id": "e19ffaab-20e0-486d-b3f7-1b74058999b5",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "279ad385-83ea-43e8-aa0e-fa916dbc2759",
+			"id": "aa1ca284-5929-4d6e-8f17-752fa2c55629",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "1c87cb74-fd48-473c-af25-5e7b2e22ea84",
+			"id": "80a6260e-5bbe-4571-af5d-5d60ef81f65f",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "963578fe-48e8-4a03-bac0-5a26d72373b5",
+			"id": "f8615bf3-5151-4faa-b305-08fc64b43481",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "e596a569-c2e4-4cf3-b61f-d840ac2ef0b5",
+			"id": "ee2fcf14-08d6-43d5-9b04-0650ef0857a1",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "74985b2a-bc26-4d5f-a081-3e2df846dd89",
+			"id": "615937fe-0489-4943-b4a8-7cbf4e582ab0",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "405130fc-c02a-49f8-88a2-68e6f6133f0a",
+			"id": "e896c79f-acd0-406c-abe2-ce6ef2cfa240",
 			"key": "oc_category",
 			"value": "CREDIT"
 		},
 		{
-			"id": "9a3ee83a-f07c-434c-abae-c7ba2a6797c5",
+			"id": "69b9e2c0-0005-46ce-99be-48b77b387131",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "5c10bc8b-92fe-4899-8662-1db896961b96",
+			"id": "2113b8f2-670f-4122-8402-04eca22a5111",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "03361986-3b3d-4e34-b563-3fe121148661",
+			"id": "34680dad-0796-4a2b-ad2c-a8476d208ff5",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "9c84c3e0-75d1-489f-9d72-ceb0c2412071",
+			"id": "83e87c6e-e71b-4186-9257-bcbb0d97c799",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "26c5c96a-bb6e-46a0-ba32-0cb60c8db6d3",
+			"id": "20d10ebc-3970-4396-bbbc-9935d9eb182f",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "c4811c42-c43e-4047-bbe5-304ad517f42e",
+			"id": "16e88cd6-2b07-44ba-9543-13f1aa5c29f2",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "e29842aa-f3f2-43ce-b114-c62a366ee232",
+			"id": "7a0e4a72-9891-4162-a6c5-262314755aec",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "7e7e9eb3-a152-4919-8df7-8bb86b799a4a",
+			"id": "bacdcfbd-ab96-4182-a45b-c652a38e4592",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "514aa6ca-d950-46ae-a7a8-9533a7c14df7",
+			"id": "c257576b-396a-4989-bae8-9076469618ba",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "985c0b98-b2d1-4183-a503-d01ae0141256",
+			"id": "bf75759a-713c-4c78-838a-bfb9cb6381fb",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "10acac0b-2b1d-4e14-8ab9-212cb1ed8828",
+			"id": "7cbae187-517c-4210-b32c-3381b5ccd190",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "69d4546a-5f8b-454e-b1d1-aa0e558b5984",
+			"id": "72b6deeb-0d80-40b4-96c6-b4a953d0cba1",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "5dec1673-a69c-4048-b519-a0023b5c0d55",
+			"id": "55c57568-7cec-40d0-888a-1292fec8b67d",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "da197d96-fc02-4ac7-803a-904f589effab",
+			"id": "bdecacef-71ea-4ab1-88f8-cb186dd86354",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "ded2fff6-539d-47b4-b427-7f7fa2db5908",
+			"id": "6d79119a-2278-4741-a4dc-0481341291af",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "fe386b99-4824-483d-852f-c99fde3a4227",
+			"id": "000bcc05-5bc2-4a3a-8291-901173b04726",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "34e8ec41-36e1-4447-b59c-2af41c5e8130",
+			"id": "027798c1-9710-4be9-86a1-631d45728233",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "a8c98fec-2b77-462b-8d64-b8161adfac8c",
+			"id": "22258a4b-be52-4626-9f96-c7b39a1e03be",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "2be7ca93-0a89-4bd3-836f-9e235af2d22d",
+			"id": "5be1dd09-bf4d-4a98-8f6c-1a21c2f4f8e9",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "8fb2db56-972c-444a-a122-4ea546f61dd2",
+			"id": "c5349c09-fbf9-440e-bdb9-799854a38c41",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "d8a4ec06-2c58-4114-b7fe-0902112a9dc9",
+			"id": "7bcb14aa-1b4a-40d5-be52-69ec618f9754",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "084c6c9b-ad7a-4819-9c4a-7ea9fb101192",
+			"id": "94057c26-48d2-4e1d-a18d-d30c917243df",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "b4ef4f4d-6e52-434a-828f-b1c4f86c5d84",
+			"id": "18780241-64df-4c70-b274-9e86bcf15690",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "e8145856-b19d-43c3-9a14-71efa623828a",
+			"id": "5d9733a0-c58f-43ca-8cf6-d0dab85761c9",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "9ca98add-1514-4bbc-88b1-989e05731d06",
+			"id": "dead9185-47f6-4348-b246-99ce12293171",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "182a05ed-307e-4707-baec-27b594d5dd22",
+			"id": "f0004f55-19c1-47bc-8e38-2c6d9b31b632",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "d92fd3fb-33ab-40c4-a7ec-d3b683661e1f",
+			"id": "6fc99396-1e8c-4601-a4e3-87bf5344890b",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "97be3cb7-2139-4414-8594-6ed6c9ab4ed0",
+			"id": "f270a94f-72af-4fdd-a14d-61db32bb7487",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "11632dbc-f919-4554-977d-599f982e13e8",
+			"id": "7ea07f04-79d8-42b6-a5ec-f704c4bf1dff",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "866f4080-3695-4a44-9eb7-f610bc33b785",
+			"id": "574dd830-6069-4843-9fa3-858913bca2d7",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "7e33f37a-a90d-4851-8daa-bcc88aa735d9",
+			"id": "6f2742fc-9bfd-4a68-9cdc-817a631b0f8a",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "42c71054-cc6a-4268-bbc9-5979f90b21c3",
+			"id": "f16750fc-168f-4233-af2a-94712e1cd791",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "e62fbd33-5f61-4e4c-b515-a381788c3b15",
+			"id": "cddb0647-3405-4131-91b8-4d46cb6c3f51",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "78080d3a-92c1-48f9-bf58-7657778ca145",
+			"id": "91246279-2c28-4621-81ec-2c9bfbc2acd8",
 			"key": "entity_status",
 			"value": "ACTIVE"
 		}
