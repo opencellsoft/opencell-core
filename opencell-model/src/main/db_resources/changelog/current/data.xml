@@ -1753,5 +1753,9 @@ public class ValidateBRScript extends Script {
             <column name="permission_id" value="-121"></column>
         </insert>    
 	</changeSet>
+	
+	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
+		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
+	</changeSet>
     
 </databaseChangeLog>
