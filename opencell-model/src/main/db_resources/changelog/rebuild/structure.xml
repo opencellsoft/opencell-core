@@ -180,6 +180,7 @@
         <createSequence sequenceName="dunning_document_seq" />
         <createSequence sequenceName="wf_generic_transition_seq" />
         <createSequence sequenceName="adm_custom_generic_entity_code_seq" startValue="3" />
+         <createSequence sequenceName="cpq_price_plan_version_seq" />
         <createSequence sequenceName="cpq_price_plan_matrix_item_seq" />
         <createSequence sequenceName="cpq_quote_version_seq" />
         <createSequence sequenceName="cpq_quote_price_seq" />
@@ -10888,6 +10889,41 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="dim2_value" type="varchar(50)" />
             <column name="dim3_value" type="varchar(50)" /> 
+            <column name="price_without_tax" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="540-31_20201023_PricePlanVersion" author="TarikF">
+        <createTable tableName="cpq_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="price_plan_version" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="status_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_date" type="datetime" />
+            <column name="end_date" type="datetime" />
+            <column name="price_list_flag" type="${type.boolean}" defaultValueNumeric="0"  >
+                <constraints nullable="false" />
+            </column>
+            <column name="dim_number" type="int4" />
             <column name="price_without_tax" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
