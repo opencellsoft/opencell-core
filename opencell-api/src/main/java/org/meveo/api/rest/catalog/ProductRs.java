@@ -1,4 +1,4 @@
-package org.meveo.api.rest.cpq;
+package org.meveo.api.rest.catalog;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -14,13 +14,10 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
-import org.meveo.api.dto.custom.UnitaryCustomTableDataDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.apiv2.models.ApiException;
-import org.meveo.apiv2.models.Document;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/cpq/product")
+@Path("/catalog/product")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ProductRs extends IBaseRs{
@@ -84,7 +81,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
             @ApiResponse(responseCode = "500", description = "the status of the product is already closed")
     })
-	ActionStatus updateStatus(@PathParam("codeProduct") String codeProduct,@QueryParam("status") int status);
+	ActionStatus updateStatus(@PathParam("codeProduct") String codeProduct,@QueryParam("status") ProductStatusEnum status);
 	
 	/**
 	 * 
