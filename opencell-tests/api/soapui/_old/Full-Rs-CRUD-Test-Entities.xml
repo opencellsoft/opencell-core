@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Full REST WS Test Entities" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2921cfe0-4f05-49a4-98d7-baf966009880" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Full REST WS Test Entities" resourceRoot="" soapui-version="5.6.0" abortOnError="false" runType="SEQUENTIAL" id="2921cfe0-4f05-49a4-98d7-baf966009880" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" id="ecf2ec08-6f4d-47e4-8bd0-7e4c64c6e6c3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#meveoUrl}</con:endpoint>
     </con:endpoints>
     <con:resource name="country" path="/opencell/api/rest/country" id="cc19cb77-870b-4f92-8fcb-cdd94a0f1710">
