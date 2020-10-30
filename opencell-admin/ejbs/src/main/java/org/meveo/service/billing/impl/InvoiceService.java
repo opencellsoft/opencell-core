@@ -3573,6 +3573,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<RatedTransaction> rtsToLink = new ArrayList<>();
         if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
             rtsToLink = ratedTransactionService.openRTbySubCat(userAccount != null ? userAccount.getWallet() : null, invoiceSubCategory, null, null);
+            if (isDetailledInvoiceMode)
+                removeRtsFromExistingRtsToLink(existingRtsTolinkMap, rtsToLink);
         } else if (isDetailledInvoiceMode && !existingRtsTolinkMap.isEmpty() && existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
             rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
         }
@@ -3580,6 +3582,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (RatedTransaction rt : rtsToLink) {
             linkRt(invoice, invoiceAgregateSubcat, rt, isEnterprise);
         }
+    }
+
+    private void removeRtsFromExistingRtsToLink(Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, List<RatedTransaction> rtsToLink) {
+        List<InvoiceSubCategory> invoicesToRemove = new ArrayList<>();
+        for (InvoiceSubCategory invSubCat : existingRtsTolinkMap.keySet()) {
+            List<RatedTransaction> ratedTransactions = existingRtsTolinkMap.get(invSubCat);
+            for (RatedTransaction rtToLink : rtsToLink) {
+                ratedTransactions.remove(rtToLink);
+            }
+            if (ratedTransactions.isEmpty())
+                invoicesToRemove.add(invSubCat);
+        }
+        for(InvoiceSubCategory invoiceSubCategory : invoicesToRemove)
+            existingRtsTolinkMap.remove(invoiceSubCategory);
     }
 
     private void createAndLinkRTsFromDTO(Seller seller, BillingAccount billingAccount, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, boolean isDetailledInvoiceMode, Invoice invoice,
