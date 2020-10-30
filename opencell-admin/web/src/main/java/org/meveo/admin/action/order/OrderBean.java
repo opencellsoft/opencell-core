@@ -44,6 +44,7 @@ import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
@@ -60,6 +61,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
@@ -514,7 +516,8 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
         }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues);
+        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues,
+                toCustomFieldsValues(extractCustomFieldsValues(orderItemDto.getProduct().getProductCharacteristic(), new Subscription())));
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -575,7 +578,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                                 || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()));
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
+                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity,
+                                toCustomFieldsValues(extractCustomFieldsValues(serviceProductMatched.getProductCharacteristic(), new ServiceInstance())));
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -642,7 +646,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                         }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
-                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity,
+                                toCustomFieldsValues(extractCustomFieldsValues(productProductMatched.getProductCharacteristic(), new ProductInstance())));
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
@@ -659,6 +664,20 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
         }
         return root;
+    }
+
+    private CustomFieldValues toCustomFieldsValues(Map<CustomFieldTemplate, Object> extractCustomFieldsValues) {
+        CustomFieldValues customFieldValues = new CustomFieldValues();
+        extractCustomFieldsValues.keySet().forEach(customFieldTemplate -> {
+            CustomFieldValue customFieldValue = new CustomFieldValue();
+            customFieldValue.setValue(extractCustomFieldsValues.get(customFieldTemplate));
+            if(customFieldTemplate.isVersionable()){
+                customFieldValues.setValue(customFieldTemplate.getCode(), new DatePeriod(), 0, extractCustomFieldsValues.get(customFieldTemplate));
+            }else{
+                customFieldValues.setValue(customFieldTemplate.getCode(), extractCustomFieldsValues.get(customFieldTemplate));
+            }
+        });
+        return customFieldValues;
     }
 
     /**
@@ -912,6 +931,11 @@ public class OrderBean extends CustomFieldBean<Order> {
         if (characteristics == null || characteristics.isEmpty()) {
             return;
         }
+        customFieldDataEntryBean.setCustomFieldValues(extractCustomFieldsValues(characteristics, cfEntity), cfEntity);
+    }
+
+    private Map<CustomFieldTemplate, Object> extractCustomFieldsValues(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
+        Map<CustomFieldTemplate, Object> cfValues = new HashMap<>();
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity);
 
@@ -921,7 +945,7 @@ public class OrderBean extends CustomFieldBean<Order> {
                 cfValues.put(cft, CustomFieldValue.parseValueFromString(cft, characteristic.getValue()));
             }
         }
-        customFieldDataEntryBean.setCustomFieldValues(cfValues, cfEntity);
+        return cfValues;
     }
 
     /**
