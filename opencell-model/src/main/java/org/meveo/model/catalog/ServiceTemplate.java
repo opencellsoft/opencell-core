@@ -54,6 +54,7 @@ import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.cpq.AccountingArticle;
 import org.meveo.model.cpq.GroupedService;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ServiceType;
@@ -253,7 +254,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	 * the grouped service
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "groupedService_id", referencedColumnName = "id")
+	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
 	private GroupedService groupedService;
 	
 	 
@@ -294,7 +295,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tag_id")
-    private Set<Tag> tagList = new HashSet<>();
+    private Set<Tag> tagList = new HashSet<>(); 
     
     
 	  /**
@@ -310,8 +311,8 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      * Accounting code
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_id",referencedColumnName = "id")
-    private AccountingCode accountingCode;
+    @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
+    private AccountingArticle accountingArticle;
     
     
     
@@ -713,18 +714,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 		this.material = material;
 	}
 
+
+
 	/**
-	 * @return the accountingCode
+	 * @return the accountingArticle
 	 */
-	public AccountingCode getAccountingCode() {
-		return accountingCode;
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
 	}
 
 	/**
-	 * @param accountingCode the accountingCode to set
+	 * @param accountingArticle the accountingArticle to set
 	 */
-	public void setAccountingCode(AccountingCode accountingCode) {
-		this.accountingCode = accountingCode;
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
 	}
 
 	/**

@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.PersistenceService;
@@ -29,6 +31,10 @@ import org.slf4j.LoggerFactory;
  * Product service implementation.
  */
 
+/**
+ * @author Khairi
+ *
+ */
 @Stateless
 public class ProductService extends
 		PersistenceService<Product> {
@@ -37,7 +43,14 @@ public class ProductService extends
 	private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product (%s) is %s, it can not be updated nor removed";
 	private final static String PRODUCT_UNKWON = "product (%s) unkwon!";
 	private final static String PRODUCT_CAN_NOT_CHANGE_THE_STATUS = "product (%s) can not change the status beacause it not draft";
-
+	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";
+	
+	@Inject
+	private CustomerBrandService customerBrandService;
+	@Inject
+	private DiscountPlanService discountPlanService;
+	@Inject
+	private ProductLineService productLineService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -118,21 +131,30 @@ public class ProductService extends
 	public Product updateStatus(Product product, ProductStatusEnum status) throws ProductException{
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			product.setStatus(status);
+			product.setStatusDate(Calendar.getInstance().getTime());
 			return  update(product);
 		}else if (ProductStatusEnum.ACTIVE.equals(product.getStatus())) {
 			product.setStatus(ProductStatusEnum.CLOSED);
+			product.setStatusDate(Calendar.getInstance().getTime());
 			return  update(product);
 		}
 		throw new ProductException(String.format(PRODUCT_CAN_NOT_CHANGE_THE_STATUS, product.getCode()));
 	}
 	
-	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";
-	
-	@Inject
-	private CustomerBrandService customerBrandService;
-	@Inject
-	private DiscountPlanService discountPlanService;
-	
+	/**
+	 *  create new product with DRAFT status
+	 * @param codeProduct
+	 * @param label
+	 * @param idProductLine
+	 * @param codeBrand
+	 * @param reference
+	 * @param model
+	 * @param modelChildren
+	 * @param discountPlanCode
+	 * @param discountFlag
+	 * @return
+	 * @throws ProductException
+	 */
 	public Product create(String codeProduct, String label, Long idProductLine,
 								String codeBrand, String reference, String model, 
 								Set<String> modelChildren, Set<String> discountPlanCode, boolean discountFlag) throws ProductException {
@@ -153,6 +175,9 @@ public class ProductService extends
 		product.setModelChlidren(modelChildren);
 		product.setDiscountFlag(discountFlag);
 		
+		final ProductLine productLine = productLineService.findById(idProductLine);
+		product.setProductLine(productLine);
+		
 		var discountPlans  = new HashSet<DiscountPlan>(discountPlanCode.stream().map(codeDiscount -> {
 			final DiscountPlan discount = discountPlanService.findByCode(codeDiscount);
 			return discount;
@@ -161,5 +186,19 @@ public class ProductService extends
 		product.setDiscountList(discountPlans);
 		this.create(product);
 		return  product;
+	}
+	
+	/**
+	 * get product by its code
+	 * @param code
+	 * @return
+	 * @throws ProductException when no result found
+	 */
+	public Product findByCode(String code) throws ProductException {
+		try {
+			return(Product) getEntityManager().createNamedQuery("Product.findByCode").setParameter("code", code).getSingleResult();
+		}catch(NoResultException e) {
+			throw new ProductException(String.format(PRODUCT_UNKWON, code));
+		}
 	}
 }

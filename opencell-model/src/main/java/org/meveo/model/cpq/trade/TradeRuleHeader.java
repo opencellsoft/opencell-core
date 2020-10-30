@@ -19,6 +19,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.GroupedService;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
@@ -69,20 +71,31 @@ public class TradeRuleHeader extends BusinessEntity {
 	@JoinColumn(name = "cpq_product_version_id", referencedColumnName = "id")
 	private  ProductVersion targetProductVersion;
 
-	/**
-	 * attribute name
-	 */
-	@Column(name = "target_attribute_name", length = 20)
-	@Size(max = 20)
-	private String targetAttributeName;
 	
+	 /** 
+     * grouped service
+     */
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
+	private GroupedService groupedService;
+	
+	
+	/**
+     * service template
+     */ 
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "service_template_id", referencedColumnName = "id") 
+	private ServiceTemplate serviceTemplate;
+ 
 
 	/**
 	 * attribute value
 	 */
-	@Column(name = "target_attribute_name", length = 255)
+	@Column(name = "target_service_value", length = 255)
 	@Size(max = 255)
-	private String targetAttributeValue;
+	private String targetServiceValue;
 
 	/**
 	 * tag target
@@ -154,32 +167,19 @@ public class TradeRuleHeader extends BusinessEntity {
 		this.targetProductVersion = targetProductVersion;
 	}
 
+ 
 	/**
-	 * @return the targetAttributeName
+	 * @return the targetServiceValue
 	 */
-	public String getTargetAttributeName() {
-		return targetAttributeName;
+	public String getTargetServiceValue() {
+		return targetServiceValue;
 	}
 
 	/**
-	 * @param targetAttributeName the targetAttributeName to set
+	 * @param targetServiceValue the targetServiceValue to set
 	 */
-	public void setTargetAttributeName(String targetAttributeName) {
-		this.targetAttributeName = targetAttributeName;
-	}
-
-	/**
-	 * @return the targetAttributeValue
-	 */
-	public String getTargetAttributeValue() {
-		return targetAttributeValue;
-	}
-
-	/**
-	 * @param targetAttributeValue the targetAttributeValue to set
-	 */
-	public void setTargetAttributeValue(String targetAttributeValue) {
-		this.targetAttributeValue = targetAttributeValue;
+	public void setTargetServiceValue(String targetServiceValue) {
+		this.targetServiceValue = targetServiceValue;
 	}
 
 	/**
@@ -203,6 +203,35 @@ public class TradeRuleHeader extends BusinessEntity {
 		return ruleEl;
 	}
 
+	
+	/**
+	 * @return the groupedService
+	 */
+	public GroupedService getGroupedService() {
+		return groupedService;
+	}
+
+	/**
+	 * @param groupedService the groupedService to set
+	 */
+	public void setGroupedService(GroupedService groupedService) {
+		this.groupedService = groupedService;
+	}
+
+	/**
+	 * @return the serviceTemplate
+	 */
+	public ServiceTemplate getServiceTemplate() {
+		return serviceTemplate;
+	}
+
+	/**
+	 * @param serviceTemplate the serviceTemplate to set
+	 */
+	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+		this.serviceTemplate = serviceTemplate;
+	}
+
 	/**
 	 * @param ruleEl the ruleEl to set
 	 */
@@ -214,7 +243,7 @@ public class TradeRuleHeader extends BusinessEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(ruleEl, ruleType, tagTarget, targetAttributeName, targetAttributeValue,
+		result = prime * result + Objects.hash(ruleEl, ruleType, tagTarget, targetServiceValue,
 				targetProduct, targetProductVersion);
 		return result;
 	}
@@ -230,8 +259,7 @@ public class TradeRuleHeader extends BusinessEntity {
 		TradeRuleHeader other = (TradeRuleHeader) obj;
 		return Objects.equals(ruleEl, other.ruleEl) && ruleType == other.ruleType
 				&& Objects.equals(tagTarget, other.tagTarget)
-				&& Objects.equals(targetAttributeName, other.targetAttributeName)
-				&& Objects.equals(targetAttributeValue, other.targetAttributeValue)
+				&& Objects.equals(targetServiceValue, other.targetServiceValue)
 				&& Objects.equals(targetProduct, other.targetProduct)
 				&& Objects.equals(targetProductVersion, other.targetProductVersion);
 	}

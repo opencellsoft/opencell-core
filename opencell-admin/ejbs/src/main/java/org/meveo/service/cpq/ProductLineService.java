@@ -1,7 +1,10 @@
 package org.meveo.service.cpq;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.ProductLine;
@@ -23,10 +26,11 @@ public class ProductLineService extends
 		PersistenceService<ProductLine> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProductLineService.class);
-	
-	private final static String PRODUCT_LINE_UNKNOWN = "product line (%d) is missing!";
+
+	public final static String PRODUCT_LINE_UNKNOWN = "product line (%d) is missing!";
 	private final static String PRODUCT_LINE_HAS_PRODUCTS = "product line (%d) has product, it can be deleted!";
 	private final static String PRODUCT_LINE_CODE_EXIST = "Duplicate of the product line code (%s)";
+	public final static String PRODUCT_LINE_CODE_UNKNOWN = "product line (%s) is missing!";
 	
 	@Inject
 	private ProductService productService;
@@ -95,6 +99,15 @@ public class ProductLineService extends
 		this.create(line);
 		LOGGER.info("product line ({}) created with successfully", codeProductLine);
 		return line;
+	}
+	
+	public ProductLine findByCode(String code) throws ProductLineException {
+		try {
+			return (ProductLine) getEntityManager().createNamedQuery("ProductLine.findByCode").getSingleResult();
+		}catch(NoResultException e) {
+			throw new ProductLineException(String.format(PRODUCT_LINE_UNKNOWN, code), e);
+		}
+		
 	}
 	
 }

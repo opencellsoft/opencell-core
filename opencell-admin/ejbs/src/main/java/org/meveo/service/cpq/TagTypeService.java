@@ -2,7 +2,9 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.cpq.exception.TagException;
@@ -24,6 +26,7 @@ public class TagTypeService extends
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TagTypeService.class);
 	private static final String TAG_TYPE_ATTACHED = "Impossible to remove a type of tag %d, it is attached to tag";
+	private static final String UNKNOWN_TAG_TYPE = "Unknown Tag type from code %s";
 	
 	@Inject
 	private TagService tagService;
@@ -34,7 +37,7 @@ public class TagTypeService extends
 		try {
 			isTagTypeAttached = this.tagService.isTagTypeExist(id);
 			if(isTagTypeAttached) {
-				LOGGER.warn("Impossible to remove is tag type {}, because it attached to a tag", id);
+				LOGGER.warn("Impossible to remove  tag type {}, because it attached to a tag", id);
 				throw new TagTypeException(String.format(TAG_TYPE_ATTACHED, id));
 			}
 		} catch (TagException e) {
@@ -43,5 +46,18 @@ public class TagTypeService extends
 		}
 		this.remove(id);
 	}
+	
 
+	/**
+	 * @param code
+	 * @return
+	 * @throws TagTypeException
+	 */
+	public TagType findByCode(String code) throws TagTypeException {
+		try {
+			return(TagType) getEntityManager().createNamedQuery("TagType.findByCode").setParameter("code", code).getSingleResult();
+		}catch(NoResultException e) {
+			throw new TagTypeException(String.format(UNKNOWN_TAG_TYPE, code));
+		}
+	}
 }

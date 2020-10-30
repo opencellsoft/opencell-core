@@ -1,4 +1,4 @@
-package org.meveo.model.cpq.attribute;
+package org.meveo.model.cpq;
 
 import java.util.Objects;
 
@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
@@ -47,7 +48,14 @@ public class Media extends BaseEntity{
 	private Product product;
 	
 
-
+	/**
+	 * product code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "serviceTemplate_id", referencedColumnName = "id", nullable = false)
+	@NotNull
+	private ServiceTemplate serviceTemplate;
+	
 	/**
 	 * short name of the media
 	 */
@@ -168,6 +176,14 @@ public class Media extends BaseEntity{
 	 */
 	public void setMediaPath(String mediaPath) {
 		this.mediaPath = mediaPath;
+	}
+
+	public ServiceTemplate getServiceTemplate() {
+		return serviceTemplate;
+	}
+
+	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+		this.serviceTemplate = serviceTemplate;
 	}
 
 	@Override

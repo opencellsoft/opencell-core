@@ -18,7 +18,6 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,6 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -134,9 +132,9 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @Transient
     private String prefix;
-
-    @Transient
-    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
+//
+//    @Transient
+//    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
     @Transient
     private List<ProductTemplate> productTemplates;
@@ -259,51 +257,51 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
         this.subscriptionRenewal = subscriptionRenewal;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
-
-        if (serviceTemplatesByChargeType != null) {
-            return serviceTemplatesByChargeType;
-        }
-
-        serviceTemplatesByChargeType = new HashMap<>();
-
-        for (OfferServiceTemplate service : offerServiceTemplates) {
-            List charges = service.getServiceTemplate().getServiceRecurringCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceUsageCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceTerminationCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
-            }
-        }
-
-        return serviceTemplatesByChargeType;
-    }
+//    @SuppressWarnings("rawtypes")
+//    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+//
+//        if (serviceTemplatesByChargeType != null) {
+//            return serviceTemplatesByChargeType;
+//        }
+//
+//        serviceTemplatesByChargeType = new HashMap<>();
+//
+//        for (OfferServiceTemplate service : offerServiceTemplates) {
+//            List charges = service.getServiceTemplate().getServiceRecurringCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceUsageCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceTerminationCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
+//            }
+//        }
+//
+//        return serviceTemplatesByChargeType;
+//    }
 
     public List<ProductTemplate> getProductTemplates() {
         if (productTemplates != null) {
@@ -453,9 +451,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.tagList = tagList;
 	}
 
-	public void setServiceTemplatesByChargeType(Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType) {
-		this.serviceTemplatesByChargeType = serviceTemplatesByChargeType;
-	}
 
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;

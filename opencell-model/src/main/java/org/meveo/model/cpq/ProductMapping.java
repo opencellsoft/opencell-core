@@ -14,8 +14,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 
 /** 
  * @author Mbarek-Ay
@@ -47,9 +47,10 @@ public class ProductMapping extends BusinessEntity {
 	/**
 	 * Name of the first service product.
 	 */
-	@Column(name = "service_1", length = 20)
-	@Size(max = 20)
-	private String service1;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_1",referencedColumnName = "id")
+	private ServiceTemplate service1;
+	
 	
 	
 	/**
@@ -62,9 +63,9 @@ public class ProductMapping extends BusinessEntity {
 	/**
 	 * Name of the second service product.
 	 */
-	@Column(name = "service_2", length = 20)
-	@Size(max = 20)
-	private String service2;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_2",referencedColumnName = "id")
+	private ServiceTemplate service2;
 	
 	
 	/**
@@ -78,9 +79,9 @@ public class ProductMapping extends BusinessEntity {
 	/**
 	 * Name of the third service product.
 	 */
-	@Column(name = "service_3", length = 20)
-	@Size(max = 20)
-	private String service3;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_3",referencedColumnName = "id")
+	private ServiceTemplate service3;
 	
 	
 	/**
@@ -91,11 +92,11 @@ public class ProductMapping extends BusinessEntity {
 	private String service3Value;
 	
 	   /**
-     * Accounting code
+     * Accounting article
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_id",referencedColumnName = "id")
-    private AccountingCode accountingCode;
+    @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
+    private AccountingArticle accountingArticle;
 	
 	
     /**
@@ -122,22 +123,7 @@ public class ProductMapping extends BusinessEntity {
 	}
 
 
-	/**
-	 * @return the service1
-	 */
-	public String getService1() {
-		return service1;
-	}
-
-
-	/**
-	 * @param service1 the service1 to set
-	 */
-	public void setService1(String service1) {
-		this.service1 = service1;
-	}
-
-
+	  
 	/**
 	 * @return the service1Value
 	 */
@@ -146,37 +132,10 @@ public class ProductMapping extends BusinessEntity {
 	}
 
 
-	/**
-	 * @param service1Value the service1Value to set
-	 */
-	public void setService1Value(String service1Value) {
-		this.service1Value = service1Value;
-	}
+ 
 
 
-	/**
-	 * @return the service2
-	 */
-	public String getService2() {
-		return service2;
-	}
-
-
-	/**
-	 * @param service2 the service2 to set
-	 */
-	public void setService2(String service2) {
-		this.service2 = service2;
-	}
-
-
-	/**
-	 * @return the service2Value
-	 */
-	public String getService2Value() {
-		return service2Value;
-	}
-
+	  
 
 	/**
 	 * @param service2Value the service2Value to set
@@ -186,20 +145,7 @@ public class ProductMapping extends BusinessEntity {
 	}
 
 
-	/**
-	 * @return the service3
-	 */
-	public String getService3() {
-		return service3;
-	}
-
-
-	/**
-	 * @param service3 the service3 to set
-	 */
-	public void setService3(String service3) {
-		this.service3 = service3;
-	}
+	 
 
 
 	/**
@@ -217,22 +163,7 @@ public class ProductMapping extends BusinessEntity {
 		this.service3Value = service3Value;
 	}
 
-
-	/**
-	 * @return the accountingCode
-	 */
-	public AccountingCode getAccountingCode() {
-		return accountingCode;
-	}
-
-
-	/**
-	 * @param accountingCode the accountingCode to set
-	 */
-	public void setAccountingCode(AccountingCode accountingCode) {
-		this.accountingCode = accountingCode;
-	}
-
+ 
 
 	/**
 	 * @return the chargeTemplate
@@ -247,6 +178,86 @@ public class ProductMapping extends BusinessEntity {
 	 */
 	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
 		this.chargeTemplate = chargeTemplate;
+	}
+
+
+	/**
+	 * @return the service1
+	 */
+	public ServiceTemplate getService1() {
+		return service1;
+	}
+
+
+	/**
+	 * @param service1 the service1 to set
+	 */
+	public void setService1(ServiceTemplate service1) {
+		this.service1 = service1;
+	}
+
+
+	/**
+	 * @return the service2
+	 */
+	public ServiceTemplate getService2() {
+		return service2;
+	}
+
+
+	/**
+	 * @param service2 the service2 to set
+	 */
+	public void setService2(ServiceTemplate service2) {
+		this.service2 = service2;
+	}
+
+
+	/**
+	 * @return the service3
+	 */
+	public ServiceTemplate getService3() {
+		return service3;
+	}
+
+
+	/**
+	 * @param service3 the service3 to set
+	 */
+	public void setService3(ServiceTemplate service3) {
+		this.service3 = service3;
+	}
+
+
+	/**
+	 * @return the accountingArticle
+	 */
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+
+	/**
+	 * @param accountingArticle the accountingArticle to set
+	 */
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
+	}
+
+
+	/**
+	 * @return the service2Value
+	 */
+	public String getService2Value() {
+		return service2Value;
+	}
+
+
+	/**
+	 * @param service1Value the service1Value to set
+	 */
+	public void setService1Value(String service1Value) {
+		this.service1Value = service1Value;
 	}
 
 

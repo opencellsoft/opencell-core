@@ -2,11 +2,14 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.cpq.exception.TagException;
+import org.meveo.service.cpq.exception.TagTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,7 @@ public class TagService extends
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TagService.class);
 	private static final String TAG_UNKNOWN = "Tag %d is missing";
+	private static final String TAG_CODE_UNKNOWN = "Tag code %s is missing";
 	private static final String TAG_VERSION_UNKNOWN = "Tag version %d is missing";
 	private static final String TAG_IS_ATTACHED_TO_PRODUCT = "Impossible to remove a tag(%s), it attached to product code %s";
 	
@@ -33,7 +37,7 @@ public class TagService extends
 
 	public boolean isTagTypeExist(Long id) throws TagException {
 		LOGGER.info("check if the list of tag exist with id tag type is {}", id);
-		var tags = this.getEntityManager().createNamedQuery(QUERY_FIND_TAG_TYPE).getResultList();
+		var tags = this.getEntityManager().createNamedQuery(QUERY_FIND_TAG_TYPE).setParameter("id", id).getResultList();
 		if(!tags.isEmpty())
 			return true;
 		LOGGER.info("no tag type {} exist for tag ", id);
@@ -60,6 +64,15 @@ public class TagService extends
 			this.remove(tag);
 		}
 		LOGGER.info("removing tag {} successfully!", id);
+	}
+
+	public Tag findByCode(String parentTagCode) {
+		try {
+			return(Tag) getEntityManager().createNamedQuery("Tag.findByCode").setParameter("code", parentTagCode).getSingleResult();
+		}catch(NoResultException e) {
+			LOGGER.error(String.format(TAG_CODE_UNKNOWN, parentTagCode));
+			return null;
+		}
 	}
 	
 	

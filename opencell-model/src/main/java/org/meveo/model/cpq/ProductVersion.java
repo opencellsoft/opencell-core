@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name = "cpq_product_version")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
+@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p.tagList in (:tagIds)")
 public class ProductVersion extends BaseEntity{
 
 
