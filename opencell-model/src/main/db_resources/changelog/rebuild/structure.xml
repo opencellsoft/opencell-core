@@ -10457,6 +10457,26 @@ $$ LANGUAGE plpgsql;
 			<column name="charge_template_id" type="bigint" /> 
 		</createTable>
 	</changeSet> 
+	
+	 <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-30">
+        <createTable tableName="cpq_accounting_article">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="cpq_accounting_article_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" /> 
+        </createTable>
+    </changeSet>
     
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-01">
         <addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cpq_product" constraintName="fk_1y8p1q0o8tw5u0vcodfukdbez" deferrable="false" initiallyDeferred="false"
