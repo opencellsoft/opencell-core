@@ -96,8 +96,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-        	result.setProductLineDto(productLineApi.findByCode(code));
-        } catch (Exception e) {
+        	result.setProductLineDto(productLineApi.findOne(code));        } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
         return result;

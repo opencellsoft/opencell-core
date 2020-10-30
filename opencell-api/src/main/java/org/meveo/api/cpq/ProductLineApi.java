@@ -64,8 +64,7 @@ public class ProductLineApi extends BaseApi {
 		return productLineService.findByCodeLike(code);
 	}
 	
-	public ProductLineDto findByCode(String code) {
-		if(code == null || code.strip().equals("") ) {
+	public ProductLineDto findOne(String code) {		if(code == null || code.strip().equals("") ) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();

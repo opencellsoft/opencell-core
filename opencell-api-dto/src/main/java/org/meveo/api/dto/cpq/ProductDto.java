@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 @XmlRootElement(name = "ProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,7 +22,7 @@ public class ProductDto {
 	private Long id;
 	private String code;
 	private String label;
-	private int status;
+	private ProductStatusEnum status;
 	private Date statusDate;
 	private ProductLineDto productLine;
 	private CustomerBrandDto brand;
@@ -38,7 +40,7 @@ public class ProductDto {
     	this.id = p.getId();
     	this.code = p.getCode();
     	this.label = p.getDescription();
-    	this.status = p.getStatus().getValue();
+    	this.status = p.getStatus();
     	this.statusDate = p.getStatusDate();
     	if(p.getProductLine() != null) {
         	this.productLine = new ProductLineDto(p.getProductLine());
@@ -61,13 +63,13 @@ public class ProductDto {
 	/**
 	 * @return the status
 	 */
-	public int getStatus() {
+	public ProductStatusEnum getStatus() {
 		return status;
 	}
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(int status) {
+	public void setStatus(ProductStatusEnum status) {
 		this.status = status;
 	}
 	/**

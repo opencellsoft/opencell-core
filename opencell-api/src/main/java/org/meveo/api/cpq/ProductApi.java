@@ -137,6 +137,45 @@ public class ProductApi extends BaseApi {
 	}
 	
 	
+
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public ProductLineDto createProductLine(ProductLineDto dto){
+		try {
+			return new ProductLineDto(productLineApi.createProductLine(dto));
+		} catch (ProductLineException e) {
+			throw new BusinessApiException(e);
+
+		}
+	}
+
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public ProductLineDto updateProductLine(ProductLineDto dto){
+		try {
+			return new ProductLineDto(productLineApi.updateProductLine(dto));
+		} catch (ProductLineException e) {
+			throw new BusinessApiException(e);
+
+		}
+	}
+
+	/**
+	 * @param code
+	 * @return
+	 */
+	public ProductLineDto findProductLineByCode(String code) {
+		try {
+			return new ProductLineDto(productLineApi.findProductLineByCode(code));
+		} catch (ProductLineException e) {
+			throw new BusinessApiException(e);
+
+		}
+	}
 	
 	
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException, ProductException {

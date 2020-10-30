@@ -18,6 +18,7 @@ import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
