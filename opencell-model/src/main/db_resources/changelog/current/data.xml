@@ -1686,5 +1686,13 @@ public class ValidateBRScript extends Script {
             <column name="occ_category" value="CREDIT" />
         </insert>        
       </changeSet>
+      
+    <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
+    	<update tableName="billing_billing_run"> 
+    	<column name="status" value="INVOICES_GENERATED"/>
+    	<where>status='INVOICES_GENERRATED'</where>
+    	</update>
+    </changeSet>
+      
     
 </databaseChangeLog>
