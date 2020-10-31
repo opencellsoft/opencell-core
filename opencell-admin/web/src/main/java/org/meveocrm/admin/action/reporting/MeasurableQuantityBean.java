@@ -78,6 +78,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
     public MeasurableQuantityBean() {
         super(MeasurableQuantity.class);
+        showDeprecatedWarning();
     }
 
     @Override
