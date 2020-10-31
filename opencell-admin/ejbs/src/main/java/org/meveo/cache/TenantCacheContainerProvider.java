@@ -133,7 +133,7 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
             provider.getLanguage().getLanguageCode();
         }
         if (provider.getInvoiceConfiguration() != null) {
-            provider.getInvoiceConfiguration().getDisplayBillingCycle();
+            provider.getInvoiceConfiguration().isDisplayBillingCycle();
         }
         if (provider.getGdprConfiguration() != null) {
             provider.getGdprConfiguration().getAccountingLife();

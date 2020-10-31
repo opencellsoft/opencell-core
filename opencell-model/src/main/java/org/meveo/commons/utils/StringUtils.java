@@ -67,7 +67,7 @@ public class StringUtils {
         return (value == null || value.trim().isEmpty());
     }
 
-    public static boolean isNotBlank(String value){
+    public static boolean isNotBlank(String value) {
         return !isBlank(value);
     }
 
@@ -89,7 +89,7 @@ public class StringUtils {
                 }
 
                 if (s.getClass().isArray()) {
-                    sb.append(StringUtils.concatenate(",", (String[])s));
+                    sb.append(StringUtils.concatenate(",", (String[]) s));
                 } else {
                     sb.append(s);
                 }
@@ -296,8 +296,26 @@ public class StringUtils {
         return newValue;
     }
 
+    /**
+     * Return a value or a default value if empty
+     * 
+     * @param value Value to check
+     * @param defaultValue A default value to return if value is empty
+     * @return A value or a default value if empty
+     */
     public static final String getDefaultIfEmpty(String value, String defaultValue) {
         return org.apache.commons.lang3.StringUtils.isNotEmpty(value) ? value : defaultValue;
+    }
+
+    /**
+     * Return a value or a default value if null
+     * 
+     * @param value Value to check
+     * @param defaultValue A default value to return if value is null
+     * @return A value or a default value if null
+     */
+    public static final String getDefaultIfNull(String value, String defaultValue) {
+        return value != null ? value : defaultValue;
     }
 
     /**
