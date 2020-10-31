@@ -8,11 +8,15 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
+import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.service.cpq.exception.ProductException;
+import org.meveo.service.cpq.exception.ProductVersionException;
 
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
@@ -101,5 +105,53 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         }
         return result;
 	}
+	
+	
+	@Override
+	public ActionStatus createOrUpdateProductVersion(ProductVersionDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            productApi.createOrUpdateProductVersion(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+	
+	public ActionStatus removeProductVersion(String productCode,int currentVersion) { 
+
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			productApi.removeProductVersion(productCode, currentVersion);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateProductVersionStatus(String productCode, int currentVersion,VersionStatusEnum status) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			productApi.UpdateProductVersionStatus(productCode, currentVersion, status);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
+	}
+	
+	
+	public ActionStatus duplicateProductVersion(String productCode,int currentVersion) { 
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			productApi.duplicateProductVersion(productCode, currentVersion);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
+	}
+ 
 
 }
