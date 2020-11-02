@@ -126,7 +126,7 @@ public class FilteringJobBean extends BaseJobBean {
                 Map<Object, Object> elContext = new HashMap<>();
                 elContext.put("manager", manager);
                 elContext.put("currentUser", currentUser);
-                elContext.put("appProvider", currentUser);
+                elContext.put("appProvider", appProvider);
 
                 for (Map.Entry<String, Object> entry : scriptParams.entrySet()) {
                     if (entry.getValue() instanceof String) {
@@ -147,7 +147,7 @@ public class FilteringJobBean extends BaseJobBean {
                 Map<Object, Object> elContext = new HashMap<>();
                 elContext.put("manager", manager);
                 elContext.put("currentUser", currentUser);
-                elContext.put("appProvider", currentUser);
+                elContext.put("appProvider", appProvider);
 
                 for (Map.Entry<String, Object> entry : sqlVariables.entrySet()) {
                     if (entry.getValue() instanceof String) {

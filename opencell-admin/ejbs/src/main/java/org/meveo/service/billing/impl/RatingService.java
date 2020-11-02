@@ -918,12 +918,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         for (Long woId : woIds) {
 
             try {
-                ratingServiceNewTX.reRate(woId, useSamePricePlan);
+                ratingServiceNewTX.reRateInNewTx(woId, useSamePricePlan);
 
             } catch (RatingException e) {
                 log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
@@ -937,7 +937,34 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
-     * Rerate wallet operation
+     * Re-rate wallet operations together. Each wallet operation is rerated and marked as failed to rerate if error occurs.
+     * 
+     * @param woIds Ids of wallet operations to be re-rated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+
+        for (Long woId : woIds) {
+
+            try {
+                reRate(woId, useSamePricePlan);
+
+            } catch (RatingException e) {
+                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
+                throw e;
+
+            } catch (BusinessException e) {
+                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
+                throw e;
+            }
+        }
+
+    }
+
+    /**
+     * Rerate wallet operation in new transaction
      * 
      * @param operationToRerateId wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
@@ -946,6 +973,18 @@ public class RatingService extends PersistenceService<WalletOperation> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void reRateInNewTx(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
+        reRate(operationToRerateId, useSamePricePlan);
+    }
+
+    /**
+     * Rerate wallet operation
+     * 
+     * @param operationToRerateId wallet operation to be rerated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
@@ -1001,7 +1040,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
             operation.setUnitAmountWithTax(null);
             operation.setUnitAmountTax(null);
 
-            rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(), priceplan.getTradingCurrency());
+            rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
+                priceplan != null ? priceplan.getTradingCurrency() : null);
         }
         create(operation);
 

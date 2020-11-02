@@ -138,7 +138,12 @@ public class ReratingService implements Serializable {
                 countToRerate = walletOperationService.markToRerateInNewTx(woIdsToRerate, rerateInvoiced);
             }
             if (countToRerate > 0) {
-                ratingService.reRate(woIdsToRerate, false);
+
+                if (sameTx) {
+                    ratingService.reRate(woIdsToRerate, false);
+                } else {
+                    ratingService.reRateInNewTx(woIdsToRerate, false);
+                }
             }
 
             // Recurring charges will result in refunding and/or canceling WOs, retroceding recurringChargeInstance.chargedToDate value and recreating them again via a standard

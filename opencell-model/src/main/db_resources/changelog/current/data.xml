@@ -2096,4 +2096,11 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
     
+    <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
+    	<update tableName="billing_billing_run"> 
+    	<column name="status" value="INVOICES_GENERATED"/>
+    	<where>status='INVOICES_GENERRATED'</where>
+    	</update>
+    </changeSet>
+    
 </databaseChangeLog>

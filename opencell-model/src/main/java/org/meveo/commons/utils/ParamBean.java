@@ -690,4 +690,32 @@ public class ParamBean {
         }
         return false;
     }
+    
+    /**
+     * Check if boolean property is filled, the boolean value will be returned. if the value is not filled or not well spelled, null value is returned
+     *
+     * @param key Property key
+     * @return true/false/null
+     */
+	public Boolean getBooleanValue(String key) {
+		if (getProperty(key, "").equalsIgnoreCase("true")) {
+			return true;
+		}
+		if (getProperty(key, "").equalsIgnoreCase("false")) {
+			return false;
+		}
+		return null;
+	}
+	
+    /**
+     * Check if boolean property is filled, the boolean value will be returned. if the value is not filled or not well spelled, defaultValue value is returned
+     *
+     * @param key Property key
+     * @param defaultValue Default value
+     * @return true/false/null
+     */
+	public boolean getBooleanValue(String key, boolean defaultValue) {
+		return getBooleanValue(key) != null ? getBooleanValue(key) : defaultValue;
+	}
+	
 }

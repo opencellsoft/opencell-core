@@ -41,8 +41,7 @@ import org.meveo.model.IEntity;
 @ExportIdentifier({ "provider" })
 @Cacheable
 @Table(name = "billing_invoice_configuration")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
 public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
 
     private static final long serialVersionUID = -735961368678724497L;
@@ -52,71 +51,70 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_subscriptions")
-    private Boolean displaySubscriptions = false;
+    private boolean displaySubscriptions = false;
 
     /**
      * Should services be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_services")
-    private Boolean displayServices = false;
+    private boolean displayServices = false;
 
     /**
      * Should offers be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_offers")
-    private Boolean displayOffers = false;
+    private boolean displayOffers = false;
 
     /**
      * Should price plans be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_priceplans")
-    private Boolean displayPricePlans = false;
+    private boolean displayPricePlans = false;
 
     /**
      * Should EDRs be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_edrs")
-    private Boolean displayEdrs = false;
+    private boolean displayEdrs = false;
 
     /**
      * Should provider information be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_provider")
-    private Boolean displayProvider = false;
+    private boolean displayProvider = false;
 
     /**
      * Should subcategory aggregates be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_detail")
-    private Boolean displayDetail = true;
+    private boolean displayDetail = true;
 
     /**
      * Should custom field values be displayed in the XML invoice in XML or JSON format
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_cf_as_xml")
-    private Boolean displayCfAsXML = false;
-
+    private boolean displayCfAsXML = false;
 
     /**
      * Should Billing cycle be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_billing_cycle")
-    private Boolean displayBillingCycle = false;
+    private boolean displayBillingCycle = false;
 
     /**
      * Should orders be displayed in the XML invoice
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_orders")
-    private Boolean displayOrders = false;
+    private boolean displayOrders = false;
 
     /**
      * Next to be assigned invoice number
@@ -129,110 +127,106 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     @Type(type = "numeric_boolean")
     @Column(name = "display_wallet_operations")
-    private Boolean displayWalletOperations = false;
+    private boolean displayWalletOperations = false;
 
-    
-    public Boolean getDisplayWalletOperations() {
-		return displayWalletOperations;
-	}
+    public boolean isDisplayWalletOperations() {
+        return displayWalletOperations;
+    }
 
-	public void setDisplayWalletOperations(Boolean displayWalletOperations) {
-		this.displayWalletOperations = displayWalletOperations;
-	}
+    public void setDisplayWalletOperations(boolean displayWalletOperations) {
+        this.displayWalletOperations = displayWalletOperations;
+    }
 
-	public Boolean getDisplaySubscriptions() {
+    public boolean isDisplaySubscriptions() {
         return displaySubscriptions;
     }
 
-    public void setDisplaySubscriptions(Boolean displaySubscriptions) {
+    public void setDisplaySubscriptions(boolean displaySubscriptions) {
         this.displaySubscriptions = displaySubscriptions;
     }
 
-    public Boolean getDisplayServices() {
+    public boolean isDisplayServices() {
         return displayServices;
     }
 
-    public void setDisplayServices(Boolean displayServices) {
+    public void setDisplayServices(boolean displayServices) {
         this.displayServices = displayServices;
     }
 
-    public Boolean getDisplayOffers() {
+    public boolean isDisplayOffers() {
         return displayOffers;
     }
 
-    public void setDisplayOffers(Boolean displayOffers) {
+    public void setDisplayOffers(boolean displayOffers) {
         this.displayOffers = displayOffers;
     }
 
-    public Boolean getDisplayPricePlans() {
+    public boolean isDisplayPricePlans() {
         return displayPricePlans;
     }
 
-    public void setDisplayPricePlans(Boolean displayPricePlans) {
+    public void setDisplayPricePlans(boolean displayPricePlans) {
         this.displayPricePlans = displayPricePlans;
     }
 
-    public Boolean getDisplayEdrs() {
+    public boolean isDisplayEdrs() {
         return displayEdrs;
     }
 
-    public void setDisplayEdrs(Boolean displayEdrs) {
+    public void setDisplayEdrs(boolean displayEdrs) {
         this.displayEdrs = displayEdrs;
     }
 
-    public Boolean getDisplayProvider() {
+    public boolean isDisplayProvider() {
         return displayProvider;
     }
 
-    public void setDisplayProvider(Boolean displayProvider) {
+    public void setDisplayProvider(boolean displayProvider) {
         this.displayProvider = displayProvider;
     }
 
-    public Boolean getDisplayDetail() {
+    public boolean isDisplayDetail() {
         return displayDetail;
     }
 
-    public void setDisplayDetail(Boolean displayDetail) {
+    public void setDisplayDetail(boolean displayDetail) {
         this.displayDetail = displayDetail;
     }
 
-    public Boolean getDisplayCfAsXML() {
+    public boolean isDisplayCfAsXML() {
         return displayCfAsXML;
     }
 
-    public void setDisplayCfAsXML(Boolean displayCfAsXML) {
+    public void setDisplayCfAsXML(boolean displayCfAsXML) {
         this.displayCfAsXML = displayCfAsXML;
     }
 
-
-
-    public Boolean getDisplayBillingCycle() {
+    public boolean isDisplayBillingCycle() {
         return displayBillingCycle;
     }
 
-    public void setDisplayBillingCycle(Boolean displayBillingCycle) {
+    public void setDisplayBillingCycle(boolean displayBillingCycle) {
         this.displayBillingCycle = displayBillingCycle;
     }
 
     @Override
     public String toString() {
-        return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
-                + "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail
-                + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations=" + displayWalletOperations + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders="
-                + displayOrders + "]";
+        return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", " + "displayPricePlans=" + displayPricePlans
+                + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations="
+                + displayWalletOperations + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + "]";
     }
 
     /**
      * @return the displayOrders
      */
-    public Boolean getDisplayOrders() {
+    public boolean isDisplayOrders() {
         return displayOrders;
     }
 
     /**
      * @param displayOrders the displayOrders to set
      */
-    public void setDisplayOrders(Boolean displayOrders) {
+    public void setDisplayOrders(boolean displayOrders) {
         this.displayOrders = displayOrders;
     }
 
