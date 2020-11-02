@@ -2095,6 +2095,10 @@ public class ValidateBRScript extends Script {
             <where>code='UNBILLED_UA_HIERARCHY'</where>
         </update>
     </changeSet>
+	
+	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
+		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
+	</changeSet>
     
     <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
     	<update tableName="billing_billing_run"> 
