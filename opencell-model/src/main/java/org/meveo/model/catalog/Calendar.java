@@ -134,4 +134,9 @@ public abstract class Calendar extends BusinessEntity {
     public Date truncateDateTime(Date dateToTruncate) {
         return dateToTruncate;
     }
+
+    protected Date nextCalendarDate(Date date, Date initDate) {
+        setInitDate(initDate);
+        return nextCalendarDate(date);
+    }
 }
