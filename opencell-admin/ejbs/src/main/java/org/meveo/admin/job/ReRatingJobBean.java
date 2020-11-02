@@ -69,7 +69,7 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
                     break;
                 }
                 try {
-                    ratingService.reRate(walletOperationId, useSamePricePlan);
+                    ratingService.reRateInNewTx(walletOperationId, useSamePricePlan);
                     result.registerSucces();
                 } catch (Exception e) {
                     // rejectededOperationProducer.fire(walletOperationId);
