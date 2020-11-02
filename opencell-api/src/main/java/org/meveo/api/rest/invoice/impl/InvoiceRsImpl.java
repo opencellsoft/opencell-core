@@ -129,7 +129,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findXMLInvoiceWithType(null, invoiceNumber, invoiceType);
+        return findXMLInvoiceWithType(xmlInvoiceRequestDto.getInvoiceId(), invoiceNumber, invoiceType);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         }
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(null, invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
+            result.setPdfContent(invoiceApi.getPdfInvoice(pdfInvoiceRequestDto.getInvoiceId(), invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
