@@ -66,6 +66,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Singleton
 @Lock(LockType.READ)
+@Deprecated
 public class ElasticSearchConfiguration implements Serializable {
 
     private static final long serialVersionUID = 7200163625956435849L;
