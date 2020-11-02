@@ -220,6 +220,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private UploadedFile uploadedFile;
 
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
+    
+    public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
     /**
      * Constructor
@@ -1632,6 +1634,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         // Check that two dates are one after another
         return !(from != null && to != null && from.compareTo(to) > 0);
+    }
+    
+    public static void showDeprecatedWarning() {
+    	List<FacesMessage> messageList = FacesContext.getCurrentInstance().getMessageList();
+		if(messageList!=null && messageList.stream().anyMatch(x->FacesMessage.SEVERITY_WARN.equals(x.getSeverity())&& DEPRECATED_FEATURE.equals(x.getSummary()))) {
+			return;
+    	}
+    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, DEPRECATED_FEATURE, DEPRECATED_FEATURE));
     }
 
 }

@@ -30,6 +30,7 @@ import org.meveo.model.customEntities.CustomTableRecord;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class CacheKeyESIndex implements Serializable {
 
     private static final long serialVersionUID = -7102146427175802501L;
