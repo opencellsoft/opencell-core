@@ -7011,7 +7011,8 @@
 									"script": {
 										"id": "3fbf0fe3-2a1e-4179-8ff1-bc073a455c9d",
 										"exec": [
-											""
+											"//pm.globals.set(\"bc_code\",pm.variables.get(\"entityCode\"));\r",
+											"//console.log(\"bc_code\",pm.globals.get(\"bc_code\"));"
 										],
 										"type": "text/javascript"
 									}
@@ -11918,7 +11919,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"email\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\": \"{{currency}}\",\r\n    \"language\": \"{{language}}\",\r\n    \"name\": {\r\n        \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"email\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -12389,7 +12390,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"customer\": \"{{customerCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\":\"{{currency}}\",\r\n    \"language\":\"{{language}}\",\r\n    \"name\": {\r\n       \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"currency\":\"{{currency}}\",\r\n    \"language\":\"{{language}}\",\r\n    \"name\": {\r\n       \"title\": \"{{customer_title}}\",\r\n        \"firstName\": \"{{first_name}}\",\r\n        \"lastName\": \"{{last_name}}\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"{{address}}\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"{{zip_code}}\",\r\n        \"city\": \"{{city}}\",\r\n        \"country\": \"{{counrty_code}}\",\r\n        \"state\": \"{{state}}\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    }\r\n}",
 									"options": {
 										"raw": {}
 									}
@@ -16833,7 +16834,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -16860,10 +16861,10 @@
 									"script": {
 										"id": "1207bdac-9893-4207-8f1e-3794a597a860",
 										"exec": [
+											"var data = pm.response.json();",
 											"pm.test(request.name + \" - Check Data\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.offerTemplate.validFrom).to.contains(\"{{validFrom}}\");",
-											"    pm.expect(jsonData.offerTemplate.validTo).to.contains(\"{{validTo}}\");",
+											"    pm.expect(data.offerTemplate.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"    pm.expect(data.offerTemplate.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
 											"});"
 										],
 										"type": "text/javascript"
@@ -16992,7 +16993,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -17029,7 +17030,7 @@
 										"id": "f672ea3a-1d68-42f3-9b31-750676309832",
 										"exec": [
 											"pm.variables.set(\"messageEql\", false);\r",
-											"pm.variables.set(\"message\", \"OfferTemplate with code= NOT_EXIST\");"
+											"pm.variables.set(\"message\", \"OfferTemplate with code=NOT_EXIST\");"
 										],
 										"type": "text/javascript"
 									}
@@ -17066,7 +17067,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{not_exist}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{not_exist}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -17129,7 +17130,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -17192,7 +17193,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -17219,10 +17220,10 @@
 									"script": {
 										"id": "c79c36ce-566c-4922-b11a-8d0bf3e3cc5c",
 										"exec": [
+											"var data = pm.response.json();",
 											"pm.test(request.name + \" - Check Data \", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.offerTemplate.validFrom).to.contain(\"2020-01-01T\");",
-											"    pm.expect(jsonData.offerTemplate.validTo).to.contain(\"2020-02-01T\");",
+											"    pm.expect(data.offerTemplate.validFrom).to.contains(pm.collectionVariables.get(\"valid_from\"));",
+											"    pm.expect(data.offerTemplate.validTo).to.contains(pm.collectionVariables.get(\"valid_to\"));",
 											"});"
 										],
 										"type": "text/javascript"
@@ -17350,7 +17351,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"INVALID\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"SE_USG_UNIT\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"5_SE_CLASSIC_REC_FLAT\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"INVALID\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"SE_USG_UNIT\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"5_SE_CLASSIC_REC_FLAT\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -17387,7 +17388,7 @@
 									"script": {
 										"id": "eec30e94-d915-4f3b-82fc-ab3ed383be96",
 										"exec": [
-											"pm.variables.set(\"message\", \"An offer, valid on 01/01/2020 - 01/03/2020, already exists. Please change the validity dates of an existing offer first.\");"
+											"pm.variables.set(\"message\", \"An offer, valid on 01/01/2020 - , already exists. Please change the validity dates of an existing offer first.\");"
 										],
 										"type": "text/javascript"
 									}
@@ -17424,167 +17425,20 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{valid_to}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{state}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"validFrom\": \"{{valid_from}}\",\r\n    \"validTo\": \"{{not_exist}}\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"{{entity_status}}\",\r\n    \"bomCode\": null,\r\n    \"offerTemplateCategoryCode\": null,\r\n    \"offerServiceTemplate\": [\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code1}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        },\r\n        {\r\n            \"serviceTemplate\": {\r\n                \"code\": \"{{service_temp_code2}}\",\r\n                \"customFields\": null\r\n            },\r\n            \"mandatory\": false\r\n        }\r\n    ]\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"offerTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|OfferTemplate|OT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "eb02990c-2791-4074-ad5d-d81a7fa2c568",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}?validFrom={{valid_from}}&validTo={{valid_to}}",
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"offerTemplate",
-										"{{entityCode}}"
-									],
-									"query": [
-										{
-											"key": "validFrom",
-											"value": "{{valid_from}}"
-										},
-										{
-											"key": "validTo",
-											"value": "{{valid_to}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|OfferTemplate|OT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ca44cf0f-e651-477c-b8e0-8d3380e9ea38",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "8c3506dc-213f-480d-8092-f70295075944",
-										"exec": [
-											"pm.variables.set(\"message\", \"OfferTemplate with code=TEST_OT /  /  does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"offerTemplate",
-										"{{entityCode}}"
+										"createOrUpdate"
 									]
 								}
 							},
@@ -27493,69 +27347,6 @@
 							"response": []
 						},
 						{
-							"name": "Delete|BillingCycle|BC|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "d5199989-d9f5-4587-bf1d-7aedbf6f993a",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Delete|Seller|SELLER|SUCCESS",
 							"event": [
 								{
@@ -27727,6 +27518,69 @@
 								"body": {
 									"mode": "raw",
 									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|BillingCycle|BC|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d5199989-d9f5-4587-bf1d-7aedbf6f993a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
 									"options": {
 										"raw": {}
 									}
@@ -29144,6 +28998,144 @@
 						{
 							"name": "Catalog",
 							"item": [
+								{
+									"name": "Delete|OfferTemplate|OT|SUCCESS",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "eb02990c-2791-4074-ad5d-d81a7fa2c568",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{auth}}"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"offerTemplate",
+												"{{entityCode}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete|OfferTemplate|OT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "ca44cf0f-e651-477c-b8e0-8d3380e9ea38",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "8c3506dc-213f-480d-8092-f70295075944",
+												"exec": [
+													"pm.variables.set(\"message\", \"OfferTemplate with code=TEST_OT /  /  does not exists.\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{auth}}"
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/catalog/offerTemplate/{{entityCode}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"catalog",
+												"offerTemplate",
+												"{{entityCode}}"
+											]
+										}
+									},
+									"response": []
+								},
 								{
 									"name": "Delete|TaxClass|TC|INVALID_PARAMETER",
 									"event": [
@@ -30579,242 +30571,242 @@
 	],
 	"variable": [
 		{
-			"id": "98870513-e2bb-459e-8a02-12b1ece60562",
+			"id": "914cd772-4b5a-493b-a928-f5e15542513d",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
-			"id": "2ce80897-da27-4086-a5bf-679d82816eca",
+			"id": "9b9b1e9d-c327-42f6-a047-c9a276964501",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "5b522faa-b4b9-40cf-be71-a725d681e627",
+			"id": "ba5ce309-5997-4c7b-b538-cdcd790cbf7d",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "e7a715b0-750d-4733-a502-b413e7a72a0b",
+			"id": "59a11148-9c17-49fe-813f-9b242223c2cb",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "d3e7a069-504e-4a0d-b6fb-dd02b749cc12",
+			"id": "3ca9a0ef-be0a-4ab2-9c6a-406409eb6d1d",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "8c97c7ba-aa54-4a27-800d-1751fcce8db2",
-			"key": "opencell.superpassword",
-			"value": "opencell.superadmin"
-		},
-		{
-			"id": "0d98826c-4b84-45a5-a2d9-4cb7331f2504",
-			"key": "testCode",
-			"value": "TEST"
-		},
-		{
-			"id": "e19ffaab-20e0-486d-b3f7-1b74058999b5",
-			"key": "testDescription",
-			"value": "This is a test description"
-		},
-		{
-			"id": "aa1ca284-5929-4d6e-8f17-752fa2c55629",
-			"key": "timezone",
-			"value": "CET"
-		},
-		{
-			"id": "80a6260e-5bbe-4571-af5d-5d60ef81f65f",
+			"id": "2f08d310-42c0-4c3b-87d6-05d3af1f36b8",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "f8615bf3-5151-4faa-b305-08fc64b43481",
+			"id": "ae61b2f6-eab5-414f-9b11-399dd0ba9adb",
+			"key": "opencell.superpassword",
+			"value": "opencell.superadmin"
+		},
+		{
+			"id": "3eefe421-adc4-466a-8e13-dacb8d4e713f",
+			"key": "testCode",
+			"value": "TEST"
+		},
+		{
+			"id": "51d199b7-048f-41f0-a4c1-9ee80bf41868",
+			"key": "testDescription",
+			"value": "This is a test description"
+		},
+		{
+			"id": "fa89811d-6e0b-4fb1-a94d-8c153eaecfeb",
+			"key": "timezone",
+			"value": "CET"
+		},
+		{
+			"id": "ca2457a5-dbf0-4778-9078-e5487c825489",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "ee2fcf14-08d6-43d5-9b04-0650ef0857a1",
+			"id": "a150f699-a014-44be-bf52-fb02f4ca62ac",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "615937fe-0489-4943-b4a8-7cbf4e582ab0",
+			"id": "b8b34569-3c5b-4d8d-b88e-eb6571d139f8",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "e896c79f-acd0-406c-abe2-ce6ef2cfa240",
+			"id": "5b97d17d-73a6-4924-9c7a-7a35b101913f",
 			"key": "oc_category",
 			"value": "CREDIT"
 		},
 		{
-			"id": "69b9e2c0-0005-46ce-99be-48b77b387131",
+			"id": "ea8276aa-08ea-4798-b24e-eee378092951",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "2113b8f2-670f-4122-8402-04eca22a5111",
+			"id": "f574b2dc-2e02-4c33-bc80-5ddebdd29591",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "34680dad-0796-4a2b-ad2c-a8476d208ff5",
+			"id": "1b49e812-f281-4023-9f47-5d718e523ab2",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "83e87c6e-e71b-4186-9257-bcbb0d97c799",
+			"id": "defdcd00-bb61-4ad3-a03b-a2be06c34828",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "20d10ebc-3970-4396-bbbc-9935d9eb182f",
+			"id": "3a85a4b6-de63-410d-a511-129fd8faebc2",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "16e88cd6-2b07-44ba-9543-13f1aa5c29f2",
+			"id": "513a0f38-a029-4e15-9fa2-a08dc23e1af5",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "7a0e4a72-9891-4162-a6c5-262314755aec",
+			"id": "efdc0b20-100a-45df-86cf-0eceb5cf125b",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "bacdcfbd-ab96-4182-a45b-c652a38e4592",
+			"id": "14be70f6-3fba-4184-bbdc-06545d582bb9",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "c257576b-396a-4989-bae8-9076469618ba",
+			"id": "d310ccb3-5f13-4df4-9b21-7a0b5f3c19d6",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "bf75759a-713c-4c78-838a-bfb9cb6381fb",
+			"id": "6457dcf5-5785-4332-950b-3f4868ca8d7d",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "7cbae187-517c-4210-b32c-3381b5ccd190",
+			"id": "8b980c0a-9bd8-4837-bb79-18ea74e7d19a",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "72b6deeb-0d80-40b4-96c6-b4a953d0cba1",
+			"id": "dc5d9f52-2b82-421e-b886-8abfe149df33",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "55c57568-7cec-40d0-888a-1292fec8b67d",
+			"id": "74356c07-70c8-4470-8bad-7a55edc75361",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "bdecacef-71ea-4ab1-88f8-cb186dd86354",
+			"id": "f3c61e8f-7018-4abb-baa0-b19142c2afae",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "6d79119a-2278-4741-a4dc-0481341291af",
+			"id": "c8682d7e-e95a-463d-a8ef-fe54ee27a670",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "000bcc05-5bc2-4a3a-8291-901173b04726",
+			"id": "fe643e2b-d59a-425a-bf85-2f05eca853d3",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "027798c1-9710-4be9-86a1-631d45728233",
+			"id": "b1a788a1-4549-4dcf-9325-18796705a693",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "22258a4b-be52-4626-9f96-c7b39a1e03be",
+			"id": "998350b3-6fc8-4669-a03e-b24f919f005a",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "5be1dd09-bf4d-4a98-8f6c-1a21c2f4f8e9",
+			"id": "c9f218f2-1c31-4013-8f8e-555801f08dce",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "c5349c09-fbf9-440e-bdb9-799854a38c41",
+			"id": "9b2d6eb3-c445-4bf1-a77c-4771249adaaf",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "7bcb14aa-1b4a-40d5-be52-69ec618f9754",
+			"id": "555929b5-a3aa-4414-9d90-bcdc51ae95f6",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "94057c26-48d2-4e1d-a18d-d30c917243df",
+			"id": "dec0bc47-2deb-414c-95d5-f45cfc212a2a",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "18780241-64df-4c70-b274-9e86bcf15690",
+			"id": "32ce8ff5-0461-431c-91af-1a0f9e33c53a",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "5d9733a0-c58f-43ca-8cf6-d0dab85761c9",
+			"id": "49303414-26f2-445e-9366-b16ae70fa3a4",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "dead9185-47f6-4348-b246-99ce12293171",
+			"id": "32383a0a-c003-4a1d-a216-0fee3ddad5a8",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "f0004f55-19c1-47bc-8e38-2c6d9b31b632",
+			"id": "67205028-2a27-4c8e-ae54-44ec7d06f99b",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "6fc99396-1e8c-4601-a4e3-87bf5344890b",
+			"id": "340cc001-f98d-47fc-a495-1a074edfd5e6",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "f270a94f-72af-4fdd-a14d-61db32bb7487",
+			"id": "d348559a-f5de-4db3-ba6a-140c8dede1fe",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "7ea07f04-79d8-42b6-a5ec-f704c4bf1dff",
+			"id": "5b80ac4c-99ac-43f2-affe-f2b601fab2b0",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "574dd830-6069-4843-9fa3-858913bca2d7",
+			"id": "d1133c77-300b-4587-9b85-4459ef5c4a24",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "6f2742fc-9bfd-4a68-9cdc-817a631b0f8a",
+			"id": "9a090477-1d44-4b41-98b8-07fea15c2405",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "f16750fc-168f-4233-af2a-94712e1cd791",
+			"id": "a1996a8f-d2e7-428f-93e5-f6cbc558e456",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "cddb0647-3405-4131-91b8-4d46cb6c3f51",
+			"id": "09f0d79e-bbfa-4dbd-a163-3cc8d4c256f9",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "91246279-2c28-4621-81ec-2c9bfbc2acd8",
+			"id": "aad9eb8b-5898-4fef-89fc-a6e3fa1a8184",
 			"key": "entity_status",
 			"value": "ACTIVE"
 		}
