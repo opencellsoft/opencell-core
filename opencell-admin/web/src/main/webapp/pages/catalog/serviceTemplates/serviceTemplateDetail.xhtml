@@ -147,14 +147,16 @@
 								field="invoicingCalendar" valueLabelField="code"
 								required="false" popup="false" listBean="#{calendarBean}" />
 
-                            <hftl:formField label="#{messages['serviceTemplate.minimumLabelEl']}" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+                            <hftl:formField label="#{messages['serviceTemplate.minimumLabelEl']}" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" 
+                            rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                             <hftl:formField label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxEl':'serviceTemplate.minimumAmountWithTaxEl']}" field="minimumAmountEl"
-                                textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                             <hftl:formField label="#{messages['serviceTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                newLine="true" />
+                                newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                             <hftl:formField label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxElSpark':'serviceTemplate.minimumAmountWithTaxElSpark']}"
-                                field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
-                            <hftl:formField label="#{messages['serviceTemplate.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
+                                field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
+                            <hftl:formField label="#{messages['serviceTemplate.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" 
+                            rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/> 
 
                             <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 			                    <h:panelGroup id="serviceRenewal">
