@@ -3597,7 +3597,7 @@ END $$;]]>
         <sql>DROP INDEX IF EXISTS agregate_index_category_invoice_agregate</sql>
         <sql>DROP INDEX IF EXISTS billing_user_account_id_index</sql>
         <sql>DROP INDEX IF EXISTS cat_st_serv_mod_id_index</sql>
-        <sql>ALTER TABLE ar_credit_category DROP CONSTRAINT IF EXISTS ar_credit_category_pkey</sql>
+        <sql>DROP INDEX IF EXISTS ar_credit_category_id_key</sql>
 		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
 		<sql>DROP INDEX IF EXISTS adm_file_type_code_index</sql>
 		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
