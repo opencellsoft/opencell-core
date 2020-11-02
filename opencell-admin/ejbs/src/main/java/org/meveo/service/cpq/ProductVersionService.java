@@ -1,5 +1,6 @@
 package org.meveo.service.cpq;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -145,4 +146,9 @@ public class ProductVersionService extends
         }
         return  update(productVersion);
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<ProductVersion> findByTags(List<Long> tagIds) {
+		return this.getEntityManager().createNamedQuery("ProductVersion.findByTags").setParameter("tagIds", tagIds).getResultList();
+	}
 }
