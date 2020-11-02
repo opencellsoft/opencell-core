@@ -31,7 +31,6 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
