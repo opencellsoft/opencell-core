@@ -1741,7 +1741,22 @@ public class ValidateBRScript extends Script {
             <column name="permission_id" value="-120"></column>
         </insert>    
 	</changeSet>   
-	 
+	<changeSet id="#5418_20201030" author="Mohammed_ELAZZOUZI">
+	    <insert tableName="adm_role">
+            <column name="id" valueNumeric="-200" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="API v2 full access" />
+            <column name="role_name" value="APIv2_FULL_ACCESS" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" valueNumeric="-1" />
+            <column name="role_id" valueNumeric="-200" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" valueNumeric="-2" />
+            <column name="role_id" valueNumeric="-200" />
+        </insert>
+	</changeSet> 
  	<changeSet id="#5303_20200814 - CDR and Mediation" author="AmineTazi">
 		<insert tableName="adm_permission">
             <column name="id" valueNumeric="-121" />
@@ -1752,6 +1767,10 @@ public class ValidateBRScript extends Script {
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-121"></column>
         </insert>    
+	</changeSet>
+	
+	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
+		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
 	</changeSet>
     
     <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
