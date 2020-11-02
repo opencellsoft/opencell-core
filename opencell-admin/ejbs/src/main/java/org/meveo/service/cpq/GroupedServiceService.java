@@ -3,7 +3,7 @@ package org.meveo.service.cpq;
 import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.GroupedService;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * @author Mbarek-Ay
@@ -13,6 +13,6 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
-public class GroupedServiceService extends PersistenceService<GroupedService> {
+public class GroupedServiceService extends BusinessService<GroupedService> {
 
 }

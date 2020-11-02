@@ -173,7 +173,7 @@ public class ProductApi extends BaseApi {
 	 */
 	public ProductLineDto findProductLineByCode(String code) {
 		try {
-			return new ProductLineDto(productLineApi.findProductLineByCode(code));
+			return new ProductLineDto(productLineService.findByCode(code));
 		} catch (ProductLineException e) {
 			throw new BusinessApiException(e);
 
