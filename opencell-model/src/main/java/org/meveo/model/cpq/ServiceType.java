@@ -28,7 +28,7 @@ import org.meveo.model.cpq.enums.ServiceTypeEnum;
         @Parameter(name = "sequence_name", value = "cpq_service_type_seq"), })
 public class ServiceType extends BusinessEntity{
 
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	@Column(name = "service_type", nullable = false, length = 100)
 	private ServiceTypeEnum serviceType;
 }

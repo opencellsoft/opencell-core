@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
@@ -19,6 +18,9 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -49,6 +51,28 @@ public class Tag extends BusinessEntity {
 	private Seller seller;
 	
 	/**
+	 * product version associated to the entity
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_version_id")
+	private ProductVersion productVersion;
+	
+	/**
+	 * service template associated to the entity
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "service_template_id")
+	private ServiceTemplate serviceTemplate;
+	
+	
+	/**
+	 * offer template associated to the entity
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "offer_template_id")
+	private OfferTemplate offerTemplate;
+	
+	/**
 	 * translate the code of the tag to different language
 	 */
 	@Column(name = "name", nullable = false, length = 20)
@@ -75,8 +99,8 @@ public class Tag extends BusinessEntity {
 	 * the expression of language used on this entity are from {@link Customer} and {@link Subscription}
 	 * 
 	 */
-	@Column(name = "filter_el")
-	@Lob
+	@Size(max = 2000)
+    @Column(name = "filter_el", columnDefinition = "TEXT") 
 	private String filterEl;
 	
 	
@@ -149,6 +173,50 @@ public class Tag extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	/**
+	 * @return the serviceTemplate
+	 */
+	public ServiceTemplate getServiceTemplate() {
+		return serviceTemplate;
+	}
+
+	/**
+	 * @param serviceTemplate the serviceTemplate to set
+	 */
+	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+		this.serviceTemplate = serviceTemplate;
+	}
+
+	/**
+	 * @return the offerTemplate
+	 */
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	/**
+	 * @param offerTemplate the offerTemplate to set
+	 */
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
+	
+	
 
 
 
