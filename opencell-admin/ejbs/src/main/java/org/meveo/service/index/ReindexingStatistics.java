@@ -28,6 +28,7 @@ import java.util.Map.Entry;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class ReindexingStatistics implements Serializable {
 
     private static final long serialVersionUID = 5769400825175515203L;

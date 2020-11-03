@@ -92,6 +92,7 @@ import com.google.common.collect.Maps;
  * @author Andrius Karpavicius
  * @lastModifiedVersion 5.0
  */
+@Deprecated
 @Stateless
 public class ElasticClient {
 
