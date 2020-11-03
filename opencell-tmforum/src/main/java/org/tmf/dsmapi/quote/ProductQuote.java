@@ -130,6 +130,10 @@ public class ProductQuote implements Serializable {
 
     private List<GenerateInvoiceResultDto> invoices;
 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    protected Date prestationDateBegin;
+    protected int prestationDuration;
+    protected String opportunityRef;
     /**
      * 
      * Gets the value of the billingAccount property.
@@ -672,4 +676,46 @@ public class ProductQuote implements Serializable {
     public void setVirtual(boolean virtual) {
         isVirtual = virtual;
     }
+
+	/**
+	 * @return the prestationDateBegin
+	 */
+	public Date getPrestationDateBegin() {
+		return prestationDateBegin;
+	}
+
+	/**
+	 * @param prestationDateBegin the prestationDateBegin to set
+	 */
+	public void setPrestationDateBegin(Date prestationDateBegin) {
+		this.prestationDateBegin = prestationDateBegin;
+	}
+
+	/**
+	 * @return the prestationDuration
+	 */
+	public int getPrestationDuration() {
+		return prestationDuration;
+	}
+
+	/**
+	 * @param prestationDuration the prestationDuration to set
+	 */
+	public void setPrestationDuration(int prestationDuration) {
+		this.prestationDuration = prestationDuration;
+	}
+
+	/**
+	 * @return the opportunityRef
+	 */
+	public String getOpportunityRef() {
+		return opportunityRef;
+	}
+
+	/**
+	 * @param opportunityRef the opportunityRef to set
+	 */
+	public void setOpportunityRef(String opportunityRef) {
+		this.opportunityRef = opportunityRef;
+	}
 }
