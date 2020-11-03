@@ -85,17 +85,23 @@
                     try {
                         PropertyUtils.copyProperties(writeOff, accountOperation);
                         writeOff.setId(null);
+                        if(accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT)
+                            writeOff.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                        else
+                            writeOff.setTransactionCategory(OperationCategoryEnum.DEBIT);
+                        writeOff.setMatchingStatus(MatchingStatusEnum.L);
+                        accountOperation.setMatchingStatus(MatchingStatusEnum.L);
                         writeOffs.add(writeOff);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("error while copy ao to write off: " + accountOperation );
                     }
                 }
-                customerAccount.setAccountOperations(writeOffs);
+                customerAccount.getAccountOperations().addAll(writeOffs);
             }
 
             private void deleteDunningDocument(CustomerAccount customerAccount) {
-                for(AccountOperation accountOperation :customerAccount.getAccountOperations()){
-                    if(accountOperation instanceof RecordedInvoice){
+                for (AccountOperation accountOperation : customerAccount.getAccountOperations()) {
+                    if (accountOperation instanceof RecordedInvoice) {
                         ((RecordedInvoice) accountOperation).setDunningDocument(null);
                         ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.PAID);
                         accountOperationService.update(accountOperation);
