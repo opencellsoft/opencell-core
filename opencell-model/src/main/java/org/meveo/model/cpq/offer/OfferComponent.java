@@ -28,7 +28,7 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_offer_component", uniqueConstraints = @UniqueConstraint(columnNames = {"commercial_offer_id", "product_id"}))
+@Table(name = "cpq_offer_component", uniqueConstraints = @UniqueConstraint(columnNames = {"offer_template_id", "product_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_offer_component_seq"), })
 public class OfferComponent extends BaseEntity {

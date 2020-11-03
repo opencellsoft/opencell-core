@@ -322,6 +322,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * recurence duration
      */
     @Column(name = "recurrence_duration_enum")
+    @Enumerated(EnumType.STRING)
     protected RecurrenceDurationEnum recurrenceDurationEnum;
     
      

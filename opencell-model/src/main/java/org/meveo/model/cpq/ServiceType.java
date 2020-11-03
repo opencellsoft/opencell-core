@@ -1,3 +1,4 @@
+
 package org.meveo.model.cpq;
 
 import javax.persistence.Column;
