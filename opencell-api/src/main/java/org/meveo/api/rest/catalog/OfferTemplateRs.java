@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -41,6 +42,10 @@ import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OfferTemplate}.
@@ -130,6 +135,25 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/list")
     public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    
+    
+    /**
+     * List offerTemplates matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of offer templates
+     */
+    @POST
+    @Path("/cpq/list")
+    @Operation(summary = "List offers matching a given billing account code and filtering Criteria",
+    tags = { "OfferTemplate" },
+    description ="if billingAccountCode is given, this API returns all commercial offers available for a customer taking into account the customer context (filtering rules associated to the offer tags);",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All offers successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
+    })
+    public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 
+    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.

@@ -18,11 +18,13 @@
 
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Base64;
 import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
@@ -125,6 +127,21 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+    
+	@Override
+	public Response listPost(String billingAccountCode, PagingAndFiltering pagingAndFiltering) {
+		 GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
+
+	        try {
+	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 
+	        	 * pagination and filetring crieria and also given billing account code trading rules and tags ***////
+	            result = (offerTemplateApi.list(null, null, null, pagingAndFiltering));
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok().entity(result).build();
+	}
 
     @Override
     public ActionStatus remove(String offerTemplateCode, Date validFrom, Date validTo) {
@@ -180,4 +197,5 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+
 }
