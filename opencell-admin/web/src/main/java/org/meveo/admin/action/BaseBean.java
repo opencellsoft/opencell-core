@@ -17,13 +17,32 @@
  */
 package org.meveo.admin.action;
 
-import com.lapis.jsfexporter.csv.CSVExportOptions;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.enterprise.context.Conversation;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -62,24 +81,7 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.Conversation;
-import javax.faces.component.UIInput;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
  * Base GUI bean class. Used as a backing bean foundation for both detail and searchable list pages. Provides a brigde between xhtml pages and service level classes.
