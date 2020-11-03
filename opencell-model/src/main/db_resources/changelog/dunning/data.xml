@@ -85,15 +85,21 @@
                     try {
                         PropertyUtils.copyProperties(writeOff, accountOperation);
                         writeOff.setId(null);
-                        if(accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT)
+                        writeOff.setAccountingWritings(null);
+                        writeOff.setMatchingAmounts(null);
+                        writeOff.setPaymentHistories(null);
+                        writeOff.setInvoices(null);
+                        writeOff.setAuditableFields(null);
+                        if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT)
                             writeOff.setTransactionCategory(OperationCategoryEnum.CREDIT);
                         else
                             writeOff.setTransactionCategory(OperationCategoryEnum.DEBIT);
                         writeOff.setMatchingStatus(MatchingStatusEnum.L);
                         accountOperation.setMatchingStatus(MatchingStatusEnum.L);
+                        accountOperationService.create(writeOff);
                         writeOffs.add(writeOff);
                     } catch (Exception e) {
-                        log.error("error while copy ao to write off: " + accountOperation );
+                        log.error("error while copy ao to write off: " + accountOperation);
                     }
                 }
                 customerAccount.getAccountOperations().addAll(writeOffs);
