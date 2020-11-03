@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_product_version")
+@Table(name = "cpq_product_version",uniqueConstraints = @UniqueConstraint(columnNames = { "product_code", "version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ @NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join  bv.product p where p.code=:productCode and pv.currentVersion=:currentVersion"),
@@ -71,7 +72,7 @@ public class ProductVersion extends BaseEntity{
      * version of the product<br />
      * this value is auto increment, do not use its method setVersion
      */
-    @Column(name = "version", nullable = false)
+    @Column(name = "current_version", nullable = false)
     @Min(1)
     private int currentVersion;
     

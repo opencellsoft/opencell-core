@@ -25,7 +25,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "quote.code" , "quoteVersion"}))
+@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "quote_id" , "quote_version"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
 @NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.code=:code and q.quoteVersion=:quoteVersion")

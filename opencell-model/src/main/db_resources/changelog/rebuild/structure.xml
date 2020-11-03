@@ -10494,7 +10494,7 @@ $$ LANGUAGE plpgsql;
 		<createTable tableName="cpq_product_mapping">
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
 				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="cpq_grouped_service_pkey" />
+					primaryKeyName="cpq_product_mapping_pkey" />
 			</column>
 			<column name="version" type="int4" />
 			<column name="created" type="datetime">
@@ -10896,7 +10896,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="540-31_20201023_PricePlanVersion" author="TarikF">
         <createTable tableName="cpq_price_plan_version">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_version_pkey" />
             </column>
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
@@ -11070,12 +11070,12 @@ $$ LANGUAGE plpgsql;
       </changeSet>
       
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-32">
-        <addForeignKeyConstraint baseColumnNames="service_2" baseTableName="cpq_product_mapping" constraintName="fk2-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="service_2" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-33">
-        <addForeignKeyConstraint baseColumnNames="service_3" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="service_3" baseTableName="cpq_product_mapping" constraintName="fk4-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       
@@ -11089,27 +11089,27 @@ $$ LANGUAGE plpgsql;
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
       </changeSet>
      
-<!--     <changeSet id="540-15_20201019_servicetype" author="TarikF"> -->
-<!--     	<createTable tableName="cpq_service_type"> -->
-<!--     		<column name="id" type="bigint" autoIncrement="${id.auto}"> -->
-<!--                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" /> -->
-<!--             </column> -->
-<!--             <column name="code" type="varchar(255)"> -->
-<!--                 <constraints nullable="false" /> -->
-<!--             </column> -->
-<!--             <column name="description" type="varchar(255)" />   -->
-<!--             <column name="version" type="int4" /> -->
-<!--             <column name="creator" type="varchar(100)" /> -->
-<!--             <column name="created" type="datetime"> -->
-<!--                 <constraints nullable="false" /> -->
-<!--             </column> -->
-<!--             <column name="updated" type="datetime" /> -->
-<!--             <column name="updater" type="varchar(100)" />  -->
-<!--             <column name="service_type" type="varchar(100)"> -->
-<!--                 <constraints nullable="false" /> -->
-<!--             </column> -->
-<!--     	</createTable> -->
-<!--     </changeSet> -->
+    <changeSet id="540-15_20201019_servicetype" author="TarikF">
+    	<createTable tableName="cpq_service_type">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="service_type" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+    	</createTable>
+    </changeSet>
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />

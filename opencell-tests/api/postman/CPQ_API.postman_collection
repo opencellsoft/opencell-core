@@ -1,0 +1,123 @@
+{
+	"id": "1d46ddf2-11d3-475d-8dd9-729d617fcb74",
+	"name": "Opencell-API-MEDIAPOST",
+	"description": null,
+	"auth": null,
+	"events": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ddcd7535-8436-4dc8-a257-3441069e0db3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5dacfcf4-4c2c-45b9-9986-66994a4b43e8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variables": [
+		{
+			"key": "entityCode",
+			"value": "OC_MP_001",
+			"disabled": false
+		},
+		{
+			"key": "entityDescription",
+			"value": "opencell",
+			"disabled": false
+		}
+	],
+	"order": [],
+	"folders_order": [
+		"c10ecc00-7a46-43ba-90e5-1969712aaae1"
+	],
+	"protocolProfileBehavior": {},
+	"folders": [
+		{
+			"id": "c10ecc00-7a46-43ba-90e5-1969712aaae1",
+			"name": "API",
+			"description": "",
+			"auth": null,
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "aa225189-67ba-45db-afd4-0eb1107f9f0f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f46373f9-faae-4df7-b96b-a68d9f89043d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"collection": "1d46ddf2-11d3-475d-8dd9-729d617fcb74",
+			"folder": null,
+			"order": [
+				"e1614f3d-f425-4b47-ae6d-4395ffb368b6"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"requests": [
+		{
+			"id": "e1614f3d-f425-4b47-ae6d-4395ffb368b6",
+			"name": "CreateOrUpdate PRODUCT",
+			"url": "{{opencell.url}}/catalog/product/create",
+			"description": "",
+			"data": [],
+			"dataOptions": null,
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"description": "",
+					"key": "Content-Type",
+					"name": "Content-Type",
+					"type": "text",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"basic": [
+					{
+						"key": "password",
+						"value": "{{opencell.password}}"
+					},
+					{
+						"key": "username",
+						"value": "{{opencell.username}}"
+					}
+				],
+				"type": "basic"
+			},
+			"events": [],
+			"folder": "c10ecc00-7a46-43ba-90e5-1969712aaae1",
+			"rawModeData": "{\r\n  \"code\": \"PR_{{entityCode}}\",\r\n  \"description\": \"Default product\",\r\n  \"status\": \"Default product\",\r\n  \"discountFlag\":false,\r\n  \"packageFlag\":true\r\n\r\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		}
+	]
+}

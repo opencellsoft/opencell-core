@@ -29,7 +29,7 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
  *
  */
 @Entity
-@Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_code", "media_name" }))
+@Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "media_name" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq"), })
 public class Media extends BaseEntity{

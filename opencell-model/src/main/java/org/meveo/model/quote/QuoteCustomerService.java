@@ -22,7 +22,7 @@ import org.meveo.model.BusinessEntity;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "quoteVersion"}))
+@Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "quote_version"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_customer_service_seq"), })
 @NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
