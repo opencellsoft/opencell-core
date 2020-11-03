@@ -46,6 +46,7 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.0
  *
  */
+@Deprecated
 @Startup
 @Singleton
 @Lock(LockType.READ)
