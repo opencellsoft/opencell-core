@@ -1753,5 +1753,12 @@ public class ValidateBRScript extends Script {
             <column name="permission_id" value="-121"></column>
         </insert>    
 	</changeSet>
+
+    <changeSet id="#5610_20201102 - bad dept operation type" author="NabilOUACHI">
+        <update tableName="ar_occ_template">
+            <column name="occ_category" value="CREDIT"></column>
+            <where>code='EXP_WRT'</where>
+        </update>
+    </changeSet>
     
 </databaseChangeLog>
