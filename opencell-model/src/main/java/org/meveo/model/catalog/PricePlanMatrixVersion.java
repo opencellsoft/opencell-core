@@ -13,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
@@ -30,7 +31,7 @@ public class PricePlanMatrixVersion extends BusinessEntity {
     @Column(name = "price_plan_version", nullable = false)
     private int pricePlanVersion;
     
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private VersionStatusEnum status;
     
@@ -46,6 +47,7 @@ public class PricePlanMatrixVersion extends BusinessEntity {
     @Column(name = "end_date")
     private Date endDate;
     
+    @Type(type = "numeric_boolean")
     @Column(name = "price_list_flag", nullable = false)
     private boolean priceListFlag;
     

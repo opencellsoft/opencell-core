@@ -28,6 +28,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -43,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_product_version",uniqueConstraints = @UniqueConstraint(columnNames = { "product_code", "version" }))
+@Table(name = "cpq_product_version",uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ @NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join  bv.product p where p.code=:productCode and pv.currentVersion=:currentVersion"),
@@ -64,7 +65,7 @@ public class ProductVersion extends BaseEntity{
     protected Long id;
     
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_code", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private Product product;
     
@@ -81,7 +82,7 @@ public class ProductVersion extends BaseEntity{
      */
     @Column(name = "status", nullable = false)
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private VersionStatusEnum status;
     
     /**
@@ -95,37 +96,36 @@ public class ProductVersion extends BaseEntity{
     /**
      * short description. must not be null
      */
-    @Column(name = "short_description", nullable = false)
-    @Lob
+    @Column(name = "short_description", nullable = true, length = 255)
+    @Size(max = 255)
     @NotNull
     private String shortDescription;
     
     /**
      * long description
      */
-    @Column(name = "long_description")
-    @Lob
+    @Size(max = 2000)
+    @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
     
     /**
      * start date 
      */
-    @Column(name = "startDate")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "start_date")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
     /**
      * date end 
      */
-    @Column(name = "endDate")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
     
     /*
      * list of tag attached to this version
-     */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "product_version_id")
+     */  
+    @OneToMany(mappedBy = "productVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
     private Set<Tag> tagList = new HashSet<>();
     
     

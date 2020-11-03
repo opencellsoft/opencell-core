@@ -12,6 +12,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -49,8 +50,8 @@ public class ProductLine extends BusinessEntity {
 	/**
 	 * long description
 	 */
-	@Column(name = "long_description")
-	@Lob
+    @Size(max = 2000)
+	@Column(name = "long_description", columnDefinition = "TEXT")
 	private String longDescription;
 	
 	/**

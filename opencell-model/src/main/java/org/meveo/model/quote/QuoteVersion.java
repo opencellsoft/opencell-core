@@ -56,21 +56,21 @@ public class QuoteVersion extends BaseEntity{
 	/**
 	 * status date
 	 */
-	@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "status_date", nullable = false)
 	private Date statusDate;
 	
 	/**
 	 * start date of quote version 
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date")
 	private Date startDate;
 	
 	/**
 	 * end date of quote version
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "end_date")
 	private Date endDate;
 	

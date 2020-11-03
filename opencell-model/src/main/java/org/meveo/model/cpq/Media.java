@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
@@ -52,7 +53,7 @@ public class Media extends BaseEntity{
 	 * product code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceTemplate_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "service_template_id", referencedColumnName = "id", nullable = false)
 	@NotNull
 	private ServiceTemplate serviceTemplate;
 	
@@ -73,17 +74,18 @@ public class Media extends BaseEntity{
 	
 	/**
 	 * flag indicate if the media is for current product or attribute of the product 
-	 */
+	 */ 
+	@Type(type = "numeric_boolean")
 	@Column(name = "main", nullable = false)
 	@NotNull
-	private Boolean main;
+	private boolean main;
 	
 	/**
 	 * type of the media : 2 options available (image / video)
 	 */
 	@Column(name = "media_type", nullable = false)
 	@NotNull
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private MediaTypeEnum mediaType;
 	
 	/**

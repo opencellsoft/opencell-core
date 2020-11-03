@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -57,7 +58,7 @@ public class Product extends BusinessEntity {
 	 */
 	@Column(name = "status", nullable = false)
 	@NotNull
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private ProductStatusEnum status;
 	
 	/**
@@ -122,6 +123,7 @@ public class Product extends BusinessEntity {
 	 * flag that indicate if true  discount list will have a specific 
 	 * list otherwise all available discount attached to this product will be displayed
 	 */
+	@Type(type = "numeric_boolean")
 	@Column(name = "discount_flag", nullable = false)
 	@NotNull
 	private boolean discountFlag;
@@ -130,6 +132,7 @@ public class Product extends BusinessEntity {
     /**
      * indicates whether or not the product detail should be displayed in the quote.
      */
+	@Type(type = "numeric_boolean")
     @Column(name = "package_flag", nullable = false)
     @NotNull
     private boolean packageFlag;

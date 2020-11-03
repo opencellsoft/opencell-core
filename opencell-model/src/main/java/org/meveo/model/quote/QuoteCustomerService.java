@@ -54,7 +54,7 @@ public class QuoteCustomerService extends BusinessEntity {
 	@Column(name = "duration")
 	private int duration;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "execution_date")
 	private Date executionDate;
 
