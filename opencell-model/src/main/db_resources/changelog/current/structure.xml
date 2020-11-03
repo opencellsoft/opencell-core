@@ -3688,8 +3688,265 @@ END $$;]]>
     
     <!-- for MediaPost -->
     
+		   <changeSet id="#5595_20201023" author="Mbarek-Ay">
+			<addColumn tableName="cat_service_template">
+				<column name="offer_template_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="product_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="grouped_service_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="service_type_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="mandatory" type="${type.boolean}" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="priority" type="int4" defaultValueNumeric="0" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="param" type="text" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="material" type="${type.boolean}" />
+			</addColumn>
+			
+			<addColumn tableName="cat_service_template">
+				<column name="accounting_article_id" type="bigint" />
+			</addColumn> 
+			 
+		   <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_service_template" constraintName="fk-product-service_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" /> 
+		       
+		   <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_service_template" constraintName="fk-product-offer_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />   
+		       
+		   <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cat_service_template" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" /> 
+		       
+		       
+		    <addForeignKeyConstraint baseColumnNames="service_type_id" baseTableName="cat_service_template" constraintName="fk-product-service_type" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_service_type" />  
+		       
+		    <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_service_template" constraintName="fk-product-accounting_article" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />     
+		               
+		           
+		   </changeSet>
 		   
-         <changeSet id="#5595-36-20201103-1" author="Mbarek-Ay">
+		   <changeSet id="#5595_#32_20201023" author="Mbarek-Ay">
+        <addColumn tableName="cat_charge_template">
+            <column name="offer_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="product_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="service_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="price_plan_matrix_id" type="bigint" />
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="recurrence_duration_enum" type="varchar(20)"/> 
+        </addColumn>
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="duration_service" type="bigint" />
+        </addColumn>
+        
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="recurrence_calendar" type="bigint" />
+        </addColumn>
+        
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="calendar_service" type="bigint" />
+        </addColumn>
+        
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="usage_service_template_id" type="bigint" />
+        </addColumn> 
+        
+        
+          <addColumn tableName="cat_charge_template">
+            <column name="surcharge" type="${type.boolean}"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="price_matrix" type="${type.boolean}"/> 
+        </addColumn>
+        
+            
+         <addColumn tableName="cat_charge_template">
+            <column name="param1" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param1_service_id" type="bigint"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param2" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param2_service_id" type="bigint"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param3" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param3_service_id" type="bigint"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param4" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="param4_service_id" type="bigint"/> 
+        </addColumn>
+         
+         
+          <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix" type="varchar(50)"/> 
+        </addColumn>
+        
+          <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/> 
+        </addColumn>
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix_service" type="bigint" />
+        </addColumn>
+        
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/> 
+        </addColumn>
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix_service" type="bigint" />
+        </addColumn>
+         
+         <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/> 
+        </addColumn>
+        
+        <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix_service" type="bigint" />
+        </addColumn>
+         
+         
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_charge_template" constraintName="fk-product-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" /> 
+            
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_charge_template" constraintName="fk-offer_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />   
+            
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cat_charge_template" constraintName="fk1-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" /> 
+            
+            
+         <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_charge_template" constraintName="fk-price_plan-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />  
+            
+         <addForeignKeyConstraint baseColumnNames="duration_service" baseTableName="cat_charge_template" constraintName="fk2-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />    
+            
+            
+         <addForeignKeyConstraint baseColumnNames="recurrence_calendar" baseTableName="cat_charge_template" constraintName="fk-cat_calendar-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+          
+          
+           <addForeignKeyConstraint baseColumnNames="calendar_service" baseTableName="cat_charge_template" constraintName="fk3-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+         
+         <addForeignKeyConstraint baseColumnNames="usage_service_template_id" baseTableName="cat_charge_template" constraintName="fk4-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+          
+          
+           <addForeignKeyConstraint baseColumnNames="param1_service_id" baseTableName="cat_charge_template" constraintName="fk5-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+          
+          
+           <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk6-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+          
+          
+           <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk7-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+         
+           <addForeignKeyConstraint baseColumnNames="param3_service_id" baseTableName="cat_charge_template" constraintName="fk8-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+      
+           <addForeignKeyConstraint baseColumnNames="param4_service_id" baseTableName="cat_charge_template" constraintName="fk9-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+ 
+           <addForeignKeyConstraint baseColumnNames="dim1_matrix_service" baseTableName="cat_charge_template" constraintName="fk10-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" /> 
+          
+          <addForeignKeyConstraint baseColumnNames="dim2_matrix_service" baseTableName="cat_charge_template" constraintName="fk11-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />  
+          
+            <addForeignKeyConstraint baseColumnNames="dim3_matrix_service" baseTableName="cat_charge_template" constraintName="fk12-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />            
+       </changeSet>
+       
+        <changeSet id="#5595_18_20201102" author="Mbarek-Ay">
+         <addColumn tableName="cat_offer_template">
+            <column name="product_line_id" type="bigint" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="customer_brand_id" type="bigint" />
+        </addColumn>
+		<addColumn tableName="cat_offer_template">
+			<column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>    
+        <addColumn tableName="cat_offer_template">
+            <column name="model" type="varchar(50)"/> 
+        </addColumn>
+          <addColumn tableName="cat_offer_template">
+            <column name="reference" type="varchar(50)"/> 
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="status_date" type="datetime"/> 
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="product_status" type="varchar(50)"/> 
+        </addColumn>
+        
+         <addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cat_offer_template" constraintName="fk-product_line-cat_offer_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+          
+         <addForeignKeyConstraint baseColumnNames="customer_brand_id" baseTableName="cat_offer_template" constraintName="fk-customer_brand-cat_offer_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_brand" />
+        
+        </changeSet>
+        
+          <changeSet id="#5595-36-20201103-1" author="Mbarek-Ay">
         <addColumn tableName="cpq_tag">
             <column name="product_version_id" type="bigint" /> 
         </addColumn> 
