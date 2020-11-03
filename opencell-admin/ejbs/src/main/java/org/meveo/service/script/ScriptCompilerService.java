@@ -350,8 +350,11 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
         Matcher matcher = pattern.matcher(javaSrc);
         while (matcher.find()) {
             String className = matcher.group(1);
+            if(className.startsWith("static ")) {
+            	className=className.substring(7, className.lastIndexOf("."));
+            }
             try {
-                if ((!className.startsWith("java") || className.startsWith("javax.persistence")) && !className.startsWith("org.meveo")) {
+                if (!className.startsWith("java.") && !className.startsWith("org.meveo")) {
                     Class clazz = Class.forName(className);
                     try {
                         String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();

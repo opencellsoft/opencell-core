@@ -223,7 +223,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
     
-    protected final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
+    public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
     /**
      * Constructor
@@ -1638,7 +1638,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return !(from != null && to != null && from.compareTo(to) > 0);
     }
     
-    protected void showDeprecatedWarning() {
+    public static void showDeprecatedWarning() {
     	List<FacesMessage> messageList = FacesContext.getCurrentInstance().getMessageList();
 		if(messageList!=null && messageList.stream().anyMatch(x->FacesMessage.SEVERITY_WARN.equals(x.getSeverity())&& DEPRECATED_FEATURE.equals(x.getSummary()))) {
 			return;
