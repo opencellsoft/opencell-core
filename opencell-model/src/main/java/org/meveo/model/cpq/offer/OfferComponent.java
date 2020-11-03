@@ -9,8 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -51,7 +51,7 @@ public class OfferComponent extends BaseEntity {
 	/**
 	 *  list of tag associated to offer component
 	 */
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "cpq_offer_component_tags",
 			joinColumns = @JoinColumn(name = "offer_component_id", referencedColumnName = "id"),

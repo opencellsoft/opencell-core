@@ -101,7 +101,7 @@ public class TradeRuleHeader extends BusinessEntity {
 	 * tag target
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_tag_id", referencedColumnName = "code")
+	@JoinColumn(name = "cpq_tag_id", referencedColumnName = "id")
 	private Tag tagTarget;
 
 	/**

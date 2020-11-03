@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.enums.OneShotTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
@@ -54,6 +55,7 @@ public class QuotePrice extends BusinessEntity  {
     @Column(name = "recurence_periodicity")
     private int recurencePeriodicity;
 
+    @Type(type = "numeric_boolean")
     @Column(name = "overcharge")
     private boolean overCharge;
 
@@ -77,8 +79,9 @@ public class QuotePrice extends BusinessEntity  {
     @Size(max = 50)
     private String param4;
 
+    @Type(type = "numeric_boolean")
     @Column(name = "price_matrix", nullable = false)
-    private Boolean priceMatrix;
+    private boolean priceMatrix;
 
     @Column(name = "dim1_matrix", length = 50)
     @Size(max = 50)

@@ -10101,12 +10101,15 @@ $$ LANGUAGE plpgsql;
             <column name="updater" type="varchar(100)" /> 
             
             <column name="status" type="varchar(255)" />
-            <column name="statusDate" type="datetime" />
+            <column name="status_date" type="datetime" />
             <column name="product_line_id" type="bigint" />
             <column name="customer_brand_id" type="bigint" />
             <column name="reference" type="varchar(50)"/>
             <column name="model" type="varchar(20)"/>
             <column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
+              <constraints nullable="false" />
+            </column>
+             <column name="package_flag" type="${type.boolean}" defaultValueNumeric="0">
               <constraints nullable="false" />
             </column>
         </createTable>
@@ -10150,7 +10153,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" />
             </column>
             <column name="description" type="varchar(255)" /> 
-             <column name="long_description" type="varchar(255)" /> 
+             <column name="long_description" type="text" /> 
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />  
@@ -10166,12 +10169,12 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="version" type="int4" />  
             <column name="status" type="varchar(255)" />
-             <column name="statusDate" type="datetime" />
+             <column name="status_date" type="datetime" />
             
             <column name="short_description" type="varchar(255)" /> 
-            <column name="long_description" type="varchar(255)" /> 
-            <column name="start_date" type="DATE" />
-            <column name="end_date" type="DATE" />
+            <column name="long_description" type="text" /> 
+            <column name="start_date" type="datetime" />
+            <column name="end_date" type="datetime" />
             <column name="product_id" type="bigint" />  
         </createTable>
     </changeSet>
@@ -10279,7 +10282,7 @@ $$ LANGUAGE plpgsql;
 			</column>
 			<column name="version" type="int4" />  
 			<column name="product_id" type="bigint" />
-			<column name="product_attribute_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
 			<column name="media_name" type="varchar(50)" />
 			<column name="label" type="varchar(255)" />
 			 <column name="main" type="${type.boolean}" defaultValueNumeric="1">
@@ -10348,7 +10351,7 @@ $$ LANGUAGE plpgsql;
 					primaryKeyName="cpq_offer_component_pkey" />
 			</column>
 			 <column name="version" type="int4" /> 
-            <column name="commercial_offer_id" type="bigint" /> 
+            <column name="offer_template_id" type="bigint" /> 
             <column name="product_id" type="bigint" />   
 		</createTable>
 	</changeSet>
@@ -10497,13 +10500,14 @@ $$ LANGUAGE plpgsql;
 					primaryKeyName="cpq_product_mapping_pkey" />
 			</column>
 			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
 			<column name="created" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="updated" type="datetime" />
 			<column name="code" type="varchar(255)">
 				<constraints nullable="false" />
-			</column>
+			</column> 
 			<column name="description" type="varchar(255)" />
 			<column name="service1Value" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
@@ -10590,8 +10594,8 @@ $$ LANGUAGE plpgsql;
     </changeSet>
     
     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-11">
-        <addForeignKeyConstraint baseColumnNames="product_attribute_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_attribute" />
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
     
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-12">
@@ -10617,7 +10621,7 @@ $$ LANGUAGE plpgsql;
    
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-16">
-        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_offer_component" constraintName="fk_ks2qo1jjo5oaciaao" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_offer_component" constraintName="fk_ks2qo1jjo5oaciaao" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
      </changeSet>
      
@@ -10839,16 +10843,16 @@ $$ LANGUAGE plpgsql;
             <column name="status" type="int4" >
                 <constraints nullable="false" />
             </column>
-            <column name="status_date" type="datetime">
+            <column name="status_date" type="DATE">
                 <constraints nullable="false" />
             </column>
-            <column name="contract_date" type="datetime">
+            <column name="contract_date" type="date">
                 <constraints nullable="false" />
             </column>
-            <column name="begin_date" type="datetime">
+            <column name="begin_date" type="date">
                 <constraints nullable="false" />
             </column>
-            <column name="end_date" type="datetime">
+            <column name="end_date" type="date">
                 <constraints nullable="false" />
             </column>
             <column name="renewal" type="${type.boolean}">
@@ -10867,7 +10871,7 @@ $$ LANGUAGE plpgsql;
             <column name="version" type="int4" />
              
             <column name="cpq_contract_id" type="bigint" /> 
-            <column name="cpq_commercial_offer_id" type="bigint" /> 
+            <column name="offer_template_id" type="bigint" /> 
             <column name="cpq_product_id" type="bigint" /> 
             <column name="price_plan_id" type="bigint" >
             	<constraints nullable="false"/>
@@ -10884,6 +10888,7 @@ $$ LANGUAGE plpgsql;
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_item_pkey" />
             </column>
+            <column name="version" type="int4" />
             <column name="dim1_value" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
@@ -10912,14 +10917,14 @@ $$ LANGUAGE plpgsql;
             <column name="price_plan_version" type="int4">
                 <constraints nullable="false" />
             </column>
-            <column name="status" type="int4">
+            <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="start_date" type="datetime" />
-            <column name="end_date" type="datetime" />
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
             <column name="price_list_flag" type="${type.boolean}" defaultValueNumeric="0"  >
                 <constraints nullable="false" />
             </column>
@@ -11030,7 +11035,7 @@ $$ LANGUAGE plpgsql;
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
      </changeSet> 
       <changeSet id="current-str-fk-48" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="cpq_commercial_offer_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_cpq_commercial_offer_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_offer_template_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
      </changeSet> 
       <changeSet id="current-str-fk-49" author="TarikFAKHOURI">

@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -117,6 +118,7 @@ public class Contract extends BusinessEntity {
 	/**
 	 * flag if this contract will be renewal
 	 */
+	@Type(type = "numeric_boolean") 
 	@Column(name = "renewal", nullable = false)
 	private boolean renewal;
 	

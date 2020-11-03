@@ -14,7 +14,7 @@ import org.meveo.model.BusinessEntity;
  *
  */
 @Entity
-@Table(name = "cpq_accounting_article_mapping", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_accounting_article_seq"), })
 public class AccountingArticle extends BusinessEntity {

@@ -46,6 +46,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.cpq.ProductLine;
@@ -91,9 +92,9 @@ public class ProductTemplate extends ProductOffering {
 	/**
 	 * status of product type of {@link ProductStatusEnum}
 	 */
-	@Column(name = "status", nullable = false)
+	@Column(name = "product_status", nullable = false)
 	@NotNull
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private ProductStatusEnum status;
 	
 	/**
@@ -158,6 +159,7 @@ public class ProductTemplate extends ProductOffering {
 	 * flag that indicate if true  discount list will have a specific 
 	 * list otherwise all available discount attached to this product will be displayed
 	 */
+	@Type(type = "numeric_boolean")
 	@Column(name = "discount_flag", nullable = false)
 	@NotNull
 	private boolean discountFlag;
@@ -211,9 +213,141 @@ public class ProductTemplate extends ProductOffering {
     public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
         this.walletTemplates = walletTemplates;
     }
+    
+    
 
-    @Override
+    /**
+	 * @return the status
+	 */
+	public ProductStatusEnum getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(ProductStatusEnum status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the productLine
+	 */
+	public ProductLine getProductLine() {
+		return productLine;
+	}
+
+	/**
+	 * @param productLine the productLine to set
+	 */
+	public void setProductLine(ProductLine productLine) {
+		this.productLine = productLine;
+	}
+
+	/**
+	 * @return the brand
+	 */
+	public CustomerBrand getBrand() {
+		return brand;
+	}
+
+	/**
+	 * @param brand the brand to set
+	 */
+	public void setBrand(CustomerBrand brand) {
+		this.brand = brand;
+	}
+
+	/**
+	 * @return the reference
+	 */
+	public String getReference() {
+		return reference;
+	}
+
+	/**
+	 * @param reference the reference to set
+	 */
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public String getModel() {
+		return model;
+	}
+
+	/**
+	 * @param model the model to set
+	 */
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	/**
+	 * @return the modelChlidren
+	 */
+	public Set<String> getModelChlidren() {
+		return modelChlidren;
+	}
+
+	/**
+	 * @param modelChlidren the modelChlidren to set
+	 */
+	public void setModelChlidren(Set<String> modelChlidren) {
+		this.modelChlidren = modelChlidren;
+	}
+
+	/**
+	 * @return the discountList
+	 */
+	public Set<DiscountPlan> getDiscountList() {
+		return discountList;
+	}
+
+	/**
+	 * @param discountList the discountList to set
+	 */
+	public void setDiscountList(Set<DiscountPlan> discountList) {
+		this.discountList = discountList;
+	}
+
+
+
+	/**
+	 * @return the discountFlag
+	 */
+	public boolean isDiscountFlag() {
+		return discountFlag;
+	}
+
+	/**
+	 * @param discountFlag the discountFlag to set
+	 */
+	public void setDiscountFlag(boolean discountFlag) {
+		this.discountFlag = discountFlag;
+	}
+
+	@Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
+    
+    
 }

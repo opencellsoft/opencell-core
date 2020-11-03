@@ -149,9 +149,8 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     
     /**
      * list of tag attached
-     */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "tag_id")
+     */ 
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Tag> tagList = new HashSet<>();
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {

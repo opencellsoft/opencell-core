@@ -282,7 +282,9 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      * The lower number, the higher the priority is
      */
     @Column(name = "priority", columnDefinition = "int DEFAULT 0")
-    private int priority = 0;
+    private Integer priority = 0;
+    
+    
      
 	
     @Column(name = "param", columnDefinition = "TEXT")
@@ -293,8 +295,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     /**
      * list of tag attached
      */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "tag_id")
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
     private Set<Tag> tagList = new HashSet<>(); 
     
     
