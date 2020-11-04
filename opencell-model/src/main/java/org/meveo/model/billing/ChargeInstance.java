@@ -27,7 +27,6 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -73,7 +72,6 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ChargeInstance", inheritCFValuesFrom = "chargeTemplate")
 @Table(name = "billing_charge_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

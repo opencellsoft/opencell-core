@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -84,7 +83,6 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
