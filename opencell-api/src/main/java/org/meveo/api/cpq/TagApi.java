@@ -163,9 +163,6 @@ public class TagApi extends BaseApi {
 		if(Strings.isEmpty(tagDto.getTagTypeCode())) {
 			missingParameters.add("TagTypeCode");
 		}
-		if(Strings.isEmpty(tagDto.getTagTypeCode())) {
-			missingParameters.add("label");
-		}
 		handleMissingParameters();
 	}
 	
