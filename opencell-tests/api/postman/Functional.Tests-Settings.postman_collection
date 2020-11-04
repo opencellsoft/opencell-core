@@ -9882,1751 +9882,6 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Clean data",
-					"item": [
-						{
-							"name": "Delete|Title|TITLE|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "145b00f1-910b-49ef-8d5c-13852200257c",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/title/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"title",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Title|TITLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "116b7253-c21a-44f9-b7a8-7d2ed270f2b1",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/title/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"title",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Calendar|CAL|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "7668ced3-1985-4740-9f76-de0b97058ce4",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/calendar/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"calendar",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Calendar|CAL|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "38ea0ecd-3e3c-42df-804b-7d30f79341fd",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/calendar/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"calendar",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Channel|CH|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "dd292e99-36a1-47c8-8888-9a1b38394220",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/channel?channelCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"channel"
-									],
-									"query": [
-										{
-											"key": "channelCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Country|TS|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f4e86a4f-55ad-462a-96a0-dcf4afebe25b",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/countryIso/TS",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"countryIso",
-										"TS"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Country|TS|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "bbb99ad8-9856-4b19-b2d8-bd6117f0c9c0",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "24c7b6db-28f8-4298-8668-816075694bcc",
-										"exec": [
-											"pm.variables.set(\"message\", \"Country with code=\"+pm.variables.get(\"entityCode\")+\" does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/countryIso/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"countryIso",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Channel|CH|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "d8bdb167-38be-4dd9-875a-488a20a838ec",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/channel?channelCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"channel"
-									],
-									"query": [
-										{
-											"key": "channelCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Currency|TST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "32ea2c13-c448-4c01-b933-7a93d7303c06",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "bdb264aa-22f6-461e-97ba-d697f9dae90d",
-										"exec": [
-											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/currencyIso/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"currencyIso",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Currency|TST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ba1eb11d-a57e-425c-9fc9-adbfff32a3b2",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "53680415-5c26-4b2c-bd3c-288140ec5986",
-										"exec": [
-											"pm.variables.set(\"message\", \"Currency with code=TEST_TST does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/currencyIso/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"currencyIso",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Language|TST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "33b4db69-35a2-4dc8-8c69-f8ae672e1aa2",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "f94df9d9-f9b4-48a0-a472-c00185a3e55c",
-										"exec": [
-											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/languageIso/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"languageIso",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Language|TST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "63862837-673d-490b-8e51-312190cff612",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "7e5c50a4-0230-4292-9840-2d16a9beadf0",
-										"exec": [
-											"pm.variables.set(\"message\", \"Language with code=TEST_TST does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/languageIso/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"languageIso",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Role|ROLE|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6987e0fe-f773-4d5f-868b-31afa337752d",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/role/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"role",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Role|ROLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "db5bd0e9-04b8-4ba6-a66b-abd3258013a0",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "37eac213-5d4b-46d1-8dc7-8af50d9c6535",
-										"exec": [
-											"pm.variables.set(\"message\", \"Role with name=TEST_ROLE does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/role/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"role",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Tax|TAX|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "fce0520e-c147-484f-ba25-b5a43e3ea9ca",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/tax/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"tax",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Tax|TAX|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "08ae291c-3c86-422b-85f7-a9f0887d2381",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/tax/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"tax",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|InvoiceType|IT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5d856200-6d25-48b0-8ab8-5a08f5065f96",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceType/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceType",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|InvoiceType|IT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "12f0aeaf-2a55-4a80-8b35-1d1048557922",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/invoiceType/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"invoiceType",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|CustomerBrand|CB|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "1e4e80db-062c-4995-a2b2-2d5b88662bc1",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"removeBrand",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|CustomerBrand|CB|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "cbdf1cb7-4ad0-458f-8427-d9136ebc00a8",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "542e1f4c-13b5-474e-b005-416225c477f2",
-										"exec": [
-											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" does not exists.\")"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"removeBrand",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "95094244-00a7-4285-bf48-76fb64617dc3",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "e066be8d-09b3-4fd0-8a9e-f1d973a36a6f",
-										"exec": [
-											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" is referenced.\")"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"customer",
-										"removeBrand",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Seller|SELLER|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5aea400e-dffd-48a4-8ace-0d8d22933cc7",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/seller/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"seller",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "a9e10ce3-9205-41ba-8a5b-cdb6897d41d2",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/seller/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"seller",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|BillingCycle|BC|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ff23ef85-db1f-429a-ae54-b2041b47d5fd",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|BillingCycle|BC|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "d5199989-d9f5-4587-bf1d-7aedbf6f993a",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"billingCycle",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete|Seller|SELLER|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f6fa9829-caa3-4d66-b55d-5fe0b5920733",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/seller/{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"seller",
-										"{{entityCode}}"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -18533,6 +16788,1302 @@
 			"name": "Catalog",
 			"item": [
 				{
+					"name": "Recurring Charge",
+					"item": [
+						{
+							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4e5063f2-56fe-4b03-b993-874da39d6e8f",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|RecurringChargeTemplate|RCT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7c175f92-a2f8-44c4-9a22-a0b8a69c166b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate?recurringChargeTemplateCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate"
+									],
+									"query": [
+										{
+											"key": "recurringChargeTemplateCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create|RecurringChargeTemplate|RCT|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "060b18bb-1726-4fa8-bb6b-129d18fbe6ac",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|RecurringChargeTemplate|RCT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5a5998dc-cd4e-411b-8b01-b06f98e1a29e",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|RecurringChargeTemplate|RCT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3a9edbd2-96a2-453d-90bd-43340e294035",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "344551ec-1dcc-4a07-9bbb-f4b95b15afb7",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|RecurringChargeTemplate|RCT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "55e7cd34-8259-4621-a85b-cf36c0dd4b2b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate?recurringChargeTemplateCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate"
+									],
+									"query": [
+										{
+											"key": "recurringChargeTemplateCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|MISSING_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3b1cf838-4f26-4eaa-a358-0499d12ec309",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "566e4fd9-b681-444b-8842-287e96aab8ac",
+										"exec": [
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: invoiceSubCategory, calendar, taxClassCode.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}_MISSING\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|INVALID_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a5a665ad-8ece-4daa-a5bc-31b0cdb27955",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "55bdbc15-9367-486e-b2d3-22489e8706bb",
+										"exec": [
+											"pm.variables.set(\"message\", \"Cannot deserialize value of type `java.lang.Boolean` from String\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"ISCAT_REC\",\r\n    \"disabled\": \"INVALID\",\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"calendar\": \"CAL_MONTHLY_1ST\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2aa71b77-9fd9-45fb-af33-ceee1a5c6257",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"recurringChargeTemplateCode\", pm.variables.get(\"entityCode\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "af122bc6-d40c-4e28-bff1-afbd3dda1f05",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Service Template",
+					"item": [
+						{
+							"name": "CreateOrUpdate|ServiceTemplate|ST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b11aa95b-7a44-4613-a2a3-b8dbc814b878",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read|ServiceTemplate|ST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "da797ded-9e40-4bb2-a183-8a8d7a4d6eb8",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate?serviceTemplateCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate"
+									],
+									"query": [
+										{
+											"key": "serviceTemplateCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create|ServiceTemplate|ST|ENTITY_ALREADY_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bece32f4-cc03-4def-b54b-15463f7f0b1f",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "11914342-0e9b-4d3a-8491-26058f22d56e",
+										"exec": [
+											"pm.variables.set(\"message\",\"ServiceTemplateService with code=TEST_ST already exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|ServiceTemplate|ST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ad436a3c-879c-49c0-9c8e-18091a61e992",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bcb1c97c-9c16-42c3-bbb0-671ddfc0cb5b",
+										"exec": [
+											"pm.variables.set(\"message\", \"ServiceTemplateService with code=NOT_EXIST does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update|ServiceTemplate|ST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4421f14e-f9cd-4a55-91ac-a08cb8344ccb",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|ServiceTemplate|ST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "71d3ee73-a103-40c2-9c3e-57f2213c895d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read updated|ServiceTemplate|ST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3468fc6c-4d1b-489b-bc43-25e5ed7f8c4e",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate?serviceTemplateCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate"
+									],
+									"query": [
+										{
+											"key": "serviceTemplateCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|ServiceTemplate|ST|MISSING_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f377412d-a2de-4953-90f5-c4312ab99fc4",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "896d1ca3-aef5-48e7-9a21-e180bcbdbe94",
+										"exec": [
+											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateOrUpdate|ServiceTemplate|ST|INVALID_PARAMETER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3cafbb66-fed0-44a1-a05a-88f3e541496f",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f6e2c940-f6ca-4bd6-ac7f-e9e8ce2b83b9",
+										"exec": [
+											"pm.variables.set(\"message\", \"Cannot deserialize value of type `boolean` from String\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{entityCode}}_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": \"INVALID\",\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "cbd7ede3-c9e8-4b8a-8c04-d9de62af3d13",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "4ca06079-859f-4ae4-a71d-9560417f5fdf",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Offer Template",
 					"item": [
 						{
@@ -19189,644 +18740,6 @@
 								}
 							},
 							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Recurring Charge",
-					"item": [
-						{
-							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4e5063f2-56fe-4b03-b993-874da39d6e8f",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|RecurringChargeTemplate|RCT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "7c175f92-a2f8-44c4-9a22-a0b8a69c166b",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate?recurringChargeTemplateCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate"
-									],
-									"query": [
-										{
-											"key": "recurringChargeTemplateCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create|RecurringChargeTemplate|RCT|ENTITY_ALREADY_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "060b18bb-1726-4fa8-bb6b-129d18fbe6ac",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|RecurringChargeTemplate|RCT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5a5998dc-cd4e-411b-8b01-b06f98e1a29e",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|RecurringChargeTemplate|RCT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3a9edbd2-96a2-453d-90bd-43340e294035",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "344551ec-1dcc-4a07-9bbb-f4b95b15afb7",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"invoiceSubCategory\": \"CLASSIC_USAGE\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"{{taxClassCode}}\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|RecurringChargeTemplate|RCT|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "55e7cd34-8259-4621-a85b-cf36c0dd4b2b",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate?recurringChargeTemplateCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate"
-									],
-									"query": [
-										{
-											"key": "recurringChargeTemplateCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|MISSING_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3b1cf838-4f26-4eaa-a358-0499d12ec309",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "566e4fd9-b681-444b-8842-287e96aab8ac",
-										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: invoiceSubCategory, calendar, taxClassCode.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}_MISSING\"\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|RecurringChargeTemplate|RCT|INVALID_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "a5a665ad-8ece-4daa-a5bc-31b0cdb27955",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "55bdbc15-9367-486e-b2d3-22489e8706bb",
-										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize value of type `java.lang.Boolean` from String\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"invoiceSubCategory\": \"ISCAT_REC\",\r\n    \"disabled\": \"INVALID\",\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"calendar\": \"CAL_MONTHLY_1ST\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "2aa71b77-9fd9-45fb-af33-ceee1a5c6257",
-								"type": "text/javascript",
-								"exec": [
-									"pm.globals.set(\"recurringChargeTemplateCode\", pm.variables.get(\"entityCode\"));"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "af122bc6-d40c-4e28-bff1-afbd3dda1f05",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -20589,664 +19502,6 @@
 							"listen": "test",
 							"script": {
 								"id": "a68dbe2a-d99c-4410-b9ba-bb2f377767d7",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Service Template",
-					"item": [
-						{
-							"name": "CreateOrUpdate|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "b11aa95b-7a44-4613-a2a3-b8dbc814b878",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "da797ded-9e40-4bb2-a183-8a8d7a4d6eb8",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate?serviceTemplateCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate"
-									],
-									"query": [
-										{
-											"key": "serviceTemplateCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create|ServiceTemplate|ST|ENTITY_ALREADY_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "bece32f4-cc03-4def-b54b-15463f7f0b1f",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "11914342-0e9b-4d3a-8491-26058f22d56e",
-										"exec": [
-											"pm.variables.set(\"message\",\"ServiceTemplateService with code=TEST_ST already exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|ServiceTemplate|ST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ad436a3c-879c-49c0-9c8e-18091a61e992",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "bcb1c97c-9c16-42c3-bbb0-671ddfc0cb5b",
-										"exec": [
-											"pm.variables.set(\"message\", \"ServiceTemplateService with code=NOT_EXIST does not exists.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"NOT_EXIST\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4421f14e-f9cd-4a55-91ac-a08cb8344ccb",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "71d3ee73-a103-40c2-9c3e-57f2213c895d",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read updated|ServiceTemplate|ST|SUCCESS",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3468fc6c-4d1b-489b-bc43-25e5ed7f8c4e",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate?serviceTemplateCode={{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate"
-									],
-									"query": [
-										{
-											"key": "serviceTemplateCode",
-											"value": "{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|ServiceTemplate|ST|MISSING_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f377412d-a2de-4953-90f5-c4312ab99fc4",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "896d1ca3-aef5-48e7-9a21-e180bcbdbe94",
-										"exec": [
-											"pm.variables.set(\"message\", \"The following parameters are required or contain invalid values: code.\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate|ServiceTemplate|ST|INVALID_PARAMETER",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3cafbb66-fed0-44a1-a05a-88f3e541496f",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "f6e2c940-f6ca-4bd6-ac7f-e9e8ce2b83b9",
-										"exec": [
-											"pm.variables.set(\"message\", \"Cannot deserialize value of type `boolean` from String\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{entityCode}}_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"customFields\": null,\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": \"INVALID\",\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"{{recurringChargeTemplateCode}}\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}\r\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"serviceTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "cbd7ede3-c9e8-4b8a-8c04-d9de62af3d13",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "4ca06079-859f-4ae4-a71d-9560417f5fdf",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -24240,9 +22495,21 @@
 					"name": "CreateOrUpdate|Subscription|SUB|SUCCESS",
 					"event": [
 						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bd7c8cbd-b8f7-4bc5-abc8-29fdf2318142",
+								"exec": [
+									"pm.globals.set(\"i\",pm.collectionVariables.get(\"i\")+1);\r",
+									"//console.log(\"(i) value is \", pm.globals.get(\"i\"));\r",
+									"//console.log(\"(code) value is \", pm.variables.get(\"entityCode\"));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
 							"listen": "test",
 							"script": {
-								"id": "bdfc289d-0f9e-4115-a0d4-d7a5eca9d000",
+								"id": "6f52f697-5d55-4001-acb5-e7b5edb26393",
 								"exec": [
 									""
 								],
@@ -25186,6 +23453,29 @@
 						}
 					},
 					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "abb258db-1f5a-446c-a4aa-485a4cffe85d",
+						"type": "text/javascript",
+						"exec": [
+							"pm.variables.set(\"entityCode\",pm.variables.get(\"entityCode\")+pm.collectionVariables.get(\"i\"));"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9950f842-cdf1-43c2-be85-ff5468d2d371",
+						"type": "text/javascript",
+						"exec": [
+							"console.log(\"(i) value is \", pm.globals.get(\"i\"));",
+							"console.log(\"(code) value is \", pm.variables.get(\"entityCode\"));"
+						]
+					}
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -27666,6 +25956,1751 @@
 		{
 			"name": "Clean Up",
 			"item": [
+				{
+					"name": "Configuration",
+					"item": [
+						{
+							"name": "Delete|Title|TITLE|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "145b00f1-910b-49ef-8d5c-13852200257c",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/title/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"title",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Title|TITLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "116b7253-c21a-44f9-b7a8-7d2ed270f2b1",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/title/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"title",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Calendar|CAL|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7668ced3-1985-4740-9f76-de0b97058ce4",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Calendar|CAL|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "38ea0ecd-3e3c-42df-804b-7d30f79341fd",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Channel|CH|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "dd292e99-36a1-47c8-8888-9a1b38394220",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/channel?channelCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"channel"
+									],
+									"query": [
+										{
+											"key": "channelCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Country|TS|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f4e86a4f-55ad-462a-96a0-dcf4afebe25b",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/countryIso/TS",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"countryIso",
+										"TS"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Country|TS|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bbb99ad8-9856-4b19-b2d8-bd6117f0c9c0",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "24c7b6db-28f8-4298-8668-816075694bcc",
+										"exec": [
+											"pm.variables.set(\"message\", \"Country with code=\"+pm.variables.get(\"entityCode\")+\" does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/countryIso/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"countryIso",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Channel|CH|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d8bdb167-38be-4dd9-875a-488a20a838ec",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/channel?channelCode={{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"channel"
+									],
+									"query": [
+										{
+											"key": "channelCode",
+											"value": "{{entityCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Currency|TST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32ea2c13-c448-4c01-b933-7a93d7303c06",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "bdb264aa-22f6-461e-97ba-d697f9dae90d",
+										"exec": [
+											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/currencyIso/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"currencyIso",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Currency|TST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ba1eb11d-a57e-425c-9fc9-adbfff32a3b2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "53680415-5c26-4b2c-bd3c-288140ec5986",
+										"exec": [
+											"pm.variables.set(\"message\", \"Currency with code=TEST_TST does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/currencyIso/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"currencyIso",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Language|TST|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "33b4db69-35a2-4dc8-8c69-f8ae672e1aa2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f94df9d9-f9b4-48a0-a472-c00185a3e55c",
+										"exec": [
+											"pm.variables.set(\"entityCode\",pm.variables.get(\"suffix\"));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/languageIso/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"languageIso",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Language|TST|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "63862837-673d-490b-8e51-312190cff612",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7e5c50a4-0230-4292-9840-2d16a9beadf0",
+										"exec": [
+											"pm.variables.set(\"message\", \"Language with code=TEST_TST does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/languageIso/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"languageIso",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Role|ROLE|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6987e0fe-f773-4d5f-868b-31afa337752d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/role/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"role",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Role|ROLE|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "db5bd0e9-04b8-4ba6-a66b-abd3258013a0",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "37eac213-5d4b-46d1-8dc7-8af50d9c6535",
+										"exec": [
+											"pm.variables.set(\"message\", \"Role with name=TEST_ROLE does not exists.\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/role/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"role",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Tax|TAX|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fce0520e-c147-484f-ba25-b5a43e3ea9ca",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/tax/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"tax",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Tax|TAX|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "08ae291c-3c86-422b-85f7-a9f0887d2381",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/tax/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"tax",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|InvoiceType|IT|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5d856200-6d25-48b0-8ab8-5a08f5065f96",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceType/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceType",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|InvoiceType|IT|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "12f0aeaf-2a55-4a80-8b35-1d1048557922",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/invoiceType/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"invoiceType",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|CustomerBrand|CB|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1e4e80db-062c-4995-a2b2-2d5b88662bc1",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer",
+										"removeBrand",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|CustomerBrand|CB|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "cbdf1cb7-4ad0-458f-8427-d9136ebc00a8",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "542e1f4c-13b5-474e-b005-416225c477f2",
+										"exec": [
+											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" does not exists.\")"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer",
+										"removeBrand",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|CustomerBrand|CB|DELETE_REFERENCED_ENTITY_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "95094244-00a7-4285-bf48-76fb64617dc3",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "e066be8d-09b3-4fd0-8a9e-f1d973a36a6f",
+										"exec": [
+											"pm.variables.set(\"message\", \"CustomerBrand with code=\"+pm.globals.get(\"customerBrandCode\")+\" is referenced.\")"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer/removeBrand/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer",
+										"removeBrand",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Seller|SELLER|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5aea400e-dffd-48a4-8ace-0d8d22933cc7",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Seller|SELLER|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a9e10ce3-9205-41ba-8a5b-cdb6897d41d2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|BillingCycle|BC|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ff23ef85-db1f-429a-ae54-b2041b47d5fd",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|BillingCycle|BC|ENTITY_DOES_NOT_EXISTS_EXCEPTION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d5199989-d9f5-4587-bf1d-7aedbf6f993a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"CLASSIC\",\r\n    \"seller\": \"CLASSIC\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete|Seller|SELLER|SUCCESS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f6fa9829-caa3-4d66-b55d-5fe0b5920733",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/{{entityCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"{{entityCode}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
 				{
 					"name": "Accounting",
 					"item": [
@@ -30565,244 +30600,249 @@
 	],
 	"variable": [
 		{
-			"id": "999370ac-48b7-4951-a7da-f0786ed534d2",
+			"id": "c1da3bb3-f7a1-4e1e-a61b-15e55fba1013",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
-			"id": "79f12099-c030-41e2-9e40-c560f00957a8",
+			"id": "a07b69af-5160-482f-adb6-b798b1c3a37d",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "88d5a4c8-d4d2-47d2-9c2b-4ae7a685f26b",
+			"id": "9d8def5f-b5bd-4763-9877-8835fadd0233",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "51289875-ac62-4235-8eef-d3eee0da82e8",
+			"id": "438ff713-7e94-444a-98c4-3c684457fd03",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "9ca2915b-326d-4175-8a0b-84712fc75d83",
+			"id": "f0e32624-d3a3-4229-b1bd-8cb3db869a75",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "20b67ec4-8a95-4445-a779-22b59e051c00",
+			"id": "49dd7387-f054-46e9-bb40-43283a181001",
 			"key": "auth",
 			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 		},
 		{
-			"id": "c830016e-40b2-4b51-ac95-eeb3d4cc26aa",
+			"id": "3708e418-346b-4ec4-aba2-f61559ae1efb",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "b3cdd3d3-4688-4901-8326-3c10e0208ba4",
+			"id": "e2b50cb8-b873-4db1-89a1-31ad51aa3383",
 			"key": "testCode",
 			"value": "TEST"
 		},
 		{
-			"id": "a598029c-b512-4224-900b-1bf1d4bdd49d",
+			"id": "7424e6f9-e424-4a93-8ba7-d0b8b77c92f7",
 			"key": "testDescription",
 			"value": "This is a test description"
 		},
 		{
-			"id": "556694a5-bdf8-47bd-98ee-afe2ee00d583",
+			"id": "ac934cdf-3494-485c-a85f-2c8da48ff552",
 			"key": "timezone",
 			"value": "CET"
 		},
 		{
-			"id": "60d81aec-2695-4917-90c5-ad768f030c53",
+			"id": "2f6d1ffc-5603-4999-b1c2-b546403ffb80",
 			"key": "type_enum",
 			"value": "ASSETS"
 		},
 		{
-			"id": "35e3b075-1080-4e16-b42a-11f26128f4ae",
+			"id": "9a088921-7eed-434e-8c84-32f2f11f7a9d",
 			"key": "view_enum",
 			"value": "REGULAR"
 		},
 		{
-			"id": "17461701-5d1a-4056-be29-93bb287ebcf4",
+			"id": "893ac249-b59e-446d-89f9-1996c97fe7fc",
 			"key": "not_exist",
 			"value": "NOT_EXIST"
 		},
 		{
-			"id": "44954bc9-c2d3-4ae6-a541-047b7550abcb",
+			"id": "fa1ab392-fb85-4913-8ff9-6472c58b866b",
 			"key": "oc_category",
 			"value": "CREDIT"
 		},
 		{
-			"id": "c45ec341-f3db-42f6-908f-06cd6a657119",
+			"id": "d096f93a-4e84-4738-a342-522c77b07166",
 			"key": "terminate_reason",
 			"value": "NONE"
 		},
 		{
-			"id": "c70a26fb-5e76-4403-81d2-037531c97e64",
+			"id": "d9aea698-1014-4bf6-a265-953452c8e60f",
 			"key": "terminate_date",
 			"value": "2018-09-14"
 		},
 		{
-			"id": "114a6bdb-ad47-48ae-9241-17c13ec25cbe",
+			"id": "35f7a0ca-a52f-417b-b30f-1427648d92b4",
 			"key": "status",
 			"value": "ACTIVE"
 		},
 		{
-			"id": "6c03df6d-736c-41c3-b6d4-2591c25496c9",
+			"id": "5acb793c-37f1-49af-be75-d5548b65d26b",
 			"key": "first_name",
 			"value": "Ben"
 		},
 		{
-			"id": "4786dfe7-0504-4e4f-ba4e-cce1d4b1e88e",
+			"id": "1dd9fab8-2221-4b21-8aff-f95735a32e1a",
 			"key": "last_name",
 			"value": "Ohara"
 		},
 		{
-			"id": "3b2ae5c0-8888-4755-8482-30048a371f2f",
+			"id": "c9653ae1-28c8-43a0-9c6c-c0483231a1d5",
 			"key": "address",
 			"value": "14 Rue Crespin du Gast"
 		},
 		{
-			"id": "daaac289-2a32-44c9-be44-c1674daf18df",
+			"id": "a5c47c9f-98e3-4045-80df-ece848e39b91",
 			"key": "adrdress2",
 			"value": "15 Rue Crespin du Gast"
 		},
 		{
-			"id": "10721665-af00-4f92-9f13-109d20d9a3a7",
+			"id": "636f7f16-f0ee-43c6-922d-ce514f09fd56",
 			"key": "address3",
 			"value": "16 Rue Crespin du Gast"
 		},
 		{
-			"id": "f20d714a-51c2-4a52-82cd-d733a105607e",
+			"id": "b7e7f7a2-d065-47e3-a21b-5488a4f9a64d",
 			"key": "zip_code",
 			"value": "75011"
 		},
 		{
-			"id": "c5b7c726-70d9-493f-a417-be06bc64c9e2",
+			"id": "a5848926-9540-496a-aec6-14a8db0a3965",
 			"key": "city",
 			"value": "PARIS"
 		},
 		{
-			"id": "060cae98-0183-4cb1-b8e1-a127cb319bb4",
+			"id": "31976758-0c4e-40a7-9f72-f9c4b656c80d",
 			"key": "counrty_code",
 			"value": "FR"
 		},
 		{
-			"id": "1943b9f1-1dc6-42a6-ae7b-9d007907db20",
+			"id": "10a0307d-07d9-4067-88b4-acba418c45ae",
 			"key": "state",
 			"value": "Paris Area"
 		},
 		{
-			"id": "1bbb216c-c368-49b0-930d-8c3b918b66ba",
+			"id": "b1c32108-2c34-49b5-b46d-c8cdb58ef2c4",
 			"key": "customer_title",
 			"value": "MR"
 		},
 		{
-			"id": "21b9c29c-7323-44c8-a7e7-78a221fe579e",
+			"id": "639e3507-0732-4c05-a6b3-13908ea331d9",
 			"key": "email",
 			"value": "ben.ohara@opencellsoft.com"
 		},
 		{
-			"id": "1d9f5f5e-71e7-48bd-a10e-ce197c42693d",
+			"id": "5b6281cc-9959-4956-a47d-55a56206febe",
 			"key": "currency",
 			"value": "EUR"
 		},
 		{
-			"id": "0f77753d-d346-44fd-8a42-36141c183ef4",
+			"id": "557ce459-9271-4860-8087-86a3b9ca2f10",
 			"key": "language",
 			"value": "FRA"
 		},
 		{
-			"id": "e41800d2-fbf6-42ae-9ca1-0c07e76ca143",
+			"id": "c485553f-c046-46ae-9f1d-363f7bd685ce",
 			"key": "valid",
 			"value": "VALID"
 		},
 		{
-			"id": "8cbb1eab-d941-4928-a90c-0c9eebe3286d",
+			"id": "46695350-0afc-4dee-87a5-22331ae7b363",
 			"key": "license",
 			"value": "COM"
 		},
 		{
-			"id": "61106504-a811-4803-aa14-e76ee2deb270",
+			"id": "b16facd5-35af-4409-b377-ae60fb875a24",
 			"key": "job_template",
 			"value": "SepaDirectDebitJob"
 		},
 		{
-			"id": "8f2bc30b-b4b1-4981-961e-3b0f606626aa",
+			"id": "6ebb6394-6fe1-493a-b1bd-bfe7d6cd38e1",
 			"key": "job_category",
 			"value": "ACCOUNT_RECEIVABLES"
 		},
 		{
-			"id": "edcba501-4fde-4c61-a655-06d6fbc478d6",
+			"id": "812bb5e6-4254-4c4b-b5a4-36185f0ad548",
 			"key": "job_temp_code",
 			"value": "SepaJob_ddRequestBuilder"
 		},
 		{
-			"id": "04d7efb8-7c6d-479e-8220-eda596de5eec",
+			"id": "13704942-364f-4139-931e-956c36f9a4a1",
 			"key": "job_class",
 			"value": "org.meveo.model.payments.DDRequestBuilder"
 		},
 		{
-			"id": "886f49ef-8655-42f2-a352-49cef39903f9",
+			"id": "b8a86fb7-adc0-4d42-81fb-058af6e27a90",
 			"key": "job_refer_code",
 			"value": "Sepa_STD"
 		},
 		{
-			"id": "d657d1af-7e72-4330-9284-ff7bcfa345e2",
+			"id": "80efa0f6-3de2-45b2-a5f9-27da2fa84568",
 			"key": "valid_from",
 			"value": "2020-01-01"
 		},
 		{
-			"id": "05cbe992-ef23-4814-884e-e2869cac37e6",
+			"id": "a9cdac96-359a-4a7a-ba1c-b7d0d7561d4a",
 			"key": "valid_to",
 			"value": "2020-12-01"
 		},
 		{
-			"id": "27dcfb60-c4ef-4f5f-b29e-2d748ddaaad8",
+			"id": "69b18c2c-9746-44c7-95ce-51a4422ce0e9",
 			"key": "service_temp_code1",
 			"value": "SE_CLASSIC_USG_UNIT"
 		},
 		{
-			"id": "bd7dccb3-b862-41f4-87b9-e249759bcc70",
+			"id": "89871e2f-4ac8-4326-8974-fa2139476f0a",
 			"key": "service_temp_code2",
 			"value": "SE_CLASSIC_REC_FLAT"
 		},
 		{
-			"id": "6f467096-498b-4d3d-8c32-90fe83a2aeb6",
+			"id": "ed6f4f08-4883-4d51-b261-19f1fde35ebd",
 			"key": "yearly_calender",
 			"value": "YEARLY"
 		},
 		{
-			"id": "bda9bacc-cae8-4f51-8613-d927ff726bcb",
+			"id": "e65bdff8-4fe9-45df-b197-35cc1a802d3f",
 			"key": "seller_code",
 			"value": "CLASSIC"
 		},
 		{
-			"id": "4265c627-769a-4897-acde-d31f0e59f5c4",
+			"id": "226a759d-c8b8-407c-a8ec-5e37c8e54496",
 			"key": "payment_type",
 			"value": "CUSTOM"
 		},
 		{
-			"id": "9cc3effb-0a25-49c3-b87b-fef080bd1890",
+			"id": "caa6fb31-1dff-47c8-9ad5-ebdde4cdd285",
 			"key": "payment_method",
 			"value": "CHECK"
 		},
 		{
-			"id": "8d45b71c-08bf-44d0-a5f3-bb40896576de",
+			"id": "0e945bef-5136-4f1a-856a-6320ea654f07",
 			"key": "instance_code",
 			"value": "org.meveo.service.script.demo.CustomGatewayPaymentScript"
 		},
 		{
-			"id": "abf8b7df-b792-40fd-9c03-d8dca070b481",
+			"id": "b197ae46-57b3-4603-9882-da9c5d23fee5",
 			"key": "seller",
 			"value": "SELLER_FR"
 		},
 		{
-			"id": "15fe558f-a7e3-4c3f-bdbf-1d0be3dbbc0b",
+			"id": "fbb972e3-654a-45d4-8e79-75ad04bb9e76",
 			"key": "entity_status",
 			"value": "ACTIVE"
+		},
+		{
+			"id": "44a739be-8546-4dc8-bb91-f8dbc07368f7",
+			"key": "i",
+			"value": "0"
 		}
 	],
 	"protocolProfileBehavior": {}
