@@ -789,4 +789,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public List<Subscription> findSubscriptions(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
+
+    public Subscription findByCodeAndValidityDate(String code, Date date) {
+        return null;
+    }
 }
