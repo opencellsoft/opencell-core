@@ -847,4 +847,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         subscription.autoUpdateEndOfEngagementDate();
     }
+
+    public Subscription findByCodeAndValidityDate(String code, Date date) {
+        return null;
+    }
 }
