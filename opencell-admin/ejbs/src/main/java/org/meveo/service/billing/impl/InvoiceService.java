@@ -3001,6 +3001,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
+        if (subscription == null && billingAccount != null) {
+            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
+            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
+            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
+        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3185,6 +3190,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+    }
+
+    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
+        return billingAccount.getUsersAccounts().stream()
+                .map(userAccount -> userAccount.getSubscriptions())
+                .map(this::addSubscriptionDiscountPlan)
+                .flatMap(Collection::stream)
+                .collect(toList());
+    }
+
+    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
+        return subscriptions.stream()
+                .map(Subscription::getDiscountPlanInstances)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int rounding, RoundingModeEnum roundingMode, int invoiceRounding,
