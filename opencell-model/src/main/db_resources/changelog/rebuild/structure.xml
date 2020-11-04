@@ -10092,7 +10092,7 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_trade_rule_line_seq" /> 
         <createSequence sequenceName="cpq_grouped_service_seq" /> 
         <createSequence sequenceName="cpq_product_mapping_seq" />
-        <createSequence sequenceName="cpq_accounting_article_seq]" />
+        <createSequence sequenceName="cpq_accounting_article_seq" />
          <createSequence sequenceName="cpq_service_type_seq" />
      </changeSet>  
      
