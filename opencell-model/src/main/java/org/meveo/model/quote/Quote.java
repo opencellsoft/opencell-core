@@ -239,21 +239,21 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	/**
 	 * statusDate
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "status_date", nullable = false)
 	private Date statusDate;
 
 	/**
 	 * sendDate
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "send_date")
 	private Date sendDate;
 
 	/**
 	 * prestationDateBegin
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prestation_date_begin")
 	private Date prestationDateBegin;
 

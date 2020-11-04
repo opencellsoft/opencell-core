@@ -60,14 +60,7 @@ public class TradeRuleLine extends BusinessEntity {
 	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product sourceProduct;
 	
-	
-	 /** 
-     * source service
-     */  
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "service_template_id", referencedColumnName = "id") 
-    private  ServiceTemplate sourceServiceTemplate;
-
+	 
 	/**
 	 * version of the product
 	 */
@@ -77,9 +70,9 @@ public class TradeRuleLine extends BusinessEntity {
 
 	/**
 	 * attribute name
-	 */
-	@Column(name = "source_attribute_name", length = 20)
-	@Size(max = 20)
+	 */ 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "source_service_name", referencedColumnName = "id")
 	private ServiceTemplate sourceService;
 	
 	/**
@@ -204,23 +197,7 @@ public class TradeRuleLine extends BusinessEntity {
 	public void setTradeRuleItem(TradeRuleItem tradeRuleItem) {
 		this.tradeRuleItem = tradeRuleItem;
 	}
-	
-	
-
-	/**
-	 * @return the sourceServiceTemplate
-	 */
-	public ServiceTemplate getSourceServiceTemplate() {
-		return sourceServiceTemplate;
-	}
-
-	/**
-	 * @param sourceServiceTemplate the sourceServiceTemplate to set
-	 */
-	public void setSourceServiceTemplate(ServiceTemplate sourceServiceTemplate) {
-		this.sourceServiceTemplate = sourceServiceTemplate;
-	}
-
+ 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
