@@ -54,6 +54,6 @@ public enum CalendarTypeEnum {
      * @return true, if is join
      */
     public boolean isJoin() {
-        return this == INTERSECT || this == UNION;
+        return this == INTERSECT || this == UNION || this == APPEND;
     }
 }
