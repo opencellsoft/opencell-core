@@ -19,6 +19,8 @@ package org.meveo.service.billing.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
