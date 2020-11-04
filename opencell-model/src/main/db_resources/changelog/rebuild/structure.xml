@@ -6245,6 +6245,17 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
             </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
 
             <column name="quote_id" type="bigint">
@@ -10081,6 +10092,8 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_trade_rule_line_seq" /> 
         <createSequence sequenceName="cpq_grouped_service_seq" /> 
         <createSequence sequenceName="cpq_product_mapping_seq" />
+        <createSequence sequenceName="cpq_accounting_article_seq]" />
+         <createSequence sequenceName="cpq_service_type_seq" />
      </changeSet>  
      
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
@@ -10167,7 +10180,7 @@ $$ LANGUAGE plpgsql;
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
             </column>
-            <column name="version" type="int4" />  
+            <column name="version" type="int4" />
             <column name="status" type="varchar(255)" />
              <column name="status_date" type="datetime" />
             
@@ -10175,7 +10188,8 @@ $$ LANGUAGE plpgsql;
             <column name="long_description" type="text" /> 
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
-            <column name="product_id" type="bigint" />  
+            <column name="product_id" type="bigint" />
+            <column name="current_version" type="int4" />   
         </createTable>
     </changeSet>
     
@@ -10206,7 +10220,7 @@ $$ LANGUAGE plpgsql;
     
     
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-07">
-        <createTable tableName="cpq_filter_tag">
+        <createTable tableName="cpq_tag_filter">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_filter_pkey" />
             </column>
@@ -10221,7 +10235,7 @@ $$ LANGUAGE plpgsql;
             <column name="description" type="varchar(255)" />  
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" /> 
-            
+             <column name="tag_id" type="bigint" /> 
             <column name="operator" type="varchar(255)" />
             <column name="entity" type="varchar(255)" />
             <column name="field" type="varchar(255)" />
@@ -10372,13 +10386,17 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="description" type="varchar(255)" />  
             <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />    
+            <column name="updater" type="varchar(100)" /> 
+               
             <column name="rule_type" type="varchar(50)" />  
-            <column name="cpq_commercial_offer_id" type="bigint" /> 
+            <column name="offer_template_id" type="bigint" /> 
             <column name="cpq_product_id" type="bigint" />  
             <column name="cpq_product_version_id" type="bigint" /> 
+            <column name="grouped_service_id" type="bigint" /> 
+            <column name="service_template_id" type="bigint" />
+            
             <column name="target_attribute_name" type="varchar(20)" />  
-            <column name="target_attribute_value" type="varchar(255)" />
+            <column name="target_service_value" type="varchar(255)" />
             <column name="cpq_tag_id" type="bigint" />  
             <column name="rule_el" type="varchar(2000)" />  
 		</createTable>
@@ -10401,7 +10419,8 @@ $$ LANGUAGE plpgsql;
 			<column name="description" type="varchar(255)" />
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
-			<column name="cpq_commercial_offer_id" type="bigint" />
+			<column name="trade_rule_header_id" type="bigint" />
+			<column name="operator" type="varchar(255)" />
 			<column name="rule_item_el" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
@@ -10425,9 +10444,11 @@ $$ LANGUAGE plpgsql;
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
 			
-			<column name="commercial_offer_id" type="bigint" />
+			<column name="offer_template_id" type="bigint" />
+			<column name="trade_rule_item_id" type="bigint" />
 			<column name="product_id" type="bigint" />
 			<column name="product_version_id" type="bigint" />
+			<column name="source_service_name" type="bigint" />
 			<column name="tag_id" type="bigint" />
 			<column name="operator" type="int" />
 			<column name="value" type="varchar(255)" /> 
@@ -10637,8 +10658,8 @@ $$ LANGUAGE plpgsql;
       
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-19">
-        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_trade_rule_line" constraintName="fk_iw510u1o6ndaphf4" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_trade_rule_line" constraintName="fk_iw510u1o6ndaphf4" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
      </changeSet> 
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-20">
@@ -10652,14 +10673,13 @@ $$ LANGUAGE plpgsql;
      </changeSet>
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-22">
-        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_trade_rule_line" constraintName="fk_oluu50oo32sqiun5" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+        <addForeignKeyConstraint baseColumnNames="trade_rule_item_id" baseTableName="cpq_trade_rule_line" constraintName="fk_rule_item_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_trade_rule_item" />
      </changeSet> 
      
-     
           <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-23">
-        <addForeignKeyConstraint baseColumnNames="cpq_commercial_offer_id" baseTableName="cpq_trade_rule_header" constraintName="fk_nhi85o6nnipl087" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_trade_rule_header" constraintName="fk_nhi85o6nnipl087" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
      </changeSet> 
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-24">
@@ -10678,7 +10698,7 @@ $$ LANGUAGE plpgsql;
      </changeSet>   
      
         <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-27">
-        <addForeignKeyConstraint baseColumnNames="cpq_commercial_offer_id" baseTableName="cpq_trade_rule_item" constraintName="fk_jj000oi0ndahhi55" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="trade_rule_header_id" baseTableName="cpq_trade_rule_item" constraintName="fk_trade_rule_header_rule_item" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
      </changeSet> 
      
@@ -10843,7 +10863,7 @@ $$ LANGUAGE plpgsql;
             <column name="status" type="int4" >
                 <constraints nullable="false" />
             </column>
-            <column name="status_date" type="DATE">
+            <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
             <column name="contract_date" type="date">
@@ -10931,6 +10951,28 @@ $$ LANGUAGE plpgsql;
             <column name="dim_number" type="int4" />
             <column name="price_without_tax" type="numeric(23, 12)" />
         </createTable>
+    </changeSet>
+    
+    <changeSet id="540-15_20201019_servicetype" author="TarikF">
+    	<createTable tableName="cpq_service_type">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" /> 
+            <column name="service_type" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+    	</createTable>
     </changeSet>
       
       <changeSet id="current-str-fk-28" author="TarikFAKHOURI">
@@ -11093,28 +11135,35 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_mapping" constraintName="fk-charge_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
       </changeSet>
+      
+        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-36">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_tag_filter" constraintName="fk-tag-tag_filter" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+      </changeSet>
+      
+        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-37">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_trade_rule_header" constraintName="fk_service_template_trade_rule_header" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet> 
      
-    <changeSet id="540-15_20201019_servicetype" author="TarikF">
-    	<createTable tableName="cpq_service_type">
-    		<column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
-            </column>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />  
-            <column name="version" type="int4" />
-            <column name="creator" type="varchar(100)" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="updater" type="varchar(100)" /> 
-            <column name="service_type" type="varchar(100)">
-                <constraints nullable="false" />
-            </column>
-    	</createTable>
-    </changeSet>
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-38">
+        <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cpq_trade_rule_header" constraintName="fk_grouped_service_trade_rule_header" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" />
+     </changeSet> 
+     
+       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-39">
+        <addForeignKeyConstraint baseColumnNames="source_service_name" baseTableName="cpq_trade_rule_line" constraintName="fk_service_template_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet> 
+     
+       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-40">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_trade_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+     </changeSet> 
+     
+     
+     
+    
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />

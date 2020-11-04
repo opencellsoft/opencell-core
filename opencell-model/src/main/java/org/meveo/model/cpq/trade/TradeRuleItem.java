@@ -2,6 +2,8 @@ package org.meveo.model.cpq.trade;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -9,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -44,14 +47,15 @@ public class TradeRuleItem extends BusinessEntity {
 	 * rule operator
 	 */
 	@Column(name = "operator", nullable = false)
+	@Enumerated(EnumType.STRING)
 	@NotNull
 	private OperatorEnum operator = OperatorEnum.ET;
 	
 	/**
 	 * Expression language
-	 */
-	@Column(name = "rule_item_el")
-	@Lob
+	 */ 
+	@Size(max = 2000)
+    @Column(name = "rule_item_el", columnDefinition = "TEXT")
 	private String ruleItemEl;
 
 	/**

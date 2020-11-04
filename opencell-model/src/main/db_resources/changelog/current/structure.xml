@@ -3946,7 +3946,7 @@ END $$;]]>
         
         </changeSet>
         
-          <changeSet id="#5595-36-20201103-1" author="Mbarek-Ay">
+      <changeSet id="#5595-36-20201103" author="Mbarek-Ay">
         <addColumn tableName="cpq_tag">
             <column name="product_version_id" type="bigint" /> 
         </addColumn> 
@@ -3962,7 +3962,7 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" /> 
             <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_tag" constraintName="fk_offer_template_version_tag" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />  
-    </changeSet>
+       </changeSet>
     
     <!-- end MediaPost -->
     

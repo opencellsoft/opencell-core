@@ -28,7 +28,7 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 @Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
-@NamedQuery(name = "QuotePrice.findByCode", query = "select q from QuotePrice where q.code=:code")
+@NamedQuery(name = "QuotePrice.findByCode", query = "select q from QuotePrice q where q.code=:code")
 public class QuotePrice extends BusinessEntity  {
 
 

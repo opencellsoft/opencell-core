@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.enums.OperatorLogicEnum;
 
@@ -48,7 +47,7 @@ public class TagFilter extends BusinessEntity {
 	@Column(name = "operator", nullable = false)
 	@Valid
 	@NotNull
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private OperatorEnum operator;
 	
 	@Column(name = "entity", length = 50, nullable = false)
@@ -65,7 +64,7 @@ public class TagFilter extends BusinessEntity {
 	@Column(name = "comparaison", nullable = false)
 	@Valid
 	@NotNull
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private OperatorLogicEnum comparaison;
 	
 	@Column(name = "value", length = 50)

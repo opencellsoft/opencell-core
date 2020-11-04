@@ -45,7 +45,7 @@ public class TradeRuleHeader extends BusinessEntity {
 	/**
 	 * rule type : can be 0 => Prérequis / 1 => incompatible 
 	 */
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	@Column(name = "rule_type", nullable = false)
 	@NotNull
 	private RuleTypeEnum ruleType = RuleTypeEnum.PRE_REQUISITE;
@@ -88,8 +88,15 @@ public class TradeRuleHeader extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "service_template_id", referencedColumnName = "id") 
 	private ServiceTemplate serviceTemplate;
- 
-
+	
+	/**
+	 * attribute name
+	 */
+	@Column(name = "target_attribute_name", length = 20)
+	@Size(max = 20)
+	private String targetAttributeName;
+	
+	
 	/**
 	 * attribute value
 	 */
@@ -107,8 +114,8 @@ public class TradeRuleHeader extends BusinessEntity {
 	/**
 	 * rule El
 	 */
-	@Column(name = "rule_el")
-	@Lob
+	@Size(max = 2000)
+    @Column(name = "rule_el", columnDefinition = "TEXT")
 	private String ruleEl;
 
 	/**
@@ -237,6 +244,22 @@ public class TradeRuleHeader extends BusinessEntity {
 	 */
 	public void setRuleEl(String ruleEl) {
 		this.ruleEl = ruleEl;
+	}
+	
+	
+
+	/**
+	 * @return the targetAttributeName
+	 */
+	public String getTargetAttributeName() {
+		return targetAttributeName;
+	}
+
+	/**
+	 * @param targetAttributeName the targetAttributeName to set
+	 */
+	public void setTargetAttributeName(String targetAttributeName) {
+		this.targetAttributeName = targetAttributeName;
 	}
 
 	@Override
