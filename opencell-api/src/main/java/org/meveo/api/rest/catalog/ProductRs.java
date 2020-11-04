@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.ProductDto;
@@ -22,6 +23,7 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,10 +47,11 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully created",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "404", description = "the product with code is missing"),
-            @ApiResponse(responseCode = "500", description = "the product already existe with the given code")
+            @ApiResponse(responseCode = "412", description = "the product with code is missing"),
+            @ApiResponse(responseCode = "302", description = "the product already existe with the given code"),
+            @ApiResponse(responseCode = "400", description = "Internat error")
     })
-	ActionStatus addNewProduct(ProductDto productDto);
+	Response addNewProduct(@Parameter(description = "product dto for a new insertion", required = true) ProductDto productDto);
 	
 	/**
 	 * 
@@ -63,9 +66,10 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully updated",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "500", description = "the status of the product is different to DRAFT")
+            @ApiResponse(responseCode = "404", description = "Unknown producth"),
+            @ApiResponse(responseCode = "400", description = "the status of the product is different to DRAFT")
     })
-	ActionStatus updateProduct(ProductDto productDto);
+	Response updateProduct(@Parameter(description = "product dto for updating an existing product", required = true) ProductDto productDto);
 	
 	/**
 	 * 
@@ -81,9 +85,9 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully updated",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "500", description = "the status of the product is already closed")
+            @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
-	ActionStatus updateStatus(@PathParam("codeProduct") String codeProduct,@QueryParam("status") ProductStatusEnum status);
+	Response updateStatus(@Parameter @PathParam("codeProduct") String codeProduct,@Parameter @QueryParam("status") ProductStatusEnum status);
 	
 	/**
 	 * 
@@ -98,9 +102,9 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully updated",
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
-            @ApiResponse(responseCode = "500", description = "the product with code in param does not exist")
+            @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
-	GetProductDtoResponse findByCode(@QueryParam("codeProduct") String codeProduct);
+	Response findByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("codeProduct") String codeProduct);
 
 	/**
 	 * 
@@ -115,9 +119,10 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully deleted",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "500", description = "the product with code in param does not exist or the product line is attached to a product")
+            @ApiResponse(responseCode = "404", description = "unknown product line"),
+            @ApiResponse(responseCode = "400", description = "the product line is attached to a product")
     })
-    ActionStatus removeProductLine(@PathParam("idProductLine") Long id);
+    Response removeProductLine(@Parameter(description = "id product for deleting an existing product line", required = true) @PathParam("idProductLine") Long id);
 
     /**
      * 
@@ -132,9 +137,9 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "500", description = "the product with code in param does exist for a new product line ")
+            @ApiResponse(responseCode = "400", description = "the product with code in param does exist for a new product line ")
     })
-    ActionStatus createOrUpdateProductLine(ProductLineDto dto);
+	Response createOrUpdateProductLine(@Parameter(description = "create new product line or update an existing product line", required = true) ProductLineDto dto);
 
 	/**
 	 * 
@@ -149,9 +154,11 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
                     content = @Content(schema = @Schema(implementation = GetProductLineDtoResponse.class))),
-            @ApiResponse(responseCode = "500", description = "the product line with code in param does not exist")
+            @ApiResponse(responseCode = "412", description = "codeProductLine parameter is missing"),
+            @ApiResponse(responseCode = "404", description = "Unkonw product line"),
+            @ApiResponse(responseCode = "400", description = "the product line with code in param does not exist")
     })
-	GetProductLineDtoResponse findProductLineByCode(String code);
+	Response findProductLineByCode(@Parameter(description = "find an existing product line", required = true) @QueryParam("codeProductLine") String code);
 	
 	
 	 /**
@@ -167,71 +174,78 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product version successfully created or updated",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "500", description = "the product verion with product code and current version in param does not exist ")
+            @ApiResponse(responseCode = "404", description = "Unkonw product to attach to product version"),
+            @ApiResponse(responseCode = "400", description = "the product verion with product code and current version in param does not exist ")
     })
-	 ActionStatus createOrUpdateProductVersion(ProductVersionDto postData);
+	Response createOrUpdateProductVersion(@Parameter(description = "create new product version or update an existing product version", required = true) ProductVersionDto postData);
  
 
 
-		/**
-		 * 
-		 * @param productCode
-		 * @param currentVersion
-		 * @return
-		 */
-		@DELETE
-		@Path("/{productCode}/{currentVersion}")
-		@Operation(summary = "This endpoint allows to remove an existing product product version",
-		tags = { "ProductVersion"},
-		description ="remove a product version with product code and current version",
-		responses = {
-		        @ApiResponse(responseCode="200", description = "the product version successfully deleted",
-		        content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-		@ApiResponse(responseCode = "500", description = "the product version with product code and current version in param does not exist or the product version is attached to a product")
-		})
-		ActionStatus removeProductVersion(@PathParam("productCode") String productCode,@PathParam("currentVersion") int currentVersion);
+	/**
+	 * 
+	 * @param productCode
+	 * @param currentVersion
+	 * @return
+	 */
+	@DELETE
+	@Path("/{productCode}/{currentVersion}")
+	@Operation(summary = "This endpoint allows to remove an existing product product version",
+	tags = { "ProductVersion"},
+	description ="remove a product version with product code and current version",
+	responses = {
+	        @ApiResponse(responseCode="200", description = "the product version successfully deleted",
+	        content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+	    	@ApiResponse(responseCode = "404", description = "Unknown product version")
+	        ,
+	    	@ApiResponse(responseCode = "400", description = "the product version with product code and current version in param does not exist or the product version is attached to a product")
+	    	})
+	Response removeProductVersion(@Parameter @PathParam("productCode") String productCode,@Parameter @PathParam("currentVersion") int currentVersion);
 		
 		
-		
-		/**
-		 * 
-		 * @param codeProduct
-		 * @param status
-		 * @param currentVersion
-		 * @return
-		 */
-		@POST
-		@Path("/{productCode}/{currentVersion}/{status}")
-	    @Operation(summary = "This endpoint allows to update status of existing product version ",
-	    tags = { "ProductVersion" },
-	    description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
-	    responses = {
-	            @ApiResponse(responseCode="200", description = "the product version successfully updated",
-	                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-	            @ApiResponse(responseCode = "500", description = "the status of the product is already closed")
-	    })
-		ActionStatus updateProductVersionStatus(@PathParam("productCode") String codeProduct,@PathParam("currentVersion") int currentVersion,@QueryParam("status") VersionStatusEnum status);
+	
+	/**
+	 * 
+	 * @param codeProduct
+	 * @param status
+	 * @param currentVersion
+	 * @return
+	 */
+	@POST
+	@Path("/{productCode}/{currentVersion}/{status}")
+    @Operation(summary = "This endpoint allows to update status of existing product version ",
+    tags = { "ProductVersion" },
+    description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the product version successfully updated",
+                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Unknown product version"),
+            @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
+    })
+	Response updateProductVersionStatus(@Parameter @PathParam("productCode") String codeProduct,
+											@Parameter @PathParam("currentVersion") int currentVersion,
+											@Parameter @QueryParam("status") VersionStatusEnum status);
 
 
 
-		/**
-		 * 
-		 * @param productCode
-		 * @param currentVersion
-		 * @return
-		 */
-		@POST
-		@Path("/{productCode}/{currentVersion}")
-		@Operation(summary = "This endpoint allows to duplicate a product version",
-		tags = { "productVersion" },
-		description ="duplicate a product version",
-		responses = {
-		        @ApiResponse(responseCode="200", description = "the product version successfully duplicated",
-		                content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-		        @ApiResponse(responseCode = "500", description = "the product verion with product code and current version in param does not exist ")
-		})
-		 ActionStatus duplicateProductVersion(@PathParam("productCode") String productCode,@PathParam("currentVersion") int currentVersion);
-		
+	/**
+	 * 
+	 * @param productCode
+	 * @param currentVersion
+	 * @return
+	 */
+	@POST
+	@Path("/{productCode}/{currentVersion}")
+	@Operation(summary = "This endpoint allows to duplicate a product version",
+	tags = { "productVersion" },
+	description ="duplicate a product version",
+	responses = {
+	        @ApiResponse(responseCode="200", description = "the product version successfully duplicated",
+	                content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+	        @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
+	})
+	Response duplicateProductVersion(@Parameter @PathParam("productCode") String productCode,
+										@Parameter @PathParam("currentVersion") int currentVersion);
+	
 
-		
-		}
+	
+}

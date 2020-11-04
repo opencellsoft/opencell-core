@@ -83,25 +83,29 @@ public class ProductApi extends BaseApi {
 	 * @param productDto
 	 * @throws ProductException
 	 */
-	public ProductDto updateProduct(ProductDto productDto) throws ProductException {
+	public ProductDto updateProduct(ProductDto productDto){
 		
-		Product product = productService.findByCode(productDto.getCode());
-		product.setDescription(productDto.getLabel());
-		product.setProductLine(productLineService.findById(productDto.getProductLine() != null ? productDto.getProductLine().getId() : null));
-		product.setBrand(brandService.findByCode(productDto.getBrand() != null ? productDto.getBrand().getCode() : null));
-		product.setReference(productDto.getReference());
-		product.setModel(productDto.getModel());
-		product.setModelChlidren(productDto.getModelChlidren());
-		
-		if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()) {
-			Set<DiscountPlan> discountPlans  = new HashSet<DiscountPlan>(productDto.getDiscountList().stream().map(d -> {
-				final DiscountPlan discount = discountPlanService.findByCode(d.getCode());
-				return discount;
-			}).collect(Collectors.toSet()));
-			product.setDiscountList(discountPlans);
+		try {
+			Product product = productService.findByCode(productDto.getCode());
+			product.setDescription(productDto.getLabel());
+			product.setProductLine(productLineService.findById(productDto.getProductLine() != null ? productDto.getProductLine().getId() : null));
+			product.setBrand(brandService.findByCode(productDto.getBrand() != null ? productDto.getBrand().getCode() : null));
+			product.setReference(productDto.getReference());
+			product.setModel(productDto.getModel());
+			product.setModelChlidren(productDto.getModelChlidren());
+			
+			if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()) {
+				Set<DiscountPlan> discountPlans  = new HashSet<DiscountPlan>(productDto.getDiscountList().stream().map(d -> {
+					final DiscountPlan discount = discountPlanService.findByCode(d.getCode());
+					return discount;
+				}).collect(Collectors.toSet()));
+				product.setDiscountList(discountPlans);
+			}
+			product.setDiscountFlag(productDto.isDiscountFlag());
+			return new ProductDto(productService.updateProduct(product));
+		} catch (ProductException e) {
+			throw new MeveoApiException(e);
 		}
-		product.setDiscountFlag(productDto.isDiscountFlag());
-		return new ProductDto(productService.updateProduct(product));
 	}
 	
 	/**
@@ -111,15 +115,20 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 * @throws ProductException when the status is unknown and the status 
 	 */
-	public ProductDto updateStatus(String codeProduct, ProductStatusEnum status) throws ProductException {
+	public ProductDto updateStatus(String codeProduct, ProductStatusEnum status){
 		if(Strings.isEmpty(codeProduct)) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
 		if(status == null)
-			throw new ProductException(String.format(PRODUCT_STATUS_NOT_FOUND, status));
-		final Product product = productService.findByCode(codeProduct);
-		return new ProductDto(productService.updateStatus(product, status));
+			throw new MeveoApiException(String.format(PRODUCT_STATUS_NOT_FOUND, status));
+		Product product;
+		try {
+			product = productService.findByCode(codeProduct);
+			return new ProductDto(productService.updateStatus(product, status));
+		} catch (ProductException e) {
+			throw new MeveoApiException(e);
+		}
 	}
 	
 	/**
@@ -132,11 +141,7 @@ public class ProductApi extends BaseApi {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		try {
-			return new ProductDto(productService.findByCode(code));
-		} catch (ProductException e) {
-			throw new BusinessException(e);
-		}
+		return new ProductDto(productService.findByCode(code));
 	}
 	
 	
@@ -146,12 +151,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 */
 	public ProductLineDto createProductLine(ProductLineDto dto){
-		try {
-			return new ProductLineDto(productLineApi.createProductLine(dto));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
+		return new ProductLineDto(productLineApi.createProductLine(dto));
 	}
 
 	/**
@@ -159,12 +159,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 */
 	public ProductLineDto updateProductLine(ProductLineDto dto){
-		try {
 			return new ProductLineDto(productLineApi.updateProductLine(dto));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
 	}
 
 	/**
@@ -172,12 +167,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 */
 	public ProductLineDto findProductLineByCode(String code) {
-		try {
-			return new ProductLineDto(productLineService.findByCode(code));
-		} catch (ProductLineException e) {
-			throw new BusinessApiException(e);
-
-		}
+		return new ProductLineDto(productLineService.findByCode(code));
 	}
 	
 	
@@ -221,7 +211,7 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion updateProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException, ProductException, ProductVersionException {
+    public ProductVersion updateProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
         String productCode = postData.getProductCode();
         int currentVersion = postData.getCurrentVersion();
         if (StringUtils.isBlank(productCode)) {
@@ -230,7 +220,12 @@ public class ProductApi extends BaseApi {
         if (StringUtils.isBlank(currentVersion)) {
             missingParameters.add("currentVersion");
         }
-       ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode,currentVersion);
+       ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+		} catch (ProductException e) {
+			throw new MeveoApiException(e);
+		}
        if(productVersion==null) {
            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
        }
@@ -240,7 +235,11 @@ public class ProductApi extends BaseApi {
         productVersion.setEndDate(postData.getEndDate());
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(postData.getStatus());
-        productVersionService.updateProductVersion(productVersion);
+        try {
+			productVersionService.updateProductVersion(productVersion);
+		} catch (ProductVersionException | ProductException e) {
+			throw new MeveoApiException(e);
+		}
         return productVersion;
     }
     /**
@@ -252,18 +251,23 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public void removeProductVersion(String productCode,int currentVersion) throws ProductException, ProductVersionException {
+    public void removeProductVersion(String productCode,int currentVersion){
     	  if (StringUtils.isBlank(productCode)) {
               missingParameters.add("productCode");
           }
           if (StringUtils.isBlank(currentVersion)) {
               missingParameters.add("currentVersion");
           }
-        ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode,currentVersion);
-        if(productVersion==null) {
-            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
-        }
-        productVersionService.removeProductVersion(productVersion);
+        ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+	        if(productVersion==null) {
+	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
+	        }
+	        productVersionService.removeProductVersion(productVersion);
+		} catch (ProductException | ProductVersionException e) {
+			throw new MeveoApiException(e);
+		}
     }
     /**
      * Duplicate a product version Entity
@@ -275,13 +279,18 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException, ProductException, ProductVersionException { 
-        ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode,currentVersion);
-        if(productVersion==null) {
-            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
-        }
-        productVersionService.duplicate(productVersion);
-        return productVersion;
+    public ProductVersion duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+        ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+	        if(productVersion==null) {
+	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
+	        }
+	        productVersionService.duplicate(productVersion);
+	        return productVersion;
+		} catch (ProductException | ProductVersionException e) {
+			throw new MeveoApiException(e);
+		}
     }
     /**
      * Change status product version Entity
@@ -293,13 +302,18 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException, ProductException, ProductVersionException { 
-        ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode,currentVersion);
-        if(productVersion==null) {
-            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
-        }
-        productVersionService.updateProductVersionStatus(productVersion,status);
-        return productVersion;
+    public ProductVersion UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException { 
+        ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+	        if(productVersion==null) {
+	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
+	        }
+	        productVersionService.updateProductVersionStatus(productVersion,status);
+	        return productVersion;
+		} catch (ProductException | ProductVersionException e) {
+			throw new MeveoApiException(e);
+		}
     }
     
     
@@ -313,16 +327,21 @@ public class ProductApi extends BaseApi {
      * @throws ProductException 
      * @throws ProductVersionException 
      */
-    public ProductVersion createOrUpdateProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException, ProductException, ProductVersionException {
+    public ProductVersion createOrUpdateProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
     	String productCode = postData.getProductCode();
         int currentVersion = postData.getCurrentVersion();
-        ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode,currentVersion); 
+        ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+	        if (productVersion == null) {
+	            return createProductVersion(postData);
+	        } else {
+	            return updateProductVersion(postData);
+	        }
+		} catch (ProductException e) {
+			throw new MeveoApiException(e);
+		} 
 
-        if (productVersion == null) {
-            return createProductVersion(postData);
-        } else {
-            return updateProductVersion(postData);
-        }
     }
 	
 }

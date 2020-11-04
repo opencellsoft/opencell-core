@@ -2,7 +2,6 @@ package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.meveo.api.cpq.TagApi;
 import org.meveo.api.dto.ActionStatus;

@@ -28,11 +28,7 @@ public class GroupedServiceApi extends BaseApi{
 		
 		groupedService.setCode(groupedServiceDto.getCode());
 		groupedService.setDescription(groupedServiceDto.getDescription());
-		try {
-			groupedService.setProduct(productService.findByCode(groupedServiceDto.getProductCode()));
-		} catch (ProductException e) {
-			groupedService.setProduct(null);
-		}
+		groupedService.setProduct(productService.findByCode(groupedServiceDto.getProductCode()));
 		
 		groupedServiceService.create(groupedService);
 	}
@@ -50,11 +46,7 @@ public class GroupedServiceApi extends BaseApi{
 		}
 
 		groupedService.setDescription(groupedServiceDto.getDescription());
-		try {
-			groupedService.setProduct(productService.findByCode(groupedServiceDto.getProductCode()));
-		} catch (ProductException e) {
-			groupedService.setProduct(null);
-		}
+		groupedService.setProduct(productService.findByCode(groupedServiceDto.getProductCode()));
 		groupedServiceService.update(groupedService);
 	}
 	
