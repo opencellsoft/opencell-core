@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,8 +29,10 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "quote_id" , "quote_version"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
-//@NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.code=:code and q.quoteVersion=:quoteVersion")
-@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and q.status=1")
+@NamedQueries({ 
+	@NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.quote.code=:code and q.quoteVersion=:quoteVersion"),
+	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and p.status=1")
+})
 public class QuoteVersion extends BaseEntity{
 
 

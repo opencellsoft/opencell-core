@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.admin.impl.SellerService;
@@ -53,7 +54,7 @@ public class ProductLineService extends
 		final ProductLine line = this.findById(id);
 		if(line == null || line.getId() == null) {
 			LOGGER.warn("unknown product line with id: ({})", id);
-			throw new ProductLineException(String.format(PRODUCT_LINE_UNKNOWN, id));
+			throw new EntityDoesNotExistsException(String.format(PRODUCT_LINE_UNKNOWN, id));
 		}
 		
 		boolean isProductExist = productService.checkIfProductLineExist(id);
@@ -101,11 +102,11 @@ public class ProductLineService extends
 		return line;
 	}
 	
-	public ProductLine findByCode(String code) throws ProductLineException {
+	public ProductLine findByCode(String code){
 		try {
 			return (ProductLine) getEntityManager().createNamedQuery("ProductLine.findByCode").getSingleResult();
 		}catch(NoResultException e) {
-			throw new ProductLineException(String.format(PRODUCT_LINE_UNKNOWN, code), e);
+			throw new EntityDoesNotExistsException(String.format(PRODUCT_LINE_UNKNOWN, code));
 		}
 		
 	}

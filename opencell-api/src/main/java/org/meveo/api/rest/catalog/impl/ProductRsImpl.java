@@ -1,6 +1,7 @@
 package org.meveo.api.rest.catalog.impl;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ProductApi;
 import org.meveo.api.cpq.ProductLineApi;
@@ -11,12 +12,11 @@ import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.service.cpq.exception.ProductException;
-import org.meveo.service.cpq.exception.ProductVersionException;
 
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
@@ -26,131 +26,131 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	private ProductLineApi productLineApi; 
 	
 	@Override
-	public ActionStatus addNewProduct(ProductDto productDto) {
+	public Response addNewProduct(ProductDto productDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
         	productApi.addNewProduct(productDto);
-        } catch (Exception e) {
-            processException(e, result);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
         }
-        return result;
 	}
 
 	@Override
-	public ActionStatus updateProduct(ProductDto productDto) {
-		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	        try {
-	        	productApi.updateProduct(productDto);
-	        } catch (Exception e) {
-	            processException(e, result);
-	        }
-	        return result;
+	public Response updateProduct(ProductDto productDto) {
+	  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+        	productApi.updateProduct(productDto);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
+        }
 	}
 
 	@Override
-	public ActionStatus updateStatus(String codeProduct, ProductStatusEnum status) {
+	public Response updateStatus(String codeProduct, ProductStatusEnum status) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
 	        	productApi.updateStatus(codeProduct, status);
-	        } catch (Exception e) {
-	            processException(e, result);
+	            return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return createResponseFromMeveoApiException(e, result).build();
 	        }
-	        return result;
 	}
 
 	@Override
-	public GetProductDtoResponse findByCode(String codeProduct) {
+	public Response findByCode(String codeProduct) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
         	result.setProductDto(productApi.findByCode(codeProduct));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
         }
-        return result;
 	}
 
 	@Override
-	public ActionStatus removeProductLine(Long id) {
+	public Response removeProductLine(Long id) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
 	        	productLineApi.removeProductLine(id);
-	        } catch (Exception e) {
-	            processException(e, result);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return createResponseFromMeveoApiException(e, result).build();
 	        }
-	        return result;
 	}
 
 	@Override
-	public ActionStatus createOrUpdateProductLine(ProductLineDto dto) {
+	public Response createOrUpdateProductLine(ProductLineDto dto) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
 	        	if(dto.getId() == null)
 	        		productLineApi.createProductLine(dto);
 	        	else
 	        		productLineApi.updateProductLine(dto);
-	        } catch (Exception e) {
-	            processException(e, result);
+	            return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return createResponseFromMeveoApiException(e, result).build();
 	        }
-	        return result;
 	}
 
 	@Override
-	public GetProductLineDtoResponse findProductLineByCode(String code) {
+	public Response findProductLineByCode(String code) {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-        	result.setProductLineDto(productLineApi.findProductLineByCode(code));        } catch (Exception e) {
-            processException(e, result.getActionStatus());
+        	result.setProductLineDto(productLineApi.findProductLineByCode(code));  
+            return Response.ok(result).build();      
+        } catch(MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
         }
-        return result;
 	}
 	
 	
 	@Override
-	public ActionStatus createOrUpdateProductVersion(ProductVersionDto postData) {
+	public Response createOrUpdateProductVersion(ProductVersionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
         try {
-            productApi.createOrUpdateProductVersion(postData);
-        } catch (Exception e) {
-            processException(e, result);
+			productApi.createOrUpdateProductVersion(postData);
+			return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+        	return createResponseFromMeveoApiException(e, result).build();
         }
 
-        return result;
 	}
 	
-	public ActionStatus removeProductVersion(String productCode,int currentVersion) { 
+	public Response removeProductVersion(String productCode,int currentVersion) { 
 
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
 			productApi.removeProductVersion(productCode, currentVersion);
-		} catch (Exception e) {
-			processException(e, result);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+        	return createResponseFromMeveoApiException(e, result).build();
 		}
-		return result;
 	}
 
 	@Override
-	public ActionStatus updateProductVersionStatus(String productCode, int currentVersion,VersionStatusEnum status) {
+	public Response updateProductVersionStatus(String productCode, int currentVersion,VersionStatusEnum status) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
 			productApi.UpdateProductVersionStatus(productCode, currentVersion, status);
-		} catch (Exception e) {
-			processException(e, result);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
 		}
-		return result;
 	}
 	
 	
-	public ActionStatus duplicateProductVersion(String productCode,int currentVersion) { 
+	public Response duplicateProductVersion(String productCode,int currentVersion) { 
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
 			productApi.duplicateProductVersion(productCode, currentVersion);
-		} catch (Exception e) {
-			processException(e, result);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		       return createResponseFromMeveoApiException(e, result).build();
 		}
-		return result;
 	}
  
 
