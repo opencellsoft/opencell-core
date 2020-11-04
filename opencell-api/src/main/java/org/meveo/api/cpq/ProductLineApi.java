@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ProductLineDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.cpq.ProductLineService;
@@ -24,30 +25,38 @@ public class ProductLineApi extends BaseApi {
 	@Inject
 	private SellerService sellerService;
 	
-	public void removeProductLine(Long id) throws ProductLineException {
-		productLineService.removeProductLine(id);
+	public void removeProductLine(Long id) {
+		try {
+			productLineService.removeProductLine(id);
+		} catch (ProductLineException e) {
+			throw new MeveoApiException(e);
+		}
 	}
 	
-	public ProductLine createProductLine(ProductLineDto dto) throws ProductLineException{
+	public ProductLine createProductLine(ProductLineDto dto){
 		if(dto == null)
-			throw new ProductLineException(PRODUCT_LINE_EMPTY);
+			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
 		if(dto.getCodeProductLine() == null) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		return productLineService.createNew(dto.getCodeProductLine(), dto.getLabel(), dto.getCodeSeller(), dto.getLongDescription(), dto.getIdCodeParentLine());
+		try {
+			return productLineService.createNew(dto.getCodeProductLine(), dto.getLabel(), dto.getCodeSeller(), dto.getLongDescription(), dto.getIdCodeParentLine());
+		} catch (ProductLineException e) {
+			throw new MeveoApiException(e);
+		}
 	}
 	
-	public ProductLine updateProductLine(ProductLineDto dto) throws ProductLineException {
+	public ProductLine updateProductLine(ProductLineDto dto){
 		if(dto == null)
-			throw new ProductLineException(PRODUCT_LINE_EMPTY);
+			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
 		if(dto.getCodeProductLine() == null) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
 		final ProductLine line = productLineService.findById(dto.getId());
 		if(line == null)
-			throw new ProductLineException(String.format(ProductLineService.PRODUCT_LINE_UNKNOWN, dto.getId()));
+			throw new MeveoApiException(String.format(ProductLineService.PRODUCT_LINE_UNKNOWN, dto.getId()));
 		
 		line.setLongDescription(dto.getLongDescription());
 		line.setDescription(dto.getLabel());
@@ -70,11 +79,7 @@ public class ProductLineApi extends BaseApi {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		try {
-			return new ProductLineDto(productLineService.findByCode(code));
-		} catch (ProductLineException e) {
-			throw new BusinessException(e);
-		}
+		return new ProductLineDto(productLineService.findByCode(code));
 	}
 
 }

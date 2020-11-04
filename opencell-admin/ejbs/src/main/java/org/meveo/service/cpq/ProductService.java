@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
@@ -160,7 +162,7 @@ public class ProductService extends
 								Set<String> modelChildren, Set<String> discountPlanCode, boolean discountFlag) throws ProductException {
 		
 		if(!this.findByCodeLike(codeProduct).isEmpty()) {
-			throw new ProductException(String.format(PRODUCT_CODE_EXIST, codeProduct));
+			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, codeProduct));
 		}
 		final Product product = new Product();
 		product.setStatus(ProductStatusEnum.DRAFT);
@@ -192,13 +194,12 @@ public class ProductService extends
 	 * get product by its code
 	 * @param code
 	 * @return
-	 * @throws ProductException when no result found
 	 */
-	public Product findByCode(String code) throws ProductException {
+	public Product findByCode(String code){
 		try {
 			return(Product) getEntityManager().createNamedQuery("Product.findByCode").setParameter("code", code).getSingleResult();
 		}catch(NoResultException e) {
-			throw new ProductException(String.format(PRODUCT_UNKWON, code));
+			throw new EntityDoesNotExistsException(String.format(PRODUCT_UNKWON, code));
 		}
 	}
 }
