@@ -31,7 +31,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
 @NamedQueries({ 
 	@NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.quote.code=:code and q.quoteVersion=:quoteVersion"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and p.status=1")
+	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and q.status=1")
 })
 public class QuoteVersion extends BaseEntity{
 
