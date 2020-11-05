@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.DiscountPlan;
@@ -43,7 +44,7 @@ public class ProductService extends
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 	private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product (%s) is %s, it can not be updated nor removed";
-	private final static String PRODUCT_UNKWON = "product (%s) unkwon!";
+	private final static String PRODUCT_UNKWON = "product (%s) unknwon!";
 	private final static String PRODUCT_CAN_NOT_CHANGE_THE_STATUS = "product (%s) can not change the status beacause it not draft";
 	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";
 	
@@ -170,15 +171,17 @@ public class ProductService extends
 		product.setCode(codeProduct);
 		product.setDescription(label);
 		
-		final CustomerBrand brand = customerBrandService.findByCode(codeBrand);
-		product.setBrand(brand);
+		if(Strings.isNotEmpty(codeBrand)) {
+			product.setBrand(customerBrandService.findByCode(codeBrand));
+		}
 		product.setReference(reference);
 		product.setModel(model);
 		product.setModelChlidren(modelChildren);
 		product.setDiscountFlag(discountFlag);
-		
-		final ProductLine productLine = productLineService.findById(idProductLine);
-		product.setProductLine(productLine);
+
+		if(Strings.isNotEmpty(codeBrand)) {
+			product.setProductLine(productLineService.findById(idProductLine));
+		}
 		
 		var discountPlans  = new HashSet<DiscountPlan>(discountPlanCode.stream().map(codeDiscount -> {
 			final DiscountPlan discount = discountPlanService.findByCode(codeDiscount);

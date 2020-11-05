@@ -58,12 +58,12 @@ public class ProductVersion extends BaseEntity{
 	/**
      * Record/entity identifier
      */
-    @Id
+   /* @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
     @JsonProperty
-    protected Long id;
+    protected Long id;*/
     
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
