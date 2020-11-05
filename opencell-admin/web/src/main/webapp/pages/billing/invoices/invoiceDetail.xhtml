@@ -267,12 +267,11 @@
 
 
                         <p:fieldset legend="#{messages['invoice.totals']}">
-                            <hftl:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
-                            <hftl:formField label="#{messages['invoice.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
-                            <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
-                            <hftl:decorateFormField fieldId="netTopayId" label="#{messages['invoice.netToPay']}">
-                                <h:outputText id="netTopayId" value="#{invoiceBean.getEntity().netToPay}" styleClass="field-value" />
-                            </hftl:decorateFormField>
+                            <hftl:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" componentWidth="15" />
+                            <hftl:formField label="#{messages['invoice.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter"  componentWidth="15"/>
+                            <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter"  componentWidth="15"/>
+                            <hftl:formField label="#{messages['invoice.dueBalance']}" field="dueBalance" converter="bigDecimal4DigitsConverter"  componentWidth="15"/>
+                            <hftl:formField label="#{messages['invoice.netToPay']}" field="netToPay" converter="bigDecimal4DigitsConverter"  componentWidth="15"/>
                         </p:fieldset>
                         <br />
                         <p:outputPanel column="2" id="buttonGenerate">
