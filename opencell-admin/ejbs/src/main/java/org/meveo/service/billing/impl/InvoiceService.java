@@ -99,6 +99,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
@@ -288,6 +289,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @XMLGenerated
     private Event<Invoice> xmlGeneratedEventProducer;
+    
+    @Inject
+    @Updated
+    private Event<BaseEntity> entityUpdatedEventProducer;
 
     @Inject
     @InvoiceNumberAssigned
@@ -1210,6 +1215,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         pdfGeneratedEventProducer.fire(invoice);
 
         invoice = updateNoCheck(invoice);
+        entityUpdatedEventProducer.fire(invoice);
         return invoice;
     }
 
@@ -1840,6 +1846,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         produceInvoiceXmlNoUpdate(invoice);
         invoice.setStatus(InvoiceStatusEnum.GENERATED);
         invoice = updateNoCheck(invoice);
+        entityUpdatedEventProducer.fire(invoice);
         return invoice;
     }
 
@@ -2761,6 +2768,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 invoice.setStatus(InvoiceStatusEnum.SENT);
+                entityUpdatedEventProducer.fire(invoice);
                 invoice.setAlreadySent(true);
                 update(invoice);
 
