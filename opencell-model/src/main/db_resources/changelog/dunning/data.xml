@@ -8,11 +8,12 @@
 
         <sql><![CDATA[
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-25, 0, 0, now(), 'org.meveo.service.script.SimpleDunning', 'Simple Dunning script', 'JAVA', '
-       package org.meveo.service.script;
+        package org.meveo.service.script;
 
         import org.apache.commons.beanutils.PropertyUtils;
         import org.meveo.model.billing.InvoiceStatusEnum;
         import org.meveo.model.dunning.DunningDocument;
+        import org.meveo.model.dunning.DunningDocumentStatus;
         import org.meveo.model.generic.wf.GWFTransition;
         import org.meveo.model.notification.NotificationEventTypeEnum;
         import org.meveo.model.payments.*;
@@ -28,7 +29,6 @@
         import java.math.BigDecimal;
         import java.math.RoundingMode;
         import java.util.*;
-        import java.util.stream.Collectors;
 
         import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
         import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
@@ -71,7 +71,7 @@
                 } else if ("R3".equals(gwfTransition.getFromStatus()) && "R0".equals(gwfTransition.getToStatus())) {
                     customerAccount = sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
                     activateSubscription(customerAccount);
-                    deleteDunningDocument(customerAccount);
+                    closeDunningDocuments(customerAccount);
                 } else if ("R0".equals(gwfTransition.getToStatus())) {
                     sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
                 }
@@ -105,7 +105,7 @@
                 customerAccount.getAccountOperations().addAll(writeOffs);
             }
 
-            private void deleteDunningDocument(CustomerAccount customerAccount) {
+            private void closeDunningDocuments(CustomerAccount customerAccount) {
                 for (AccountOperation accountOperation : customerAccount.getAccountOperations()) {
                     if (accountOperation instanceof RecordedInvoice) {
                         ((RecordedInvoice) accountOperation).setDunningDocument(null);
@@ -114,14 +114,10 @@
                     }
                 }
 
-                Set<Long> ids = customerAccount.getDunningDocuments()
-                        .stream()
-                        .map(dd -> dd.getId())
-                        .collect(Collectors.toSet());
-
-                customerAccount.setDunningDocuments(null);
-                customerAccountService.update(customerAccount);
-                dunningDocumentService.remove(ids);
+                for(DunningDocument dd : customerAccount.getDunningDocuments()){
+                    dd.setStatus(DunningDocumentStatus.CLOSED);
+                    dunningDocumentService.update(dd);
+                }
             }
 
             private void activateSubscription(CustomerAccount customerAccount) {
@@ -169,6 +165,7 @@
                 List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
                 DunningDocument dunningDocument = new DunningDocument();
                 dunningDocument.setCustomerAccount(customerAccount);
+                dunningDocument.setStatus(DunningDocumentStatus.OPEN);
 
                 if (accountOperations != null) {
                     List<RecordedInvoice> ris = new ArrayList<>();
