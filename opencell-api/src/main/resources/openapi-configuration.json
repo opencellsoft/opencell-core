@@ -1,11 +1,7 @@
 {
   "scannerClass": "io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner",
-  "resourceClasses":[],
-  "resourcePackages": [
-    "org.meveo.apiv2.generic",
-    "org.meveo.apiv2.document",
-    "org.meveo.apiv2.ordering"
-  ],
+  "resourceClasses":["org.meveo.api.rest.catalog.ProductRs","org.meveo.api.rest.catalog.TagRs","org.meveo.api.rest.tmforum.QuoteRs"],
+  "resourcePackages": [],
   "prettyPrint" : true,
   "cacheTTL": 0,
   "openAPI": {
