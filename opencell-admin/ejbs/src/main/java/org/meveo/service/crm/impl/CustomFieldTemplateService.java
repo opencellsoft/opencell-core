@@ -192,7 +192,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         Map<String, CustomFieldTemplate> cftMap = new TreeMap<>();
         if (referencedEntity != null) {
             List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
-                .setParameter("referencedEntity", referencedEntity.toUpperCase()).getResultList();
+                .setParameter("referencedEntity", referencedEntity.toLowerCase()).getResultList();
             cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getAppliesTo() + cft.getCode(), cft -> cft));
         }
         return cftMap;

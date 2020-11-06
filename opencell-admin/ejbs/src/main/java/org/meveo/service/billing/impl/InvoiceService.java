@@ -19,6 +19,8 @@ package org.meveo.service.billing.impl;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -97,6 +99,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.XMLGenerated;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
@@ -286,6 +289,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @XMLGenerated
     private Event<Invoice> xmlGeneratedEventProducer;
+    
+    @Inject
+    @Updated
+    private Event<BaseEntity> entityUpdatedEventProducer;
 
     @Inject
     @InvoiceNumberAssigned
@@ -1208,6 +1215,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         pdfGeneratedEventProducer.fire(invoice);
 
         invoice = updateNoCheck(invoice);
+        entityUpdatedEventProducer.fire(invoice);
         return invoice;
     }
 
@@ -1838,6 +1846,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         produceInvoiceXmlNoUpdate(invoice);
         invoice.setStatus(InvoiceStatusEnum.GENERATED);
         invoice = updateNoCheck(invoice);
+        entityUpdatedEventProducer.fire(invoice);
         return invoice;
     }
 
@@ -2759,6 +2768,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
                 invoice.setStatus(InvoiceStatusEnum.SENT);
+                entityUpdatedEventProducer.fire(invoice);
                 invoice.setAlreadySent(true);
                 update(invoice);
 
@@ -3001,6 +3011,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
+        if (subscription == null && billingAccount != null) {
+            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
+            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
+            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
+        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3009,9 +3024,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("subCategoryAggregates.total={}", subCategoryAggregates != null ? subCategoryAggregates.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
-        }
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
         Map<String, CategoryInvoiceAgregate> categoryAggregates = new HashMap<>();
@@ -3134,10 +3146,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("taxAggregate.grantTotal={}", taxAggregates != null ? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
-        }
-
         // Calculate derived tax aggregate amounts
         if (calculateTaxOnSubCategoryLevel && !isExonerated) {
             for (TaxInvoiceAgregate taxAggregate : taxAggregates.values()) {
@@ -3192,6 +3200,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+    }
+
+    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
+        return billingAccount.getUsersAccounts().stream()
+                .map(userAccount -> userAccount.getSubscriptions())
+                .map(this::addSubscriptionDiscountPlan)
+                .flatMap(Collection::stream)
+                .collect(toList());
+    }
+
+    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
+        return subscriptions.stream()
+                .map(Subscription::getDiscountPlanInstances)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int rounding, RoundingModeEnum roundingMode, int invoiceRounding,
@@ -3573,6 +3596,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<RatedTransaction> rtsToLink = new ArrayList<>();
         if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
             rtsToLink = ratedTransactionService.openRTbySubCat(userAccount != null ? userAccount.getWallet() : null, invoiceSubCategory, null, null);
+            if (isDetailledInvoiceMode)
+                removeRtsFromExistingRtsToLink(existingRtsTolinkMap, rtsToLink);
         } else if (isDetailledInvoiceMode && !existingRtsTolinkMap.isEmpty() && existingRtsTolinkMap.containsKey(invoiceSubCategory)) {
             rtsToLink = existingRtsTolinkMap.remove(invoiceSubCategory);
         }
@@ -3580,6 +3605,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (RatedTransaction rt : rtsToLink) {
             linkRt(invoice, invoiceAgregateSubcat, rt, isEnterprise);
         }
+    }
+
+    private void removeRtsFromExistingRtsToLink(Map<InvoiceSubCategory, List<RatedTransaction>> existingRtsTolinkMap, List<RatedTransaction> rtsToLink) {
+        List<InvoiceSubCategory> invoicesToRemove = new ArrayList<>();
+        for (InvoiceSubCategory invSubCat : existingRtsTolinkMap.keySet()) {
+            List<RatedTransaction> ratedTransactions = existingRtsTolinkMap.get(invSubCat);
+            for (RatedTransaction rtToLink : rtsToLink) {
+                ratedTransactions.remove(rtToLink);
+            }
+            if (ratedTransactions.isEmpty())
+                invoicesToRemove.add(invSubCat);
+        }
+        for(InvoiceSubCategory invoiceSubCategory : invoicesToRemove)
+            existingRtsTolinkMap.remove(invoiceSubCategory);
     }
 
     private void createAndLinkRTsFromDTO(Seller seller, BillingAccount billingAccount, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, boolean isDetailledInvoiceMode, Invoice invoice,

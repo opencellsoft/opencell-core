@@ -29,6 +29,7 @@ import javax.enterprise.context.RequestScoped;
  * @author Andrius Karpavicius
  */
 @RequestScoped
+@Deprecated
 public class ElasticClientQueuedChanges {
 
     private Map<String, ElasticSearchChangeset> queuedChanges = new HashMap<>();

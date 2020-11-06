@@ -110,7 +110,7 @@ public class ProviderService extends PersistenceService<Provider> {
         Provider provider = getEntityManager().find(Provider.class, Provider.CURRENT_PROVIDER_ID);
         getEntityManager().refresh(provider);
         if (provider.getInvoiceConfiguration() != null) {
-            provider.getInvoiceConfiguration().getDisplayBillingCycle();
+            provider.getInvoiceConfiguration().isDisplayBillingCycle();
         }
         if (provider.getGdprConfiguration() != null) {
             provider.getGdprConfiguration().getInvoiceLife();
@@ -194,7 +194,7 @@ public class ProviderService extends PersistenceService<Provider> {
             return null;
         }
 
-        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where upper(code)=:code", entityClass).setParameter("code", code.toUpperCase())
+        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where lower(code)=:code", entityClass).setParameter("code", code.toLowerCase())
             .setMaxResults(1);
 
         try {
