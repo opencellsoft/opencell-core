@@ -3696,22 +3696,6 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
-    
-    
-    <changeSet id="#5599_20201029" author="AndriusKarpavicius">
-        <createTable tableName="billing_invoice_agr_amount">
-            <column name="aggr_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-            <column name="tax_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-            <column name="amountwithouttax" type="numeric(23, 12)" />
-            <column name="amounttax" type="numeric(23, 12)" />
-            <column name="amountwithtax" type="numeric(23, 12)" />   
-        </createTable>
-    
-    </changeSet>
 
     <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
         <addColumn tableName="dunning_document">
