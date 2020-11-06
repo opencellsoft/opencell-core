@@ -137,7 +137,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         if (isSubscriptionCharge) {
             ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
-           
+
         } else {
             ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
@@ -288,6 +288,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         if (applyCharge) {
             walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, subscription.getOrderNumber());
+            oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
         }
         return oneShotChargeInstance;
     }
@@ -310,6 +311,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride);
+
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
     }
 
     /**
@@ -333,8 +336,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return null;
         }
 
-        return walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber());
+        WalletOperation wo = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber());
 
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+        return wo;
     }
 
     @SuppressWarnings("unchecked")
