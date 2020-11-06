@@ -19,7 +19,8 @@
 package org.meveo.api;
 
 /**
- * Action status error codes. See ActionStatus.message for a detailed error message
+ * Action
+ * status error codes. See ActionStatus.message for a detailed error message
  * 
  * @author Andrius Karpavicius
  * @lastModifiedVersion 5.2
