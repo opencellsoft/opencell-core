@@ -108,11 +108,11 @@ public interface ProductRs extends IBaseRs{
 
 	/**
 	 * 
-	 * @param id
+	 * @param codeProductLine
 	 * @return
 	 */
     @DELETE
-    @Path("/{idProductLine}")
+    @Path("/{codeProductLine}")
     @Operation(summary = "This endpoint allows to remove an existing product line",
     tags = { "ProductLine" },
     description ="remove a product line with its code",
@@ -122,7 +122,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "unknown product line"),
             @ApiResponse(responseCode = "400", description = "the product line is attached to a product")
     })
-    Response removeProductLine(@Parameter(description = "id product for deleting an existing product line", required = true) @PathParam("idProductLine") Long id);
+    Response removeProductLine(@Parameter(description = "id product for deleting an existing product line", required = true) @PathParam("codeProductLine") String codeProductLine);
 
     /**
      * 
@@ -188,7 +188,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@DELETE
-	@Path("/{productCode}/{currentVersion}")
+	@Path("/productVersion/{productCode}/{currentVersion}")
 	@Operation(summary = "This endpoint allows to remove an existing product product version",
 	tags = { "ProductVersion"},
 	description ="remove a product version with product code and current version",
@@ -211,13 +211,12 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/{productCode}/{currentVersion}/{status}")
+	@Path("/productVersion/{productCode}/{currentVersion}")
     @Operation(summary = "This endpoint allows to update status of existing product version ",
     tags = { "ProductVersion" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product version successfully updated",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode="200", description = "the product version successfully updated"),
             @ApiResponse(responseCode = "404", description = "Unknown product version"),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
@@ -234,13 +233,12 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/{productCode}/{currentVersion}")
+	@Path("/productVersion/duplicate/{productCode}/{currentVersion}")
 	@Operation(summary = "This endpoint allows to duplicate a product version",
 	tags = { "productVersion" },
 	description ="duplicate a product version",
 	responses = {
-	        @ApiResponse(responseCode="200", description = "the product version successfully duplicated",
-	                content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+	        @ApiResponse(responseCode="200", description = "the product version successfully duplicated"),
 	        @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
 	})
 	Response duplicateProductVersion(@Parameter @PathParam("productCode") String productCode,

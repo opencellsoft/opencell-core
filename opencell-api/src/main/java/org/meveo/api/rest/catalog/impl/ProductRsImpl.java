@@ -25,6 +25,8 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	@Inject
 	private ProductLineApi productLineApi; 
 	
+	
+	
 	@Override
 	public Response addNewProduct(ProductDto productDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -32,7 +34,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         	productApi.addNewProduct(productDto);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
         }
 	}
 
@@ -43,7 +45,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         	productApi.updateProduct(productDto);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
         }
 	}
 
@@ -54,7 +56,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	        	productApi.updateStatus(codeProduct, status);
 	            return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return createResponseFromMeveoApiException(e, result).build();
+			       return errorResponse(e, result);
 	        }
 	}
 
@@ -66,18 +68,18 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         	result.setProductDto(productApi.findByCode(codeProduct));
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 
 	@Override
-	public Response removeProductLine(Long id) {
+	public Response removeProductLine(String codeProductLine) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	productLineApi.removeProductLine(id);
+	        	productLineApi.removeProductLine(codeProductLine);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
-			       return createResponseFromMeveoApiException(e, result).build();
+			       return errorResponse(e, result);
 	        }
 	}
 
@@ -91,7 +93,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	        		productLineApi.updateProductLine(dto);
 	            return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return createResponseFromMeveoApiException(e, result).build();
+			       return errorResponse(e, result);
 	        }
 	}
 
@@ -103,7 +105,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         	result.setProductLineDto(productLineApi.findProductLineByCode(code));  
             return Response.ok(result).build();      
         } catch(MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 	
@@ -115,7 +117,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			productApi.createOrUpdateProductVersion(postData);
 			return Response.ok(result).build();
         } catch (MeveoApiException e) {
-        	return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
         }
 
 	}
@@ -127,7 +129,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			productApi.removeProductVersion(productCode, currentVersion);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
-        	return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
 		}
 	}
 
@@ -138,7 +140,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			productApi.UpdateProductVersionStatus(productCode, currentVersion, status);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
 		}
 	}
 	
@@ -149,9 +151,14 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			productApi.duplicateProductVersion(productCode, currentVersion);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
+		       return errorResponse(e, result);
 		}
 	}
- 
+
+	private Response errorResponse(MeveoApiException e, ActionStatus result) {
+		result.setStatus(ActionStatusEnum.FAIL);
+		result.setMessage(e.getMessage());
+		 return createResponseFromMeveoApiException(e, result).build();
+	}
 
 }

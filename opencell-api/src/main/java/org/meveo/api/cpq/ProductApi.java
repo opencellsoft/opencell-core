@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -88,8 +89,12 @@ public class ProductApi extends BaseApi {
 		try {
 			Product product = productService.findByCode(productDto.getCode());
 			product.setDescription(productDto.getLabel());
-			product.setProductLine(productLineService.findById(productDto.getProductLine() != null ? productDto.getProductLine().getId() : null));
-			product.setBrand(brandService.findByCode(productDto.getBrand() != null ? productDto.getBrand().getCode() : null));
+			if(productDto.getProductLine() != null) {
+				product.setProductLine(productLineService.findById(productDto.getProductLine().getId()));
+			}
+			if(productDto.getBrand() != null) {
+				product.setBrand(brandService.findByCode(productDto.getBrand().getCode()));
+			}
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
 			product.setModelChlidren(productDto.getModelChlidren());
@@ -198,6 +203,7 @@ public class ProductApi extends BaseApi {
         productVersion.setEndDate(postData.getEndDate());
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(VersionStatusEnum.DRAFT);
+        productVersion.setStatusDate(Calendar.getInstance().getTime());
         productVersionService.create(productVersion);
         return productVersion;
     }

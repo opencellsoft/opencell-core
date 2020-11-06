@@ -1,5 +1,6 @@
 package org.meveo.service.cpq;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -76,14 +77,16 @@ public class ProductVersionService extends
      *</ul>
      */
     public ProductVersion duplicate(ProductVersion productVersion) throws ProductVersionException{
-        this.detach(productVersion);
-        productVersion.setId(null);
-        productVersion.setCurrentVersion(1);
-        productVersion.setVersion(1);
-        productVersion.setStatus(VersionStatusEnum.DRAFT);
-        productVersion.setStatusDate(Calendar.getInstance().getTime());
+    	final ProductVersion duplicate = new ProductVersion();
+    	duplicate.setTagList( new HashSet<>(productVersion.getTagList()));
+    	duplicate.setCurrentVersion(1);
+    	duplicate.setVersion(1);
+    	duplicate.setStatus(VersionStatusEnum.DRAFT);
+    	duplicate.setStatusDate(Calendar.getInstance().getTime());
+    	duplicate.setProduct(productVersion.getProduct());
+    	duplicate.setShortDescription(productVersion.getShortDescription());
         try {
-            this.create(productVersion);
+            this.create(duplicate);
         }catch(BusinessException e) {
             throw new ProductVersionException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, productVersion.getId()), e);
         }
@@ -119,7 +122,8 @@ public class ProductVersionService extends
         }
         return productVersion;
     }
-    public ProductVersion findByProductAndVersion(String productCode,int currentVersion) throws ProductException{
+    @SuppressWarnings("unchecked")
+	public ProductVersion findByProductAndVersion(String productCode,int currentVersion) throws ProductException{
         Product product=productService.findByCode(productCode);
         if(product == null) {
             log.warn("the product with code={} inexistent",productCode);
@@ -127,8 +131,8 @@ public class ProductVersionService extends
         }
         Query query = getEntityManager().createNamedQuery("ProductVersion.findByProductAndVersion")
                 .setParameter("productCode", productCode).setParameter("currentVersion", currentVersion);
-        ProductVersion productVersion=(ProductVersion)query.getResultList().get(0);
-        return productVersion;
+        List<ProductVersion> productVersion=(List<ProductVersion>)query.getResultList();
+        return productVersion.isEmpty() ? null : productVersion.get(0);
     }
     /**
      * change the status of product version

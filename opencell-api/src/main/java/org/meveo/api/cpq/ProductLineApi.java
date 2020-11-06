@@ -33,6 +33,14 @@ public class ProductLineApi extends BaseApi {
 		}
 	}
 	
+	public void removeProductLine(String codeProductLine) {
+		try {
+			productLineService.removeProductLine(codeProductLine);
+		} catch (ProductLineException e) {
+			throw new MeveoApiException(e);
+		}
+	}
+	
 	public ProductLine createProductLine(ProductLineDto dto){
 		if(dto == null)
 			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
