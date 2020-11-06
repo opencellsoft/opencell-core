@@ -24,6 +24,7 @@ import java.util.Date;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -98,6 +99,15 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+    
+
+	@Override
+	public Response find(@NotNull String offerTemplateCode, String billingAccountCode, Date validFrom, Date validTo,
+			CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+			boolean loadAllowedDiscountPlan) {
+		/*****@TODO RAY :**/
+		return null;
+	}
 
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query, String fields, Integer offset, Integer limit,
@@ -134,7 +144,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
 	        try {
 	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 
-	        	 * pagination and filetring crieria and also given billing account code trading rules and tags ***////
+	        	 * pagination/filetring crieria and also BA trading rules and tags ***////
 	            result = (offerTemplateApi.list(null, null, null, pagingAndFiltering));
 	        } catch (Exception e) {
 	            processException(e, result.getActionStatus());
@@ -197,5 +207,6 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+
 
 }

@@ -15,7 +15,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
-@XmlRootElement(name = "ProductDto")
+@XmlRootElement(name = "CpqProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductDto {
 

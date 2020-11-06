@@ -42,6 +42,7 @@ import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
+import org.tmf.dsmapi.catalog.resource.order.CustomerService;
 import org.tmf.dsmapi.catalog.resource.order.Note;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -120,6 +121,7 @@ public class ProductQuote implements Serializable {
     protected List<ServiceLevelAgreement> agreement;
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
     protected List<ProductQuoteItem> quoteItem;
+    protected List<CustomerService> customerService;//prestation
     private boolean isVirtual;
     /**
      * By default we do not generate the pdf as it cost CPU usage
@@ -718,4 +720,20 @@ public class ProductQuote implements Serializable {
 	public void setOpportunityRef(String opportunityRef) {
 		this.opportunityRef = opportunityRef;
 	}
+	
+	/**
+	 * @return the CustomerService list
+	 */
+	public List<CustomerService> getCustomerService() {
+		return customerService;
+	}
+
+	/**
+	 * @param customerService the customerService to set
+	 */
+	public void setCustomerService(List<CustomerService> customerService) {
+		this.customerService = customerService;
+	}
+	
+	
 }

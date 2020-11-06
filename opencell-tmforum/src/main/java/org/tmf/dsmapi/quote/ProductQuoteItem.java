@@ -45,8 +45,10 @@ import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
+import org.tmf.dsmapi.catalog.resource.order.CustomerService;
 import org.tmf.dsmapi.catalog.resource.order.Note;
 import org.tmf.dsmapi.catalog.resource.order.Product;
+import org.tmf.dsmapi.catalog.resource.order.Service;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -95,6 +97,9 @@ public class ProductQuoteItem implements Serializable {
     protected List<Note> note;
     protected ProductOffering productOffering;
     protected Product product;
+    protected Service service;
+    protected Integer quantity;
+    protected CustomerService customerService;
     protected List<QuoteProductOfferingPrice> itemQuoteProductOfferingPrice;
     protected List<BillingAccount> billingAccount;
 
@@ -333,8 +338,31 @@ public class ProductQuoteItem implements Serializable {
     public void setProduct(Product value) {
         this.product = value;
     }
+    
+    
 
     /**
+     * Obtient la valeur de la propriété service.
+     * 
+     * @return possible object is {@link Service }
+     * 
+     */
+    public Service getService() {
+		return service;
+	}
+
+
+    /**
+     * Définit la valeur de la propriété service.
+     * 
+     * @param value allowed object is {@link Service }
+     * 
+     */
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	/**
      * Gets the value of the itemQuoteProductOfferingPrice property.
      * 
      * <p>
@@ -402,7 +430,25 @@ public class ProductQuoteItem implements Serializable {
         addBillingAccount(ba);
     }
 
-    /**
+    public CustomerService getCustomerService() {
+		return customerService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+	
+	
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	/**
      * Serialize orderItem DTO into a string.
      * 
      * @param productQuoteItem Quote item to serialize
