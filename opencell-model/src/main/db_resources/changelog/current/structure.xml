@@ -3583,7 +3583,7 @@ END $$;]]>
             <column name="apply_terminated_charge_to_date_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5510_20200923" author="anasseh">
 		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
     </changeSet>
@@ -3602,6 +3602,28 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS adm_file_type_code_index</sql>
 		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
+    </changeSet>
+    
+    
+    <changeSet id="#5599_20201029" author="AndriusKarpavicius">
+        <createTable tableName="billing_invoice_agr_amount">
+            <column name="aggr_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="tax_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="amountwithouttax" type="numeric(23, 12)" />
+            <column name="amounttax" type="numeric(23, 12)" />
+            <column name="amountwithtax" type="numeric(23, 12)" />   
+        </createTable>
+    
+    </changeSet>
+
+    <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
+        <addColumn tableName="dunning_document">
+            <column name="status" type="varchar(25)"/>
+        </addColumn>
     </changeSet>
     
 </databaseChangeLog>
