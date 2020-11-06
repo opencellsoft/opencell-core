@@ -3712,5 +3712,11 @@ END $$;]]>
         </createTable>
     
     </changeSet>
+
+    <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
+        <addColumn tableName="dunning_document">
+            <column name="status" type="varchar(25)"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
