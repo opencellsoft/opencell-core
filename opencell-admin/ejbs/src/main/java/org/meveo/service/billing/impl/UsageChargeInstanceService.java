@@ -53,10 +53,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
 
-    public UsageChargeInstance usageChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplateUsage serviceUsageChargeTemplate, boolean isVirtual)
-            throws BusinessException {
+    public UsageChargeInstance usageChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplateUsage serviceUsageChargeTemplate, boolean isVirtual) throws BusinessException {
 
-        log.debug("instanciate usageCharge for code {} and subscription {}", serviceUsageChargeTemplate.getChargeTemplate().getCode(), serviceInstance.getSubscription().getCode());
+        log.debug("Instanciate usage charge for code {} and subscription {}", serviceUsageChargeTemplate.getChargeTemplate().getCode(), serviceInstance.getSubscription().getCode());
 
         UsageChargeInstance usageChargeInstance = new UsageChargeInstance(null, null, serviceUsageChargeTemplate.getChargeTemplate(), serviceInstance, InstanceStatusEnum.INACTIVE);
 
@@ -64,19 +63,15 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         log.debug("usage charge wallet templates {}, by default we set it to postpaid", walletTemplates);
         usageChargeInstance.setPrepaid(false);
         if (walletTemplates != null && walletTemplates.size() > 0) {
-            log.debug("usage charge has {} wallet templates", walletTemplates.size());
             for (WalletTemplate walletTemplate : walletTemplates) {
-                log.debug("wallet template {}", walletTemplate.getCode());
                 if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    log.debug("it is a prepaid wallet so we set the charge itself has being prepaid");
                     usageChargeInstance.setPrepaid(true);
                 }
                 WalletInstance walletInstance = walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(), walletTemplate, isVirtual);
-                log.debug("we add the waleltInstance {} to the charge instance {}", walletInstance.getId(), usageChargeInstance.getId());
+                log.debug("Added the walletInstance {} to the charge instance {}", walletInstance.getId(), usageChargeInstance.getId());
                 usageChargeInstance.getWalletInstances().add(walletInstance);
             }
         } else {
-            log.debug("add postpaid walletInstance {}", serviceInstance.getSubscription().getUserAccount().getWallet());
             usageChargeInstance.getWalletInstances().add(serviceInstance.getSubscription().getUserAccount().getWallet());
         }
 
@@ -84,19 +79,15 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
             create(usageChargeInstance);
         }
 
-        if ((serviceUsageChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceUsageChargeTemplate.getAccumulatorCounterTemplates().isEmpty())
-                || serviceUsageChargeTemplate.getCounterTemplate() != null) {
-            log.debug("Usage charge has {} accumulator counter templates", serviceUsageChargeTemplate.getAccumulatorCounterTemplates().size());
+        if ((serviceUsageChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceUsageChargeTemplate.getAccumulatorCounterTemplates().isEmpty()) || serviceUsageChargeTemplate.getCounterTemplate() != null) {
             for (CounterTemplate counterTemplate : serviceUsageChargeTemplate.getAccumulatorCounterTemplates()) {
-                log.debug("Accumulator counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
-                log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, usageChargeInstance);
+                log.debug("Accumulator counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
                 usageChargeInstance.addCounterInstance(counterInstance);
             }
             if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-                log.debug("Counter template {}", serviceUsageChargeTemplate.getCounterTemplate());
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
-                log.debug("Counter instance {} will be add to charge instance {}", counterInstance, usageChargeInstance);
+                log.debug("Counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
                 usageChargeInstance.setCounter(counterInstance);
             }
             if (!isVirtual) {
@@ -155,22 +146,20 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      */
     public List<UsageChargeInstance> getActiveUsageChargeInstancesBySubscriptionId(Long subscriptionId) {
         if (subscriptionId == null) {
-            return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageCharges", UsageChargeInstance.class)
-                    .getResultList();
+            return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageCharges", UsageChargeInstance.class).getResultList();
         }
-        return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class)
-                .setParameter("subscriptionId", subscriptionId).getResultList();
+        return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class).setParameter("subscriptionId", subscriptionId).getResultList();
     }
-    
+
     /**
      * Get a list of usage charge instances valid for a given subscription and a consumption date
      *
      * @param subscriptionId Subscription identifier
-     * @param consumptionDate 
+     * @param consumptionDate
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
-        		.setParameter("subscriptionId", subscriptionId).setParameter("terminationDate", consumptionDate).getResultList();
+        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class).setParameter("subscriptionId", subscriptionId)
+            .setParameter("terminationDate", consumptionDate).getResultList();
     }
 }
