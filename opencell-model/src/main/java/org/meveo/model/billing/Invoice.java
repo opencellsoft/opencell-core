@@ -58,6 +58,8 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -173,7 +175,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 25)
-    private InvoiceStatusEnum status;
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
+    private InvoiceStatusEnum status = InvoiceStatusEnum.CREATED;
 
     /**
      * Payment due date

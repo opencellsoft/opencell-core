@@ -44,6 +44,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -1614,6 +1615,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isServiceMinRTsUsed() {
 
+    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+		if(booleanValue!=null) {
+    		return booleanValue;
+    	}
+    	 
         try {
             getEntityManager().createNamedQuery("ServiceInstance.getMimimumRTUsed").setMaxResults(1).getSingleResult();
             return true;
@@ -1629,6 +1635,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
+    	
+    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+		if(booleanValue!=null) {
+    		return booleanValue;
+    	}
 
         try {
             getEntityManager().createNamedQuery("Subscription.getMimimumRTUsed").setMaxResults(1).getSingleResult();
@@ -1645,6 +1656,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @Deprecated
     public boolean isBAMinRTsUsed() {
+    	
+    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+		if(booleanValue!=null) {
+    		return booleanValue;
+    	}
 
         try {
             getEntityManager().createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
@@ -1661,15 +1677,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return An array of booleans indicating if minimum invoicing amount rule exists on service, subscription and billingAccount levels, in that particular order.
      */
     public boolean[] isMinRTsUsed() {
-
-        EntityManager em = getEntityManager();
-
+    	
+    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+		if(booleanValue!=null) {
+    		return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue};
+    	}
+    	
         boolean baMin = false;
         boolean subMin = false;
         boolean servMin = false;
         boolean uaMin = false;
         boolean caMin = false;
         boolean custMin = false;
+
+        EntityManager em = getEntityManager();
+
         try {
             em.createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
             baMin = true;

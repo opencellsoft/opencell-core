@@ -114,6 +114,7 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 8.0
  */
 @Stateless
+@Deprecated
 public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;

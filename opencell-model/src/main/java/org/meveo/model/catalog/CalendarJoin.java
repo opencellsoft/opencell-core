@@ -19,14 +19,7 @@ package org.meveo.model.catalog;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Represents a calendar that operates on two calendars joining them by union or intersection. Union will return the greatest matched period while intersect will return the
@@ -64,6 +57,9 @@ public class CalendarJoin extends Calendar {
     @JoinColumn(name = "join_cal_2_id")
     private Calendar joinCalendar2;
 
+    @Transient
+    private Date lastCalendar1date;
+
     public CalendarJoinTypeEnum getJoinType() {
         return joinType;
     }
@@ -98,6 +94,20 @@ public class CalendarJoin extends Calendar {
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
+        initChildCalendarsDate();
+
+        if(joinType.equals(CalendarJoinTypeEnum.APPEND)){
+            Date firstCalendarDate = joinCalendar1.nextCalendarDate(date, getInitDate());
+
+            if(firstCalendarDate != null){
+                lastCalendar1date = firstCalendarDate;
+                return firstCalendarDate;
+            }else {
+                Date secondDate = joinCalendar2.nextCalendarDate(date, lastCalendar1date);
+                return secondDate;
+            }
+        }
+    	
 
         Date date1 = joinCalendar1.nextCalendarDate(date);
         Date date2 = joinCalendar2.nextCalendarDate(date);
@@ -125,13 +135,8 @@ public class CalendarJoin extends Calendar {
             } else {
                 return date2;
             }
-        } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if (date1 != null) {
-        		return date1;
-        	} else {
-        		return date2;
-        	}
         }
+
         return null;
     }
 
@@ -145,9 +150,19 @@ public class CalendarJoin extends Calendar {
      * @return Previous calendar date.
      */
     public Date previousCalendarDate(Date date) {
-
+    	
+    	initChildCalendarsDate();
+    	
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
+        
+        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+    		Date endOfPreviousDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
+    		if(endOfPreviousDate!=null) {
+				joinCalendar2.setInitDate(endOfPreviousDate);
+        		date2 = joinCalendar2.previousCalendarDate(date);
+    		}
+    	}
 
         if (date1 == null && date2 == null) {
             return null;
@@ -183,6 +198,15 @@ public class CalendarJoin extends Calendar {
         return null;
     }
 
+	private void initChildCalendarsDate() {
+		if(joinCalendar1.getInitDate()==null) {
+    		joinCalendar1.setInitDate(getInitDate());
+    	}
+    	if(joinCalendar2.getInitDate()==null) {
+    		joinCalendar2.setInitDate(getInitDate());
+    	}
+	}
+
     /**
      * Determines a previous period end date by joining previousPeriodEndDate result from two calendars. Result depends on a join type:
      * 
@@ -195,6 +219,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date previousPeriodEndDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.previousPeriodEndDate(date);
         Date date2 = joinCalendar2.previousPeriodEndDate(date);
 
@@ -245,6 +270,7 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date nextPeriodStartDate(Date date) {
 
+    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextPeriodStartDate(date);
         Date date2 = joinCalendar2.nextPeriodStartDate(date);
 

@@ -150,25 +150,27 @@
 
 							<hftl:formField label="#{messages['serviceTemplate.minimumLabelEl']}" field="minimumLabelEl"
 											textArea="true" rows="1" maxlength="2000" componentWidth="50"
-											newLine="true"/>
+											newLine="true"
+											rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 							<hftl:formField
 									label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxEl':'serviceTemplate.minimumAmountWithTaxEl']}"
 									field="minimumAmountEl"
 									textArea="true" rows="1" maxlength="2000" componentWidth="50"
-							/>
+									rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 							<hftl:formField label="#{messages['serviceTemplate.minimumLabelElSpark']}"
 											field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000"
 											componentWidth="50"
-											newLine="true" rendered="#{paramBean.sparkEnabled}"/>
+											newLine="true" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 							<hftl:formField
 									label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxElSpark':'serviceTemplate.minimumAmountWithTaxElSpark']}"
 									field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000"
-									componentWidth="50" rendered="#{paramBean.sparkEnabled}"/>
+									componentWidth="50" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 
 							<hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId"
 											field="minimumChargeTemplate" valueLabelField="code"
 											listBean="#{oneShotChargeTemplateBean}"
-											listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}"/>
+											listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}"
+											rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 
 							<p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 								<h:panelGroup id="serviceRenewal">
