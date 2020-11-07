@@ -22,7 +22,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +43,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
     private static final String COUNTER_OVERAGE_WO_QUERY = "from WalletOperation wo \n" +
             "where wo.subscription.id=:subId\n" +
             " and wo.chargeInstance.code=:overChargeCode\n" +
-            " and wo.status = 'OPEN'" +
+            " and (wo.status = 'OPEN' or wo.ratedTransaction.status = 'OPEN')\n" +
+            " and (wo.operationDate between :startMonth and :endMonth)\n" +
             "order by wo.id";
 
     private static final String POOL_OVERAGE_WO_QUERY = "from WalletOperation wo \n" +
@@ -48,7 +52,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
             " and wo.parameter1=:chargeType \n" +
             " and wo.offerTemplate=:offer \n" +
             " and wo.subscription.userAccount=:agency \n" +
-            " and wo.status = 'OPEN' \n" +
+            " and (wo.status = 'OPEN' or wo.ratedTransaction.status = 'OPEN')\n" +
+            " and (wo.operationDate between :startMonth and :endMonth)\n" +
             "order by wo.id";
 
     @Inject
@@ -118,10 +123,24 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
     @SuppressWarnings("unchecked")
     private List<WalletOperation> getOverageWalletOperationList(WalletOperation canceledWO) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(canceledWO.getOperationDate());
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        // start month of usage date
+        calendar.set(year, month, 1, 0, 0, 0);
+        Date startMonth = calendar.getTime();
+        // end month of usage date
+        int lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calendar.set(year, month, lastDayOfMonth, 23, 59, 59);
+        Date endMonth = calendar.getTime();
+
         if (canceledWO.getCounter() != null) {
             return emWrapper.getEntityManager().createQuery(COUNTER_OVERAGE_WO_QUERY, WalletOperation.class)
                     .setParameter("subId", canceledWO.getSubscription().getId())
                     .setParameter("overChargeCode", "CH_M2M_USG_" + canceledWO.getParameter1() + "_OVER")
+                    .setParameter("startMonth", startMonth)
+                    .setParameter("endMonth", endMonth)
                     .getResultList();
 
         } else {
@@ -129,6 +148,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
                     .setParameter("chargeType", canceledWO.getParameter1())
                     .setParameter("offer", canceledWO.getOfferTemplate())
                     .setParameter("agency", canceledWO.getSubscription().getUserAccount())
+                    .setParameter("startMonth", startMonth)
+                    .setParameter("endMonth", endMonth)
                     .getResultList();
         }
     }
@@ -184,8 +205,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 // the canceled Quantiy cover all overageWO quantity
                 overageWO.setQuantity(BigDecimal.ZERO);
                 overageWO.setInputQuantity(BigDecimal.ZERO);
-                recomputeWOAmounts(overageWO);
-                overageWO.setParameterExtra("reajusted by AmendDuplicateConsumption");
+                initOverageWOStatus(overageWO);
                 walletOperationService.update(overageWO);
 
             } else {
@@ -200,8 +220,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
                 overageWO.setQuantity(newOverageQuantity);
                 overageWO.setInputQuantity(rest);
-                recomputeWOAmounts(overageWO);
-                overageWO.setParameterExtra("reajusted by AmendDuplicateConsumption");
+                initOverageWOStatus(overageWO);
                 walletOperationService.update(overageWO);
 
                 // the whole canceled quantity is deducted from Overage WO
@@ -213,6 +232,13 @@ public class AmendDuplicateConsumptionUnitJobBean {
         // return the rest of canceled quantity which still here
         // even we deducted it from all overage WOs which became all with zero
         return canceledQuantity;
+    }
+
+    private void initOverageWOStatus(WalletOperation overageWO) {
+        recomputeWOAmounts(overageWO);
+        overageWO.setParameterExtra("reajusted by AmendDuplicateConsumption");
+        overageWO.setStatus(WalletOperationStatusEnum.OPEN);
+        overageWO.setRatedTransaction(null);
     }
 
     public void recomputeWOAmounts(WalletOperation wo) {
