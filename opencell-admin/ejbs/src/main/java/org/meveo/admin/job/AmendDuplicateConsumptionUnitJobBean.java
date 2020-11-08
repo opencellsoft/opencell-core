@@ -43,7 +43,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
     private static final String COUNTER_OVERAGE_WO_QUERY = "from WalletOperation wo \n" +
             "where wo.subscription.id=:subId\n" +
             " and wo.chargeInstance.code=:overChargeCode\n" +
-            " and (wo.status = 'OPEN' or wo.ratedTransaction.status = 'OPEN')\n" +
+            " and (wo.status = 'OPEN' or (wo.status = 'TREATED' and wo.ratedTransaction.status = 'OPEN'))\n" +
             " and (wo.operationDate between :startMonth and :endMonth)\n" +
             "order by wo.id";
 
@@ -52,7 +52,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
             " and wo.parameter1=:chargeType \n" +
             " and wo.offerTemplate=:offer \n" +
             " and wo.subscription.userAccount=:agency \n" +
-            " and (wo.status = 'OPEN' or wo.ratedTransaction.status = 'OPEN')\n" +
+            " and (wo.status = 'OPEN' or (wo.status = 'TREATED' and wo.ratedTransaction.status = 'OPEN'))\n" +
             " and (wo.operationDate between :startMonth and :endMonth)\n" +
             "order by wo.id";
 
@@ -188,6 +188,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
     @SuppressWarnings("unchecked")
     private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<WalletOperation> overageWOs) {
         BigDecimal canceledQuantity = canceledWO.getQuantity();
+
         for (WalletOperation overageWO : overageWOs) {
             canceledQuantity = canceledQuantity.subtract(overageWO.getInputQuantity());
 
@@ -197,15 +198,19 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 ratedTransaction = ratedTransactionService.refreshOrRetrieve(ratedTransaction);
                 if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN) {
                     ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
+                    ratedTransaction.setParameterExtra("canceled by AmendDuplicateConsumption");
                     ratedTransactionService.update(ratedTransaction);
                 }
             }
-
+            // if Over WO is already canceled then skip it
+            if(overageWO.getStatus() == WalletOperationStatusEnum.CANCELED) {
+                continue;
+            }
             if (canceledQuantity.compareTo(BigDecimal.ZERO) >= 0) {
                 // the canceled Quantiy cover all overageWO quantity
-                overageWO.setQuantity(BigDecimal.ZERO);
-                overageWO.setInputQuantity(BigDecimal.ZERO);
-                initOverageWOStatus(overageWO);
+                // so the whole Over WO should be canceled
+                overageWO.setParameterExtra("canceled by AmendDuplicateConsumption");
+                overageWO.setStatus(WalletOperationStatusEnum.CANCELED);
                 walletOperationService.update(overageWO);
 
             } else {
@@ -220,7 +225,10 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
                 overageWO.setQuantity(newOverageQuantity);
                 overageWO.setInputQuantity(rest);
-                initOverageWOStatus(overageWO);
+                recomputeWOAmounts(overageWO);
+                overageWO.setParameterExtra("reajusted by AmendDuplicateConsumption");
+                overageWO.setStatus(WalletOperationStatusEnum.OPEN);
+                overageWO.setRatedTransaction(null);
                 walletOperationService.update(overageWO);
 
                 // the whole canceled quantity is deducted from Overage WO
@@ -232,13 +240,6 @@ public class AmendDuplicateConsumptionUnitJobBean {
         // return the rest of canceled quantity which still here
         // even we deducted it from all overage WOs which became all with zero
         return canceledQuantity;
-    }
-
-    private void initOverageWOStatus(WalletOperation overageWO) {
-        recomputeWOAmounts(overageWO);
-        overageWO.setParameterExtra("reajusted by AmendDuplicateConsumption");
-        overageWO.setStatus(WalletOperationStatusEnum.OPEN);
-        overageWO.setRatedTransaction(null);
     }
 
     public void recomputeWOAmounts(WalletOperation wo) {
