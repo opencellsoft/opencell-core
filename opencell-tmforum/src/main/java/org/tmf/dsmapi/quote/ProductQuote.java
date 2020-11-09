@@ -30,13 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
+import org.meveo.api.dto.cpq.AccountingArticlePricesDTO;
 import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.model.cpq.contract.Contract;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -127,7 +120,9 @@ public class ProductQuote implements Serializable {
     protected Customer customer;
     protected List<RelatedParty> relatedParty;
     protected List<ServiceLevelAgreement> agreement;
+    @Deprecated
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
+    protected List<AccountingArticlePricesDTO> accountingArticlePricesDTO;
     protected List<ProductQuoteItem> quoteItem;
     protected List<CustomerService> customerService;//customerService
     private boolean isVirtual;
@@ -595,13 +590,14 @@ public class ProductQuote implements Serializable {
      * 
      * 
      */
+    @Deprecated
     public List<QuoteProductOfferingPrice> getQuoteProductOfferingPrice() {
         if (quoteProductOfferingPrice == null) {
             quoteProductOfferingPrice = new ArrayList<QuoteProductOfferingPrice>();
         }
         return this.quoteProductOfferingPrice;
     }
-
+    @Deprecated
     public void setQuoteProductOfferingPrice(List<QuoteProductOfferingPrice> quoteProductOfferingPrice) {
         this.quoteProductOfferingPrice = quoteProductOfferingPrice;
     }
@@ -748,6 +744,14 @@ public class ProductQuote implements Serializable {
 
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
+	}
+
+	public List<AccountingArticlePricesDTO> getAccountingArticlePricesDTO() {
+		return accountingArticlePricesDTO;
+	}
+
+	public void setAccountingArticlePricesDTO(List<AccountingArticlePricesDTO> accountingArticlePricesDTO) {
+		this.accountingArticlePricesDTO = accountingArticlePricesDTO;
 	}
 	
 	
