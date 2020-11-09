@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.tmforum.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,15 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.QuoteRs;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.quote.ProductQuote;
+import org.tmf.dsmapi.quote.ProductQuoteItem;
+import org.tmf.dsmapi.quote.QuoteProductOfferingPrice;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -187,4 +192,59 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         
         return response;
     }
+
+    //@Override
+    public Response productQuotation(ProductContextDTO quoteContext,UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        Response.ResponseBuilder responseBuilder = null;
+        List<QuoteProductOfferingPrice> quoteProductOfferingPrices=new ArrayList<QuoteProductOfferingPrice>();
+        try {
+
+            responseBuilder = Response.ok().entity(quoteProductOfferingPrices);
+
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+        }
+
+
+        return buildResponse(responseBuilder);
+    }
+    
+    //@Override
+    public Response offerQuotation(OfferContextDTO quoteContext,UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        Response.ResponseBuilder responseBuilder = null;
+        List<QuoteProductOfferingPrice> quoteProductOfferingPrices=new ArrayList<QuoteProductOfferingPrice>();
+        try {
+
+            responseBuilder = Response.ok().entity(quoteProductOfferingPrices);
+
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+        }
+
+
+        return buildResponse(responseBuilder);
+    }
+
+	@Override
+	public Response createQuoteItem(ProductQuoteItem productQuoteItem, UriInfo info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response deleteQuoteItem(String id, UriInfo info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+   
 }

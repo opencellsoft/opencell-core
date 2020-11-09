@@ -39,6 +39,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
@@ -46,6 +47,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
@@ -101,26 +104,6 @@ public interface OfferTemplateRs extends IBaseRs {
             @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate,
             @QueryParam("loadAllowedDiscountPlan") @DefaultValue("false") boolean loadAllowedDiscountPlan);
 
-    @GET
-    @Path("/cpq")
-    @Operation(summary = "Search offer template with a given billing account code, offer code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.\r\n",
-    tags = { "OfferTemplate" },
-    description ="Search offer template with a given billing account code, offer code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.\\r\\n"
-    		+ "if billingAccountCode is given, this API returns all offer products and services for a customer taking into account the customer context (filtering rules associated to the product an service tags);",
-    responses = {
-            @ApiResponse(responseCode="200", description = "the offer is successfully retrieved"),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerTemplateCode does not exist")
-    })
-    Response find(@Parameter(description = "offerTemplateCode The offer template's code", required = true) @QueryParam("offerTemplateCode") @NotNull String offerTemplateCode, 
-    		@Parameter(description = "billing account code used to get offer products and services matching the customer context", required = false) @QueryParam("billingAccountCode") String billingAccountCode, 
-    		@Parameter(description = "validFrom Offer template validity range - from date", required = false) @QueryParam("validFrom") @RestDateParam Date validFrom,
-    		@Parameter(description = "validTo Offer template validity range - to date", required = false)  @QueryParam("validTo") @RestDateParam Date validTo,
-    		@Parameter(description = "inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.", required = false)  @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
-    		@Parameter(description = "loadOfferServiceTemplate if true loads the services", required = false)  @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, 
-    		@Parameter(description = "loadOfferProductTemplate if true loads the products", required = false)  @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
-    		@Parameter(description = "loadAllowedDiscountPlan if true load the allowed discount plans", required = false)  @QueryParam("loadAllowedDiscountPlan") @DefaultValue("false") boolean loadAllowedDiscountPlan);
-
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
      * 
@@ -170,7 +153,7 @@ public interface OfferTemplateRs extends IBaseRs {
     tags = { "OfferTemplate" },
     description ="if billingAccountCode is given, this API returns all commercial offers available for a customer taking into account the customer context (filtering rules associated to the offer tags);",
     responses = {
-            @ApiResponse(responseCode="200", description = "All offers successfully retrieved"),
+            @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListOfferTemplateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
     })
     public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 

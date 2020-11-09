@@ -34,6 +34,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.enums.ServiceTypeEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -130,6 +131,27 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
+    
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String groupedServiceCode;
+    
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private ServiceTypeEnum serviceType;
+    
+    /**
+     * Corresponding to predefined allowed values
+     */
+    private List<Object> values;
+    
+    
+    /**
+     * Corresponding to the value validator (regex expression)
+     */
+    private String valueValidator;
 
     /**
      * Instantiates a new service template dto.
@@ -591,4 +613,37 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+	public String getGroupedServiceCode() {
+		return groupedServiceCode;
+	}
+
+	public void setGroupedServiceCode(String groupedServiceCode) {
+		this.groupedServiceCode = groupedServiceCode;
+	}
+
+	public ServiceTypeEnum getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(ServiceTypeEnum serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public List<Object> getValues() {
+		return values;
+	}
+
+	public void setValues(List<Object> values) {
+		this.values = values;
+	}
+
+	public String getValueValidator() {
+		return valueValidator;
+	}
+
+	public void setValueValidator(String valueValidator) {
+		this.valueValidator = valueValidator;
+	}
+    
 }

@@ -94,6 +94,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     /**
      * Quote version because if the customer rejected the quote but negotiations still open a new version of the quote is managed
      */
+    @Deprecated
     @Column(name = "quote_version", length = 10)
     @Size(max = 10)
     private String quoteVersion;
@@ -228,13 +229,6 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
-
-	/**
-	 * statusVersion
-	 */
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "status_version", nullable = false)
-	private VersionStatusEnum statusVersion;
 
 	/**
 	 * statusDate
@@ -525,20 +519,6 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 */
 	public void setContract(Contract contract) {
 		this.contract = contract;
-	}
-
-	/**
-	 * @return the statusVersion
-	 */
-	public VersionStatusEnum getStatusVersion() {
-		return statusVersion;
-	}
-
-	/**
-	 * @param statusVersion the statusVersion to set
-	 */
-	public void setStatusVersion(VersionStatusEnum statusVersion) {
-		this.statusVersion = statusVersion;
 	}
 
 	/**

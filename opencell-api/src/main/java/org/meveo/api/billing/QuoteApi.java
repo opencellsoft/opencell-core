@@ -193,8 +193,8 @@ public class QuoteApi extends BaseApi {
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
         quote.setGeneratePdf(productQuote.isGeneratePdf());
         quote.setVirtual(productQuote.isVirtual());
-        quote.setPrestationDateBegin(productQuote.getPrestationDateBegin());
-        quote.setPrestationDuration(productQuote.getPrestationDuration());
+        quote.setPrestationDateBegin(productQuote.getCustomerServiceDateBegin());
+        quote.setPrestationDuration(productQuote.getCustomerServiceDuration());
         quote.setOpportunityRef(productQuote.getOpportunityRef());
         if (productQuote.getValidFor() != null) {
             quote.setValidity(productQuote.getValidFor().toDatePeriod());
@@ -955,8 +955,8 @@ public class QuoteApi extends BaseApi {
         productQuote.setState(quote.getStatus().getApiState());
         productQuote.setVirtual(quote.isVirtual());
         productQuote.setGeneratePdf(quote.isGeneratePdf());
-        productQuote.setPrestationDateBegin(quote.getPrestationDateBegin());
-        productQuote.setPrestationDuration(quote.getPrestationDuration());
+        productQuote.setCustomerServiceDateBegin(quote.getPrestationDateBegin());
+        productQuote.setCustomerServiceDuration(quote.getPrestationDuration());
         productQuote.setOpportunityRef(quote.getOpportunityRef());
         List<ProductQuoteItem> productQuoteItems = new ArrayList<>();
         productQuote.setQuoteItem(productQuoteItems);

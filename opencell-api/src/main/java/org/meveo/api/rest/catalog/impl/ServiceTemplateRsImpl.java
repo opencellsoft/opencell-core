@@ -21,11 +21,13 @@ package org.meveo.api.rest.catalog.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
@@ -149,4 +151,18 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
         return result;
     }
+
+	@Override
+	public Response listPost(ProductContextDTO quoteContext, PagingAndFiltering pagingAndFiltering) {
+		GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+
+	        try {
+	        	/*****@TODO RAY : create a new method in ServicetemplateAPI that get products matching given criteria**/
+	        	
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok().entity(result).build();
+	}
 }

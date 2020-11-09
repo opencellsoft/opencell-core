@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +18,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -105,7 +109,35 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
 	Response findByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("codeProduct") String codeProduct);
+	
+	
+    /**
+     * List offerTemplates matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of offer templates
+     */
+    @POST
+    @Path("/list")
+    public Response listPost(PagingAndFiltering pagingAndFiltering);
+    
 
+    @POST
+    @Path("/cpq/list")
+    @Operation(summary = "List products matching a given billing account code, given offer, and filtering Criteria",
+    tags = { "products" },
+    description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected product does not exist")
+    })
+    public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 
+    		@Parameter(description = "The offer code", required = false) String offerCode, 
+    		@Parameter(description = "Selected products", required = false) List<String> selectedProducts,
+    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
+    
 	/**
 	 * 
 	 * @param codeProductLine

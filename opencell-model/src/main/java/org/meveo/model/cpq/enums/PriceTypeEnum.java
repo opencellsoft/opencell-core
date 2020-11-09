@@ -2,17 +2,15 @@ package org.meveo.model.cpq.enums;
 
 public enum PriceTypeEnum {
 
-	RECURRENT(0),
-	ONE_SHOT(1),
-	USAGE(3);
+	 RECURRING("recurring"), ONE_TIME("one time"), USAGE("usage");
 	
-	private int value;
+	private String value;
 	
-	private PriceTypeEnum(int value) {
+	private PriceTypeEnum(String value) {
 		this.value = value;
 	}
 	
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 }

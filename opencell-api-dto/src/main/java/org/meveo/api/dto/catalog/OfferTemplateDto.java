@@ -20,6 +20,7 @@ package org.meveo.api.dto.catalog;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -57,9 +58,15 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private List<OfferServiceTemplateDto> offerServiceTemplates;
 
     /** The offer product templates. */
+    @Deprecated
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
+    
+    /** The offer product templates. */
+    @XmlElementWrapper(name = "offerProductTemplates")
+    @XmlElement(name = "offerProductTemplate")
+    private List<ProductDto> offerProducts;
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
@@ -357,4 +364,14 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+
+	public List<ProductDto> getOfferProducts() {
+		return offerProducts;
+	}
+
+	public void setOfferProducts(List<ProductDto> offerProducts) {
+		this.offerProducts = offerProducts;
+	}
+    
+    
 }

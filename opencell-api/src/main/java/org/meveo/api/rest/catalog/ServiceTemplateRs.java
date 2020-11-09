@@ -18,6 +18,9 @@
 
 package org.meveo.api.rest.catalog;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -29,14 +32,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
@@ -132,4 +144,19 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/list")
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
+    
+    @POST
+    @Path("/cpq/list")
+    @Operation(summary = "List services matching a given billing account code, offer, product, and filtering Criteria",
+    tags = { "serviceTemplates" },
+    description ="if billingAccountCode/offer/product are given, this API returns all available services for an offer taking into account the customer and quote context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListServiceTemplateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+    })
+    public Response listPost(@Parameter(description = "The QuoteContextDTO object", required = false) ProductContextDTO quoteContext,
+    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
 }

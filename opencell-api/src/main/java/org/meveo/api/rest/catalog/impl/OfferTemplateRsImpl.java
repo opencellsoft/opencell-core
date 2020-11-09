@@ -99,15 +99,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
-    
 
-	@Override
-	public Response find(@NotNull String offerTemplateCode, String billingAccountCode, Date validFrom, Date validTo,
-			CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-			boolean loadAllowedDiscountPlan) {
-		/*****@TODO RAY :**/
-		return null;
-	}
 
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query, String fields, Integer offset, Integer limit,

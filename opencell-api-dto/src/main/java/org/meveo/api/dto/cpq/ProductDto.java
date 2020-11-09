@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -32,6 +33,7 @@ public class ProductDto {
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
 	private boolean discountFlag;
     private boolean packageFlag;
+    private Set<ServiceTemplateDto> serviceList = new HashSet<>();
     
     
     public ProductDto() {}
@@ -221,6 +223,14 @@ public class ProductDto {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public Set<ServiceTemplateDto> getServiceList() {
+		return serviceList;
+	}
+
+	public void setServiceList(Set<ServiceTemplateDto> serviceList) {
+		this.serviceList = serviceList;
 	}
     
     

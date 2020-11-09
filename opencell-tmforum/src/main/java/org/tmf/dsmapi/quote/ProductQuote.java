@@ -30,6 +30,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -38,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.commons.utils.CustomDateSerializer;
+import org.meveo.model.cpq.contract.Contract;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -121,21 +129,20 @@ public class ProductQuote implements Serializable {
     protected List<ServiceLevelAgreement> agreement;
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
     protected List<ProductQuoteItem> quoteItem;
-    protected List<CustomerService> customerService;//prestation
+    protected List<CustomerService> customerService;//customerService
     private boolean isVirtual;
     /**
      * By default we do not generate the pdf as it cost CPU usage
      */
     private boolean generatePdf = true;
-
     private CustomFieldsDto customFields = new CustomFieldsDto();
-
     private List<GenerateInvoiceResultDto> invoices;
-
-    @JsonSerialize(using = CustomDateSerializer.class)
-    protected Date prestationDateBegin;
-    protected int prestationDuration;
-    protected String opportunityRef;
+    private String contractCode;
+	@JsonSerialize(using = CustomDateSerializer.class)
+	private Date customerServiceDateBegin;
+	private int customerServiceDuration;
+	private String opportunityRef;
+    
     /**
      * 
      * Gets the value of the billingAccount property.
@@ -680,31 +687,31 @@ public class ProductQuote implements Serializable {
     }
 
 	/**
-	 * @return the prestationDateBegin
+	 * @return the customerServiceDateBegin
 	 */
-	public Date getPrestationDateBegin() {
-		return prestationDateBegin;
+	public Date getCustomerServiceDateBegin() {
+		return customerServiceDateBegin;
 	}
 
 	/**
-	 * @param prestationDateBegin the prestationDateBegin to set
+	 * @param customerServiceDateBegin the customerServiceDateBegin to set
 	 */
-	public void setPrestationDateBegin(Date prestationDateBegin) {
-		this.prestationDateBegin = prestationDateBegin;
+	public void setCustomerServiceDateBegin(Date customerServiceDateBegin) {
+		this.customerServiceDateBegin = customerServiceDateBegin;
 	}
 
 	/**
-	 * @return the prestationDuration
+	 * @return the customerServiceDuration
 	 */
-	public int getPrestationDuration() {
-		return prestationDuration;
+	public int getCustomerServiceDuration() {
+		return customerServiceDuration;
 	}
 
 	/**
-	 * @param prestationDuration the prestationDuration to set
+	 * @param customerServiceDuration the customerServiceDuration to set
 	 */
-	public void setPrestationDuration(int prestationDuration) {
-		this.prestationDuration = prestationDuration;
+	public void setCustomerServiceDuration(int customerServiceDuration) {
+		this.customerServiceDuration = customerServiceDuration;
 	}
 
 	/**
@@ -733,6 +740,14 @@ public class ProductQuote implements Serializable {
 	 */
 	public void setCustomerService(List<CustomerService> customerService) {
 		this.customerService = customerService;
+	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
 	}
 	
 	

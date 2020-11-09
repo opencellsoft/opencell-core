@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.rest.PATCH;
 import org.tmf.dsmapi.quote.ProductQuote;
+import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 /**
  * TMForum Product quote API specification implementation
@@ -107,6 +108,30 @@ public interface QuoteRs {
      * @return Response status
      */
     @POST
-    @Path("/placeOrder/{quoteId}")
-    public Response placeOrder(@PathParam("quoteId") String id, @Context UriInfo info);
+    @Path("/placeOrder/{quoteCode}")
+    public Response placeOrder(@PathParam("quoteCode") String id, @Context UriInfo info);
+    
+    /**
+     * Create a new product quote item
+     * 
+     * @param productQuote Product quote information
+     * @param info Http request context
+     * @return Product quote information
+     */
+    @POST
+    @Path("/")
+    public Response createQuoteItem(ProductQuoteItem productQuoteItem, @Context UriInfo info);
+    
+    /**
+     * Delete a product quote item.
+     * 
+     * @param id Product quote code
+     * @param info Http request context
+     * @return Response status
+     */
+    @DELETE
+    @Path("/{quoteIteùCode}")
+    public Response deleteQuoteItem(@PathParam("quoteItemCode") String id, @Context UriInfo info);
+    
+    
 }

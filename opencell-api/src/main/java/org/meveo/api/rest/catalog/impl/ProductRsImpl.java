@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
@@ -10,6 +12,8 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -71,7 +75,35 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		       return errorResponse(e, result.getActionStatus());
         }
 	}
+	@Override
+	public Response listPost(PagingAndFiltering pagingAndFiltering) {
+		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
+	        try {
+	        	/*****@TODO RAY : create a new method in ProductAPI that get products matching given criteria**/
+	        	
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok().entity(result).build();
+	}
+
+	@Override
+	public Response listPost(String billingAccountCode, String offerCode, List<String> selectedProducts,
+			PagingAndFiltering pagingAndFiltering) {
+		 GetListProductsResponseDto result = new GetListProductsResponseDto();
+
+	        try {
+	        	/*****@TODO RAY : create a new method in ProductAPI that get products matching given criteria**/
+	        	
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok().entity(result).build();
+	}
+	
 	@Override
 	public Response removeProductLine(String codeProductLine) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -160,5 +192,8 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		result.setMessage(e.getMessage());
 		 return createResponseFromMeveoApiException(e, result).build();
 	}
+
+
+
 
 }
