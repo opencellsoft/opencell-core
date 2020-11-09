@@ -103,7 +103,7 @@ public interface TagRs extends IBaseRs {
 	@Path("/tagType")
     @Operation(summary = "This endpoint allows to create new tag type",
     description ="Creating a new tag type",
-    tags = { "TagType" },
+    tags = { "Tag" },
     responses = {
             @ApiResponse(responseCode="200", description = "the Tag type successfully added"),
             @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required parameter is  code",
@@ -115,7 +115,7 @@ public interface TagRs extends IBaseRs {
 	@Path("/tagType")
     @Operation(summary = "This endpoint allows to update new tag type",
     description ="updating a new tag type",
-    tags = { "TagType" },
+    tags = { "Tag" },
     responses = {
             @ApiResponse(responseCode="200", description = "the Tag type successfully updated"),
             @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required parameter is  code",
@@ -129,7 +129,7 @@ public interface TagRs extends IBaseRs {
 	@Path("/tagType")
     @Operation(summary = "This endpoint allows to retrieve a tag type",
     description ="Retrieving a tag type with code tag type parameter",
-    tags = { "TagType" },
+    tags = { "Tag" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Tag type successfully found"),
             @ApiResponse(responseCode = "400", description = "No tag type was found with the code", 
