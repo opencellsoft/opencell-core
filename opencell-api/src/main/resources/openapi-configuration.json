@@ -3,7 +3,9 @@
   "resourceClasses":
   ["org.meveo.api.rest.catalog.ProductRs",
   "org.meveo.api.rest.cpq.TagRs",
-  "org.meveo.api.rest.tmforum.QuoteRs"],
+  "org.meveo.api.rest.tmforum.QuoteRs",
+  "org.meveo.api.rest.catalog.OfferTemplateRs",
+  "org.meveo.api.rest.catalog.ServiceTemplateRs"],
   "resourcePackages": [],
   "prettyPrint" : true,
   "cacheTTL": 0,
