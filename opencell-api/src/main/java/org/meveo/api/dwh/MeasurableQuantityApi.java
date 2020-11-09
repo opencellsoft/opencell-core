@@ -45,6 +45,7 @@ import org.meveocrm.services.dwh.MeasuredValueService;
  * @author Andrius Karpavicius
  **/
 @Stateless
+@Deprecated
 public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, MeasurableQuantityDto> {
 
     @Inject
