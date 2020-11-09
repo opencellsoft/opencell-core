@@ -125,7 +125,7 @@ public interface ProductRs extends IBaseRs{
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Lists products matching the customer, seller, and quote contexts",
-    tags = { "Products" },
+    tags = { "Product" },
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
@@ -144,7 +144,7 @@ public interface ProductRs extends IBaseRs{
     @DELETE
     @Path("/{codeProductLine}")
     @Operation(summary = "This endpoint allows to remove an existing product line",
-    tags = { "ProductLine" },
+    tags = { "Product" },
     description ="remove a product line with its code",
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully deleted",
@@ -162,7 +162,7 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productLine")
     @Operation(summary = "This endpoint allows to create or update a product line",
-    tags = { "ProductLine" },
+    tags = { "Product" },
     description ="create a product line if it doesn't exist or update an existing product line",
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
@@ -179,7 +179,7 @@ public interface ProductRs extends IBaseRs{
 	@GET
 	@Path("/productLine")
     @Operation(summary = "This endpoint allows to retrieve a product line",
-    tags = { "ProductLine" },
+    tags = { "Product" },
     description ="retrieving a product line with its code",
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
@@ -199,7 +199,7 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productVersion")
     @Operation(summary = "This endpoint allows to create or update a product version",
-    tags = { "ProductVersion" },
+    tags = { "Product" },
     description ="create a product version if it doesn't exist or update an existing product line",
     responses = {
             @ApiResponse(responseCode="200", description = "the product version successfully created or updated",
@@ -243,7 +243,7 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productVersion/{productCode}/{currentVersion}")
     @Operation(summary = "This endpoint allows to update the product version status",
-    tags = { "ProductVersion" },
+    tags = { "Product" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
     responses = {
             @ApiResponse(responseCode="200", description = "the product version successfully updated",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
@@ -265,7 +265,7 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productVersion/duplicate/{productCode}/{currentVersion}")
 	@Operation(summary = "This endpoint allows to duplicate a product version",
-	tags = { "ProductVersion" },
+	tags = { "Product" },
 	description ="duplicate a product version",
 	responses = {
 	        @ApiResponse(responseCode="200", description = "the product version successfully duplicated"),
