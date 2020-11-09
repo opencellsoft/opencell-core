@@ -193,7 +193,8 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         return response;
     }
 
-    //@Override
+    
+	@Override
     public Response productQuotation(ProductContextDTO quoteContext,UriInfo info) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -214,7 +215,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         return buildResponse(responseBuilder);
     }
     
-    //@Override
+	@Override
     public Response offerQuotation(OfferContextDTO quoteContext,UriInfo info) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

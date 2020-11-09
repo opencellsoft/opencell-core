@@ -30,9 +30,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.rest.PATCH;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
+import org.tmf.dsmapi.quote.QuoteProductOfferingPrice;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * TMForum Product quote API specification implementation
@@ -132,6 +142,26 @@ public interface QuoteRs {
     @DELETE
     @Path("/{quoteIteùCode}")
     public Response deleteQuoteItem(@PathParam("quoteItemCode") String id, @Context UriInfo info);
+    
+    @POST
+    @Path("/productQuotation")
+    @Operation(summary = "product quotation",
+    tags = { "productQuotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "Product quotation is well done!",content = @Content(schema = @Schema(implementation = QuoteProductOfferingPrice.class)))
+    })
+     Response productQuotation(@Parameter(description = "ProductContextDTO object", required = false) ProductContextDTO quoteContext, UriInfo info);
+   
+    @POST
+    @Path("/offerQuotation")
+    @Operation(summary = "product quotation",
+    tags = { "offerQuotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "Offer quotation is well done!",content = @Content(schema = @Schema(implementation = QuoteProductOfferingPrice.class)))
+    })
+	Response offerQuotation(@Parameter(description = "OfferContextDTO object", required = false) OfferContextDTO quoteContext, UriInfo info);
     
     
 }
