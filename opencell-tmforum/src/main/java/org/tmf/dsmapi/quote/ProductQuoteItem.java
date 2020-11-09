@@ -97,7 +97,7 @@ public class ProductQuoteItem implements Serializable {
     protected List<RelatedParty> relatedParty;
     protected List<Note> note;
     protected ProductOffering productOffering;
-    protected ProductVersion productVersion;
+    protected Product product;
     protected Service service;
     protected Integer quantity;
     protected CustomerService customerService;
@@ -105,6 +105,7 @@ public class ProductQuoteItem implements Serializable {
     protected List<BillingAccount> billingAccount;
     protected String produtQuote;
     protected String produtQuoteVersion;
+    protected String produtVersion;
 
     protected TimeRange subscriptionPeriod;
     protected List<String> consumptionCdr;
@@ -323,12 +324,13 @@ public class ProductQuoteItem implements Serializable {
     }
 
 
-    public ProductVersion getProductVersion() {
-		return productVersion;
+
+	public Product getProduct() {
+		return product;
 	}
 
-	public void setProductVersion(ProductVersion productVersion) {
-		this.productVersion = productVersion;
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 	public String getProdutQuote() {
@@ -452,6 +454,16 @@ public class ProductQuoteItem implements Serializable {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+	
+	
+
+	public String getProdutVersion() {
+		return produtVersion;
+	}
+
+	public void setProdutVersion(String produtVersion) {
+		this.produtVersion = produtVersion;
 	}
 
 	/**
