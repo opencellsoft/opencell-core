@@ -119,13 +119,19 @@ public interface ProductRs extends IBaseRs{
      */
     @POST
     @Path("/list")
+    @Operation(summary = "Get products matching the given criteria",
+    tags = { "Product" },
+    description ="Get products matching the given criteria",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+    })
     public Response listPost(PagingAndFiltering pagingAndFiltering);
     
 
     @POST
     @Path("/cpq/list")
-    @Operation(summary = "Lists products matching the customer, seller, and quote contexts",
-    tags = { "Product" },
+    @Operation(summary = "Get products matching the customer, seller, and quote contexts",
+    tags = { "CPQ" },
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
@@ -220,7 +226,7 @@ public interface ProductRs extends IBaseRs{
 	@DELETE
 	@Path("/productVersion/{productCode}/{currentVersion}")
 	@Operation(summary = "This endpoint allows to remove a product version",
-	tags = { "ProductVersion"},
+	tags = { "Product"},
 	description ="remove a product version with product code and current version",
 	responses = {
 	        @ApiResponse(responseCode="200", description = "the product version successfully deleted",

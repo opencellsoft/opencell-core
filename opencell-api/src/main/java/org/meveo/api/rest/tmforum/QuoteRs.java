@@ -127,6 +127,26 @@ public interface QuoteRs {
     })
     public Response updateProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code,
     		@Parameter(description = "Product quote information", required = false) ProductQuote productQuote, @Context UriInfo info);
+    
+    
+    /**
+     * Modify  a product quote item
+     * 
+     * @param id Product quote code
+     * @param productQuote Product quote information
+     * @param info Http request context
+     * @return An updated product quote information
+     */
+    @PUT
+    @Path("/{quoteItemCode}")
+    @Operation(summary = "Modify a quote item",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteItemCode") String code,
+    		@Parameter(description = "Product quote information", required = false) ProductQuoteItem productQuoteitem, @Context UriInfo info);
 
     /**
      * Delete a product quote.

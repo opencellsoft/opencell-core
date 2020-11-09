@@ -42,7 +42,6 @@ import org.meveo.api.rest.tmforum.QuoteRs;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
-import org.tmf.dsmapi.quote.QuoteProductOfferingPrice;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -274,6 +273,12 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
 	@Override
 	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response updateQuoteItem(String code, ProductQuoteItem productQuoteitem, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}
