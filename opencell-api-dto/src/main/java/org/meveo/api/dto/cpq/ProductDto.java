@@ -8,15 +8,16 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 @XmlRootElement(name = "CpqProductDto")
+@XmlType(name = "CpqProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductDto {
 
