@@ -2,6 +2,8 @@ package org.meveo.api.dto.cpq;
 
 import org.meveo.model.cpq.tags.Tag;
 
+import com.google.gson.Gson;
+
 public class TagDto {
 
 	private String code;
@@ -13,6 +15,7 @@ public class TagDto {
 	private String parentTagCode;
 	private String filterEl;
 	
+	public TagDto() {}
 	public TagDto(Tag tag) {
 		if(tag != null) {
 			this.code = tag.getCode();
