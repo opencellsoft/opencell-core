@@ -15,15 +15,32 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
+package org.meveo.admin.job;
 
-package org.meveo.model.dwh;
+import static org.meveo.model.jobs.MeveoJobCategoryEnum.UTILS;
 
-@Deprecated
-public enum MeasurementPeriodEnum {
-    DAILY, WEEKLY, MONTHLY, YEARLY;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.job.Job;
 
-    public String getLabel() {
-        return "enum.measurementperiod." + name();
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+@Stateless
+public class DataCollectorJob extends Job {
+
+    @Inject
+    private DataCollectorJobBean dataCollectorJobBean;
+
+    @Override
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        dataCollectorJobBean.execute(result,  jobInstance.getParametres());
     }
 
+    @Override
+    public JobCategoryEnum getJobCategory() {
+        return UTILS;
+    }
 }
