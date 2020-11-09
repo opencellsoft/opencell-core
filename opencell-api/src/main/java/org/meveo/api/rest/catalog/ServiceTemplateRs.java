@@ -37,6 +37,7 @@ import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
@@ -147,7 +148,7 @@ public interface ServiceTemplateRs extends IBaseRs {
     tags = { "serviceTemplates" },
     description ="if billingAccountCode/offer/product are given, this API returns all available services for an offer taking into account the customer and quote context",
     responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListServiceTemplateResponseDto.class))),
+            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListServiceResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
             @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),

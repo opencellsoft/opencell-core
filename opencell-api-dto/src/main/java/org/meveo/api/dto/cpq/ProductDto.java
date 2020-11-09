@@ -35,7 +35,7 @@ public class ProductDto {
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
 	private boolean discountFlag;
     private boolean packageFlag;
-    private Set<ServiceTemplateDto> serviceList = new HashSet<>();
+    private Set<ServiceDTO> serviceList = new HashSet<>();
     /** The custom fields. */
     private CustomFieldsDto customFields;
     
@@ -229,11 +229,11 @@ public class ProductDto {
 		this.label = label;
 	}
 
-	public Set<ServiceTemplateDto> getServiceList() {
+	public Set<ServiceDTO> getServiceList() {
 		return serviceList;
 	}
 
-	public void setServiceList(Set<ServiceTemplateDto> serviceList) {
+	public void setServiceList(Set<ServiceDTO> serviceList) {
 		this.serviceList = serviceList;
 	}
 

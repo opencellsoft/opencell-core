@@ -44,7 +44,7 @@ public interface TagRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/")
-    @Operation(summary = "This endpoint allows to creating new tag",
+    @Operation(summary = "This endpoint allows to create new tag",
     tags = { "Tag" },
     description ="Creating a new tag",
     responses = {
@@ -60,7 +60,7 @@ public interface TagRs extends IBaseRs {
 	
 	@PUT
 	@Path("/")
-    @Operation(summary = "This endpoint allows to updating an existing Tag",
+    @Operation(summary = "This endpoint allows to update an existing Tag",
     description ="Updating an existing Tag",
     tags = { "Tag" },
     responses = {
@@ -75,7 +75,7 @@ public interface TagRs extends IBaseRs {
 	
 	@DELETE
 	@Path("/{codeTag}")
-    @Operation(summary = "This endpoint allows to  deleting an existing Tag",
+    @Operation(summary = "This endpoint allows to  delete an existing Tag",
     description ="Deleting an existing Tag with its code",
     tags = { "Tag" },
     responses = {
@@ -90,8 +90,8 @@ public interface TagRs extends IBaseRs {
 
 	@GET
 	@Path("/")
-    @Operation(summary = "This endpoint allows to finding a tag by codeTag parameter",
-    description ="Finding a tag type by codeTag parameter",
+    @Operation(summary = "This endpoint allows to find a tag by codeTag parameter",
+    description ="Find a tag type by codeTag parameter",
     tags = { "Tag" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Tag successfully retrieved",
@@ -101,7 +101,7 @@ public interface TagRs extends IBaseRs {
 	
 	@POST
 	@Path("/tagType")
-    @Operation(summary = "This endpoint allows to creating new tag type",
+    @Operation(summary = "This endpoint allows to create new tag type",
     description ="Creating a new tag type",
     tags = { "TagType" },
     responses = {
@@ -113,7 +113,7 @@ public interface TagRs extends IBaseRs {
 	
 	@PUT
 	@Path("/tagType")
-    @Operation(summary = "This endpoint allows to updating new tag type",
+    @Operation(summary = "This endpoint allows to update new tag type",
     description ="updating a new tag type",
     tags = { "TagType" },
     responses = {

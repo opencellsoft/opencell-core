@@ -28,10 +28,10 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -155,7 +155,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
 	@Override
 	public Response listPost(OfferContextDTO quoteContext, PagingAndFiltering pagingAndFiltering) {
-		GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+		GetListServiceResponseDto result = new GetListServiceResponseDto();
 
 	        try {
 	        	/*****@TODO RAY : create a new method in ServicetemplateAPI that get products matching given criteria**/

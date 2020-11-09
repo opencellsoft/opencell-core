@@ -227,7 +227,7 @@ public interface QuoteRs {
 	Response offerQuotation(@Parameter(description = "Offer context ", required = false) OfferContextDTO quoteContext, UriInfo info);
     
     @POST
-    @Path("/offerQuotation")
+    @Path("/quoteQuotation")
     @Operation(summary = "Quote quotation",
     tags = { "CPQ" },
     description ="",

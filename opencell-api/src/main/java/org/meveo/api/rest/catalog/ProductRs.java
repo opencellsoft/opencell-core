@@ -64,7 +64,7 @@ public interface ProductRs extends IBaseRs{
 	 */
 	@PUT
 	@Path("/")
-    @Operation(summary = "This endpoint allows to update an existing product ",
+    @Operation(summary = "This endpoint allows to update a product ",
     tags = { "Product" },
     description ="to update the product the status must be DRAFT otherwise exception will be thrown",
     responses = {
@@ -73,7 +73,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "Unknown producth"),
             @ApiResponse(responseCode = "400", description = "the status of the product is different to DRAFT")
     })
-	Response updateProduct(@Parameter(description = "product dto for updating an existing product", required = true) ProductDto productDto);
+	Response updateProduct(@Parameter(description = "product dto for updating a product", required = true) ProductDto productDto);
 	
 	/**
 	 * 
@@ -83,7 +83,7 @@ public interface ProductRs extends IBaseRs{
 	 */
 	@POST
 	@Path("/{codeProduct}/update/status")
-    @Operation(summary = "This endpoint allows to update status of existing product  ",
+    @Operation(summary = "This endpoint allows to update product status  ",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception",
     responses = {
@@ -219,7 +219,7 @@ public interface ProductRs extends IBaseRs{
 	 */
 	@DELETE
 	@Path("/productVersion/{productCode}/{currentVersion}")
-	@Operation(summary = "This endpoint allows to remove an existing product product version",
+	@Operation(summary = "This endpoint allows to remove a product version",
 	tags = { "ProductVersion"},
 	description ="remove a product version with product code and current version",
 	responses = {
@@ -242,7 +242,7 @@ public interface ProductRs extends IBaseRs{
 	 */
 	@POST
 	@Path("/productVersion/{productCode}/{currentVersion}")
-    @Operation(summary = "This endpoint allows to update status of existing product version ",
+    @Operation(summary = "This endpoint allows to update the product version status",
     tags = { "ProductVersion" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
     responses = {
