@@ -56,18 +56,6 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	    }
 	}
 
-	@Override
-	public Response deleteTag(Long id) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    Response.ResponseBuilder responseBuilder = null;
-	    try {
-	        tagApi.removeTag(id);
-	        responseBuilder = Response.ok(result);
-	        return responseBuilder.build();
-	    } catch (MeveoApiException e) {
-		       return createResponseFromMeveoApiException(e, result).build();
-	    }
-	}
 
 	@Override
 	public Response findByCode(String codeTag) {
@@ -114,18 +102,4 @@ public class TagRsImpl extends BaseRs implements TagRs {
 		       return createResponseFromMeveoApiException(e, result).build();
 	    }
 	}
-
-	@Override
-	public Response findById(Long idTagType) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    try {
-	        return Response.ok(tagApi.findTagTypeById(idTagType)).build();
-	    } catch (MeveoApiException e) {
-	       return createResponseFromMeveoApiException(e, result).build();
-	    }
-	}
-	
-
-
-
 }

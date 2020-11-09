@@ -285,7 +285,7 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+    public ProductVersionDto duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
         ProductVersion productVersion;
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
@@ -293,7 +293,7 @@ public class ProductApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
 	        productVersionService.duplicate(productVersion);
-	        return productVersion;
+	        return new ProductVersionDto(productVersion);
 		} catch (ProductException | ProductVersionException e) {
 			throw new MeveoApiException(e);
 		}
@@ -308,7 +308,7 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException { 
+    public ProductVersionDto UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException { 
         ProductVersion productVersion;
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
@@ -316,7 +316,7 @@ public class ProductApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
-	        return productVersion;
+	        return new ProductVersionDto(productVersion);
 		} catch (ProductException | ProductVersionException e) {
 			throw new MeveoApiException(e);
 		}

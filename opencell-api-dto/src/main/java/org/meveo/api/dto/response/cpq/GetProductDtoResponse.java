@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.BaseResponse;
 
@@ -19,6 +20,11 @@ import org.meveo.api.dto.response.BaseResponse;
 public class GetProductDtoResponse extends BaseResponse{
 
 	private ProductDto productDto;
+	
+	public GetProductDtoResponse() {
+		super();
+		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	}
 
 	/**
 	 * @return the productDto

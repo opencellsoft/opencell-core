@@ -5,8 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductLineDto;
+import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 
@@ -18,25 +17,26 @@ import org.meveo.api.dto.response.BaseResponse;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetProductLineDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetProductLineDtoResponse extends BaseResponse{
+public class GetProductVersionResponse extends BaseResponse{
 
-	private ProductLineDto productLineDto;
+	private ProductVersionDto productVersionDto;
 
-	public GetProductLineDtoResponse() {
+	public GetProductVersionResponse() {
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
+
 	/**
-	 * @return the productLineDto
+	 * @return the productVersionDto
 	 */
-	public ProductLineDto getProductLineDto() {
-		return productLineDto;
+	public ProductVersionDto getProductVersionDto() {
+		return productVersionDto;
 	}
 
 	/**
-	 * @param productLineDto the productLineDto to set
+	 * @param productVersionDto the productVersionDto to set
 	 */
-	public void setProductLineDto(ProductLineDto productLineDto) {
-		this.productLineDto = productLineDto;
+	public void setProductVersionDto(ProductVersionDto productVersionDto) {
+		this.productVersionDto = productVersionDto;
 	}
 
 	

@@ -3,7 +3,7 @@ package org.meveo.api.rest.cpq;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
+import javax.ws.rs.PUT;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -54,7 +54,7 @@ public interface TagRs extends IBaseRs {
 	
 	Response createTag(@Parameter(description = "tag dto for a new insertion", required = true) TagDto tagDto);
 	
-	@PATCH
+	@PUT
 	@Path("/")
     @Operation(summary = "This endpoint allows to updating an existing Tag",
     description ="Updating an existing Tag",
@@ -80,19 +80,6 @@ public interface TagRs extends IBaseRs {
     })
 	Response deleteTag(@Parameter(description = "contain the code of tag te be deleted by its code", required = true) @PathParam("codeTag") String codeTag);
 
-	@DELETE
-	@Path("/{idTag}")
-    @Operation(summary = "Deleting an existing Tag",
-    description ="Deleting an existing Tag with its id",
-    responses = {
-            @ApiResponse(responseCode="200", description = "The Tag successfully deleted"),
-            @ApiResponse(responseCode = "500", description = "No Tag found for the idTag parameter", 
-    		content = @Content(schema = @Schema(implementation = BusinessException.class))),
-            @ApiResponse(responseCode = "500", description = "Impossible to delete a Tag, because it contains product", 
-    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
-    })
-	Response deleteTag(@Parameter(description = "contain the code of tag te be deleted by its id", required = true) @PathParam("idTag") Long id);
-	
 	@GET
 	@Path("/")
     @Operation(summary = "This endpoint allows to finding a tag type by codeTag parameter",
@@ -113,7 +100,7 @@ public interface TagRs extends IBaseRs {
     })
 	Response createTagType(@Parameter(description = "tag type dto for new insertion", required = true)TagTypeDto tagTypeDto);
 	
-	@PATCH
+	@PUT
 	@Path("/tagType")
     @Operation(summary = "This endpoint allows to updating new tag type",
     description ="updating a new tag type",
@@ -137,15 +124,5 @@ public interface TagRs extends IBaseRs {
     })
 	Response findBycode(@Parameter(description = "code tag type for retrieving an existing one", required = true) @QueryParam("codeTagType") String codeTagType);
 
-	@GET
-	@Path("/tagType/{idTagType}")
-    @Operation(summary = "This endpoint allows to  retrieving a tag type",
-    description ="Retrieving a tag type with id tag type parameter",
-    responses = {
-            @ApiResponse(responseCode="200", description = "The Tag type successfully found"),
-            @ApiResponse(responseCode = "500", description = "No tag type was found with the id in the parameter", 
-    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
-    })
-	Response findById(@Parameter(description = "id tag type for retrieving an existing one", required = true) @PathParam("idTagType") Long idTagType);
 	
 }
