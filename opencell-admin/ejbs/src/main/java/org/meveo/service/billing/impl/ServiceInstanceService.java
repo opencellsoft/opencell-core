@@ -551,6 +551,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 recurringChargeInstance.getId(), recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate(), endDate,
                 serviceInstance.getEndAgreementDate(), terminationReason.getCode());
 
+            //compute the next charge date by applying the recurring charge using the appropriate calendar
+            if(nextChargeDate == null) {
+                walletOperationService.initializeAndApplyFirstRecuringCharge(recurringChargeInstance);
+                nextChargeDate = recurringChargeInstance.getNextChargeDate();
+            }
+
             if (endDate.after(nextChargeDate)) {
                 try {
                     walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata);
