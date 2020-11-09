@@ -420,7 +420,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
                 try {
                     oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
-// TODO AKK we should change status inside the oneShotChargeInstanceService.oneShotChargeApplication?? 
+
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    
                 } catch (RatingException e) {
                     log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
                     throw e; // e.getBusinessException();
@@ -429,9 +431,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     log.error("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
                     throw e;
                 }
-
-                oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-                oneShotChargeInstanceService.update(oneShotChargeInstance);
             }
         } else {
             log.debug("ServiceActivation: subscription charges are not applied.");
