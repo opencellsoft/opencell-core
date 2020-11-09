@@ -1,12 +1,10 @@
 package org.meveo.api.rest.catalog;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,7 +14,6 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -24,6 +21,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -52,7 +50,7 @@ public interface ProductRs extends IBaseRs{
     description ="creation of the product",
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully created",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "the product with code is missing"),
             @ApiResponse(responseCode = "302", description = "the product already existe with the given code"),
             @ApiResponse(responseCode = "400", description = "Internat error")
@@ -64,7 +62,7 @@ public interface ProductRs extends IBaseRs{
 	 * @param productDto
 	 * @return
 	 */
-	@PATCH
+	@PUT
 	@Path("/")
     @Operation(summary = "This endpoint allows to update an existing product ",
     tags = { "Product" },
@@ -90,7 +88,7 @@ public interface ProductRs extends IBaseRs{
     description ="the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception",
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully updated",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
 	Response updateStatus(@Parameter @PathParam("codeProduct") String codeProduct,@Parameter @QueryParam("status") ProductStatusEnum status);
@@ -127,7 +125,7 @@ public interface ProductRs extends IBaseRs{
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Lists products matching the customer, seller, and quote contexts",
-    tags = { "products" },
+    tags = { "Products" },
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
@@ -154,7 +152,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "unknown product line"),
             @ApiResponse(responseCode = "400", description = "the product line is attached to a product")
     })
-    Response removeProductLine(@Parameter(description = "id product for deleting an existing product line", required = true) @PathParam("codeProductLine") String codeProductLine);
+    Response removeProductLine(@Parameter(description = "productLine code", required = true) @PathParam("codeProductLine") String codeProductLine);
 
     /**
      * 
@@ -168,7 +166,7 @@ public interface ProductRs extends IBaseRs{
     description ="create a product line if it doesn't exist or update an existing product line",
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    content = @Content(schema = @Schema(implementation = GetProductLineDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does exist for a new product line ")
     })
 	Response createOrUpdateProductLine(@Parameter(description = "create new product line or update an existing product line", required = true) ProductLineDto dto);
@@ -201,11 +199,11 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productVersion")
     @Operation(summary = "This endpoint allows to create or update a product version",
-    tags = { "productVersion" },
+    tags = { "ProductVersion" },
     description ="create a product version if it doesn't exist or update an existing product line",
     responses = {
             @ApiResponse(responseCode="200", description = "the product version successfully created or updated",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Unkonw product to attach to product version"),
             @ApiResponse(responseCode = "400", description = "the product verion with product code and current version in param does not exist ")
     })
@@ -248,7 +246,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "ProductVersion" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product version successfully updated"),
+            @ApiResponse(responseCode="200", description = "the product version successfully updated",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Unknown product version"),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
@@ -267,7 +265,7 @@ public interface ProductRs extends IBaseRs{
 	@POST
 	@Path("/productVersion/duplicate/{productCode}/{currentVersion}")
 	@Operation(summary = "This endpoint allows to duplicate a product version",
-	tags = { "productVersion" },
+	tags = { "ProductVersion" },
 	description ="duplicate a product version",
 	responses = {
 	        @ApiResponse(responseCode="200", description = "the product version successfully duplicated"),

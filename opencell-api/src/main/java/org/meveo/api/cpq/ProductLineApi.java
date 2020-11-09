@@ -41,7 +41,7 @@ public class ProductLineApi extends BaseApi {
 		}
 	}
 	
-	public ProductLine createProductLine(ProductLineDto dto){
+	public ProductLineDto createProductLine(ProductLineDto dto){
 		if(dto == null)
 			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
 		if(dto.getCodeProductLine() == null) {
@@ -49,13 +49,15 @@ public class ProductLineApi extends BaseApi {
 		}
 		handleMissingParameters();
 		try {
-			return productLineService.createNew(dto.getCodeProductLine(), dto.getLabel(), dto.getCodeSeller(), dto.getLongDescription(), dto.getIdCodeParentLine());
+			return new ProductLineDto(productLineService.createNew(dto.getCodeProductLine(), 
+																		dto.getLabel(), dto.getCodeSeller(), 
+																			dto.getLongDescription(), dto.getIdCodeParentLine()));
 		} catch (ProductLineException e) {
 			throw new MeveoApiException(e);
 		}
 	}
 	
-	public ProductLine updateProductLine(ProductLineDto dto){
+	public ProductLineDto updateProductLine(ProductLineDto dto){
 		if(dto == null)
 			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
 		if(dto.getCodeProductLine() == null) {
@@ -74,7 +76,7 @@ public class ProductLineApi extends BaseApi {
 		if(dto.getCodeSeller() != null && !dto.getCodeSeller().strip().equals("")) {
 			line.setSeller(sellerService.findByCode(dto.getCodeSeller()));
 		}
-		return productLineService.update(line);
+		return new ProductLineDto(productLineService.update(line));
 	}
 	
 	public List<ProductLine> findByCodeLike(String code) {
