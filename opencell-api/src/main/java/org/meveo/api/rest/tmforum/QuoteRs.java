@@ -91,7 +91,7 @@ public interface QuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = ProductQuote.class)))
     })
-    public Response getProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code, @Context UriInfo info);
+    public Response getProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String code, @Context UriInfo info);
 
     /**
      * Get a list of product quotes optionally filtered by some criteria
@@ -125,7 +125,7 @@ public interface QuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response updateProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code,
+    public Response updateProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String code,
     		@Parameter(description = "Product quote information", required = false) ProductQuote productQuote, @Context UriInfo info);
     
     
@@ -145,7 +145,7 @@ public interface QuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteItemCode") String code,
+    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = false) @PathParam("quoteItemCode") String code,
     		@Parameter(description = "Product quote information", required = false) ProductQuoteItem productQuoteitem, @Context UriInfo info);
 
     /**
@@ -163,7 +163,7 @@ public interface QuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response deleteProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code, @Context UriInfo info);
+    public Response deleteProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String code, @Context UriInfo info);
 
     /**
      * Place an order based on a product quote.
@@ -180,7 +180,7 @@ public interface QuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "order succeffully created from current quote",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response placeOrder(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String id, @Context UriInfo info);
+    public Response placeOrder(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String id, @Context UriInfo info);
     
     /**
      * Create a new product quote item
