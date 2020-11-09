@@ -35,6 +35,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -232,11 +233,30 @@ public interface ServiceTemplateRs extends IBaseRs {
     ActionStatus disable(@PathParam("code") String code);
     
     /**
-     * Gets a service template list widh .
+     * Gets a service template list matching given criteria .
      * 
      * @param pagingAndFiltering PagingAndFiltering config.
      * @return Return serviceTemplate list
      */
+    @POST
+    @Path("/list")
+	@Operation(
+			summary=" Gets a service template list matching given criteria",
+			description=" Gets a service template list matching given criteria",
+			operationId="    POST_ServiceTemplate_list",
+			responses= {
+				@ApiResponse(description=" Return serviceTemplate list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListServiceTemplateResponseDto.class
+											)
+								)
+				)}
+	)
+    GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
+    
+    
+    
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Lists services matching the customer, seller, and quote contexts",
