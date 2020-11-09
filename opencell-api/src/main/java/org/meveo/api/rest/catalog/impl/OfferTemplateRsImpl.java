@@ -20,6 +20,7 @@ package org.meveo.api.rest.catalog.impl;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -131,7 +132,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
     
 	@Override
-	public Response listPost(String billingAccountCode, PagingAndFiltering pagingAndFiltering) {
+	public Response listPost(String billingAccountCode,List<String> commercialWallet, PagingAndFiltering pagingAndFiltering) {
 		 GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
 	        try {

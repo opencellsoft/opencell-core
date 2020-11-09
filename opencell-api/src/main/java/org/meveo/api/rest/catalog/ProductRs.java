@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -124,7 +126,7 @@ public interface ProductRs extends IBaseRs{
 
     @POST
     @Path("/cpq/list")
-    @Operation(summary = "List products matching a given billing account code, given offer, and filtering Criteria",
+    @Operation(summary = "Lists products matching the customer, seller, and quote contexts",
     tags = { "products" },
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
@@ -133,9 +135,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
             @ApiResponse(responseCode = "404", description = "selected product does not exist")
     })
-    public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 
-    		@Parameter(description = "The offer code", required = false) String offerCode, 
-    		@Parameter(description = "Selected products", required = false) List<String> selectedProducts,
+    public Response listPost(@Parameter(description = "Offer Context", required = false) OfferContextDTO quoteContext,
     		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
     
 	/**

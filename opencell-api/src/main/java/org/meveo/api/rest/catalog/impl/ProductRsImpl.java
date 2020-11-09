@@ -9,6 +9,7 @@ import org.meveo.api.cpq.ProductApi;
 import org.meveo.api.cpq.ProductLineApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -90,7 +91,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listPost(String billingAccountCode, String offerCode, List<String> selectedProducts,
+	public Response listPost(OfferContextDTO quoteContext,
 			PagingAndFiltering pagingAndFiltering) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 

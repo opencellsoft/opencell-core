@@ -18,12 +18,10 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
@@ -51,6 +49,9 @@ public class OfferContextDTO extends EnableBusinessDto {
      * The selected offer template code in the quote
      */
     private String offerCode;
+    
+    
+    private List<String> sellerWallet;
     /**
      * The select products in the quote
      */
@@ -73,7 +74,13 @@ public class OfferContextDTO extends EnableBusinessDto {
 	public void setProducts(List<ProductContextDTO> products) {
 		this.products = products;
 	}
-   
+	public List<String> getSellerWallet() {
+		return sellerWallet;
+	}
+	public void setSellerWallet(List<String> sellerWallet) {
+		this.sellerWallet = sellerWallet;
+	}
+
     
     
     

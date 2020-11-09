@@ -18,9 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -36,9 +33,8 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -147,7 +143,7 @@ public interface ServiceTemplateRs extends IBaseRs {
     
     @POST
     @Path("/cpq/list")
-    @Operation(summary = "List services matching a given billing account code, offer, product, and filtering Criteria",
+    @Operation(summary = "Lists services matching the customer, seller, and quote contexts",
     tags = { "serviceTemplates" },
     description ="if billingAccountCode/offer/product are given, this API returns all available services for an offer taking into account the customer and quote context",
     responses = {
@@ -157,6 +153,6 @@ public interface ServiceTemplateRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),
             @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
-    public Response listPost(@Parameter(description = "The QuoteContextDTO object", required = false) ProductContextDTO quoteContext,
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext,
     		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
 }
