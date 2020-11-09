@@ -24,6 +24,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -116,8 +117,8 @@ public interface QuoteRs {
      * @param info Http request context
      * @return An updated product quote information
      */
-    @PATCH
-    @Path("/{id}")
+    @PUT
+    @Path("/{quoteCode}")
     @Operation(summary = "Modify a product quote",
     tags = { "Quote management" },
     description ="",
@@ -135,7 +136,7 @@ public interface QuoteRs {
      * @return Response status
      */
     @DELETE
-    @Path("/{quoteId}")
+    @Path("/{quoteCode}")
     @Operation(summary = "Delete a product quote.",
     tags = { "Quote management" },
     description ="",
@@ -169,7 +170,7 @@ public interface QuoteRs {
      * @return Product quote information
      */
     @POST
-    @Path("/")
+    @Path("/quoteItem")
     @Operation(summary = "Create a quote item",
     tags = { "Quote management" },
     description ="",
@@ -180,7 +181,7 @@ public interface QuoteRs {
     
     
     @POST
-    @Path("/")
+    @Path("/quoteVersion")
     @Operation(summary = "Create a quote version",
     tags = { "Quote management" },
     description ="",
