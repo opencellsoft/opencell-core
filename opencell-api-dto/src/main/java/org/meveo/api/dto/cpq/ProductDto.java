@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
@@ -34,6 +35,8 @@ public class ProductDto {
 	private boolean discountFlag;
     private boolean packageFlag;
     private Set<ServiceTemplateDto> serviceList = new HashSet<>();
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
     
     
     public ProductDto() {}
@@ -231,6 +234,14 @@ public class ProductDto {
 
 	public void setServiceList(Set<ServiceTemplateDto> serviceList) {
 		this.serviceList = serviceList;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
     
     
