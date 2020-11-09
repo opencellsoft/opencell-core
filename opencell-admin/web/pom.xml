@@ -242,7 +242,7 @@
                     <replacements>
                         <replacement>
                             <token>https://petstore.swagger.io/v2/swagger.json</token>
-                            <value>/opencell/api/rest/v2/openapi.json</value>
+                            <value>/opencell/api/rest/openapi.json</value>
                         </replacement>
                     </replacements>
                 </configuration>
