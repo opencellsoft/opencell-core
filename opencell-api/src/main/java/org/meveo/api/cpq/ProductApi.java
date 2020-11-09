@@ -156,7 +156,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 */
 	public ProductLineDto createProductLine(ProductLineDto dto){
-		return new ProductLineDto(productLineApi.createProductLine(dto));
+		return productLineApi.createProductLine(dto);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 */
 	public ProductLineDto updateProductLine(ProductLineDto dto){
-			return new ProductLineDto(productLineApi.updateProductLine(dto));
+			return productLineApi.updateProductLine(dto);
 	}
 
 	/**

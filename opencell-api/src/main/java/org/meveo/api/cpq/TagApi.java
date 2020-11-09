@@ -40,7 +40,7 @@ public class TagApi extends BaseApi {
 	 * the parameters code, name, label and tag type code must not be empty
 	 * @param tagDto
 	 */
-	public void create(TagDto tagDto) {
+	public TagDto create(TagDto tagDto) {
 		
 		checkParams(tagDto);
 		
@@ -61,12 +61,13 @@ public class TagApi extends BaseApi {
 		tag.setFilterEl(tagDto.getFilterEl());
 		
 		tagService.create(tag);
+		return tagDto;
 	}
 	
 	/**
 	 * @param tagDto
 	 */
-	public void update(TagDto tagDto) {
+	public TagDto update(TagDto tagDto) {
 
 		checkParams(tagDto);
 		final Tag tag = tagService.findByCode(tagDto.getCode());
@@ -89,24 +90,9 @@ public class TagApi extends BaseApi {
 		tag.setFilterEl(tagDto.getFilterEl());
 
 		tagService.update(tag);
+		return tagDto;
 	}
 	
-	/**
-	 * remove Tag by its id
-	 * @param id
-	 */
-	public void removeTag(Long id) {
-		final Tag tag = tagService.findById(id);
-		if(tag == null) {
-			throw new BusinessApiException("Missing Tag with Id : " + id);
-		}
-		
-		var productVersions = productVersionService.findByTags(Arrays.asList(new Long[] {tag.getId()}));
-		if(!productVersions.isEmpty()) {
-			throw new BusinessApiException("Tag contains product, it can not be deleted");
-		}
-		tagService.remove(tag);
-	}
 
 	/**
 	 * remove Tag by its code
@@ -171,7 +157,7 @@ public class TagApi extends BaseApi {
 	 * create new Tag type 
 	 * @param tagTypeDto
 	 */
-	public void create(TagTypeDto tagTypeDto) {
+	public TagTypeDto create(TagTypeDto tagTypeDto) {
 		checkCodeTagTypeExist(tagTypeDto);
 		
 		final TagType tagType = new TagType();
@@ -181,13 +167,14 @@ public class TagApi extends BaseApi {
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
 		
 		tagTypeService.create(tagType);
+		return tagTypeDto;
 	}
 	
 	/**
 	 * update tag type
 	 * @param tagTypeDto
 	 */
-	public void update(TagTypeDto tagTypeDto) {
+	public TagTypeDto update(TagTypeDto tagTypeDto) {
 		checkCodeTagTypeExist(tagTypeDto);
 		TagType tagType = null;
 		try {
@@ -199,6 +186,18 @@ public class TagApi extends BaseApi {
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
 		
 		tagTypeService.update(tagType);
+		return tagTypeDto;
+	}
+	
+	/**
+	 * @param codeTag
+	 */
+	public void deleteTagType(String codeTag) {
+		try {
+			tagTypeService.removeTagType(codeTag);
+		} catch (TagTypeException e) {
+			throw new BusinessApiException(e);
+		}
 	}
 	
 	/**
@@ -214,14 +213,6 @@ public class TagApi extends BaseApi {
 		}
 	}
 	
-	/**
-	 * retrieve tag type from id
-	 * @param id
-	 * @return
-	 */
-	public TagTypeDto findTagTypeById(Long id) {
-		return new TagTypeDto(tagTypeService.findById(id));
-	}
 	
 	private void checkCodeTagTypeExist(TagTypeDto dto) {
 		if(Strings.isEmpty(dto.getCode())) {

@@ -15,7 +15,7 @@ import org.meveo.api.dto.response.BaseResponse;
  *
  */
 @SuppressWarnings("serial")
-@XmlRootElement(name = "GetProductLineDtoResponse")
+@XmlRootElement(name = "GetProductVersionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetProductVersionResponse extends BaseResponse{
 

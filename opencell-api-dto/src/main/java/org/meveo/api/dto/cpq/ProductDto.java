@@ -20,7 +20,6 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 @XmlRootElement(name = "CpqProductDto")
 @XmlType(name = "CpqProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CpqProductDto")
 public class ProductDto {
 
 	private Long id;
