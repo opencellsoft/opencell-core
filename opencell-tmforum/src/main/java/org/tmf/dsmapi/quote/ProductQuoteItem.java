@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.cpq.ProductVersion;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -96,12 +97,14 @@ public class ProductQuoteItem implements Serializable {
     protected List<RelatedParty> relatedParty;
     protected List<Note> note;
     protected ProductOffering productOffering;
-    protected Product product;
+    protected ProductVersion productVersion;
     protected Service service;
     protected Integer quantity;
     protected CustomerService customerService;
     protected List<QuoteProductOfferingPrice> itemQuoteProductOfferingPrice;
     protected List<BillingAccount> billingAccount;
+    protected String produtQuote;
+    protected String produtQuoteVersion;
 
     protected TimeRange subscriptionPeriod;
     protected List<String> consumptionCdr;
@@ -319,29 +322,32 @@ public class ProductQuoteItem implements Serializable {
         this.productOffering = value;
     }
 
-    /**
-     * Obtient la valeur de la propriété product.
-     * 
-     * @return possible object is {@link Product }
-     * 
-     */
-    public Product getProduct() {
-        return product;
-    }
 
-    /**
-     * Définit la valeur de la propriété product.
-     * 
-     * @param value allowed object is {@link Product }
-     * 
-     */
-    public void setProduct(Product value) {
-        this.product = value;
-    }
-    
-    
+    public ProductVersion getProductVersion() {
+		return productVersion;
+	}
 
-    /**
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	public String getProdutQuote() {
+		return produtQuote;
+	}
+
+	public void setProdutQuote(String produtQuote) {
+		this.produtQuote = produtQuote;
+	}
+
+	public String getProdutQuoteVersion() {
+		return produtQuoteVersion;
+	}
+
+	public void setProdutQuoteVersion(String produtQuoteVersion) {
+		this.produtQuoteVersion = produtQuoteVersion;
+	}
+
+	/**
      * Obtient la valeur de la propriété service.
      * 
      * @return possible object is {@link Service }

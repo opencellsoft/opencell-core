@@ -32,8 +32,10 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.QuoteRs;
@@ -199,10 +201,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
-        List<QuoteProductOfferingPrice> quoteProductOfferingPrices=new ArrayList<QuoteProductOfferingPrice>();
+        List<GetListAccountingArticlePricesResponseDto> accountingArticlePrices=new ArrayList<GetListAccountingArticlePricesResponseDto>();
+        
         try {
 
-            responseBuilder = Response.ok().entity(quoteProductOfferingPrices);
+            responseBuilder = Response.ok().entity(accountingArticlePrices);
 
 //        } catch (MeveoApiException e) {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -220,10 +223,31 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
-        List<QuoteProductOfferingPrice> quoteProductOfferingPrices=new ArrayList<QuoteProductOfferingPrice>();
+        List<GetListAccountingArticlePricesResponseDto> accountingArticlePrices=new ArrayList<GetListAccountingArticlePricesResponseDto>();
         try {
 
-            responseBuilder = Response.ok().entity(quoteProductOfferingPrices);
+            responseBuilder = Response.ok().entity(accountingArticlePrices);
+
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+        }
+
+
+        return buildResponse(responseBuilder);
+    }
+	
+	@Override
+    public Response quoteQuotation(List<OfferContextDTO> quoteContext,UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        Response.ResponseBuilder responseBuilder = null;
+        List<GetListAccountingArticlePricesResponseDto> accountingArticlePrices=new ArrayList<GetListAccountingArticlePricesResponseDto>();
+        try {
+
+            responseBuilder = Response.ok().entity(accountingArticlePrices);
 
 //        } catch (MeveoApiException e) {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -244,6 +268,12 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
 	@Override
 	public Response deleteQuoteItem(String id, UriInfo info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.tmforum;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,13 +32,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
-import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.rest.PATCH;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
-import org.tmf.dsmapi.quote.QuoteProductOfferingPrice;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,7 +67,13 @@ public interface QuoteRs {
      */
     @POST
     @Path("/")
-    public Response createProductQuote(ProductQuote productQuote, @Context UriInfo info);
+    @Operation(summary = "Create a product quote",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response createProductQuote(@Parameter(description = "Product quote information", required = false) ProductQuote productQuote, @Context UriInfo info);
 
     /**
      * Get details of a single product quote
@@ -74,8 +83,14 @@ public interface QuoteRs {
      * @return quote response
      */
     @GET
-    @Path("/{quoteId}")
-    public Response getProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
+    @Path("/{quoteCode}")
+    @Operation(summary = "Get a product quote by its code",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = ProductQuote.class)))
+    })
+    public Response getProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code, @Context UriInfo info);
 
     /**
      * Get a list of product quotes optionally filtered by some criteria
@@ -85,6 +100,12 @@ public interface QuoteRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Get a list of product quotes optionally filtered by some criteria",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quotes are succeffully retrieved",content = @Content(schema = @Schema(implementation = ProductQuote.class)))
+    })
     public Response findProductQuotes(@Context UriInfo info);
 
     /**
@@ -97,7 +118,14 @@ public interface QuoteRs {
      */
     @PATCH
     @Path("/{id}")
-    public Response updateProductQuote(@PathParam("id") String id, ProductQuote productQuote, @Context UriInfo info);
+    @Operation(summary = "Modify a product quote",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response updateProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code,
+    		@Parameter(description = "Product quote information", required = false) ProductQuote productQuote, @Context UriInfo info);
 
     /**
      * Delete a product quote.
@@ -108,7 +136,13 @@ public interface QuoteRs {
      */
     @DELETE
     @Path("/{quoteId}")
-    public Response deleteProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
+    @Operation(summary = "Delete a product quote.",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response deleteProductQuote(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String code, @Context UriInfo info);
 
     /**
      * Place an order based on a product quote.
@@ -119,7 +153,13 @@ public interface QuoteRs {
      */
     @POST
     @Path("/placeOrder/{quoteCode}")
-    public Response placeOrder(@PathParam("quoteCode") String id, @Context UriInfo info);
+    @Operation(summary = "Place an order based on a product quote",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "order succeffully created from current quote",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response placeOrder(@Parameter(description = "Product quote code", required = false) @PathParam("QuoteCode") String id, @Context UriInfo info);
     
     /**
      * Create a new product quote item
@@ -130,7 +170,24 @@ public interface QuoteRs {
      */
     @POST
     @Path("/")
-    public Response createQuoteItem(ProductQuoteItem productQuoteItem, @Context UriInfo info);
+    @Operation(summary = "Create a quote item",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote item is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response createQuoteItem(@Parameter(description = "Product quote item information", required = false) ProductQuoteItem productQuoteItem, @Context UriInfo info);
+    
+    
+    @POST
+    @Path("/")
+    @Operation(summary = "Create a quote version",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "New quote version is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response createQuoteVersion(@Parameter(description = "Product quote version information", required = false) QuoteVersionDto quoteVersion, @Context UriInfo info);
     
     /**
      * Delete a product quote item.
@@ -140,28 +197,44 @@ public interface QuoteRs {
      * @return Response status
      */
     @DELETE
-    @Path("/{quoteIteùCode}")
-    public Response deleteQuoteItem(@PathParam("quoteItemCode") String id, @Context UriInfo info);
+    @Path("/{quoteItemCode}")
+    @Operation(summary = "Delete a quote item",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemCode") String code, @Context UriInfo info);
     
     @POST
     @Path("/productQuotation")
     @Operation(summary = "product quotation",
-    tags = { "productQuotation" },
+    tags = { "CPQ" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "Product quotation is well done!",content = @Content(schema = @Schema(implementation = QuoteProductOfferingPrice.class)))
+            @ApiResponse(responseCode="200", description = "Product quotation is well done!",content = @Content(schema = @Schema(implementation = GetListAccountingArticlePricesResponseDto.class)))
     })
-     Response productQuotation(@Parameter(description = "ProductContextDTO object", required = false) ProductContextDTO quoteContext, UriInfo info);
+     Response productQuotation(@Parameter(description = "product context", required = false) ProductContextDTO quoteContext, UriInfo info);
    
     @POST
     @Path("/offerQuotation")
-    @Operation(summary = "product quotation",
-    tags = { "offerQuotation" },
+    @Operation(summary = "Offer quotation",
+    tags = { "CPQ" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "Offer quotation is well done!",content = @Content(schema = @Schema(implementation = QuoteProductOfferingPrice.class)))
+            @ApiResponse(responseCode="200", description = "Offer quotation is well done!",content = @Content(schema = @Schema(implementation = GetListAccountingArticlePricesResponseDto.class)))
     })
-	Response offerQuotation(@Parameter(description = "OfferContextDTO object", required = false) OfferContextDTO quoteContext, UriInfo info);
+	Response offerQuotation(@Parameter(description = "Offer context ", required = false) OfferContextDTO quoteContext, UriInfo info);
+    
+    @POST
+    @Path("/offerQuotation")
+    @Operation(summary = "Quote quotation",
+    tags = { "CPQ" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "Quote quotation is well done!",content = @Content(schema = @Schema(implementation = GetListAccountingArticlePricesResponseDto.class)))
+    })
+	Response quoteQuotation(@Parameter(description = "quote context", required = false) List<OfferContextDTO> quoteContext, UriInfo info);
     
     
 }
