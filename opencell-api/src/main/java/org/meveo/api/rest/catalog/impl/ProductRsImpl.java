@@ -9,6 +9,7 @@ import org.meveo.api.cpq.ProductApi;
 import org.meveo.api.cpq.ProductLineApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -33,34 +35,34 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	
 	@Override
 	public Response addNewProduct(ProductDto productDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	productApi.addNewProduct(productDto);
+        	result.setProductDto(productApi.addNewProduct(productDto));
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result);
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 
 	@Override
 	public Response updateProduct(ProductDto productDto) {
-	  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	productApi.updateProduct(productDto);
+        	result.setProductDto(productApi.updateProduct(productDto));
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result);
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 
 	@Override
 	public Response updateStatus(String codeProduct, ProductStatusEnum status) {
-		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductDtoResponse result = new GetProductDtoResponse();
 	        try {
-	        	productApi.updateStatus(codeProduct, status);
+	        	result.setProductDto(productApi.updateStatus(codeProduct, status));
 	            return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result);
+			       return errorResponse(e, result.getActionStatus());
 	        }
 	}
 
@@ -90,7 +92,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listPost(String billingAccountCode, String offerCode, List<String> selectedProducts,
+	public Response listPost(OfferContextDTO quoteContext,
 			PagingAndFiltering pagingAndFiltering) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
@@ -117,15 +119,17 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	public Response createOrUpdateProductLine(ProductLineDto dto) {
-		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
 	        try {
+	        	ProductLineDto line = null;
 	        	if(dto.getId() == null)
-	        		productLineApi.createProductLine(dto);
+	        		line = productLineApi.createProductLine(dto);
 	        	else
-	        		productLineApi.updateProductLine(dto);
+	        		line = productLineApi.updateProductLine(dto);
+	        	result.setProductLineDto(line);
 	            return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result);
+			       return errorResponse(e, result.getActionStatus());
 	        }
 	}
 
@@ -144,19 +148,18 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	
 	@Override
 	public Response createOrUpdateProductVersion(ProductVersionDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductVersionResponse result = new GetProductVersionResponse();
         try {
 			productApi.createOrUpdateProductVersion(postData);
 			return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result);
+		       return errorResponse(e, result.getActionStatus());
         }
 
 	}
 	
 	public Response removeProductVersion(String productCode,int currentVersion) { 
-
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		ActionStatus result = new ActionStatus();
 		try {
 			productApi.removeProductVersion(productCode, currentVersion);
 			return Response.ok(result).build();
@@ -167,23 +170,23 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	public Response updateProductVersionStatus(String productCode, int currentVersion,VersionStatusEnum status) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductVersionResponse result = new GetProductVersionResponse();
 		try {
-			productApi.UpdateProductVersionStatus(productCode, currentVersion, status);
+			result.setProductVersionDto(productApi.UpdateProductVersionStatus(productCode, currentVersion, status));
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
-		       return errorResponse(e, result);
+		       return errorResponse(e, result.getActionStatus());
 		}
 	}
 	
 	
 	public Response duplicateProductVersion(String productCode,int currentVersion) { 
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		GetProductVersionResponse result = new GetProductVersionResponse();
 		try {
-			productApi.duplicateProductVersion(productCode, currentVersion);
+			result.setProductVersionDto(productApi.duplicateProductVersion(productCode, currentVersion));
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
-		       return errorResponse(e, result);
+		       return errorResponse(e, result.getActionStatus());
 		}
 	}
 

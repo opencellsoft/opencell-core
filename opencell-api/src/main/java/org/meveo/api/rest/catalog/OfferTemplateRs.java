@@ -19,6 +19,7 @@
 package org.meveo.api.rest.catalog;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -149,7 +150,7 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/cpq/list")
-    @Operation(summary = "List offers matching a given billing account code and filtering Criteria",
+    @Operation(summary = "List offers matching the customer and seller contexts",
     tags = { "OfferTemplate" },
     description ="if billingAccountCode is given, this API returns all commercial offers available for a customer taking into account the customer context (filtering rules associated to the offer tags);",
     responses = {
@@ -157,6 +158,7 @@ public interface OfferTemplateRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
     })
     public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 
+    		@Parameter(description = "The saller wallet containing sales-agent tags", required = false) List<String> sellerWallet,
     		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
 
     /**

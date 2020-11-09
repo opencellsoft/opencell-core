@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.ProductDto;
+import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 
@@ -15,30 +15,30 @@ import org.meveo.api.dto.response.BaseResponse;
  *
  */
 @SuppressWarnings("serial")
-@XmlRootElement(name = "GetProductDtoResponse")
+@XmlRootElement(name = "GetTagTypeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetProductDtoResponse extends BaseResponse{
+public class GetTagTypeDtoResponse extends BaseResponse{
 
-	private ProductDto productDto;
-	
-	public GetProductDtoResponse() {
-		super();
+	private TagTypeDto tagTypeDto;
+
+	public GetTagTypeDtoResponse() {
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
 
 	/**
-	 * @return the productDto
+	 * @return the tagTypeDto
 	 */
-	public ProductDto getProductDto() {
-		return productDto;
+	public TagTypeDto getTagTypeDto() {
+		return tagTypeDto;
 	}
 
 	/**
-	 * @param productDto the productDto to set
+	 * @param tagTypeDto the tagTypeDto to set
 	 */
-	public void setProductDto(ProductDto productDto) {
-		this.productDto = productDto;
+	public void setTagTypeDto(TagTypeDto tagTypeDto) {
+		this.tagTypeDto = tagTypeDto;
 	}
+
 	
 	
 }

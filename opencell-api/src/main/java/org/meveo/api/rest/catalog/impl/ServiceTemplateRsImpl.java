@@ -27,6 +27,7 @@ import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
@@ -153,7 +154,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
     }
 
 	@Override
-	public Response listPost(ProductContextDTO quoteContext, PagingAndFiltering pagingAndFiltering) {
+	public Response listPost(OfferContextDTO quoteContext, PagingAndFiltering pagingAndFiltering) {
 		GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
 
 	        try {
