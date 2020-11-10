@@ -1,0 +1,30 @@
+{
+  "scannerClass": "io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner",
+  "resourceClasses":[],
+  "resourcePackages": [
+    "org.meveo.apiv2.generic",
+    "org.meveo.apiv2.document",
+    "org.meveo.apiv2.ordering"
+  ],
+  "prettyPrint" : true,
+  "cacheTTL": 0,
+  "openAPI": {
+    "servers": [{
+      "url": "/opencell",
+      "description": "Root path"
+    }],
+    "info": {
+      "version": "1.0",
+      "title": "Opencell OpenApi definition",
+      "description": "This is an Opencell Restful API server",
+      "termsOfService": "http://opencell.com/terms/",
+      "contact": {
+        "email": "opencell@opencellsoft.com"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+    }
+  }
+}

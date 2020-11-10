@@ -84,77 +84,44 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<includes>
-						<!-- <include>${project.build.directory}/**/persistence.xml</include> -->
-						<!--<include>${project.build.directory}/**/layout/*.xhtml</include> -->
-						<include>${project.build.directory}/opencell/layout/*.xhtml</include>
-						<include>${project.build.directory}/opencell/about.xhtml</include>
-						<include>${project.build.outputDirectory}/version.json</include>
-					</includes>
-					<replacements>
-						<replacement>
-							<token>@VERSION_NUMBER@</token>
-							<value>${project.version}</value>
-						</replacement>
-						<replacement>
-							<token>@BUILD_NUMBER@</token>
-							<value>${buildNumber}</value>
-						</replacement>
-					</replacements>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>prepare-package</id>
-						<phase>prepare-package</phase>
-						<configuration>
-							<target>
-								<copy file="src/main/resources/import-${dbtype}.sql" tofile="${project.build.directory}/opencell/WEB-INF/classes/import.sql" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>install</id>
-						<phase>install</phase>
-						<configuration>
-							<target>
-								<copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
-								<copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-package</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="src/main/resources/import-${dbtype}.sql" tofile="${project.build.directory}/opencell/WEB-INF/classes/import.sql" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
+                                <copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
 
 			<!--
 			<plugin>
@@ -178,8 +145,87 @@
 				</executions>
 			</plugin>
 			 -->
+            <!-- SWAGGER UI -->
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>swagger-ui</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <skipCache>false</skipCache>
+                            <url>https://github.com/swagger-api/swagger-ui/archive/master.tar.gz</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>./target</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-		</plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>./target/opencell/pages/docs</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./target/swagger-ui-master/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>replace-swagger-json-location</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>${project.build.directory}/opencell/pages/docs/index.html</include>
+                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
+                        <include>${project.build.directory}/opencell/about.xhtml</include>
+                        <include>${project.build.outputDirectory}/version.json</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>https://petstore.swagger.io/v2/swagger.json</token>
+                            <value>/opencell/api/rest/v2/openapi.json</value>
+                        </replacement>
+                        <replacement>
+                            <token>@VERSION_NUMBER@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@BUILD_NUMBER@</token>
+                            <value>${buildNumber}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            <!-- SWAGGER UI -->
+        </plugins>
 
 	</build>
 
@@ -398,20 +444,20 @@
 		<!-- <artifactId>humanity</artifactId> -->
 		<!-- <version>1.0.10</version> -->
 		<!-- </dependency> -->
-		
-		
-		
+
+
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.ws.rs</groupId>
 			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>23.0</version>
-		</dependency>		
-		
+		</dependency>
+
 		<dependency>
 		    <groupId>org.apache.tika</groupId>
 		    <artifactId>tika-core</artifactId>
@@ -473,18 +519,41 @@
 			</activation>
 		</profile>
 
-		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
-			<!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
-			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
-			<id>arq-jbossas-managed</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
+        <profile>
+            <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
+            <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
+            <!-- Run with: mvn clean test -Parq-jbossas-managed -->
+            <id>arq-jbossas-managed</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+
+        <profile>
+            <id>war-flavor</id>
+            <activation>
+                <property>
+                    <name>flavor</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <!--do not upgrade, needed for maven-replacer -->
+                        <version>2.0.1</version>
+                        <configuration>
+                            <classifier>${flavor}</classifier>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
