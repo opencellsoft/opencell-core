@@ -53,6 +53,8 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import java.util.Date;
+
 /**
  * @author Edward P. Legaspi
  * @author Youssef IZEM
@@ -215,7 +217,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE, new Date()));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

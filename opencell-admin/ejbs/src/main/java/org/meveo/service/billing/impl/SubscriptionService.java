@@ -790,7 +790,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 
-    public Subscription findByCodeAndValidityDate(String code, Date date) {
-        return null;
+    public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
+        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", subscriptionCode)
+                .setParameter("validityDate", date)
+                .getSingleResult();
     }
 }
