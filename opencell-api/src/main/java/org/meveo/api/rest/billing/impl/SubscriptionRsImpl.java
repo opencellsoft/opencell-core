@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -29,20 +30,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OneShotChargeInstanceDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -234,11 +222,13 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF, Date validityDate) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
+        if(validityDate == null)
+            validityDate = new Date();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF, validityDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -484,5 +474,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
         return result;
     }
+
+    @Override
+    public ActionStatus patchSubscription(String code, SubscriptionPatchDto subscriptionPatchDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.patchSubscription(code, subscriptionPatchDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
 
 }

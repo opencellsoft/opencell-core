@@ -33,18 +33,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
@@ -56,7 +45,11 @@ import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.rest.PATCH;
+import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -208,8 +201,8 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
             @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
-
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+                                                @QueryParam("validityDate") @RestDateParam Date validityDate);
 
     /**
      * Search for a subscription with a given code.
@@ -401,4 +394,8 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/subscribeAndActivateServices")
     ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData);
+
+    @PATCH
+    @Path("/{code}/offer")
+    ActionStatus patchSubscription(@PathParam("code") String code, SubscriptionPatchDto subscriptionPatchDto);
 }
