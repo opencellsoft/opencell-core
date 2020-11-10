@@ -242,7 +242,7 @@
             <column name="code" value="dunningJob_R3TimesUp"></column>
             <column name="description" value="Days to wait before dunning transition R3 - R4 fires up"></column>
             <column name="applicable_on_el" value='#{entity.code.equals("WF_Dunning")}'></column>
-            <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R3 - R4","ENG":"Days to wait before dunning transition R2 - R3 fires up"}'></column>
+            <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R3 - R4","ENG":"Days to wait before dunning transition R3 - R4 fires up"}'></column>
             <column name="field_type" value="LONG"></column>
             <column name="value_required" value="1"></column>
             <column name="default_value" value="30"></column>
