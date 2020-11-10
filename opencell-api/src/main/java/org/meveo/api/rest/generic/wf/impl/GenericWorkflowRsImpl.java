@@ -18,12 +18,14 @@
 
 package org.meveo.api.rest.generic.wf.impl;
 
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
+import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
 import org.meveo.api.dto.response.generic.wf.GenericWorkflowResponseDto;
 import org.meveo.api.dto.response.generic.wf.GenericWorkflowsResponseDto;
@@ -42,7 +44,7 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
 
     @Override
     public ActionStatus create(GenericWorkflowDto genericWorkflowDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             genericWorkflowApi.create(genericWorkflowDto);
         } catch (Exception e) {
@@ -53,7 +55,7 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
 
     @Override
     public ActionStatus update(GenericWorkflowDto genericWorkflowDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             genericWorkflowApi.update(genericWorkflowDto);
         } catch (Exception e) {
@@ -65,7 +67,7 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
 
     @Override
     public ActionStatus remove(String workflowCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             genericWorkflowApi.remove(workflowCode);
         } catch (Exception e) {
@@ -76,7 +78,7 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
 
     @Override
     public ActionStatus createOrUpdate(GenericWorkflowDto genericWorkflowDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             genericWorkflowApi.createOrUpdate(genericWorkflowDto);
         } catch (Exception e) {
@@ -110,7 +112,7 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
 
     @Override
     public ActionStatus execute(String baseEntityName, String entityInstanceCode, String workflowCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(SUCCESS, "");
         try {
             genericWorkflowApi.execute(baseEntityName, entityInstanceCode, workflowCode);
         } catch (Exception e) {
@@ -165,5 +167,19 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus executeTransition(String baseEntityName, String entityInstanceCode, String workflowCode,
+                                          String transitionUUID, boolean ignoreConditionEL) {
+        ActionStatus response = new ActionStatus();
+        try {
+            response = genericWorkflowApi.executeTransition(baseEntityName, entityInstanceCode, workflowCode, transitionUUID, ignoreConditionEL);
+        } catch (Exception exception) {
+            response.setStatus(FAIL);
+            response.setMessage(exception.getMessage());
+            processException(exception, response);
+        }
+        return response;
     }
 }
