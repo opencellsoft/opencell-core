@@ -138,7 +138,7 @@ public interface QuoteRs {
      * @return An updated product quote information
      */
     @PUT
-    @Path("/{quoteItemCode}")
+    @Path("/quoteItem/{quoteItemCode}")
     @Operation(summary = "Modify a quote item",
     tags = { "Quote management" },
     description ="",
@@ -218,7 +218,7 @@ public interface QuoteRs {
      * @return Response status
      */
     @DELETE
-    @Path("/{quoteItemCode}")
+    @Path("/quoteItem/{quoteItemCode}")
     @Operation(summary = "Delete a quote item",
     tags = { "Quote management" },
     description ="",
