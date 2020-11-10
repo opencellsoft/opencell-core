@@ -19,8 +19,9 @@
 package org.meveo.api.generic.wf;
 
 import static java.util.Optional.ofNullable;
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
-import static org.meveo.api.dto.ActionStatusEnum.CONDITION_FALSE;
+import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.generic.wf.GWFTransitionDto;
@@ -452,7 +454,8 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
     private ActionStatus buildResponse(WorkflowInstance result) {
         ActionStatus actionStatus = new ActionStatus(SUCCESS, "Transition executed successfully");
         if (result == null) {
-            actionStatus.setStatus(CONDITION_FALSE);
+            actionStatus.setStatus(FAIL);
+            actionStatus.setErrorCode(CONDITION_FALSE);
             actionStatus.setMessage("Transition not executed: condition is false");
         }
         return actionStatus;
