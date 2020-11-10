@@ -32,10 +32,5 @@ public enum ActionStatusEnum {
     /**
      * Request failed. See ActionStatus.errorCode for an error code.
      */
-    FAIL,
-
-    /**
-     * Transition not executed: condition is false
-     */
-    CONDITION_FALSE
+    FAIL
 }
