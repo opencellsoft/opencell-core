@@ -3963,6 +3963,15 @@ END $$;]]>
             <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_tag" constraintName="fk_offer_template_version_tag" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />  
        </changeSet>
+       
+       
+        <changeSet id="#48-20201111" author="Mbarek-Ay">
+        <addColumn tableName="cpq_tag">
+            <column name="billing_account_id" type="bigint" /> 
+        </addColumn>  
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_tag" constraintName="fk_billing_account_tag" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" /> 
+       </changeSet>
     
     <!-- end MediaPost -->
     

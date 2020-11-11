@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -102,6 +103,14 @@ public class Tag extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "filter_el", columnDefinition = "TEXT") 
 	private String filterEl;
+	
+	/**
+	 * billing account associated to the entity
+	 */
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billing_account_id")
+	private BillingAccount billingAccount;
 	
 	
 
@@ -215,6 +224,22 @@ public class Tag extends BusinessEntity {
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
 	}
+
+	/**
+	 * @return the billingAccount
+	 */
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+	/**
+	 * @param billingAccount the billingAccount to set
+	 */
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+	
+	
 	
 	
 

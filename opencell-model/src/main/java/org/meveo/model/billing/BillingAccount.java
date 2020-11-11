@@ -23,8 +23,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,6 +61,7 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxCategory;
@@ -344,6 +347,16 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
+    
+    
+    /**
+     * list of tag attached
+     */ 
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tag> tagList = new HashSet<>();
+    
+    
+    
     public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
 	}
@@ -763,4 +776,21 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+	/**
+	 * @return the tagList
+	 */
+	public Set<Tag> getTagList() {
+		return tagList;
+	}
+
+	/**
+	 * @param tagList the tagList to set
+	 */
+	public void setTagList(Set<Tag> tagList) {
+		this.tagList = tagList;
+	}
+    
+    
+    
 }

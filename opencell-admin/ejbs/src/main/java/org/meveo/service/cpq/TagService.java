@@ -1,15 +1,18 @@
 package org.meveo.service.cpq;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.cpq.exception.TagException;
-import org.meveo.service.cpq.exception.TagTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +74,19 @@ public class TagService extends
 			return(Tag) getEntityManager().createNamedQuery("Tag.findByCode").setParameter("code", parentTagCode).getSingleResult();
 		}catch(NoResultException e) {
 			LOGGER.error(String.format(TAG_CODE_UNKNOWN, parentTagCode));
+			return null;
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Tag> getTagsByBA(BillingAccount ba) {
+		QueryBuilder qb = new QueryBuilder(Tag.class, "tag");
+		qb.addCriterionEntity("tag.billingAccount", ba);
+		try {
+			return qb.getQuery(getEntityManager()).getResultList();
+
+		} catch (NoResultException e) {
 			return null;
 		}
 	}
