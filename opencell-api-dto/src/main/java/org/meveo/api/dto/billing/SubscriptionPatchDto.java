@@ -62,16 +62,16 @@ public class SubscriptionPatchDto {
         this.servicesToInstantiate = servicesToInstantiate;
     }
 
-    public List<String> getServicesToActivate() {
+    public ServicesToActivateDto getServicesToActivate() {
         return servicesToActivate;
     }
 
-    public void setServicesToActivate(List<String> servicesToActivate) {
+    public void setServicesToActivate(ServicesToActivateDto servicesToActivate) {
         this.servicesToActivate = servicesToActivate;
     }
 
     public Boolean getUpdateSubscriptionDate() {
-        return updateSubscriptionDate;
+        return updateSubscriptionDate == null ? false : updateSubscriptionDate;
     }
 
     public void setUpdateSubscriptionDate(Boolean updateSubscriptionDate) {
