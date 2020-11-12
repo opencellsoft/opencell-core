@@ -37,6 +37,10 @@ public class DataCollector extends BusinessEntity {
     @Column(name = "aliases", columnDefinition = "text")
     private Map<String, String> aliases = new HashMap<>();
 
+    @Type(type = "json")
+    @Column(name = "parameters", columnDefinition = "text")
+    private Map<String, String> parameters = new HashMap<>();
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_run_date", columnDefinition = "text")
     private Date lastRunDate;
@@ -71,5 +75,13 @@ public class DataCollector extends BusinessEntity {
 
     public void setLastRunDate(Date lastRunDate) {
         this.lastRunDate = lastRunDate;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

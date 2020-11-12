@@ -52,6 +52,7 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
     public DataCollector initEntity() {
         DataCollector dataCollector = super.initEntity();
         extractMapTypeFieldFromEntity(dataCollector.getAliases(), "aliases");
+        extractMapTypeFieldFromEntity(dataCollector.getParameters(), "parameters");
         return dataCollector;
     }
 
@@ -64,6 +65,7 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         updateMapTypeFieldInEntity(entity.getAliases(), "aliases");
+        updateMapTypeFieldInEntity(entity.getParameters(), "parameters");
         validateInputs(entity);
         entity.setSqlQuery(buildQuery());
         return super.saveOrUpdate(killConversation);
@@ -83,9 +85,7 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
     }
 
     public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
-
         mapTypeFieldValues.remove(fieldName);
-
         if (entityField != null) {
             List<HashMap<String, String>> fieldValues = new ArrayList<>();
             mapTypeFieldValues.put(fieldName, fieldValues);
@@ -100,7 +100,6 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
 
     public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
         entityField.clear();
-
         if (mapTypeFieldValues.get(fieldName) != null) {
             for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
                 if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
