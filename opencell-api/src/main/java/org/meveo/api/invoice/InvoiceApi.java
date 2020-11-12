@@ -610,7 +610,7 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceType");
         }
 
-        if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty()) {
+        if ((invoiceDTO.getRatedTransactionsTolink() == null || invoiceDTO.getRatedTransactionsTolink().isEmpty()) && (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty())) {
             missingParameters.add("categoryInvoiceAgregates");
         }
 
