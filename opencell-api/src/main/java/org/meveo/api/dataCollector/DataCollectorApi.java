@@ -1,5 +1,7 @@
 package org.meveo.api.dataCollector;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.BusinessException;
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Stateless
 public class DataCollectorApi extends BaseApi {
@@ -33,13 +36,20 @@ public class DataCollectorApi extends BaseApi {
     private DataCollectorService dataCollectorService;
 
     public DataCollectorDto create(DataCollectorDto postData) throws MeveoApiException, BusinessException {
-        if(postData.getEntityTemplateDto() == null && postData.getCustomTableCode() == null) {
-            throw new MeveoApiException("Custom table is missing");
-        }
+        validateInputs(postData);
         String customTableCode = customTableCode(postData);
         DataCollector dataCollector = from(postData, customTableCode);
         dataCollectorService.create(dataCollector);
         return DataCollectorDto.from(dataCollector);
+    }
+
+    private void validateInputs(DataCollectorDto postData) {
+        if(postData.getEntityTemplateDto() == null && postData.getCustomTableCode() == null) {
+            throw new MeveoApiException("Custom table is missing");
+        }
+        if (postData.getAliases() == null || postData.getAliases().isEmpty()) {
+            throw new MeveoApiException("Data collector aliases are missing");
+        }
     }
 
     private String customTableCode(DataCollectorDto postData) {
@@ -52,9 +62,10 @@ public class DataCollectorApi extends BaseApi {
         }
     }
 
-    public DataCollectorDto find(String code) {
-        DataCollector dataCollector = dataCollectorService.findByCode(code);
-        return DataCollectorDto.from(dataCollector);
+    public Optional<DataCollectorDto> find(String code) {
+        return ofNullable(dataCollectorService.findByCode(code))
+                .map(dc -> of(DataCollectorDto.from(dc)))
+                .orElse(empty());
     }
 
     private DataCollector from(DataCollectorDto postData, String tableCode) {
@@ -87,9 +98,9 @@ public class DataCollectorApi extends BaseApi {
         return response;
     }
 
-    public void updateLastRunDate(String code) {
+    public void updateLastRunDate(String code, Date lastDateRun) {
         DataCollector dataCollector = dataCollectorService.findByCode(code);
-        dataCollector.setLastRunDate(new Date());
+        dataCollector.setLastRunDate(lastDateRun);
         dataCollectorService.update(dataCollector);
     }
 }

@@ -22,7 +22,8 @@ import java.util.Map;
         parameters = { @Parameter(name = "sequence_name", value = "bi_data_collector_seq"), })
 @NamedQueries({
         @NamedQuery(name ="DataCollector.dataCollectorsByDate", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created <= :to"),
-        @NamedQuery(name ="DataCollector.dataCollectorsBetween", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created BETWEEN :from AND :to")
+        @NamedQuery(name ="DataCollector.dataCollectorsBetween", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created BETWEEN :from AND :to"),
+        @NamedQuery(name ="DataCollector.updateLastRunDate", query = "UPDATE DataCollector SET lastRunDate = :lastDateRun WHERE code IN :codes")
 })
 public class DataCollector extends BusinessEntity {
 

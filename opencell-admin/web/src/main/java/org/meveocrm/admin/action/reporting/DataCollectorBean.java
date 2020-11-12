@@ -64,8 +64,15 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         updateMapTypeFieldInEntity(entity.getAliases(), "aliases");
+        validateInputs(entity);
         entity.setSqlQuery(buildQuery());
         return super.saveOrUpdate(killConversation);
+    }
+
+    private void validateInputs(DataCollector entity) {
+        if (entity.getAliases() == null || entity.getAliases().isEmpty()) {
+            throw new BusinessException("Data collector aliases are missing");
+        }
     }
 
     public void addMapTypeFieldValue(String fieldName) {
