@@ -115,11 +115,11 @@ public class EmailService extends PersistenceService<Email> {
 				message.setRecipients(RecipientType.CC, ccAddress);
 			}
 			message.setFrom(new InternetAddress(from));
-			message.setSubject(subject);
+			message.setSubject(subject, "UTF-8");
 			message.setSentDate(new Date());
 			MimeBodyPart bodyPart = new MimeBodyPart();
 
-			bodyPart.setText(body);
+			bodyPart.setText(body, "UTF-8");
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(bodyPart);
 			int index = 0;
