@@ -42,6 +42,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -791,9 +792,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
-        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+        try {
+            return  getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                    .setParameter("code", subscriptionCode)
+                    .setParameter("validityDate", date)
+                    .getSingleResult();
+        } catch (NoResultException exp) {
+            return null;
+        }
+    }
+
+    public Subscription findByCodeAndValidity(String subscriptionCode, DatePeriod datePeriod){
+        return  getEntityManager().createNamedQuery("Subscription.findByCodeAndValidity", Subscription.class)
                 .setParameter("code", subscriptionCode)
-                .setParameter("validityDate", date)
+                .setParameter("validity", datePeriod)
                 .getSingleResult();
     }
 }

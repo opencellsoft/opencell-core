@@ -49,6 +49,9 @@ public class TerminateSubscriptionServicesRequestDto extends BaseEntityDto {
     @XmlElement()
     private List<String> services;
 
+    /** The subscription validity date. */
+    private Date subscriptionValidityDate;
+
     /** The service ids. */
     @XmlElement()
     private List<Long> serviceIds;
@@ -241,7 +244,15 @@ public class TerminateSubscriptionServicesRequestDto extends BaseEntityDto {
     public void setAction(OrderItemActionEnum action) {
         this.orderItemAction = action;
     }
-    
+
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate == null ? new Date() : subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
+    }
+
     @Override
     public String toString() {
         return "TerminateSubscriptionServicesRequestDto [services=" + services + ", serviceIds=" + serviceIds + ", subscriptionCode=" + subscriptionCode + ", terminationReason="
