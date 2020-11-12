@@ -17,6 +17,10 @@
  */
 package org.meveocrm.admin.action.reporting;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
+import static java.util.stream.Collectors.joining;
+
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -60,6 +64,7 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         updateMapTypeFieldInEntity(entity.getAliases(), "aliases");
+        entity.setSqlQuery(buildQuery());
         return super.saveOrUpdate(killConversation);
     }
 
@@ -108,5 +113,21 @@ public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
 
     public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
         this.mapTypeFieldValues = mapTypeFieldValues;
+    }
+
+    private String buildQuery() {
+        String query = prepareQuery(entity.getSqlQuery());
+        String columns = entity.getAliases().entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + " as " + entry.getValue())
+                .collect(joining(", "));
+        return  "SELECT " + columns + " " + query;
+    }
+
+    private String prepareQuery(String query) {
+        String sqlQuery = compile("FROM", CASE_INSENSITIVE)
+                .matcher(query)
+                .replaceAll("FROM");
+        return sqlQuery.substring(sqlQuery.indexOf("FROM"));
     }
 }
