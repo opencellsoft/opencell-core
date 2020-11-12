@@ -561,7 +561,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(activateServicesDto);
 
-        Subscription subscription = subscriptionService.findByCode(activateServicesDto.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(activateServicesDto.getSubscription(), activateServicesDto.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, activateServicesDto.getSubscription());
         }
@@ -827,7 +827,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(instantiateServicesDto);
 
-        Subscription subscription = subscriptionService.findByCode(instantiateServicesDto.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(instantiateServicesDto.getSubscription(), instantiateServicesDto.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, instantiateServicesDto.getSubscription());
         }
@@ -1151,7 +1151,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(terminateSubscriptionDto);
 
-        Subscription subscription = subscriptionService.findByCode(terminateSubscriptionDto.getSubscriptionCode());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(terminateSubscriptionDto.getSubscriptionCode(), terminateSubscriptionDto.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, terminateSubscriptionDto.getSubscriptionCode());
         }
@@ -1550,6 +1550,7 @@ public class SubscriptionApi extends BaseApi {
 
             InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
             instantiateServicesDto.setSubscription(subscriptionDto.getCode());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
             instantiateServicesDto.setOrderNumber(orderNumber);
             instantiateServicesDto.setOrderItemId(orderItemId);
             instantiateServicesDto.setOrderItemAction(orderItemAction);
@@ -1557,12 +1558,14 @@ public class SubscriptionApi extends BaseApi {
 
             ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
             activateServicesDto.setSubscription(subscriptionDto.getCode());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
             activateServicesDto.setOrderNumber(orderNumber);
             activateServicesDto.setOrderItemId(orderItemId);
             activateServicesDto.setOrderItemAction(orderItemAction);
 
             UpdateServicesRequestDto updateServicesRequestDto = new UpdateServicesRequestDto();
             updateServicesRequestDto.setSubscriptionCode(subscriptionDto.getCode());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
             updateServicesRequestDto.setOrderNumber(orderNumber);
             updateServicesRequestDto.setOrderItemId(orderItemId);
             updateServicesRequestDto.setOrderItemAction(orderItemAction);
@@ -1587,6 +1590,7 @@ public class SubscriptionApi extends BaseApi {
                         terminateServiceDto.addServiceId(serviceInstanceDto.getId());
                     }
                     terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
+                    terminateServiceDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
                     terminateServiceDto.setOrderNumber(orderNumber != null ? orderNumber : serviceInstanceDto.getOrderNumber());
@@ -1812,7 +1816,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
         }
@@ -2306,6 +2310,10 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
         }
 
+        return createSubscriptionWithoutCheckOnCodeExistence(postData);
+    }
+
+    private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData) {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             postData.setSubscriptionDate(new Date());
         }
@@ -2348,6 +2356,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setUserAccount(userAccount);
         subscription.setSeller(seller);
         subscription.setOffer(offerTemplate);
+        subscription.setFromValidity(postData.getValidtyDate());
         if (!StringUtils.isBlank(postData.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
@@ -2480,31 +2489,52 @@ public class SubscriptionApi extends BaseApi {
 
     public void patchSubscription(String code, SubscriptionPatchDto subscriptionPatchDto) throws Exception {
 
+        SubscriptionDto existingSubscriptionDto = findSubscription(code, new Date());
+        Subscription existingSubscription = subscriptionService.findByCodeAndValidityDate(code, new Date());
 
-        SubscriptionDto subscription = findSubscription(code, new Date());
+        if(existingSubscription == null)
+            throw new EntityDoesNotExistsException(Subscription.class, code, subscriptionPatchDto.getEffectiveDate());
 
+        if(existingSubscription.getValidity() != null
+                && (existingSubscription.getValidity().getTo() != null && subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getTo()))
+                || (existingSubscription.getValidity().getTo() == null && (subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getFrom()) || subscriptionPatchDto.getEffectiveDate().equals(existingSubscription.getValidity().getFrom())))){
+            String from = existingSubscription.getValidity().getFrom() == null ? "-" : existingSubscription.getValidity().getFrom().toString();
+            String to = existingSubscription.getValidity().getTo() == null ? "-" : existingSubscription.getValidity().getTo().toString();
+            throw new InvalidParameterException("A version already exists for effectiveDate=" + subscriptionPatchDto.getEffectiveDate() + " (Subscription[code=" + code  +", validFrom=" + from +" validTo=" + to + "])). Only last version can be updated.");
+        }
+
+        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
+        if (subscriptionTerminationReason == null) {
+            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
+        }
+        subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate() ,subscriptionTerminationReason, existingSubscription.getOrderNumber());
+
+
+        existingSubscriptionDto.setValidtyDate(subscriptionPatchDto.getEffectiveDate());
         if(subscriptionPatchDto.getUpdateSubscriptionDate()) {
-            subscription.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate());
+            existingSubscriptionDto.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate());
         }
         if(isNotBlank(subscriptionPatchDto.getOfferTemplate())){
-            subscription.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
+            existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
         if(isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())){
-            subscription.setCode(subscriptionPatchDto.getNewSubscriptionCode());
+            existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
 
-        Subscription newSubscription = createSubscription(subscription);
+        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto);
 
-        for (AccessDto access : subscription.getAccesses().getAccess()){
-            access.setSubscription(subscription.getCode());
+
+        for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()){
+            access.setSubscription(existingSubscriptionDto.getCode());
         }
-        createAccess(subscription);
+        createAccess(existingSubscriptionDto);
 
-        for(ServiceInstanceDto serviceInstanceDto : subscription.getServices().getServiceInstance()){
+        for(ServiceInstanceDto serviceInstanceDto : existingSubscriptionDto.getServices().getServiceInstance()){
             serviceInstanceDto.setId(null);
             serviceInstanceDto.setSubscriptionDate(null);
         }
-        createService(subscription, subscription.getOrderNumber(), null, null);
+        createService(existingSubscriptionDto, existingSubscriptionDto.getOrderNumber(), null, null);
+        subscriptionService.activateInstantiatedService(newSubscription);
 
         if(subscriptionPatchDto.getServicesToInstantiate() != null){
             List<ServiceToInstantiateDto> serviceToInstantiateDtos = checkCompatibilityAndGetServiceToInstantiate(newSubscription, subscriptionPatchDto.getServicesToInstantiate());
@@ -2518,13 +2548,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
 
-        Subscription existingSubscription = subscriptionService.findByCode(code);
-
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
-        if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
-        }
-        subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate() ,subscriptionTerminationReason, existingSubscription.getOrderNumber());
 
 
     }

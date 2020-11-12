@@ -27,7 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Objects;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -45,6 +44,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -150,16 +150,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
-        Subscription subscriptionOld = this.findByCode(subscription.getCode());
+        Subscription subscriptionOld = this.findByCodeAndValidity(subscription.getCode(), subscription.getValidity());
         subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
     }
 
     private void checkSubscriptionPaymentMethod(Subscription subscription, List<PaymentMethod> paymentMethods) {
-        if(Objects.nonNull(subscription.getPaymentMethod()) && (paymentMethods.isEmpty() || paymentMethods.stream()
+        if (Objects.nonNull(subscription.getPaymentMethod()) && (paymentMethods.isEmpty() || paymentMethods.stream()
                 .filter(PaymentMethod::isActive)
-                .noneMatch(paymentMethod -> paymentMethod.getId().equals(subscription.getPaymentMethod().getId())))){
+                .noneMatch(paymentMethod -> paymentMethod.getId().equals(subscription.getPaymentMethod().getId())))) {
             log.error("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
             throw new BusinessException("the payment method should be reference to an active PaymentMethod defined on the CustomerAccount");
         }
@@ -257,7 +257,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     /**
      * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
      * updated with a termination date and a reason.
-     * 
+     *
      * @param subscription Subscription to terminate
      * @param terminationDate Termination date
      * @param terminationReason Termination reason
@@ -273,7 +273,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     /**
      * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
      * updated with a termination date and a reason.
-     * 
+     *
      * @param subscription Subscription to terminate
      * @param terminationDate Termination date
      * @param terminationReason Termination reason
@@ -318,6 +318,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
 
         subscription.setSubscribedTillDate(terminationDate);
+        subscription.setToValidity(terminationDate);
         subscriptionRenewal.setTerminationReason(terminationReason);
         subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
         subscriptionRenewal.setAutoRenew(false);
@@ -330,7 +331,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @MeveoAudit
     private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId,
-            OrderItemActionEnum orderItemAction) throws BusinessException {
+                                                           OrderItemActionEnum orderItemAction) throws BusinessException {
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -356,6 +357,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
 
         }
+
+
+        subscription.setToValidity(terminationDate);
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
@@ -407,7 +411,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Subscription> listByCustomer(Customer customer) {
         try {
@@ -420,7 +424,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
-     * 
+     *
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
@@ -430,16 +434,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
-     * 
+     *
      * @param untillDate the subscription till date
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
 
         List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", untillDate)
-            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
+                .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
         ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", untillDate)
-            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
+                .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
         return ids;
     }
@@ -468,7 +472,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Return all subscriptions with status not equal to CREATED or ACTIVE and initialAgreement date more than n years old
-     * 
+     *
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */
@@ -537,7 +541,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Computes a balance given a subscription. to and isDue parameters are ignored when isFuture is true.
-     * 
+     *
      * @param subscription of the customer
      * @param to compare the invoice due or transaction date here
      * @param isFuture includes the future due or transaction date
@@ -764,7 +768,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get OfferServiceTemplate which corresponds to serviceCode and offerTemplate
-     * 
+     *
      * @param serviceCode
      * @param offerTemplate
      * @return offerServiceTemplate
@@ -798,14 +802,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * List subscriptions that are associated with a given billing run
-     * 
+     *
      * @param billingRun Billing run
      * @return A list of Subscriptions
      */
     public List<Subscription> findSubscriptions(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
-    
+
 
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
@@ -849,9 +853,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
-        return getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+        try {
+            return  getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                    .setParameter("code", subscriptionCode)
+                    .setParameter("validityDate", date)
+                    .getSingleResult();
+        } catch (NoResultException exp) {
+            return null;
+        }
+    }
+
+    public Subscription findByCodeAndValidity(String subscriptionCode, DatePeriod datePeriod){
+        return  getEntityManager().createNamedQuery("Subscription.findByCodeAndValidity", Subscription.class)
                 .setParameter("code", subscriptionCode)
-                .setParameter("validityDate", date)
+                .setParameter("validity", datePeriod)
                 .getSingleResult();
     }
 }
