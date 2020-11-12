@@ -106,5 +106,10 @@ public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
     /**
      * database constraint violation.
      */
-    CONSTRAINT_VIOLATION_EXCEPTION;
+    CONSTRAINT_VIOLATION_EXCEPTION,
+
+    /**
+     * Transition not executed: condition is false
+     */
+    CONDITION_FALSE
 }
