@@ -6,8 +6,6 @@ import static org.meveo.api.MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTI
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.DataCollectorDto;
-import org.meveo.api.dto.AggregatedDataDto;
-import org.meveo.api.dto.response.AggregatedDataResponseDto;
 import org.meveo.api.dataCollector.DataCollectorApi;
 import org.meveo.api.dto.response.DataCollectorResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -76,18 +74,5 @@ public class DataCollectorRsImpl  extends BaseRs implements DataCollectorRs {
             processException(exception, result);
         }
         return result;
-    }
-
-    @Override
-    public AggregatedDataResponseDto aggregatedData(AggregatedDataDto aggregationFields) {
-        AggregatedDataResponseDto response;
-        try {
-            response = dataCollectorApi.aggregatedData(aggregationFields);
-            response.setStatus(SUCCESS);
-        } catch (Exception exception) {
-            response = new AggregatedDataResponseDto();
-            response.setStatus(FAIL);
-        }
-        return response;
     }
 }

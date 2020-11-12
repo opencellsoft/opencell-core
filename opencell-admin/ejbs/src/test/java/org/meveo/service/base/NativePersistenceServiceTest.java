@@ -363,7 +363,18 @@ public class NativePersistenceServiceTest {
                 "Param name:a_equalFilter value:1 Param name:a_defaultEqualFilter value:1 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
     }
 
+    @Test
+    public void test_aggregation_functions() {
+        PaginationConfiguration configuration = new PaginationConfiguration(1, 10, filters, "text", List.of("field", "field2", "max(field3)"));
+
+        assertThat(queryWithAggFields(configuration)).isEqualTo("select  a.field, a.field2, max(field3) from tableName a  GROUP BY  a.field, a.field2");
+    }
+
     private String getQuery() {
         return sut.getQuery("tableName", new PaginationConfiguration(10, 40, filters, "text", List.of("selectField"), "selectField", "desc")).toString();
+    }
+
+    private String queryWithAggFields(PaginationConfiguration configuration) {
+        return sut.getQuery("tableName", configuration).toString();
     }
 }

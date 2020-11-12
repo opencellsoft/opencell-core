@@ -9,10 +9,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.CustomEntityTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.AggregatedDataDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.DataCollectorDto;
-import org.meveo.api.dto.response.AggregatedDataResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.bi.DataCollector;
@@ -23,8 +21,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Stateless
@@ -88,16 +84,6 @@ public class DataCollectorApi extends BaseApi {
         result.setMessage("Number of record imported : " + importedRecord);
         result.setEntityCode(dataCollectorCode);
         return result;
-    }
-
-    public AggregatedDataResponseDto aggregatedData(AggregatedDataDto aggregationFields) {
-        List<Map<String, Object>> queryResult =  dataCollectorService.aggregatedData(aggregationFields.getCustomTableCode(),
-                aggregationFields.getDataCollectorCode(),
-                aggregationFields.getAggregatedFields(),
-                aggregationFields.getFields());
-        AggregatedDataResponseDto response = new AggregatedDataResponseDto();
-        response.setQueryResult(queryResult);
-        return response;
     }
 
     public void updateLastRunDate(String code, Date lastDateRun) {

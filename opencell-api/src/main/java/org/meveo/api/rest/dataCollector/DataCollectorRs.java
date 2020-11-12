@@ -5,8 +5,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.DataCollectorDto;
-import org.meveo.api.dto.AggregatedDataDto;
-import org.meveo.api.dto.response.AggregatedDataResponseDto;
 import org.meveo.api.dto.response.DataCollectorResponse;
 import org.meveo.api.rest.IBaseRs;
 
@@ -51,14 +49,4 @@ public interface DataCollectorRs extends IBaseRs {
     @GET
     @Path("/executeQuery")
     ActionStatus execute(@QueryParam("code") String dataCollectorCode);
-
-    /**
-     * aggregation API : extract aggregated data (like sum, avg)
-     *
-     * @param aggregationFields aggregation information
-     * @return AggregatedData information
-     */
-    @POST
-    @Path("/data")
-    AggregatedDataResponseDto aggregatedData(AggregatedDataDto aggregationFields);
 }
