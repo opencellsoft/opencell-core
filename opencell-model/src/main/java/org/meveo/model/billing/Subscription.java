@@ -68,13 +68,14 @@ import java.util.Map;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "Subscription", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
-@Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
 @NamedQueries({
         @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.findByValidity", query = "select s from Subscription s where s.code=:code and s.validity is null or (s.validity.from <= :validityDate and  (s.validity.to is null or :validityDate < s.validity.to))") ,
+        @NamedQuery(name = "Subscription.findByCodeAndValidity", query = "select s from Subscription s where s.code=:code and s.validity = :validity") ,
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate"),
         @NamedQuery(name = "Subscription.listByBillingRun", query = "select s from Subscription s where s.billingRun.id=:billingRunId order by s.id"),
         @NamedQuery(name = "Subscription.getMimimumRTUsed", query = "select s.minimumAmountEl from Subscription s where s.minimumAmountEl is not null"),
@@ -1045,5 +1046,25 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     public void setValidity(DatePeriod validity) {
         this.validity = validity;
+    }
+
+    public void setToValidity(Date validToDate) {
+        if(getValidity() == null){
+            DatePeriod datePeriod = new DatePeriod();
+            datePeriod.setTo(validToDate);
+            setValidity(datePeriod);
+        }else{
+            getValidity().setTo(validToDate);
+        }
+    }
+
+    public void setFromValidity(Date validFromDate) {
+        if(getValidity() == null){
+            DatePeriod datePeriod = new DatePeriod();
+            datePeriod.setFrom(validFromDate);
+            setValidity(datePeriod);
+        }else{
+            getValidity().setFrom(validFromDate);
+        }
     }
 }
