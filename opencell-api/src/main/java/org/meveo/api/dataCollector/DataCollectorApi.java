@@ -76,6 +76,8 @@ public class DataCollectorApi extends BaseApi {
         dataCollector.setSqlQuery(postData.buildQuery());
         dataCollector.setCustomTableCode(tableCode);
         dataCollector.setAliases(postData.getAliases());
+        ofNullable(postData.getParameters())
+                .ifPresent(params -> dataCollector.setParameters(params));
         return dataCollector;
     }
 

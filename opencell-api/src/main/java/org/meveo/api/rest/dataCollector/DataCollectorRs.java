@@ -50,7 +50,7 @@ public interface DataCollectorRs extends IBaseRs {
      */
     @GET
     @Path("/executeQuery")
-    ActionStatus execute(@QueryParam("dataCollectorCode") String dataCollectorCode);
+    ActionStatus execute(@QueryParam("code") String dataCollectorCode);
 
     /**
      * aggregation API : extract aggregated data (like sum, avg)
