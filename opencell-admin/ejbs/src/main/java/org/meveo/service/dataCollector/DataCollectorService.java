@@ -1,14 +1,15 @@
 package org.meveo.service.dataCollector;
 
 import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.bi.DataCollector;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.security.Permission;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
@@ -17,10 +18,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
 @Stateless
 public class DataCollectorService extends BusinessService<DataCollector> {
@@ -35,12 +34,22 @@ public class DataCollectorService extends BusinessService<DataCollector> {
 
     @Override
     public void create(DataCollector entity) throws BusinessException {
+        validate(entity);
+        super.create(entity);
+    }
+
+    @Override
+    public DataCollector update(DataCollector entity) throws BusinessException {
+        validate(entity);
+        return super.update(entity);
+    }
+
+    private void validate(DataCollector entity) {
         ofNullable(customEntityTemplateService.findByCode(entity.getCustomTableCode()))
                 .orElseThrow(() ->
                         new BusinessException(format("Custom Table with code %s does not exists", entity.getCustomTableCode())));
         ofNullable(entity.getSqlQuery()).orElseThrow(() ->
-                        new BusinessException(format("Missing SQL Query")));
-        super.create(entity);
+                new BusinessException(format("Missing SQL Query")));
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -132,5 +141,12 @@ public class DataCollectorService extends BusinessService<DataCollector> {
             result.put(dataCollector.getCode(), executeQuery(dataCollector.getCode()));
         }
         return result;
+    }
+
+    public int updateLastRun(List<String> dataCollectors, Date lastRunDate) {
+        return getEntityManager().createNamedQuery("DataCollector.updateLastRunDate")
+                .setParameter("lastDateRun", lastRunDate)
+                .setParameter("codes", dataCollectors)
+                .executeUpdate();
     }
 }
