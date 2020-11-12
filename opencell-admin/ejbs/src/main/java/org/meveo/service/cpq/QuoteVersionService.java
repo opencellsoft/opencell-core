@@ -1,5 +1,6 @@
 package org.meveo.service.cpq;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,7 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 	private final String QUOTE_VERSION_STATUS_NOT_DRAFT = "you can not publish a quote version with status %s, the status must be DRAFT";
 	private final String QUOTE_VERSION_ALREADY_CLOSED = "Quote version code %d is already closed";
 	
-	private final String QUOTE_VERSION_ALREADY_EXIST_ALREADY = "Violation contraint : quote version code %s and version %d exist already";
+//	private final String QUOTE_VERSION_ALREADY_EXIST_ALREADY = "Violation contraint : quote version code %s and version %d exist already";
 	
 	@Inject
 	private QuoteService quoteService;
@@ -47,12 +48,8 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		if(quote == null) {
 			throw new QuoteVersionException(String.format(MISSING_QUOTE, codeQuote));
 		}
-		
-		QuoteVersion quoteVersion = this.findByCodeWithVersionOne(codeQuote);
-		if(quoteVersion != null) {
-				throw new QuoteVersionException(String.format(QUOTE_VERSION_ALREADY_EXIST_ALREADY, codeQuote, NEW_VERSION));
-		}
-		quoteVersion = new QuoteVersion();
+
+		QuoteVersion quoteVersion = new QuoteVersion();
 		quoteVersion.setVersion(NEW_VERSION);
 		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
@@ -60,7 +57,7 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		quoteVersion.setStartDate(startDate);
 		quoteVersion.setEndDate(endDate);
 		quoteVersion.setQuote(quote);
-		quoteVersion.setVersion(NEW_VERSION);
+		quoteVersion.setQuoteVersion(this.findLastVersionByCode(codeQuote).size() + 1);
 		try {
 			this.create(quoteVersion);
 		}catch(BusinessException e) {
@@ -70,21 +67,33 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		return quoteVersion;
 	}
 	
-	public QuoteVersion findByCodeWithVersionOne(String code) {
+	@SuppressWarnings("unchecked")
+	public List<QuoteVersion> findLastVersionByCode(String code) {
+			return this.getEntityManager().createNamedQuery("QuoteVersion.findByCode")
+																			.setParameter("code", code).getResultList();
+	}
+	
+	public QuoteVersion findByQuoteAndVersion(String codeQuote, int quoteVersion) {
 		try {
-			return (QuoteVersion) this.getEntityManager().createNamedQuery("QuoteVersion.findByQuoteCodeAndQuoteVersion")
-															.setParameter("code", code)
-																.setParameter("quoteVersion", NEW_VERSION)
-																	.getSingleResult();
+			return (QuoteVersion) this.getEntityManager().createNamedQuery("QuoteVersion.findByCode")
+																.setParameter("code", codeQuote)
+																	.setParameter("quoteVersion", quoteService)
+																		.getSingleResult();
 		}catch(NoResultException e) {
-			return null;
+			throw new BusinessException(e);
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<QuoteVersion> findByQuoteId(Long idQuote) {
 			return (List<QuoteVersion>) this.getEntityManager().createNamedQuery("QuoteVersion.findByQuoteIdAndStatusActive")
 															.setParameter("id", idQuote).getResultList();
+	}
+
+	public int countByCode(String idQuote) {
+			return (int) this.getEntityManager().createNamedQuery("QuoteVersion.countCode")
+															.setParameter("code", idQuote).getSingleResult();
 	}
 	
 	

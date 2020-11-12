@@ -27,6 +27,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.QuoteApi;
@@ -39,6 +40,7 @@ import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.QuoteRs;
+import org.meveo.model.quote.QuoteItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
@@ -261,14 +263,30 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
 	@Override
 	public Response createQuoteItem(ProductQuoteItem productQuoteItem, UriInfo info) {
-		// TODO Auto-generated method stub
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+            responseBuilder = Response.ok().entity(quoteApi.createQuoteItem(productQuoteItem));
+            return responseBuilder.build();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
 		return null;
 	}
 
 	@Override
 	public Response deleteQuoteItem(String id, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.deleteQuoteItem(id);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
 	}
 
 	@Override

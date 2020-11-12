@@ -134,7 +134,7 @@ public class QuoteItem extends BusinessEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_customer_service_id", updatable = false)
-    private QuoteCustomerService customerService;
+    private QuoteCustomerService quoteCustomerService;
     
 
     /**
@@ -363,19 +363,6 @@ public class QuoteItem extends BusinessEntity {
 		this.quoteVersion = quoteVersion;
 	}
 
-	/**
-	 * @return the customerService
-	 */
-	public QuoteCustomerService getCustomerService() {
-		return customerService;
-	}
-
-	/**
-	 * @param customerService the customerService to set
-	 */
-	public void setCustomerService(QuoteCustomerService customerService) {
-		this.customerService = customerService;
-	}
 
 	/**
 	 * @return the quoteProduct
@@ -627,6 +614,20 @@ public class QuoteItem extends BusinessEntity {
 	 */
 	public void setRcPriceWithTax(BigDecimal rcPriceWithTax) {
 		this.rcPriceWithTax = rcPriceWithTax;
+	}
+
+	/**
+	 * @return the quoteCustomerService
+	 */
+	public QuoteCustomerService getQuoteCustomerService() {
+		return quoteCustomerService;
+	}
+
+	/**
+	 * @param quoteCustomerService the quoteCustomerService to set
+	 */
+	public void setQuoteCustomerService(QuoteCustomerService quoteCustomerService) {
+		this.quoteCustomerService = quoteCustomerService;
 	}
 
 }

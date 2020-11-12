@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteCustomerService;
@@ -27,7 +28,7 @@ public class QuoteCustomerServiceService extends PersistenceService<QuoteCustome
 	@Inject
 	private QuoteService quoteService;
 	
-	public QuoteCustomerService addNewQuoteCustomerService(String code, Long idQuote, String name, int duration, Date executionDate) throws QuoteCustomerServiceException {
+	public QuoteCustomerService addNewQuoteCustomerService(String code, Long idQuote, String name, int duration, Date executionDate, int quoteVersion) throws QuoteCustomerServiceException {
 		LOGGER.info("adding a new quote customer service [code : {}, quoteId : {}]", code, idQuote);
 		
 		final Quote quote = quoteService.findById(idQuote);
@@ -35,7 +36,7 @@ public class QuoteCustomerServiceService extends PersistenceService<QuoteCustome
 			throw new QuoteCustomerServiceException(String.format(QUOTE_CUSTOMER_SERVICE_ALREADY_EXIST, code));
 		if(!this.getEntityManager().createNamedQuery("QuoteCustomerService.findByCodeAndVersion")
 										.setParameter("code", code)
-											.setParameter("quoteVersion", 1)
+											.setParameter("quoteVersion", quoteVersion)
 												.getResultList().isEmpty()) {
 			
 		}
@@ -51,5 +52,19 @@ public class QuoteCustomerServiceService extends PersistenceService<QuoteCustome
 		LOGGER.info("adding a new quote customer service [code : {}, quoteId : {}] ==> operation successful", code, idQuote);
 		return qcs;
 	}
+	
+	public QuoteCustomerService findByCodeAndQuoteVersion(String quoteCustomerServiceCode, int quoteVersion) {
+		try {
+			return (QuoteCustomerService) this.getEntityManager().createNamedQuery("QuoteCustomerService.findByCodeAndVersion")
+																	.setParameter("code", quoteCustomerServiceCode)
+																		.setParameter("quoteVersion", quoteVersion).getSingleResult();
+		}catch(NoResultException e) {
+			LOGGER.warn("Unknow Quote Customer Service for key ("+quoteCustomerServiceCode+", "+quoteVersion+")");
+			return null;
+		}
+		
+	}
+	
+	
 	
 }

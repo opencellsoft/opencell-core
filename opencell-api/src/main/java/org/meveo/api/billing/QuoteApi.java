@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -68,8 +69,10 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -77,8 +80,13 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.OfferComponentService;
+import org.meveo.service.cpq.QuoteCustomerServiceService;
+import org.meveo.service.cpq.QuoteProductService;
+import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteInvoiceInfo;
+import org.meveo.service.quote.QuoteItemService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -142,6 +150,24 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private TerminationReasonService terminationReasonService;
+    
+    @Inject
+    private QuoteItemService quoteItemService;
+    
+    @Inject
+    private QuoteVersionService quoteVersionService;
+    
+    @Inject
+    private QuoteProductService quoteProductService;
+    
+    @Inject
+    private OfferComponentService offerComponentService;
+    
+    @Inject
+    private QuoteCustomerServiceService quoteCustomerServiceService;
+    
+    @Inject 
+    private BillingAccountService billingAccountService;
 
     /**
      * Register a quote from TMForumApi.
@@ -211,13 +237,14 @@ public class QuoteApi extends BaseApi {
 
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
-            if (!StringUtils.isEmpty(billingAccountId)) {
+            /*if (!StringUtils.isEmpty(billingAccountId)) {
                 quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
                 billingAccount = quoteLevelUserAccount.getBillingAccount();
-            }
+            }*/
+            billingAccount = billingAccountService.findByCode(billingAccountId);
         }
 
         for (ProductQuoteItem productQuoteItem : quoteItem1) {
@@ -238,14 +265,14 @@ public class QuoteApi extends BaseApi {
                 }
             }
 
-            if (itemLevelUserAccount == null && quoteLevelUserAccount == null) {
+           /* if (billingAccount == null && billingAccount == null) {
                 missingParameters.add("billingAccount");
 
             } else if (itemLevelUserAccount == null && quoteLevelUserAccount != null) {
-                productQuoteItem.addBillingAccount(quoteLevelUserAccount.getCode());
+                productQuoteItem.addBillingAccount(billingAccount.getCode());
             }
 
-            handleMissingParameters();
+            handleMissingParameters();*/
 
             QuoteItem quoteItem = new QuoteItem();
             List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
@@ -1076,4 +1103,111 @@ public class QuoteApi extends BaseApi {
 
         return productOrder;
     }
+
+
+	public void deleteQuoteItem(String id) {
+		final QuoteItem quoteItem = quoteItemService.findByCode(id);
+		if(quoteItem == null) {
+            throw new EntityDoesNotExistsException(QuoteItem.class, id);
+		}
+		quoteItemService.remove(quoteItem);
+	}
+
+
+	public ProductQuoteItem createQuoteItem(ProductQuoteItem productQuoteItem) {
+		return createOrUpdateQuoteItem(null, productQuoteItem, true);
+	}
+	
+	public ProductQuoteItem updateQuoteItem(String code, ProductQuoteItem productQuoteitem, UriInfo info) {
+		return createOrUpdateQuoteItem(code, productQuoteitem, false);
+	}
+	
+	private ProductQuoteItem createOrUpdateQuoteItem(String code, ProductQuoteItem productQuoteItem, boolean isCreated) {
+	if (StringUtils.isEmpty(productQuoteItem.getQuoteItemCode())) {
+            missingParameters.add("quoteItemCode");
+     }
+	if (StringUtils.isEmpty(productQuoteItem.getId())) {
+        missingParameters.add("id");
+	}
+	if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+        missingParameters.add("produtQuoteVersion");
+	}
+	if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
+        missingParameters.add("offerCode");
+	}
+	if (productQuoteItem.getService() == null && StringUtils.isEmpty(productQuoteItem.getService().getId())) {
+        missingParameters.add("service");
+	}
+	if(productQuoteItem.getServiceType() == null) {
+		 missingParameters.add("serviceType");
+	}
+	if(!isCreated) {
+		if(StringUtils.isEmpty(code)) {
+			missingParameters.add("code");
+		}
+	}
+    handleMissingParameters();
+	QuoteItem quoteItem = null;
+    if(isCreated) {
+    	quoteItem = new QuoteItem();
+    }else {
+    	quoteItem = quoteItemService.findByCode(code);
+    	if(quoteItem == null) {
+    		throw new EntityDoesNotExistsException(QuoteItem.class, code);
+    	}
+    }
+	quoteItem.setCode(productQuoteItem.getQuoteItemCode());
+	Quote quote = quoteService.findByCode(productQuoteItem.getId());
+	if(quote == null)
+		throw new EntityDoesNotExistsException(Quote.class, productQuoteItem.getId());
+	quoteItem.setQuote(quote);
+	quoteItem.setItemId(productQuoteItem.getId());
+	/*if(productQuoteItem.getItemQuoteProductOfferingPrice() != null && !productQuoteItem.getItemQuoteProductOfferingPrice().isEmpty()) {
+		// TODO : wait for more information to implement this
+	}*/
+	if(StringUtils.isEmpty(productQuoteItem.getId()) && 
+			StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+		quoteItem.setQuoteVersion(quoteVersionService.findByQuoteAndVersion(productQuoteItem.getId(), Integer.valueOf(productQuoteItem.getProdutQuoteVersion())));
+	}else {
+		 throw new EntityDoesNotExistsException(QuoteVersion.class, productQuoteItem.getId());
+	}
+    quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
+    if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
+        UserAccount itemLevelUserAccount = null;
+        String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
+    	 itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
+         if (itemLevelUserAccount == null) {
+             throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+         }
+ 		quoteItem.setUserAccount(itemLevelUserAccount);
+    }
+	if (StringUtils.isEmpty(productQuoteItem.getProdutQuote())) {
+		quoteItem.setQuoteProduct(quoteProductService.findByCode(productQuoteItem.getProdutQuote()));
+	}
+	if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
+		quoteItem.setOfferComponent(offerComponentService.findByCode(productQuoteItem.getOfferCode(), productQuoteItem.getId()));
+	}
+	quoteItem.setServiceCode(productQuoteItem.getService().getId());
+	quoteItem.setQuantity(new BigDecimal(productQuoteItem.getQuantity()));
+	quoteItem.setServiceType(productQuoteItem.getServiceType());
+	quoteItem.setValue(productQuoteItem.getValue());
+
+	if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion()) && 
+			StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+		quoteItem.setQuoteCustomerService(
+									quoteCustomerServiceService.findByCodeAndQuoteVersion(
+																productQuoteItem.getProdutQuoteVersion(), 
+																	Integer.parseInt(productQuoteItem.getProdutQuoteVersion())));
+	}
+
+    if (productQuoteItem.getState() != null) {
+        quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
+    } else {
+        quoteItem.setStatus(QuoteStatusEnum.IN_PROGRESS);
+    }
+    quoteItemService.create(quoteItem);
+	return productQuoteItem;
+
+		
+	}
 }
