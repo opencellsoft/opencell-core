@@ -93,7 +93,7 @@ public class GDPRJobBean extends BaseJobBean {
 
 		try {
 			if (gdprConfiguration.isDeleteSubscription()) {
-				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
+				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveSubscriptionLife());
 				log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
 				if (!inactiveSubscriptions.isEmpty()) {
 					subscriptionService.bulkDelete(inactiveSubscriptions);
