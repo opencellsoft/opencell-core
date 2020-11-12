@@ -34,9 +34,14 @@ public class DataCollectorDto extends EnableBusinessDto {
     @XmlAttribute(required = true)
     private Map<String, String> aliases;
 
+    /**
+     * Custom table code
+     *  Existing custom table to be used by the data collector
+     */
     private String customTableCode;
 
     /**
+     * Custom table information used to create new custom entity for the data collector
      * Custom table to use for data selector to store SQL query result
      */
     @XmlElement(name = "customTable")
