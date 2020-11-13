@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ApplicationPath("/api/rest")
+@ApplicationPath("/api/rest/v2")
 public class GenericOpencellRestful extends Application {
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
