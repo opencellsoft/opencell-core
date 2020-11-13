@@ -40,7 +40,6 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
-import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
@@ -398,4 +397,8 @@ public interface SubscriptionRs extends IBaseRs {
     @PATCH
     @Path("/{code}/offer")
     ActionStatus patchSubscription(@PathParam("code") String code, SubscriptionPatchDto subscriptionPatchDto);
+
+    @PATCH
+    @Path("{code}/offer/rollback")
+    ActionStatus rollbackOffer(@PathParam("code") String code, OfferRollbackDto offerRollbackDto);
 }

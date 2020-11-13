@@ -33,6 +33,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -150,7 +151,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
-        Subscription subscriptionOld = this.findByCodeAndValidity(subscription.getCode(), subscription.getValidity());
+        Subscription subscriptionOld = this.findById(subscription.getId());
         subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
@@ -855,7 +856,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
         try {
             return  getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
-                    .setParameter("code", subscriptionCode)
+                    .setParameter("code", subscriptionCode.toLowerCase())
                     .setParameter("validityDate", date)
                     .getSingleResult();
         } catch (NoResultException exp) {
@@ -863,10 +864,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    public Subscription findByCodeAndValidity(String subscriptionCode, DatePeriod datePeriod){
-        return  getEntityManager().createNamedQuery("Subscription.findByCodeAndValidity", Subscription.class)
-                .setParameter("code", subscriptionCode)
-                .setParameter("validity", datePeriod)
-                .getSingleResult();
+    public List<Subscription> findListByCode(String code) {
+        if (code == null) {
+            return null;
+        }
+        TypedQuery<Subscription> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
+                .setParameter("code", code.toLowerCase());
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            return new ArrayList<>();
+        }
     }
 }

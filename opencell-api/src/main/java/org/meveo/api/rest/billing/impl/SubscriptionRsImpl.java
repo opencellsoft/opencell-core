@@ -486,5 +486,16 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         return result;
     }
 
+    @Override
+    public ActionStatus rollbackOffer(String code, OfferRollbackDto offerRollbackDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.rollbackOffer(code, offerRollbackDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
 
 }
