@@ -9,7 +9,6 @@ import org.meveo.api.dto.cpq.GroupedServiceDto;
 import org.meveo.model.cpq.GroupedService;
 import org.meveo.service.cpq.GroupedServiceService;
 import org.meveo.service.cpq.ProductService;
-import org.meveo.service.cpq.exception.ProductException;
 
 public class GroupedServiceApi extends BaseApi{
 

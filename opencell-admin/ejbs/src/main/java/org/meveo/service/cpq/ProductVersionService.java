@@ -13,7 +13,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.cpq.exception.ProductException;
 import org.meveo.service.cpq.exception.ProductVersionException;
 /**
  * @author Tarik FAKHOURI.
@@ -38,13 +37,13 @@ public class ProductVersionService extends
      * @throws ProductVersionException when the status is different to DRAFT
      * @throws ProductException
      */
-    public ProductVersion updateProductVersion(ProductVersion productVersion) throws ProductVersionException, ProductException{
+    public ProductVersion updateProductVersion(ProductVersion productVersion) throws BusinessException{
         String productCode=productVersion.getProduct().getCode();
         int currentVersion=productVersion.getCurrentVersion();
         log.info("updating productVersion with product code={} and current version={}",productCode,currentVersion);
         if(!productVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
             log.warn("the product with product code={} and current version={}, it must be DRAFT status.", productCode,currentVersion);
-            throw new ProductVersionException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE,productVersion.getId(), productVersion.getStatus().toString()));
+            throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE,productVersion.getId(), productVersion.getStatus().toString()));
         }
         update(productVersion);
         return productVersion;
@@ -59,10 +58,10 @@ public class ProductVersionService extends
      * </ul>
      * @throws ProductException
      */
-    public void removeProductVersion(ProductVersion productVersion) throws ProductVersionException, ProductException {
+    public void removeProductVersion(ProductVersion productVersion) throws BusinessException {
         if(!productVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
             log.warn("the status of version of product is not DRAFT, the current version is {}.Can not be deleted", productVersion.getStatus().toString());
-            throw new ProductVersionException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, productVersion.getId(), productVersion.getStatus().toString()));
+            throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, productVersion.getId(), productVersion.getStatus().toString()));
         }
         this.remove(productVersion);
     }
@@ -76,9 +75,9 @@ public class ProductVersionService extends
      * <li>error when saving the new version of the product</li>
      *</ul>
      */
-    public ProductVersion duplicate(ProductVersion productVersion) throws ProductVersionException{
+    public ProductVersion duplicate(ProductVersion productVersion) throws BusinessException{
     	final ProductVersion duplicate = new ProductVersion();
-    	duplicate.setTagList( new HashSet<>(productVersion.getTagList()));
+    	duplicate.setTags( new HashSet<>(productVersion.getTags()));
     	duplicate.setCurrentVersion(1);
     	duplicate.setVersion(1);
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
@@ -88,7 +87,7 @@ public class ProductVersionService extends
         try {
             this.create(duplicate);
         }catch(BusinessException e) {
-            throw new ProductVersionException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, productVersion.getId()), e);
+            throw new BusinessException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, productVersion.getId()), e);
         }
         return productVersion;
     }
@@ -123,7 +122,7 @@ public class ProductVersionService extends
         return productVersion;
     }
     @SuppressWarnings("unchecked")
-	public ProductVersion findByProductAndVersion(String productCode,int currentVersion) throws ProductException{
+	public ProductVersion findByProductAndVersion(String productCode,int currentVersion) throws BusinessException{
         Product product=productService.findByCode(productCode);
         if(product == null) {
             log.warn("the product with code={} inexistent",productCode);
@@ -140,10 +139,10 @@ public class ProductVersionService extends
      * @param status
      * @throws ProductVersionException
      */
-    public ProductVersion updateProductVersionStatus(ProductVersion productVersion, VersionStatusEnum status) throws ProductVersionException{
+    public ProductVersion updateProductVersionStatus(ProductVersion productVersion, VersionStatusEnum status) throws BusinessException{
         if(!productVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
             log.warn("the product with product code={} and current version={}, it must be DRAFT status.", productVersion.getProduct().getCode(),productVersion.getCurrentVersion());
-            throw new ProductVersionException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE,productVersion.getId(), productVersion.getStatus().toString()));
+            throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE,productVersion.getId(), productVersion.getStatus().toString()));
         }else {
             productVersion.setStatus(status);
             productVersion.setStatusDate(Calendar.getInstance().getTime());

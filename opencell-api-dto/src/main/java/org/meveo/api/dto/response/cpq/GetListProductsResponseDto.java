@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.response.catalog;
+package org.meveo.api.dto.response.cpq;
 
 import java.util.ArrayList;
 import java.util.List;

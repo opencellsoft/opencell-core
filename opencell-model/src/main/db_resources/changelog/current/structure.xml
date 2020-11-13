@@ -4011,6 +4011,37 @@ END $$;]]>
         </dropColumn>
 	    
 	   </changeSet>
+	   <changeSet id="#5596-20201113" author="Rachid.AIT">
+		         <createTable tableName="cpq_offer_template_services">
+			        <column name="offer_template_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			        <column name="service_template_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			    </createTable>
+			     <dropColumn tableName="cpq_tag">
+		            <column name="offer_template_id"></column>
+		            <column name="product_id"></column>
+		        </dropColumn>
+		          <createTable tableName="cpq_product_discount_plan">
+			        <column name="product_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			        <column name="discount_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			    </createTable>
+			       <createTable tableName="cpq_product_services">
+			        <column name="product_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			        <column name="service_template_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			    </createTable>
+			    
+       </changeSet>
     
     <!-- end MediaPost -->
     

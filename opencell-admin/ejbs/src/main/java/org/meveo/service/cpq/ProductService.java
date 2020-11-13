@@ -1,27 +1,18 @@
 package org.meveo.service.cpq;
 
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
-import org.meveo.model.crm.CustomerBrand;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.cpq.exception.ProductException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Stateless
-public class ProductService extends
-		PersistenceService<Product> {
+public class ProductService extends BusinessService<Product> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 	private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product (%s) is %s, it can not be updated nor removed";
@@ -78,16 +68,16 @@ public class ProductService extends
 	 * @return product updated
 	 * @throws ProductException <br/> when: <ul><li>the status is ACTIVE</li><li>the status is CLOSED</li>
 	 */
-	public Product updateProduct(Product product) throws ProductException{
+	public Product updateProduct(Product product) throws BusinessException{
 		LOGGER.info("updating product {}", product.getCode());
 		
 		if(product.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
-			throw new ProductException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
+			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
 		}
 		if(product.getStatus().equals(ProductStatusEnum.CLOSED)) {
 			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
-			throw new ProductException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
+			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
 		}
 		
 		update(product);
@@ -106,16 +96,16 @@ public class ProductService extends
 	 * 		<li>the status of contract is active</li>
 	 * 	</ul>
 	 */
-	public void deleteContractById(Long id) throws ProductException{
+	public void deleteContractById(Long id) throws BusinessException{
 		LOGGER.info("product ({}) to be deleted", id);
 		
 		final Product deleteProduct = findById(id);
 		if(deleteProduct == null) {
-			throw new ProductException(String.format(PRODUCT_UNKWON, id));
+			throw new BusinessException(String.format(PRODUCT_UNKWON, id));
 		}
 		if(deleteProduct.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 			LOGGER.warn("product ({}) can not be removed, because its status is active", deleteProduct.getCode());
-			throw new ProductException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, deleteProduct.getCode(), deleteProduct.getStatus().toString()));
+			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, deleteProduct.getCode(), deleteProduct.getStatus().toString()));
 		}
 		getEntityManager().remove(deleteProduct);
 		LOGGER.info("product ({}) is deleted successfully", deleteProduct.getCode());
@@ -131,17 +121,18 @@ public class ProductService extends
 	 * @return
 	 * @throws ProductException
 	 */
-	public Product updateStatus(Product product, ProductStatusEnum status) throws ProductException{
+	public Product updateStatus(String productCode, ProductStatusEnum status) throws BusinessException{
+		Product product =findByCode(productCode);
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
 			return  update(product);
-		}else if (ProductStatusEnum.ACTIVE.equals(product.getStatus())) {
-			product.setStatus(ProductStatusEnum.CLOSED);
+		}else if (ProductStatusEnum.ACTIVE.equals(product.getStatus()) && ProductStatusEnum.CLOSED.equals(status)) {
+			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
 			return  update(product);
 		}
-		throw new ProductException(String.format(PRODUCT_CAN_NOT_CHANGE_THE_STATUS, product.getCode()));
+		throw new BusinessException(String.format(PRODUCT_CAN_NOT_CHANGE_THE_STATUS, product.getCode()));
 	}
 	
 	/**
@@ -158,51 +149,13 @@ public class ProductService extends
 	 * @return
 	 * @throws ProductException
 	 */
-	public Product create(String codeProduct, String label, Long idProductLine,
-								String codeBrand, String reference, String model, 
-								Set<String> modelChildren, Set<String> discountPlanCode, boolean discountFlag) throws ProductException {
+	public void create(Product product) throws BusinessException {
 		
-		if(!this.findByCodeLike(codeProduct).isEmpty()) {
-			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, codeProduct));
+		if(!this.findByCodeLike(product.getCode()).isEmpty()) {
+			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, product.getCode()));
 		}
-		final Product product = new Product();
 		product.setStatus(ProductStatusEnum.DRAFT);
-		product.setStatusDate(Calendar.getInstance().getTime());
-		product.setCode(codeProduct);
-		product.setDescription(label);
-		
-		if(Strings.isNotEmpty(codeBrand)) {
-			product.setBrand(customerBrandService.findByCode(codeBrand));
-		}
-		product.setReference(reference);
-		product.setModel(model);
-		product.setModelChlidren(modelChildren);
-		product.setDiscountFlag(discountFlag);
-
-		if(Strings.isNotEmpty(codeBrand)) {
-			product.setProductLine(productLineService.findById(idProductLine));
-		}
-		
-		var discountPlans  = new HashSet<DiscountPlan>(discountPlanCode.stream().map(codeDiscount -> {
-			final DiscountPlan discount = discountPlanService.findByCode(codeDiscount);
-			return discount;
-		}).collect(Collectors.toSet()));
-		
-		product.setDiscountList(discountPlans);
 		this.create(product);
-		return  product;
 	}
-	
-	/**
-	 * get product by its code
-	 * @param code
-	 * @return
-	 */
-	public Product findByCode(String code){
-		try {
-			return(Product) getEntityManager().createNamedQuery("Product.findByCode").setParameter("code", code).getSingleResult();
-		}catch(NoResultException e) {
-			throw new EntityDoesNotExistsException(String.format(PRODUCT_UNKWON, code));
-		}
-	}
+
 }
