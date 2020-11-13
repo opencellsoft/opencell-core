@@ -78,7 +78,7 @@ public class ProductVersionService extends
      */
     public ProductVersion duplicate(ProductVersion productVersion) throws ProductVersionException{
     	final ProductVersion duplicate = new ProductVersion();
-    	duplicate.setTagList( new HashSet<>(productVersion.getTagList()));
+    	duplicate.setTags( new HashSet<>(productVersion.getTags()));
     	duplicate.setCurrentVersion(1);
     	duplicate.setVersion(1);
     	duplicate.setStatus(VersionStatusEnum.DRAFT);

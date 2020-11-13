@@ -8,7 +8,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.PersistenceService;
@@ -58,7 +57,7 @@ public class TagService extends
 			throw new TagException(String.format(TAG_VERSION_UNKNOWN, id));
 		}
 		if(version.getProduct() != null ) {
-			boolean isTagExist = version.getTagList().stream().filter( t -> t.getId() == tag.getId()).findFirst().isPresent();
+			boolean isTagExist = version.getTags().stream().filter( t -> t.getId() == tag.getId()).findFirst().isPresent();
 			if(isTagExist) {
 				throw new TagException(String.format(TAG_IS_ATTACHED_TO_PRODUCT, id, version.getProduct().getCode()));
 			}
