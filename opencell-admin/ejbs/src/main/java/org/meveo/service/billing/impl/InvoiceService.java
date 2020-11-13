@@ -51,6 +51,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -91,6 +92,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
@@ -260,6 +262,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    @InvoiceNumberAssigned
+    private Event<Invoice> invoiceNumberAssignedEventProducer;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -438,6 +444,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
+
+        invoiceNumberAssignedEventProducer.fire(invoice);
     }
 
     /**

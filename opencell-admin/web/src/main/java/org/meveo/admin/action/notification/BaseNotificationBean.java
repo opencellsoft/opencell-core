@@ -15,6 +15,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
@@ -122,6 +123,8 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
+            } else if (clazzStr.equals(Invoice.class.getName())) {
+                events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
             }
         } else if (hasNotificableEntity(clazz)) {
             if (clazzStr.equals(MeveoFtpFile.class.getName())) {

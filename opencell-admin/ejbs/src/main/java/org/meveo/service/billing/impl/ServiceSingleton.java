@@ -8,11 +8,13 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
@@ -73,6 +75,10 @@ public class ServiceSingleton {
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
 
+    @Inject
+    @InvoiceNumberAssigned
+    private Event<Invoice> invoiceNumberAssignedEventProducer;
+    
     @Inject
     private Logger log;
 
@@ -378,6 +384,7 @@ public class ServiceSingleton {
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
         if (saveInvoice) {
+            invoiceNumberAssignedEventProducer.fire(invoice);
             if (invoice.getId() == null) {
                 invoiceService.create(invoice);
             } else {
