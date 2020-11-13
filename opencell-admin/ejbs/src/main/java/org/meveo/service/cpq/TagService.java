@@ -8,7 +8,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.PersistenceService;
