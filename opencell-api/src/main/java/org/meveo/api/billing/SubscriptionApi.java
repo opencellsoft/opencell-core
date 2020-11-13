@@ -120,10 +120,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.meveo.commons.utils.StringUtils.isNotBlank;
@@ -331,9 +329,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(postData.getCode());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidtyDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getCode());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getCode(), postData.getValidtyDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
@@ -2419,68 +2417,112 @@ public class SubscriptionApi extends BaseApi {
 
     public void patchSubscription(String code, SubscriptionPatchDto subscriptionPatchDto) throws Exception {
 
+        if (StringUtils.isBlank(subscriptionPatchDto.getTerminationReason())) {
+            missingParameters.add("terminationReason");
+        }
+        handleMissingParameters();
+
         SubscriptionDto existingSubscriptionDto = findSubscription(code, new Date());
         Subscription existingSubscription = subscriptionService.findByCodeAndValidityDate(code, new Date());
 
-        if(existingSubscription == null)
+        if (existingSubscription == null)
             throw new EntityDoesNotExistsException(Subscription.class, code, subscriptionPatchDto.getEffectiveDate());
 
-        if(existingSubscription.getValidity() != null
-                && (existingSubscription.getValidity().getTo() != null && subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getTo()))
-                || (existingSubscription.getValidity().getTo() == null && (subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getFrom()) || subscriptionPatchDto.getEffectiveDate().equals(existingSubscription.getValidity().getFrom())))){
+        if (existingSubscription.getValidity() != null &&
+                (isEffectiveDateBeforeValidTo(subscriptionPatchDto, existingSubscription) || isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(subscriptionPatchDto, existingSubscription))
+        ) {
             String from = existingSubscription.getValidity().getFrom() == null ? "-" : existingSubscription.getValidity().getFrom().toString();
             String to = existingSubscription.getValidity().getTo() == null ? "-" : existingSubscription.getValidity().getTo().toString();
-            throw new InvalidParameterException("A version already exists for effectiveDate=" + subscriptionPatchDto.getEffectiveDate() + " (Subscription[code=" + code  +", validFrom=" + from +" validTo=" + to + "])). Only last version can be updated.");
+            throw new InvalidParameterException("A version already exists for effectiveDate=" + subscriptionPatchDto.getEffectiveDate() + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
         }
-        subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate() ,subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate(), subscriptionTerminationReason, existingSubscription.getOrderNumber());
 
 
         existingSubscriptionDto.setValidtyDate(subscriptionPatchDto.getEffectiveDate());
-        if(subscriptionPatchDto.getUpdateSubscriptionDate()) {
+        if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
             existingSubscriptionDto.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate());
         }
-        if(isNotBlank(subscriptionPatchDto.getOfferTemplate())){
+        if (subscriptionPatchDto.getResetRenewalTerms()) {
+            existingSubscriptionDto.setRenewalRule(null);
+        }
+        if (isNotBlank(subscriptionPatchDto.getOfferTemplate())) {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
-        if(isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())){
+        if (isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())) {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
 
         Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto);
 
-
-        for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()){
+        for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
         }
         createAccess(existingSubscriptionDto);
 
-        for(ServiceInstanceDto serviceInstanceDto : existingSubscriptionDto.getServices().getServiceInstance()){
-            serviceInstanceDto.setId(null);
-            serviceInstanceDto.setSubscriptionDate(null);
-        }
-        createService(existingSubscriptionDto, existingSubscriptionDto.getOrderNumber(), null, null);
-        subscriptionService.activateInstantiatedService(newSubscription);
-
-        if(subscriptionPatchDto.getServicesToInstantiate() != null){
+        if (subscriptionPatchDto.getServicesToInstantiate() != null) {
             List<ServiceToInstantiateDto> serviceToInstantiateDtos = checkCompatibilityAndGetServiceToInstantiate(newSubscription, subscriptionPatchDto.getServicesToInstantiate());
-            for(ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos){
+            serviceToInstantiateDtos.stream()
+                    .forEach(s -> s.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate()));
+            for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
                 instantiateServiceForSubscription(serviceToInstantiateDto, newSubscription, null, null, null);
             }
         }
 
-        if(subscriptionPatchDto.getServicesToActivate() != null){
+        if (subscriptionPatchDto.getServicesToActivate() != null) {
+            subscriptionPatchDto.getServicesToActivate()
+                    .getService()
+                    .stream()
+                    .forEach(s -> s.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate()));
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
         }
 
-
-
-
     }
 
+    private boolean isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
+        return existingSubscription.getValidity().getTo() == null && (subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getFrom()) || subscriptionPatchDto.getEffectiveDate().equals(existingSubscription.getValidity().getFrom()));
+    }
 
+    private boolean isEffectiveDateBeforeValidTo(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
+        return existingSubscription.getValidity().getTo() != null && subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getTo());
+    }
+
+    public void rollbackOffer(String code, OfferRollbackDto offerRollbackDto) {
+        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(offerRollbackDto.getTerminationReason());
+        if (subscriptionTerminationReason == null) {
+            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, offerRollbackDto.getTerminationReason());
+        }
+
+        List<Subscription> subscriptions = subscriptionService.findListByCode(code);
+
+        if (subscriptions.isEmpty())
+            throw new EntityDoesNotExistsException(Subscription.class, code);
+        if (subscriptions.size() == 1)
+            throw new InvalidParameterException("Subscription with code: " + code + " had one version, could not rollback it");
+
+
+        Subscription actualSubscription = subscriptions.stream()
+                .filter(s -> s.getValidity().getTo() == null)
+                .findFirst()
+                .get();
+
+        Subscription lastSubscription = subscriptions.stream()
+                .filter(s -> s.getValidity().getTo() != null)
+                .sorted((a, b) -> b.getValidity().getTo().compareTo(a.getValidity().getTo()))
+                .findFirst()
+                .get();
+
+        actualSubscription.setToValidity(new Date());
+        subscriptionService.terminateSubscription(actualSubscription, new Date(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
+
+        lastSubscription.setFromValidity(new Date());
+        lastSubscription.setToValidity(null);
+        lastSubscription.setInitialSubscriptionRenewal(actualSubscription.getInitialSubscriptionRenewal());
+        subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        subscriptionService.activateInstantiatedService(lastSubscription);
+    }
 }

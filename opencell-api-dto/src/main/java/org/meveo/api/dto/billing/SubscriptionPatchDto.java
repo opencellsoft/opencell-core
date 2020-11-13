@@ -1,13 +1,10 @@
 package org.meveo.api.dto.billing;
 
-import org.meveo.api.dto.TerminationReasonDto;
-import org.meveo.api.dto.TerminationReasonsDto;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
-import java.util.List;
 
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,6 +12,7 @@ public class SubscriptionPatchDto {
 
     private String offerTemplate;
     private String newSubscriptionCode;
+    @XmlElement(required = true)
     private String terminationReason;
     private Date effectiveDate;
     private ServicesToInstantiateDto servicesToInstantiate;
@@ -79,7 +77,7 @@ public class SubscriptionPatchDto {
     }
 
     public Boolean getResetRenewalTerms() {
-        return resetRenewalTerms;
+        return resetRenewalTerms == null ? false : resetRenewalTerms;
     }
 
     public void setResetRenewalTerms(Boolean resetRenewalTerms) {
