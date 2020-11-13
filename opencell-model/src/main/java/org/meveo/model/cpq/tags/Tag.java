@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -33,8 +34,8 @@ import org.meveo.model.crm.Customer;
 @Table(name = "cpq_tag", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_tag_seq"), })
-@NamedNativeQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
-@NamedNativeQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
+@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
+@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
 public class Tag extends BusinessEntity {
 
 	/**
@@ -50,27 +51,6 @@ public class Tag extends BusinessEntity {
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
 	
-	/**
-	 * product version associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_version_id")
-	private ProductVersion productVersion;
-	
-	/**
-	 * service template associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_template_id")
-	private ServiceTemplate serviceTemplate;
-	
-	
-	/**
-	 * offer template associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "offer_template_id")
-	private OfferTemplate offerTemplate;
 	
 	/**
 	 * translate the code of the tag to different language
@@ -102,6 +82,14 @@ public class Tag extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "filter_el", columnDefinition = "TEXT") 
 	private String filterEl;
+	
+	/**
+	 * billing account associated to the entity
+	 */
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billing_account_id")
+	private BillingAccount billingAccount;
 	
 	
 
@@ -174,47 +162,23 @@ public class Tag extends BusinessEntity {
 		this.seller = seller;
 	}
 
+	 
+
 	/**
-	 * @return the productVersion
+	 * @return the billingAccount
 	 */
-	public ProductVersion getProductVersion() {
-		return productVersion;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
 	/**
-	 * @param productVersion the productVersion to set
+	 * @param billingAccount the billingAccount to set
 	 */
-	public void setProductVersion(ProductVersion productVersion) {
-		this.productVersion = productVersion;
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
-
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-
-	/**
-	 * @return the offerTemplate
-	 */
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
-
-	/**
-	 * @param offerTemplate the offerTemplate to set
-	 */
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
+	
+	
 	
 	
 
