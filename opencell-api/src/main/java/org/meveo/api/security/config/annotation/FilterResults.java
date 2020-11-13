@@ -16,44 +16,41 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.account;
+package org.meveo.api.security.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.meveo.model.BusinessEntity;
-
 /**
- * Identifies the filtering rule to apply to items selected for filtering
- * 
- * Specifies how to reconstruct an object used to compare what user has access to. Used in conjunction with {@link FilterResults}
+ * Specified how and on what criteria to filter API results.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface FilterProperty {
+@Target({ ElementType.METHOD })
+public @interface FilterResults {
 
     /**
-     * Name of a property of item selected for filtering. The value will be used to reconstruct an object of a given entity class
+     * Identifies the DTO property that returns the child entities to be iterated for filtering. e.g. if "customerAccounts.customerAccount" is passed into this attribute, then the
+     * value of "dto.customerAccounts.customerAccount" will be parsed and filtered.
      * 
-     * @return name of property.
+     * If not specified - an object itself will be filtered
+     * 
+     * @return name of property to be filtered
      */
-    String property();
+    String propertyToFilter() default "";
 
     /**
-     * Identifies the entity type that property value corresponds to. e.g. if CustomerAccount.class is passed into this attribute, then property value resolved from a "property"
-     * will correspond to code field of a CustomerAccount object.
+     * Identifies the filtering rule to apply to items selected for filtering.
      * 
-     * @return business entity class.
+     * @return array of property to be filtered.
      */
-    Class<? extends BusinessEntity> entityClass();
-
+    FilterProperty[] itemPropertiesToFilter();
+    
     /**
-     * Shall access to an entity be granted in cases when property is resolved to a null value. If set to True, user will have access to entities that match his security settings
-     * and those that have no property value set.
+     * Identifies the DTO property containing the number of records returned to refresh after applying filter
      * 
-     * @return true/false
+     * 
      */
-    boolean allowAccessIfNull() default false;
+    String totalRecords() default "";
 }

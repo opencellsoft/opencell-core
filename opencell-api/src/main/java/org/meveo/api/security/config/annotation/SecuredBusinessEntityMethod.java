@@ -16,41 +16,36 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.account;
+package org.meveo.api.security.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.meveo.api.security.filter.NullFilter;
+import org.meveo.api.security.filter.SecureMethodResultFilter;
+
 /**
- * Specified how and on what criteria to filter API results.
+ * Identifies API methods that require proper user permissions to access.
+ *
+ * @author Tony Alejandro
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface FilterResults {
+public @interface SecuredBusinessEntityMethod {
 
     /**
-     * Identifies the DTO property that returns the child entities to be iterated for filtering. e.g. if "customerAccounts.customerAccount" is passed into this attribute, then the
-     * value of "dto.customerAccounts.customerAccount" will be parsed and filtered.
+     * Contains an array of {@link SecureMethodParameter} annotations that describe how the method parameters are going to be validated.
      * 
-     * If not specified - an object itself will be filtered
-     * 
-     * @return name of property to be filtered
+     * @return Array off secure method parameter
      */
-    String propertyToFilter() default "";
+    SecureMethodParameter[] validate() default {};
 
     /**
-     * Identifies the filtering rule to apply to items selected for filtering.
+     * The result filter class that will be used to filter the results for entities that should be accessible to the user.
      * 
-     * @return array of property to be filtered.
+     * @return The secure method result filter
      */
-    FilterProperty[] itemPropertiesToFilter();
-    
-    /**
-     * Identifies the DTO property containing the number of records returned to refresh after applying filter
-     * 
-     * 
-     */
-    String totalRecords() default "";
+    Class<? extends SecureMethodResultFilter> resultFilter() default NullFilter.class;
 }
