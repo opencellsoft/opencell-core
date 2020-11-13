@@ -17,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -122,12 +124,14 @@ public class ProductVersion extends BaseEntity{
     @Column(name = "end_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
+     
     
-    /*
-     * list of tag attached to this version
-     */  
-    @OneToMany(mappedBy = "productVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
-    private Set<Tag> tagList = new HashSet<>();
+    /**
+     * list of tag attached
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_product_version_tags", joinColumns = @JoinColumn(name = "product_version_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<Tag>();
     
     
     
@@ -201,18 +205,28 @@ public class ProductVersion extends BaseEntity{
 		this.product = product;
 	}
 
-	public Set<Tag> getTagList() {
-		return tagList;
+	
+
+	/**
+	 * @return the tags
+	 */
+	public Set<Tag> getTags() {
+		return tags;
 	}
 
-	public void setTagList(Set<Tag> tagList) {
-		this.tagList = tagList;
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
 	}
+
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(endDate, id, longDescription, product, shortDescription, startDate, status, statusDate,
-				tagList, version);
+				tags, version);
 	}
 
 	@Override
@@ -228,7 +242,7 @@ public class ProductVersion extends BaseEntity{
 				&& Objects.equals(longDescription, other.longDescription) && Objects.equals(product, other.product)
 				&& Objects.equals(shortDescription, other.shortDescription)
 				&& Objects.equals(startDate, other.startDate) && status == other.status
-				&& Objects.equals(statusDate, other.statusDate) && Objects.equals(tagList, other.tagList)
+				&& Objects.equals(statusDate, other.statusDate) && Objects.equals(tags, other.tags)
 				&& version == other.version;
 	}
 
