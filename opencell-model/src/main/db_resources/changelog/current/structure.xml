@@ -3972,6 +3972,45 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_tag" constraintName="fk_billing_account_tag" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" /> 
        </changeSet>
+       
+        <changeSet author="Mbarek-Ay" id="#43-20201113">
+	    <createTable tableName="cpq_offer_template_tags">
+	        <column name="offer_template_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+	    <addUniqueConstraint columnNames="offer_template_id" constraintName="offer_template_tag_pkey" tableName="cpq_offer_template_tags" />
+	    
+	    <createTable tableName="cpq_service_template_tags">
+	        <column name="service_template_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+	    <addUniqueConstraint columnNames="service_template_id" constraintName="service_template_tag_pkey" tableName="cpq_service_template_tags" />
+	    
+	    <createTable tableName="cpq_product_version_tags">
+	        <column name="product_version_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+	    <addUniqueConstraint columnNames="product_version_id" constraintName="product_version_tag_pkey" tableName="cpq_product_version_tags" />
+	    
+	     <dropColumn tableName="cpq_tag">
+            <column name="product_version_id"></column>
+            <column name="service_template_id"></column>
+            <column name="offer_template_id"></column>
+        </dropColumn>
+	    
+	   </changeSet>
     
     <!-- end MediaPost -->
     

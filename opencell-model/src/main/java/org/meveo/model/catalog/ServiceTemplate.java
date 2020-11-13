@@ -30,6 +30,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -283,10 +285,8 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     @Column(name = "priority", columnDefinition = "int DEFAULT 0")
     private Integer priority = 0;
-    
-    
      
-	
+    
     @Column(name = "param", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param;
@@ -294,9 +294,11 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     
     /**
      * list of tag attached
-     */
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
-    private Set<Tag> tagList = new HashSet<>(); 
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_service_template_tags", joinColumns = @JoinColumn(name = "service_template_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<Tag>();
+    
     
     
 	  /**
@@ -687,18 +689,26 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 		this.param = param;
 	}
 
+	
 	/**
-	 * @return the tagList
+	 * @return the tags
 	 */
-	public Set<Tag> getTagList() {
-		return tagList;
+	public Set<Tag> getTags() {
+		return tags;
 	}
 
 	/**
-	 * @param tagList the tagList to set
+	 * @param tags the tags to set
 	 */
-	public void setTagList(Set<Tag> tagList) {
-		this.tagList = tagList;
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
 	/**

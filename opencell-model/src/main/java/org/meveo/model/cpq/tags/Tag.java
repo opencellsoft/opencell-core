@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -34,8 +34,8 @@ import org.meveo.model.crm.Customer;
 @Table(name = "cpq_tag", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_tag_seq"), })
-@NamedNativeQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
-@NamedNativeQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
+@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
+@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
 public class Tag extends BusinessEntity {
 
 	/**
@@ -51,27 +51,6 @@ public class Tag extends BusinessEntity {
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
 	
-	/**
-	 * product version associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_version_id")
-	private ProductVersion productVersion;
-	
-	/**
-	 * service template associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_template_id")
-	private ServiceTemplate serviceTemplate;
-	
-	
-	/**
-	 * offer template associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "offer_template_id")
-	private OfferTemplate offerTemplate;
 	
 	/**
 	 * translate the code of the tag to different language
@@ -183,47 +162,7 @@ public class Tag extends BusinessEntity {
 		this.seller = seller;
 	}
 
-	/**
-	 * @return the productVersion
-	 */
-	public ProductVersion getProductVersion() {
-		return productVersion;
-	}
-
-	/**
-	 * @param productVersion the productVersion to set
-	 */
-	public void setProductVersion(ProductVersion productVersion) {
-		this.productVersion = productVersion;
-	}
-
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-
-	/**
-	 * @return the offerTemplate
-	 */
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
-
-	/**
-	 * @param offerTemplate the offerTemplate to set
-	 */
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
+	 
 
 	/**
 	 * @return the billingAccount
