@@ -231,25 +231,6 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
-
-
-
-    /**
-     * associated product
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
-    @NotNull
-    private Product product;
-	
-    
-	/**
-	 * commercial offer
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name =  "offer_template_id", referencedColumnName = "id")
-	@NotNull
-	private OfferTemplate offerTemplate;
 	
 	
 	/**
@@ -604,33 +585,6 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         }
     }
 
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-	/**
-	 * @return the commercialOffer
-	 */
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
-
-	/**
-	 * @param commercialOffer the commercialOffer to set
-	 */
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
 
 	/**
 	 * @return the serviceType

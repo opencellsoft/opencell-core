@@ -27,15 +27,13 @@ public class ProductDto {
 	private String label;
 	private ProductStatusEnum status;
 	private Date statusDate;
-	private ProductLineDto productLine;
-	private CustomerBrandDto brand;
+	private String productLineCode;
+	private String brandCode;
 	private String reference;
 	private String model;
 	private Set<String> modelChlidren;
-	private Set<DiscountPlanDto> discountList = new HashSet<>();
 	private boolean discountFlag;
     private boolean packageFlag;
-    private Set<ServiceDTO> serviceList = new HashSet<>();
     /** The custom fields. */
     private CustomFieldsDto customFields;
     
@@ -49,20 +47,14 @@ public class ProductDto {
     	this.status = p.getStatus();
     	this.statusDate = p.getStatusDate();
     	if(p.getProductLine() != null) {
-        	this.productLine = new ProductLineDto(p.getProductLine());
+        	this.productLineCode =p.getProductLine().getCode();
     	}
     	if(p.getBrand() != null) {
-    		this.brand = new CustomerBrandDto(p.getBrand());
+    		this.brandCode = p.getBrand().getCode();
     	}
     	this.reference = p.getReference();
     	this.model = p.getModel();
     	this.modelChlidren = p.getModelChlidren();
-    	if(p.getDiscountList() != null && !p.getDiscountList().isEmpty()) {
-    		discountList = p.getDiscountList().stream().map(d -> {
-    			final DiscountPlanDto discount = new DiscountPlanDto(d, null);
-    			return discount;
-    		}).collect(Collectors.toSet());
-    	}
     	this.discountFlag = p.isDiscountFlag();
     	this.packageFlag = p.isPackageFlag();
     }
@@ -89,102 +81,6 @@ public class ProductDto {
 	 */
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
-	}
-	/**
-	 * @return the productLine
-	 */
-	public ProductLineDto getProductLine() {
-		return productLine;
-	}
-	/**
-	 * @param productLine the productLine to set
-	 */
-	public void setProductLine(ProductLineDto productLine) {
-		this.productLine = productLine;
-	}
-	/**
-	 * @return the brand
-	 */
-	public CustomerBrandDto getBrand() {
-		return brand;
-	}
-	/**
-	 * @param brand the brand to set
-	 */
-	public void setBrand(CustomerBrandDto brand) {
-		this.brand = brand;
-	}
-	/**
-	 * @return the reference
-	 */
-	public String getReference() {
-		return reference;
-	}
-	/**
-	 * @param reference the reference to set
-	 */
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
-	/**
-	 * @return the model
-	 */
-	public String getModel() {
-		return model;
-	}
-	/**
-	 * @param model the model to set
-	 */
-	public void setModel(String model) {
-		this.model = model;
-	}
-	/**
-	 * @return the modelChlidren
-	 */
-	public Set<String> getModelChlidren() {
-		return modelChlidren;
-	}
-	/**
-	 * @param modelChlidren the modelChlidren to set
-	 */
-	public void setModelChlidren(Set<String> modelChlidren) {
-		this.modelChlidren = modelChlidren;
-	}
-	/**
-	 * @return the discountList
-	 */
-	public Set<DiscountPlanDto> getDiscountList() {
-		return discountList;
-	}
-	/**
-	 * @param discountList the discountList to set
-	 */
-	public void setDiscountList(Set<DiscountPlanDto> discountList) {
-		this.discountList = discountList;
-	}
-	/**
-	 * @return the discountFlag
-	 */
-	public boolean isDiscountFlag() {
-		return discountFlag;
-	}
-	/**
-	 * @param discountFlag the discountFlag to set
-	 */
-	public void setDiscountFlag(boolean discountFlag) {
-		this.discountFlag = discountFlag;
-	}
-	/**
-	 * @return the packageFlag
-	 */
-	public boolean isPackageFlag() {
-		return packageFlag;
-	}
-	/**
-	 * @param packageFlag the packageFlag to set
-	 */
-	public void setPackageFlag(boolean packageFlag) {
-		this.packageFlag = packageFlag;
 	}
 
 	/**
@@ -229,21 +125,117 @@ public class ProductDto {
 		this.label = label;
 	}
 
-	public Set<ServiceDTO> getServiceList() {
-		return serviceList;
+	/**
+	 * @return the productLineCode
+	 */
+	public String getProductLineCode() {
+		return productLineCode;
 	}
 
-	public void setServiceList(Set<ServiceDTO> serviceList) {
-		this.serviceList = serviceList;
+	/**
+	 * @param productLineCode the productLineCode to set
+	 */
+	public void setProductLineCode(String productLineCode) {
+		this.productLineCode = productLineCode;
 	}
 
+	/**
+	 * @return the brandCode
+	 */
+	public String getBrandCode() {
+		return brandCode;
+	}
+
+	/**
+	 * @param brandCode the brandCode to set
+	 */
+	public void setBrandCode(String brandCode) {
+		this.brandCode = brandCode;
+	}
+
+	/**
+	 * @return the reference
+	 */
+	public String getReference() {
+		return reference;
+	}
+
+	/**
+	 * @param reference the reference to set
+	 */
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public String getModel() {
+		return model;
+	}
+
+	/**
+	 * @param model the model to set
+	 */
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	/**
+	 * @return the modelChlidren
+	 */
+	public Set<String> getModelChlidren() {
+		return modelChlidren;
+	}
+
+	/**
+	 * @param modelChlidren the modelChlidren to set
+	 */
+	public void setModelChlidren(Set<String> modelChlidren) {
+		this.modelChlidren = modelChlidren;
+	}
+
+	/**
+	 * @return the discountFlag
+	 */
+	public boolean isDiscountFlag() {
+		return discountFlag;
+	}
+
+	/**
+	 * @param discountFlag the discountFlag to set
+	 */
+	public void setDiscountFlag(boolean discountFlag) {
+		this.discountFlag = discountFlag;
+	}
+
+	/**
+	 * @return the packageFlag
+	 */
+	public boolean isPackageFlag() {
+		return packageFlag;
+	}
+
+	/**
+	 * @param packageFlag the packageFlag to set
+	 */
+	public void setPackageFlag(boolean packageFlag) {
+		this.packageFlag = packageFlag;
+	}
+
+	/**
+	 * @return the customFields
+	 */
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
 
+	/**
+	 * @param customFields the customFields to set
+	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
-    
+	
     
 }

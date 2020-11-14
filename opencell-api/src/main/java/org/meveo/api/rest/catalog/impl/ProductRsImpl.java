@@ -1,5 +1,6 @@
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
@@ -35,34 +36,32 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	
 	@Override
 	public Response addNewProduct(ProductDto productDto) {
-		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	result.setProductDto(productApi.addNewProduct(productDto));
-            return Response.ok(result).build();
+        	Long id=productApi.addNewProduct(productDto);
+            return  Response.ok().entity(Collections.singletonMap("id", id))
+                    .build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
+		       return errorResponse(e, null);
         }
 	}
 
 	@Override
 	public Response updateProduct(ProductDto productDto) {
-		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	result.setProductDto(productApi.updateProduct(productDto));
-            return Response.ok(result).build();
+        	productApi.updateProduct(productDto);
+            return Response.ok().build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
+		       return errorResponse(e, null);
         }
 	}
 
 	@Override
 	public Response updateStatus(String codeProduct, ProductStatusEnum status) {
-		GetProductDtoResponse result = new GetProductDtoResponse();
 	        try {
-	        	result.setProductDto(productApi.updateStatus(codeProduct, status));
-	            return Response.ok(result).build();
+	        	productApi.updateStatus(codeProduct, status);
+	            return Response.ok().build();
 	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
+			       return errorResponse(e,null);
 	        }
 	}
 
@@ -191,6 +190,9 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	private Response errorResponse(MeveoApiException e, ActionStatus result) {
+		if(result==null) {
+			result = new ActionStatus();
+		}
 		result.setStatus(ActionStatusEnum.FAIL);
 		result.setMessage(e.getMessage());
 		 return createResponseFromMeveoApiException(e, result).build();
