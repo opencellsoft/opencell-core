@@ -515,9 +515,14 @@ public class OrderBean extends CustomFieldBean<Order> {
                 mainOfferCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, mainOffering.getCode());
             }
         }
+        OfferItemInfo offerItemInfo;
+        if(orderItemDto != null && orderItemDto.getProduct() != null){
+            offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues,
+                    toCustomFieldsValues(extractCustomFieldsValues(orderItemDto.getProduct().getProductCharacteristic(), new Subscription())));
+        }else{
+            offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues);
+        }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues,
-                toCustomFieldsValues(extractCustomFieldsValues(orderItemDto.getProduct().getProductCharacteristic(), new Subscription())));
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -578,8 +583,12 @@ public class OrderBean extends CustomFieldBean<Order> {
                                 || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()));
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity,
-                                toCustomFieldsValues(extractCustomFieldsValues(serviceProductMatched.getProductCharacteristic(), new ServiceInstance())));
+                        if(serviceProductMatched != null && serviceProductMatched.getProductCharacteristic() != null){
+                            offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity,
+                                    toCustomFieldsValues(extractCustomFieldsValues(serviceProductMatched.getProductCharacteristic(), new ServiceInstance())));
+                        }else{
+                            offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
+                        }
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -645,9 +654,14 @@ public class OrderBean extends CustomFieldBean<Order> {
                             productCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, offerProductTemplate.getProductTemplate().getCode());
                         }
 
-                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
-                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity,
-                                toCustomFieldsValues(extractCustomFieldsValues(productProductMatched.getProductCharacteristic(), new ProductInstance())));
+                        if(productProductMatched != null && productProductMatched.getProductCharacteristic() != null){
+                            offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                                productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity,
+                                    toCustomFieldsValues(extractCustomFieldsValues(productProductMatched.getProductCharacteristic(), new ProductInstance())));
+                        }else{
+                            offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                                    productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                        }
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
