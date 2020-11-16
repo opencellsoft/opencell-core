@@ -4014,7 +4014,7 @@ END $$;]]>
 		            <column name="product_id" type="bigint" />
 		            <column name="model_chlidren" type="varchar(100)" />
 		        </createTable>
-		        <addPrimaryKey columnNames="product_id,modelChlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
+		        <addPrimaryKey columnNames="product_id,model_chlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
         
 			      <addUniqueConstraint columnNames="offer_template_id,service_template_id" constraintName="cpq_offer_template_services_pkey" tableName="cpq_offer_template_services" />
 			      <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
