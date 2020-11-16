@@ -353,7 +353,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * list of tag attached
      */ 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Tag> tagList = new HashSet<>();
+    private Set<Tag> tags = new HashSet<>();
     
     
     
@@ -778,18 +778,20 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     }
 
 	/**
-	 * @return the tagList
+	 * @return the tags
 	 */
-	public Set<Tag> getTagList() {
-		return tagList;
+	public Set<Tag> getTags() {
+		return tags;
 	}
 
 	/**
-	 * @param tagList the tagList to set
+	 * @param tags the tags to set
 	 */
-	public void setTagList(Set<Tag> tagList) {
-		this.tagList = tagList;
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
 	}
+
+	
     
     
     

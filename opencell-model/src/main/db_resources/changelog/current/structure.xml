@@ -3914,36 +3914,9 @@ END $$;]]>
        </changeSet>
        
         <changeSet id="#5595_18_20201102" author="Mbarek-Ay">
-         <addColumn tableName="cat_offer_template">
-            <column name="product_line_id" type="bigint" />
-        </addColumn>
-         <addColumn tableName="cat_offer_template">
-            <column name="customer_brand_id" type="bigint" />
-        </addColumn>
-		<addColumn tableName="cat_offer_template">
-			<column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>    
-        <addColumn tableName="cat_offer_template">
-            <column name="model" type="varchar(50)"/> 
-        </addColumn>
-          <addColumn tableName="cat_offer_template">
-            <column name="reference" type="varchar(50)"/> 
-        </addColumn>
-         <addColumn tableName="cat_offer_template">
-            <column name="status_date" type="datetime"/> 
-        </addColumn>
         <addColumn tableName="cat_offer_template">
             <column name="product_status" type="varchar(50)"/> 
-        </addColumn>
-        
-         <addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cat_offer_template" constraintName="fk-product_line-cat_offer_template" deferrable="false" initiallyDeferred="false"
-          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
-          
-         <addForeignKeyConstraint baseColumnNames="customer_brand_id" baseTableName="cat_offer_template" constraintName="fk-customer_brand-cat_offer_template" deferrable="false" initiallyDeferred="false"
-          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_brand" />
-        
+        </addColumn> 
         </changeSet>
         
       <changeSet id="#5595-36-20201103" author="Mbarek-Ay">
@@ -3982,7 +3955,7 @@ END $$;]]>
 	            <constraints nullable="false" />
 	        </column>
 	    </createTable>
-	    <addUniqueConstraint columnNames="offer_template_id" constraintName="offer_template_tag_pkey" tableName="cpq_offer_template_tags" />
+	    <addUniqueConstraint columnNames="offer_template_id,tag_id" constraintName="offer_template_tag_pkey" tableName="cpq_offer_template_tags" />
 	    
 	    <createTable tableName="cpq_service_template_tags">
 	        <column name="service_template_id" type="bigint">
@@ -3992,7 +3965,7 @@ END $$;]]>
 	            <constraints nullable="false" />
 	        </column>
 	    </createTable>
-	    <addUniqueConstraint columnNames="service_template_id" constraintName="service_template_tag_pkey" tableName="cpq_service_template_tags" />
+	    <addUniqueConstraint columnNames="service_template_id,tag_id" constraintName="service_template_tag_pkey" tableName="cpq_service_template_tags" />
 	    
 	    <createTable tableName="cpq_product_version_tags">
 	        <column name="product_version_id" type="bigint">
@@ -4002,7 +3975,7 @@ END $$;]]>
 	            <constraints nullable="false" />
 	        </column>
 	    </createTable>
-	    <addUniqueConstraint columnNames="product_version_id" constraintName="product_version_tag_pkey" tableName="cpq_product_version_tags" />
+	    <addUniqueConstraint columnNames="product_version_id,tag_id" constraintName="product_version_tag_pkey" tableName="cpq_product_version_tags" />
 	    
 	     <dropColumn tableName="cpq_tag">
             <column name="product_version_id"></column>
@@ -4011,7 +3984,7 @@ END $$;]]>
         </dropColumn>
 	    
 	   </changeSet>
-	   <changeSet id="#5596-20201113" author="Rachid.AIT">
+	   <changeSet id="#5596-20201113" author="Rachid.AIT"> 
 		         <createTable tableName="cpq_offer_template_services">
 			        <column name="offer_template_id" type="bigint">
 			            <constraints nullable="false" />
@@ -4019,11 +3992,7 @@ END $$;]]>
 			        <column name="service_template_id" type="bigint">
 			            <constraints nullable="false" />
 			        </column>
-			    </createTable>
-			     <dropColumn tableName="cpq_tag">
-		            <column name="offer_template_id"></column>
-		            <column name="product_id"></column>
-		        </dropColumn>
+			    </createTable>  
 		          <createTable tableName="cpq_product_discount_plan">
 			        <column name="product_id" type="bigint">
 			            <constraints nullable="false" />
@@ -4040,6 +4009,16 @@ END $$;]]>
 			            <constraints nullable="false" />
 			        </column>
 			    </createTable>
+			     
+			    <createTable tableName="cpq_product_model_children">
+		            <column name="product_id" type="bigint" />
+		            <column name="model_chlidren" type="varchar(100)" />
+		        </createTable>
+		        <addPrimaryKey columnNames="product_id,modelChlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
+        
+			      <addUniqueConstraint columnNames="offer_template_id,service_template_id" constraintName="cpq_offer_template_services_pkey" tableName="cpq_offer_template_services" />
+			      <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
+			      <addUniqueConstraint columnNames="product_id,service_template_id" constraintName="cpq_product_services_pkey" tableName="cpq_product_services" />
 			    
        </changeSet>
     

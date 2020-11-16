@@ -50,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
-	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p where p.tagList in (:tagIds)")
+	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p where p.tags in (:tagIds)")
 })
 public class ProductVersion extends BaseEntity{
 

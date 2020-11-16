@@ -10128,28 +10128,7 @@ $$ LANGUAGE plpgsql;
         </createTable>
     </changeSet>
      
-     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-02">
-        <createTable tableName="cpq_product_model_children">
-            <column name="product_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="model_chlidren" type="varchar(255)" />
-        </createTable>
-        <addUniqueConstraint columnNames="product_id,model_chlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
-    </changeSet> 
-     
-    
-    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-03">
-    <createTable tableName="cpq_product_discount_plan">
-        <column name="product_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-        <column name="discount_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-    </createTable>
-    <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
-   </changeSet>
+      
    
    
    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-04">
