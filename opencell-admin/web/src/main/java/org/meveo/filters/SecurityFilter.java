@@ -20,9 +20,6 @@ public class SecurityFilter implements Filter {
     private static final String POLICY = "frame-src 'self'";
     private static final String XFRAME_SAMEORIGIN = "SAMEORIGIN";
     private static final String XCONTENT_NOSNIFF = "nosniff";
-    private static final String SESSION_COOKIE_NAME = "JSESSIONID";
-    private static final String SAME_SITE_ATTRIBUTE_VALUES = ";HttpOnly;Secure;SameSite=None";
-
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -33,15 +30,6 @@ public class SecurityFilter implements Filter {
         res.setHeader("Content-Security-Policy", SecurityFilter.POLICY);
         res.setHeader("X-Frame-Options", SecurityFilter.XFRAME_SAMEORIGIN);
         res.setHeader("X-Content-Type-Options", SecurityFilter.XCONTENT_NOSNIFF);
-        
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null && cookies.length > 0) {
-            List<Cookie> cookieList = Arrays.asList(cookies);
-            Cookie sessionCookie = cookieList.stream().filter(cookie -> SESSION_COOKIE_NAME.equals(cookie.getName())).findFirst().orElse(null);
-            if (sessionCookie != null) {
-                res.setHeader(HttpHeaders.SET_COOKIE, sessionCookie.getName() + "=" + sessionCookie.getValue() + SAME_SITE_ATTRIBUTE_VALUES);
-            }
-        }
         
         chain.doFilter(request, res);
     }
