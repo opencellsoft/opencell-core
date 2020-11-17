@@ -49,9 +49,6 @@ public class TerminateSubscriptionServicesRequestDto extends BaseEntityDto {
     @XmlElement()
     private List<String> services;
 
-    /** The subscription validity date. */
-    private Date subscriptionValidityDate;
-
     /** The service ids. */
     @XmlElement()
     private List<Long> serviceIds;
@@ -59,6 +56,9 @@ public class TerminateSubscriptionServicesRequestDto extends BaseEntityDto {
     /** The subscription code. */
     @XmlElement(required = true)
     private String subscriptionCode;
+
+    /** The subscription validity date. */
+    private Date subscriptionValidityDate;
 
     /** The termination reason. */
     @XmlElement(required = true)
