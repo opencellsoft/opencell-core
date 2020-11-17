@@ -18,14 +18,12 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -138,7 +136,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 	        try {
 	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 
 	        	 * pagination/filetring crieria and also BA trading rules and tags ***////
-	            result = (offerTemplateApi.list(null, null, null, pagingAndFiltering));
+	            result = (offerTemplateApi.list(billingAccountCode, commercialWallet, pagingAndFiltering));
 	        } catch (Exception e) {
 	            processException(e, result.getActionStatus());
 	        }

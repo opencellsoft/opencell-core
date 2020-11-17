@@ -346,5 +346,13 @@ public class ProductApi extends BaseApi {
     	  
 		return product;
     }
+    
+	public void removeProduct(String codeProduct) {
+		try {
+			productService.removeProduct(codeProduct);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e);
+		}
+	}
 	
 }

@@ -13,9 +13,11 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.cpq.TagTypeService;
@@ -33,6 +35,8 @@ public class TagApi extends BaseApi {
     @Inject
     private TagTypeService tagTypeService;
     @Inject
+    private BillingAccountService billingAccountService;
+    @Inject
     private ProductVersionService productVersionService;
 
 	/**
@@ -41,7 +45,8 @@ public class TagApi extends BaseApi {
 	 * @param tagDto
 	 */
 	public Long create(TagDto tagDto) {
-		
+	try {
+	
 		checkParams(tagDto);
 		if(tagService.findByCode(tagDto.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Tag.class, tagDto.getCode());
@@ -52,17 +57,28 @@ public class TagApi extends BaseApi {
 		tag.setSeller(sellerService.findByCode(tagDto.getSellerCode()));
 		tag.setName(tagDto.getName());
 		
-		final TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
+		TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
 		if(tagType == null) {
 			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 		}
 		tag.setTagType(tagType);
-		
-		tag.setParentTag(tagService.findByCode(tagDto.getParentTagCode()));
+		BillingAccount ba = billingAccountService.findByCode(tagDto.getBillingAccountCode());
+		if(ba!=null) {
+			tag.setBillingAccount(ba);
+		}
+
+		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
+			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());
+			if(parentTag!=null)
+				tag.setParentTag(parentTag);
+			}
 		tag.setFilterEl(tagDto.getFilterEl());
 		
 		tagService.create(tag);
 		return tag.getId();
+	} catch (BusinessApiException e) {
+		throw new BusinessApiException(e);
+	}
 	}
 	
 	/**
@@ -82,17 +98,16 @@ public class TagApi extends BaseApi {
 				throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 			}
 			tag.setTagType(tagType);
+		}else {
+			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 		}
-			
 		
 		if(!StringUtils.isBlank(tagDto.getSellerCode())) {
 			Seller seller = sellerService.findByCode(tagDto.getSellerCode());
-			if(seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class, tagDto.getSellerCode());
+			if(seller != null) {
+				tag.setSeller(seller);
 			}
-			tag.setSeller(seller);
 		}
-		
 		
 		tag.setDescription(tagDto.getDescription());		
 		tag.setName(tagDto.getName());
@@ -182,7 +197,7 @@ public class TagApi extends BaseApi {
 		
 		tagType.setCode(tagTypeDto.getCode());
 		tagType.setDescription(tagType.getDescription());
-		tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
+		tagType.setSeller(sellerService.findByCode(tagTypeDto.getSellerCode()));
 		
 		tagTypeService.create(tagType);
 		return tagType.getId();
@@ -194,9 +209,11 @@ public class TagApi extends BaseApi {
 	 */
 	public TagTypeDto update(TagTypeDto tagTypeDto) {
 		checkCodeTagTypeExist(tagTypeDto);
-		TagType tagType = tagTypeService.findByCode(tagTypeDto.getCode());
-		if(tagType == null) {
-			throw new EntityDoesNotExistsException(TagType.class, tagTypeDto.getCode());
+		TagType tagType = null;
+		try {
+			tagType = tagTypeService.findByCode(tagTypeDto.getCode());
+		} catch (BusinessApiException e) {
+			throw new BusinessApiException(e);
 		}
 		tagType.setDescription(tagTypeDto.getDescription());
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
@@ -218,7 +235,11 @@ public class TagApi extends BaseApi {
 	 * @return
 	 */
 	public TagTypeDto findTagTypeByCode(String code) {
-		return new TagTypeDto(tagTypeService.findByCode(code));
+		try {
+			return new TagTypeDto(tagTypeService.findByCode(code));
+		} catch (BusinessApiException e) {
+			throw new BusinessApiException(e);
+		}
 	}
 	
 	

@@ -77,12 +77,12 @@ public interface ProductRs extends IBaseRs{
 	
 	/**
 	 * 
-	 * @param codeProduct
+	 * @param productCode
 	 * @param status
 	 * @return
 	 */
 	@POST
-	@Path("/{codeProduct}/update/status")
+	@Path("/{productCode}/update/status")
     @Operation(summary = "This endpoint allows to update product status  ",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception",
@@ -91,11 +91,11 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
-	Response updateStatus(@Parameter @PathParam("codeProduct") String codeProduct,@Parameter @QueryParam("status") ProductStatusEnum status);
+	Response updateStatus(@Parameter @PathParam("productCode") String productCode,@Parameter @QueryParam("status") ProductStatusEnum status);
 	
 	/**
 	 * 
-	 * @param codeProduct
+	 * @param productCode
 	 * @return
 	 */
 	@GET
@@ -108,7 +108,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
-	Response findByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("codeProduct") String codeProduct);
+	Response findByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("productCode") String productCode);
 	
 	
     /**
@@ -144,21 +144,39 @@ public interface ProductRs extends IBaseRs{
     
 	/**
 	 * 
-	 * @param codeProductLine
+	 * @param productCode
 	 * @return
 	 */
     @DELETE
-    @Path("/{codeProductLine}")
+    @Path("/{productCode}")
+    @Operation(summary = "This endpoint allows to remove an existing product",
+    tags = { "Product" },
+    description ="remove a product by its code",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the product is successfully deleted",
+                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "unknown product line"),
+            @ApiResponse(responseCode = "400", description = "the product is attached to an offer")
+    })
+    Response removeProduct(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode);
+    
+	/**
+	 * 
+	 * @param productLineCode
+	 * @return
+	 */
+    @DELETE
+    @Path("/productLine/{productLineCode}")
     @Operation(summary = "This endpoint allows to remove an existing product line",
     tags = { "Product" },
-    description ="remove a product line with its code",
+    description ="remove a product line by its code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product line successfully deleted",
+            @ApiResponse(responseCode="200", description = "the product line is successfully deleted",
                     content = @Content(schema = @Schema(implementation = ActionStatus.class))),
             @ApiResponse(responseCode = "404", description = "unknown product line"),
             @ApiResponse(responseCode = "400", description = "the product line is attached to a product")
     })
-    Response removeProductLine(@Parameter(description = "productLine code", required = true) @PathParam("codeProductLine") String codeProductLine);
+    Response removeProductLine(@Parameter(description = "productLine code", required = true) @PathParam("productLineCode") String productLineCode);
 
     /**
      * 
@@ -190,11 +208,11 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
                     content = @Content(schema = @Schema(implementation = GetProductLineDtoResponse.class))),
-            @ApiResponse(responseCode = "412", description = "codeProductLine parameter is missing"),
+            @ApiResponse(responseCode = "412", description = "productLineCode parameter is missing"),
             @ApiResponse(responseCode = "404", description = "Unkonw product line"),
             @ApiResponse(responseCode = "400", description = "the product line with code in param does not exist")
     })
-	Response findProductLineByCode(@Parameter(description = "find an existing product line", required = true) @QueryParam("codeProductLine") String code);
+	Response findProductLineByCode(@Parameter(description = "find an existing product line", required = true) @QueryParam("productLineCode") String code);
 	
 	
 	 /**
@@ -220,11 +238,11 @@ public interface ProductRs extends IBaseRs{
 	/**
 	 * 
 	 * @param productCode
-	 * @param currentVersion
+	 * @param productVersion
 	 * @return
 	 */
 	@DELETE
-	@Path("/productVersion/{productCode}/{currentVersion}")
+	@Path("/productVersion/{productCode}/{productVersion}")
 	@Operation(summary = "This endpoint allows to remove a product version",
 	tags = { "Product"},
 	description ="remove a product version with product code and current version",
@@ -235,19 +253,19 @@ public interface ProductRs extends IBaseRs{
 	        ,
 	    	@ApiResponse(responseCode = "400", description = "the product version with product code and current version in param does not exist or the product version is attached to a product")
 	    	})
-	Response removeProductVersion(@Parameter @PathParam("productCode") String productCode,@Parameter @PathParam("currentVersion") int currentVersion);
+	Response removeProductVersion(@Parameter @PathParam("productCode") String productCode,@Parameter @PathParam("productVersion") int productVersion);
 		
 		
 	
 	/**
 	 * 
-	 * @param codeProduct
+	 * @param productCode
 	 * @param status
-	 * @param currentVersion
+	 * @param productVersion
 	 * @return
 	 */
 	@POST
-	@Path("/productVersion/{productCode}/{currentVersion}")
+	@Path("/productVersion/{productCode}/{productVersion}")
     @Operation(summary = "This endpoint allows to update the product version status",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
@@ -256,8 +274,8 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "Unknown product version"),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
-	Response updateProductVersionStatus(@Parameter @PathParam("productCode") String codeProduct,
-											@Parameter @PathParam("currentVersion") int currentVersion,
+	Response updateProductVersionStatus(@Parameter @PathParam("productCode") String productCode,
+											@Parameter @PathParam("productVersion") int productVersion,
 											@Parameter @QueryParam("status") VersionStatusEnum status);
 
 
@@ -265,11 +283,11 @@ public interface ProductRs extends IBaseRs{
 	/**
 	 * 
 	 * @param productCode
-	 * @param currentVersion
+	 * @param productVersion
 	 * @return
 	 */
 	@POST
-	@Path("/productVersion/duplicate/{productCode}/{currentVersion}")
+	@Path("/productVersion/duplicate/{productCode}/{productVersion}")
 	@Operation(summary = "This endpoint allows to duplicate a product version",
 	tags = { "Product" },
 	description ="duplicate a product version",
@@ -278,7 +296,7 @@ public interface ProductRs extends IBaseRs{
 	        @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
 	})
 	Response duplicateProductVersion(@Parameter @PathParam("productCode") String productCode,
-										@Parameter @PathParam("currentVersion") int currentVersion);
+										@Parameter @PathParam("productVersion") int productVersion);
 	
 
 	

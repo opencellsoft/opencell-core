@@ -198,6 +198,17 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		 return createResponseFromMeveoApiException(e, result).build();
 	}
 
+	@Override
+	public Response removeProduct(String productCode) {
+		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	        try {
+	        	productApi.removeProduct(productCode);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+	}
+
 
 
 

@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 
 @Stateless
-public class TagTypeService extends
-		BusinessService<TagType> {
+public class TagTypeService extends BusinessService<TagType> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TagTypeService.class);
 	private static final String TAG_TYPE_ATTACHED = "Impossible to remove a type of tag %s, it is attached to tag";
@@ -43,6 +42,4 @@ public class TagTypeService extends
 			}
 			this.remove(tag.getId());
 	}
-	
-
 }
