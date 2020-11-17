@@ -15,7 +15,6 @@ import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.cpq.exception.ProductLineException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
