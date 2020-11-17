@@ -255,7 +255,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -268,7 +268,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -318,7 +318,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode));
+            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode, new Date()));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -343,7 +343,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, serviceInstanceCode));
+            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, new Date(), serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
