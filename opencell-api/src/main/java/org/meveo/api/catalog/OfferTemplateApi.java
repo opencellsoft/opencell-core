@@ -21,6 +21,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,7 @@ import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DiscountPlan;
@@ -71,10 +73,12 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
@@ -82,6 +86,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -126,6 +131,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private CustomerCategoryService customerCategoryService;
+    
+    @Inject
+    private TagService tagService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -610,6 +621,44 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return list(code, validFrom, validTo, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 
+    public GetListOfferTemplateResponseDto list(String baCode,List<String> commercialWallet,PagingAndFiltering pagingAndFiltering) {
+    	BillingAccount ba=billingAccountService.findByCode(baCode);
+    	GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto(); 
+    	List<String> tagCodes=new ArrayList<String>();
+
+    	if(ba!=null) {
+    		List<Tag> entityTags=tagService.getTagsByBA(ba);
+    		if(!entityTags.isEmpty()) {
+    			for(Tag tag:entityTags) {
+    				tagCodes.add(tag.getCode());
+    			}
+    		}}
+    	HashSet<String> resultBaTag = new HashSet<String>();
+    	resultBaTag.addAll(tagCodes);
+    	resultBaTag.addAll(commercialWallet);
+    	log.info("OfferTemplateApi.list resultBaTag={}",resultBaTag); 
+    	if (!resultBaTag.isEmpty()) {
+    		String tags=resultBaTag.stream().collect(Collectors.joining(","));
+    		log.info("OfferTemplateApi.list tags={}",tags);
+    		if(pagingAndFiltering==null) {
+    		 pagingAndFiltering=new PagingAndFiltering();
+    		}
+    		pagingAndFiltering.addFilter("inList tags", tags); 
+    	} 
+    	PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
+    	Long totalCount = offerTemplateService.count(paginationConfig); 
+    	result.setPaging(pagingAndFiltering);
+    	result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+    	if (totalCount > 0) {
+    		List<OfferTemplate> offers = offerTemplateService.list(paginationConfig);
+    		for (OfferTemplate offerTemplate : offers) {
+    			result.addOfferTemplate(fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false, false,false,true));
+    		}
+    	}
+    	return result;
+    }
+    
+    
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "offerTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public GetListOfferTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering,

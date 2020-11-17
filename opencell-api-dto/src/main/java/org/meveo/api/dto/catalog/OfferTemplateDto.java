@@ -63,9 +63,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
     
-    /** The offer product templates. */
-    @XmlElementWrapper(name = "offerProductTemplates")
-    @XmlElement(name = "offerProductTemplate")
+    /** The offer product. */
+    @XmlElementWrapper(name = "offerProducts")
+    @XmlElement(name = "offerProducts")
     private List<ProductDto> offerProducts;
 
     /** The offer product templates. */

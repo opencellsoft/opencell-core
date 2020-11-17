@@ -2,8 +2,6 @@ package org.meveo.api.dto.cpq;
 
 import org.meveo.model.cpq.tags.Tag;
 
-import com.google.gson.Gson;
-
 public class TagDto {
 
 	private String code;
@@ -14,12 +12,13 @@ public class TagDto {
 	private String tagTypeCode;
 	private String parentTagCode;
 	private String filterEl;
+	private String billingAccountCode;
 	
 	public TagDto() {}
 	public TagDto(Tag tag) {
 		if(tag != null) {
 			this.code = tag.getCode();
-			this.description = tag.getDescription();
+			this.billingAccountCode = tag.getDescription();
 			this.id = tag.getId();
 			this.name = tag.getName();
 			if(tag.getSeller() != null) {
@@ -32,6 +31,10 @@ public class TagDto {
 				this.parentTagCode = tag.getParentTag().getCode();
 			}
 			this.filterEl = tag.getFilterEl();
+			if(tag.getBillingAccount() != null) {
+				this.billingAccountCode = tag.getBillingAccount().getCode();
+			}
+			
 		}
 	}
 	/**
@@ -130,6 +133,20 @@ public class TagDto {
 	public void setParentTagCode(String parentTagCode) {
 		this.parentTagCode = parentTagCode;
 	}
+	/**
+	 * @return the billingAccountCode
+	 */
+	public String getBillingAccountCode() {
+		return billingAccountCode;
+	}
+	/**
+	 * @param billingAccountCode the billingAccountCode to set
+	 */
+	public void setBillingAccountCode(String billingAccountCode) {
+		this.billingAccountCode = billingAccountCode;
+	}
+	
+	
 	
 	
 }
