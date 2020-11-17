@@ -19,7 +19,6 @@
 package org.meveo.api.generic.wf;
 
 import static java.util.Optional.ofNullable;
-import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
 
@@ -437,7 +436,10 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         GWFTransition transition =  ofNullable(gwfTransitionService.findWFTransitionByUUID(transitionUUID))
                 .orElseThrow(() -> new EntityDoesNotExistsException(GWFTransition.class, transitionUUID));
         WorkflowInstance result = genericWorkflowService.executeTransition(transition, businessEntity, genericWorkflow, ignoreConditionEL);
-        return buildResponse(result);
+        if (result == null) {
+            throw new MeveoApiException(CONDITION_FALSE, "Transition not executed: condition is false");
+        }
+        return new ActionStatus(SUCCESS, "Transition executed successfully");
     }
 
     private BusinessEntity businessEntityFrom(String baseEntityName, String entityInstanceCode) {
@@ -449,15 +451,5 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
         businessEntityService.setEntityClass(clazz);
         return businessEntityService.findByCode(entityInstanceCode);
-    }
-
-    private ActionStatus buildResponse(WorkflowInstance result) {
-        ActionStatus actionStatus = new ActionStatus(SUCCESS, "Transition executed successfully");
-        if (result == null) {
-            actionStatus.setStatus(FAIL);
-            actionStatus.setErrorCode(CONDITION_FALSE);
-            actionStatus.setMessage("Transition not executed: condition is false");
-        }
-        return actionStatus;
     }
 }
