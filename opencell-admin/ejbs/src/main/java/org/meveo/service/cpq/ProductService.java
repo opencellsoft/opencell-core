@@ -9,10 +9,13 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.cpq.exception.ProductLineException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +159,28 @@ public class ProductService extends BusinessService<Product> {
 		}
 		product.setStatus(ProductStatusEnum.DRAFT);
 		this.create(product);
+	}
+	
+	/**
+	 * delete a product line
+	 * @param id
+	 * @throws ProductException when 
+	 * 	<ul>
+	 * 		<li>there is no Product line found</li>
+	 * 		<li>if product line attached to any product</li>
+	 *	</ul>
+	 */
+	public void removeProduct(String codeProduct) throws BusinessException {
+		LOGGER.info("deleting product  ({})", codeProduct);
+		
+		final Product product = this.findByCode(codeProduct);
+		if(product == null || product.getId() == null) {
+			LOGGER.warn("unknown product  with id: ({})", codeProduct);
+			throw new EntityDoesNotExistsException(String.format(PRODUCT_UNKWON, codeProduct));
+		}
+		
+		this.remove(product);
+		LOGGER.info("product  ({}) is deleted successfully", codeProduct);
 	}
 
 }

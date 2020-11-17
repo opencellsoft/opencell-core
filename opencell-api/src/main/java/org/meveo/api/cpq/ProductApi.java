@@ -22,6 +22,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.exception.ProductLineException;
 import org.meveo.service.cpq.exception.ProductVersionException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 
@@ -347,5 +348,13 @@ public class ProductApi extends BaseApi {
     	  
 		return product;
     }
+    
+	public void removeProduct(String codeProduct) {
+		try {
+			productService.removeProduct(codeProduct);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e);
+		}
+	}
 	
 }
