@@ -18,7 +18,6 @@
 
 package org.meveo.api.billing;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -1617,6 +1616,7 @@ public class SubscriptionApi extends BaseApi {
                     throw new MeveoApiException("Access's subscription " + accessDto.getSubscription() + " doesn't match with parent subscription " + subscriptionDto.getCode());
                 } else {
                     accessDto.setSubscription(subscriptionDto.getCode());
+                    accessDto.setSubscriptionValidity(subscriptionDto.getValidtyDate());
                 }
                 accessApi.createOrUpdatePartial(accessDto);
             }
@@ -1736,7 +1736,7 @@ public class SubscriptionApi extends BaseApi {
                 if (isToSuspend) {
                     serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
                 } else {
-                    serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                    serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate(), true, false);
                 }
             }
         }
@@ -2516,13 +2516,18 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
-        actualSubscription.setToValidity(new Date());
-        subscriptionService.terminateSubscription(actualSubscription, new Date(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getSubscriptionDate(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
-        lastSubscription.setFromValidity(new Date());
         lastSubscription.setToValidity(null);
-        lastSubscription.setInitialSubscriptionRenewal(actualSubscription.getInitialSubscriptionRenewal());
-        subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        subscriptionService.activateInstantiatedService(lastSubscription);
+        subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
+        reactivateServices(lastSubscription);
+        if(lastSubscription.getInitialSubscriptionRenewal() != null)
+            subscriptionService.cancelSubscriptionTermination(lastSubscription);
+    }
+
+    private void reactivateServices(Subscription lastSubscription) {
+        for(ServiceInstance serviceInstance : lastSubscription.getServiceInstances()){
+            serviceInstanceService.serviceReactivation(serviceInstance, serviceInstance.getSubscriptionDate(), true, true);
+        }
     }
 }

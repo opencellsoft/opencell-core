@@ -43,7 +43,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -218,7 +217,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
-                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate);
+                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate, true, false);
             }
         }
 

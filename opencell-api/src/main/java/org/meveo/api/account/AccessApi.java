@@ -63,9 +63,9 @@ public class AccessApi extends BaseApi {
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription(), postData.getSubscriptionValidityDate());
         }
 
         Access access = new Access();
@@ -106,7 +106,7 @@ public class AccessApi extends BaseApi {
         }
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }

@@ -1071,7 +1071,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
             datePeriod.setTo(validToDate);
             setValidity(datePeriod);
         }else{
-            getValidity().setTo(validToDate);
+            if(getValidity().getFrom() != null && validToDate != null && validToDate.before(getValidity().getFrom()))
+                getValidity().setTo(getValidity().getFrom());
+            else
+                getValidity().setTo(validToDate);
         }
     }
 
