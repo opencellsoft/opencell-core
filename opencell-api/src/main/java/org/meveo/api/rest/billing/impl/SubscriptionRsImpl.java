@@ -38,7 +38,6 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
-import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
@@ -282,7 +281,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -295,7 +294,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -341,11 +340,13 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode) {
+    public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode, Date subscriptionValidityDate) {
         GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode));
+            if(subscriptionValidityDate == null)
+                subscriptionValidityDate = new Date();
+            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode, subscriptionValidityDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -369,9 +370,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     /**
      * Get all one shot charge others.
      * 
-     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers(String subscriptionCode)
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers(String subscriptionCode, Date validityDate)
      */
-    public GetOneShotChargesResponseDto getOneShotChargeOthers(String subscriptionCode) {
+    public GetOneShotChargesResponseDto getOneShotChargeOthers(String subscriptionCode, Date validityDate) {
         GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
 
         try {
@@ -379,7 +380,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
                 List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
                 result.getOneshotCharges().addAll(oneShotChargeOthers);
             } else {
-                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
+                if(validityDate == null)
+                    validityDate = new Date();
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode, validityDate);
                 result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
             }
 
@@ -391,11 +394,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetListServiceInstanceResponseDto listServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+    public GetListServiceInstanceResponseDto listServiceInstance(String subscriptionCode, Date subscriptionValidityDate, String serviceInstanceCode) {
         GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
-
+        if(subscriptionValidityDate == null)
+            subscriptionValidityDate = new Date();
         try {
-            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, serviceInstanceCode));
+            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, subscriptionValidityDate, serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -452,11 +456,13 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
+    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode, Date validityDate) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        if(validityDate == null)
+            validityDate = new Date();
 
         try {
-            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
+            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode, validityDate);
         } catch (Exception e) {
             processException(e, result);
         }

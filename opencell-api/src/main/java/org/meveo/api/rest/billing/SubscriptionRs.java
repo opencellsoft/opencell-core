@@ -212,7 +212,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @DELETE
     @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
-    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
+    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode, @QueryParam("validityDate") Date validityDate);
 
 
     /**
@@ -223,7 +223,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listOneshotChargeOthers")
-    GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode);
+    GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("validityDate") Date validityDate);
 
     /**
      * Create or update subscription information ONLY. Does not include access, services nor products
@@ -318,18 +318,19 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Path("serviceInstance")
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
-            @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
     /**
      * Returns a list of service instances.
      * 
      * @param subscriptionCode subscription code
+     * @param subscriptionValidityDate
      * @param serviceInstanceCode service instance code.
      * @return list of service instances
      */
     @GET
     @Path("serviceInstances")
-    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.

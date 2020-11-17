@@ -328,9 +328,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidtyDate());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getCode(), postData.getValidtyDate());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getCode(), postData.getValidityDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
@@ -917,9 +917,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getOneShotCharge());
         }
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription(), postData.getSubscriptionValidityDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
@@ -982,9 +982,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription(), postData.getSubscriptionValidityDate());
         }
 
         if ((subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) && (subscription.getStatus() != SubscriptionStatusEnum.CREATED)) {
@@ -1039,9 +1039,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
@@ -1291,7 +1291,7 @@ public class SubscriptionApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public Subscription createOrUpdate(SubscriptionDto postData) throws MeveoApiException, BusinessException {
-        Subscription subscription = subscriptionService.findByCode(postData.getCode());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate());
         if (subscription == null) {
             subscription = create(postData);
         } else {
@@ -1408,7 +1408,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionDto existedSubscriptionDto = null;
         try {
-            existedSubscriptionDto = findSubscription(subscriptionDto.getCode(), new Date());
+            existedSubscriptionDto = findSubscription(subscriptionDto.getCode(), subscriptionDto.getValidityDate());
         } catch (Exception e) {
             existedSubscriptionDto = null;
         }
@@ -1485,7 +1485,7 @@ public class SubscriptionApi extends BaseApi {
 
             InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
             instantiateServicesDto.setSubscription(subscriptionDto.getCode());
-            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidityDate());
             instantiateServicesDto.setOrderNumber(orderNumber);
             instantiateServicesDto.setOrderItemId(orderItemId);
             instantiateServicesDto.setOrderItemAction(orderItemAction);
@@ -1493,14 +1493,14 @@ public class SubscriptionApi extends BaseApi {
 
             ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
             activateServicesDto.setSubscription(subscriptionDto.getCode());
-            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidityDate());
             activateServicesDto.setOrderNumber(orderNumber);
             activateServicesDto.setOrderItemId(orderItemId);
             activateServicesDto.setOrderItemAction(orderItemAction);
 
             UpdateServicesRequestDto updateServicesRequestDto = new UpdateServicesRequestDto();
             updateServicesRequestDto.setSubscriptionCode(subscriptionDto.getCode());
-            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
+            instantiateServicesDto.setSubscriptionValidityDate(subscriptionDto.getValidityDate());
             updateServicesRequestDto.setOrderNumber(orderNumber);
             updateServicesRequestDto.setOrderItemId(orderItemId);
             updateServicesRequestDto.setOrderItemAction(orderItemAction);
@@ -1525,7 +1525,7 @@ public class SubscriptionApi extends BaseApi {
                         terminateServiceDto.addServiceId(serviceInstanceDto.getId());
                     }
                     terminateServiceDto.setSubscriptionCode(subscriptionDto.getCode());
-                    terminateServiceDto.setSubscriptionValidityDate(subscriptionDto.getValidtyDate());
+                    terminateServiceDto.setSubscriptionValidityDate(subscriptionDto.getValidityDate());
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
                     terminateServiceDto.setOrderNumber(orderNumber != null ? orderNumber : serviceInstanceDto.getOrderNumber());
@@ -1616,7 +1616,7 @@ public class SubscriptionApi extends BaseApi {
                     throw new MeveoApiException("Access's subscription " + accessDto.getSubscription() + " doesn't match with parent subscription " + subscriptionDto.getCode());
                 } else {
                     accessDto.setSubscription(subscriptionDto.getCode());
-                    accessDto.setSubscriptionValidity(subscriptionDto.getValidtyDate());
+                    accessDto.setSubscriptionValidity(subscriptionDto.getValidityDate());
                 }
                 accessApi.createOrUpdatePartial(accessDto);
             }
@@ -1628,21 +1628,22 @@ public class SubscriptionApi extends BaseApi {
      *
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension date
+     * @param subscriptionValidityDate
      * @throws MissingParameterException Missing parameter exception
      * @throws EntityDoesNotExistsException Entity does not exists exception
      * @throws IncorrectSusbcriptionException Incorrect susbcription exception
      * @throws IncorrectServiceInstanceException Incorrect service instance exception
      * @throws BusinessException Business exception
      */
-    public void suspendSubscription(String subscriptionCode, Date suspensionDate)
+    public void suspendSubscription(String subscriptionCode, Date suspensionDate, Date subscriptionValidityDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
             handleMissingParameters();
         }
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
         subscriptionService.subscriptionSuspension(subscription, suspensionDate);
     }
@@ -1652,21 +1653,22 @@ public class SubscriptionApi extends BaseApi {
      *
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension data
+     * @param subscriptionValidityDate
      * @throws MissingParameterException missiong parameter exeption
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrection service isntance exception
      * @throws BusinessException business exception.
      */
-    public void resumeSubscription(String subscriptionCode, Date suspensionDate)
+    public void resumeSubscription(String subscriptionCode, Date suspensionDate, Date subscriptionValidityDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
             handleMissingParameters();
         }
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
         subscriptionService.subscriptionReactivation(subscription, suspensionDate);
     }
@@ -1723,9 +1725,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, postData.getSubscriptionValidityDate());
         }
 
         if (postData != null) {
@@ -1754,7 +1756,7 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
         }
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
@@ -1797,7 +1799,7 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
-    public ServiceInstanceDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode) throws MeveoApiException {
+    public ServiceInstanceDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode, Date subscriptionValidityDate) throws MeveoApiException {
         ServiceInstanceDto result = new ServiceInstanceDto();
 
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -1806,9 +1808,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
 
         ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, serviceInstanceCode, subscription);
@@ -1897,11 +1899,11 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
-    private List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+    private List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode, Date validityDate) throws EntityDoesNotExistsException, InvalidParameterException {
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, validityDate);
 
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, validityDate);
         }
 
         List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
@@ -1930,9 +1932,9 @@ public class SubscriptionApi extends BaseApi {
         return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
     }
 
-    public List<OneShotChargeInstanceDto> getOneShotChargeOthers(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+    public List<OneShotChargeInstanceDto> getOneShotChargeOthers(String subscriptionCode, Date validityDate) throws EntityDoesNotExistsException, InvalidParameterException {
 
-        return this.getOneShotCharges(subscriptionCode);
+        return this.getOneShotCharges(subscriptionCode, validityDate);
     }
 
     /**
@@ -2050,7 +2052,7 @@ public class SubscriptionApi extends BaseApi {
         return serviceInstance;
     }
 
-    public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, String serviceInstanceCode) throws MissingParameterException {
+    public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, Date subscriptionValidityDate, String serviceInstanceCode) throws MissingParameterException {
         List<ServiceInstanceDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -2063,7 +2065,7 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
+        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, subscriptionValidityDate ,serviceInstanceCode);
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
             result = serviceInstances.stream().map(p -> serviceInstanceToDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), CustomFieldInheritanceEnum.INHERIT_NO_MERGE))
                 .collect(Collectors.toList());
@@ -2181,9 +2183,12 @@ public class SubscriptionApi extends BaseApi {
         return result;
     }
 
-    public void terminateOneShotCharge(String oneShotChargeCode, String subscriptionCode) {
+    public void terminateOneShotCharge(String oneShotChargeCode, String subscriptionCode, Date validityDate) {
         try {
-            Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+            Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, validityDate);
+            if (subscription == null) {
+                throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, validityDate);
+            }
             OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCodeAndSubsription(oneShotChargeCode, subscription.getId());
             oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
         } catch (BusinessException e) {
@@ -2292,7 +2297,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setUserAccount(userAccount);
         subscription.setSeller(seller);
         subscription.setOffer(offerTemplate);
-        subscription.setFromValidity(postData.getValidtyDate());
+        subscription.setFromValidity(postData.getValidityDate());
         if (!StringUtils.isBlank(postData.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
@@ -2443,7 +2448,7 @@ public class SubscriptionApi extends BaseApi {
         subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate(), subscriptionTerminationReason, existingSubscription.getOrderNumber());
 
 
-        existingSubscriptionDto.setValidtyDate(subscriptionPatchDto.getEffectiveDate());
+        existingSubscriptionDto.setValidityDate(subscriptionPatchDto.getEffectiveDate());
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
             existingSubscriptionDto.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate());
         }
