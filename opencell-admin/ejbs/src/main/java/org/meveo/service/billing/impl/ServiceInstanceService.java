@@ -718,11 +718,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * @param serviceInstance service instance
      * @param reactivationDate reactivation date
+     * @param reactivateSuspendedCharges
+     * @param reactivateTerminatedCharges
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
      */
-    public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate, boolean reactivateSuspendedCharges, boolean reactivateTerminatedCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         String serviceCode = serviceInstance.getCode();
         if (reactivationDate == null) {
@@ -734,7 +736,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
         }
         ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-        if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
+        if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED && !reactivateTerminatedCharges) {
             throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
         checkServiceAssociatedWithOffer(serviceInstance);
@@ -744,21 +746,34 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setDescription(serviceTemplate.getDescription());
         serviceInstance.setTerminationDate(null);
 
-        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-                recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, reactivationDate);
-            }
+        if(reactivateSuspendedCharges){
+            reactivateRecurringChargeWithStatus(serviceInstance, reactivationDate, subscription, InstanceStatusEnum.SUSPENDED);
+            reactivateUsageChargeWithStatus(serviceInstance, reactivationDate, InstanceStatusEnum.SUSPENDED);
+        } if(reactivateTerminatedCharges){
+            reactivateRecurringChargeWithStatus(serviceInstance, reactivationDate, subscription, InstanceStatusEnum.TERMINATED);
+            reactivateUsageChargeWithStatus(serviceInstance, reactivationDate, InstanceStatusEnum.TERMINATED);
         }
 
-        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-            if (usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-                usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, reactivationDate);
-            }
-        }
         update(serviceInstance);
 
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.reactivateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), reactivationDate);
+        }
+    }
+
+    private void reactivateUsageChargeWithStatus(ServiceInstance serviceInstance, Date reactivationDate, InstanceStatusEnum status) {
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+            if (usageChargeInstance.getStatus() == status) {
+                usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, reactivationDate);
+            }
+        }
+    }
+
+    private void reactivateRecurringChargeWithStatus(ServiceInstance serviceInstance, Date reactivationDate, Subscription subscription, InstanceStatusEnum status) {
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+            if (recurringChargeInstance.getStatus() == status) {
+                recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, reactivationDate);
+            }
         }
     }
 
