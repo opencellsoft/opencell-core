@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ import org.meveo.model.cpq.tags.Tag;
 @Table(name = "cpq_offer_component", uniqueConstraints = @UniqueConstraint(columnNames = {"offer_template_id", "product_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_offer_component_seq"), })
+@NamedQuery(name = "OfferComponent.findByOfferTEmplateAndProduct", query = "select o from OfferComponent o left join o.offerTemplate ot left join o.product op where ot.code=:offerCode  and op.code=:productCode")
 public class OfferComponent extends BaseEntity {
 
 	/**

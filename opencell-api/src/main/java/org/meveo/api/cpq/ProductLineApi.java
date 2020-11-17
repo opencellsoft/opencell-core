@@ -5,14 +5,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.cpq.ProductLineService;
-import org.meveo.service.cpq.exception.ProductLineException;
 
 @Stateless
 public class ProductLineApi extends BaseApi {
@@ -26,35 +25,35 @@ public class ProductLineApi extends BaseApi {
 	private SellerService sellerService;
 	
 	public void removeProductLine(Long id) {
-		try {
-			productLineService.removeProductLine(id);
-		} catch (ProductLineException e) {
-			throw new MeveoApiException(e);
-		}
+		productLineService.removeProductLine(id);
 	}
 	
 	public void removeProductLine(String codeProductLine) {
-		try {
-			productLineService.removeProductLine(codeProductLine);
-		} catch (ProductLineException e) {
-			throw new MeveoApiException(e);
-		}
+		productLineService.removeProductLine(codeProductLine);
 	}
 	
-	public ProductLineDto createProductLine(ProductLineDto dto){
+	public Long createProductLine(ProductLineDto dto){
 		if(dto == null)
 			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
 		if(dto.getCodeProductLine() == null) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		try {
-			return new ProductLineDto(productLineService.createNew(dto.getCodeProductLine(), 
-																		dto.getLabel(), dto.getCodeSeller(), 
-																			dto.getLongDescription(), dto.getIdCodeParentLine()));
-		} catch (ProductLineException e) {
-			throw new MeveoApiException(e);
+		/**String codeProductLine, String label, String codeSeller, String longDescription, Long idCodeParentLine**/
+
+		ProductLine productLine = new ProductLine();
+		productLine.setCode(dto.getCodeProductLine());
+		productLine.setDescription(dto.getLabel());
+		productLine.setLongDescription(dto.getLongDescription());
+		if(dto.getIdCodeParentLine() != null) {
+			productLine.setParentLine(productLineService.findById(dto.getIdCodeParentLine()));
 		}
+		if(Strings.isNotEmpty(dto.getCodeSeller())) {
+			productLine.setSeller(sellerService.findByCode(dto.getCodeSeller()));
+		}
+		
+		productLine = productLineService.createNew(productLine);
+		return productLine.getId();
 	}
 	
 	public ProductLineDto updateProductLine(ProductLineDto dto){

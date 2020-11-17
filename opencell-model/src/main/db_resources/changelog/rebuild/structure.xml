@@ -10808,6 +10808,9 @@ $$ LANGUAGE plpgsql;
             <column name="status" type="int4"  >
             	<constraints nullable="false"/>
             </column>  
+            <column name="description_short" type="text" >
+            	<constraints nullable="false"/>
+            </column>  
             <column name="status_date" type="datetime" >
             	<constraints nullable="false"/>
             </column>  

@@ -3,11 +3,10 @@ package org.meveo.service.cpq;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.cpq.exception.TagException;
-import org.meveo.service.cpq.exception.TagTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +28,9 @@ public class TagTypeService extends BusinessService<TagType> {
 	@Inject
 	private TagService tagService;
 	
-	public void removeTagType(String codeTagType) throws TagTypeException {
+	public void removeTagType(String codeTagType) {
 		LOGGER.info("removing tag type {}", codeTagType);
 		boolean isTagTypeAttached;
-		try {
 			TagType tag = this.findByCode(codeTagType);
 			if(tag == null) {
 				throw new EntityDoesNotExistsException(String.format(UNKNOWN_TAG_TYPE, codeTagType));
@@ -40,15 +38,8 @@ public class TagTypeService extends BusinessService<TagType> {
 			isTagTypeAttached = this.tagService.isTagTypeExist(tag.getId());
 			if(isTagTypeAttached) {
 				LOGGER.warn("Impossible to remove  tag type {}, because it attached to a tag", codeTagType);
-				throw new TagTypeException(String.format(TAG_TYPE_ATTACHED, codeTagType));
+				throw new BusinessException(String.format(TAG_TYPE_ATTACHED, codeTagType));
 			}
 			this.remove(tag.getId());
-		} catch (TagException e) {
-			LOGGER.error("Error while removing tag type {}", codeTagType);
-			throw new TagTypeException(e);
-		}
 	}
-	
-
-	 
 }

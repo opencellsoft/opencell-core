@@ -3,7 +3,6 @@ package org.meveo.api.cpq;
 import java.util.Arrays;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -11,6 +10,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.tags.Tag;
@@ -20,7 +21,6 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.cpq.TagTypeService;
-import org.meveo.service.cpq.exception.TagTypeException;
 
 /**
  * @author Tarik FAKHOURI
@@ -44,39 +44,42 @@ public class TagApi extends BaseApi {
 	 * the parameters code, name, label and tag type code must not be empty
 	 * @param tagDto
 	 */
-    public TagDto create(TagDto tagDto) {
-    	try {
-    		checkParams(tagDto);
-    		Tag tag = new Tag();
-    		tag.setCode(tagDto.getCode());
-    		tag.setDescription(tagDto.getDescription());		
-    		tag.setSeller(sellerService.findByCode(tagDto.getSellerCode()));
-    		tag.setName(tagDto.getName());
+	public Long create(TagDto tagDto) {
+	try {
+	
+		checkParams(tagDto);
+		if(tagService.findByCode(tagDto.getCode()) != null) {
+			throw new EntityAlreadyExistsException(Tag.class, tagDto.getCode());
+		}
+		final Tag tag = new Tag();
+		tag.setCode(tagDto.getCode());
+		tag.setDescription(tagDto.getDescription());		
+		tag.setSeller(sellerService.findByCode(tagDto.getSellerCode()));
+		tag.setName(tagDto.getName());
+		
+		TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
+		if(tagType == null) {
+			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
+		}
+		tag.setTagType(tagType);
+		BillingAccount ba = billingAccountService.findByCode(tagDto.getBillingAccountCode());
+		if(ba!=null) {
+			tag.setBillingAccount(ba);
+		}
 
-    		TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
-    		if(tagType!=null) {
-    		tag.setTagType(tagType);
-    		}
-    		BillingAccount ba = billingAccountService.findByCode(tagDto.getBillingAccountCode());
-    		if(ba!=null) {
-    		tag.setBillingAccount(ba);
-    		}
-    		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
-    		Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());
-    		if(parentTag!=null)
-    			tag.setParentTag(parentTag);
-    		}
-    		tag.setFilterEl(tagDto.getFilterEl());
-    		tagService.create(tag);
-    	} catch (BusinessApiException e) {
-    		throw new BusinessApiException(e);
-    	}
-
-
-
-
-    	return tagDto;
-    }
+		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
+			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());
+			if(parentTag!=null)
+				tag.setParentTag(parentTag);
+			}
+		tag.setFilterEl(tagDto.getFilterEl());
+		
+		tagService.create(tag);
+		return tag.getId();
+	} catch (BusinessApiException e) {
+		throw new BusinessApiException(e);
+	}
+	}
 	
 	/**
 	 * @param tagDto
@@ -89,25 +92,22 @@ public class TagApi extends BaseApi {
 			throw new BusinessApiException("Tag unknown from code " + tagDto.getCode());
 		}
 
-		try {
-			if(!StringUtils.isBlank(tagDto.getTagTypeCode())) {
-				TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
-				tag.setTagType(tagType);
+		if(!StringUtils.isBlank(tagDto.getTagTypeCode())) {
+			TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
+			if(tagType == null) {
+				throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 			}
-			
-		} catch (BusinessApiException e) {
-			throw new BusinessApiException("unknown TagType with code " + tagDto.getTagTypeCode());
+			tag.setTagType(tagType);
+		}else {
+			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 		}
 		
-		try {
-			if(!StringUtils.isBlank(tagDto.getSellerCode())) {
-				Seller seller = sellerService.findByCode(tagDto.getSellerCode());
+		if(!StringUtils.isBlank(tagDto.getSellerCode())) {
+			Seller seller = sellerService.findByCode(tagDto.getSellerCode());
+			if(seller != null) {
 				tag.setSeller(seller);
 			}
-		} catch (NoResultException e) {
-			throw new BusinessApiException("unknown Seller with code " + tagDto.getTagTypeCode());
 		}
-		
 		
 		tag.setDescription(tagDto.getDescription());		
 		tag.setName(tagDto.getName());
@@ -142,8 +142,14 @@ public class TagApi extends BaseApi {
 	 * @return
 	 */
 	public TagDto findTagByCode(String code) {
+		if(Strings.isEmpty(code)) {
+			missingParameters.add("code");
+		}
+		handleMissingParameters();
 		final Tag tag = tagService.findByCode(code);
-		if(tag == null) return null;
+		if(tag == null) {
+			throw new EntityDoesNotExistsException(Tag.class, code);
+		}
 		return new TagDto(tag);
 	}
 	
@@ -182,9 +188,11 @@ public class TagApi extends BaseApi {
 	 * create new Tag type 
 	 * @param tagTypeDto
 	 */
-	public TagTypeDto create(TagTypeDto tagTypeDto) {
+	public Long create(TagTypeDto tagTypeDto) {
 		checkCodeTagTypeExist(tagTypeDto);
-		
+		if(tagTypeService.findByCode(tagTypeDto.getCode()) != null) {
+			throw new EntityAlreadyExistsException(TagType.class, tagTypeDto.getCode());
+		}
 		final TagType tagType = new TagType();
 		
 		tagType.setCode(tagTypeDto.getCode());
@@ -192,7 +200,7 @@ public class TagApi extends BaseApi {
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getSellerCode()));
 		
 		tagTypeService.create(tagType);
-		return tagTypeDto;
+		return tagType.getId();
 	}
 	
 	/**
@@ -218,11 +226,7 @@ public class TagApi extends BaseApi {
 	 * @param codeTag
 	 */
 	public void deleteTagType(String codeTag) {
-		try {
-			tagTypeService.removeTagType(codeTag);
-		} catch (TagTypeException e) {
-			throw new BusinessApiException(e);
-		}
+		tagTypeService.removeTagType(codeTag);
 	}
 	
 	/**

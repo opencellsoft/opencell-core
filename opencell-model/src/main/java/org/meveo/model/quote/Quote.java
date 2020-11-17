@@ -255,7 +255,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 * prestationDuration
 	 */
 	@Column(name = "prestation_duration")
-	private int prestationDuration;
+	private Integer prestationDuration;
 
 	/**
 	 * opportunityRef

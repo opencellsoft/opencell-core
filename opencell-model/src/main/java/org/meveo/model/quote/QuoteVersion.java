@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,8 +31,10 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
 @NamedQueries({ 
-	@NamedQuery(name = "QuoteVersion.findByQuoteCodeAndQuoteVersion", query = "select q from QuoteVersion q where q.quote.code=:code and q.quoteVersion=:quoteVersion"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select q from QuoteVersion q where q.quote.id=:id and q.status=1")
+	@NamedQuery(name = "QuoteVersion.findByCode", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code order by qv.quoteVersion desc"),
+	@NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
+	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=1"),
+	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion")
 })
 public class QuoteVersion extends BaseEntity{
 
@@ -85,6 +88,9 @@ public class QuoteVersion extends BaseEntity{
 	@Size(max = 20)
 	private String billingPlanCode;
 
+	@Column(name = "description_short")
+	@Lob
+	private String shortDescription;
 	/**
 	 * @return the quoteVersion
 	 */
@@ -206,6 +212,20 @@ public class QuoteVersion extends BaseEntity{
 				&& Objects.equals(id, other.id) && Objects.equals(quote, other.quote)
 				&& Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(startDate, other.startDate)
 				&& status == other.status && Objects.equals(statusDate, other.statusDate);
+	}
+
+	/**
+	 * @return the shortDescription
+	 */
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	/**
+	 * @param shortDescription the shortDescription to set
+	 */
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
 	}
 
 	

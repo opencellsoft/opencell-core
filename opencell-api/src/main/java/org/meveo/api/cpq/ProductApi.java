@@ -22,8 +22,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
-import org.meveo.service.cpq.exception.ProductLineException;
-import org.meveo.service.cpq.exception.ProductVersionException;
 import org.meveo.service.crm.impl.CustomerBrandService;
 
 /**
@@ -134,7 +132,7 @@ public class ProductApi extends BaseApi {
 	 * @param dto
 	 * @return
 	 */
-	public ProductLineDto createProductLine(ProductLineDto dto){
+	public Long createProductLine(ProductLineDto dto){
 		return productLineApi.createProductLine(dto);
 	}
 

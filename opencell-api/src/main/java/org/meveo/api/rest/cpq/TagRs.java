@@ -139,7 +139,7 @@ public interface TagRs extends IBaseRs {
 
 
 	@DELETE
-	@Path("/{codeTagType}")
+	@Path("/tagType/{codeTagType}")
     @Operation(summary = "This endpoint allows to  delete an existing Tag type",
     description ="Deleting an existing Tag type",
     tags = { "Tag" },
