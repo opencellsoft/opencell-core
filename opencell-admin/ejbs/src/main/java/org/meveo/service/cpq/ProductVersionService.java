@@ -13,7 +13,6 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.cpq.exception.ProductVersionException;
 /**
  * @author Tarik FAKHOURI.
  * @author Mbarek-Ay.
@@ -34,7 +33,7 @@ public class ProductVersionService extends
      * update product with status DRAFT only
      * @param productVersion
      * @return
-     * @throws ProductVersionException when the status is different to DRAFT
+     * @when the status is different to DRAFT
      * @throws ProductException
      */
     public ProductVersion updateProductVersion(ProductVersion productVersion) throws BusinessException{
@@ -98,7 +97,7 @@ public class ProductVersionService extends
      * @return
      * @throws ProductVersionException
      */
-    public ProductVersion publishOrCloseVersion(Long id, boolean publish) throws ProductVersionException {
+    public ProductVersion publishOrCloseVersion(Long id, boolean publish) {
         final ProductVersion productVersion = this.getProductVersion(id);
         if(publish) {
             productVersion.setStatus(VersionStatusEnum.PUBLIED);
@@ -109,15 +108,15 @@ public class ProductVersionService extends
         try {
             this.update(productVersion);
         }catch(BusinessException e) {
-            throw new ProductVersionException(String.format(CAN_NOT_UPDATE_VERSION_PRODUCT_STAUTS, id), e);
+            throw new BusinessException(String.format(CAN_NOT_UPDATE_VERSION_PRODUCT_STAUTS, id), e);
         }
         return productVersion;
     }
-    private ProductVersion getProductVersion(Long id) throws ProductVersionException{
+    private ProductVersion getProductVersion(Long id){
         final ProductVersion productVersion = this.findById(id);
         if(productVersion == null || productVersion.getId() == null) {
             log.warn("The version product {}  is missing", id);
-            throw new ProductVersionException(String.format(PRODUCT_VERSION_MISSING, id));
+            throw new BusinessException(String.format(PRODUCT_VERSION_MISSING, id));
         }
         return productVersion;
     }

@@ -10580,7 +10580,7 @@ $$ LANGUAGE plpgsql;
     
        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-08">
         <addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag_type" />
     </changeSet>
     
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-09">
@@ -10806,6 +10806,9 @@ $$ LANGUAGE plpgsql;
             	<constraints nullable="false"/>
             </column>  
             <column name="status" type="int4"  >
+            	<constraints nullable="false"/>
+            </column>  
+            <column name="description_short" type="text" >
             	<constraints nullable="false"/>
             </column>  
             <column name="status_date" type="datetime" >

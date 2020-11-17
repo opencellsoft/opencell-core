@@ -20,6 +20,7 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -59,6 +61,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -1114,100 +1117,165 @@ public class QuoteApi extends BaseApi {
 	}
 
 
-	public ProductQuoteItem createQuoteItem(ProductQuoteItem productQuoteItem) {
-		return createOrUpdateQuoteItem(null, productQuoteItem, true);
+	public Long createQuoteItem(ProductQuoteItem productQuoteItem) {
+		QuoteItem item = createOrUpdateQuoteItem(null, productQuoteItem, true);
+		return item.getId();
 	}
 	
-	public ProductQuoteItem updateQuoteItem(String code, ProductQuoteItem productQuoteitem, UriInfo info) {
-		return createOrUpdateQuoteItem(code, productQuoteitem, false);
+	public void updateQuoteItem(String code, ProductQuoteItem productQuoteitem) {
+		createOrUpdateQuoteItem(code, productQuoteitem, false);
 	}
 	
-	private ProductQuoteItem createOrUpdateQuoteItem(String code, ProductQuoteItem productQuoteItem, boolean isCreated) {
-	if (StringUtils.isEmpty(productQuoteItem.getQuoteItemCode())) {
-            missingParameters.add("quoteItemCode");
-     }
-	if (StringUtils.isEmpty(productQuoteItem.getId())) {
-        missingParameters.add("id");
+	private QuoteItem createOrUpdateQuoteItem(String code, ProductQuoteItem productQuoteItem, boolean isCreated) {
+		if (StringUtils.isEmpty(productQuoteItem.getQuoteItemCode())) {
+	            missingParameters.add("quoteItemCode");
+	     }
+		if (StringUtils.isEmpty(productQuoteItem.getId())) {
+	        missingParameters.add("id");
+		}
+		if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+	        missingParameters.add("produtQuoteVersion");
+		}
+		if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
+	        missingParameters.add("offerCode");
+		}
+		if (productQuoteItem.getService() == null && StringUtils.isEmpty(productQuoteItem.getService().getId())) {
+	        missingParameters.add("service");
+		}
+		if(productQuoteItem.getServiceType() == null) {
+			 missingParameters.add("serviceType");
+		}
+		if(!isCreated) {
+			if(StringUtils.isEmpty(code)) {
+				missingParameters.add("code");
+			}
+		}
+	    handleMissingParameters();
+		QuoteItem quoteItem = null;
+	    if(isCreated) {
+	    	quoteItem = new QuoteItem();
+	    }else {
+	    	quoteItem = quoteItemService.findByCode(code);
+	    	if(quoteItem == null) {
+	    		throw new EntityDoesNotExistsException(QuoteItem.class, code);
+	    	}
+	    }
+		quoteItem.setCode(productQuoteItem.getQuoteItemCode());
+		Quote quote = quoteService.findByCode(productQuoteItem.getId());
+		if(quote == null)
+			throw new EntityDoesNotExistsException(Quote.class, productQuoteItem.getId());
+		quoteItem.setQuote(quote);
+		quoteItem.setItemId(productQuoteItem.getId());
+		/*if(productQuoteItem.getItemQuoteProductOfferingPrice() != null && !productQuoteItem.getItemQuoteProductOfferingPrice().isEmpty()) {
+			// TODO : wait for more information to implement this
+		}*/
+		if(StringUtils.isEmpty(productQuoteItem.getId()) && 
+				StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+			quoteItem.setQuoteVersion(quoteVersionService.findByQuoteAndVersion(productQuoteItem.getId(), Integer.valueOf(productQuoteItem.getProdutQuoteVersion())));
+		}else {
+			 throw new EntityDoesNotExistsException(QuoteVersion.class, productQuoteItem.getId());
+		}
+	    quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
+	    if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
+	        UserAccount itemLevelUserAccount = null;
+	        String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
+	    	 itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
+	         if (itemLevelUserAccount == null) {
+	             throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+	         }
+	 		quoteItem.setUserAccount(itemLevelUserAccount);
+	    }
+		if (StringUtils.isEmpty(productQuoteItem.getProdutQuote())) {
+			quoteItem.setQuoteProduct(quoteProductService.findByCode(productQuoteItem.getProdutQuote()));
+		}
+		if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
+			quoteItem.setOfferComponent(offerComponentService.findByCode(productQuoteItem.getOfferCode(), productQuoteItem.getId()));
+		}
+		quoteItem.setServiceCode(productQuoteItem.getService().getId());
+		quoteItem.setQuantity(new BigDecimal(productQuoteItem.getQuantity()));
+		quoteItem.setServiceType(productQuoteItem.getServiceType());
+		quoteItem.setValue(productQuoteItem.getValue());
+	
+		if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion()) && 
+				StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
+			quoteItem.setQuoteCustomerService(
+										quoteCustomerServiceService.findByCodeAndQuoteVersion(
+																	productQuoteItem.getProdutQuoteVersion(), 
+																		Integer.parseInt(productQuoteItem.getProdutQuoteVersion())));
+		}
+	
+	    if (productQuoteItem.getState() != null || !isCreated) {
+	        quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
+	    } else {
+	        quoteItem.setStatus(QuoteStatusEnum.IN_PROGRESS);
+	    }
+	    if(isCreated) 
+	    	quoteItemService.create(quoteItem);
+	    else 
+	    	quoteItemService.update(quoteItem);
+		return quoteItem;
 	}
-	if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
-        missingParameters.add("produtQuoteVersion");
-	}
-	if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
-        missingParameters.add("offerCode");
-	}
-	if (productQuoteItem.getService() == null && StringUtils.isEmpty(productQuoteItem.getService().getId())) {
-        missingParameters.add("service");
-	}
-	if(productQuoteItem.getServiceType() == null) {
-		 missingParameters.add("serviceType");
-	}
-	if(!isCreated) {
-		if(StringUtils.isEmpty(code)) {
-			missingParameters.add("code");
+	
+	public Long createQuoteVersion(QuoteVersionDto quoteVersionDto) {
+
+		if (StringUtils.isEmpty(quoteVersionDto.getQuoteCode())) {
+	        missingParameters.add("quoteCode");
+		}
+		if (StringUtils.isEmpty(quoteVersionDto.getShortDescription())) {
+	        missingParameters.add("shortDescription");
+		}
+		
+		handleMissingParameters();
+		
+		final Quote quote = quoteService.findByCode(quoteVersionDto.getQuoteCode());
+		if(quote == null) {
+			throw new EntityDoesNotExistsException(Quote.class, quoteVersionDto.getQuoteCode());
+		}
+		try {
+
+			QuoteVersion quoteVersion = new QuoteVersion();
+			quoteVersion.setStatus(VersionStatusEnum.DRAFT);
+			quoteVersion.setStatusDate(Calendar.getInstance().getTime());
+			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+			quoteVersion.setQuote(quote);
+			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+			
+			quoteVersionService.createQuoteVersion(quoteVersion);
+			return quoteVersion.getId();
+		}catch(BusinessException e) {
+			throw new MeveoApiException(e);
 		}
 	}
-    handleMissingParameters();
-	QuoteItem quoteItem = null;
-    if(isCreated) {
-    	quoteItem = new QuoteItem();
-    }else {
-    	quoteItem = quoteItemService.findByCode(code);
-    	if(quoteItem == null) {
-    		throw new EntityDoesNotExistsException(QuoteItem.class, code);
-    	}
-    }
-	quoteItem.setCode(productQuoteItem.getQuoteItemCode());
-	Quote quote = quoteService.findByCode(productQuoteItem.getId());
-	if(quote == null)
-		throw new EntityDoesNotExistsException(Quote.class, productQuoteItem.getId());
-	quoteItem.setQuote(quote);
-	quoteItem.setItemId(productQuoteItem.getId());
-	/*if(productQuoteItem.getItemQuoteProductOfferingPrice() != null && !productQuoteItem.getItemQuoteProductOfferingPrice().isEmpty()) {
-		// TODO : wait for more information to implement this
-	}*/
-	if(StringUtils.isEmpty(productQuoteItem.getId()) && 
-			StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
-		quoteItem.setQuoteVersion(quoteVersionService.findByQuoteAndVersion(productQuoteItem.getId(), Integer.valueOf(productQuoteItem.getProdutQuoteVersion())));
-	}else {
-		 throw new EntityDoesNotExistsException(QuoteVersion.class, productQuoteItem.getId());
-	}
-    quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
-    if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
-        UserAccount itemLevelUserAccount = null;
-        String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
-    	 itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
-         if (itemLevelUserAccount == null) {
-             throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-         }
- 		quoteItem.setUserAccount(itemLevelUserAccount);
-    }
-	if (StringUtils.isEmpty(productQuoteItem.getProdutQuote())) {
-		quoteItem.setQuoteProduct(quoteProductService.findByCode(productQuoteItem.getProdutQuote()));
-	}
-	if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
-		quoteItem.setOfferComponent(offerComponentService.findByCode(productQuoteItem.getOfferCode(), productQuoteItem.getId()));
-	}
-	quoteItem.setServiceCode(productQuoteItem.getService().getId());
-	quoteItem.setQuantity(new BigDecimal(productQuoteItem.getQuantity()));
-	quoteItem.setServiceType(productQuoteItem.getServiceType());
-	quoteItem.setValue(productQuoteItem.getValue());
+	
+	public void updateQuoteVersion(QuoteVersionDto quoteVersionDto) {
+		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteVersionDto.getQuoteCode(), quoteVersionDto.getCurrentVersion());
+		if(quoteVersion == null) {
+			throw new EntityDoesNotExistsException(QuoteVersion.class, quoteVersionDto.getQuoteCode());
+		}
+		final Quote quote = quoteService.findByCode(quoteVersionDto.getQuoteCode());
+		if(quote == null) {
+			throw new EntityDoesNotExistsException(Quote.class, quoteVersionDto.getQuoteCode());
+		}
+		quoteVersion.setQuote(quote);
+		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+		quoteVersion.setBillingPlanCode(null); // TODO : add association with belling plan code
+		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 
-	if (StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion()) && 
-			StringUtils.isEmpty(productQuoteItem.getProdutQuoteVersion())) {
-		quoteItem.setQuoteCustomerService(
-									quoteCustomerServiceService.findByCodeAndQuoteVersion(
-																productQuoteItem.getProdutQuoteVersion(), 
-																	Integer.parseInt(productQuoteItem.getProdutQuoteVersion())));
+		try {
+			quoteVersionService.updateQuoteVersion(quoteVersion);
+		}catch(BusinessException e) {
+			throw new MeveoApiException(e);
+		}
 	}
-
-    if (productQuoteItem.getState() != null) {
-        quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
-    } else {
-        quoteItem.setStatus(QuoteStatusEnum.IN_PROGRESS);
-    }
-    quoteItemService.create(quoteItem);
-	return productQuoteItem;
-
-		
+	
+	public void deleteQuoteVersion(String quoteCode, int version) {
+		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+		if(quoteVersion == null) {
+			throw new EntityDoesNotExistsException(QuoteVersion.class, quoteCode);
+		}
+		quoteVersionService.remove(quoteVersion);
 	}
 }

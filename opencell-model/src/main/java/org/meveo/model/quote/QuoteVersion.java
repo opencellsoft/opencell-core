@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -87,6 +88,9 @@ public class QuoteVersion extends BaseEntity{
 	@Size(max = 20)
 	private String billingPlanCode;
 
+	@Column(name = "description_short")
+	@Lob
+	private String shortDescription;
 	/**
 	 * @return the quoteVersion
 	 */
@@ -208,6 +212,20 @@ public class QuoteVersion extends BaseEntity{
 				&& Objects.equals(id, other.id) && Objects.equals(quote, other.quote)
 				&& Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(startDate, other.startDate)
 				&& status == other.status && Objects.equals(statusDate, other.statusDate);
+	}
+
+	/**
+	 * @return the shortDescription
+	 */
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	/**
+	 * @param shortDescription the shortDescription to set
+	 */
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
 	}
 
 	

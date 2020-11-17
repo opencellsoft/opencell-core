@@ -5,14 +5,15 @@ import java.util.Date;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.cpq.exception.ContractException;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
@@ -23,13 +24,11 @@ import org.slf4j.LoggerFactory;
  * @version 10.0
  */
 @Stateless
-public class ContractService extends PersistenceService<Contract>  {
+public class ContractService extends BusinessService<Contract>  {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 	
 	private final static String CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the contract (%s) is %s, it can not be updated nor removed";
-	private final static String CONTRACT_UNKWON = "contract (%s) unkwon!";
-	private final static String SELLER_UNKNOW = "SELLER (%s) for contract code (%s) is unkonw!";
 	private final static String CONTRACT_CAN_NOT_CHANGE_THE_STATUS = "contract (%s) can not change the status beacause it not draft";
 	
 	@Inject
@@ -50,16 +49,16 @@ public class ContractService extends PersistenceService<Contract>  {
 	 * @return update DRAFT contract
 	 * @throws ContractException throw this exception if the contract status is ACTIVE or CLOSED
 	 */
-	public Contract updateContract(Contract contract) throws ContractException{
+	public Contract updateContract(Contract contract) {
 		LOGGER.info("updating contract {}", contract.getCode());
 		
 		if(contract.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus().toString());
-			throw new ContractException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
 		}
 		if(!contract.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			LOGGER.warn("the contract {} can not be updated, because of its status => {}", contract.getCode(), contract.getStatus().toString());
-			throw new ContractException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contract.getCode(), contract.getStatus().toString()));
 		}
 		
 		update(contract);
@@ -77,16 +76,16 @@ public class ContractService extends PersistenceService<Contract>  {
 	 * 		<li>the status of contract is active</li>
 	 * 	</ul>
 	 */
-	public void deleteContractById(Long id) throws ContractException{
+	public void deleteContractById(Long id) {
 		LOGGER.info("contract({}) to be deleted", id);
 		
 		final Contract contratToDelete = findById(id);
 		if(contratToDelete == null) {
-			throw new ContractException(String.format(CONTRACT_UNKWON, id));
+			throw new EntityDoesNotExistsException(Contract.class, id);
 		}
 		if(contratToDelete.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 			LOGGER.warn("contract({}) can not be removed, because its status is active", contratToDelete.getCode());
-			throw new ContractException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contratToDelete.getCode(), contratToDelete.getStatus().toString()));
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contratToDelete.getCode(), contratToDelete.getStatus().toString()));
 		}
 		getEntityManager().remove(contratToDelete);
 		LOGGER.info("contract({}) is deleted successfully", contratToDelete.getCode());
@@ -103,11 +102,9 @@ public class ContractService extends PersistenceService<Contract>  {
 	 * @param endDate
 	 * @throws ContractException
 	 */
-	public void createNewContract(String codeContract, String codeCustomerAccount, 
+	public void createNewContract(Contract newContract, String codeCustomerAccount, 
 										String codeCustomer, String codeSeller, 
-										Date contractDate, Date dateBegin,
-										Date dateEnd) throws ContractException {
-		final Contract newContract = new Contract();
+										Date contractDate) {
 		
 		final CustomerAccount customerAccount = customerAccountService.findByCode(codeCustomerAccount);
 		if(customerAccount != null && customerAccount.getId() != null) {
@@ -127,14 +124,11 @@ public class ContractService extends PersistenceService<Contract>  {
 		}
 		
 		if(newContract.getSeller() == null) {
-			LOGGER.warn("the seller is requied for creation of the contract ({})", codeContract);
-			throw new ContractException(String.format(SELLER_UNKNOW, seller, codeContract));
+			LOGGER.warn("the seller is requied for creation of the contract ({})", newContract.getCode());
+			throw new EntityDoesNotExistsException(Seller.class, codeSeller);
 		}
 		
 		newContract.setContractDate(contractDate);
-		newContract.setBeginDate(dateBegin);
-		newContract.setEndDate(dateEnd);
-		newContract.setCode(codeContract);
 		
 		this.create(newContract);
 	}
@@ -145,7 +139,7 @@ public class ContractService extends PersistenceService<Contract>  {
 	 * @return
 	 * @throws ContractException
 	 */
-	public Contract updateStatus(Contract contract, ProductStatusEnum status) throws ContractException{
+	public Contract updateStatus(Contract contract, ProductStatusEnum status){
 		if(contract.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			contract.setStatus(status);
 			return  update(contract);
@@ -153,7 +147,7 @@ public class ContractService extends PersistenceService<Contract>  {
 			contract.setStatus(ProductStatusEnum.CLOSED);
 			return  update(contract);
 		}
-		throw new ContractException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS, contract.getCode()));
+		throw new BusinessException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS, contract.getCode()));
 	}
 	
 }

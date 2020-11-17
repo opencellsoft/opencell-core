@@ -120,12 +120,12 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response createOrUpdateProductLine(ProductLineDto dto) {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
 	        try {
-	        	ProductLineDto line = null;
-	        	if(dto.getId() == null)
-	        		line = productLineApi.createProductLine(dto);
-	        	else
-	        		line = productLineApi.updateProductLine(dto);
-	        	result.setProductLineDto(line);
+	        	Long id = null;
+	        	if(dto.getId() == null) {
+	        		id = productLineApi.createProductLine(dto);
+	            	return  Response.ok().entity(Collections.singletonMap("id", id)).build();
+	        	}else
+	        		 productLineApi.updateProductLine(dto);
 	            return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());

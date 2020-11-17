@@ -37,6 +37,8 @@ public class QuoteVersionDto extends BaseEntityDto {
     private Date startDate;
     /** The endDate */
     private Date endDate;
+    /** billing code */
+	private String billingPlanCode;
   
     
     /**
@@ -137,6 +139,20 @@ public class QuoteVersionDto extends BaseEntityDto {
 
 	public void setQuoteCode(String quoteCode) {
 		this.quoteCode = quoteCode;
+	}
+
+	/**
+	 * @return the billingPlanCode
+	 */
+	public String getBillingPlanCode() {
+		return billingPlanCode;
+	}
+
+	/**
+	 * @param billingPlanCode the billingPlanCode to set
+	 */
+	public void setBillingPlanCode(String billingPlanCode) {
+		this.billingPlanCode = billingPlanCode;
 	}
 
     

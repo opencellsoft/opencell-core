@@ -137,15 +137,7 @@ public class ProductService extends BusinessService<Product> {
 	
 	/**
 	 *  create new product with DRAFT status
-	 * @param codeProduct
-	 * @param label
-	 * @param idProductLine
-	 * @param codeBrand
-	 * @param reference
-	 * @param model
-	 * @param modelChildren
-	 * @param discountPlanCode
-	 * @param discountFlag
+	 * @param product
 	 * @return
 	 * @throws ProductException
 	 */

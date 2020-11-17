@@ -3,7 +3,7 @@ package org.meveo.service.cpq;
 import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.trade.TradeRuleHeader;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * @author Tarik FAKHOURI.
@@ -14,6 +14,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class TradeRuleHeaderService extends
-		PersistenceService<TradeRuleHeader> {
+			BusinessService<TradeRuleHeader> {
 
 }

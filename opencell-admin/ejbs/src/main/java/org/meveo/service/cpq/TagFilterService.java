@@ -3,7 +3,7 @@ package org.meveo.service.cpq;
 import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.tags.TagFilter;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * @author Mbarek-Ay
@@ -14,6 +14,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class TagFilterService extends
-		PersistenceService<TagFilter> {
+				BusinessService<TagFilter> {
 
 }

@@ -1,18 +1,15 @@
 package org.meveo.service.cpq;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.cpq.exception.ProductLineException;
+import org.meveo.service.base.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +22,8 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ProductLineService extends
-		PersistenceService<ProductLine> {
+		BusinessService<ProductLine> {
+	
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProductLineService.class);
 
@@ -44,13 +42,13 @@ public class ProductLineService extends
 	/**
 	 * delete a product line
 	 * @param id
-	 * @throws ProductLineException when 
+	 * @ when 
 	 * 	<ul>
 	 * 		<li>there is no Product line found</li>
 	 * 		<li>if product line attached to any product</li>
 	 *	</ul>
 	 */
-	public void removeProductLine(Long id) throws ProductLineException {
+	public void removeProductLine(Long id) {
 		LOGGER.info("deleting product line ({})", id);
 		
 		final ProductLine line = this.findById(id);
@@ -63,7 +61,7 @@ public class ProductLineService extends
 		
 		if(isProductExist) {
 			LOGGER.warn("this product line ({}) can not be delete, it attached to product", id);
-			throw new ProductLineException(String.format(PRODUCT_LINE_HAS_PRODUCTS, id));
+			throw new BusinessException(String.format(PRODUCT_LINE_HAS_PRODUCTS, id));
 		}
 		
 		this.remove(line);
@@ -72,13 +70,13 @@ public class ProductLineService extends
 	/**
 	 * delete a product line
 	 * @param id
-	 * @throws ProductLineException when 
+	 * @ when 
 	 * 	<ul>
 	 * 		<li>there is no Product line found</li>
 	 * 		<li>if product line attached to any product</li>
 	 *	</ul>
 	 */
-	public void removeProductLine(String codeProductLine) throws ProductLineException {
+	public void removeProductLine(String codeProductLine)  {
 		LOGGER.info("deleting product line ({})", codeProductLine);
 		
 		final ProductLine line = this.findByCode(codeProductLine);
@@ -91,7 +89,7 @@ public class ProductLineService extends
 		
 		if(isProductExist) {
 			LOGGER.warn("this product line ({}) can not be delete, it attached to product", codeProductLine);
-			throw new ProductLineException(String.format(PRODUCT_LINE_HAS_PRODUCTS, codeProductLine));
+			throw new BusinessException(String.format(PRODUCT_LINE_HAS_PRODUCTS, codeProductLine));
 		}
 		
 		this.remove(line);
@@ -100,37 +98,20 @@ public class ProductLineService extends
 	
 	
 	/**
-	 * create a new 
-	 * @param codeProductLine
-	 * @param label
-	 * @param codeSeller
-	 * @param longDescription
-	 * @param idCodeParentLine
+	 * @param productLine
 	 * @return
-	 * @throws ProductLineException
 	 */
-	public ProductLine createNew(String codeProductLine, String label, String codeSeller, String longDescription, Long idCodeParentLine) throws ProductLineException {
-		LOGGER.info("creation of the product line ({})", codeProductLine);
-		
-		final boolean isCodeProductExist = this.findByCodeLike(codeProductLine).isEmpty();
-		if(!isCodeProductExist) {
-			throw new ProductLineException(String.format(PRODUCT_LINE_CODE_EXIST, codeProductLine));
+	public ProductLine createNew(ProductLine productLine)  {
+		LOGGER.info("creation of the product line ({})", productLine.getCode());
+		if(productLine.getParentEntity() != null) {
+			final boolean isCodeProductExist = this.findByCodeLike(productLine.getParentLine().getCode()).isEmpty();
+			if(!isCodeProductExist) {
+				throw new BusinessException(String.format(PRODUCT_LINE_CODE_EXIST, productLine.getCode()));
+			}
 		}
-		final ProductLine line = new ProductLine();
-		line.setCode(codeProductLine);
-		line.setDescription(label);
-		line.setLongDescription(longDescription);
-		
-		if(idCodeParentLine != null) {
-			line.setParentLine(this.findById(idCodeParentLine));
-		}
-		if(Strings.isNotEmpty(codeSeller)) {
-			line.setSeller(sellerService.findByCode(codeSeller));
-		}
-		
-		this.create(line);
-		LOGGER.info("product line ({}) created with successfully", codeProductLine);
-		return line;
+		this.create(productLine);
+		LOGGER.info("product line ({}) created with successfully", productLine.getCode());
+		return productLine;
 	}
 	
 	public ProductLine findByCode(String code){

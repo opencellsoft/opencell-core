@@ -19,6 +19,7 @@
 package org.meveo.api.rest.tmforum.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,10 @@ import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.QuoteRs;
-import org.meveo.model.quote.QuoteItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
@@ -266,7 +267,8 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
         try {
-            responseBuilder = Response.ok().entity(quoteApi.createQuoteItem(productQuoteItem));
+        	Long id = quoteApi.createQuoteItem(productQuoteItem);
+            responseBuilder = Response.ok(Collections.singletonMap("id", id));
             return responseBuilder.build();
         } catch (Exception e) {
             processExceptionAndSetBuilder(result, responseBuilder, e);
@@ -291,14 +293,66 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
 	@Override
 	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+        try {
+        	Long id = quoteApi.createQuoteVersion(quoteVersion);
+            return  Response.ok().entity(Collections.singletonMap("id", id))
+                    .build();
+        } catch (MeveoApiException e) {
+        	return errorResponse(e, null);
+        }
+	
 	}
 
 	@Override
 	public Response updateQuoteItem(String code, ProductQuoteItem productQuoteitem, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.updateQuoteItem(code, productQuoteitem);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	
+	}
+
+	@Override
+	public Response updateQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.updateQuoteVersion(quoteVersion);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response deleteQuoteVersion(String quoteCode, int quoteVersion, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.deleteQuoteVersion(quoteCode, quoteVersion);
+            responseBuilder = Response.ok(result);
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	}
+
+	private Response errorResponse(MeveoApiException e, ActionStatus result) {
+		if(result==null) {
+			result = new ActionStatus();
+		}
+		result.setStatus(ActionStatusEnum.FAIL);
+		result.setMessage(e.getMessage());
+		 return createResponseFromMeveoApiException(e, result).build();
 	}
    
 }

@@ -38,7 +38,8 @@ import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
-import org.meveo.api.rest.PATCH;
+import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
 
@@ -198,7 +199,7 @@ public interface QuoteRs {
             @ApiResponse(responseCode="200", description = "quote item is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
     public Response createQuoteItem(@Parameter(description = "Product quote item information", required = false) ProductQuoteItem productQuoteItem, @Context UriInfo info);
-    
+
     
     @POST
     @Path("/quoteVersion")
@@ -206,9 +207,35 @@ public interface QuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "New quote version is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+            @ApiResponse(responseCode="200", description = "New quote version is succeffully created",content = @Content(schema = @Schema(implementation = GetQuoteVersionDtoResponse.class))),
+            @ApiResponse(responseCode = "412", description = "the quote version with code or short description  is missing"),
     })
     public Response createQuoteVersion(@Parameter(description = "Product quote version information", required = false) QuoteVersionDto quoteVersion, @Context UriInfo info);
+
+    
+    @PUT
+    @Path("/quoteVersion")
+    @Operation(summary = "Update a quote version",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "New quote version is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response updateQuoteVersion(@Parameter(description = "Product quote version information", required = false) QuoteVersionDto quoteVersion, @Context UriInfo info);
+
+    
+    @DELETE
+    @Path("/quoteVersion/{quoteCode}/{quoteVersion}")
+    @Operation(summary = "Delete a quote version",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "Existing quote version is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode="404", description = "No quote version was found with quoteCode and quoteVersion in parameter", 
+            			content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response deleteQuoteVersion(@Parameter(description = "quote code attached to quote version", required = false) @PathParam("quoteCode") String quoteCode, 
+    									@Parameter(description = "quote version number", required = false) @PathParam("quoteVersion") int quoteVersion, @Context UriInfo info);
     
     /**
      * Delete a product quote item.

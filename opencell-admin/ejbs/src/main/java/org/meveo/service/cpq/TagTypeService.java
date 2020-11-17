@@ -2,14 +2,11 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.tags.TagType;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.cpq.exception.TagException;
-import org.meveo.service.cpq.exception.TagTypeException;
+import org.meveo.service.base.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TagTypeService extends
-		PersistenceService<TagType> {
+		BusinessService<TagType> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TagTypeService.class);
 	private static final String TAG_TYPE_ATTACHED = "Impossible to remove a type of tag %s, it is attached to tag";
@@ -32,10 +29,9 @@ public class TagTypeService extends
 	@Inject
 	private TagService tagService;
 	
-	public void removeTagType(String codeTagType) throws TagTypeException {
+	public void removeTagType(String codeTagType) {
 		LOGGER.info("removing tag type {}", codeTagType);
 		boolean isTagTypeAttached;
-		try {
 			TagType tag = this.findByCode(codeTagType);
 			if(tag == null) {
 				throw new EntityDoesNotExistsException(String.format(UNKNOWN_TAG_TYPE, codeTagType));
@@ -43,26 +39,10 @@ public class TagTypeService extends
 			isTagTypeAttached = this.tagService.isTagTypeExist(tag.getId());
 			if(isTagTypeAttached) {
 				LOGGER.warn("Impossible to remove  tag type {}, because it attached to a tag", codeTagType);
-				throw new TagTypeException(String.format(TAG_TYPE_ATTACHED, codeTagType));
+				throw new BusinessException(String.format(TAG_TYPE_ATTACHED, codeTagType));
 			}
 			this.remove(tag.getId());
-		} catch (TagException e) {
-			LOGGER.error("Error while removing tag type {}", codeTagType);
-			throw new TagTypeException(e);
-		}
 	}
 	
 
-	/**
-	 * @param code
-	 * @return
-	 * @throws TagTypeException
-	 */
-	public TagType findByCode(String code) throws TagTypeException {
-		try {
-			return(TagType) getEntityManager().createNamedQuery("TagType.findByCode").setParameter("code", code).getSingleResult();
-		}catch(NoResultException e) {
-			throw new TagTypeException(String.format(UNKNOWN_TAG_TYPE, code));
-		}
-	}
 }
