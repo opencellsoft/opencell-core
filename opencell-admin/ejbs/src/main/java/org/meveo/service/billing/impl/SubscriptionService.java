@@ -20,11 +20,8 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -43,6 +40,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -792,13 +790,25 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
-        try {
-            return  getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
-                    .setParameter("code", subscriptionCode.toLowerCase())
-                    .setParameter("validityDate", date)
-                    .getSingleResult();
-        } catch (NoResultException exp) {
+        List<Subscription> subscriptions = getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", subscriptionCode.toLowerCase())
+                .setParameter("validityDate", date)
+                .getResultList();
+
+        if(subscriptions.isEmpty())
             return null;
+
+        Optional<Subscription> activeSubscription = subscriptions.stream()
+                .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus()))
+                .findFirst();
+
+        if (activeSubscription.isPresent())
+            return activeSubscription.get();
+        else {
+            return subscriptions.stream()
+                    .sorted(Comparator.<Subscription, Date>comparing(a -> a.getAuditable().getUpdated()).reversed())
+                    .collect(Collectors.toList())
+                    .get(0);
         }
     }
 
