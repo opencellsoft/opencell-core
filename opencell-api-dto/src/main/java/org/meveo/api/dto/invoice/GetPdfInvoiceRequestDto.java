@@ -40,7 +40,7 @@ public class GetPdfInvoiceRequestDto extends BaseEntityDto {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "id")
-    private long invoiceId;
+    private Long invoiceId;
     
     /** The invoice number. */
     private String invoiceNumber;
@@ -111,11 +111,11 @@ public class GetPdfInvoiceRequestDto extends BaseEntityDto {
         this.generatePdf = generatePdf;
     }
 
-    public long getInvoiceId() {
+    public Long getInvoiceId() {
         return invoiceId;
     }
 
-    public void setInvoiceId(long invoiceId) {
+    public void setInvoiceId(Long invoiceId) {
         this.invoiceId = invoiceId;
     }
 
