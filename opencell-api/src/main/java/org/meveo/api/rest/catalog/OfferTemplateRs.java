@@ -18,17 +18,7 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,6 +33,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
@@ -50,9 +41,21 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OfferTemplate}.
@@ -80,13 +83,45 @@ public interface OfferTemplateRs extends IBaseRs {
 			description=" Create offer template.  ",
 			operationId="    POST_OfferTemplate_create",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(
+						responseCode = "200",
+						description=" Request processing status ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+						),
+				@ApiResponse(
+								responseCode = "302", 
+								description = "Offer template already existe", 
+								content = @Content(
+											schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+				@ApiResponse(
+								responseCode = "400", 
+								description = "An offer with period date from and to  already exist ", 
+								content = @Content(
+											schema = @Schema(implementation = InvalidParameterException.class))),
+				@ApiResponse(
+								responseCode = "412", 
+								description = "code of Offer template is missing / imagePath is missing", 
+								content = @Content(
+											schema = @Schema(
+													implementation = MissingParameterException.class))),
+				@ApiResponse(
+								responseCode = "404", 
+								description = "one of these entities doesn't exist : BusinessOfferModel, OfferTemplateCategory, "
+											+ "ScriptInstance, Seller, Channel, OneShotChargeTemplate, CustomerCategory", 
+								content = @Content(
+											schema = @Schema(
+														implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+								responseCode = "400", 
+								description = "Failed creating/deleting image", 
+								content = @Content(
+											schema = @Schema(
+														implementation = InvalidImageData.class)))
+				}
 	)
     ActionStatus create(OfferTemplateDto postData);
 
@@ -104,13 +139,43 @@ public interface OfferTemplateRs extends IBaseRs {
 			description=" Update offer template.  ",
 			operationId="    PUT_OfferTemplate_update",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(responseCode = "200", description=" Request processing status ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+								responseCode = "302", 
+								description = "Offer template already existe", 
+								content = @Content(
+											schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+				@ApiResponse(
+								responseCode = "400", 
+								description = "An offer with period date from and to  already exist ", 
+								content = @Content(
+											schema = @Schema(implementation = InvalidParameterException.class))),
+				@ApiResponse(
+								responseCode = "412", 
+								description = "code of Offer template is missing / imagePath is missing", 
+								content = @Content(
+											schema = @Schema(
+													implementation = MissingParameterException.class))),
+				@ApiResponse(
+								responseCode = "404", 
+								description = "one of these entities doesn't exist : BusinessOfferModel, OfferTemplateCategory, "
+											+ "ScriptInstance, Seller, Channel, OneShotChargeTemplate, CustomerCategory", 
+								content = @Content(
+											schema = @Schema(
+														implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+								responseCode = "400", 
+								description = "Failed creating/deleting image", 
+								content = @Content(
+											schema = @Schema(
+														implementation = InvalidImageData.class)))
+				}
 	)
     ActionStatus update(OfferTemplateDto postData);
 
@@ -142,7 +207,20 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= GetOfferTemplateResponseDto.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "offerTemplateCode paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "Entity OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class)))
+				}
 	)
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
@@ -182,7 +260,13 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= GetListOfferTemplateResponseDto.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "some field doesn't have a valid field name", 
+						content = @Content(
+									schema = @Schema(implementation = InvalidParameterException.class)))	
+			}
 	)
     public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
             @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
@@ -210,7 +294,13 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= GetListOfferTemplateResponseDto.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "some field doesn't have a valid field name", 
+						content = @Content(
+									schema = @Schema(implementation = InvalidParameterException.class)))	
+			}
 	)
     public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
     
@@ -228,7 +318,12 @@ public interface OfferTemplateRs extends IBaseRs {
     description ="if billingAccountCode is given, this API returns all commercial offers available for a customer taking into account the customer context (filtering rules associated to the offer tags);",
     responses = {
             @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListOfferTemplateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+			@ApiResponse(
+					responseCode = "400", 
+					description = "some field doesn't have a valid field name", 
+					content = @Content(
+								schema = @Schema(implementation = InvalidParameterException.class)))	
     })
     public Response listPost(@Parameter(description = "The customer context information", required = false) CustomerContextDTO customerContextDTO);
 
@@ -254,7 +349,21 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "offerTemplateCode paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class)))
+				
+			}
 	)
     ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
@@ -305,7 +414,26 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "code paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while enabling offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))
+			}
 	)
     ActionStatus enable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
@@ -331,7 +459,26 @@ public interface OfferTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "code paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while enabling offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))	
+			}
 	)
     ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
