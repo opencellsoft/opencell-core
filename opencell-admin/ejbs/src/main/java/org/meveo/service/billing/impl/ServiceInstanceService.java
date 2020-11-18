@@ -861,14 +861,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ServiceInstance> listServiceInstance(String subscriptionCode, Date subscriptionValidityDate, String serviceInstanceCode) {
+    public List<ServiceInstance> listServiceInstance(Long subscriptionId, String serviceInstanceCode) {
         List<ServiceInstance> serviceInstances = null;
         try {
-            serviceInstanceCode = getEntityManager().createNamedQuery("ServiceInstance.findByServiceCodeAndSubscriptionCodeAndValidity", ServiceInstance)
-                    .setParameter("code", serviceInstanceCode.toLowerCase())
-                    .setParameter("subscriptionCode", subscriptionCode.toLowerCase())
-                    .setParameter("subscriptionValidityDate", subscriptionValidityDate)
-                    .getResultList();
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", serviceInstanceCode, true);
+            qb.addValueIsEqualToField("c.subscription.id", subscriptionId, false, false);
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", serviceInstanceCode, serviceInstances != null });
 
         } catch (NoResultException nre) {
