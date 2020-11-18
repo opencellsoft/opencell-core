@@ -4022,6 +4022,106 @@ END $$;]]>
 			    
        </changeSet>
     
+      <changeSet id="#5569_54052_20201117" author="TarikFAKHOURI">
+	         <sql>ALTER TABLE ${db.schema.adapted}ord_quote RENAME COLUMN billing_account_id TO appliquant_account_id;</sql>   
+             
+			<addColumn tableName="ord_quote">
+	            <column name="billable_account_id" type="bigint" />
+	        </addColumn>
+	        
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="ord_quote" constraintName="fk_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	            
+	        
+			<addColumn tableName="cpq_quote_product">
+	            <column name="billable_account_id" type="bigint" />
+	        </addColumn>    
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_product" constraintName="fk_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	            
+	         
+        	<createSequence sequenceName="cpq_quote_article_line_seq" />
+        	
+	    	<createTable tableName="cpq_quote_article_line">
+	    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_article_line_pkey" />
+	            </column>
+	            <column name="code" type="varchar(255)">
+	                <constraints nullable="false" unique="true" />
+	            </column>
+	            <column name="description" type="varchar(255)" />  
+	            <column name="version" type="int4" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="updater" type="varchar(100)" />
+	             
+	            <column name="quote_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>  
+	            <column name="quote_version_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>   
+	            <column name="quote_customer_service_id" type="bigint">
+	                <constraints nullable="false" />
+	            </column>  
+	            <column name="billable_account_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column> 
+	            <column name="accounting_article_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>  
+            	<column name="quantity" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column> 
+            	<column name="quantity_service" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column>  
+	            <column name="os_unit_price_without_tax" type="numeric(23, 12)" /> 
+	            <column name="os_price_without_tax" type="numeric(23, 12)" /> 
+	            <column name="os_tax_code" type="numeric(23, 12)" /> 
+	            <column name="os_tax_rate" type="INT4" /> 
+	            <column name="os_price_with_tax" type="numeric(23, 12)" /> 
+	            <column name="rc_unit_price_without_tax" type="numeric(23, 12)" /> 
+	            <column name="rc_price_without_tax" type="numeric(23, 12)" /> 
+	            <column name="rc_tax_code" type="numeric(23, 12)" /> 
+	            <column name="rc_tax_rate" type="INT4" /> 
+	            <column name="rc_price_with_tax" type="numeric(23, 12)" /> 
+	    	</createTable>
+    	
+	        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_accounting_article_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
+	          
+			<addColumn tableName="ord_quote_item">
+	            <column name="quote_article_line_id" type="bigint">
+	            	<constraints nullable="false"/>
+	            </column>
+	        </addColumn>    
+	        <addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_quote_article_line_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	         
+			<addColumn tableName="ord_quote_item">
+	            <column name="product_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </addColumn>    
+	        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+     	</changeSet>
     <!-- end MediaPost -->
     
 </databaseChangeLog>
