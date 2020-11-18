@@ -297,12 +297,16 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     private AccountingArticle accountingArticle;
     
 
-    @Column(name = "sequence")
-    protected Integer sequence;
-
-    @Column(name = "display", nullable = false)
-    @NotNull
-    protected Boolean display;
+//    @Column(name = "sequence")
+//    protected Integer sequence;
+//
+//	  /**
+//     * Display
+//     */
+//    @Type(type = "numeric_boolean")
+//    @Column(name = "display")
+//    @NotNull
+//    protected Boolean display;
     
     
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {

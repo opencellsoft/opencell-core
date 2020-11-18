@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 
 /**
@@ -38,16 +39,24 @@ public class GroupedService extends BusinessEntity {
 	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product product;
 
-	@Column(name = "mandatory", nullable = false)
-	@NotNull
-	private Boolean mandatory;
+//	  /**
+//     * Mandatory
+//     */
+//    @Type(type = "numeric_boolean")
+//    @Column(name = "mandatory")
+//    @NotNull
+//    protected Boolean mandatory;
+//
+//	  /**
+//     * Display
+//     */
+//    @Type(type = "numeric_boolean")
+//    @Column(name = "display")
+//    @NotNull
+//    protected Boolean display;
 
-	@Column(name = "display", nullable = false)
-	@NotNull
-	private Boolean display;
-
-    @Column(name = "sequence")
-    private Integer sequence;
+//    @Column(name = "sequence")
+//    private Integer sequence;
 	/**
 	 * @return the product
 	 */
@@ -64,20 +73,6 @@ public class GroupedService extends BusinessEntity {
 	}
 
 
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
 	
 	 
 	
