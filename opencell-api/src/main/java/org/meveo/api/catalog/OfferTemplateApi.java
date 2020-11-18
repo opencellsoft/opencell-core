@@ -41,6 +41,7 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -621,8 +622,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return list(code, validFrom, validTo, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 
-    public GetListOfferTemplateResponseDto list(String baCode,List<String> commercialWallet,PagingAndFiltering pagingAndFiltering) {
-    	BillingAccount ba=billingAccountService.findByCode(baCode);
+    public GetListOfferTemplateResponseDto list(CustomerContextDTO customerContextDto) {
+    	String billingAccountCode=customerContextDto.getBillingAccountCode();
+    	BillingAccount ba=billingAccountService.findByCode(billingAccountCode);
     	GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto(); 
     	List<String> tagCodes=new ArrayList<String>();
 
@@ -635,16 +637,19 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     		}}
     	HashSet<String> resultBaTag = new HashSet<String>();
     	resultBaTag.addAll(tagCodes);
+    	List<String> commercialWallet=customerContextDto.getSellerWallet();
     	resultBaTag.addAll(commercialWallet);
     	log.info("OfferTemplateApi.list resultBaTag={}",resultBaTag); 
+    	String tags=null;
     	if (!resultBaTag.isEmpty()) {
-    		String tags=resultBaTag.stream().collect(Collectors.joining(","));
+    		 tags=resultBaTag.stream().collect(Collectors.joining(","));
+    	}
     		log.info("OfferTemplateApi.list tags={}",tags);
+    		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
     		if(pagingAndFiltering==null) {
     		 pagingAndFiltering=new PagingAndFiltering();
     		}
-    		pagingAndFiltering.addFilter("inList tags", tags); 
-    	} 
+    		pagingAndFiltering.addFilter("inList tags", tags);
     	PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, OfferTemplate.class);
     	Long totalCount = offerTemplateService.count(paginationConfig); 
     	result.setPaging(pagingAndFiltering);

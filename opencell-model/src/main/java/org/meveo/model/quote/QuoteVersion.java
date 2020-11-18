@@ -87,10 +87,11 @@ public class QuoteVersion extends BaseEntity{
 	@Column(name = "billing_plan_code", length = 20)
 	@Size(max = 20)
 	private String billingPlanCode;
-
-	@Column(name = "description_short")
-	@Lob
-	private String shortDescription;
+ 
+    @Column(name = "short_description", nullable = true, length = 255)
+    @Size(max = 255)
+    @NotNull
+    private String shortDescription;
 	/**
 	 * @return the quoteVersion
 	 */

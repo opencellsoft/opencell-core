@@ -3937,6 +3937,12 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />  
        </changeSet>
        
+          <changeSet id="#5595_49_20201118" author="Mbarek-Ay">
+        <addColumn tableName="cpq_quote_version">
+            <column name="short_description" type="varchar(255)"/> 
+        </addColumn>
+        </changeSet>
+       
        
         <changeSet id="#48-20201111" author="Mbarek-Ay">
         <addColumn tableName="cpq_tag">

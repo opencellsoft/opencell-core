@@ -30,6 +30,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
@@ -130,13 +131,13 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
     
 	@Override
-	public Response listPost(String billingAccountCode,List<String> commercialWallet, PagingAndFiltering pagingAndFiltering) {
+	public Response listPost(CustomerContextDTO customerContextDto) {
 		 GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
 	        try {
 	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 
 	        	 * pagination/filetring crieria and also BA trading rules and tags ***////
-	            result = (offerTemplateApi.list(billingAccountCode, commercialWallet, pagingAndFiltering));
+	            result = (offerTemplateApi.list(customerContextDto));
 	        } catch (Exception e) {
 	            processException(e, result.getActionStatus());
 	        }
