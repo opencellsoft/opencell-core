@@ -18,11 +18,16 @@
 
 package org.meveo.security.keycloak;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
@@ -222,4 +227,31 @@ public class CurrentUserProvider {
         currentTenant.remove();
         currentTenant.set(tenantName);
     }
+
+    /**
+     * Get roles by application. Applies to Keycloak implementation only.
+     * 
+     * @param currentUser Currently logged-in user
+     * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains
+     *         a mix or realm roles, client roles, roles defined in opencell and their resolution to permissions.
+     */
+    public Map<String, Set<String>> getRolesByApplication(MeveoUser currentUser) {
+
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            Map<String, Set<String>> rolesByApplication = MeveoUserKeyCloakImpl.getRolesByApplication(ctx);
+
+            // Supplement admin application roles with ones resolved in a current user,
+            String adminClientName = System.getProperty("opencell.keycloak.client");
+            Set<String> adminRoles = rolesByApplication.get(adminClientName);
+            if (adminRoles == null) {
+                adminRoles = new HashSet<String>();
+            }
+            adminRoles.addAll(currentUser.getRoles());
+            rolesByApplication.put(adminClientName, adminRoles);
+
+            return rolesByApplication;
+        }
+        return null;
+    }
+
 }

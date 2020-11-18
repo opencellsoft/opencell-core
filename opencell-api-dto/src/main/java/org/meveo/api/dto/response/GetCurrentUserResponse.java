@@ -22,28 +22,32 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.CurrentUserDto;
 
 /**
- * The Class GetUserResponse.
+ * The Class GetCurrentUserResponse.
  *
  * @author Edward P. Legaspi
  */
 @XmlRootElement(name = "GetUserResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetUserResponse extends BaseResponse {
+public class GetCurrentUserResponse extends BaseResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6212357569361512794L;
 
     /** The user. */
-    private UserDto user;
+    private CurrentUserDto user;
 
     /**
      * Instantiates a new gets the user response.
      */
-    public GetUserResponse() {
+    public GetCurrentUserResponse() {
         super();
+    }
+
+    public GetCurrentUserResponse(CurrentUserDto user) {
+        this.user = user;
     }
 
     /**
@@ -51,7 +55,7 @@ public class GetUserResponse extends BaseResponse {
      *
      * @return the user
      */
-    public UserDto getUser() {
+    public CurrentUserDto getUser() {
         return user;
     }
 
@@ -60,12 +64,7 @@ public class GetUserResponse extends BaseResponse {
      *
      * @param user the new user
      */
-    public void setUser(UserDto user) {
+    public void setUser(CurrentUserDto user) {
         this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return "GetUserResponse [user=" + user + "]";
     }
 }
