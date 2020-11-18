@@ -31,6 +31,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
@@ -38,6 +39,11 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
@@ -76,13 +82,44 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Create a new service template.  ",
 			operationId="    POST_ServiceTemplate_create",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(responseCode = "200", description=" Request processing status ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "one of these fields is missing : code, renewalInfo/initillyActiveForUnit, renewalInfo/endOfTermAction, "
+									+ "renewalInfo/renewFor, renewalInfo/renewForUnit, renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "302", 
+						description = "ServiceTemplateService already existe", 
+						content = @Content(
+									schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "one of these entities doesn't exist : Calendar, BusinessServiceModel, OneShotChargeTemplate", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidParameterException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Failed creating/deleting image", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidImageData.class)))
+				}
 	)
     ActionStatus create(ServiceTemplateDto postData);
 
@@ -100,13 +137,43 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Update an existing service template.  ",
 			operationId="    PUT_ServiceTemplate_update",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(responseCode = "200", description=" Request processing status ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "one of these fields is missing : code, renewalInfo/initillyActiveForUnit, renewalInfo/endOfTermAction, "
+									+ "renewalInfo/renewFor, renewalInfo/renewForUnit, renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "302", 
+						description = "ServiceTemplateService already existe", 
+						content = @Content(
+									schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "one of these entities doesn't exist : Calendar, BusinessServiceModel, OneShotChargeTemplate", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidParameterException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Failed creating/deleting image", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidImageData.class)))}
 	)
     ActionStatus update(ServiceTemplateDto postData);
 
@@ -131,7 +198,21 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= GetServiceTemplateResponseDto.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "serviceTemplateCode is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				
+				@ApiResponse(
+						responseCode = "404", 
+						description = "ServiceTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class)))
+			}
 	)
     GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -156,7 +237,20 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "serviceTemplateCode is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "ServiceTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class)))
+			}
 	)
     ActionStatus remove(@PathParam("serviceTemplateCode") String serviceTemplateCode);
 
@@ -180,7 +274,37 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "one of these fields is missing : code, renewalInfo/initillyActiveForUnit, renewalInfo/endOfTermAction, "
+									+ "renewalInfo/renewFor, renewalInfo/renewForUnit, renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "302", 
+						description = "ServiceTemplateService already existe", 
+						content = @Content(
+									schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "one of these entities doesn't exist : Calendar, BusinessServiceModel, OneShotChargeTemplate", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "renewalInfo/terminationReason", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidParameterException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Failed creating/deleting image", 
+						content = @Content(
+									schema = @Schema(
+												implementation = InvalidImageData.class)))}
 	)
     ActionStatus createOrUpdate(ServiceTemplateDto postData);
 
@@ -204,7 +328,26 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "code paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while enabling offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))	
+			}
 	)
     ActionStatus enable(@PathParam("code") String code);
 
@@ -228,7 +371,26 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= ActionStatus.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "code paramter is missing", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "404", 
+						description = "OfferTemplate doesn't exist", 
+						content = @Content(
+									schema = @Schema(
+												implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while enabling offer template ", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))	
+			}
 	)
     ActionStatus disable(@PathParam("code") String code);
     
@@ -251,7 +413,13 @@ public interface ServiceTemplateRs extends IBaseRs {
 											implementation= GetListServiceTemplateResponseDto.class
 											)
 								)
-				)}
+				),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "some field doesn't have a valid field name", 
+						content = @Content(
+									schema = @Schema(implementation = InvalidParameterException.class)))
+				}
 	)
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
     
