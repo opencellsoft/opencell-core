@@ -5,6 +5,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -27,6 +28,27 @@ import java.util.concurrent.Future;
  */
 @Stateless
 public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
+
+    private static final String CREATE_TABLE_AMEND_STATS = "create table if not exists amend_stat (\n" +
+            "    wo_id bigint NOT NULL,\n" +
+            "    sub_id bigint,\n" +
+            "    canceled_qt numeric(23, 12),\n" +
+            "    new_qt numeric(23, 12),\n" +
+            "    restored_qt numeric(23, 12),\n" +
+            "    nbr_overs integer,\n" +
+            "    overs_ids text,\n" +
+            "    overs_qt numeric(23, 12),\n" +
+            "    overs_new_qt numeric(23, 12),\n" +
+            "    time_op timestamp,\n" +
+            "    cn_qt numeric(23, 12),\n" +
+            "    cn_new_qt numeric(23, 12),\n" +
+            "    offer_id bigint,\n" +
+            "    start_month timestamp,\n" +
+            "    end_month timestamp,\n" +
+            "    all_overs integer,\n" +
+            "    instant varchar,\n" +
+            "    PRIMARY KEY (wo_id)\n" +
+            ")";
 
     private static final String OFFERS_WITH_DUPLICATED_WO_QUERY = "select distinct wo.offer_id\n" +
             "from billing_wallet_operation wo\n" +
@@ -58,7 +80,7 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @SuppressWarnings("unchecked")
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance, String activateStats) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
@@ -86,7 +108,7 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures.add(amendDuplicateConsumptionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(amendDuplicateConsumptionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser, activateStats));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -114,6 +136,15 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
 
         } catch (Exception e) {
             log.error("Failed to amend canceled duplicated WOs from Pools", e);
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createStatsTable(String activateStats) {
+        if ("TRUE".equalsIgnoreCase(activateStats)) {
+            emWrapper.getEntityManager().createNativeQuery(CREATE_TABLE_AMEND_STATS)
+                    .executeUpdate();
         }
     }
 }

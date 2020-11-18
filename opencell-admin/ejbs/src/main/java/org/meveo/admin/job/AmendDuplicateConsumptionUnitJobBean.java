@@ -88,54 +88,66 @@ public class AmendDuplicateConsumptionUnitJobBean {
     @SuppressWarnings({"unchecked"})
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long canceledWOId) throws BusinessException {
+    public void execute(JobExecutionResultImpl result, Long canceledWOId, String activateStats) throws BusinessException {
         log.info("Cancel consumption of a duplicated WOId={}", canceledWOId);
-        AuditWOCancelation audit = new AuditWOCancelation();
+        AuditWOCancelation audit = null;
         try {
+            boolean statsActivated = "TRUE".equalsIgnoreCase(activateStats);
+
             WalletOperation canceledWO = walletOperationService.findById(canceledWOId);
             //trace
-            audit.woId = canceledWO.getId();
-            audit.subId = canceledWO.getSubscription().getId();
-            audit.offerId = canceledWO.getOfferTemplate().getId();
-            audit.originCanceledQT = canceledWO.getQuantity();
+            if (statsActivated) {
+                audit = new AuditWOCancelation();
+                audit.woId = canceledWO.getId();
+                audit.subId = canceledWO.getSubscription().getId();
+                audit.offerId = canceledWO.getOfferTemplate().getId();
+                audit.originCanceledQT = canceledWO.getQuantity();
 
-            //trace
+            }
+
             List<WalletOperation> overageWOList = getOverageWalletOperationList(canceledWO, audit);
-            audit.allOvers = overageWOList.size();
+            if (statsActivated) {
+                audit.allOvers = overageWOList.size();
+            }
 
             BigDecimal quantityToRestore;
             if (overageWOList.isEmpty()) {
                 quantityToRestore = canceledWO.getQuantity();
                 //trace
-                audit.nbrOfOvers = 0;
-                audit.oversIds = "no_adjustement";
-                audit.originOversQT = BigDecimal.ZERO;
-                audit.newOversQT = BigDecimal.ZERO;
-
+                if (statsActivated) {
+                    audit.nbrOfOvers = 0;
+                    audit.oversIds = "no_adjustement";
+                    audit.originOversQT = BigDecimal.ZERO;
+                    audit.newOversQT = BigDecimal.ZERO;
+                }
             } else {
-                //trace
-                quantityToRestore = adjustOverageWOQuantities(canceledWO, overageWOList, audit);
+                quantityToRestore = adjustOverageWOQuantities(canceledWO, overageWOList, audit, statsActivated);
             }
-            audit.restoredQT = quantityToRestore;
+            //trace
+            if (statsActivated) {
+                audit.restoredQT = quantityToRestore;
+            }
+            // restore the canceled QT which rest after adjusting Overage WO to counter or pool
             restoreQuantityToCounterOrPool(canceledWO, quantityToRestore, audit);
 
             // in case of WO deducted from counter
             // also reajuste canceled WO's quantity and put it to OPEN
             if (canceledWO.getCounter() != null) {
                 canceledWO.setQuantity(canceledWO.getQuantity().subtract(quantityToRestore));
-                //trace
                 canceledWO.setStatus(WalletOperationStatusEnum.OPEN);
                 canceledWO.setParameter3("AMENDED_FROM_COUNTER");
             } else {
                 canceledWO.setParameter3("AMENDED_FROM_POOL");
             }
-            //trace
-            audit.newQT = canceledWO.getQuantity();
             walletOperationService.update(canceledWO);
 
-            audit.trace();
-            result.registerSucces();
+            //trace
+            if (statsActivated) {
+                audit.newQT = canceledWO.getQuantity();
+                audit.trace();
+            }
 
+            result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to cancel the deduction from pool of a duplicated WalletOperationId={}: {}", canceledWOId, e);
             result.registerError("Error on duplicated processing WOId="+ canceledWOId + ": " +e.getMessage());
@@ -156,8 +168,11 @@ public class AmendDuplicateConsumptionUnitJobBean {
         calendar.set(year, month, lastDayOfMonth, 23, 59, 59);
         Date endMonth = calendar.getTime();
 
-        audit.startMonth = startMonth;
-        audit.endMonth = endMonth;
+        //trace
+        if (audit != null) {
+            audit.startMonth = startMonth;
+            audit.endMonth = endMonth;
+        }
 
         if (canceledWO.getCounter() != null) {
             return emWrapper.getEntityManager().createQuery(COUNTER_OVERAGE_WO_QUERY, WalletOperation.class)
@@ -220,7 +235,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
     }
 
     @SuppressWarnings("unchecked")
-    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<WalletOperation> overageWOs, AuditWOCancelation audit) {
+    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<WalletOperation> overageWOs,
+                                                 AuditWOCancelation audit, boolean statsActivated) {
         BigDecimal canceledQuantity = canceledWO.getQuantity();
 
         int nbrOfOvers = 0;
@@ -284,21 +300,24 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
                 // the whole canceled quantity is deducted from Overage WO
                 // so we return ZERO
-                audit.nbrOfOvers = nbrOfOvers;
-                audit.oversIds = oversIds;
-                audit.originOversQT = originOversQT;
-                audit.newOversQT = newOversQT;
-
+                if (statsActivated) {
+                    audit.nbrOfOvers = nbrOfOvers;
+                    audit.oversIds = oversIds;
+                    audit.originOversQT = originOversQT;
+                    audit.newOversQT = newOversQT;
+                }
                 return BigDecimal.ZERO;
             }
         }
 
         // return the rest of canceled quantity which still here
         // even we deducted it from all overage WOs which became all with zero
-        audit.nbrOfOvers = nbrOfOvers;
-        audit.oversIds = oversIds;
-        audit.originOversQT = originOversQT;
-        audit.newOversQT = newOversQT;
+        if (statsActivated) {
+            audit.nbrOfOvers = nbrOfOvers;
+            audit.oversIds = oversIds;
+            audit.originOversQT = originOversQT;
+            audit.newOversQT = newOversQT;
+        }
         return canceledQuantity;
     }
 

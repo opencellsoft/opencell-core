@@ -51,7 +51,7 @@ public class AmendDuplicateConsumptionAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser, String activateStats) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         log.info("Start amend new group of canceled duplicated WO thread to process. WorkSet of offers={}", offerIds.size());
@@ -71,7 +71,7 @@ public class AmendDuplicateConsumptionAsync {
                 if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                amendDuplicateConsumptionUnitJobBean.execute(result, walletOperationId.longValue());
+                amendDuplicateConsumptionUnitJobBean.execute(result, walletOperationId.longValue(), activateStats);
             }
 
         }

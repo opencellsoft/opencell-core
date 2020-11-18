@@ -48,7 +48,9 @@ public class AmendDuplicateConsumptionJob extends Job {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        amendDuplicateConsumptionJobBean.execute(result, jobInstance);
+        String activateStats = (String) appProvider.getCfValue("activateAmendConsoStats");
+        amendDuplicateConsumptionJobBean.createStatsTable(activateStats);
+        amendDuplicateConsumptionJobBean.execute(result, jobInstance, activateStats);
     }
 
     @Override
