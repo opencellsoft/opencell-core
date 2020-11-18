@@ -1880,14 +1880,14 @@ public class SubscriptionApi extends BaseApi {
         return result;
     }
 
-    public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode, String orderCode) throws MeveoApiException, BusinessException {
+    public DueDateDelayDto getDueDateDelay(String subscriptionCode, Date subscriptionValidityDate, String invoiceNumber, String invoiceTypeCode, String orderCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
 
         handleMissingParameters();
@@ -2124,7 +2124,12 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, subscriptionValidityDate ,serviceInstanceCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
+
+        if(subscription == null)
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
+
+        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscription.getId() ,serviceInstanceCode);
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
             result = serviceInstances.stream().map(p -> serviceInstanceToDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), CustomFieldInheritanceEnum.INHERIT_NO_MERGE))
                     .collect(Collectors.toList());
@@ -2157,12 +2162,16 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("rateUntilDate", String.valueOf(rateUntillDate));
         }
 
+
         handleMissingParameters();
 
         RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscriptionCode(), postData.getSubscriptionValidityDate());
+        if(subscription == null)
+            return result;
 
         // Recurring charges :
-        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode);
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscription.getId());
         for (Long chargeId : activeRecurringChargeIds) {
             int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false).getNbRating();
             result.addResult(chargeId, nbRating);
@@ -2192,14 +2201,14 @@ public class SubscriptionApi extends BaseApi {
         subscriptionService.activateInstantiatedService(subscription);
     }
 
-    public void cancelSubscriptionRenewal(String subscriptionCode) throws MeveoApiException, BusinessException {
+    public void cancelSubscriptionRenewal(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
@@ -2222,9 +2231,9 @@ public class SubscriptionApi extends BaseApi {
         this.handleMissingParameters();
 
         // Checking if Subscription exist :
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, postData.getSubscriptionValidityDate());
         }
         // Checking if Customer exist :
         Customer customer = this.customerService.findByCode(customerCode);
@@ -2284,6 +2293,7 @@ public class SubscriptionApi extends BaseApi {
         ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
         activateServicesRequestDto.setServicesToActivateDto(postData.getServicesToActivateDto());
         activateServicesRequestDto.setSubscription(postData.getCode());
+        activateServicesRequestDto.setSubscriptionValidityDate(postData.getValidityDate());
 
         this.create(postData);
         this.activateServices(activateServicesRequestDto);
