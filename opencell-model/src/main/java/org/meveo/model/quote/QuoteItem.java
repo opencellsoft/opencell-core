@@ -47,6 +47,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
@@ -158,10 +159,10 @@ public class QuoteItem extends BusinessEntity {
 
     /**
      * Quantity subscribed
-     */
+     
     @Column(name = "quantity", precision = 23, scale = 12, nullable = false)
     @NotNull
-    private BigDecimal quantity = BigDecimal.ONE;
+    private BigDecimal quantity = BigDecimal.ONE;*/
     
     /**
      * service type
@@ -178,9 +179,9 @@ public class QuoteItem extends BusinessEntity {
     
     /**
      * OS_UNIT_PRICE_WITHOUT_TAX
-     */
+     
     @Column(name = "os_unite_price_without_tax", precision = 23, scale = 12)
-    private BigDecimal osUnitPriceWithoutTax;
+    private BigDecimal osUnitPriceWithoutTax;*/
 
     /**
      * OS_PRICE_WITHOUT_TAX
@@ -247,6 +248,17 @@ public class QuoteItem extends BusinessEntity {
      */
     @Column(name = "rc_price_with_tax", precision = 23, scale = 12)
     private BigDecimal rcPriceWithTax;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_article_line_id", nullable = false, referencedColumnName = "id")
+	@NotNull
+    private QuoteArticleLine quoteArticleLine;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
+	@NotNull
+    private Product product;
+    
     public Quote getQuote() {
         return quote;
     }
@@ -407,20 +419,6 @@ public class QuoteItem extends BusinessEntity {
 	}
 
 	/**
-	 * @return the quantity
-	 */
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
-
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-
-	/**
 	 * @return the serviceType
 	 */
 	public Integer getServiceType() {
@@ -448,19 +446,6 @@ public class QuoteItem extends BusinessEntity {
 		this.value = value;
 	}
 
-	/**
-	 * @return the osUnitPriceWithoutTax
-	 */
-	public BigDecimal getOsUnitPriceWithoutTax() {
-		return osUnitPriceWithoutTax;
-	}
-
-	/**
-	 * @param osUnitPriceWithoutTax the osUnitPriceWithoutTax to set
-	 */
-	public void setOsUnitPriceWithoutTax(BigDecimal osUnitPriceWithoutTax) {
-		this.osUnitPriceWithoutTax = osUnitPriceWithoutTax;
-	}
 
 	/**
 	 * @return the osPriceWithoutTax
@@ -628,6 +613,34 @@ public class QuoteItem extends BusinessEntity {
 	 */
 	public void setQuoteCustomerService(QuoteCustomerService quoteCustomerService) {
 		this.quoteCustomerService = quoteCustomerService;
+	}
+
+	/**
+	 * @return the quoteArticleLine
+	 */
+	public QuoteArticleLine getQuoteArticleLine() {
+		return quoteArticleLine;
+	}
+
+	/**
+	 * @param quoteArticleLine the quoteArticleLine to set
+	 */
+	public void setQuoteArticleLine(QuoteArticleLine quoteArticleLine) {
+		this.quoteArticleLine = quoteArticleLine;
+	}
+
+	/**
+	 * @return the product
+	 */
+	public Product getProduct() {
+		return product;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 }

@@ -3897,6 +3897,8 @@
             <column name="initial_term_type" type="varchar(20)" />
             <column name="auto_end_of_engagement" type="${type.boolean}" />
             <column name="auto_renew_date" type="datetime" />
+            <column name="sequence" type="INT4" />
+            <column name="display" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-228">
@@ -6238,6 +6240,8 @@
             <column name="contact_name" type="varchar(52)" />
             <column name="register_number" type="varchar(50)" />
             <column name="sales_person_name" type="varchar(52)" />
+<!--             <column name="billable_account_id" type="varchar(50)" /> -->
+<!--             <column name="appliquant_account_id" type="varchar(50)" /> -->
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-346">
@@ -6289,14 +6293,10 @@
             <column name="service_code" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
-            <column name="quantity" type="numeric(23, 12)" >
-                <constraints nullable="false" />
-            </column>
             <column name="service_type" type="int4" >
                 <constraints nullable="false" />
             </column>
             <column name="value" type="text" />
-            <column name="os_unite_price_without_tax" type="numeric(23, 12)" />
             <column name="os_price_without_tax" type="numeric(23, 12)" />
             <column name="os_tax_code" type="numeric(23, 12)" />
             
@@ -10490,6 +10490,12 @@ $$ LANGUAGE plpgsql;
 			<column name="updater" type="varchar(100)" />
 			
 			<column name="product_id" type="bigint" /> 
+			<column name="mandatory" type="${type.boolean}" >
+				<constraints nullable="false" />
+			</column>
+			<column name="display" type="${type.boolean}" >
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 	</changeSet>
 	

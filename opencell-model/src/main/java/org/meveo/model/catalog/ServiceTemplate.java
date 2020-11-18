@@ -53,12 +53,10 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
-import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.AccountingArticle;
 import org.meveo.model.cpq.GroupedService;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ServiceType;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -298,6 +296,13 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
     private AccountingArticle accountingArticle;
     
+
+    @Column(name = "sequence")
+    protected Integer sequence;
+
+    @Column(name = "display", nullable = false)
+    @NotNull
+    protected Boolean display;
     
     
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {

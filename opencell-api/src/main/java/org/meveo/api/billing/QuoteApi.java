@@ -1192,7 +1192,6 @@ public class QuoteApi extends BaseApi {
 			quoteItem.setOfferComponent(offerComponentService.findByCode(productQuoteItem.getOfferCode(), productQuoteItem.getId()));
 		}
 		quoteItem.setServiceCode(productQuoteItem.getService().getId());
-		quoteItem.setQuantity(new BigDecimal(productQuoteItem.getQuantity()));
 		quoteItem.setServiceType(productQuoteItem.getServiceType());
 		quoteItem.setValue(productQuoteItem.getValue());
 	

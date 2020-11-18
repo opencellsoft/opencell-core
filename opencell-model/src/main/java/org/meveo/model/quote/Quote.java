@@ -58,7 +58,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
@@ -220,8 +219,8 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 * billingAccount
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id", nullable = false)
-	private BillingAccount billingAccount;
+	@JoinColumn(name = "applicant_account_id", nullable = false)
+	private BillingAccount applicantAccount;
 
 	/**
 	 * contract
@@ -298,6 +297,14 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	@Column(name = "sales_person_name", length = 52)
 	@Size(max = 52)
 	private String salesPersonName;
+	
+
+	/**
+	 * billing account invoice code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billable_account_id")
+	private BillingAccount billableAccount;
     
     public String getExternalId() {
         return externalId;
@@ -493,19 +500,6 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 		this.seller = seller;
 	}
 
-	/**
-	 * @return the billingAccount
-	 */
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
-
-	/**
-	 * @param billingAccount the billingAccount to set
-	 */
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
 
 	/**
 	 * @return the contract
@@ -659,6 +653,41 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 */
 	public void setSalesPersonName(String salesPersonName) {
 		this.salesPersonName = salesPersonName;
+	}
+
+	/**
+	 * @param prestationDuration the prestationDuration to set
+	 */
+	public void setPrestationDuration(Integer prestationDuration) {
+		this.prestationDuration = prestationDuration;
+	}
+
+	/**
+	 * @return the applicantAccount
+	 */
+	public BillingAccount getApplicantAccount() {
+		return applicantAccount;
+	}
+
+	/**
+	 * @param applicantAccount the applicantAccount to set
+	 */
+	public void setApplicantAccount(BillingAccount applicantAccount) {
+		this.applicantAccount = applicantAccount;
+	}
+
+	/**
+	 * @return the billableAccount
+	 */
+	public BillingAccount getBillableAccount() {
+		return billableAccount;
+	}
+
+	/**
+	 * @param billableAccount the billableAccount to set
+	 */
+	public void setBillableAccount(BillingAccount billableAccount) {
+		this.billableAccount = billableAccount;
 	}
 
 }

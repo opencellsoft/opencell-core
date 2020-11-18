@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.offer.OfferComponent;
 
@@ -72,6 +73,10 @@ public class QuoteProduct extends BusinessEntity {
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     private BigDecimal quantity = BigDecimal.ONE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billable_account_id", referencedColumnName = "id")
+    private BillingAccount billableAccount;
 
 	/**
 	 * @return the quote
@@ -155,5 +160,19 @@ public class QuoteProduct extends BusinessEntity {
 	 */
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
+	}
+
+	/**
+	 * @return the billableAccount
+	 */
+	public BillingAccount getBillableAccount() {
+		return billableAccount;
+	}
+
+	/**
+	 * @param billableAccount the billableAccount to set
+	 */
+	public void setBillableAccount(BillingAccount billableAccount) {
+		this.billableAccount = billableAccount;
 	}
 }
