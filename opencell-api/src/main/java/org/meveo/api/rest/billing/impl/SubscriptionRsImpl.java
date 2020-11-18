@@ -18,13 +18,6 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -48,6 +41,12 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -355,11 +354,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode, String orderCode) {
+    public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, Date subscriptionValidityDate, String invoiceNumber, String invoiceTypeCode, String orderCode) {
         GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
 
         try {
-            result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+            result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, subscriptionValidityDate, invoiceNumber, invoiceTypeCode, orderCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -432,11 +431,13 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+    public ActionStatus cancelSubscriptionRenewal(String subscriptionCode, Date subscriptionValidityDate) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+            if(subscriptionValidityDate == null)
+                subscriptionValidityDate = new Date();
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode, subscriptionValidityDate);
         } catch (Exception e) {
             processException(e, result);
         }

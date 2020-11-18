@@ -343,7 +343,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/dueDateDelay")
-    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
+    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
     /**
@@ -383,7 +383,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
-    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode);
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
     /**
      * Create a subscription and activate services in a single transaction.
