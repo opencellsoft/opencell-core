@@ -30,7 +30,7 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
     private Integer id;
     private String label;
 
-    private MeveoJobCategoryEnum(Integer id, String label) {
+    MeveoJobCategoryEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
     }
@@ -55,7 +55,7 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
     }
 
     public String toString() {
-        return label.toString();
+        return label;
     }
 
     public final String getName() {

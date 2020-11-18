@@ -3604,6 +3604,42 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
 
+    <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
+        <addColumn tableName="dunning_document">
+            <column name="status" type="varchar(25)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5587_20201021" author="ZBariki">
+        <createSequence sequenceName="bi_data_collector_seq" startValue="1" />
+        <createTable tableName="bi_data_collector" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="data_collector_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="sql_query" type="text" >
+                <constraints nullable="false" />
+            </column>
+            <column name="custom_table_code" type="varchar(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aliases" type="text" >
+                <constraints nullable="false" />
+            </column>
+            <column name="last_run_date" type="datetime" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
+                             disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
+    </changeSet>
+
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
@@ -3621,5 +3657,5 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
 </databaseChangeLog>

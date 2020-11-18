@@ -142,6 +142,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.PROCESSED);
             } else if (clazzStr.equals(Invoice.class.getName())) {
                 events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
+                events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
             }
