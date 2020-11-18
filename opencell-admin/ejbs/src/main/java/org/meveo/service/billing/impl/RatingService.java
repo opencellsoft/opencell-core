@@ -406,7 +406,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
-                        sub = subscriptionService.findByCode(subCode);
+                        sub = subscriptionService.findByCodeAndValidityDate(subCode, new Date());
                         if (sub == null) {
                             log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
                         }

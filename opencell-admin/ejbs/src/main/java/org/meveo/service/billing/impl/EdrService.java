@@ -259,7 +259,7 @@ public class EdrService extends PersistenceService<EDR> {
         for (EDRDto dto : edrs) {
             EDR edr = new EDR();
             if (dto.getSubscriptionCode() != null) {
-                Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
+                Subscription subscription = subscriptionService.findByCodeAndValidityDate(dto.getSubscriptionCode(), new Date());
                 edr.setSubscription(subscription);
             }
 
