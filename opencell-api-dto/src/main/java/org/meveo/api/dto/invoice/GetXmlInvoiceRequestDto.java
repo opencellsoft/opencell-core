@@ -38,7 +38,7 @@ public class GetXmlInvoiceRequestDto extends BaseEntityDto {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "id")
-    private long invoiceId;
+    private Long invoiceId;
     
     /** The invoice number. */
     private String invoiceNumber;
@@ -88,11 +88,11 @@ public class GetXmlInvoiceRequestDto extends BaseEntityDto {
         this.invoiceType = invoiceType;
     }
 
-    public long getInvoiceId() {
+    public Long getInvoiceId() {
         return invoiceId;
     }
 
-    public void setInvoiceId(long invoiceId) {
+    public void setInvoiceId(Long invoiceId) {
         this.invoiceId = invoiceId;
     }
 

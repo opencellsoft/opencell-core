@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 import java.util.List;
+import java.util.Optional;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -126,10 +127,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto) {
         String invoiceNumber = xmlInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = xmlInvoiceRequestDto.getInvoiceType();
+        Long invoiceId = Optional.ofNullable(xmlInvoiceRequestDto.getInvoiceId()).orElse(null);
         if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findXMLInvoiceWithType(xmlInvoiceRequestDto.getInvoiceId(), invoiceNumber, invoiceType);
+        return findXMLInvoiceWithType(invoiceId, invoiceNumber, invoiceType);
     }
 
     @Override
@@ -157,12 +159,13 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         String invoiceNumber = pdfInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = pdfInvoiceRequestDto.getInvoiceType();
+        Long invoiceId = Optional.ofNullable(pdfInvoiceRequestDto.getInvoiceId()).orElse(null);
         if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(pdfInvoiceRequestDto.getInvoiceId(), invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId, invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
