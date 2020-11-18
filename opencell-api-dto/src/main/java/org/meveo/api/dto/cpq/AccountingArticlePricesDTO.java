@@ -44,6 +44,11 @@ public class AccountingArticlePricesDTO extends EnableBusinessDto {
      */
     private String accountingArticleCode;
     
+    /**
+     * The accounting article label
+     */
+    private String accountingArticleLabel;
+    
     private List<PriceDTO> AccountingArticlePrices;
 
     

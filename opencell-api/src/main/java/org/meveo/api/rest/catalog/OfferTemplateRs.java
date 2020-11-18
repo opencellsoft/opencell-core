@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
@@ -217,7 +218,7 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * List offerTemplates matching a given criteria
      * 
-     * @param pagingAndFiltering Pagination and filtering criteria
+     * @param customerContextDTO
      * @return List of offer templates
      */
     @POST
@@ -229,9 +230,7 @@ public interface OfferTemplateRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListOfferTemplateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
     })
-    public Response listPost(@Parameter(description = "The billing account code", required = false) String billingAccountCode, 
-    		@Parameter(description = "The saller wallet containing sales-agent tags", required = false) List<String> sellerWallet,
-    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
+    public Response listPost(@Parameter(description = "The customer context information", required = false) CustomerContextDTO customerContextDTO);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.
