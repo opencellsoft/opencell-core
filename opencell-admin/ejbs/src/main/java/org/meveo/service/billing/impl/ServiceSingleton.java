@@ -384,12 +384,12 @@ public class ServiceSingleton {
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
         if (saveInvoice) {
-            invoiceNumberAssignedEventProducer.fire(invoice);
             if (invoice.getId() == null) {
                 invoiceService.create(invoice);
             } else {
                 invoice = invoiceService.update(invoice);
             }
+            invoiceNumberAssignedEventProducer.fire(invoice);
         }
         return invoice;
     }
