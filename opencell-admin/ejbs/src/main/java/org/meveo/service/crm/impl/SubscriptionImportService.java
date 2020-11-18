@@ -20,6 +20,7 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class SubscriptionImportService extends ImportService {
         boolean ignoreCheck = jaxbSubscription.getIgnoreCheck() != null && jaxbSubscription.getIgnoreCheck().booleanValue();
         try {
             if (!ignoreCheck) {
-                checkSubscription.setSubscription(subscriptionService.findByCode(jaxbSubscription.getCode()));
+                checkSubscription.setSubscription(subscriptionService.findByCodeAndValidityDate(jaxbSubscription.getCode(), new Date()));
             }
         } catch (Exception e) {
             log.error("failed to find checkSubscription", e);

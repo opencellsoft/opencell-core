@@ -854,6 +854,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 .setParameter("validityDate", date)
                 .getResultList();
 
+        return getActiveOrLastUpdated(subscriptions);
+    }
+
+    private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {
         if(subscriptions.isEmpty())
             return null;
 
@@ -871,10 +875,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    @Override
+    public Subscription findByCode(String code) {
+        List<Subscription> subscriptions = findListByCode(code);
+        return getActiveOrLastUpdated(subscriptions);
+    }
+
     public List<Subscription> findListByCode(String code) {
-        if (code == null) {
-            return null;
-        }
         TypedQuery<Subscription> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
                 .setParameter("code", code.toLowerCase());
         try {
@@ -883,5 +890,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
             return new ArrayList<>();
         }
+
+
     }
 }
