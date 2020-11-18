@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.CurrentUserDto;
 import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
@@ -40,10 +42,10 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
@@ -52,6 +54,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -86,6 +89,9 @@ public class UserApi extends BaseApi {
 
     @Inject
     private KeycloakAdminClientService keycloakAdminClientService;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
@@ -320,10 +326,10 @@ public class UserApi extends BaseApi {
         User user = userService.findByUsernameWithFetch(username, Arrays.asList("roles", "userLevel"));
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
-        } 
+        }
 
         UserDto result = new UserDto(user, true);
-        
+
         // get the external roles
         result.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, username));
 
@@ -342,15 +348,16 @@ public class UserApi extends BaseApi {
 
     /**
      * List users matching filtering and query criteria
+     * 
      * @param httpServletRequest http servlet request.
      * @param pagingAndFiltering Paging and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
      * @return A list of users
      * @throws ActionForbiddenException action forbidden exception
      * @throws InvalidParameterException invalid parameter exception
-     * @throws BusinessException  business exception.
+     * @throws BusinessException business exception.
      */
-   // @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    //@FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
+    // @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    // @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UsersDto list(HttpServletRequest httpServletRequest, PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
         boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
@@ -408,5 +415,12 @@ public class UserApi extends BaseApi {
 
         keycloakAdminClientService.deleteUser(httpServletRequest, username);
     }
-    
+
+    public CurrentUserDto getCurrentUser() throws MeveoApiException, BusinessException {
+
+        Map<String, Set<String>> rolesByApplication = currentUserProvider.getRolesByApplication(currentUser);
+        CurrentUserDto dto = new CurrentUserDto(currentUser, rolesByApplication);
+
+        return dto;
+    }
 }

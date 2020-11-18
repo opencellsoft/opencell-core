@@ -1514,7 +1514,7 @@ public class CustomFieldInstanceService extends BaseService {
             return entity;
 
         } else {
-            log.trace("Find {}/{} by id", entity.getClass().getSimpleName(), entity.getId());
+            //log.trace("Find {}/{} by id", entity.getClass().getSimpleName(), entity.getId());
             entity = getEntityManager().find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId());
             return entity;
         }
