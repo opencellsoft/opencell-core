@@ -18,14 +18,14 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 
 /**
  * The Class ServiceDto.
@@ -33,9 +33,9 @@ import org.meveo.api.dto.BaseEntityDto;
  * @author Rachid.AIT
  * @lastModifiedVersion 11.0.0
  */
-@XmlRootElement(name = "ProductContextDTO")
+@XmlRootElement(name = "CustomerContextDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductContextDTO extends BaseEntityDto {
+public class CustomerContextDTO extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
@@ -46,44 +46,46 @@ public class ProductContextDTO extends BaseEntityDto {
      * The billing account code
      */
     private String billingAccountCode;
+    
+    
+    private List<String> sellerWallet;
     /**
-     * The selected offer template code in the quote
+     * The contract code
      */
-    private String offerCode;
+    private String contractCode;
+    
     /**
-     * The select product code in the quote
+     * paging And Filtering
      */
-    private String productCode;
-    /**
-     * The selected services in the quote with their values
-     */
-    // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
-    @XmlElement
-    private LinkedHashMap<String, Object> selectedServices;
+    private PagingAndFiltering pagingAndFiltering;
+    
+    
+	public PagingAndFiltering getPagingAndFiltering() {
+		return pagingAndFiltering;
+	}
+	public void setPagingAndFiltering(PagingAndFiltering pagingAndFiltering) {
+		this.pagingAndFiltering = pagingAndFiltering;
+	}
 	public String getBillingAccountCode() {
 		return billingAccountCode;
 	}
 	public void setBillingAccountCode(String billingAccountCode) {
 		this.billingAccountCode = billingAccountCode;
 	}
-	public String getOfferCode() {
-		return offerCode;
+
+	public String getContractCode() {
+		return contractCode;
 	}
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
 	}
-	public String getProductCode() {
-		return productCode;
+	public List<String> getSellerWallet() {
+		return sellerWallet;
 	}
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
+	public void setSellerWallet(List<String> sellerWallet) {
+		this.sellerWallet = sellerWallet;
 	}
-	public LinkedHashMap<String, Object> getSelectedServices() {
-		return selectedServices;
-	}
-	public void setSelectedServices(LinkedHashMap<String, Object> selectedServices) {
-		this.selectedServices = selectedServices;
-	}
+
     
     
     

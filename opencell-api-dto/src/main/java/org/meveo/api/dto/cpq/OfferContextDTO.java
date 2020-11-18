@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class ServiceDto.
@@ -34,52 +34,32 @@ import org.meveo.api.dto.EnableBusinessDto;
  */
 @XmlRootElement(name = "OfferContextDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferContextDTO extends EnableBusinessDto {
+public class OfferContextDTO extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
 
 
-
+	private CustomerContextDTO customerContextDTO;
+	
     /**
-     * The billing account code
-     */
-    private String billingAccountCode;
-    /**
-     * The selected offer template code in the quote
-     */
-    private String offerCode;
-    
-    
-    private List<String> sellerWallet;
-    /**
-     * The select products in the quote
+     * The selected products in the quote
      */
     private List<ProductContextDTO> products;
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
-	public String getOfferCode() {
-		return offerCode;
-	}
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
+    
 	public List<ProductContextDTO> getProducts() {
 		return products;
 	}
 	public void setProducts(List<ProductContextDTO> products) {
 		this.products = products;
 	}
-	public List<String> getSellerWallet() {
-		return sellerWallet;
+	public CustomerContextDTO getCustomerContextDTO() {
+		return customerContextDTO;
 	}
-	public void setSellerWallet(List<String> sellerWallet) {
-		this.sellerWallet = sellerWallet;
+	public void setCustomerContextDTO(CustomerContextDTO customerContextDTO) {
+		this.customerContextDTO = customerContextDTO;
 	}
+
 
     
     
