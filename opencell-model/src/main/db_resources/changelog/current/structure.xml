@@ -4023,7 +4023,7 @@ END $$;]]>
        </changeSet>
     
       <changeSet id="#5569_54052_20201117" author="TarikFAKHOURI">
-	         <sql>ALTER TABLE ${db.schema.adapted}ord_quote RENAME COLUMN billing_account_id TO appliquant_account_id;</sql>   
+	         <sql>ALTER TABLE ${db.schema.adapted}ord_quote RENAME COLUMN billing_account_id TO applicant_account_id;</sql>   
              
 			<addColumn tableName="ord_quote">
 	            <column name="billable_account_id" type="bigint" />
@@ -4057,13 +4057,6 @@ END $$;]]>
 	            </column>
 	            <column name="updated" type="datetime" />
 	            <column name="updater" type="varchar(100)" />
-	             
-	            <column name="quote_id" type="bigint" >
-	                <constraints nullable="false" />
-	            </column>  
-	            <column name="quote_version_id" type="bigint" >
-	                <constraints nullable="false" />
-	            </column>   
 	            <column name="quote_customer_service_id" type="bigint">
 	                <constraints nullable="false" />
 	            </column>  
@@ -4076,7 +4069,7 @@ END $$;]]>
             	<column name="quantity" type="numeric(23, 12)" >
 	                <constraints nullable="false" />
 	            </column> 
-            	<column name="quantity_service" type="numeric(23, 12)" >
+            	<column name="service_quantity" type="numeric(23, 12)" >
 	                <constraints nullable="false" />
 	            </column>  
 	            <column name="os_unit_price_without_tax" type="numeric(23, 12)" /> 
@@ -4091,12 +4084,6 @@ END $$;]]>
 	            <column name="rc_price_with_tax" type="numeric(23, 12)" /> 
 	    	</createTable>
     	
-	        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
-	            
-	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_version_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
-	            
 	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
 	            

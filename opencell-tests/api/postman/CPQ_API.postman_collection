@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1f6c4a52-c7e7-4ac1-8dbe-55020a8bc5b2",
+		"_postman_id": "772e51ec-4cc2-4b51-a4c1-a5fe957e7075",
 		"name": "Opencell-API-MEDIAPOST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,38 +9,30 @@
 			"name": "API",
 			"item": [
 				{
-					"name": "Quote",
+					"name": "Product_quote",
 					"item": [
 						{
-							"name": "POST| place Order",
+							"name": "POST|create_product_quote",
 							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "opencell.admin",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "opencell.admin",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"billingAccount\":[\r\n      {\r\n         \"id\":\"{{billing_account_code}}\",\r\n         \"name\":\"BAT1\"\r\n      }\r\n   ],\r\n   \"state\":\"InProgress\",\r\n   \"id\":\"{{quote_code}}\",\r\n   \"externalId\":\"External Id\",\r\n   \"description\":\"{{quote_code}}-description\",\r\n   \"category\":\"CATEGORY_1\",\r\n   \"fulfillmentStartDate\":\"Dec 3, 2020 12:08:03 PM\",\r\n   \"notificationContact\":\"test.1@yopmail.com\",\r\n   \"characteristic\":[\r\n      {\r\n         \"name\":\"preQuoteScript\",\r\n         \"value\":\"CHARAT1\"\r\n      }\r\n   ],\r\n   \"customer\":{\r\n      \"id\":\"{{code}}\"\r\n   },\r\n   \"agreement\":[\r\n      {\r\n         \"id\":\"SLA_T1\",\r\n         \"name\":\"SLAT1\"\r\n      },\r\n      {\r\n         \"id\":\"SLA_T2\",\r\n         \"name\":\"SLAT2\"\r\n      }\r\n   ],\r\n   \"isVirtual\":false,\r\n   \"generatePdf\":true,\r\n   \"customFields\":{\r\n      \r\n   },\r\n   \"prestationDuration\":0,\r\n   \"opportunityRef\":\"OpportunityRef-T1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "{{opencell.base}}/quoteManagement/productQuote/placeOrder/{{quote_code}}",
+									"raw": "{{opencell.base}}/quoteManagement/productQuote",
 									"host": [
 										"{{opencell.base}}"
 									],
 									"path": [
 										"quoteManagement",
-										"productQuote",
-										"placeOrder",
-										"{{quote_code}}"
+										"productQuote"
 									]
 								}
 							},
@@ -66,6 +58,49 @@
 								},
 								"method": "GET",
 								"header": [],
+								"url": {
+									"raw": "{{opencell.base}}/quoteManagement/productQuote/{{quote_code}}",
+									"host": [
+										"{{opencell.base}}"
+									],
+									"path": [
+										"quoteManagement",
+										"productQuote",
+										"{{quote_code}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PATCH|update Product Quote",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"id\":\"{{quote_code}}\",\r\n   \"state\":\"Pending\",\r\n   \"prestationDuration\":5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{opencell.base}}/quoteManagement/productQuote/{{quote_code}}",
 									"host": [
@@ -115,34 +150,7 @@
 							"response": []
 						},
 						{
-							"name": "POST|create_product_quote",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"billingAccount\":[\r\n      {\r\n         \"id\":\"{{billing_account_code}}\",\r\n         \"name\":\"BAT1\"\r\n      }\r\n   ],\r\n   \"state\":\"InProgress\",\r\n   \"id\":\"{{quote_code}}\",\r\n   \"externalId\":\"External Id\",\r\n   \"description\":\"{{quote_code}}-description\",\r\n   \"category\":\"CATEGORY_1\",\r\n   \"fulfillmentStartDate\":\"Dec 3, 2020 12:08:03 PM\",\r\n   \"notificationContact\":\"test.1@yopmail.com\",\r\n   \"characteristic\":[\r\n      {\r\n         \"name\":\"preQuoteScript\",\r\n         \"value\":\"CHARAT1\"\r\n      }\r\n   ],\r\n   \"customer\":{\r\n      \"id\":\"{{code}}\"\r\n   },\r\n   \"agreement\":[\r\n      {\r\n         \"id\":\"SLA_T1\",\r\n         \"name\":\"SLAT1\"\r\n      },\r\n      {\r\n         \"id\":\"SLA_T2\",\r\n         \"name\":\"SLAT2\"\r\n      }\r\n   ],\r\n   \"isVirtual\":false,\r\n   \"generatePdf\":true,\r\n   \"customFields\":{\r\n      \r\n   },\r\n   \"prestationDuration\":0,\r\n   \"opportunityRef\":\"OpportunityRef-T1\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.base}}/quoteManagement/productQuote",
-									"host": [
-										"{{opencell.base}}"
-									],
-									"path": [
-										"quoteManagement",
-										"productQuote"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "PATCH|update Product Quote",
+							"name": "POST| place Order",
 							"request": {
 								"auth": {
 									"type": "basic",
@@ -159,25 +167,17 @@
 										}
 									]
 								},
-								"method": "PATCH",
+								"method": "POST",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"id\":\"{{quote_code}}\",\r\n   \"state\":\"Pending\",\r\n   \"prestationDuration\":5\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{opencell.base}}/quoteManagement/productQuote/{{quote_code}}",
+									"raw": "{{opencell.base}}/quoteManagement/productQuote/placeOrder/{{quote_code}}",
 									"host": [
 										"{{opencell.base}}"
 									],
 									"path": [
 										"quoteManagement",
 										"productQuote",
+										"placeOrder",
 										"{{quote_code}}"
 									]
 								}
@@ -189,7 +189,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c60ee681-9921-4d0e-b2c6-5db34505d192",
+								"id": "5379da66-808b-412a-8e2e-ad46e7ad08fc",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -199,7 +199,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "70d579b9-9249-4336-a6a2-dacb730bfe09",
+								"id": "3c034a93-0d5c-41a5-a170-d46cf920bea1",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -213,6 +213,60 @@
 				{
 					"name": "grouped_Service",
 					"item": [
+						{
+							"name": "POST|create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"productCode\":\"{{product_code}}\",\r\n   \"code\":\"{{grouped_service_code}}\",\r\n   \"description\":\"{{grouped_service_code}}- description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/groupedService",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"groupedService"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT|update",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"code\":\"{{grouped_service_code}}\",\r\n   \"description\":\"{{grouped_service_code}}- updated\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/groupedService",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"groupedService"
+									]
+								}
+							},
+							"response": []
+						},
 						{
 							"name": "DELETE|delete",
 							"request": {
@@ -250,60 +304,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "PUT|update",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"code\":\"{{grouped_service_code}}\",\r\n   \"description\":\"{{grouped_service_code}}- updated\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/cpq/groupedService",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"cpq",
-										"groupedService"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST|create",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"productCode\":\"{{product_code}}\",\r\n   \"code\":\"{{grouped_service_code}}\",\r\n   \"description\":\"{{grouped_service_code}}- description\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/cpq/groupedService",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"cpq",
-										"groupedService"
-									]
-								}
-							},
-							"response": []
 						}
 					],
 					"auth": {
@@ -325,7 +325,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Product",
+					"name": "Product_CPQ",
 					"item": [
 						{
 							"name": "DELETE | delete product line",
@@ -356,6 +356,49 @@
 										"catalog",
 										"product",
 										"{{product_line_code}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST | create product line",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"codeProductLine\":\"{{product_line_code}}\",\r\n   \"label\":\"{{product_line_code}}-description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productLine",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productLine"
 									]
 								}
 							},
@@ -402,7 +445,7 @@
 							"response": []
 						},
 						{
-							"name": "POST | duplicate product version",
+							"name": "PSOT| createOrUpdate Product version",
 							"request": {
 								"auth": {
 									"type": "basic",
@@ -421,18 +464,24 @@
 								},
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"productCode\":\"PR_{{entityCode}}\",\r\n   \"shortDescription\" : \"PR_{{entityCode}}--description\",\r\n   \"currentVersion\":1,\r\n   \"status\":\"DRAFT\",\r\n   \"statusDate\":\"2020-11-01T00:00:00\",\r\n   \"endDate\":\"2020-12-01T00:00:00\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion/duplicate/PR_{{entityCode}}/{{product_version}}",
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
 										"product",
-										"productVersion",
-										"duplicate",
-										"PR_{{entityCode}}",
-										"{{product_version}}"
+										"productVersion"
 									]
 								}
 							},
@@ -511,6 +560,43 @@
 											"key": "status",
 											"value": "PUBLIED"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST | duplicate product version",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/duplicate/PR_{{entityCode}}/{{product_version}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"duplicate",
+										"PR_{{entityCode}}",
+										"{{product_version}}"
 									]
 								}
 							},
@@ -609,286 +695,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "PSOT| createOrUpdate Product version",
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "opencell.admin",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "opencell.admin",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"productCode\":\"PR_{{entityCode}}\",\r\n   \"shortDescription\" : \"PR_{{entityCode}}--description\",\r\n   \"currentVersion\":1,\r\n   \"status\":\"DRAFT\",\r\n   \"statusDate\":\"2020-11-01T00:00:00\",\r\n   \"endDate\":\"2020-12-01T00:00:00\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productVersion",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"productVersion"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST | create product line",
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "opencell.admin",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "opencell.admin",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n   \"codeProductLine\":\"{{product_line_code}}\",\r\n   \"label\":\"{{product_line_code}}-description\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/productLine",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"productLine"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate PRODUCT",
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"PR_{{entityCode}}\",\r\n  \"label\": \"Default product\",\r\n  \"status\": \"DRAFT\",\r\n  \"discountFlag\":false,\r\n  \"packageFlag\":true\r\n\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "CreateOrUpdate PRODUCT",
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"PR_{{entityCode}}\",\r\n  \"label\": \"Default product - updated\"\r\n\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GET|find by product code",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product?codeProduct=PR_{{entityCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product"
-									],
-									"query": [
-										{
-											"key": "codeProduct",
-											"value": "PR_{{entityCode}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "POST | update status",
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/PR_{{entityCode}}/update/status?status=DRAFT",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"PR_{{entityCode}}",
-										"update",
-										"status"
-									],
-									"query": [
-										{
-											"key": "status",
-											"value": "DRAFT"
-										}
-									]
-								}
-							},
-							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -901,24 +707,28 @@
 							"name": "Tag_Type",
 							"item": [
 								{
-									"name": "GET|find tag type by code",
-									"request": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": ""
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "POST| create new tag type",
 									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
 										"method": "POST",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n   \"code\":\"{{tagtype_code}}\",\r\n   \"description\":\"{{tagtype_code}}-description\",\r\n   \"sellerCode\":\"{{seller_code}}\"\r\n}",
+											"raw": "{\r\n   \"code\":\"{{tag_type_code}}\",\r\n   \"description\":\"{{tag_type_code}}-description\",\r\n   \"sellerCode\":\"{{seller_code}}\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -940,13 +750,28 @@
 									"response": []
 								},
 								{
-									"name": "PATCH|update tag type",
+									"name": "PUT|update tag type",
 									"request": {
-										"method": "PATCH",
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n   \"code\":\"{{tagtype_code}}\",\r\n   \"description\":\"{{tagtype_code}}-description--updated\"\r\n}",
+											"raw": "{\r\n   \"code\":\"{{tag_type_code}}\",\r\n   \"description\":\"{{tag_type_code}}-description--updated\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -962,6 +787,81 @@
 												"cpq",
 												"tags",
 												"tagType"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GET|find tag type by code",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{opencell.url}}/cpq/tags/tagType?codeTagType={{tag_type_code}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"cpq",
+												"tags",
+												"tagType"
+											],
+											"query": [
+												{
+													"key": "codeTagType",
+													"value": "{{tag_type_code}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DELETE|find tag type by code",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{opencell.url}}/cpq/tags/tagType/{{tag_type_code}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"cpq",
+												"tags",
+												"tagType",
+												"{{tag_type_code}}"
 											]
 										}
 									},
@@ -972,10 +872,34 @@
 							"_postman_isSubFolder": true
 						},
 						{
-							"name": "POST|create new Tag",
+							"name": "PUT|update tag",
 							"request": {
-								"method": "POST",
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"code\":\"{{tag_code}}\",\r\n   \"description\":\"{{tag_code}}-description--updated\",\r\n   \"name\":\"{{tag_code}}--name\",\r\n   \"tagTypeCode\":\"{{tag_type_code}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{opencell.url}}/cpq/tags",
 									"host": [
@@ -990,32 +914,23 @@
 							"response": []
 						},
 						{
-							"name": "GET| find Tag by code",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/cpq/tags?codeTag=tag_code",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"cpq",
-										"tags"
-									],
-									"query": [
-										{
-											"key": "codeTag",
-											"value": "tag_code"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "DELETE | delete tag by code",
 							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
@@ -1033,13 +948,67 @@
 							"response": []
 						},
 						{
-							"name": "PATCH|update tag",
+							"name": "GET| find Tag by code",
 							"request": {
-								"method": "PATCH",
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags?codeTag={{tag_code}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags"
+									],
+									"query": [
+										{
+											"key": "codeTag",
+											"value": "{{tag_code}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST|create new Tag",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n   \"code\":\"{{tagtype_code}}\",\r\n   \"description\":\"{{tagtype_code}}-description--updated\"\r\n}",
+									"raw": "{\r\n   \"code\":\"{{tag_code}}\",\r\n   \"description\":\"{{tag_code}}-description\",\r\n   \"name\":\"{{tag_code}}--name\",\r\n   \"tagTypeCode\":\"{{tag_type_code}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1062,13 +1031,408 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Quote CPQ",
+					"item": [
+						{
+							"name": "Quote",
+							"item": [
+								{
+									"name": "POST|create new Quote",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n   \"quoteDate\":\"2020-11-11T00:00:00Z\",\r\n   \"quoteItem\":[\r\n      {\r\n         \"osTAxRate\":0,\r\n         \"recurrenceDuration\":0,\r\n         \"recurrencePeriodicity\":0,\r\n         \"rcTAxRate\":0\r\n      }\r\n   ],\r\n   \"isVirtual\":false,\r\n   \"generatePdf\":true,\r\n   \"customFields\":{\r\n      \r\n   },\r\n   \"customerServiceDuration\":0\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/quoteManagement/productQuote",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"quoteManagement",
+												"productQuote"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Quote version",
+							"item": [
+								{
+									"name": "POST| create new quote version with code quote=QT_C1",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n   \"shortDescription\":\"{{quote_code}}--new description\",\r\n   \"quoteCode\":\"{{quote_code}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/quoteManagement/productQuote/quoteVersion",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"quoteManagement",
+												"productQuote",
+												"quoteVersion"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "PUT| update quote version with code quote=QT_C1 change description",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n   \"shortDescription\":\"newupdated text\",\r\n   \"quoteCode\":\"{{quote_code}}\",\r\n   \"currentVersion\" :1\r\n\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/quoteManagement/productQuote/quoteVersion",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"quoteManagement",
+												"productQuote",
+												"quoteVersion"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DELETE| delete quote version with code quote=QT_C1 and version=1",
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "username",
+													"value": "opencell.admin",
+													"type": "string"
+												},
+												{
+													"key": "password",
+													"value": "opencell.admin",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/quoteManagement/productQuote/quoteVersion/{{quote_code}}/1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"quoteManagement",
+												"productQuote",
+												"quoteVersion",
+												"{{quote_code}}",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "CreateOrUpdate PRODUCT",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"PR_{{entityCode}}\",\r\n  \"label\": \"Default product\",\r\n  \"status\": \"DRAFT\",\r\n  \"discountFlag\":false,\r\n  \"packageFlag\":true\r\n\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET|find by product code",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product?codeProduct=PR_{{entityCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product"
+							],
+							"query": [
+								{
+									"key": "codeProduct",
+									"value": "PR_{{entityCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST | update status",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/PR_{{entityCode}}/update/status?status=DRAFT",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"PR_{{entityCode}}",
+								"update",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "DRAFT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrUpdate PRODUCT",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"PR_{{entityCode}}\",\r\n  \"label\": \"Default product - updated\"\r\n\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "6f8fdfc2-f788-4cf4-876e-fb15bbbe9bee",
+						"id": "886e9f26-2077-4cf7-bab1-b15d266d5148",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -1078,7 +1442,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f91e1be8-bbf2-4e5a-aee5-9fcf0b991e74",
+						"id": "8a46dbd3-268e-4215-8d87-c9f304c5e154",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -1093,7 +1457,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "bf97bccc-c537-4528-a151-f304fd75cd04",
+				"id": "ef3a88f6-e611-43f1-b881-8c48b9a36cfe",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1103,7 +1467,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "12ac0b19-2b05-43a1-8395-60a78900e9d5",
+				"id": "1eccc30f-0a5c-4851-bc26-a11540b99432",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1113,12 +1477,12 @@
 	],
 	"variable": [
 		{
-			"id": "6a3c4208-be41-4bf1-8889-331f9ace075e",
+			"id": "d0107aa1-6658-4a47-b00f-b80efee63d2d",
 			"key": "entityCode",
 			"value": "OC_MP_001"
 		},
 		{
-			"id": "30b4d4ce-dc7f-4935-99a9-e1cca71b7a9b",
+			"id": "4336985e-e8e1-404f-8aed-8fa1f1d2f879",
 			"key": "entityDescription",
 			"value": "opencell"
 		}

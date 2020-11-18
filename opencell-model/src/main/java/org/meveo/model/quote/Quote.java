@@ -219,9 +219,8 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 * billingAccount
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id", nullable = false)
-	@JoinColumn(name = "appliquant_account_id", nullable = false)
-	private BillingAccount appliquantAccount; // TODO : change made on current/structure.xml
+	@JoinColumn(name = "applicant_account_id", nullable = false)
+	private BillingAccount applicantAccount;
 
 	/**
 	 * contract
@@ -303,9 +302,9 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	/**
 	 * billing account invoice code
 	 */
-	@Column(name = "billable_account_id", length = 50)
-	@Size(max = 50)
-	private BillingAccount billableAccount; // TODO :change made on current/structure.xml
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billable_account_id")
+	private BillingAccount billableAccount;
     
     public String getExternalId() {
         return externalId;
@@ -661,6 +660,34 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 	 */
 	public void setPrestationDuration(Integer prestationDuration) {
 		this.prestationDuration = prestationDuration;
+	}
+
+	/**
+	 * @return the applicantAccount
+	 */
+	public BillingAccount getApplicantAccount() {
+		return applicantAccount;
+	}
+
+	/**
+	 * @param applicantAccount the applicantAccount to set
+	 */
+	public void setApplicantAccount(BillingAccount applicantAccount) {
+		this.applicantAccount = applicantAccount;
+	}
+
+	/**
+	 * @return the billableAccount
+	 */
+	public BillingAccount getBillableAccount() {
+		return billableAccount;
+	}
+
+	/**
+	 * @param billableAccount the billableAccount to set
+	 */
+	public void setBillableAccount(BillingAccount billableAccount) {
+		this.billableAccount = billableAccount;
 	}
 
 }

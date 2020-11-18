@@ -29,21 +29,6 @@ import org.meveo.model.cpq.AccountingArticle;
         @Parameter(name = "sequence_name", value = "cpq_quote_article_line_seq"), })
 public class QuoteArticleLine extends BusinessEntity {
 
-    /**
-     * quote
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_id", nullable = false, referencedColumnName = "id")
-	@NotNull
-	private Quote quote;
-
-    /**
-     * quote Version
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_version_id", nullable = false, referencedColumnName = "id")
-	@NotNull
-	private QuoteVersion quoteVersion;
 
     /**
      * quote customer service
@@ -72,8 +57,8 @@ public class QuoteArticleLine extends BusinessEntity {
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     private BigDecimal quantity = BigDecimal.ONE;
 
-    @Column(name = "quantity_service", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
-    private BigDecimal quantityService;
+    @Column(name = "service_quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    private BigDecimal serviceQuantity;
 
     @Column(name = "os_unit_price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal osUnitPriceWithoutTax;
@@ -104,34 +89,6 @@ public class QuoteArticleLine extends BusinessEntity {
 
     @Column(name = "rc_price_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal rcPriceWithTax;
-
-	/**
-	 * @return the quote
-	 */
-	public Quote getQuote() {
-		return quote;
-	}
-
-	/**
-	 * @param quote the quote to set
-	 */
-	public void setQuote(Quote quote) {
-		this.quote = quote;
-	}
-
-	/**
-	 * @return the quoteVersion
-	 */
-	public QuoteVersion getQuoteVersion() {
-		return quoteVersion;
-	}
-
-	/**
-	 * @param quoteVersion the quoteVersion to set
-	 */
-	public void setQuoteVersion(QuoteVersion quoteVersion) {
-		this.quoteVersion = quoteVersion;
-	}
 
 	/**
 	 * @return the quoteCustomerService
@@ -187,20 +144,6 @@ public class QuoteArticleLine extends BusinessEntity {
 	 */
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
-	}
-
-	/**
-	 * @return the quantityService
-	 */
-	public BigDecimal getQuantityService() {
-		return quantityService;
-	}
-
-	/**
-	 * @param quantityService the quantityService to set
-	 */
-	public void setQuantityService(BigDecimal quantityService) {
-		this.quantityService = quantityService;
 	}
 
 	/**
@@ -341,6 +284,20 @@ public class QuoteArticleLine extends BusinessEntity {
 	 */
 	public void setRcPriceWithTax(BigDecimal rcPriceWithTax) {
 		this.rcPriceWithTax = rcPriceWithTax;
+	}
+
+	/**
+	 * @return the serviceQuantity
+	 */
+	public BigDecimal getServiceQuantity() {
+		return serviceQuantity;
+	}
+
+	/**
+	 * @param serviceQuantity the serviceQuantity to set
+	 */
+	public void setServiceQuantity(BigDecimal serviceQuantity) {
+		this.serviceQuantity = serviceQuantity;
 	}
     
     
