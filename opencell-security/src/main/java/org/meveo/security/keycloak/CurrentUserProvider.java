@@ -18,11 +18,16 @@
 
 package org.meveo.security.keycloak;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
