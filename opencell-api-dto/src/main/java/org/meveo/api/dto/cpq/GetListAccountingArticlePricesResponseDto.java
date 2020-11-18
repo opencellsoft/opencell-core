@@ -18,7 +18,6 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,8 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.SearchResponse;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
 /**
  * The Class GetListOfferTemplateResponseDto.
@@ -46,6 +45,29 @@ public class GetListAccountingArticlePricesResponseDto extends SearchResponse {
     @XmlElementWrapper(name = "accountingArticlePrices")
     @XmlElement(name = "accountingArticlePrices")
     private List<AccountingArticlePricesDTO> accountingArticlePrices;
+    
+    /** total Prices. */
+    @XmlElementWrapper(name = "totalPrices")
+    @XmlElement(name = "totalPrices")
+    private List<PriceDTO> totalPrices;
+    
+    /**
+     * Discount item code
+     */
+    
+    private String discountPlanItemCode;
+    
+    
+    /**
+     * Discount item type
+     */
+    
+    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+    
+    /**
+     * Discount value
+     */
+    private String discountValue;
 
     /**
      * Instantiates a new gets the list offer template response dto.
@@ -60,6 +82,62 @@ public class GetListAccountingArticlePricesResponseDto extends SearchResponse {
 
 	public void setAccountingArticlePrices(List<AccountingArticlePricesDTO> accountingArticlePrices) {
 		this.accountingArticlePrices = accountingArticlePrices;
+	}
+
+	/**
+	 * @return the totalPrices
+	 */
+	public List<PriceDTO> getTotalPrices() {
+		return totalPrices;
+	}
+
+	/**
+	 * @param totalPrices the totalPrices to set
+	 */
+	public void setTotalPrices(List<PriceDTO> totalPrices) {
+		this.totalPrices = totalPrices;
+	}
+
+	/**
+	 * @return the discountPlanItemCode
+	 */
+	public String getDiscountPlanItemCode() {
+		return discountPlanItemCode;
+	}
+
+	/**
+	 * @param discountPlanItemCode the discountPlanItemCode to set
+	 */
+	public void setDiscountPlanItemCode(String discountPlanItemCode) {
+		this.discountPlanItemCode = discountPlanItemCode;
+	}
+
+	/**
+	 * @return the discountPlanItemType
+	 */
+	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
+		return discountPlanItemType;
+	}
+
+	/**
+	 * @param discountPlanItemType the discountPlanItemType to set
+	 */
+	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
+		this.discountPlanItemType = discountPlanItemType;
+	}
+
+	/**
+	 * @return the discountValue
+	 */
+	public String getDiscountValue() {
+		return discountValue;
+	}
+
+	/**
+	 * @param discountValue the discountValue to set
+	 */
+	public void setDiscountValue(String discountValue) {
+		this.discountValue = discountValue;
 	}
 
    

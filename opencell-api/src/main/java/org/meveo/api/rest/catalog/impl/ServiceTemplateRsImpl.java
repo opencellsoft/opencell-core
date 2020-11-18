@@ -154,7 +154,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
     }
 
 	@Override
-	public Response listPost(OfferContextDTO quoteContext, PagingAndFiltering pagingAndFiltering) {
+	public Response listPost(OfferContextDTO quoteContext) {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();
 
 	        try {

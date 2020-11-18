@@ -91,8 +91,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listPost(OfferContextDTO quoteContext,
-			PagingAndFiltering pagingAndFiltering) {
+	public Response listPost(OfferContextDTO quoteContext) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
 	        try {

@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
 /**
  * The Class AccountingArticlePrices.
@@ -49,7 +51,36 @@ public class AccountingArticlePricesDTO extends EnableBusinessDto {
      */
     private String accountingArticleLabel;
     
-    private List<PriceDTO> AccountingArticlePrices;
+    /**
+     * The accounting article label
+     */
+    private String customerServiceCode;
+    
+    /**
+     * List of accouting article prices
+     */
+    private List<PriceDTO> accountingArticlePrices;
+    
+    /**
+     * Discount item code
+     */
+    
+    private String discountPlanItemCode;
+    
+    
+    /**
+     * Discount item type
+     */
+    
+    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+    
+    /**
+     * Discount value
+     */
+    private String discountValue;
+    
+    
+  
 
     
 	public String getAccountingArticleCode() {
@@ -61,11 +92,52 @@ public class AccountingArticlePricesDTO extends EnableBusinessDto {
 	}
 
 	public List<PriceDTO> getAccountingArticlePrices() {
-		return AccountingArticlePrices;
+		return accountingArticlePrices;
 	}
 
 	public void setAccountingArticlePrices(List<PriceDTO> accountingArticlePrices) {
-		AccountingArticlePrices = accountingArticlePrices;
+		this.accountingArticlePrices = accountingArticlePrices;
+	}
+
+
+	public String getAccountingArticleLabel() {
+		return accountingArticleLabel;
+	}
+
+	public void setAccountingArticleLabel(String accountingArticleLabel) {
+		this.accountingArticleLabel = accountingArticleLabel;
+	}
+
+	public String getCustomerServiceCode() {
+		return customerServiceCode;
+	}
+
+	public void setCustomerServiceCode(String customerServiceCode) {
+		this.customerServiceCode = customerServiceCode;
+	}
+
+	public String getDiscountPlanItemCode() {
+		return discountPlanItemCode;
+	}
+
+	public void setDiscountPlanItemCode(String discountPlanItemCode) {
+		this.discountPlanItemCode = discountPlanItemCode;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
+		return discountPlanItemType;
+	}
+
+	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
+		this.discountPlanItemType = discountPlanItemType;
+	}
+
+	public String getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(String discountValue) {
+		this.discountValue = discountValue;
 	}
     
 	

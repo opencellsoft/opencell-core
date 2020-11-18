@@ -224,7 +224,7 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/cpq/list")
     @Operation(summary = "List offers matching the customer and seller contexts",
-    tags = { "CPQ" },
+    tags = { "Catalog browsing" },
     description ="if billingAccountCode is given, this API returns all commercial offers available for a customer taking into account the customer context (filtering rules associated to the offer tags);",
     responses = {
             @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListOfferTemplateResponseDto.class))),

@@ -1,27 +1,27 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.account.CustomerBrandDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 @XmlRootElement(name = "CpqProductDto")
 @XmlType(name = "CpqProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductDto {
+public class ProductDto extends BaseEntityDto{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2483466298983716926L;
 	private Long id;
 	private String code;
 	private String label;

@@ -131,7 +131,7 @@ public interface ProductRs extends IBaseRs{
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Get products matching the customer, seller, and quote contexts",
-    tags = { "CPQ" },
+    tags = { "Catalog browsing" },
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
@@ -139,8 +139,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
             @ApiResponse(responseCode = "404", description = "selected product does not exist")
     })
-    public Response listPost(@Parameter(description = "Offer Context", required = false) OfferContextDTO quoteContext,
-    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
+    public Response listPost(@Parameter(description = "Offer Context", required = false) OfferContextDTO quoteContext);
     
 	/**
 	 * 

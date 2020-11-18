@@ -42,6 +42,8 @@ public class OfferContextDTO extends BaseEntityDto {
 
 	private CustomerContextDTO customerContextDTO;
 	
+	private String customerServiceCode ;
+	
     /**
      * The selected products in the quote
      */
@@ -58,6 +60,18 @@ public class OfferContextDTO extends BaseEntityDto {
 	}
 	public void setCustomerContextDTO(CustomerContextDTO customerContextDTO) {
 		this.customerContextDTO = customerContextDTO;
+	}
+	/**
+	 * @return the customerServiceCode
+	 */
+	public String getCustomerServiceCode() {
+		return customerServiceCode;
+	}
+	/**
+	 * @param customerServiceCode the customerServiceCode to set
+	 */
+	public void setCustomerServiceCode(String customerServiceCode) {
+		this.customerServiceCode = customerServiceCode;
 	}
 
 

@@ -18,11 +18,11 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -33,63 +33,35 @@ import org.meveo.api.dto.BaseEntityDto;
  * @author Rachid.AIT
  * @lastModifiedVersion 11.0.0
  */
-@XmlRootElement(name = "ProductContextDTO")
+@XmlRootElement(name = "OfferContextListDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductContextDTO extends BaseEntityDto {
+public class OfferContextListDTO extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
 
 
+	private List<OfferContextDTO> offerContextList=new ArrayList<OfferContextDTO>();
 
-    /**
-     * The billing account code
-     */
-    private String billingAccountCode;
-    /**
-     * The selected offer template code in the quote
-     */
-    private String offerCode;
-    /**
-     * The selected product code in the quote
-     */
-    private String productCode;
-    
-    /**
-     * The product quantity
-     */
-    private int quantity;
-    /**
-     * The selected services in the quote with their values
-     */
-    // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
-    @XmlElement
-    private LinkedHashMap<String, Object> selectedServices;
-    
-	public String getBillingAccountCode() {
-		return billingAccountCode;
+
+	/**
+	 * @return the offerContextList
+	 */
+	public List<OfferContextDTO> getOfferContextList() {
+		return offerContextList;
 	}
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
+
+
+	/**
+	 * @param offerContextList the offerContextList to set
+	 */
+	public void setOfferContextList(List<OfferContextDTO> offerContextList) {
+		this.offerContextList = offerContextList;
 	}
-	public String getOfferCode() {
-		return offerCode;
-	}
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
-	public String getProductCode() {
-		return productCode;
-	}
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-	public LinkedHashMap<String, Object> getSelectedServices() {
-		return selectedServices;
-	}
-	public void setSelectedServices(LinkedHashMap<String, Object> selectedServices) {
-		this.selectedServices = selectedServices;
-	}
+	
+	
+
+
     
     
     

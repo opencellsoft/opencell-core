@@ -45,12 +45,18 @@ public class PriceDTO extends EnableBusinessDto {
 	private PriceTypeEnum priceType;
 
     private BigDecimal amountWithtax;
+    
+    private BigDecimal unitPriceWithoutTax;
 
     private BigDecimal amountWithoutTax;
+    
+    private BigDecimal amountWithoutTaxWithDiscount;
 
     private BigDecimal taxAmount;
     
     private BigDecimal taxRate;
+    
+    private Boolean priceOverCharged;
 
     private String currencyCode;
     
@@ -103,6 +109,30 @@ public class PriceDTO extends EnableBusinessDto {
 	}
 	public void setRecurrencePeriodicity(String recurrencePeriodicity) {
 		this.recurrencePeriodicity = recurrencePeriodicity;
+	}
+	public BigDecimal getUnitPriceWithoutTax() {
+		return unitPriceWithoutTax;
+	}
+	public void setUnitPriceWithoutTax(BigDecimal unitPriceWithoutTax) {
+		this.unitPriceWithoutTax = unitPriceWithoutTax;
+	}
+	public BigDecimal getAmountWithoutTaxWithDiscount() {
+		return amountWithoutTaxWithDiscount;
+	}
+	public void setAmountWithoutTaxWithDiscount(BigDecimal amountWithoutTaxWithDiscount) {
+		this.amountWithoutTaxWithDiscount = amountWithoutTaxWithDiscount;
+	}
+	/**
+	 * @return the priceOverCharged
+	 */
+	public Boolean getPriceOverCharged() {
+		return priceOverCharged;
+	}
+	/**
+	 * @param priceOverCharged the priceOverCharged to set
+	 */
+	public void setPriceOverCharged(Boolean priceOverCharged) {
+		this.priceOverCharged = priceOverCharged;
 	}
     
     

@@ -18,11 +18,8 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.LinkedHashMap;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -35,62 +32,22 @@ import org.meveo.api.dto.BaseEntityDto;
  */
 @XmlRootElement(name = "ProductContextDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductContextDTO extends BaseEntityDto {
+public class ServiceContextDTO extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
 
-
-
-    /**
-     * The billing account code
-     */
-    private String billingAccountCode;
-    /**
-     * The selected offer template code in the quote
-     */
-    private String offerCode;
-    /**
-     * The selected product code in the quote
-     */
-    private String productCode;
+    private String serviceCode;
     
     /**
-     * The product quantity
+     * The service quantity
      */
     private int quantity;
-    /**
-     * The selected services in the quote with their values
-     */
-    // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
-    @XmlElement
-    private LinkedHashMap<String, Object> selectedServices;
+   
+         
+    private Object value;
     
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
-	public String getOfferCode() {
-		return offerCode;
-	}
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
-	public String getProductCode() {
-		return productCode;
-	}
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-	public LinkedHashMap<String, Object> getSelectedServices() {
-		return selectedServices;
-	}
-	public void setSelectedServices(LinkedHashMap<String, Object> selectedServices) {
-		this.selectedServices = selectedServices;
-	}
-    
+	
     
     
     

@@ -260,7 +260,7 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Lists services matching the customer, seller, and quote contexts",
-    tags = { "CPQ" },
+    tags = { "Catalog browsing" },
     description ="if billingAccountCode/offer/product are given, this API returns all available services for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListServiceResponseDto.class))),
@@ -269,6 +269,5 @@ public interface ServiceTemplateRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),
             @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
-    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext,
-    		@Parameter(description = "Pagination and filtering criteria", required = false) PagingAndFiltering pagingAndFiltering);
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
 }
