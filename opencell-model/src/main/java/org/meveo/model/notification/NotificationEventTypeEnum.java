@@ -138,14 +138,31 @@ public enum NotificationEventTypeEnum {
      * Invoice number assigned
      */
     INVOICE_NUMBER_ASSIGNED,
+
     /**
      * Dunning workflow status to R0
      */
     TO_R0,
+
     /**
      * Dunning workflow status to R1
      */
-    TO_R1;
+    TO_R1,
+
+    /**
+     * Dunning workflow status to R2
+     */
+    TO_R2,
+
+    /**
+     * New subscription version has been created
+     */
+    VERSION_CREATED,
+
+    /**
+     * Subscription version has been removed
+     */
+    VERSION_REMOVED;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

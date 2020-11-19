@@ -51,6 +51,8 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.VersionCreated;
+import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -119,6 +121,7 @@ import org.meveo.service.payments.impl.PaymentMethodService;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
@@ -226,6 +229,14 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private EmailTemplateService emailTemplateService;
+
+    @Inject
+    @VersionCreated
+    private Event<Subscription> versionCreatedEvent;
+
+    @Inject
+    @VersionRemoved
+    private Event<Subscription> versionRemovedEvent;
 
     private void setRenewalTermination(SubscriptionRenewal renewal, String terminationReason) throws EntityDoesNotExistsException {
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(terminationReason);
@@ -2563,6 +2574,8 @@ public class SubscriptionApi extends BaseApi {
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
         }
 
+        versionCreatedEvent.fire(newSubscription);
+
     }
 
     private boolean isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
@@ -2605,6 +2618,7 @@ public class SubscriptionApi extends BaseApi {
         reactivateServices(lastSubscription);
         if(lastSubscription.getInitialSubscriptionRenewal() != null)
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        versionRemovedEvent.fire(lastSubscription);
     }
 
     private void reactivateServices(Subscription lastSubscription) {
