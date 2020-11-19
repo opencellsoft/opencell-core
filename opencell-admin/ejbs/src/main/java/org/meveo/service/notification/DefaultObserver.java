@@ -42,20 +42,7 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.EndOfTerm;
-import org.meveo.event.qualifier.InboundRequestReceived;
-import org.meveo.event.qualifier.InstantiateWF;
-import org.meveo.event.qualifier.LoggedIn;
-import org.meveo.event.qualifier.LowBalance;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.event.qualifier.Rejected;
-import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Terminated;
-import org.meveo.event.qualifier.Updated;
+import org.meveo.event.qualifier.*;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -63,6 +50,8 @@ import org.meveo.model.CustomTableEvent;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -107,7 +96,7 @@ public class DefaultObserver {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     @Inject
     private DefaultNotificationService defaultNotificationService;
 
@@ -121,7 +110,7 @@ public class DefaultObserver {
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        
+
 		for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
 			if (notif.isRunAsync()) {
 				defaultNotificationService.fireNotificationAsync(notif, entityOrEvent);
@@ -132,7 +121,7 @@ public class DefaultObserver {
 			}
 
 		}
-		
+
         return result;
     }
 
@@ -144,7 +133,7 @@ public class DefaultObserver {
             workflowInstanceService.create(e, genericWorkflow);
         }
     }
-    
+
     public void customEntityChange(@Observes CustomTableEvent e) throws BusinessException {
         log.debug("Defaut observer : CustomEntity {} with id {} created", e.getClass().getName());
         checkEvent(e.getType(), e);
@@ -159,7 +148,7 @@ public class DefaultObserver {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
-    
+
     public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
@@ -274,6 +263,28 @@ public class DefaultObserver {
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+
+    /**
+     * Handle Subscription version
+     *
+     * @param Subscription subscription
+     * @throws BusinessException General business exception
+     */
+    public void versionCreated(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
+        log.debug("Defaut observer: Assigned a number to the invoice {} ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
+    }
+
+    /**
+     * Handle Subscription version
+     *
+     * @param Subscription subscription
+     * @throws BusinessException General business exception
+     */
+    public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
+        log.debug("Defaut observer: Assigned a number to the invoice {} ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
