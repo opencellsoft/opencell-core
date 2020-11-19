@@ -13,11 +13,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
@@ -135,11 +137,10 @@ public interface ProductRs extends IBaseRs{
     description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
     responses = {
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "selected product does not exist")
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
     })
-    public Response listPost(@Parameter(description = "Offer Context", required = false) OfferContextDTO quoteContext);
+  
+    public Response listPost(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
     
 	/**
 	 * 

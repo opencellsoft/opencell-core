@@ -91,12 +91,12 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listPost(OfferContextDTO quoteContext) {
+	 
+	public Response listPost(OfferContextDTO offerContextDTO) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
 	        try {
-	        	/*****@TODO RAY : create a new method in ProductAPI that get products matching given criteria**/
-	        	
+	        	result=productApi.list(offerContextDTO);
 	        } catch (Exception e) {
 	            processException(e, result.getActionStatus());
 	        }
