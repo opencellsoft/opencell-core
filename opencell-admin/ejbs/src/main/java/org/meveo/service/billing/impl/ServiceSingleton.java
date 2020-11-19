@@ -390,7 +390,6 @@ public class ServiceSingleton {
             } else {
                 invoice = invoiceService.update(invoice);
             }
-            invoiceNumberAssignedEventProducer.fire(invoice);
         }
         return invoice;
     }
