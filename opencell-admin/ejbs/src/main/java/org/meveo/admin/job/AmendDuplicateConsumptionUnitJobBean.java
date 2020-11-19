@@ -105,7 +105,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
             }
 
-            List<WalletOperation> overageWOList = getOverageWalletOperationList(canceledWO, audit);
+            List<WalletOperation> overageWOList = getOverageWalletOperationList(canceledWO, audit, statsActivated);
             if (statsActivated) {
                 audit.allOvers = overageWOList.size();
             }
@@ -128,7 +128,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 audit.restoredQT = quantityToRestore;
             }
             // restore the canceled QT which rest after adjusting Overage WO to counter or pool
-            restoreQuantityToCounterOrPool(canceledWO, quantityToRestore, audit);
+            restoreQuantityToCounterOrPool(canceledWO, quantityToRestore, audit, statsActivated);
 
             // in case of WO deducted from counter
             // also reajuste canceled WO's quantity and put it to OPEN
@@ -155,7 +155,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
     }
 
     @SuppressWarnings("unchecked")
-    private List<WalletOperation> getOverageWalletOperationList(WalletOperation canceledWO, AuditWOCancelation audit) {
+    private List<WalletOperation> getOverageWalletOperationList(WalletOperation canceledWO,
+                                                                AuditWOCancelation audit, boolean statsActivated) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(canceledWO.getOperationDate());
         int year = calendar.get(Calendar.YEAR);
@@ -169,7 +170,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
         Date endMonth = calendar.getTime();
 
         //trace
-        if (audit != null) {
+        if (statsActivated) {
             audit.startMonth = startMonth;
             audit.endMonth = endMonth;
         }
@@ -194,7 +195,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
     }
 
     @SuppressWarnings("unchecked")
-    private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore, AuditWOCancelation audit) {
+    private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore,
+                                                AuditWOCancelation audit, boolean statsActivated) {
         if (quantityToRestore.compareTo(BigDecimal.ZERO) == 0) {
             // no quantity to restore to counter or pool
             return;
@@ -203,11 +205,14 @@ public class AmendDuplicateConsumptionUnitJobBean {
             CounterPeriod counterPeriod = counterPeriodService
                     .getCounterPeriod(canceledWO.getCounter(), canceledWO.getOperationDate());
             //trace
-            audit.originCounterQT = counterPeriod.getValue();
+            if (statsActivated) {
+                audit.originCounterQT = counterPeriod.getValue();
+            }
             counterPeriod.setValue(counterPeriod.getValue().add(quantityToRestore));
             //trace
-            audit.newCounterQT = counterPeriod.getValue();
-
+            if (statsActivated) {
+                audit.newCounterQT = counterPeriod.getValue();
+            }
             counterPeriodService.update(counterPeriod);
 
         } else {
@@ -223,13 +228,16 @@ public class AmendDuplicateConsumptionUnitJobBean {
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
             //trace
-            audit.originCounterQT = BigDecimal.valueOf(agencyCounter);
+            if (statsActivated) {
+                audit.originCounterQT = BigDecimal.valueOf(agencyCounter);
+            }
             offerAgenciesCountersMap.put(agencyCounterKey, agencyCounter + quantityToRestore.doubleValue());
 
             cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, canceledWO.getOperationDate());
             //trace
-            audit.newCounterQT = BigDecimal.valueOf(offerAgenciesCountersMap.get(agencyCounterKey));
-
+            if (statsActivated) {
+                audit.newCounterQT = BigDecimal.valueOf(offerAgenciesCountersMap.get(agencyCounterKey));
+            }
             serviceTemplateService.update(serviceTemplate);
         }
     }
