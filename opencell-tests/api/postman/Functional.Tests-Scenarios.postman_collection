@@ -61545,7 +61545,7 @@
 		{
 			"id": "579f66b8-a04c-46bb-b45a-377a6de90d2e",
 			"key": "opencell.base",
-			"value": "http://localhost:8080/opencell"
+			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
 			"id": "54178f8b-dd1a-423b-b30d-98228583970a",
