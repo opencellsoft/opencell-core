@@ -18,9 +18,11 @@
 package org.meveo.service.payments.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -31,6 +33,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -474,4 +477,14 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+    public List<PaymentMethod> listByCustomerAccount(CustomerAccount customerAccount) {
+        try {
+            return getEntityManager().createNamedQuery("PaymentMethod.listByCustomerAccount").setParameter("customerAccount", customerAccount).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list PaymentMethod by customerAccount", e);
+            return null;
+        }
+    }
 }
