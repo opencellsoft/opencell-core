@@ -4114,6 +4114,13 @@ END $$;]]>
 	        </addColumn>    
 	        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_product_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	            
+			<addColumn tableName="cat_service_template">
+	            <column name="sequence" type="INT4" />
+	            <column name="display" type="${type.boolean}" />
+	        </addColumn>  
+	        
+	        
      	</changeSet>
     <!-- end MediaPost -->
     

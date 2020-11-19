@@ -39,24 +39,24 @@ public class GroupedService extends BusinessEntity {
 	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product product;
 
-//	  /**
-//     * Mandatory
-//     */
-//    @Type(type = "numeric_boolean")
-//    @Column(name = "mandatory")
-//    @NotNull
-//    protected Boolean mandatory;
-//
-//	  /**
-//     * Display
-//     */
-//    @Type(type = "numeric_boolean")
-//    @Column(name = "display")
-//    @NotNull
-//    protected Boolean display;
+	  /**
+     * Mandatory
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "mandatory")
+    @NotNull
+    protected Boolean mandatory;
 
-//    @Column(name = "sequence")
-//    private Integer sequence;
+	  /**
+     * Display
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display")
+    @NotNull
+    protected Boolean display;
+
+    @Column(name = "sequence")
+    private Integer sequence;
 	/**
 	 * @return the product
 	 */
@@ -70,6 +70,54 @@ public class GroupedService extends BusinessEntity {
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+
+	/**
+	 * @return the mandatory
+	 */
+	public Boolean getMandatory() {
+		return mandatory;
+	}
+
+
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(Boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+
+	/**
+	 * @return the display
+	 */
+	public Boolean getDisplay() {
+		return display;
+	}
+
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(Boolean display) {
+		this.display = display;
+	}
+
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 
