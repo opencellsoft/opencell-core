@@ -18,7 +18,6 @@
 
 package org.meveo.admin.job.cdr;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -26,10 +25,10 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.medina.impl.CDRService;
 import org.slf4j.Logger;
 
@@ -49,8 +48,9 @@ public class CDRBackoutJobBean {
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, String fileName) {
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         try {   
+            String fileName = jobInstance.getParametres();
             cdrService.backout(fileName);
             result.setNbItemsToProcess(1);
             result.setNbItemsCorrectlyProcessed(1);
