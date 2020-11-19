@@ -852,4 +852,16 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
+
+    @Override
+    public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(String customerAccountCode) {
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        try {
+            result = paymentMethodApi.listByCustomerAccountCode(customerAccountCode);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }
