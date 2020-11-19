@@ -139,6 +139,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
     })
+ 
   
     public Response listPost(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
     

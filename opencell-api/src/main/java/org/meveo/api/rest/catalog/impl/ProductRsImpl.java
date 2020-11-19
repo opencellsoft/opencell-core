@@ -92,6 +92,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	 
+	 
 	public Response listPost(OfferContextDTO offerContextDTO) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
