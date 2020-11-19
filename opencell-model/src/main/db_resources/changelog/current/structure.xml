@@ -4115,6 +4115,22 @@ END $$;]]>
 	        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_product_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
      	</changeSet>
+     	
+     	
+     	
+        <changeSet author="Mbarek-Ay" id="#51-20201118">
+	    <createTable tableName="cpq_offer_template_products">
+	        <column name="offer_template_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="product_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable> 
+	     <addUniqueConstraint columnNames="offer_template_id,product_id" constraintName="offer_template_product_pkey" tableName="cpq_offer_template_products" />
+	    </changeSet>  
+	    
+	    
     <!-- end MediaPost -->
     
 </databaseChangeLog>
