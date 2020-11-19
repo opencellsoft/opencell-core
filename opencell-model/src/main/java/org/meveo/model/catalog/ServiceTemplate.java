@@ -297,16 +297,16 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     private AccountingArticle accountingArticle;
     
 
-//    @Column(name = "sequence")
-//    protected Integer sequence;
-//
-//	  /**
-//     * Display
-//     */
-//    @Type(type = "numeric_boolean")
-//    @Column(name = "display")
-//    @NotNull
-//    protected Boolean display;
+    @Column(name = "sequence")
+    protected Integer sequence;
+
+	  /**
+     * Display
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display")
+    @NotNull
+    protected Boolean display;
     
     
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
@@ -716,6 +716,34 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	 */
 	public void setGroupedService(GroupedService groupedService) {
 		this.groupedService = groupedService;
+	}
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	/**
+	 * @return the display
+	 */
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(Boolean display) {
+		this.display = display;
 	}
     
     

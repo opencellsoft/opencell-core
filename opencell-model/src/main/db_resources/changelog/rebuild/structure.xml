@@ -3897,8 +3897,6 @@
             <column name="initial_term_type" type="varchar(20)" />
             <column name="auto_end_of_engagement" type="${type.boolean}" />
             <column name="auto_renew_date" type="datetime" />
-            <column name="sequence" type="INT4" />
-            <column name="display" type="${type.boolean}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-228">
@@ -10496,6 +10494,7 @@ $$ LANGUAGE plpgsql;
 			<column name="display" type="${type.boolean}" >
 				<constraints nullable="false" />
 			</column>
+	        <column name="sequence" type="INT4" />
 		</createTable>
 	</changeSet>
 	
