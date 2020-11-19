@@ -18,7 +18,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,6 +118,17 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         List<AccountOperation> accountOperations = query.getResultList();
 
         return accountOperations.size() > 0 ? accountOperations.get(0) : null;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> listByCustomerAccount(CustomerAccount customerAccount) {
+        try {
+            return getEntityManager().createNamedQuery("AccountOperation.listByCustomerAccount").setParameter("customerAccount", customerAccount).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list AccountOperation by customerAccount", e);
+            return null;
+        }
     }
 
     /**

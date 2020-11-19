@@ -1,5 +1,13 @@
 package org.meveo.api.payment;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -41,13 +49,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The Class AccountOperationApi.
@@ -266,6 +267,37 @@ public class AccountOperationApi extends BaseApi {
                 }
             }
         }
+        return result;
+    }
+    
+    /**
+     * List.
+     * 
+     * @param customerAccountCode customerAccountCode
+     * @return the account operations response dto
+     * @throws MeveoApiException the meveo api exception
+     */
+    public AccountOperationsResponseDto listByCustomerAccountCode(String customerAccountCode) throws MeveoApiException {
+        
+        if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
+            handleMissingParameters();
+        }
+        
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+        }
+
+        AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+        List<AccountOperation> accountOperations = accountOperationService.listByCustomerAccount(customerAccount);
+        if (accountOperations != null) {
+            for (AccountOperation accountOperation : accountOperations) {
+                AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+            }
+        }
+
         return result;
     }
 
