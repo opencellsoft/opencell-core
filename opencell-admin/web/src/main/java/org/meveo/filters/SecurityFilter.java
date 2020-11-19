@@ -31,6 +31,7 @@ public class SecurityFilter implements Filter {
         res.setHeader("X-Frame-Options", SecurityFilter.XFRAME_SAMEORIGIN);
         res.setHeader("X-Content-Type-Options", SecurityFilter.XCONTENT_NOSNIFF);
         
+        /*
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for(Cookie cookie :cookies){
@@ -40,8 +41,8 @@ public class SecurityFilter implements Filter {
                 }
             }
         }
-        
         res.setHeader(SET_COOKIE, JSESSION_ID + req.getSession().getId() + HTTP_ONLY);
+        */
         chain.doFilter(request, res);
     }
 
