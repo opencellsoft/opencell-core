@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -380,5 +382,19 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         return listOfferTemplates;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public OfferTemplate getOfferByTags(HashSet<String> tagCodes) { 
+    	OfferTemplate offer=null;
+    	try {
+    		offer = (OfferTemplate)getEntityManager().createNamedQuery("OfferTemplate.findByTags").setParameter("tagCodes", tagCodes).getResultList().get(0);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("listOffersByTags error ", e.getMessage());
+    	}
+
+    	return offer;
     }
 }
