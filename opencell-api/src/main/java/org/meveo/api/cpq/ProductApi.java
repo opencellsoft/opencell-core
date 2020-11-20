@@ -262,15 +262,14 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersionDto duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+    public ProductVersion duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
         ProductVersion productVersion;
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        productVersionService.duplicate(productVersion);
-	        return new ProductVersionDto(productVersion);
+	        return productVersionService.duplicate(productVersion, true);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}

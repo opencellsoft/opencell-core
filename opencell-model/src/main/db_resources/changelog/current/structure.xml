@@ -4007,8 +4007,8 @@ END $$;]]>
 			            <constraints nullable="false" />
 			        </column>
 			    </createTable>
-			       <createTable tableName="cpq_product_services">
-			        <column name="product_id" type="bigint">
+			       <createTable tableName="cpq_product_version_services">
+			        <column name="product_version_id" type="bigint">
 			            <constraints nullable="false" />
 			        </column>
 			        <column name="service_template_id" type="bigint">
@@ -4024,7 +4024,13 @@ END $$;]]>
         
 			      <addUniqueConstraint columnNames="offer_template_id,service_template_id" constraintName="cpq_offer_template_services_pkey" tableName="cpq_offer_template_services" />
 			      <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
-			      <addUniqueConstraint columnNames="product_id,service_template_id" constraintName="cpq_product_services_pkey" tableName="cpq_product_services" />
+			      <addUniqueConstraint columnNames="product_version_id,service_template_id" constraintName="cpq_product_services_pkey" tableName="cpq_product_version_services" />
+			      
+	        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_services" constraintName="fk_cpq_product_version_services_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_product_version_services" constraintName="fk_cpq_product_version_services_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
 			    
        </changeSet>
     

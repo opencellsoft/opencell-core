@@ -29,16 +29,11 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 
@@ -147,17 +142,6 @@ public class Product extends BusinessEntity {
     @NotNull
     private boolean packageFlag;
     
-	
-	/**
-	 * list of services attached to this product
-	 */
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_product_services",
-				joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id")				
-			)
-    private List<ServiceTemplate> services = new ArrayList<>();
 	
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
@@ -349,22 +333,6 @@ public class Product extends BusinessEntity {
 				&& Objects.equals(modelChlidren, other.modelChlidren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
-	}
-
-
-	/**
-	 * @return the services
-	 */
-	public List<ServiceTemplate> getServices() {
-		return services;
-	}
-
-
-	/**
-	 * @param services the services to set
-	 */
-	public void setServices(List<ServiceTemplate> services) {
-		this.services = services;
 	}
 
 

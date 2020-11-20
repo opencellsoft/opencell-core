@@ -9,14 +9,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.ServiceDTO;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.Product;
 
@@ -34,7 +29,6 @@ public class GetProductDtoResponse extends BaseResponse{
 	private ProductDto productDto;
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
-    private Set<ServiceDTO> serviceList = new HashSet<>();
     private Set<ProductVersionDto> productVersions = new HashSet<>();
     
     
@@ -46,12 +40,6 @@ public class GetProductDtoResponse extends BaseResponse{
     		discountList = p.getDiscountList().stream().map(d -> {
     			final DiscountPlanDto discount = new DiscountPlanDto(d, null);
     			return discount;
-    		}).collect(Collectors.toSet());
-    	}
-    	if(p.getServices() != null && !p.getServices().isEmpty()) {
-    		serviceList = p.getServices().stream().map(d -> {
-    			final ServiceDTO service = new ServiceDTO(d);
-    			return service;
     		}).collect(Collectors.toSet());
     	}
     	
@@ -81,21 +69,6 @@ public class GetProductDtoResponse extends BaseResponse{
 	public void setProductDto(ProductDto productDto) {
 		this.productDto = productDto;
 	}
-
-	/**
-	 * @return the serviceList
-	 */
-	public Set<ServiceDTO> getServiceList() {
-		return serviceList;
-	}
-
-	/**
-	 * @param serviceList the serviceList to set
-	 */
-	public void setServiceList(Set<ServiceDTO> serviceList) {
-		this.serviceList = serviceList;
-	}
-
 	/**
 	 * @return the productVersions
 	 */
@@ -108,6 +81,20 @@ public class GetProductDtoResponse extends BaseResponse{
 	 */
 	public void setProductVersions(Set<ProductVersionDto> productVersions) {
 		this.productVersions = productVersions;
+	}
+
+	/**
+	 * @return the discountList
+	 */
+	public Set<DiscountPlanDto> getDiscountList() {
+		return discountList;
+	}
+
+	/**
+	 * @param discountList the discountList to set
+	 */
+	public void setDiscountList(Set<DiscountPlanDto> discountList) {
+		this.discountList = discountList;
 	}
 	
 	
