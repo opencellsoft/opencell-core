@@ -93,7 +93,7 @@ public class OperationServicesRequestDto extends BaseEntityDto {
     }
 
     public Date getSubscriptionValidityDate() {
-        return this.subscriptionValidityDate == null ? new Date() : this.subscriptionValidityDate;
+        return this.subscriptionValidityDate;
     }
     @Override
     public String toString() {

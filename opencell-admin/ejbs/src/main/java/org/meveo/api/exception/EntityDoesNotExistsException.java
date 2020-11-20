@@ -71,7 +71,7 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 	}
 
 	public EntityDoesNotExistsException(Class<?> clazz, String code, Date date){
-		super(clazz.getSimpleName() + " with code=" + code + " and valid on " + date  + " does not exists.");
+		super(clazz.getSimpleName() + " with code=" + code + (date == null ? "" : " and valid on " + date)  + " does not exists.");
 		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
 	}
 
