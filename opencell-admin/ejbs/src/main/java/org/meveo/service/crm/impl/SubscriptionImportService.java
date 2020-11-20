@@ -156,7 +156,7 @@ public class SubscriptionImportService extends ImportService {
         boolean ignoreCheck = jaxbSubscription.getIgnoreCheck() != null && jaxbSubscription.getIgnoreCheck().booleanValue();
         try {
             if (!ignoreCheck) {
-                checkSubscription.subscription = subscriptionService.findByCodeAndValidityDate(jaxbSubscription.getCode(), new Date());
+                checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
             }
         } catch (Exception e) {
             log.error("failed to find checkSubscription", e);
