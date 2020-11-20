@@ -23,8 +23,7 @@ package org.meveo.service.payments.impl;
 
 import java.util.Date;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -36,7 +35,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
-import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -47,10 +45,10 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
+@Stateless
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod) throws BusinessException {
         PaymentHistory paymentHistory = new PaymentHistory();
