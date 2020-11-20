@@ -27,8 +27,10 @@ import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
@@ -158,12 +160,14 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();
 
 	        try {
-	        	/*****@TODO RAY : create a new method in ServicetemplateAPI that get products matching given criteria**/
-	        	
+	        	result= serviceTemplateApi.list(quoteContext);
 	        } catch (Exception e) {
 	            processException(e, result.getActionStatus());
 	        }
 
 	        return Response.ok().entity(result).build();
 	}
+	
+	
+	 
 }
