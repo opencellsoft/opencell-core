@@ -197,7 +197,7 @@ public class AccessDto extends BaseEntityDto implements IEnableDto {
     }
 
     public Date getSubscriptionValidityDate() {
-        return subscriptionValidityDate == null ? new Date() : subscriptionValidityDate;
+        return subscriptionValidityDate;
     }
 
     @Override
