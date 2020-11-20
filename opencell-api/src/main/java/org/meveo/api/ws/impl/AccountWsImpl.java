@@ -500,7 +500,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode, new Date(), startDate, endDate, null));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode, null, startDate, endDate, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
