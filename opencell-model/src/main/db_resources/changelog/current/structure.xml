@@ -3766,12 +3766,50 @@ END $$;]]>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
                              disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
     </changeSet>
+
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
+
     <changeSet id="#5587_20201125" author="ZBariki" failOnError="false">
         <addColumn tableName="bi_data_collector">
             <column name="parameters" type="text" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#5214_20201117" author="ZBariki">
+        <createSequence sequenceName="wf_generic_action_seq" startValue="1" />
+        <createTable tableName="wf_generic_action" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_action_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="description" type="varchar(255)" />
+            <column name="uuid" type="varchar(255)" />
+            <column name="priority" type="int4" />
+            <column name="condition_el" type="varchar(2000)" />
+            <column name="value_el" type="varchar(2000)" />
+            <column name="type" type="varchar(255)" />
+            <column name="log_level" type="varchar(255)" />
+            <column name="field_to_update" type="varchar(255)" />
+            <column name="is_asynchronous" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="action_script_id" type="bigint" />
+            <column name="notification_id" type="bigint" />
+            <column name="transition_id" type="bigint" />
+        </createTable>
+        <addUniqueConstraint columnNames="uuid" constraintName="uk_wf_generic_action_uuid" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_generic_action" />
+
+        <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_transition_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="wf_generic_transition" />
+
+        <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="wf_generic_action"
+                                 constraintName="fk_wf_generic_action_notification_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_script_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
 </databaseChangeLog>

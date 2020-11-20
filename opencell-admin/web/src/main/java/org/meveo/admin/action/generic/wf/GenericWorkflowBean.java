@@ -42,6 +42,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -269,7 +270,7 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
         showDetailPage = false;
     }
 
-    public void saveWfTransition() throws BusinessException {
+    public void saveWfTransition() throws BusinessException, IOException {
         if (gWFTransition.getId() != null) {
             GWFTransition wfTrs = gWFTransitionService.findById(gWFTransition.getId());
             wfTrs.setFromStatus(gWFTransition.getFromStatus());
@@ -281,6 +282,9 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
             gWFTransitionService.update(wfTrs);
 
             messages.info(new BundleKey("messages", "update.successful"));
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/opencell/pages/admin/workflow/actions.xhtml?wfCode="
+                            + entity.getCode() + "&transition=" + gWFTransition.getUuid());
         } else {
 
             gWFTransition.setGenericWorkflow(entity);
@@ -288,6 +292,9 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
 
             entity.getTransitions().add(gWFTransition);
             messages.info(new BundleKey("messages", "save.successful"));
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/opencell/pages/admin/workflow/actions.xhtml?wfCode=" + entity.getCode()
+                            + "&transition=" + gWFTransition.getUuid());
         }
 
         cancelTransitionDetail();
