@@ -1,6 +1,10 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,20 +12,30 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 
 /**
@@ -41,12 +55,18 @@ public class ProductApi extends BaseApi {
 	@Inject
 	private CustomerBrandService brandService;
 	@Inject
-	private DiscountPlanService discountPlanService;
+	private BillingAccountService billingAccountService;
 	@Inject
 	private ProductLineApi productLineApi;
 	
 	@Inject
 	private ProductVersionService productVersionService;
+	
+	@Inject
+	private TagService tagService;
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
 	
 	/**
 	 * @return ProductDto
@@ -352,6 +372,38 @@ public class ProductApi extends BaseApi {
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
+	}
+	 
+	
+	public GetListProductsResponseDto list(OfferContextDTO offerContextDTO) {
+		GetListProductsResponseDto result = new GetListProductsResponseDto();
+		String billingAccountCode=offerContextDTO.getCustomerContextDTO().getBillingAccountCode();
+		if(Strings.isEmpty(billingAccountCode)) {
+			missingParameters.add("billingAccountCode");
+		}
+		handleMissingParameters();
+		List<String> tagCodes=new ArrayList<String>();
+		BillingAccount ba=billingAccountService.findByCode(billingAccountCode);
+		if(ba!=null) {
+			List<Tag> entityTags=tagService.getTagsByBA(ba);
+			if(!entityTags.isEmpty()) {
+				for(Tag tag:entityTags) {
+					tagCodes.add(tag.getCode());
+				}
+			}} 
+		List<String> sellerWallets=offerContextDTO.getCustomerContextDTO().getSellerWallet();
+		HashSet<String> resultBaTags = new HashSet<String>();
+		resultBaTags.addAll(tagCodes);
+		resultBaTags.addAll(sellerWallets); 
+		OfferTemplate offerTemplate=offerTemplateService.getOfferByTags(resultBaTags);
+		if(offerTemplate!=null) {
+			Set<Product> products=offerTemplate.getProducts();
+			for(Product prod:products) {
+				ProductDto prodDto=new ProductDto(prod);
+				result.addProduct(prodDto);
+			}
+		}
+		return result;
 	}
 	
 }
