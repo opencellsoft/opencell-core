@@ -43,6 +43,7 @@ public class CurrentUserProvider {
 
     @Inject
     private UserInfoManagement userInfoManagement;
+
     @Resource
     private SessionContext ctx;
 
@@ -173,7 +174,9 @@ public class CurrentUserProvider {
         }
         // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
         // getCurrentTenant());
-        userInfoManagement.supplementOrCreateUserInApp(user, em, forcedUserUsername.get());
+        if (!userInfoManagement.supplementUserInApp(user, em, forcedUserUsername.get())) {
+            userInfoManagement.createUserInApp(user, em, forcedUserUsername.get());
+        }
 
         log.trace("Current user is {}", user.toStringLong());
         return user;
@@ -185,19 +188,12 @@ public class CurrentUserProvider {
      * @param currentUser Authenticated current user
      */
 
-    
-
-
-
-
-
     /**
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
     public void invalidateRoleToPermissionMapping() {
-        userInfoManagement.roleToPermissionMapping = null;
+        UserInfoManagement.roleToPermissionMapping = null;
     }
-
 
     /**
      * Check if current tenant value is set (differs from the initial value)
