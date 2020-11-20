@@ -301,7 +301,7 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     }
 
     public Date getSubscriptionValidityDate() {
-        return this.subscriptionValidityDate == null ? new Date() : this.subscriptionValidityDate;
+        return this.subscriptionValidityDate;
     }
 
     public void setSubscriptionValidityDate(Date subscriptionValidityDate) {

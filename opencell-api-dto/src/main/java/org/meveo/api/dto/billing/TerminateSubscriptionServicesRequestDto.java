@@ -246,7 +246,7 @@ public class TerminateSubscriptionServicesRequestDto extends BaseEntityDto {
     }
 
     public Date getSubscriptionValidityDate() {
-        return subscriptionValidityDate == null ? new Date() : subscriptionValidityDate;
+        return subscriptionValidityDate;
     }
 
     public void setSubscriptionValidityDate(Date subscriptionValidityDate) {

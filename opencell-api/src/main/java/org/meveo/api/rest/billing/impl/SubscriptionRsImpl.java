@@ -222,8 +222,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     @Override
     public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF, Date validityDate) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
-        if(validityDate == null)
-            validityDate = new Date();
 
         try {
             result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF, validityDate));
@@ -343,8 +341,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
         try {
-            if(subscriptionValidityDate == null)
-                subscriptionValidityDate = new Date();
             result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode, subscriptionValidityDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -379,8 +375,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
                 List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
                 result.getOneshotCharges().addAll(oneShotChargeOthers);
             } else {
-                if(validityDate == null)
-                    validityDate = new Date();
                 List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode, validityDate);
                 result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
             }
@@ -395,8 +389,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     @Override
     public GetListServiceInstanceResponseDto listServiceInstance(String subscriptionCode, Date subscriptionValidityDate, String serviceInstanceCode) {
         GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
-        if(subscriptionValidityDate == null)
-            subscriptionValidityDate = new Date();
         try {
             result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, subscriptionValidityDate, serviceInstanceCode));
         } catch (Exception e) {
@@ -435,8 +427,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            if(subscriptionValidityDate == null)
-                subscriptionValidityDate = new Date();
             subscriptionApi.cancelSubscriptionRenewal(subscriptionCode, subscriptionValidityDate);
         } catch (Exception e) {
             processException(e, result);
@@ -459,8 +449,6 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     @Override
     public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode, Date validityDate) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        if(validityDate == null)
-            validityDate = new Date();
 
         try {
             subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode, validityDate);

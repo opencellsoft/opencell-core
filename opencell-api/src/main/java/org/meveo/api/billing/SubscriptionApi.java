@@ -123,6 +123,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
+import javax.xml.crypto.Data;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -546,7 +547,7 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(activateServicesDto.getSubscription(), activateServicesDto.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, activateServicesDto.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, activateServicesDto.getSubscription(), activateServicesDto.getSubscriptionValidityDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
@@ -1099,7 +1100,7 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(terminateSubscriptionDto.getSubscriptionCode(), terminateSubscriptionDto.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, terminateSubscriptionDto.getSubscriptionCode());
+            throw new EntityDoesNotExistsException(Subscription.class, terminateSubscriptionDto.getSubscriptionCode(), terminateSubscriptionDto.getSubscriptionValidityDate());
         }
 
         SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(terminateSubscriptionDto.getTerminationReason());
@@ -1283,7 +1284,7 @@ public class SubscriptionApi extends BaseApi {
         }
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, validityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, validityDate);
         }
 
         CustomFieldInheritanceEnum inherit = (inheritCF != null && !mergedCF) ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
@@ -2162,7 +2163,7 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
 
         subscriptionService.cancelSubscriptionRenewal(subscription);
@@ -2448,30 +2449,33 @@ public class SubscriptionApi extends BaseApi {
         }
         handleMissingParameters();
 
-        SubscriptionDto existingSubscriptionDto = findSubscription(code, new Date());
-        Subscription existingSubscription = subscriptionService.findByCodeAndValidityDate(code, new Date());
+        SubscriptionDto existingSubscriptionDto = findSubscription(code, null);
+        Subscription existingSubscription = subscriptionService.findByCode(code);
 
-        if (existingSubscription == null)
-            throw new EntityDoesNotExistsException(Subscription.class, code, subscriptionPatchDto.getEffectiveDate());
+        if (existingSubscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, code);
+        }
+
+        Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date(): subscriptionPatchDto.getEffectiveDate();
 
         if (existingSubscription.getValidity() != null &&
                 (isEffectiveDateBeforeValidTo(subscriptionPatchDto, existingSubscription) || isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(subscriptionPatchDto, existingSubscription))
         ) {
             String from = existingSubscription.getValidity().getFrom() == null ? "-" : existingSubscription.getValidity().getFrom().toString();
             String to = existingSubscription.getValidity().getTo() == null ? "-" : existingSubscription.getValidity().getTo().toString();
-            throw new InvalidParameterException("A version already exists for effectiveDate=" + subscriptionPatchDto.getEffectiveDate() + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
+            throw new InvalidParameterException("A version already exists for effectiveDate=" + effectiveDate + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
         }
-        subscriptionService.terminateSubscription(existingSubscription, subscriptionPatchDto.getEffectiveDate(), subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
 
 
-        existingSubscriptionDto.setValidityDate(subscriptionPatchDto.getEffectiveDate());
+        existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
-            existingSubscriptionDto.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate());
+            existingSubscriptionDto.setSubscriptionDate(effectiveDate);
         }
         if (subscriptionPatchDto.getResetRenewalTerms()) {
             existingSubscriptionDto.setRenewalRule(null);
@@ -2493,7 +2497,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionPatchDto.getServicesToInstantiate() != null) {
             List<ServiceToInstantiateDto> serviceToInstantiateDtos = checkCompatibilityAndGetServiceToInstantiate(newSubscription, subscriptionPatchDto.getServicesToInstantiate());
             serviceToInstantiateDtos.stream()
-                    .forEach(s -> s.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate()));
+                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
             for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
                 instantiateServiceForSubscription(serviceToInstantiateDto, newSubscription, null, null, null);
             }
@@ -2503,7 +2507,7 @@ public class SubscriptionApi extends BaseApi {
             subscriptionPatchDto.getServicesToActivate()
                     .getService()
                     .stream()
-                    .forEach(s -> s.setSubscriptionDate(subscriptionPatchDto.getEffectiveDate()));
+                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
         }
 
@@ -2512,11 +2516,13 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private boolean isValidToNullAndEffectiveDateBeforeOrEqualValidFrom(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
-        return existingSubscription.getValidity().getTo() == null && (subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getFrom()) || subscriptionPatchDto.getEffectiveDate().equals(existingSubscription.getValidity().getFrom()));
+        Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date() : subscriptionPatchDto.getEffectiveDate();
+        return existingSubscription.getValidity().getTo() == null && (effectiveDate.before(existingSubscription.getValidity().getFrom()) || effectiveDate.equals(existingSubscription.getValidity().getFrom()));
     }
 
     private boolean isEffectiveDateBeforeValidTo(SubscriptionPatchDto subscriptionPatchDto, Subscription existingSubscription) {
-        return existingSubscription.getValidity().getTo() != null && subscriptionPatchDto.getEffectiveDate().before(existingSubscription.getValidity().getTo());
+        Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date() : subscriptionPatchDto.getEffectiveDate();
+        return existingSubscription.getValidity().getTo() != null && effectiveDate.before(existingSubscription.getValidity().getTo());
     }
 
     public void rollbackOffer(String code, OfferRollbackDto offerRollbackDto) {
@@ -2544,7 +2550,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
-        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getSubscriptionDate(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
         lastSubscription.setToValidity(null);
         subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());

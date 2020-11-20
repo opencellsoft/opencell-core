@@ -831,7 +831,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     public Date getValidityDate() {
-        return validityDate == null ? new Date() : validityDate;
+        return validityDate;
     }
 
     public void setValidityDate(Date validityDate) {

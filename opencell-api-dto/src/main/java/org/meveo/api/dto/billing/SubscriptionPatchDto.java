@@ -45,7 +45,7 @@ public class SubscriptionPatchDto {
     }
 
     public Date getEffectiveDate() {
-        return effectiveDate == null ? new Date() : effectiveDate;
+        return effectiveDate;
     }
 
     public void setEffectiveDate(Date effectiveDate) {

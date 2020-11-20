@@ -790,6 +790,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
+        if(date == null)
+            return findByCode(subscriptionCode);
+
         List<Subscription> subscriptions = getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
                 .setParameter("code", subscriptionCode.toLowerCase())
                 .setParameter("validityDate", date)
