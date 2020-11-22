@@ -48,10 +48,11 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
     private static final String POOL_OVERAGE_WO_QUERY = "select wo from WalletOperation wo \n" +
             "left join wo.ratedTransaction rt \n" +
+            "inner join wo.subscription sub \n" +
             "where wo.code like 'POOL%_USG_OVER' " +
             " and wo.parameter1=:chargeType \n" +
             " and wo.offerTemplate=:offer \n" +
-            " and wo.subscription.userAccount=:agency \n" +
+            " and sub.userAccount=:agency \n" +
             " and (wo.status = 'OPEN' or (wo.status = 'TREATED' and rt.status = 'OPEN')) \n" +
             " and (wo.operationDate between :startMonth and :endMonth) \n" +
             "order by wo.id";
