@@ -91,10 +91,14 @@ public class AmendDuplicateConsumptionUnitJobBean {
     public void execute(JobExecutionResultImpl result, Long canceledWOId, String activateStats) throws BusinessException {
         log.info("Cancel consumption of a duplicated WOId={}", canceledWOId);
         AuditWOCancelation audit = null;
+        long start = System.currentTimeMillis();
         try {
             boolean statsActivated = "TRUE".equalsIgnoreCase(activateStats);
 
             WalletOperation canceledWO = walletOperationService.findById(canceledWOId);
+            log.info("> ADCUnitJob > " + canceledWOId + " >1> canceledWO >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             //trace
             if (statsActivated) {
                 audit = new AuditWOCancelation();
@@ -106,6 +110,9 @@ public class AmendDuplicateConsumptionUnitJobBean {
             }
 
             List<WalletOperation> overageWOList = getOverageWalletOperationList(canceledWO, audit, statsActivated);
+            log.info("> ADCUnitJob > " + canceledWOId + " >2> overageWOList >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             if (statsActivated) {
                 audit.allOvers = overageWOList.size();
             }
@@ -127,8 +134,14 @@ public class AmendDuplicateConsumptionUnitJobBean {
             if (statsActivated) {
                 audit.restoredQT = quantityToRestore;
             }
+            log.info("> ADCUnitJob > " + canceledWOId + " >3> quantityToRestore >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             // restore the canceled QT which rest after adjusting Overage WO to counter or pool
             restoreQuantityToCounterOrPool(canceledWO, quantityToRestore, audit, statsActivated);
+
+            log.info("> ADCUnitJob > " + canceledWOId + " >4> restoreQuantityToCounterOrPool >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
 
             // in case of WO deducted from counter
             // also reajuste canceled WO's quantity and put it to OPEN
@@ -139,15 +152,28 @@ public class AmendDuplicateConsumptionUnitJobBean {
             } else {
                 canceledWO.setParameter3("AMENDED_FROM_POOL");
             }
+
+            log.info("> ADCUnitJob > " + canceledWOId + " >5> getCounter() >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             walletOperationService.update(canceledWO);
+
+            log.info("> ADCUnitJob > " + canceledWOId + " >6> wo.update >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
 
             //trace
             if (statsActivated) {
                 audit.newQT = canceledWO.getQuantity();
                 audit.trace();
             }
+            log.info("> ADCUnitJob > " + canceledWOId + " >7>  audit.trace();() >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
 
             result.registerSucces();
+
+            log.info("> ADCUnitJob > " + canceledWOId + " >8> registerSucces() >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
         } catch (Exception e) {
             log.error("Failed to cancel the deduction from pool of a duplicated WalletOperationId={}: {}", canceledWOId, e);
             result.registerError("Error on duplicated processing WOId="+ canceledWOId + ": " +e.getMessage());
@@ -197,6 +223,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
     @SuppressWarnings("unchecked")
     private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore,
                                                 AuditWOCancelation audit, boolean statsActivated) {
+        long start = System.currentTimeMillis();
         if (quantityToRestore.compareTo(BigDecimal.ZERO) == 0) {
             // no quantity to restore to counter or pool
             return;
@@ -214,13 +241,24 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 audit.newCounterQT = counterPeriod.getValue();
             }
             counterPeriodService.update(counterPeriod);
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> getCounter() >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
 
         } else {
             ServiceTemplate serviceTemplate = canceledWO.getServiceInstance().getServiceTemplate();
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> serviceTemplate >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             String agencyCode = canceledWO.getSubscription().getUserAccount().getCode();
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >2> agencyCode >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             String agencyCounterKey = agencyCode + "_value";
             Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService
                     .getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, canceledWO.getOperationDate());
+
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >3> offerAgenciesCountersMap >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
 
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
                 throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " +
@@ -233,20 +271,24 @@ public class AmendDuplicateConsumptionUnitJobBean {
             }
             offerAgenciesCountersMap.put(agencyCounterKey, agencyCounter + quantityToRestore.doubleValue());
 
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >4> offerAgenciesCountersMap.put >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
+
             cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, canceledWO.getOperationDate());
             //trace
             if (statsActivated) {
                 audit.newCounterQT = BigDecimal.valueOf(offerAgenciesCountersMap.get(agencyCounterKey));
             }
             serviceTemplateService.update(serviceTemplate);
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >5> update >"+ (System.currentTimeMillis()-start));
         }
     }
 
     @SuppressWarnings("unchecked")
     private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<WalletOperation> overageWOs,
                                                  AuditWOCancelation audit, boolean statsActivated) {
+        long start = System.currentTimeMillis();
         BigDecimal canceledQuantity = canceledWO.getQuantity();
-
         int nbrOfOvers = 0;
         String oversIds = "adjustement";
         BigDecimal originOversQT = BigDecimal.ZERO;
@@ -262,15 +304,23 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
             canceledQuantity = canceledQuantity.subtract(overageWO.getInputQuantity());
 
+            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >1> *** >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
             // Cancel RT if already exists
             RatedTransaction ratedTransaction = overageWO.getRatedTransaction();
+            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >2> getRatedTransaction >"+ (System.currentTimeMillis()-start));
+            start = System.currentTimeMillis();
             if (ratedTransaction != null) {
                 ratedTransaction = ratedTransactionService.refreshOrRetrieve(ratedTransaction);
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >3> refreshOrRetrieve >"+ (System.currentTimeMillis()-start));
+                start = System.currentTimeMillis();
                 if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN) {
                     ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
                     ratedTransaction.setParameterExtra("canceled by AmendDuplicateConsumption");
                     ratedTransactionService.update(ratedTransaction);
                 }
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >4> RT uodate >"+ (System.currentTimeMillis()-start));
+                start = System.currentTimeMillis();
             }
             if (canceledQuantity.compareTo(BigDecimal.ZERO) >= 0) {
                 // the canceled Quantiy cover all overageWO quantity
@@ -278,6 +328,9 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 overageWO.setParameterExtra("AmendDuplicateConsumption_Canceled_" + bgToStr(originQT));
                 overageWO.setStatus(WalletOperationStatusEnum.CANCELED);
                 walletOperationService.update(overageWO);
+                
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >5> wo update >"+ (System.currentTimeMillis()-start));
+                start = System.currentTimeMillis();
 
                 if (canceledQuantity.compareTo(BigDecimal.ZERO) == 0) {
                     break;
@@ -295,6 +348,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 Double multiplier = ((Map<String, Double>) cfiService
                         .getInheritedCFValueByKey(appProvider, "CF_P_USAGE_UNITS", overageUnit))
                         .get("multiplier");
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >6> wo multiplier >"+ (System.currentTimeMillis()-start));
+                start = System.currentTimeMillis();
                 BigDecimal newOverageQuantity = rest.divide(BigDecimal.valueOf(multiplier),
                         appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
@@ -305,6 +360,9 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 overageWO.setStatus(WalletOperationStatusEnum.OPEN);
                 overageWO.setRatedTransaction(null);
                 walletOperationService.update(overageWO);
+
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >7> wo update >"+ (System.currentTimeMillis()-start));
+                start = System.currentTimeMillis();
 
                 // the whole canceled quantity is deducted from Overage WO
                 // so we return ZERO
