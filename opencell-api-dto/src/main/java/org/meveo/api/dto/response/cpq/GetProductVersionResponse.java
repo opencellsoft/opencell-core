@@ -1,12 +1,19 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.cpq.ServiceDTO;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.model.cpq.ProductVersion;
 
 
 
@@ -21,8 +28,30 @@ public class GetProductVersionResponse extends BaseResponse{
 
 	private ProductVersionDto productVersionDto;
 
+    private Set<ServiceDTO> serviceList = new HashSet<>();
+    
+    private Set<TagDto> tagList = new HashSet<>();
+
 	public GetProductVersionResponse() {
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	}
+	
+	public GetProductVersionResponse(ProductVersion productVersion) {
+		this();
+		productVersionDto = new ProductVersionDto(productVersion);
+
+    	if(productVersion.getServices() != null && !productVersion.getServices().isEmpty()) {
+    		serviceList = productVersion.getServices().stream().map(d -> {
+    			final ServiceDTO service = new ServiceDTO(d);
+    			return service;
+    		}).collect(Collectors.toSet());
+    	}
+    	if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
+    		tagList = productVersion.getTags().stream().map(t -> {
+    			final TagDto dto = new TagDto(t);
+    			return dto;
+    		}).collect(Collectors.toSet());
+    	}
 	}
 
 	/**
@@ -39,6 +68,34 @@ public class GetProductVersionResponse extends BaseResponse{
 		this.productVersionDto = productVersionDto;
 	}
 
-	
+
+	/**
+	 * @return the serviceList
+	 */
+	public Set<ServiceDTO> getServiceList() {
+		return serviceList;
+	}
+
+	/**
+	 * @param serviceList the serviceList to set
+	 */
+	public void setServiceList(Set<ServiceDTO> serviceList) {
+		this.serviceList = serviceList;
+	}
+
+	/**
+	 * @return the tagList
+	 */
+	public Set<TagDto> getTagList() {
+		return tagList;
+	}
+
+	/**
+	 * @param tagList the tagList to set
+	 */
+	public void setTagList(Set<TagDto> tagList) {
+		this.tagList = tagList;
+	}
+
 	
 }

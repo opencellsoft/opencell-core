@@ -59,6 +59,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
@@ -132,6 +133,19 @@ public class CatalogHierarchyBuilderService {
     @CurrentUser
     protected MeveoUser currentUser;
 
+
+    public void duplicateProductVersion(ProductVersion entity, List<ServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
+       // List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+        List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
+        List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
+
+        if (offerServiceTemplates != null) {
+            for (ServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+                entity.getServices().add(duplicateServiceTemplate(offerServiceTemplate.getCode(), prefix, null, pricePlansInMemory, chargeTemplateInMemory));
+            }
+        }
+    }
+    
     public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();

@@ -149,7 +149,8 @@ public class ProductService extends BusinessService<Product> {
 			throw new EntityAlreadyExistsException(String.format(PRODUCT_CODE_EXIST, product.getCode()));
 		}
 		product.setStatus(ProductStatusEnum.DRAFT);
-		this.create(product);
+		product.setStatusDate(Calendar.getInstance().getTime());
+		super.create(product);
 	}
 	
 	/**

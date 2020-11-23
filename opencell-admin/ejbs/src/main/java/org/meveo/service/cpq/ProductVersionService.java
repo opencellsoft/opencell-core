@@ -1,18 +1,32 @@
 package org.meveo.service.cpq;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
+
+import com.lowagie.text.xml.xmp.DublinCoreSchema;
 /**
  * @author Tarik FAKHOURI.
  * @author Mbarek-Ay.
@@ -67,6 +81,7 @@ public class ProductVersionService extends
     /**
      * duplicate a version of product with status DRAFT and value of the version is 1
      * @param productVersion entity
+     * @param productVersion duplicateHierarchy
      * @return
      * @throws ProductVersionException
      * <br /> when :
@@ -74,22 +89,60 @@ public class ProductVersionService extends
      * <li>error when saving the new version of the product</li>
      *</ul>
      */
-    public ProductVersion duplicate(ProductVersion productVersion) throws BusinessException{
-    	final ProductVersion duplicate = new ProductVersion();
-    	duplicate.setTags( new HashSet<>(productVersion.getTags()));
-    	duplicate.setCurrentVersion(1);
-    	duplicate.setVersion(1);
+    public ProductVersion duplicate(ProductVersion productVersion, boolean duplicateHierarchy) throws BusinessException{
+    	productVersion = refreshOrRetrieve(productVersion);
+    	
+    	productVersion.getServices().size();
+    	productVersion.getTags().size();
+    	
+    	if(!productVersion.getServices().isEmpty()) {
+    		for (ServiceTemplate services : productVersion.getServices()) {
+    			services.getServiceRecurringCharges().size();
+    			services.getServiceSubscriptionCharges().size();
+    			services.getServiceTerminationCharges().size();
+    			services.getServiceUsageCharges().size();
+			}
+    	}
+    	var serviceTemplateList = productVersion.getServices();
+    	var tagList = new ArrayList<>(productVersion.getTags());
+
+    	detach(productVersion);
+    	ProductVersion duplicate = new ProductVersion();
+    	 try {
+             BeanUtils.copyProperties(duplicate, productVersion);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new BusinessException("Failed to clone offer template", e);
+        }
+    	duplicate.setId(null);
+     	duplicate.setVersion(0);
+     	duplicate.setCurrentVersion(1);
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
-    	duplicate.setProduct(productVersion.getProduct());
-    	duplicate.setShortDescription(productVersion.getShortDescription());
+    	duplicate.setTags(new HashSet<>());
+    	duplicate.setServices(new ArrayList<>());
+
+    	if(duplicateHierarchy) {
+    		if(serviceTemplateList != null && !serviceTemplateList.isEmpty())
+    			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, duplicate.getId() + "_");
+    	}
+    	
         try {
+
+        	if(tagList != null) {
+        		for (Tag tag : tagList) {
+        			duplicate.getTags().add(tag);
+    			}
+        	}
             this.create(duplicate);
+        	
         }catch(BusinessException e) {
-            throw new BusinessException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, productVersion.getId()), e);
+            throw new BusinessException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, duplicate.getId()), e);
         }
-        return productVersion;
+        return duplicate;
     }
+    
+    private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+    
     /**
      * change the status of the product of version
      * @param id

@@ -182,7 +182,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response duplicateProductVersion(String productCode,int currentVersion) { 
 		GetProductVersionResponse result = new GetProductVersionResponse();
 		try {
-			result.setProductVersionDto(productApi.duplicateProductVersion(productCode, currentVersion));
+			result = new GetProductVersionResponse(productApi.duplicateProductVersion(productCode, currentVersion));
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
