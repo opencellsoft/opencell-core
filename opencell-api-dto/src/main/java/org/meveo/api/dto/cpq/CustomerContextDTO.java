@@ -47,8 +47,15 @@ public class CustomerContextDTO extends BaseEntityDto {
      */
     private String billingAccountCode;
     
+   /**
+    * The the seller tags
+    */
+    private List<String> sellerTags;
     
-    private List<String> sellerWallet;
+    /**
+    * The customer tags
+    */
+    private List<String> customerTags;
     /**
      * The contract code
      */
@@ -79,12 +86,31 @@ public class CustomerContextDTO extends BaseEntityDto {
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
 	}
-	public List<String> getSellerWallet() {
-		return sellerWallet;
+	/**
+	 * @return the sellerTags
+	 */
+	public List<String> getSellerTags() {
+		return sellerTags;
 	}
-	public void setSellerWallet(List<String> sellerWallet) {
-		this.sellerWallet = sellerWallet;
+	/**
+	 * @param sellerTags the sellerTags to set
+	 */
+	public void setSellerTags(List<String> sellerTags) {
+		this.sellerTags = sellerTags;
 	}
+	/**
+	 * @return the customerTags
+	 */
+	public List<String> getCustomerTags() {
+		return customerTags;
+	}
+	/**
+	 * @param customerTags the customerTags to set
+	 */
+	public void setCustomerTags(List<String> customerTags) {
+		this.customerTags = customerTags;
+	}
+
 
     
     

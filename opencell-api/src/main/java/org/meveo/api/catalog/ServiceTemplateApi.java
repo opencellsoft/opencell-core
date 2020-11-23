@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -39,8 +41,11 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.ServiceDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
@@ -48,10 +53,12 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -63,12 +70,15 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
@@ -78,7 +88,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.GroupedServiceService;
-import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.TagService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -138,6 +148,15 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     
 	@Inject
 	private GroupedServiceService groupedServiceService;
+	
+	@Inject
+	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private TagService tagService;
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
     /**
      * Sets the service charge template.
@@ -635,5 +654,39 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 			template.setGroupedService(groupedService);
 			serviceTemplateService.update(template);
 		});
+	}
+	
+	
+	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
+		GetListServiceResponseDto result = new GetListServiceResponseDto();
+		String billingAccountCode=offerContextDTO.getCustomerContextDTO().getBillingAccountCode();
+		if(Strings.isEmpty(billingAccountCode)) {
+			missingParameters.add("billingAccountCode");
+		}
+		handleMissingParameters();
+		List<String> tagCodes=new ArrayList<String>();
+		BillingAccount ba=billingAccountService.findByCode(billingAccountCode);
+		if(ba!=null) {
+			List<Tag> entityTags=tagService.getTagsByBA(ba);
+			if(!entityTags.isEmpty()) {
+				for(Tag tag:entityTags) {
+					tagCodes.add(tag.getCode());
+				}
+			}} 
+		List<String> sellerTags=offerContextDTO.getCustomerContextDTO().getSellerTags();
+		List<String> customerTags=offerContextDTO.getCustomerContextDTO().getCustomerTags();
+		HashSet<String> resultBaTags = new HashSet<String>();
+		resultBaTags.addAll(tagCodes);
+		resultBaTags.addAll(sellerTags);
+		resultBaTags.addAll(customerTags);
+		OfferTemplate offerTemplate=offerTemplateService.getOfferByTags(resultBaTags);
+		if(offerTemplate!=null) {
+			List<ServiceTemplate> services=offerTemplate.getServices();
+			for(ServiceTemplate serv:services) {
+				ServiceDTO serviceDto=new ServiceDTO(serv);
+				result.addServiceTemplate(serviceDto);
+			}
+		}
+		return result;
 	}
 }

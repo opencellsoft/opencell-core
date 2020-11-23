@@ -64,11 +64,13 @@ public class GetListServiceResponseDto extends SearchResponse {
         this.services = services;
     }
 
-    public void addServiceTemplate(ServiceDTO service) {
-        if (service == null) {
+    public void addServiceTemplate(ServiceDTO serviceDto) {
+        if (services == null) {
         	services = new ArrayList<>();
         }
-        services.add(service);
+        services.add(serviceDto);
     }
+    
+    
 
 }
