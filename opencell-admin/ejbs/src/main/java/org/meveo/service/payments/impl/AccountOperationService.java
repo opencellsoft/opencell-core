@@ -118,6 +118,17 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         return accountOperations.size() > 0 ? accountOperations.get(0) : null;
     }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> listByCustomerAccount(CustomerAccount customerAccount) {
+        try {
+            return getEntityManager().createNamedQuery("AccountOperation.listByCustomerAccount").setParameter("customerAccount", customerAccount).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list AccountOperation by customerAccount", e);
+            return null;
+        }
+    }
 
     /**
      * Find by reference.

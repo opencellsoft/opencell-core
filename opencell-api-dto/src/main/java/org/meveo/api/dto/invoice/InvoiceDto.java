@@ -95,7 +95,7 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The category invoice aggregates. */
     @XmlElementWrapper
-    @XmlElement(name = "categoryInvoiceAgregate", required = true)
+    @XmlElement(name = "categoryInvoiceAgregate")
     protected List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
 
     /** The tax aggregates */
@@ -580,7 +580,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * @return the categoryInvoiceAgregates
      */
     public List<CategoryInvoiceAgregateDto> getCategoryInvoiceAgregates() {
-        return categoryInvoiceAgregates;
+        return categoryInvoiceAgregates == null ? new ArrayList<>() : categoryInvoiceAgregates;
     }
 
     /**

@@ -56,6 +56,7 @@ import org.meveo.model.ModuleItem;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_measurable_quant_seq"), })
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class MeasurableQuantity extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -4864192159320969937L;

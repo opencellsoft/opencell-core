@@ -75,7 +75,10 @@ import org.meveo.model.payments.CustomerAccount;
 @Table(name = "crm_customer")
 @NamedQueries({
         @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
-        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer")})
+        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer"),
+        @NamedQuery(name = "Customer.getProspects", query = "select c from Customer c inner join CustomerAccount ca on ca.customer.id = c.id where c.auditable.created < :creationDate GROUP BY c")})
+
+//s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca 
 public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();

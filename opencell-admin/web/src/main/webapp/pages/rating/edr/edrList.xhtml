@@ -1,10 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:o="http://omnifaces.org/ui"
-    xmlns:hftl="http://hftl.org"
-    template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -20,78 +15,54 @@
                 <p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
                 <p:menuitem outcome="edrList" value="#{messages['menu.edr']}" />
             </p:breadCrumb>
-        </h:form>   
+        </h:form>
 
-        <hftl:entityPopup id="searchEdrPopup"
-            header="#{messages['commons.search']}"
-            updateField=":searchForm:edr"
-            selection="#{edrBean.filters['subscription']}"
-            backingBean="#{subscriptionBean}"
-            searchField1Label="#{messages['BusinessEntity.code']}"
-            searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-            column1="code"
-            column2Label="#{messages['BusinessEntity.description']}"
-            column2="description">
+        <hftl:entityPopup id="searchEdrPopup" header="#{messages['commons.search']}" updateField=":searchForm:edr" selection="#{edrBean.filters['subscription']}"
+            backingBean="#{subscriptionBean}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+            column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description">
         </hftl:entityPopup>
 
         <hftl:searchPanel label="#{messages['commons.search']}" backingBean="#{edrBean}" renderNewButton="false">
-            <hftl:searchField id="edr" label="#{messages['edr.subscription']}"
-                field="subscription" valueLabelField="code" popup="true"
-                popupId="searchEdrPopup" />
-          <hftl:searchField label="#{messages['commons.status']}" field="status"/>
-          <hftl:searchField label="#{messages['edr.eventDate']}" field="eventDate"/>
-          <hftl:searchField label="#{messages['edr.timesTried']}" field="timesTried"/>
-          <hftl:searchField label="#{messages['edr.rejectReason']}" field="rejectReason" />
+            <hftl:searchField id="edr" label="#{messages['edr.subscription']}" field="subscription" valueLabelField="code" popup="true" popupId="searchEdrPopup" />
+            <hftl:searchField label="#{messages['commons.status']}" field="status" />
+            <hftl:searchField label="#{messages['edr.eventDate']}" field="eventDate" />
+            <hftl:searchField label="#{messages['edr.timesTried']}" field="timesTried" />
+            <hftl:searchField label="#{messages['edr.rejectReason']}" field="rejectReason" />
         </hftl:searchPanel>
 
         <hftl:dataList checkMany="true" noClose="false" backingBean="#{edrBean}">
 
             <hftl:column label="#{messages['edr.subscription']}" field="subscription.code" />
-            <hftl:column label="#{messages['commons.status']}" field="status" isMessage="true"  messagePrefix="edrStatus"/>
-            <hftl:column label="#{messages['edr.eventDate']}" field="eventDate" isDate="true" />
-            <hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" />
-            <hftl:column label="#{messages['edr.timesTried']}"	field="timesTried"/>
-                
+            <hftl:column label="#{messages['commons.status']}" field="status" isMessage="true" messagePrefix="edrStatus" />
+            <hftl:column label="#{messages['commons.statusDate']}" field="statusDate" isDate="true" time="true" />
+            <hftl:column label="#{messages['edr.eventDate']}" field="eventDate" isDate="true" time="true" />
+            <hftl:column label="#{messages['edr.rejectReason']}" field="rejectReason" showTruncated="true" truncateToSize="10000" truncateToInListSize="160"/>
+            <hftl:column label="#{messages['edr.timesTried']}" field="timesTried" width="10%"/>
+
             <p:column width="100">
                 <f:facet name="header">
                     <h:outputText value="#{messages['commons.actions']}" />
                 </f:facet>
 
-                <p:commandButton id="updateEdr" icon="ui-icon-play"
-                    actionListener="#{edrBean.updateStatus(entity)}"
-                    rendered="#{edrBean.canUserUpdateEntity()}"
-                    process="@form" update="datatable_results">
-                    <p:confirm header="#{messages['commons.confirmationHeader']}"
-                        message="#{messages['message.confirm.edr.update']}"
-                        icon="ui-icon-alert" />
+                <p:commandButton id="updateEdr" icon="ui-icon-refresh" actionListener="#{edrBean.updateStatus(entity)}" rendered="#{edrBean.canUserUpdateEntity() and entity.status=='REJECTED'}" process="@form"
+                    update="datatable_results">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['message.confirm.edr.reOpenStatus']}" icon="ui-icon-alert" />
                 </p:commandButton>
-                <p:commandButton id="reprocess" icon="ui-icon-refresh"
-					title="#{messages['edr.reprocess']}" process="@form" update="datatable_results"
-					rendered="#{edrBean.canReprocess(entity)}"
-					action="#{edrBean.reprocess(entity)}">
-					<p:confirm header="#{messages['commons.confirmationHeader']}"
-						message="#{messages['message.confirm.edr.reprocess']}"
-						icon="ui-icon-alert" />
-				</p:commandButton>
+                <p:commandButton id="reprocess" icon="ui-icon-play" title="#{messages['edr.reprocess']}" process="@form" update="datatable_results"
+                    rendered="#{edrBean.canReprocess(entity)}" action="#{edrBean.reprocess(entity)}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['message.confirm.edr.reprocess']}" icon="ui-icon-alert" />
+                </p:commandButton>
             </p:column>
 
         </hftl:dataList>
 
         <p:panel styleClass="action-buttons" rendered="#{edrBean.canUserUpdateEntity()}">
-            <p:commandButton id="massUpdateEdr"
-                value="#{messages['action.massUpdate']}"
-                update=":results_form" action="#{edrBean.massUpdate()}">
-                <p:confirm header="#{messages['commons.confirmationHeader']}"
-                    message="#{messages['message.confirm.edr.update']}"
-                    icon="ui-icon-alert" />
+            <p:commandButton id="massUpdateEdr" value="#{messages['edr.mass.reOpenStatus']}" update=":results_form" action="#{edrBean.massUpdate()}">
+                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['message.confirm.edr.mass.reOpenStatus']}" icon="ui-icon-alert" />
             </p:commandButton>
-            <p:commandButton id="massReprocessEdr"
-				value="#{messages['edr.mass.reprocessing']}" update=":results_form"
-				action="#{edrBean.massReprocessing()}">
-				<p:confirm header="#{messages['commons.confirmationHeader']}"
-					message="#{messages['message.confirm.edr.mass.reprocess']}"
-					icon="ui-icon-alert" />
-			</p:commandButton>
+            <p:commandButton id="massReprocessEdr" value="#{messages['edr.mass.reprocess']}" update=":results_form" action="#{edrBean.massReprocessing()}">
+                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['message.confirm.edr.mass.reprocess']}" icon="ui-icon-alert" />
+            </p:commandButton>
         </p:panel>
 
 

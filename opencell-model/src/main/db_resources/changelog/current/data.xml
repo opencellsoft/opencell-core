@@ -1756,7 +1756,7 @@ public class ValidateBRScript extends Script {
             <column name="user_id" valueNumeric="-2" />
             <column name="role_id" valueNumeric="-200" />
         </insert>
-	</changeSet> 
+	</changeSet>
  	<changeSet id="#5303_20200814 - CDR and Mediation" author="AmineTazi">
 		<insert tableName="adm_permission">
             <column name="id" valueNumeric="-121" />
@@ -2110,16 +2110,22 @@ public class ValidateBRScript extends Script {
             <where>code='UNBILLED_UA_HIERARCHY'</where>
         </update>
     </changeSet>
-	
+
 	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
 		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
 	</changeSet>
-    
+
     <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
-    	<update tableName="billing_billing_run"> 
+    	<update tableName="billing_billing_run">
     	<column name="status" value="INVOICES_GENERATED"/>
     	<where>status='INVOICES_GENERRATED'</where>
     	</update>
     </changeSet>
-    
+    <changeSet id="#5610_20201102 - bad dept operation type" author="NabilOUACHI">
+        <update tableName="ar_occ_template">
+            <column name="occ_category" value="CREDIT"></column>
+            <where>code='EXP_WRT'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

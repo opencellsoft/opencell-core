@@ -25,7 +25,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.security.Principal;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -38,9 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.keycloak.KeycloakPrincipal;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.notification.InboundRequest;
@@ -80,13 +86,13 @@ public class InboundServlet extends HttpServlet {
     private void doService(HttpServletRequest req, HttpServletResponse res) {
         
         try {
-            
+
             ParamBean param = paramBeanFactory.getInstance();
             boolean authorizationDisabled = "true".equalsIgnoreCase(param.getProperty("inbound.authorization.disabled", "false"));
-            //if(!authorizationDisabled) {
-            //    req.authenticate(res);
-            //}
-            boolean processRequest = authorizationDisabled || req.isUserInRole("apiAccess");
+
+            boolean isUserInRole = isUserInRole(req);
+
+            boolean processRequest = authorizationDisabled || isUserInRole;
 
             String path = req.getPathInfo();
             log.debug("received request for method {} , path={}", req.getMethod(), path);
@@ -155,6 +161,34 @@ public class InboundServlet extends HttpServlet {
         } catch (BusinessException | IOException e) {
             log.error("Failed to process Inbound request ", e);
         }
+    }
+
+    private boolean isUserInRole(HttpServletRequest req) {
+        if (req.isUserInRole("inboundAccess")) {
+            return true;
+        } else {
+            return isUserInCustomRole(req);
+        }
+
+    }
+
+    private boolean isUserInCustomRole(HttpServletRequest req) {
+
+        String[] stringUri = req.getRequestURI().split("/");
+        String inboundWsRole = "";
+        if (stringUri.length > 0) {
+            inboundWsRole = stringUri[stringUri.length - 1];
+        }
+        if (StringUtils.isBlank(inboundWsRole)) {
+            return false;
+        }
+        return req.isUserInRole(inboundWsRole);
+    }
+
+    private Set<String> getCustomRoles(KeycloakPrincipal principal) {
+        String client = principal.getKeycloakSecurityContext().getToken().getIssuedFor();
+
+        return principal.getKeycloakSecurityContext().getToken().getResourceAccess(client).getRoles();
     }
 
     @Override
