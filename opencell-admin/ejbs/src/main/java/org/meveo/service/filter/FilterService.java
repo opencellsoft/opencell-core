@@ -297,8 +297,10 @@ public class FilterService extends BusinessService<Filter> {
         } else {
             targetFilter.setSecondarySelectors(new ArrayList<FilterSelector>());
         }
-        for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
-            targetFilter.getSecondarySelectors().add(filterSelector);
+        if (sourceFilter.getSecondarySelectors() != null) {
+            for (FilterSelector filterSelector : sourceFilter.getSecondarySelectors()) {
+                targetFilter.getSecondarySelectors().add(filterSelector);
+            }
         }
 
         targetFilter.setFilterCondition(sourceFilter.getFilterCondition());
