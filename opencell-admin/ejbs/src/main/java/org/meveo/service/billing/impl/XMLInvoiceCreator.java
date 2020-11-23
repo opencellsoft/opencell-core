@@ -1583,6 +1583,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
 
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
+                        	RatedTransaction refreshedRT = ratedTransactionService.refreshOrRetrieve(ratedTransaction);
+                        	ratedTransaction = refreshedRT != null ? refreshedRT : ratedTransaction;
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                     && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                                 continue;
