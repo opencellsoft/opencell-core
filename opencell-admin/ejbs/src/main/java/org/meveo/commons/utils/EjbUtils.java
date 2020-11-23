@@ -37,6 +37,8 @@ public class EjbUtils {
 
     private static final String LOCALHOST = "127.0.0.1";
 
+    private static final String JBOSSHOST = "JBOSS_HOST";
+
     /**
      * Non instantiable class.
      */
@@ -53,12 +55,9 @@ public class EjbUtils {
      */
     public static Object getInterface(String nameEJB) throws NamingException {
         InitialContext ctx = null;
-//        if (System.getenv("JBOSS_HOST") != null) {
-        if (System.getProperty("JBOSS_HOST") != null) {
-//            logger.info(String.format("JBOSS_HOST=", System.getenv("JBOSS_HOST")));
-//            ctx = getInitialContext(System.getenv("JBOSS_HOST"));
-            logger.info(String.format("JBOSS_HOST=", System.getProperty("JBOSS_HOST")));
-            ctx = getInitialContext(System.getProperty("JBOSS_HOST"));
+        if (System.getProperty(JBOSSHOST) != null) {
+            logger.info(String.format("JBOSS_HOST=", System.getProperty(JBOSSHOST)));
+            ctx = getInitialContext(System.getProperty(JBOSSHOST));
         } else {
             ctx = getInitialContext(LOCALHOST);
         }
