@@ -406,10 +406,12 @@ public class ProductApi extends BaseApi {
 					tagCodes.add(tag.getCode());
 				}
 			}} 
-		List<String> sellerWallets=offerContextDTO.getCustomerContextDTO().getSellerWallet();
+		List<String> sellerTags=offerContextDTO.getCustomerContextDTO().getSellerTags();
+		List<String> customerTags=offerContextDTO.getCustomerContextDTO().getCustomerTags();
 		HashSet<String> resultBaTags = new HashSet<String>();
 		resultBaTags.addAll(tagCodes);
-		resultBaTags.addAll(sellerWallets); 
+		resultBaTags.addAll(sellerTags);
+		resultBaTags.addAll(customerTags);
 		OfferTemplate offerTemplate=offerTemplateService.getOfferByTags(resultBaTags);
 		if(offerTemplate!=null) {
 			Set<Product> products=offerTemplate.getProducts();

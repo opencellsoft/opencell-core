@@ -634,17 +634,18 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     			for(Tag tag:entityTags) {
     				tagCodes.add(tag.getCode());
     			}
-    		}}
-    	HashSet<String> resultBaTag = new HashSet<String>();
-    	resultBaTag.addAll(tagCodes);
-    	List<String> commercialWallet=customerContextDto.getSellerWallet();
-    	resultBaTag.addAll(commercialWallet);
-    	log.info("OfferTemplateApi.list resultBaTag={}",resultBaTag); 
+    		}} 
+    	List<String> sellerTags=customerContextDto.getSellerTags();
+		List<String> customerTags=customerContextDto.getCustomerTags();
+		HashSet<String> resultBaTags = new HashSet<String>();
+		resultBaTags.addAll(tagCodes);
+		resultBaTags.addAll(sellerTags);
+		resultBaTags.addAll(customerTags);
+    	log.info("OfferTemplateApi.list resultBaTag={}",resultBaTags); 
     	String tags=null;
-    	if (!resultBaTag.isEmpty()) {
-    		 tags=resultBaTag.stream().collect(Collectors.joining(","));
-    	}
-    		log.info("OfferTemplateApi.list tags={}",tags);
+    	if (!resultBaTags.isEmpty()) {
+    		 tags=resultBaTags.stream().collect(Collectors.joining(","));
+    	} 
     		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
     		if(pagingAndFiltering==null) {
     		 pagingAndFiltering=new PagingAndFiltering();
