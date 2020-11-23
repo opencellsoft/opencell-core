@@ -24,6 +24,7 @@ import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -58,6 +59,25 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
 	Response addNewProduct(@Parameter(description = "product dto for a new insertion", required = true) ProductDto productDto);
+	
+
+	/**
+	 * @param productCode
+	 * @param duplicateHierarchy
+	 * @param preserveCode
+	 * @return
+	 */
+	@POST
+	@Path("/duplicate")
+	@Operation(summary = "This endpoint allows to duplicate a product",
+	tags = { "Product" },
+	description ="duplicate a product with the published its version or a recent version",
+	responses = {
+	        @ApiResponse(responseCode="200", description = "the product successfully duplicated"),
+	        @ApiResponse(responseCode = "404", description = "the product with product code in param does not exist ", 
+	        	content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)) )
+	})
+	Response duplicateProduct(String productCode, boolean duplicateHierarchy, boolean preserveCode);
 	
 	/**
 	 * 
@@ -298,7 +318,5 @@ public interface ProductRs extends IBaseRs{
 	})
 	Response duplicateProductVersion(@Parameter @PathParam("productCode") String productCode,
 										@Parameter @PathParam("productVersion") int productVersion);
-	
-
 	
 }

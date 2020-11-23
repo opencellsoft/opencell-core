@@ -20,7 +20,7 @@ public enum VersionStatusEnum {
 	 * status of publied. <br />
 	 * publied = 1 
 	 */
-	PUBLIED(1),
+	PUBLISHED(1),
 	/**
 	 * status of CLOSED. <br />
 	 * CLOSED = 2 

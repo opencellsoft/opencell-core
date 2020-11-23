@@ -9,14 +9,16 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.slf4j.Logger;
@@ -43,12 +45,15 @@ public class ProductService extends BusinessService<Product> {
 	private final static String PRODUCT_CAN_NOT_CHANGE_THE_STATUS = "product (%s) can not change the status beacause it not draft";
 	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";
 	
-	@Inject
+	/*@Inject
 	private CustomerBrandService customerBrandService;
 	@Inject
 	private DiscountPlanService discountPlanService;
 	@Inject
-	private ProductLineService productLineService;
+	private ProductLineService productLineService;*/
+	
+	@Inject
+	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -89,6 +94,43 @@ public class ProductService extends BusinessService<Product> {
 		
 		LOGGER.info("the product ({}) updated successfully", product.getCode());
 		return product;
+	}
+	
+	public Product duplicateProduct(Product product, boolean duplicateHierarchy, boolean preserveCode) throws BusinessException {
+		product = refreshOrRetrieve(product);
+		
+		product.getProductVersions().size();
+		
+		var productVersions = product.getProductVersions();
+		var discountPlans = product.getDiscountList();
+		var modelChildren = product.getModelChlidren();
+		
+		detach(product);
+		
+		Product duplicate = new Product();
+
+   	 	try{
+            BeanUtils.copyProperties(duplicate, product);
+	       } catch (IllegalAccessException | InvocationTargetException e) {
+	           throw new BusinessException("Failed to clone offer template", e);
+	       }
+   	 	
+	   	 duplicate.setId(null);
+	   	 duplicate.setBrand(null);
+	   	 
+	   	 if(!preserveCode) {
+	         String code = findDuplicateCode(duplicate);
+	   	   	duplicate.setCode(code);
+	   	 }
+	   	 if(duplicateHierarchy) {
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersions, discountPlans, modelChildren,  duplicate.getId() + "_");
+	   	 }
+	   	 try {
+		   	 	super.create(duplicate);
+	   	 }catch(BusinessException e) {
+	   		 throw new MeveoApiException(e);
+	   	 }
+	   	 return duplicate;
 	}
 	
 

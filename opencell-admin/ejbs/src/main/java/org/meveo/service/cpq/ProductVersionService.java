@@ -121,23 +121,19 @@ public class ProductVersionService extends
     	duplicate.setTags(new HashSet<>());
     	duplicate.setServices(new ArrayList<>());
 
-    	if(duplicateHierarchy) {
-    		if(serviceTemplateList != null && !serviceTemplateList.isEmpty())
-    			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, duplicate.getId() + "_");
-    	}
-    	
-        try {
+    	// TODO : voir duplicate.getId()
 
-        	if(tagList != null) {
-        		for (Tag tag : tagList) {
-        			duplicate.getTags().add(tag);
-    			}
-        	}
+        try {
             this.create(duplicate);
-        	
         }catch(BusinessException e) {
             throw new BusinessException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, duplicate.getId()), e);
         }
+        
+    	if(duplicateHierarchy) {
+    		if(serviceTemplateList != null && !serviceTemplateList.isEmpty())
+    			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, tagList, duplicate.getId() + "_");
+    	}
+    	
         return duplicate;
     }
     
@@ -153,7 +149,7 @@ public class ProductVersionService extends
     public ProductVersion publishOrCloseVersion(Long id, boolean publish) {
         final ProductVersion productVersion = this.getProductVersion(id);
         if(publish) {
-            productVersion.setStatus(VersionStatusEnum.PUBLIED);
+            productVersion.setStatus(VersionStatusEnum.PUBLISHED);
         }else {
             productVersion.setStatus(VersionStatusEnum.CLOSED);
         }
