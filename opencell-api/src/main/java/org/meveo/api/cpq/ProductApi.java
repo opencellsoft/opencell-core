@@ -294,6 +294,21 @@ public class ProductApi extends BaseApi {
 			throw new MeveoApiException(e);
 		}
     }
+    
+    public Product duplicateProduct(String codeProduct, boolean duplicateHierarchy, boolean preserveCode) throws MeveoApiException, BusinessException {
+    	
+    	Product product = null; 
+    	try {
+    		product = productService.findByCode(codeProduct);
+    		if(product == null) {
+    			throw new EntityDoesNotExistsException(Product.class, codeProduct);
+    		}
+    		return productService.duplicateProduct(product, duplicateHierarchy, preserveCode);
+    	}catch (BusinessException e) {
+			throw new MeveoApiException(e);
+		}
+    	
+    }
     /**
      * Change status product version Entity
      *
