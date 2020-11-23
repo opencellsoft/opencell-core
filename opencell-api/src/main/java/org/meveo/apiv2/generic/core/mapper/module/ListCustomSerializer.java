@@ -19,11 +19,13 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
     private JsonSerializer<Object> serializer;
     private final Set<String> nestedEntities;
     private final Set<IEntity> sharedEntityToSerialize;
+    private final Long nestedDepth;
 
-    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize) {
+    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize, Long nestedDepth) {
         super(List.class);
         this.nestedEntities = nestedEntities;
         this.sharedEntityToSerialize = sharedEntityToSerialize;
+        this.nestedDepth = nestedDepth;
     }
 
     @Override
@@ -33,7 +35,10 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
 
     @Override
     public void serialize(List list, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if(shouldReturnOnlyIds(list, gen.getCurrentValue(), gen.getOutputContext().getCurrentName(), getPathToRoot(gen))){
+        Object currentValue = gen.getCurrentValue();
+        String currentName = gen.getOutputContext().getCurrentName();
+        String pathToRoot = getPathToRoot(gen);
+        if(shouldReturnOnlyIds(list, currentValue, currentName, pathToRoot)){
             List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
             gen.writeStartArray(listIEntity.size());
             for (IEntity iEntity : listIEntity) {
