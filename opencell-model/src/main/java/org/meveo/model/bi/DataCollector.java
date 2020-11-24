@@ -22,7 +22,8 @@ import java.util.Map;
         parameters = { @Parameter(name = "sequence_name", value = "bi_data_collector_seq"), })
 @NamedQueries({
         @NamedQuery(name ="DataCollector.dataCollectorsByDate", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created <= :to"),
-        @NamedQuery(name ="DataCollector.dataCollectorsBetween", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created BETWEEN :from AND :to")
+        @NamedQuery(name ="DataCollector.dataCollectorsBetween", query = "SELECT dc FROM DataCollector dc WHERE dc.auditable.created BETWEEN :from AND :to"),
+        @NamedQuery(name ="DataCollector.updateLastRunDate", query = "UPDATE DataCollector SET lastRunDate = :lastDateRun WHERE code IN :codes")
 })
 public class DataCollector extends BusinessEntity {
 
@@ -35,6 +36,10 @@ public class DataCollector extends BusinessEntity {
     @Type(type = "json")
     @Column(name = "aliases", columnDefinition = "text")
     private Map<String, String> aliases = new HashMap<>();
+
+    @Type(type = "json")
+    @Column(name = "parameters", columnDefinition = "text")
+    private Map<String, String> parameters = new HashMap<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_run_date", columnDefinition = "text")
@@ -70,5 +75,13 @@ public class DataCollector extends BusinessEntity {
 
     public void setLastRunDate(Date lastRunDate) {
         this.lastRunDate = lastRunDate;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }
