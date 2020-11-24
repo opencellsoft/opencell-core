@@ -868,14 +868,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus()))
                 .findFirst();
 
-        if (activeSubscription.isPresent())
-            return activeSubscription.get();
-        else {
-            return subscriptions.stream()
-                    .sorted(Comparator.<Subscription, Date>comparing(a -> a.getAuditable().getUpdated()).reversed())
-                    .collect(Collectors.toList())
-                    .get(0);
-        }
+        return activeSubscription.orElseGet(() -> subscriptions.stream()
+                .sorted(Comparator.comparing(this::getUpdated).reversed())
+                .collect(Collectors.toList())
+                .get(0));
+    }
+
+    private Date getUpdated(Subscription subscription) {
+        return subscription.getAuditable().getUpdated() != null ? subscription.getAuditable().getUpdated() : subscription.getAuditable().getCreated();
     }
 
     @Override

@@ -316,7 +316,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Assigned a number to the invoice {} ", subscription.getId());
+        log.debug("Defaut observer: Subscription version created, id: ", subscription.getId());
         checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
     }
 
