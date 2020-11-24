@@ -1583,6 +1583,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
 
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
+                        	//try to refresh the entity to avoid lazy init exception
                         	RatedTransaction refreshedRT = ratedTransactionService.refreshOrRetrieve(ratedTransaction);
                         	ratedTransaction = refreshedRT != null ? refreshedRT : ratedTransaction;
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
