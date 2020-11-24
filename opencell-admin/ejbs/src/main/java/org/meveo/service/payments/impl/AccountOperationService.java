@@ -119,11 +119,21 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         return accountOperations.size() > 0 ? accountOperations.get(0) : null;
     }
     
-    
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> listByCustomerAccount(CustomerAccount customerAccount) {
+    public List<AccountOperation> listByCustomerAccount(CustomerAccount customerAccount, Integer firstRow, Integer numberOfRows) {
         try {
-            return getEntityManager().createNamedQuery("AccountOperation.listByCustomerAccount").setParameter("customerAccount", customerAccount).getResultList();
+            
+            Query query = getEntityManager().createNamedQuery("AccountOperation.listByCustomerAccount");
+            query.setParameter("customerAccount", customerAccount);
+            
+            if (firstRow != null) {
+                query.setFirstResult(firstRow);
+            }
+            if (numberOfRows != null) {
+                query.setMaxResults(numberOfRows);
+            }
+            
+            return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list AccountOperation by customerAccount", e);
             return null;
