@@ -125,7 +125,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
-import javax.xml.crypto.Data;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -2183,7 +2182,7 @@ public class SubscriptionApi extends BaseApi {
             return result;
 
         // Recurring charges :
-        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscription.getId());
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionId(InstanceStatusEnum.ACTIVE, rateUntillDate, subscription.getId());
         for (Long chargeId : activeRecurringChargeIds) {
             int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate, false).getNbRating();
             result.addResult(chargeId, nbRating);
