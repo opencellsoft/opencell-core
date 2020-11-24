@@ -26,9 +26,8 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Invoice number assigned event
- * 
- * @author Adrius Karpavicius
+ * Subscription removed event
+ *
  */
 @Qualifier
 @Target({ METHOD, FIELD, PARAMETER, TYPE })
