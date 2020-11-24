@@ -209,6 +209,15 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	        }
 	}
 
+	public Response duplicateProduct(String productCode, boolean duplicateHierarchy, boolean preserveCode) { 
+		GetProductDtoResponse result = new GetProductDtoResponse();
+		try {
+			result = new GetProductDtoResponse(productApi.duplicateProduct(productCode, duplicateHierarchy, preserveCode));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+		}
+	}
 
 
 

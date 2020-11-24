@@ -140,6 +140,25 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		}
 	}
 	
+	public DiscountPlan() {}
+	
+	public DiscountPlan(DiscountPlan dp) {
+
+		this.setActive(dp.isActive());
+		this.setStartDate(dp.getStartDate());
+		this.setEndDate(dp.getEndDate());
+		this.setDefaultDuration(dp.getDefaultDuration());
+		this.setDurationUnit(dp.getDurationUnit());
+		this.setUUIDIfNull();
+		this.setCode(dp.getCode());
+		this.setMaxDuration(dp.getMaxDuration());
+		this.setDescription(dp.getDescription());
+		this.setMinDuration(dp.getMinDuration());
+		this.setCfValues(dp.getCfValues());
+		this.setCfAccumulatedValues(dp.getCfAccumulatedValues());
+		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
+	}
+	
 	public boolean isValid() {
 		return (startDate == null || endDate == null || startDate.before(endDate));
 	}

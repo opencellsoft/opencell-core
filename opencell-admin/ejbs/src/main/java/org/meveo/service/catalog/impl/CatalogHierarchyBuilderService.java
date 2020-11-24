@@ -23,9 +23,14 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -41,6 +46,8 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -59,13 +66,17 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,13 +139,22 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private ProductVersionService productVersionService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+    
+    @Inject 
+    private DiscountPlanItemService discountPlanItemService;
 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
 
-    public void duplicateProductVersion(ProductVersion entity, List<ServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
+    public void duplicateProductVersion(ProductVersion entity, List<ServiceTemplate> offerServiceTemplates, List<Tag> tags, String prefix) throws BusinessException {
        // List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
@@ -144,7 +164,78 @@ public class CatalogHierarchyBuilderService {
                 entity.getServices().add(duplicateServiceTemplate(offerServiceTemplate.getCode(), prefix, null, pricePlansInMemory, chargeTemplateInMemory));
             }
         }
+        
+        if(tags != null) {
+        	entity.setTags(new HashSet<>());
+        	for (Tag tag : tags) {
+				entity.getTags().add(tag);
+			}
+        }
     }
+   
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, String prefix) {
+    	if(productVersion != null) {
+    		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
+    		tmpProductVersion.getTags().size();
+    		tmpProductVersion.getServices().size();
+    		
+    		var tagList = new ArrayList<>(tmpProductVersion.getTags());
+    		var serviceList = new ArrayList<>(tmpProductVersion.getServices());
+
+    		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
+    		productVersionService.create(newProductVersion);    		
+			duplicateProductVersion(newProductVersion, serviceList, tagList, newProductVersion.getId() + "_");			
+			entity.getProductVersions().add(newProductVersion);
+    	}
+    	if(discountPlans != null) {
+    		entity.setDiscountList(new HashSet<>());
+    		discountPlans.forEach(dp -> {
+    			dp.getDiscountPlanItems().size();
+    			DiscountPlan newDiscountPlan = new DiscountPlan(dp);
+    			newDiscountPlan.setCode(discountPlanService.findDuplicateCode(dp));
+    			
+    			
+    			discountPlanService.create(newDiscountPlan);
+
+    			List<DiscountPlanItem> discountPlanItem = new ArrayList<DiscountPlanItem>();
+    			duplicateDiscount(newDiscountPlan, discountPlanItem);
+    			
+        		entity.getDiscountList().add(newDiscountPlan);
+    			
+    		});
+    	}
+    	if(modelChildren != null) {
+    		entity.setModelChlidren(new HashSet<String>());
+    		modelChildren.forEach( model -> {
+    			entity.getModelChlidren().add(model);
+    		});
+    	}
+    }
+
+	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
+		if(entity.getDiscountPlanItems() != null && !entity.getDiscountPlanItems().isEmpty()) {
+			entity.getDiscountPlanItems().forEach(dp -> {
+				final DiscountPlanItem duplicate = new DiscountPlanItem();
+				duplicate.setCode(dp.getCode());
+				duplicate.setId(null);
+				duplicate.setDiscountPlan(entity);
+				duplicate.setExpressionEl(dp.getExpressionEl());
+				duplicate.setExpressionElSpark(dp.getExpressionElSpark());
+				duplicate.setDiscountValue(dp.getDiscountValue());
+				duplicate.setDiscountValueEL(dp.getDiscountValueEL());
+				duplicate.setDiscountPlanItemType(dp.getDiscountPlanItemType());
+				duplicate.setUUIDIfNull();
+				duplicate.setCfValues(dp.getCfValues());
+				duplicate.setCfAccumulatedValues(dp.getCfAccumulatedValues());
+				duplicate.setInvoiceCategory(dp.getInvoiceCategory());
+				duplicate.setAccountingCode(dp.getAccountingCode());
+				
+				discountPlanItemService.create(duplicate);
+				discountPlanItem.add(duplicate);
+			});
+			entity.setDiscountPlanItems(discountPlanItem);
+		}
+	}
     
     public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
@@ -594,7 +685,7 @@ public class CatalogHierarchyBuilderService {
 		    log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
 		}
 	}
-
+	
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
 
         try {
