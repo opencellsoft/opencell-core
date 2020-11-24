@@ -24,44 +24,27 @@
 				<h:panelGroup styleClass="form-panel-fields">
 
 					<p:panel>
-						<hftl:decorateFormField label="#{messages['enableEntity.active']}"
-							fieldId="enabled">
-							<p:selectBooleanCheckbox id="enabled"
-								value="#{auditConfigurationBean.auditConfiguration.enabled}">
+						<hftl:decorateFormField label="#{messages['enableEntity.active']}" fieldId="enabled">
+							<p:selectBooleanCheckbox id="enabled" value="#{auditConfigurationBean.auditConfiguration.enabled}">
 							</p:selectBooleanCheckbox>
 						</hftl:decorateFormField>
 
-						<hftl:decorateFormField label="#{messages['auditLog.handlers']}"
-							fieldId="handlerSelection">
-							<p:pickList id="handlerSelection"
-								value="#{auditConfigurationBean.handlers}" var="handler"
-								itemLabel="#{handler}" itemValue="#{handler}" />
+						<hftl:decorateFormField label="#{messages['auditLog.handlers']}" fieldId="handlerSelection">
+							<p:pickList id="handlerSelection" value="#{auditConfigurationBean.handlers}" var="handler" itemLabel="#{handler}" itemValue="#{handler}" />
 						</hftl:decorateFormField>
 					</p:panel>
 
 					<p:panel id="classSelection">
-						<hftl:decorateFormField label="#{messages['auditLog.classes']}"
-							fieldId="classes" newLine="true">
-							<p:selectOneMenu id="classes" filter="true"
-								filterMatchMode="startsWith"
-								value="#{auditConfigurationBean.selectedClass}"
-								converter="omnifaces.SelectItemsConverter">
-								<p:ajax listener="#{auditConfigurationBean.onClassChange()}"
-									update="methods messages" />
-								<f:selectItem itemLabel="#{messages['commons.select']}"
-									itemValue="" noSelectionOption="true" />
-								<f:selectItems value="#{auditConfigurationBean.serviceClasses}"
-									var="e" itemLabel="#{e.simpleName}" />
+						<hftl:decorateFormField label="#{messages['auditLog.classes']}" fieldId="classes" newLine="true">
+							<p:selectOneMenu id="classes" filter="true" filterMatchMode="startsWith" value="#{auditConfigurationBean.selectedClass}" converter="omnifaces.SelectItemsConverter">
+								<p:ajax listener="#{auditConfigurationBean.onClassChange()}" update="methods messages" />
+								<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" noSelectionOption="true" />
+								<f:selectItems value="#{auditConfigurationBean.serviceClasses}" var="e" itemLabel="#{e.simpleName}" />
 							</p:selectOneMenu>
 						</hftl:decorateFormField>
 
-						<hftl:decorateFormField label="#{messages['auditLog.methods']}"
-							fieldId="methods">
-							<p:pickList id="methods"
-								value="#{auditConfigurationBean.methods}" var="m"
-								itemLabel="#{m.methodName}" itemValue="#{m}">
-								<o:converter converterId="omnifaces.ListConverter"
-									list="#{auditConfigurationBean.methods.source}" />
+						<hftl:decorateFormField label="#{messages['auditLog.methods']}" fieldId="methods">
+							<p:pickList id="methods" value="#{auditConfigurationBean.methods}" var="m" itemLabel="#{m.methodName}" itemValue="#{m}">
 							</p:pickList>
 						</hftl:decorateFormField>
 
@@ -75,8 +58,7 @@
 					</p:panel>
 
 					<p:panel id="classAndMethodsPanel" width="100">
-						<p:dataTable id="classAndMethods" var="c"
-							value="#{auditConfigurationBean.selectedClassAndMethods}">
+						<p:dataTable id="classAndMethods" var="c" value="#{auditConfigurationBean.selectedClassAndMethods}">
 							<p:column headerText="#{messages['auditLog.className']}">
 								<h:outputText value="#{c.className}" />
 							</p:column>
@@ -87,14 +69,14 @@
 									</p:repeat>
 								</ul>
 							</p:column>
+
 							<p:column headerText="#{messages['commons.actions']}"
 								style="width: 100px; text-align: center">
 								<p:commandButton
 									update=":#{p:component('classAndMethodsPanel')} :#{p:component('messages')}"
 									icon="fa fa-remove" title="#{messages['action.remove']}"
 									action="#{auditConfigurationBean.removeClassAndMethods}">
-									<f:setPropertyActionListener value="#{c}"
-										target="#{auditConfigurationBean.selectedClassAndMethod}"></f:setPropertyActionListener>
+									<f:setPropertyActionListener value="#{c}" target="#{auditConfigurationBean.selectedClassAndMethod}"></f:setPropertyActionListener>
 								</p:commandButton>
 							</p:column>
 						</p:dataTable>
