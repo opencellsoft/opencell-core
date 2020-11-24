@@ -294,7 +294,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void invoiceNumberAssigned(@Observes @InvoiceNumberAssigned Invoice invoice) throws BusinessException {
-        log.debug("Defaut observer: Assigned a number to the invoice {} ", invoice.getId());
+        log.debug("Defaut observer: Subscription version created, id ", invoice.getId());
         checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
     }
 
@@ -305,7 +305,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void versionCreated(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Assigned a number to the invoice {} ", subscription.getId());
+        log.debug("Defaut observer: Subscription version removed, id: ", subscription.getId());
         checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
     }
 

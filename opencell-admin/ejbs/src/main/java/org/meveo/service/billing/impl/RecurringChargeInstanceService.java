@@ -103,7 +103,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return chargeInstance;
     }
 
-    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, Long subscriptionId) {
+    public List<Long> findIdsByStatusAndSubscriptionId(InstanceStatusEnum status, Date maxChargeDate, Long subscriptionId) {
 
         QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
         qb.addCriterionEnum("c.status", status);

@@ -76,7 +76,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The status date. */
     private Date statusDate;
 
-    /** The termination date. */
+    /** The validity date. */
     private Date validityDate;
 
     /** The custom fields. */
