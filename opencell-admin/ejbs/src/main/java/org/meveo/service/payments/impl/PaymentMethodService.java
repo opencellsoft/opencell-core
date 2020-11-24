@@ -23,6 +23,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -33,7 +34,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -479,9 +479,19 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	}
 	
 	@SuppressWarnings("unchecked")
-    public List<PaymentMethod> listByCustomerAccount(CustomerAccount customerAccount) {
+    public List<PaymentMethod> listByCustomerAccount(CustomerAccount customerAccount, Integer firstRow, Integer numberOfRows) {
         try {
-            return getEntityManager().createNamedQuery("PaymentMethod.listByCustomerAccount").setParameter("customerAccount", customerAccount).getResultList();
+            Query query = getEntityManager().createNamedQuery("PaymentMethod.listByCustomerAccount");
+            query.setParameter("customerAccount", customerAccount);
+            
+            if (firstRow != null) {
+                query.setFirstResult(firstRow);
+            }
+            if (numberOfRows != null) {
+                query.setMaxResults(numberOfRows);
+            }
+            
+            return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by customerAccount", e);
             return null;

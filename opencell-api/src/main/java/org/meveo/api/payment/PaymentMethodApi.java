@@ -218,13 +218,13 @@ public class PaymentMethodApi extends BaseApi {
     }
     
     /**
-     * List.
+     * List By Customer Account Code.
      * 
      * @param customerAccountCode customerAccountCode
      * @return the payment method tokens dto
      * @throws MeveoApiException the meveo api exception
      */
-    public PaymentMethodTokensDto listByCustomerAccountCode(String customerAccountCode) throws MeveoApiException {
+    public PaymentMethodTokensDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -237,7 +237,7 @@ public class PaymentMethodApi extends BaseApi {
         }
 
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
-        List<PaymentMethod> paymentMethods = paymentMethodService.listByCustomerAccount(customerAccount);
+        List<PaymentMethod> paymentMethods = paymentMethodService.listByCustomerAccount(customerAccount, firstRow, numberOfRows);
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
