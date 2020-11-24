@@ -76,6 +76,7 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +139,15 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private ProductVersionService productVersionService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+    
+    @Inject 
+    private DiscountPlanItemService discountPlanItemService;
 
     @Inject
     @CurrentUser
@@ -162,35 +172,35 @@ public class CatalogHierarchyBuilderService {
 			}
         }
     }
-    // new methode displna plan similaire to duplicate price without service
-    // produt version avec status public or recent by startdate
-    // change status to published
    
-	public void duplicateProduct(Product entity, List<ProductVersion> productVersions, Set<DiscountPlan> discountPlans, Set<String> modelChildren, String prefix) {
-    	if(productVersions != null && !productVersions.isEmpty()) {
-    		entity.setProductVersions(new ArrayList<>());
-    		// TODO : filter par date fin valid ??
-    		Collections.sort(productVersions, new Comparator<ProductVersion>() {
-				@Override
-				public int compare(ProductVersion o1, ProductVersion o2) {
-					return o2.getStartDate().compareTo(o1.getStartDate());
-				}
-			});
-    		ProductVersion productVersion = productVersions.stream().filter(pv -> VersionStatusEnum.PUBLISHED == pv.getStatus()).findFirst().get();
-    		if(productVersion == null) {
-        		productVersion = productVersions.get(0);
-    		}
-			productVersion.setStatus(VersionStatusEnum.DRAFT);
-			productVersion.setCurrentVersion(1);
-			productVersion.setStatusDate(Calendar.getInstance().getTime());
-			duplicateProductVersion(productVersion, productVersion.getServices(), new ArrayList<>(productVersion.getTags()), prefix);
-			entity.getProductVersions().add(productVersion);
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, String prefix) {
+    	if(productVersion != null) {
+    		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
+    		tmpProductVersion.getTags().size();
+    		tmpProductVersion.getServices().size();
+    		
+    		var tagList = new ArrayList<>(tmpProductVersion.getTags());
+    		var serviceList = new ArrayList<>(tmpProductVersion.getServices());
+
+    		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
+    		productVersionService.create(newProductVersion);    		
+			duplicateProductVersion(newProductVersion, serviceList, tagList, newProductVersion.getId() + "_");			
+			entity.getProductVersions().add(newProductVersion);
     	}
     	if(discountPlans != null) {
     		entity.setDiscountList(new HashSet<>());
     		discountPlans.forEach(dp -> {
-    			duplicateDiscount(dp, dp.getDiscountPlanItems());
-        		entity.getDiscountList().add(dp);
+    			dp.getDiscountPlanItems().size();
+    			DiscountPlan newDiscountPlan = new DiscountPlan(dp);
+    			newDiscountPlan.setCode(discountPlanService.findDuplicateCode(dp));
+    			
+    			
+    			discountPlanService.create(newDiscountPlan);
+
+    			List<DiscountPlanItem> discountPlanItem = new ArrayList<DiscountPlanItem>();
+    			duplicateDiscount(newDiscountPlan, discountPlanItem);
+    			
+        		entity.getDiscountList().add(newDiscountPlan);
     			
     		});
     	}
@@ -203,8 +213,8 @@ public class CatalogHierarchyBuilderService {
     }
 
 	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
-		if(discountPlanItem != null && !discountPlanItem.isEmpty()) {
-			discountPlanItem.forEach(dp -> {
+		if(entity.getDiscountPlanItems() != null && !entity.getDiscountPlanItems().isEmpty()) {
+			entity.getDiscountPlanItems().forEach(dp -> {
 				final DiscountPlanItem duplicate = new DiscountPlanItem();
 				duplicate.setCode(dp.getCode());
 				duplicate.setId(null);
@@ -217,8 +227,13 @@ public class CatalogHierarchyBuilderService {
 				duplicate.setUUIDIfNull();
 				duplicate.setCfValues(dp.getCfValues());
 				duplicate.setCfAccumulatedValues(dp.getCfAccumulatedValues());
-				entity.getDiscountPlanItems().add(duplicate);
+				duplicate.setInvoiceCategory(dp.getInvoiceCategory());
+				duplicate.setAccountingCode(dp.getAccountingCode());
+				
+				discountPlanItemService.create(duplicate);
+				discountPlanItem.add(duplicate);
 			});
+			entity.setDiscountPlanItems(discountPlanItem);
 		}
 	}
     

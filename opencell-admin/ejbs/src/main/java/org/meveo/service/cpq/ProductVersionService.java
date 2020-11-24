@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,20 +12,12 @@ import javax.persistence.Query;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
-
-import com.lowagie.text.xml.xmp.DublinCoreSchema;
 /**
  * @author Tarik FAKHOURI.
  * @author Mbarek-Ay.
@@ -39,6 +30,9 @@ public class ProductVersionService extends
         PersistenceService<ProductVersion> {
     @Inject
     private ProductService productService;
+    @Inject
+    private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+    
     private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product version (%d) is %s, it can not be updated nor removed";
     private final static String PRODUCT_VERSION_MISSING = "Version of the product %s is missing";
     private final static String PRODUCT_VERSION_ERROR_DUPLICATE = "Can not duplicate the version of product from version product (%d)";
@@ -130,14 +124,11 @@ public class ProductVersionService extends
         }
         
     	if(duplicateHierarchy) {
-    		if(serviceTemplateList != null && !serviceTemplateList.isEmpty())
-    			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, tagList, duplicate.getId() + "_");
+			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, tagList, duplicate.getId() + "_");
     	}
     	
         return duplicate;
     }
-    
-    private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
     
     /**
      * change the status of the product of version
