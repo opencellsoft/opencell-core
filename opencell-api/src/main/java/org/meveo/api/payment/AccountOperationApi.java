@@ -297,7 +297,7 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
-    public AccountOperationsResponseDto listByCustomerAccountCode(String customerAccountCode) throws MeveoApiException {
+    public AccountOperationsResponseDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -310,7 +310,7 @@ public class AccountOperationApi extends BaseApi {
         }
 
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
-        List<AccountOperation> accountOperations = accountOperationService.listByCustomerAccount(customerAccount);
+        List<AccountOperation> accountOperations = accountOperationService.listByCustomerAccount(customerAccount, firstRow, numberOfRows);
         if (accountOperations != null) {
             for (AccountOperation accountOperation : accountOperations) {
                 AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
