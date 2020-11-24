@@ -1251,7 +1251,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                                 .keySet()
                                 .stream()
                                 .forEach(x-> thresholdAmounts.get(x).
-                                        addAmounts((discountAmounts.get(x) != null ) ? discountAmounts.get(x).negate() : new Amounts()));
+                                        addAmounts((discountAmounts.get(x) != null ) ? discountAmounts.get(x).negate() : null));
                     }
                     checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold,
 							isThresholdPerEntity, thresholdAmounts);
