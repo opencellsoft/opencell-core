@@ -68,7 +68,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/duplicate")
+	@Path("/duplicate/{productCode}")
 	@Operation(summary = "This endpoint allows to duplicate a product",
 	tags = { "Product" },
 	description ="duplicate a product with the published its version or a recent version",
@@ -77,7 +77,9 @@ public interface ProductRs extends IBaseRs{
 	        @ApiResponse(responseCode = "404", description = "the product with product code in param does not exist ", 
 	        	content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)) )
 	})
-	Response duplicateProduct(String productCode, boolean duplicateHierarchy, boolean preserveCode);
+	Response duplicateProduct(@Parameter(description = "code of the product that will be duplicate", required = true) @PathParam("productCode") String productCode,
+								@Parameter(description = "copy the hierarchy of the product") @QueryParam("duplicateHierarchy") boolean duplicateHierarchy, 
+								@Parameter(description = "preserve code of product") @QueryParam("preserveCode") boolean preserveCode);
 	
 	/**
 	 * 

@@ -1,6 +1,7 @@
 package org.meveo.model.cpq;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -141,6 +142,23 @@ public class ProductVersion extends BaseEntity{
     private List<ServiceTemplate> services = new ArrayList<>();
     
     
+	public ProductVersion() {}
+	
+	public ProductVersion(ProductVersion copy, Product product) {
+		this.setId(null);
+		this.setStatus(VersionStatusEnum.DRAFT);
+		this.setCurrentVersion(1);
+		this.setStatusDate(Calendar.getInstance().getTime());
+		if(product != null)
+			this.setProduct(product);
+		else
+			this.setProduct(copy.getProduct());
+		this.setTags(new HashSet<>());
+		this.setServices(new ArrayList<>());
+		this.setShortDescription(copy.getShortDescription());
+		this.setStartDate(copy.getStartDate());
+		this.setEndDate(copy.getEndDate());
+	}
 
 	public void setId(Long id) {
 		this.id = id;

@@ -200,7 +200,6 @@ public class ProductApi extends BaseApi {
         productVersion.setShortDescription(description);
         productVersion.setLongDescription(postData.getLongDescription());
         productVersion.setCurrentVersion(currentVersion);
-        productVersion.setStartDate(postData.getStartDate());
         productVersion.setEndDate(postData.getEndDate());
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(VersionStatusEnum.DRAFT);
