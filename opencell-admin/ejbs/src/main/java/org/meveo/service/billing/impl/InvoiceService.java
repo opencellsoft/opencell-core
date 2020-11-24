@@ -3199,7 +3199,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
          */
 
         // Update net to pay amount
-        invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+        final BigDecimal amountWithTax = invoice.getAmountWithTax()!=null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
+		invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
     private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
