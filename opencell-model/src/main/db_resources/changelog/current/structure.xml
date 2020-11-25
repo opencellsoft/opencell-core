@@ -3743,7 +3743,6 @@ END $$;]]>
             <column name="aliases" type="text" >
                 <constraints nullable="false" />
             </column>
-            <column name="parameters" type="text" />
             <column name="last_run_date" type="datetime" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
@@ -3751,5 +3750,10 @@ END $$;]]>
     </changeSet>
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
+    <changeSet id="#5587_20201125" author="ZBariki">
+        <addColumn tableName="bi_data_collector">
+            <column name="parameters" type="text" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
