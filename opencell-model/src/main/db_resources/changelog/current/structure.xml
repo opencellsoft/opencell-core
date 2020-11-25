@@ -3751,7 +3751,7 @@ END $$;]]>
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
-    <changeSet id="#5587_20201125" author="ZBariki">
+    <changeSet id="#5587_20201125" author="ZBariki" failOnError="false">
         <addColumn tableName="bi_data_collector">
             <column name="parameters" type="text" />
         </addColumn>
