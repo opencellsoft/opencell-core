@@ -80,7 +80,7 @@ public class ElasticClientConnection {
 
         try {
 
-            String restUri = paramBean.getProperty("elasticsearch.restUri", null);
+            String restUri = paramBean.getProperty("elasticsearch.restUri", "");
             hosts = restUri.split(";");
 
             if (StringUtils.isBlank(restUri) || hosts.length == 0) {
