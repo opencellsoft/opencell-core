@@ -107,18 +107,4 @@ public class TagRsImpl extends BaseRs implements TagRs {
 		       return errorResponse(e, result);
 	    }
 	}
-
-	private Response errorResponse(MeveoApiException e, ActionStatus result) {
-		if(result==null) {
-			result = new ActionStatus();
-		}
-		result.setStatus(ActionStatusEnum.FAIL);
-		result.setMessage(e.getMessage());
-		 return createResponseFromMeveoApiException(e, result).build();
-	}
-	private Response errorResponse(MeveoApiException e) {
-		ActionStatus result = new ActionStatus();
-		return errorResponse(e, result);
-	}
-
 }
