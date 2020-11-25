@@ -280,18 +280,20 @@ public class JsonGenericMapperTest {
         ua.setId(3L);
         ua.setCode("UA");
         ua.setBillingAccount(ba);
+        Subscription subscription = new Subscription();
+        subscription.setId(4L);
+        subscription.setCode("SUB");
+        ua.setSubscriptions(singletonList(subscription));
         ba.setUsersAccounts(singletonList(ua));
         customerAccount.setBillingAccounts(singletonList(ba));
 
         JsonGenericMapper jsonMapper = JsonGenericMapper.Builder.getBuilder()
-                .withNestedDepth(3L)
-                .withNestedEntities(Set.of("billingAccounts")).build();
+                .withNestedDepth(1L)
+                .withNestedEntities(Set.of("billingAccounts", "billingAccounts.usersAccounts")).build();
 
         ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder().total(1l).limit(0l).offset(0l).addData(customerAccount).build();
 
-        String response = jsonMapper.toJson(Set.of(), CustomerAccount.class, immutableGenericPaginatedResource);
-
-        System.out.println(response);
+        jsonMapper.toJson(Set.of(), CustomerAccount.class, immutableGenericPaginatedResource);
     }
 
     private Date getDefaultDate() {
