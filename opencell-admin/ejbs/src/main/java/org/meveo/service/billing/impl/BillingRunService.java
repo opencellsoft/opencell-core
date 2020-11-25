@@ -1247,7 +1247,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 Map<Long, Amounts> discountAmounts = discountThresholdAmounts.get(entityId);
                 if (thresholdAmounts != null) {
                     if (discountAmounts != null) {
-                        thresholdAmounts.keySet().stream().forEach(x->thresholdAmounts.get(x).addAmounts(discountAmounts.get(x).negate()));
+                        thresholdAmounts
+                                .keySet()
+                                .stream()
+                                .forEach(x-> thresholdAmounts.get(x).
+                                        addAmounts((discountAmounts.get(x) != null ) ? discountAmounts.get(x).negate() : null));
                     }
                     checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold,
 							isThresholdPerEntity, thresholdAmounts);
