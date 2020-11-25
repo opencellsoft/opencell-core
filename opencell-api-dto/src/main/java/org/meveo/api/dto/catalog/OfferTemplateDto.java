@@ -18,18 +18,20 @@
 
 package org.meveo.api.dto.catalog;
 
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.OfferTemplate;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.ProductDto;
+import org.meveo.api.dto.cpq.TagDto;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
 
 /**
  * The Class OfferTemplateDto.
@@ -108,6 +110,23 @@ public class OfferTemplateDto extends ProductOfferingDto {
      * Corresponding to minimum one shot charge template code.
      */
     private String minimumChargeTemplate;
+    
+    /** The tags. */
+    @XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    private List<TagDto> tags;
+    
+    
+    /** The products. */
+    @XmlElementWrapper(name = "product")
+    @XmlElement(name = "products")
+    private List<ProductDto> products;
+    
+    
+    /** The services template. */
+    @XmlElementWrapper(name = "services")
+    @XmlElement(name = "services")
+    private List<ServiceTemplateDto> services;
 
     /**
      * Instantiates a new offer template dto.
@@ -372,6 +391,49 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	public void setOfferProducts(List<ProductDto> offerProducts) {
 		this.offerProducts = offerProducts;
 	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<TagDto> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<TagDto> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * @return the products
+	 */
+	public List<ProductDto> getProducts() {
+		return products;
+	}
+
+	/**
+	 * @param products the products to set
+	 */
+	public void setProducts(List<ProductDto> products) {
+		this.products = products;
+	}
+
+	/**
+	 * @return the services
+	 */
+	public List<ServiceTemplateDto> getServices() {
+		return services;
+	}
+
+	/**
+	 * @param services the services to set
+	 */
+	public void setServices(List<ServiceTemplateDto> services) {
+		this.services = services;
+	}
     
+	
     
 }

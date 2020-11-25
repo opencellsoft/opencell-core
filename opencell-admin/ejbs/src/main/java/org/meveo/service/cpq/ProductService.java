@@ -256,5 +256,19 @@ public class ProductService extends BusinessService<Product> {
 		this.remove(product);
 		LOGGER.info("product  ({}) is deleted successfully", codeProduct);
 	}
+	
+	
+	  @SuppressWarnings("unchecked")
+	    public List<Product> getProductsByTags(HashSet<String> tagCodes) { 
+	    	List<Product> products=new ArrayList<Product>();
+	    	try {
+	    		products = (List<Product>)getEntityManager().createNamedQuery("Product.findByTags").setParameter("tagCodes", tagCodes).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("getProductsByTags error ", e.getMessage());
+	    	}
+
+	    	return products;
+	    }
 
 }

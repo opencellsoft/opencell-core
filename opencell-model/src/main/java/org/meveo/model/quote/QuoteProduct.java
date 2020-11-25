@@ -55,14 +55,6 @@ public class QuoteProduct extends BusinessEntity {
     private QuoteCustomerService quoteCustomer;
 
     /**
-     * offer component
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "offer_component_id", referencedColumnName = "id", nullable = false)
-	@NotNull
-    private OfferComponent offerComponent;
-
-    /**
      * product
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -118,20 +110,6 @@ public class QuoteProduct extends BusinessEntity {
 	 */
 	public void setQuoteCustomer(QuoteCustomerService quoteCustomer) {
 		this.quoteCustomer = quoteCustomer;
-	}
-
-	/**
-	 * @return the offerComponent
-	 */
-	public OfferComponent getOfferComponent() {
-		return offerComponent;
-	}
-
-	/**
-	 * @param offerComponent the offerComponent to set
-	 */
-	public void setOfferComponent(OfferComponent offerComponent) {
-		this.offerComponent = offerComponent;
 	}
 
 	/**

@@ -80,7 +80,8 @@ import org.meveo.model.cpq.tags.Tag;
         @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
         @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
         @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate", query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate"),
-        @NamedQuery(name = "ServiceTemplate.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceTemplate s where s.minimumAmountEl is not null")
+        @NamedQuery(name = "ServiceTemplate.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceTemplate s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceTemplate.findByTags", query = "select s from ServiceTemplate s LEFT JOIN s.tags as tag WHERE tag.code IN (:tagCodes)")
         // @NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
         // @NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate",
@@ -256,7 +257,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
     @NotNull
-    protected Boolean mandatory;
+    protected Boolean mandatory=Boolean.FALSE;
     
     
     /**

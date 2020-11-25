@@ -67,8 +67,9 @@ public class GetListServiceResponseDto extends SearchResponse {
     public void addServiceTemplate(ServiceDTO serviceDto) {
         if (services == null) {
         	services = new ArrayList<>();
-        }
+        }if(!services.contains(serviceDto)) {
         services.add(serviceDto);
+        }
     }
     
     

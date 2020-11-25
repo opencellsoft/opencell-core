@@ -18,6 +18,7 @@
 package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -26,6 +27,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -132,6 +134,19 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
         entity.setCode(code);
 
         create(entity);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<ServiceTemplate> getServiceByTags(HashSet<String> tagCodes) { 
+    	List<ServiceTemplate> services=new ArrayList<ServiceTemplate>();
+    	try {
+    		services = (List<ServiceTemplate>)getEntityManager().createNamedQuery("ServiceTemplate.findByTags").setParameter("tagCodes", tagCodes).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("getServiceByTags error ", e.getMessage());
+    	}
+
+    	return services;
     }
 
 }

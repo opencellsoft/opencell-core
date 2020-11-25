@@ -45,11 +45,7 @@ public class ProductContextDTO extends BaseEntityDto {
     /**
      * The billing account code
      */
-    private String billingAccountCode;
-    /**
-     * The selected offer template code in the quote
-     */
-    private String offerCode;
+    private String billingAccountCode; 
     /**
      * The selected product code in the quote
      */
@@ -72,12 +68,7 @@ public class ProductContextDTO extends BaseEntityDto {
 	public void setBillingAccountCode(String billingAccountCode) {
 		this.billingAccountCode = billingAccountCode;
 	}
-	public String getOfferCode() {
-		return offerCode;
-	}
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
+	 
 	public String getProductCode() {
 		return productCode;
 	}
@@ -89,6 +80,18 @@ public class ProductContextDTO extends BaseEntityDto {
 	}
 	public void setSelectedServices(LinkedHashMap<String, Object> selectedServices) {
 		this.selectedServices = selectedServices;
+	}
+	/**
+	 * @return the quantity
+	 */
+	public int getQuantity() {
+		return quantity;
+	}
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
     
     

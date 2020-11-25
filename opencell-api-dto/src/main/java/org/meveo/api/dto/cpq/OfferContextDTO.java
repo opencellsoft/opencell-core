@@ -49,6 +49,24 @@ public class OfferContextDTO extends BaseEntityDto {
      */
     private List<ProductContextDTO> products;
     
+    /**
+     * The offer code
+     */
+    
+    private String offerCode; 
+    
+    /**
+     * The currentProductCode 
+     */
+    private String currentProductCode;
+    
+    
+    /**
+     * The currentProductVersion
+     */
+    private int currentProductVersion;
+    
+	 
 	public List<ProductContextDTO> getProducts() {
 		return products;
 	}
@@ -73,7 +91,48 @@ public class OfferContextDTO extends BaseEntityDto {
 	public void setCustomerServiceCode(String customerServiceCode) {
 		this.customerServiceCode = customerServiceCode;
 	}
+	/**
+	 * @return the offerCode
+	 */
+	public String getOfferCode() {
+		return offerCode;
+	}
+	/**
+	 * @param offerCode the offerCode to set
+	 */
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+ 
+	 
+	/**
+	 * @return the currentProductCode
+	 */
+	public String getCurrentProductCode() {
+		return currentProductCode;
+	}
+	/**
+	 * @param currentProductCode the currentProductCode to set
+	 */
+	public void setCurrentProductCode(String currentProductCode) {
+		this.currentProductCode = currentProductCode;
+	}
+	/**
+	 * @return the currentProductVersion
+	 */
+	public int getCurrentProductVersion() {
+		return currentProductVersion;
+	}
+	/**
+	 * @param currentProductVersion the currentProductVersion to set
+	 */
+	public void setCurrentProductVersion(int currentProductVersion) {
+		this.currentProductVersion = currentProductVersion;
+	}
 
+	
+
+	
 
     
     

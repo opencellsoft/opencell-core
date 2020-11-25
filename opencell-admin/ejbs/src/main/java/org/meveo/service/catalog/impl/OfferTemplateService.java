@@ -386,15 +386,15 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     
     
     @SuppressWarnings("unchecked")
-    public OfferTemplate getOfferByTags(HashSet<String> tagCodes) { 
-    	OfferTemplate offer=null;
+    public List<OfferTemplate> getOffersByTags(HashSet<String> tagCodes) { 
+    	List<OfferTemplate> offers=new ArrayList<OfferTemplate>();
     	try {
-    		offer = (OfferTemplate)getEntityManager().createNamedQuery("OfferTemplate.findByTags").setParameter("tagCodes", tagCodes).getResultList().get(0);
+    		offers = (List<OfferTemplate>)getEntityManager().createNamedQuery("OfferTemplate.findByTags").setParameter("tagCodes", tagCodes).getResultList();
     	} catch (Exception e) {
     		e.printStackTrace();
     		log.error("listOffersByTags error ", e.getMessage());
     	}
 
-    	return offer;
+    	return offers;
     }
 }

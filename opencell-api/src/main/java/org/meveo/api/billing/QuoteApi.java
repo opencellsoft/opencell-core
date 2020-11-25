@@ -1188,9 +1188,6 @@ public class QuoteApi extends BaseApi {
 		if (StringUtils.isEmpty(productQuoteItem.getProdutQuote())) {
 			quoteItem.setQuoteProduct(quoteProductService.findByCode(productQuoteItem.getProdutQuote()));
 		}
-		if (StringUtils.isEmpty(productQuoteItem.getOfferCode())) {
-			quoteItem.setOfferComponent(offerComponentService.findByCode(productQuoteItem.getOfferCode(), productQuoteItem.getId()));
-		}
 		quoteItem.setServiceCode(productQuoteItem.getService().getId());
 		quoteItem.setServiceType(productQuoteItem.getServiceType());
 		quoteItem.setValue(productQuoteItem.getValue());

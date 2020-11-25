@@ -33,8 +33,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.CustomerBrand;
 
 /**
@@ -50,6 +54,7 @@ import org.meveo.model.crm.CustomerBrand;
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })
 @NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id")
 @NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
+@NamedQuery(name = "Product.findByTags", query = "select p from Product p LEFT JOIN p.tags as tag WHERE tag.code IN (:tagCodes)")
 public class Product extends BusinessEntity {
 
 	/**
@@ -106,10 +111,10 @@ public class Product extends BusinessEntity {
 	/**
 	 * model children : display all older model 
 	 */
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "model_chlidren")
 	@CollectionTable(name = "cpq_product_model_children", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-	private Set<String> modelChlidren;
+	private Set<String> modelChlidren=new HashSet<String>();
 	
 
 	/**
@@ -146,6 +151,22 @@ public class Product extends BusinessEntity {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductVersion> productVersions = new ArrayList<>();
+    
+    
+    /**
+     * list of tag attached
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_product_tags", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags = new  ArrayList<Tag>();
+    
+    
+    /**
+     * offer component
+     */  
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
+    private List<OfferComponent> offerComponents = new ArrayList<>();
+
 
 
 	/**
@@ -326,8 +347,12 @@ public class Product extends BusinessEntity {
 		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
-			return false;
+			return false;  
+		
 		Product other = (Product) obj;
+		 if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+	            return true;
+	        }
 		return Objects.equals(brand, other.brand) && discountFlag == other.discountFlag
 				&& Objects.equals(discountList, other.discountList) && Objects.equals(model, other.model)
 				&& Objects.equals(modelChlidren, other.modelChlidren) && Objects.equals(productLine, other.productLine)
@@ -350,6 +375,41 @@ public class Product extends BusinessEntity {
 	public void setProductVersions(List<ProductVersion> productVersions) {
 		this.productVersions = productVersions;
 	}
+
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
+
+	/**
+	 * @return the offerComponents
+	 */
+	public List<OfferComponent> getOfferComponents() {
+		return offerComponents;
+	}
+
+
+	/**
+	 * @param offerComponents the offerComponents to set
+	 */
+	public void setOfferComponents(List<OfferComponent> offerComponents) {
+		this.offerComponents = offerComponents;
+	}
+
+
+	
 	
 	
 

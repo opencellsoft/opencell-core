@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
@@ -42,6 +43,8 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.ProductDto;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -87,6 +90,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -138,6 +142,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private BillingAccountService billingAccountService;
+    
+    @Inject
+    private ProductService productService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -337,6 +344,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
         processAllowedDiscountPlans(postData, offerTemplate);
+        processTags(postData, offerTemplate); 
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -378,6 +386,18 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     .collect(Collectors.toList()));
         }
     }
+    
+    private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+        List<TagDto> tags = postData.getTags();
+        if(tags != null && !tags.isEmpty()){
+            offerTemplate.setTags(tags
+                    .stream()
+                    .map(tagDto -> tagService.findByCode(tagDto.getCode()))
+                    .collect(Collectors.toList()));
+        }
+    }
+    
+ 
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
@@ -624,9 +644,14 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     public GetListOfferTemplateResponseDto list(CustomerContextDTO customerContextDto) {
     	String billingAccountCode=customerContextDto.getBillingAccountCode();
-    	BillingAccount ba=billingAccountService.findByCode(billingAccountCode);
+    	
+    	if(Strings.isEmpty(billingAccountCode)) {
+			missingParameters.add("billingAccountCode");
+		}
     	GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto(); 
     	List<String> tagCodes=new ArrayList<String>();
+    	
+    	BillingAccount ba=billingAccountService.findByCode(billingAccountCode); 
 
     	if(ba!=null) {
     		List<Tag> entityTags=tagService.getTagsByBA(ba);

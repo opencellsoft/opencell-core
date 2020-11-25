@@ -1,10 +1,13 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -36,6 +39,11 @@ public class ProductDto extends BaseEntityDto{
     private boolean packageFlag;
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The tags. */
+    @XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    private List<TagDto> tags;
     
     
     public ProductDto() {}
@@ -236,6 +244,21 @@ public class ProductDto extends BaseEntityDto{
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<TagDto> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<TagDto> tags) {
+		this.tags = tags;
+	}
+	
 	
     
 }

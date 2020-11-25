@@ -145,13 +145,7 @@ public class QuoteItem extends BusinessEntity {
     @JoinColumn(name = "quote_product_id", updatable = false)
     private QuoteProduct quoteProduct;
 
-    /**
-     * offer component
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offer_component_id", nullable = false, updatable = false)
-    @NotNull
-    private OfferComponent offerComponent;
+
     
     @Column(name = "service_code", nullable = false, length = 20)
     @Size(max = 20)
@@ -389,20 +383,7 @@ public class QuoteItem extends BusinessEntity {
 	public void setQuoteProduct(QuoteProduct quoteProduct) {
 		this.quoteProduct = quoteProduct;
 	}
-
-	/**
-	 * @return the offerComponent
-	 */
-	public OfferComponent getOfferComponent() {
-		return offerComponent;
-	}
-
-	/**
-	 * @param offerComponent the offerComponent to set
-	 */
-	public void setOfferComponent(OfferComponent offerComponent) {
-		this.offerComponent = offerComponent;
-	}
+ 
 
 	/**
 	 * @return the serviceCode

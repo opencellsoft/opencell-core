@@ -58,6 +58,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -70,6 +71,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -88,6 +90,8 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.GroupedServiceService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.primefaces.model.SortOrder;
 
@@ -157,6 +161,13 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	
 	@Inject
 	private OfferTemplateService offerTemplateService;
+	
+	@Inject
+	private ProductService productService;
+	
+	
+	 @Inject
+	 private ProductVersionService productVersionService;
 
     /**
      * Sets the service charge template.
@@ -678,15 +689,35 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		HashSet<String> resultBaTags = new HashSet<String>();
 		resultBaTags.addAll(tagCodes);
 		resultBaTags.addAll(sellerTags);
-		resultBaTags.addAll(customerTags);
-		OfferTemplate offerTemplate=offerTemplateService.getOfferByTags(resultBaTags);
-		if(offerTemplate!=null) {
-			List<ServiceTemplate> services=offerTemplate.getServices();
-			for(ServiceTemplate serv:services) {
-				ServiceDTO serviceDto=new ServiceDTO(serv);
-				result.addServiceTemplate(serviceDto);
+		resultBaTags.addAll(customerTags); 
+		List<ServiceTemplate> serviceByTags=serviceTemplateService.getServiceByTags(resultBaTags); 
+
+		if(!StringUtils.isBlank(offerContextDTO.getCurrentProductCode()) && !StringUtils.isBlank(offerContextDTO.getCurrentProductVersion())  ) {
+			ProductVersion prodVersion=productVersionService.findByProductAndVersion(offerContextDTO.getCurrentProductCode(), offerContextDTO.getCurrentProductVersion());
+			List<ServiceTemplate> services=prodVersion.getServices();
+			if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
+				for(ServiceTemplate service:services) {
+					if(serviceByTags.contains(service)) {
+						ServiceDTO serviceDto=new ServiceDTO(service);
+						result.addServiceTemplate(serviceDto);
+					}
+				} 
+			}
+		}else if(!StringUtils.isBlank(offerContextDTO.getOfferCode())){
+			OfferTemplate offerTemplate=offerTemplateService.findByCode(offerContextDTO.getOfferCode());
+			if(offerTemplate!=null) { 
+				List<OfferServiceTemplate> services=offerTemplate.getOfferServiceTemplates();
+				if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
+					for(OfferServiceTemplate service:services) {
+						if(serviceByTags.contains(service.getServiceTemplate())) {
+							ServiceDTO serviceDto=new ServiceDTO(service.getServiceTemplate());
+							result.addServiceTemplate(serviceDto);
+						}
+					}
+				}
 			}
 		}
-		return result;
+		return result;	
 	}
+	
 }
