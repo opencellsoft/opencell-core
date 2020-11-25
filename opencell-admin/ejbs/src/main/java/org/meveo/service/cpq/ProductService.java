@@ -1,6 +1,6 @@
 package org.meveo.service.cpq;
 
-import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -16,7 +16,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.Product;
