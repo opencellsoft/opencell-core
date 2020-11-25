@@ -509,8 +509,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             throw new IncorrectChargeInstanceException("nextChargeDate is null.");
         }
 
-        log.debug("Will apply {} recuring charges for charge {} for period(s) {} - {}.",
-            chargeMode == ChargeApplicationModeEnum.REIMBURSMENT || chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT ? "reimbursement" : "", chargeInstance.getId(), applyChargeFromDate, applyChargeToDate);
+        log.debug("Will apply {} recuring charges for charge {}/{} for period(s) {} - {}.",
+            chargeMode == ChargeApplicationModeEnum.REIMBURSMENT || chargeMode == ChargeApplicationModeEnum.RERATING_REIMBURSEMENT ? "reimbursement" : "", chargeInstance.getId(), chargeInstance.getCode(),
+            applyChargeFromDate, applyChargeToDate);
 
         // -- Divide a period to charge into periods (or partial periods) and create WOs
 
@@ -562,14 +563,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 boolean chargeDatesAlreadyAdvanced = false;
 
-                boolean filterExpression=isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression()) ;
-                List<WalletOperation> woList =chargeInstance.getWalletOperations();
-                log.debug("chargeApplication mode={}={}, chargeInstanceID={}, filterExpression={} ",chargeMode.name(),chargeInstance.getId(),filterExpression);
+                boolean filterExpression = isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression());
+                List<WalletOperation> woList = chargeInstance.getWalletOperations();
+
                 // If charge is not applicable for current period, skip it
                 if ((!filterExpression && woList.isEmpty()) || (filterExpression && woList.isEmpty() && chargeMode.isReimbursement())) {
-                    log.debug("IPIEL: not rating chargeInstance with id={}, chargeApplication mode={}", chargeInstance.getId(),chargeMode.name());
+                    log.debug("IPIEL: not rating chargeInstance with id={}, chargeApplication mode={}", chargeInstance.getId(), chargeMode.name());
 
-                }else {
+                } else {
 
                     BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
@@ -756,11 +757,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param ids
      * @return list of walletOperations by ids
      */
-    public List<WalletOperation> listByIds(List<Long> ids){
-        if(ids.isEmpty())
+    public List<WalletOperation> listByIds(List<Long> ids) {
+        if (ids.isEmpty())
             return emptyList();
-        return getEntityManager().createNamedQuery("WalletOperation.listByIds", WalletOperation.class).setParameter("idList", ids)
-                .getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listByIds", WalletOperation.class).setParameter("idList", ids).getResultList();
     }
 
     /**
