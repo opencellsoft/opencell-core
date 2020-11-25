@@ -1,11 +1,16 @@
 package org.meveo.api.dto.cpq;
 import java.util.Date;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
@@ -39,6 +44,11 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The endDate */
     private Date endDate;
   
+    
+    /** The services template. */
+    @XmlElementWrapper(name = "services")
+    @XmlElement(name = "services")
+    private List<ServiceTemplateDto> services;
     
     /**
      * Instantiates a new product version dto.
@@ -159,7 +169,21 @@ public class ProductVersionDto extends BaseEntityDto {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    @Override
+    
+    
+    /**
+	 * @return the services
+	 */
+	public List<ServiceTemplateDto> getServices() {
+		return services;
+	}
+	/**
+	 * @param services the services to set
+	 */
+	public void setServices(List<ServiceTemplateDto> services) {
+		this.services = services;
+	}
+	@Override
     public String toString() {
         return "ProductVersionDto [shortDescription=" + shortDescription + ", productCode=" + productCode
                 + ", currentVersion=" + currentVersion + ", status=" + status + ", statusDate=" + statusDate

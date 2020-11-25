@@ -10081,9 +10081,7 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_tag_filter_seq" />
         <createSequence sequenceName="cpq_tag_type_seq" /> 
         <createSequence sequenceName="cpq_attribute_type_seq" /> 
-        <createSequence sequenceName="cpq_media_seq" /> 
-        <createSequence sequenceName="cpq_product_attribute_seq" /> 
-        <createSequence sequenceName="cpq_commercial_offer_seq" /> 
+        <createSequence sequenceName="cpq_media_seq" />
         <createSequence sequenceName="cpq_offer_component_seq" /> 
         <createSequence sequenceName="cpq_trade_rule_header_seq" /> 
         <createSequence sequenceName="cpq_trade_rule_item_seq" /> 
@@ -10282,58 +10280,8 @@ $$ LANGUAGE plpgsql;
             <column name="media_type" type="varchar(50)" />
              <column name="media_path" type="varchar(50)" />
 		</createTable>
-	</changeSet>
-	
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-11">
-		<createTable tableName="cpq_product_attribute">
-			<column name="id" type="bigint" autoIncrement="${id.auto}">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="cpq_product_attribute_pkey" />
-			</column>
-			<column name="version" type="int4" />  
-			<column name="product_id" type="bigint" />
-			<column name="product_version_id" type="bigint" />
-			<column name="commercial_offer_id" type="bigint" />
-			<column name="attribute_type_id" type="bigint" />
-			<column name="attribute_name" type="varchar(20)" />
-			<column name="status" type="varchar(255)" />
-			 <column name="mandatory" type="${type.boolean}" defaultValueNumeric="1">
-                <constraints nullable="false" />
-            </column>
-            <column name="priority" type="int" />
-            <column name="title" type="varchar(50)" />
-            <column name="param" type="varchar(2000)" />
-             <column name="material" type="${type.boolean}" defaultValueNumeric="1">
-                <constraints nullable="false" />
-            </column>
-		</createTable>
-	</changeSet>
-	
-	 
-   
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-12">
-		<createTable tableName="cpq_commercial_offer">
-			<column name="id" type="bigint" autoIncrement="${id.auto}">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="cpq_commercial_offer_pkey" />
-			</column>
-			 <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />  
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" /> 
-            <column name="seller_id" type="bigint" /> 
-            <column name="status" type="varchar(50)" />
-            <column name="begin_date" type="DATE" />
-            <column name="end_date" type="DATE" />
-		</createTable>
-	</changeSet>
+	</changeSet>  
+	  
 	
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-13">
 		<createTable tableName="cpq_offer_component">
@@ -10444,17 +10392,7 @@ $$ LANGUAGE plpgsql;
     <addUniqueConstraint columnNames="product_id,tag_id" constraintName="cpq_product_tags_pkey" tableName="cpq_product_tags" />
    </changeSet>
 	
-	 <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-18">
-    <createTable tableName="cpq_commercial_offer_tags">
-        <column name="commercial_offer_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-        <column name="tag_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-    </createTable>
-    <addUniqueConstraint columnNames="commercial_offer_id,tag_id" constraintName="cpq_commercial_offer_tags_pkey" tableName="cpq_commercial_offer_tags" />
-   </changeSet>
+ 
    
    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-19">
     <createTable tableName="cpq_offer_component_tags">
@@ -10602,43 +10540,13 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
-    
-      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-12">
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_attribute" constraintName="fk_vv62po85asdabcipq5" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
-    </changeSet>
-    
-      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-13">
-        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_attribute" constraintName="fk_ro62ppqqzsqdabdp5a" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
-     </changeSet>
-     
-       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-15">
-        <addForeignKeyConstraint baseColumnNames="attribute_type_id" baseTableName="cpq_product_attribute" constraintName="fk_vosp81qazsqdabciaao" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute_type" />
-     </changeSet>
-     
-      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-14">
-        <addForeignKeyConstraint baseColumnNames="commercial_offer_id" baseTableName="cpq_product_attribute" constraintName="fk_vv62ppqazsqdabcipqc" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
-     </changeSet>
-    
-   
-     
-      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-16">
-        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_offer_component" constraintName="fk_ks2qo1jjo5oaciaao" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
-     </changeSet>
+      
      
         <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-17">
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_offer_component" constraintName="fk_sspl5q1jj6jdakklqp" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
      </changeSet>
-     
-     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-18">
-        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_commercial_offer" constraintName="fk_sqolc5q1qzsqdaoopak" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
-     </changeSet> 
+  
       
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-19">
@@ -10680,11 +10588,7 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="cpq_tag_id" baseTableName="cpq_trade_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
      </changeSet>   
-     
-        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-27">
-        <addForeignKeyConstraint baseColumnNames="trade_rule_header_id" baseTableName="cpq_trade_rule_item" constraintName="fk_trade_rule_header_rule_item" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_offer" />
-     </changeSet> 
+    
      
     <changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
     	<createTable tableName="cpq_quote_customer_service">

@@ -50,7 +50,7 @@ public class GetListProductsResponseDto extends SearchResponse {
     /** products list. */
     @XmlElementWrapper(name = "products")
     @XmlElement(name = "products")
-    private List<ProductDto> products;
+    private List<ProductDto> products  = new ArrayList<>();;
 
     /**
      * Instantiates a new gets the list offer template response dto.
@@ -82,10 +82,9 @@ public class GetListProductsResponseDto extends SearchResponse {
      *
      * @param product the offer template
      */
-    public void addProduct(ProductDto product) {
-        if (products == null) {
-        	products = new ArrayList<>();
-        }
-        products.add(product);
-    }
+	public void addProduct(ProductDto product) { 
+		if(!products.contains(product)) {
+			products.add(product);
+		}
+	}
 }

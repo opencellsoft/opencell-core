@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -28,10 +28,11 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -67,6 +68,9 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private OfferTemplateService offerTemplateService;
+	
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
 	
 	/**
 	 * @return ProductDto
@@ -201,6 +205,7 @@ public class ProductApi extends BaseApi {
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(VersionStatusEnum.DRAFT);
         productVersion.setStatusDate(Calendar.getInstance().getTime());
+        processServices(postData,productVersion);
         productVersionService.create(productVersion);
         return productVersion;
     }
@@ -361,8 +366,8 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChlidren(productDto.getModelChlidren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+		processTags(productDto, product); 
 		
-    	  
 		return product;
     }
     
@@ -378,8 +383,12 @@ public class ProductApi extends BaseApi {
 	public GetListProductsResponseDto list(OfferContextDTO offerContextDTO) {
 		GetListProductsResponseDto result = new GetListProductsResponseDto();
 		String billingAccountCode=offerContextDTO.getCustomerContextDTO().getBillingAccountCode();
+		String offerCode=offerContextDTO.getOfferCode();
 		if(Strings.isEmpty(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
+		}
+		if(Strings.isEmpty(offerCode)) {
+			missingParameters.add("offerCode");
 		}
 		handleMissingParameters();
 		List<String> tagCodes=new ArrayList<String>();
@@ -397,15 +406,44 @@ public class ProductApi extends BaseApi {
 		resultBaTags.addAll(tagCodes);
 		resultBaTags.addAll(sellerTags);
 		resultBaTags.addAll(customerTags);
-		OfferTemplate offerTemplate=offerTemplateService.getOfferByTags(resultBaTags);
-		if(offerTemplate!=null) {
-			Set<Product> products=offerTemplate.getProducts();
-			for(Product prod:products) {
-				ProductDto prodDto=new ProductDto(prod);
-				result.addProduct(prodDto);
-			}
-		}
+		 
+		OfferTemplate offerTemplate=offerTemplateService.findByCode(offerCode);
+		if(offerTemplate!=null) { 
+			List<OfferComponent> offerComponents=offerTemplate.getOfferComponents();
+			List<Product> prodByTags=productService.getProductsByTags(resultBaTags); 
+			ProductDto prodDto=null;
+			Product product=null;
+			if(!offerComponents.isEmpty() && !prodByTags.isEmpty()) {
+				for(OfferComponent oc:offerComponents) {
+					product=oc.getProduct();
+					if(prodByTags.contains(product)) {
+						prodDto=new ProductDto(product);
+						result.addProduct(prodDto);
+				}}
+			}  
+		} 
 		return result;
+	}
+	
+	
+	private void processTags(ProductDto postData, Product product) {
+		List<TagDto> tags = postData.getTags();
+		if(tags != null && !tags.isEmpty()){
+			product.setTags(tags
+					.stream()
+					.map(tagDto -> tagService.findByCode(tagDto.getCode()))
+					.collect(Collectors.toList()));
+		}
+	}
+
+	private void processServices(ProductVersionDto postData, ProductVersion productVersion) {
+		List<ServiceTemplateDto> services = postData.getServices();
+		if(services != null && !services.isEmpty()){
+			productVersion.setServices(services
+					.stream()
+					.map(serviceDto -> serviceTemplateService.findByCode(serviceDto.getCode()))
+					.collect(Collectors.toList()));
+		}
 	}
 	
 }

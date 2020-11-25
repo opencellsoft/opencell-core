@@ -18,9 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -48,7 +46,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -83,6 +81,13 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
 
+    /**
+     * offer component
+     */  
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
+    private List<OfferComponent> offerComponents = new ArrayList<>();
+    
+    
     /**
      * Expression to determine minimum amount value
      */
@@ -154,7 +159,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-    private Set<Tag> tags = new HashSet<Tag>();
+    private List<Tag> tags = new ArrayList<Tag>();
     
 	/**
 	 * list of services attached to this offer
@@ -166,17 +171,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 				inverseJoinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id")				
 			)
     private List<ServiceTemplate> services = new ArrayList<>();
-    
-    
-    /**
-     * list of products attached
-     */   
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "cpq_offer_template_products", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-    private Set<Product> products = new HashSet<Product>();
-
-    
-
+     
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
     }
@@ -466,17 +461,19 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
  
+
+
 	/**
 	 * @return the tags
 	 */
-	public Set<Tag> getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
 	/**
 	 * @param tags the tags to set
 	 */
-	public void setTags(Set<Tag> tags) {
+	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
 
@@ -498,19 +495,25 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.services = services;
 	}
 
+ 
+
 	/**
-	 * @return the products
+	 * @return the offerComponents
 	 */
-	public Set<Product> getProducts() {
-		return products;
+	public List<OfferComponent> getOfferComponents() {
+		return offerComponents;
 	}
 
 	/**
-	 * @param products the products to set
+	 * @param offerComponents the offerComponents to set
 	 */
-	public void setProducts(Set<Product> products) {
-		this.products = products;
+	public void setOfferComponents(List<OfferComponent> offerComponents) {
+		this.offerComponents = offerComponents;
 	}
+
+	
+	
+
     
 	
     

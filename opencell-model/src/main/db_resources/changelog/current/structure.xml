@@ -4128,20 +4128,23 @@ END $$;]]>
 	        
 	        
      	</changeSet>
-     	
-     	
-     	
-        <changeSet author="Mbarek-Ay" id="#51-20201118">
-	    <createTable tableName="cpq_offer_template_products">
-	        <column name="offer_template_id" type="bigint">
-	            <constraints nullable="false" />
-	        </column>
-	        <column name="product_id" type="bigint">
-	            <constraints nullable="false" />
-	        </column>
-	    </createTable> 
-	     <addUniqueConstraint columnNames="offer_template_id,product_id" constraintName="offer_template_product_pkey" tableName="cpq_offer_template_products" />
-	    </changeSet>  
+      
+	    
+	    <changeSet author="Mbarek-Ay" id="#51-20201123"> 
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_tags" constraintName="fk1_cpq_product_tags" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_product_tags" constraintName="fk2_cpq_product_tags" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />    
+            
+           <dropColumn tableName="ord_quote_item">
+            <column name="offer_component_id"/>
+           </dropColumn>
+           
+            <dropColumn tableName="cpq_quote_product">
+            <column name="offer_component_id"/>
+           </dropColumn>
+             
+	    </changeSet> 
 	    
 	    
     <!-- end MediaPost -->

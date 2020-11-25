@@ -1,3 +1,4 @@
+
 package org.meveo.model.cpq.trade;
 
 import javax.persistence.Column;

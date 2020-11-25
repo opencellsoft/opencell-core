@@ -1,6 +1,8 @@
 package org.meveo.service.cpq;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,6 +12,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -174,5 +177,19 @@ public class ProductService extends BusinessService<Product> {
 		this.remove(product);
 		LOGGER.info("product  ({}) is deleted successfully", codeProduct);
 	}
+	
+	
+	  @SuppressWarnings("unchecked")
+	    public List<Product> getProductsByTags(HashSet<String> tagCodes) { 
+	    	List<Product> products=new ArrayList<Product>();
+	    	try {
+	    		products = (List<Product>)getEntityManager().createNamedQuery("Product.findByTags").setParameter("tagCodes", tagCodes).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("getProductsByTags error ", e.getMessage());
+	    	}
+
+	    	return products;
+	    }
 
 }
