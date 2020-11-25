@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,6 +37,11 @@ import org.meveo.model.payments.CustomerAccount;
 @Table(name = "cpq_contract", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_seq"), })
+//@NamedQueries({
+	@NamedQuery(name = "Contract.findBillingAccount", query = "select c from Contract c  left join fetch  c.billingAccount cb where cb.code=:codeBillingAccount")
+	@NamedQuery(name = "Contract.findCustomerAccount", query = "select c from Contract c left join c.customerAccount cc where cc.code=:codeCustomerAccount")
+	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer")
+//})
 public class Contract extends BusinessEntity {
 
 	public Contract() {
@@ -51,7 +58,7 @@ public class Contract extends BusinessEntity {
 	 *  seller attached to quotes
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id", referencedColumnName = "id")
+	@JoinColumn(name = "seller_id", referencedColumnName = "id", nullable = false)
 	private Seller seller;
 	
 	/**
