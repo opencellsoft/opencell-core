@@ -28,6 +28,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
@@ -39,6 +40,7 @@ import org.meveo.audit.logging.handler.ConsoleAuditHandler;
 import org.meveo.audit.logging.handler.DBAuditHandler;
 import org.meveo.audit.logging.handler.FileAuditHandler;
 import org.meveo.audit.logging.handler.Handler;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.DualListModel;
 import org.slf4j.Logger;
@@ -100,8 +102,9 @@ public class AuditConfigurationBean implements Serializable {
 			ClassAndMethods cm = new ClassAndMethods();
 			cm.setClassName(selectedClass.getName());
 
-			for (MethodWithParameter m : methods.getTarget()) {
-				cm.addMethod(m.getMethodName());
+
+			for (Object methodName : methods.getTarget()) {
+				cm.addMethod(StringEscapeUtils.unescapeHtml((String)methodName));
 			}
 
 			if (!selectedClassAndMethods.contains(cm)) {

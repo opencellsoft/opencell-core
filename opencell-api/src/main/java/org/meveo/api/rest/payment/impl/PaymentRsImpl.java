@@ -855,10 +855,10 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
     
     @Override
-    public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(String customerAccountCode) {
+    public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(String customerAccountCode, Integer offset, Integer limit) {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
         try {
-            result = paymentMethodApi.listByCustomerAccountCode(customerAccountCode);
+            result = paymentMethodApi.listByCustomerAccountCode(customerAccountCode, offset, limit);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

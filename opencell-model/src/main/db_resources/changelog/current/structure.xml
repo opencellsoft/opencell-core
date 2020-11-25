@@ -3743,6 +3743,7 @@ END $$;]]>
             <column name="aliases" type="text" >
                 <constraints nullable="false" />
             </column>
+            <column name="parameters" type="text" />
             <column name="last_run_date" type="datetime" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
