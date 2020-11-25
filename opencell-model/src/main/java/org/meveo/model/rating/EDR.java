@@ -49,8 +49,7 @@ import org.meveo.model.billing.Subscription;
  */
 @Entity
 @Table(name = "rating_edr")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 @NamedQueries({
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
@@ -285,7 +284,7 @@ public class EDR extends BaseEntity {
     @Column(name = "reject_reason", columnDefinition = "text")
     @Size(max = 255)
     private String rejectReason;
-    
+
     /** The times tried. */
     @Column(name = "times_tried")
     private Integer timesTried = 0;
@@ -553,13 +552,12 @@ public class EDR extends BaseEntity {
 
     @Override
     public String toString() {
-        return "EDR [id=" + id + ", subscription=" + (subscription != null ? subscription.getId() : null) + ", originBatch=" + originBatch + ", originRecord=" + originRecord
-                + ", eventDate=" + eventDate + ", quantity=" + quantity + ", access=" + accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3="
-                + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5 + ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8="
-                + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4="
-                + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3
-                + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR="
-                + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + updated + "]";
+        return "EDR [id=" + id + ", subscription=" + (subscription != null ? subscription.getId() : null) + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", eventDate=" + eventDate + ", quantity="
+                + quantity + ", access=" + accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5
+                + ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8=" + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3="
+                + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4="
+                + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate="
+                + updated + "]";
     }
 
     @Override
@@ -589,7 +587,7 @@ public class EDR extends BaseEntity {
 
         if (quantityLeftToRate == null) {
             quantityLeftToRate = quantity == null ? BigDecimal.ZERO : quantity;
-}
+        }
         return quantityLeftToRate;
     }
 
@@ -658,5 +656,14 @@ public class EDR extends BaseEntity {
      */
     public void setTimesTried(Integer timesTried) {
         this.timesTried = timesTried;
-    }        
+    }
+
+    /**
+     * Get the last status date - either record creation or updatedate
+     * 
+     * @return Last status date
+     */
+    public Date getStatusDate() {
+        return updated == null ? created : updated;
+    }
 }

@@ -561,7 +561,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     @Override
     public void create(CustomerAccount entity) throws BusinessException {
-
+        validatePaymentMethod(entity.getPreferredPaymentMethod(), entity.getDDPaymentMethods());
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
@@ -585,9 +585,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     @Override
     public CustomerAccount update(CustomerAccount entity) throws BusinessException {
 
-        if (entity.getPreferredPaymentMethod() == null) {
-            throw new BusinessException("CustomerAccount does not have a preferred payment method");
-        }
+        List<DDPaymentMethod> ddPaymentMethods = entity.getDDPaymentMethods();
+        validatePaymentMethod(entity.getPreferredPaymentMethod(), ddPaymentMethods);
         for (PaymentMethod pm : entity.getPaymentMethods()) {
             pm.updateAudit(currentUser);
         }
@@ -597,7 +596,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         
         // Register dd payment methods in payment gateway and obtain a token id
-        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
+        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
         	if(ddPaymentMethod.getTokenId() == null){
         		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
         	}
@@ -606,6 +605,20 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
+    }
+
+    private void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
+        if (preferredPaymentMethod == null) {
+            throw new BusinessException("CustomerAccount does not have a preferred payment method");
+        }
+        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
+            if(ddPaymentMethods.stream()
+                    .filter(entry -> entry.getBankCoordinates().getIban().equals(ddPaymentMethod.getBankCoordinates().getIban()))
+                    .limit(2)
+                    .count() > 1){
+                throw new BusinessException("CustomerAccount Could not have two Direct debit payment method with the same iban");
+            }
+        }
     }
 
     /**

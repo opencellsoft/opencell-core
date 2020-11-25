@@ -49,14 +49,14 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     @Override
     public String toString(CustomFieldValues value) {
 
-    	if (value == null) {
+        if (value == null) {
             return null;
         }
-        
+
         if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR)) && value.isEncrypted()) {
-			return encrypt(((CustomFieldValues) value).asJson());
-		}
-        
+            return encrypt(((CustomFieldValues) value).asJson());
+        }
+
         return ((CustomFieldValues) value).asJson();
 
     }
@@ -64,14 +64,14 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     @Override
     public CustomFieldValues fromString(String string) {
 
-    	if(StringUtils.isBlank(string)) {
-    		return null;
-    	}
+        if (StringUtils.isBlank(string)) {
+            return null;
+        }
 
         if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
-        	string = decrypt(string);
-		}
-        
+            string = decrypt(string);
+        }
+
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
 
@@ -99,14 +99,24 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         }
         throw unknownWrap(value.getClass());
     }
-    
+
     @Override
-	public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {
-		boolean equals = super.areEqual(one, another);
-		if (equals && one != null && 
-				(CollectionUtils.isNotEmpty(one.getDirtyCfPeriods()) || CollectionUtils.isNotEmpty(one.getDirtyCfValues()))) {
-			return false;
-		}
-		return equals;
-	}
+    public boolean areEqual(CustomFieldValues one, CustomFieldValues another) {
+        boolean equals = super.areEqual(one, another);
+
+        if (equals && one != null && CollectionUtils.isNotEmpty(one.getDirtyCfValues())) {
+            if (another != null && CollectionUtils.isNotEmpty(another.getDirtyCfValues())) {
+
+                if (!CollectionUtils.isEqualCollection(one.getDirtyCfValues(), another.getDirtyCfValues())) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            } else {
+                return false;
+            }
+        }
+        return equals;
+    }
 }

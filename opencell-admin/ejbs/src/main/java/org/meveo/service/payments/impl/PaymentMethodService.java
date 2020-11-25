@@ -18,9 +18,12 @@
 package org.meveo.service.payments.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -474,4 +477,24 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+    public List<PaymentMethod> listByCustomerAccount(CustomerAccount customerAccount, Integer firstRow, Integer numberOfRows) {
+        try {
+            Query query = getEntityManager().createNamedQuery("PaymentMethod.listByCustomerAccount");
+            query.setParameter("customerAccount", customerAccount);
+            
+            if (firstRow != null) {
+                query.setFirstResult(firstRow);
+            }
+            if (numberOfRows != null) {
+                query.setMaxResults(numberOfRows);
+            }
+            
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list PaymentMethod by customerAccount", e);
+            return null;
+        }
+    }
 }

@@ -97,11 +97,22 @@ public class CDRService extends PersistenceService<CDR> {
         return cdrs;
     }
 
+    @SuppressWarnings("unchecked")
     public void backout(String fileName) {
         if (!currentUser.hasRole("cdrManager")) {
             throw new AccessDeniedException("CDR Manager permission is required to write off CDR");
         }
-        
+        if(StringUtils.isBlank(fileName)) {
+            throw new BusinessException("Please provide a correct file name!");
+        }
+        List<String> cdrs = getEntityManager().createNamedQuery("CDR.checkFileNameExists").setParameter("fileName", fileName).getResultList();
+        if(cdrs == null || cdrs.isEmpty()) {
+            throw new BusinessException("File ["+ fileName + "] not found in RATING_CDR Table");
+        }
+        cdrs = getEntityManager().createNamedQuery("CDR.checkRTBilledExists").setParameter("fileName", fileName).getResultList();
+        if(cdrs != null && !cdrs.isEmpty()) {
+            throw new BusinessException("Billed Rated Transactions exist related to this file name!");
+        }
         getEntityManager().createNamedQuery("CDR.deleteRTs").setParameter("fileName", fileName).executeUpdate();            
         getEntityManager().createNamedQuery("CDR.deleteWOs").setParameter("fileName", fileName).executeUpdate();        
         getEntityManager().createNamedQuery("CDR.deleteEDRs").setParameter("fileName", fileName).executeUpdate();

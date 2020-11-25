@@ -420,7 +420,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
                 try {
                     oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
-// TODO AKK we should change status inside the oneShotChargeInstanceService.oneShotChargeApplication?? 
+
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+
                 } catch (RatingException e) {
                     log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
                     throw e; // e.getBusinessException();
@@ -429,9 +431,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     log.error("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
                     throw e;
                 }
-
-                oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-                oneShotChargeInstanceService.update(oneShotChargeInstance);
             }
         } else {
             log.debug("ServiceActivation: subscription charges are not applied.");
@@ -797,14 +796,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (entity.getStatus() == InstanceStatusEnum.INACTIVE || quantityChanged) {
             if (entity.getRecurringChargeInstances() != null) {
                 for (RecurringChargeInstance chargeInstance : entity.getRecurringChargeInstances()) {
-                    if (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0) {
+                    if (!chargeInstance.getStatus().isFinalStatus() && (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0)) {
                         chargeInstance.setQuantity(entity.getQuantity());
                     }
                 }
             }
             if (entity.getSubscriptionChargeInstances() != null) {
                 for (SubscriptionChargeInstance chargeInstance : entity.getSubscriptionChargeInstances()) {
-                    if (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0) {
+                    if (!chargeInstance.getStatus().isFinalStatus() && (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0)) {
                         chargeInstance.setQuantity(entity.getQuantity());
                     }
                 }
@@ -812,7 +811,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             if (entity.getTerminationChargeInstances() != null) {
                 for (TerminationChargeInstance chargeInstance : entity.getTerminationChargeInstances()) {
-                    if (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0) {
+                    if (!chargeInstance.getStatus().isFinalStatus() && (entity.getQuantity() == null || chargeInstance.getQuantity() == null || entity.getQuantity().compareTo(chargeInstance.getQuantity()) != 0)) {
                         chargeInstance.setQuantity(entity.getQuantity());
                     }
                 }
