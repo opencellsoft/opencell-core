@@ -74,6 +74,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            
             AccessToken accessToken = keycloakSecurityContext.getToken();
 
             // log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", accessToken.getSubject(),
@@ -82,11 +83,12 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             // accessToken.getResourceAccess(RESOURCE_PROVIDER) != null ? accessToken.getResourceAccess(RESOURCE_PROVIDER).getRoles()
             // : null,
             // accessToken.getOtherClaims());
-
+            
             this.subject = accessToken.getSubject();
             this.userName = accessToken.getPreferredUsername();
             this.fullName = accessToken.getName();
-            this.authTime = accessToken.getAuthTime();
+            this.authenticatedAt = accessToken.getIssuedAt();
+            this.authenticationTokenId = accessToken.getSessionState();
             this.email = accessToken.getEmail();
 
             if (accessToken.getOtherClaims() != null) {

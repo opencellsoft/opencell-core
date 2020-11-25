@@ -65,6 +65,7 @@
                 } else if ("R3".equals(gwfTransition.getFromStatus()) && "R4".equals(gwfTransition.getToStatus())) {
                     customerAccount = updateDunningLevel(customerAccount, DunningLevelEnum.R4);
                     updateAccountOperationsToWritteOff(customerAccount);
+                    markInvoicesAsAbandoned(customerAccount.getAccountOperations());
                     customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
                     customerAccount.setDateStatus(new Date());
                     customerAccountService.update(customerAccount);
@@ -74,6 +75,15 @@
                     closeDunningDocuments(customerAccount);
                 } else if ("R0".equals(gwfTransition.getToStatus())) {
                     sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
+                }
+            }
+
+            private void markInvoicesAsAbandoned(List<AccountOperation> accountOperations) {
+                for(AccountOperation accountOperation : accountOperations){
+                    if (accountOperation instanceof RecordedInvoice) {
+                        ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.ABANDONED);
+                        accountOperationService.update(accountOperation);
+                    }
                 }
             }
 
