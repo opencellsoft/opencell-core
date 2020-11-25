@@ -22,7 +22,7 @@ public class GenericModule extends SimpleModule {
     private static final VersionUtil VERSION_UTIL = new VersionUtil() {};
     static final String DATA_ROOT_ELEMENT = "data";
 
-    GenericModule(Set<String> nestedEntitiesToLoad) {
+    GenericModule(Set<String> nestedEntitiesToLoad, Long nestedDepth) {
         super(NAME, VERSION_UTIL.version());
         Set<IEntity> sharedEntityToSerialize = new HashSet<>();
         Set<String> nestedEntities = nestedEntitiesToLoad
@@ -42,7 +42,7 @@ public class GenericModule extends SimpleModule {
             }
         });
         addSerializer(HibernateProxy.class, new LazyProxySerializer(nestedEntities, sharedEntityToSerialize));
-        addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize));
+        addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override
@@ -68,8 +68,15 @@ public class GenericModule extends SimpleModule {
 
     public static class Builder {
         private Set<String> nestedEntities;
+        private Long nestedDepth;
+
         public Builder withEntityToLoad(Set<String> nestedEntities){
             this.nestedEntities = nestedEntities;
+            return this;
+        }
+
+        public Builder withNestedDepth(Long nestedDepth){
+            this.nestedDepth = nestedDepth;
             return this;
         }
 
@@ -79,9 +86,9 @@ public class GenericModule extends SimpleModule {
 
         public GenericModule build(){
             if(nestedEntities != null){
-                return new GenericModule(nestedEntities);
+                return new GenericModule(nestedEntities, nestedDepth == null ?  0 : nestedDepth);
             }
-            return new GenericModule(Collections.emptySet());
+            return new GenericModule(Collections.emptySet(), nestedDepth == null ? 0 : nestedDepth);
         }
     }
 
