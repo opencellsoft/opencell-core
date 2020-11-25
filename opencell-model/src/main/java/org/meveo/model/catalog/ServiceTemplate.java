@@ -257,7 +257,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
     @NotNull
-    protected Boolean mandatory;
+    protected Boolean mandatory=Boolean.FALSE;
     
     
     /**

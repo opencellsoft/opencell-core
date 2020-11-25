@@ -58,6 +58,7 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -705,11 +706,11 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		}else if(!StringUtils.isBlank(offerContextDTO.getOfferCode())){
 			OfferTemplate offerTemplate=offerTemplateService.findByCode(offerContextDTO.getOfferCode());
 			if(offerTemplate!=null) { 
-				List<ServiceTemplate> services=offerTemplate.getServices(); 
+				List<OfferServiceTemplate> services=offerTemplate.getOfferServiceTemplates();
 				if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
-					for(ServiceTemplate service:services) {
-						if(serviceByTags.contains(service)) {
-							ServiceDTO serviceDto=new ServiceDTO(service);
+					for(OfferServiceTemplate service:services) {
+						if(serviceByTags.contains(service.getServiceTemplate())) {
+							ServiceDTO serviceDto=new ServiceDTO(service.getServiceTemplate());
 							result.addServiceTemplate(serviceDto);
 						}
 					}

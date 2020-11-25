@@ -344,8 +344,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
         processAllowedDiscountPlans(postData, offerTemplate);
-        processTags(postData, offerTemplate);
-        processServices(postData, offerTemplate);
+        processTags(postData, offerTemplate); 
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -398,16 +397,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
     
-      
-    private void processServices(OfferTemplateDto postData, OfferTemplate offerTemplate) {
-        List<ServiceTemplateDto> services = postData.getServices();
-        if(services != null && !services.isEmpty()){
-            offerTemplate.setServices(services
-                    .stream()
-                    .map(serviceDto -> serviceTemplateService.findByCode(serviceDto.getCode()))
-                    .collect(Collectors.toList()));
-        }
-    }
+ 
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();

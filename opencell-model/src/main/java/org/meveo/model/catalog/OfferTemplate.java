@@ -161,16 +161,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<Tag>();
     
-	/**
-	 * list of services attached to this offer
-	 */
-    @ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_offer_template_services",
-				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id")				
-			)
-    private List<ServiceTemplate> services = new ArrayList<>();
+	 
      
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -480,23 +471,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;
 	}
-
-	/**
-	 * @return the services
-	 */
-	public List<ServiceTemplate> getServices() {
-		return services;
-	}
-
-	/**
-	 * @param services the services to set
-	 */
-	public void setServices(List<ServiceTemplate> services) {
-		this.services = services;
-	}
-
  
-
 	/**
 	 * @return the offerComponents
 	 */

@@ -243,6 +243,7 @@ public class ProductApi extends BaseApi {
         productVersion.setEndDate(postData.getEndDate());
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(postData.getStatus());
+        processServices(postData,productVersion);
         try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
