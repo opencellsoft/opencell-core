@@ -24,15 +24,16 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.ServiceTemplateApi;
+import org.meveo.api.cpq.ServiceTypeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.catalog.ServiceTypeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceTypeResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
@@ -50,6 +51,9 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
     @Inject
     private ServiceTemplateApi serviceTemplateApi;
+    
+    @Inject
+    private ServiceTypeApi serviceTypeApi;
 
     @Override
     public ActionStatus create(ServiceTemplateDto postData) {
@@ -167,6 +171,75 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
 	        return Response.ok().entity(result).build();
 	}
+	
+	
+	  @Override
+	    public ActionStatus createServiceType(ServiceTypeDto postData) {
+	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	            serviceTypeApi.create(postData);
+	        } catch (Exception e) {
+	            processException(e, result);
+	        }
+
+	        return result;
+	    }
+	  
+	  
+	  @Override
+	    public ActionStatus removeServiceType(String serviceTypeCode) {
+	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	        	serviceTypeApi.remove(serviceTypeCode);
+	        } catch (Exception e) {
+	            processException(e, result);
+	        }
+
+	        return result;
+	    }
+	  
+	  
+	  @Override
+	    public ActionStatus createOrUpdateServiceType(ServiceTypeDto postData) {
+	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	        	serviceTypeApi.createOrUpdate(postData);
+	        } catch (Exception e) {
+	            processException(e, result);
+	        }
+
+	        return result;
+	    }
+
+	    @Override
+	    public GetServiceTypeResponseDto findServiceType(String serviceTypeCode) {
+	    	GetServiceTypeResponseDto result = new GetServiceTypeResponseDto();
+
+	        try {
+	            result.setServiceType(serviceTypeApi.find(serviceTypeCode));
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return result;
+	    }
+
+	    @Override
+	    public ActionStatus updateServiceType(ServiceTypeDto postData) {
+	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	        try {
+	        	serviceTypeApi.update(postData);
+	        } catch (Exception e) {
+	            processException(e, result);
+	        }
+
+	        return result;
+	    }
+ 
 	
 	
 	 
