@@ -142,6 +142,7 @@ public class JsonGenericMapper extends ObjectMapper{
         private SimpleFilterProvider simpleFilterProvider;
         private Module module;
         private Set<String> nestedEntities;
+        private Long nestedDepth;
 
         public static Builder getBuilder(){
             return new Builder();
@@ -162,8 +163,16 @@ public class JsonGenericMapper extends ObjectMapper{
             return this;
         }
 
+        public Builder withNestedDepth(Long nestedDepth){
+            this.nestedDepth = nestedDepth;
+            return this;
+        }
+
         public JsonGenericMapper build(){
-            module = GenericModule.Builder.getBuilder().withEntityToLoad(nestedEntities).build();
+            module = GenericModule.Builder.getBuilder()
+                    .withEntityToLoad(nestedEntities)
+                    .withNestedDepth(nestedDepth)
+                    .build();
             if(simpleFilterProvider == null){
                 simpleFilterProvider = new GenericSimpleFilterProvider();
             }

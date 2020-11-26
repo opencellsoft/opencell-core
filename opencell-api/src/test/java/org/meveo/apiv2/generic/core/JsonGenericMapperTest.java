@@ -17,6 +17,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
@@ -30,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -264,6 +266,34 @@ public class JsonGenericMapperTest {
 
         FileFormat resultingEntity = (FileFormat) jsonGenericMapper.parseFromJson(jsonDto, FileFormat.class);
         assertTrue(resultingEntity.getFileTypes().get(0).getId().equals(5l));
+    }
+
+    @Test
+    public void serialize_customer_account() {
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setId(1L);
+        customerAccount.setCode("CA");
+        BillingAccount ba = new BillingAccount();
+        ba.setId(2L);
+        ba.setCode("BA");
+        UserAccount ua = new UserAccount();
+        ua.setId(3L);
+        ua.setCode("UA");
+        ua.setBillingAccount(ba);
+        Subscription subscription = new Subscription();
+        subscription.setId(4L);
+        subscription.setCode("SUB");
+        ua.setSubscriptions(singletonList(subscription));
+        ba.setUsersAccounts(singletonList(ua));
+        customerAccount.setBillingAccounts(singletonList(ba));
+
+        JsonGenericMapper jsonMapper = JsonGenericMapper.Builder.getBuilder()
+                .withNestedDepth(1L)
+                .withNestedEntities(Set.of("billingAccounts", "billingAccounts.usersAccounts")).build();
+
+        ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder().total(1l).limit(0l).offset(0l).addData(customerAccount).build();
+
+        jsonMapper.toJson(Set.of(), CustomerAccount.class, immutableGenericPaginatedResource);
     }
 
     private Date getDefaultDate() {
