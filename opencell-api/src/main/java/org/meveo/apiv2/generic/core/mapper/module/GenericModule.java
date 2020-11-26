@@ -43,7 +43,7 @@ public class GenericModule extends SimpleModule {
             }
         });
         addSerializer(HibernateProxy.class, new LazyProxySerializer(nestedEntities, sharedEntityToSerialize));
-        addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize));
+        addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
         addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
