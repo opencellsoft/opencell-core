@@ -146,7 +146,7 @@
 
                                     <span style="width: 5px;"> </span>
                                     <p:commandButton icon="ui-icon-trash" immediate="true" action="#{creationInvoiceBean.deleteLinkedInvoiceCategoryDetaild}"
-                                        update=":formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary">
+                                        update="ratedTransactionTable :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary">
                                         <f:setPropertyActionListener value="#{aSubCatInvAgregate}" target="#{creationInvoiceBean.selectedSubCategoryInvoiceAgregateDetaild}" />
                                     </p:commandButton>
                                 </p:column>
