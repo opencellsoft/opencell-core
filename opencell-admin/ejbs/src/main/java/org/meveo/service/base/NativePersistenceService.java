@@ -62,6 +62,7 @@ import java.util.Date;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 
@@ -734,13 +735,16 @@ public class NativePersistenceService extends BaseService {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
-        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase());
-        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
         String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
+        if(!aggFields.isEmpty()) {
+            config.getFetchFields().remove("id");
+        }
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
         if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
             fieldsToRetrieve = "*";
         }
-        QueryBuilder queryBuilder = new QueryBuilder("select " + fieldsToRetrieve + ((!aggFields.isEmpty()) ? ", " + aggFields : "") + " from " + tableName + " a ", "a");
+        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }
@@ -754,8 +758,10 @@ public class NativePersistenceService extends BaseService {
 
         }
 
-        queryBuilder.addPaginationConfiguration(config, "a");
-        if (!aggFields.isEmpty()) {
+        if(aggFields.isEmpty()) {
+            queryBuilder.addPaginationConfiguration(config, "a");
+        }
+        if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
             queryBuilder.addGroupCriterion(fieldsToRetrieve);
         }
 
@@ -766,11 +772,21 @@ public class NativePersistenceService extends BaseService {
 
     }
 
+    private String buildFields(String fieldsToRetrieve, String aggFields) {
+        if (!fieldsToRetrieve.isEmpty() && !aggFields.isEmpty()) {
+            return String.join("," , fieldsToRetrieve, aggFields);
+        } else if(!fieldsToRetrieve.isEmpty()) {
+            return fieldsToRetrieve;
+        } else {
+            return aggFields;
+        }
+    }
+
     private String retrieveFields(List<String> fields, Predicate<String> predicate) {
         return fields
                 .stream()
                 .filter(predicate)
-                .map(x -> " a." + x)
+                .map(x -> "a." + x)
                 .collect(joining(","));
     }
 
