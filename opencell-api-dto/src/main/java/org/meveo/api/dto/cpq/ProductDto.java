@@ -1,13 +1,10 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -34,16 +31,12 @@ public class ProductDto extends BaseEntityDto{
 	private String brandCode;
 	private String reference;
 	private String model;
-	private Set<String> modelChlidren;
+	private Set<String> modelChildren;
 	private boolean discountFlag;
     private boolean packageFlag;
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
-    /** The tags. */
-    @XmlElementWrapper(name = "tags")
-    @XmlElement(name = "tags")
-    private List<TagDto> tags;
+
     
     
     public ProductDto() {}
@@ -62,7 +55,7 @@ public class ProductDto extends BaseEntityDto{
     	}
     	this.reference = p.getReference();
     	this.model = p.getModel();
-    	this.modelChlidren = p.getModelChlidren();
+    	this.modelChildren = p.getModelChlidren();
     	this.discountFlag = p.isDiscountFlag();
     	this.packageFlag = p.isPackageFlag();
     }
@@ -189,18 +182,20 @@ public class ProductDto extends BaseEntityDto{
 		this.model = model;
 	}
 
+	
+
 	/**
-	 * @return the modelChlidren
+	 * @return the modelChildren
 	 */
-	public Set<String> getModelChlidren() {
-		return modelChlidren;
+	public Set<String> getModelChildren() {
+		return modelChildren;
 	}
 
 	/**
-	 * @param modelChlidren the modelChlidren to set
+	 * @param modelChildren the modelChildren to set
 	 */
-	public void setModelChlidren(Set<String> modelChlidren) {
-		this.modelChlidren = modelChlidren;
+	public void setModelChildren(Set<String> modelChildren) {
+		this.modelChildren = modelChildren;
 	}
 
 	/**
@@ -245,19 +240,7 @@ public class ProductDto extends BaseEntityDto{
 		this.customFields = customFields;
 	}
 
-	/**
-	 * @return the tags
-	 */
-	public List<TagDto> getTags() {
-		return tags;
-	}
 
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(List<TagDto> tags) {
-		this.tags = tags;
-	}
 	
 	
     

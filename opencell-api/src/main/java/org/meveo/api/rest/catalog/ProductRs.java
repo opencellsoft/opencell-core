@@ -128,7 +128,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="retrieving a product with its code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product successfully updated",
+            @ApiResponse(responseCode="200", description = "the product successfully retrieved",
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
@@ -147,7 +147,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="Get products matching the given criteria",
     responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+            @ApiResponse(responseCode="200", description = "Products are successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
     })
     public Response listPost(PagingAndFiltering pagingAndFiltering);
     
@@ -229,7 +229,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="retrieving a product line with its code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product line successfully created or updated",
+            @ApiResponse(responseCode="200", description = "the product line is successfully retrieved",
                     content = @Content(schema = @Schema(implementation = GetProductLineDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "productLineCode parameter is missing"),
             @ApiResponse(responseCode = "404", description = "Unkonw product line"),
@@ -320,5 +320,54 @@ public interface ProductRs extends IBaseRs{
 	})
 	Response duplicateProductVersion(@Parameter @PathParam("productCode") String productCode,
 										@Parameter @PathParam("productVersion") int productVersion);
+	
+	/**
+	 * 
+	 * @param productCode
+	 * @param productVersion
+	 * @return
+	 */
+	@GET
+	@Path("/productVersion/{productCode}/{productVersion}")
+	@Operation(summary = "This endpoint allows to find a product version",
+	tags = { "Product" },
+	description ="find a product version",
+	responses = {
+	        @ApiResponse(responseCode="200", description = "the product version successfully retrieved",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
+	        @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
+	})
+	Response findProductVersion(@Parameter @PathParam("productCode") String productCode,
+										@Parameter @PathParam("productVersion") int productVersion);
+	
+	/**
+	 * 
+	 * @param productCode
+	 * @param productVersion
+	 * @return
+	 */
+	@GET
+	@Path("/productVersion/{productCode}")
+	@Operation(summary = "This endpoint allows to find all product versions related to a product",
+	tags = { "Product" },
+	description ="find product versions by product code",
+	responses = {
+	        @ApiResponse(responseCode="200", description = "product versions are successfully retrieved",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class)))
+	})
+	Response findProductVersions(@Parameter @PathParam("productCode") String productCode);
+	
+
+    @POST
+    @Path("/cpq/productVersion/list")
+    @Operation(summary = "Get product versions matching the customer, seller, and quote contexts",
+    tags = { "Catalog browsing" },
+    description ="Returns all available product versions for an offer taking into account the customer and seller context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billing Account Code does not exist"),
+            @ApiResponse(responseCode = "404", description = "offer code does not exist")
+    })
+ 
+  
+    public Response listProductVersions(@Parameter(description = "The Offer context", required = false) OfferContextDTO offerContextDTO);
 	
 }

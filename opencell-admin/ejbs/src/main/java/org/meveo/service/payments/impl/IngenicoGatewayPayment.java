@@ -737,7 +737,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
     	MandatInfoDto mandatInfoDto=new MandatInfoDto();
-    	GetMandateResponse response = client.merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
+    	GetMandateResponse response = getClient().merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
     	MandateResponse mandatResponse=response.getMandate();
     	if(mandatResponse!=null) { 
     		if("WAITING_FOR_REFERENCE".equals(mandatResponse.getStatus())) {

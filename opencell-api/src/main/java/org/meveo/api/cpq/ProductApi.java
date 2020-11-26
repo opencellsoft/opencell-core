@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -17,6 +18,7 @@ import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.cpq.ServiceDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -107,7 +109,7 @@ public class ProductApi extends BaseApi {
 			}
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
-			product.setModelChlidren(productDto.getModelChlidren());
+			product.setModelChlidren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -205,6 +207,7 @@ public class ProductApi extends BaseApi {
         productVersion.setStatus(VersionStatusEnum.DRAFT);
         productVersion.setStatusDate(Calendar.getInstance().getTime());
         processServices(postData,productVersion);
+        processTags(postData, product); 
         productVersionService.create(productVersion);
         return productVersion;
     }
@@ -300,6 +303,19 @@ public class ProductApi extends BaseApi {
 		}
     }
     
+    public ProductVersion findProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+        ProductVersion productVersion;
+		try {
+			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+	        if(productVersion==null) {
+	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
+	        }
+	        return productVersion;
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e);
+		}
+    }
+    
     public Product duplicateProduct(String codeProduct, boolean duplicateHierarchy, boolean preserveCode) throws MeveoApiException, BusinessException {
     	
     	Product product = null; 
@@ -379,9 +395,9 @@ public class ProductApi extends BaseApi {
 		}
 		product.setReference(productDto.getReference());
 		product.setModel(productDto.getModel());
-		product.setModelChlidren(productDto.getModelChlidren());
+		product.setModelChlidren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
-		processTags(productDto, product); 
+		
 		
 		return product;
     }
@@ -441,8 +457,8 @@ public class ProductApi extends BaseApi {
 	}
 	
 	
-	private void processTags(ProductDto postData, Product product) {
-		List<TagDto> tags = postData.getTags();
+	private void processTags(ProductVersionDto postData, Product product) {
+		Set<TagDto> tags = postData.getTagList();
 		if(tags != null && !tags.isEmpty()){
 			product.setTags(tags
 					.stream()
@@ -452,7 +468,7 @@ public class ProductApi extends BaseApi {
 	}
 
 	private void processServices(ProductVersionDto postData, ProductVersion productVersion) {
-		List<ServiceTemplateDto> services = postData.getServices();
+		Set<ServiceDTO> services = postData.getServices();
 		if(services != null && !services.isEmpty()){
 			productVersion.setServices(services
 					.stream()

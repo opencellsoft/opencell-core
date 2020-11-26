@@ -38,20 +38,6 @@ public class GetProductVersionResponse extends BaseResponse{
 	
 	public GetProductVersionResponse(ProductVersion productVersion) {
 		this();
-		productVersionDto = new ProductVersionDto(productVersion);
-
-    	if(productVersion.getServices() != null && !productVersion.getServices().isEmpty()) {
-    		serviceList = productVersion.getServices().stream().map(d -> {
-    			final ServiceDTO service = new ServiceDTO(d);
-    			return service;
-    		}).collect(Collectors.toSet());
-    	}
-    	if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
-    		tagList = productVersion.getTags().stream().map(t -> {
-    			final TagDto dto = new TagDto(t);
-    			return dto;
-    		}).collect(Collectors.toSet());
-    	}
 	}
 
 	/**
