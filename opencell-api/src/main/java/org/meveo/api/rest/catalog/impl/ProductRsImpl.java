@@ -240,6 +240,12 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		return null;
 	}
 
+	@Override
+	public Response listProductVersions(PagingAndFiltering pagingAndFiltering) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 }
