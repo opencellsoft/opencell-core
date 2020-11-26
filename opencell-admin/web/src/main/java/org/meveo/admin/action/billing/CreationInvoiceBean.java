@@ -442,9 +442,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteLinkedInvoiceCategoryDetaild() {
 
-        for (int i = 0; i < selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().size(); i++) {
-            aggregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().get(i));
+        List<RatedTransaction> listToRemove = new ArrayList<RatedTransaction>();
+        listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
+		for (RatedTransaction rt : listToRemove) {
+            aggregateHandler.removeRT(rt);
         }
+		updateAmountsAndLines();
     }
 
     /**
