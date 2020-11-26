@@ -207,7 +207,7 @@ public class ProductApi extends BaseApi {
         productVersion.setStatus(VersionStatusEnum.DRAFT);
         productVersion.setStatusDate(Calendar.getInstance().getTime());
         processServices(postData,productVersion);
-        processTags(postData, product); 
+        processTags(postData, productVersion); 
         productVersionService.create(productVersion);
         return productVersion;
     }
@@ -457,13 +457,13 @@ public class ProductApi extends BaseApi {
 	}
 	
 	
-	private void processTags(ProductVersionDto postData, Product product) {
+	private void processTags(ProductVersionDto postData, ProductVersion product) {
 		Set<TagDto> tags = postData.getTagList();
 		if(tags != null && !tags.isEmpty()){
 			product.setTags(tags
 					.stream()
 					.map(tagDto -> tagService.findByCode(tagDto.getCode()))
-					.collect(Collectors.toList()));
+					.collect(Collectors.toSet()));
 		}
 	}
 

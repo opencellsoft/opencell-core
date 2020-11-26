@@ -153,12 +153,6 @@ public class Product extends BusinessEntity {
     private List<ProductVersion> productVersions = new ArrayList<>();
     
     
-    /**
-     * list of tag attached
-     */   
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "cpq_product_tags", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags = new  ArrayList<Tag>();
     
     
     /**
@@ -377,20 +371,6 @@ public class Product extends BusinessEntity {
 	}
 
 
-	/**
-	 * @return the tags
-	 */
-	public List<Tag> getTags() {
-		return tags;
-	}
-
-
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
-	}
 
 
 	/**

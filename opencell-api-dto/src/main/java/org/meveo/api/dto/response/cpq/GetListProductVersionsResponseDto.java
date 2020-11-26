@@ -47,9 +47,9 @@ public class GetListProductVersionsResponseDto extends SearchResponse {
    
 
     /** products list. */
-    @XmlElementWrapper(name = "products")
-    @XmlElement(name = "products")
-    private List<ProductVersionDto> products  = new ArrayList<>();;
+    @XmlElementWrapper(name = "productVersions")
+    @XmlElement(name = "productVersions")
+    private List<ProductVersionDto> productVersions  = new ArrayList<>();;
 
     /**
      * Instantiates a new gets the list offer template response dto.
@@ -58,25 +58,30 @@ public class GetListProductVersionsResponseDto extends SearchResponse {
 
     }
 
-
-
-
 	/**
-	 * @return the products
+	 * @return the productVersions
 	 */
-	public List<ProductVersionDto> getProducts() {
-		return products;
+	public List<ProductVersionDto> getProductVersions() {
+		return productVersions;
 	}
 
 
 
 
+
+
+
+
 	/**
-	 * @param products the products to set
+	 * @param productVersions the productVersions to set
 	 */
-	public void setProducts(List<ProductVersionDto> products) {
-		this.products = products;
+	public void setProductVersions(List<ProductVersionDto> productVersions) {
+		this.productVersions = productVersions;
 	}
+
+
+
+
 
 
 
@@ -87,8 +92,8 @@ public class GetListProductVersionsResponseDto extends SearchResponse {
      * @param productVersion the offer template
      */
 	public void addProductVersion(ProductVersionDto productVersion) { 
-		if(!products.contains(productVersion)) {
-			products.add(productVersion);
+		if(!productVersions.contains(productVersion)) {
+			productVersions.add(productVersion);
 		}
 	}
 }
