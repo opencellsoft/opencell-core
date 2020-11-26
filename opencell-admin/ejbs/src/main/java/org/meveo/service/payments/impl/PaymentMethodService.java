@@ -29,6 +29,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -46,7 +47,7 @@ import org.meveo.service.crm.impl.CustomerService;
 
 /**
  * PaymentMethod service implementation.
- * 
+ *
  * @author anasseh
  * @author Mounir Bahije
  * @author Mbarek-Ay
@@ -66,14 +67,22 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
-    
+
     /** The customer service. */
     @Inject
     private CustomerService customerService;
-    
+
 	@Inject
 	private SellerService sellerService;
 
+	private boolean automaticMandateCreation;
+
+    public PaymentMethodService() {
+        ParamBean bean = ParamBean.getInstance();
+        if (bean != null) {
+            automaticMandateCreation = Boolean.parseBoolean(bean.getProperty("payment.automatic.mandate.creation", "false"));
+        }
+    }
 
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
@@ -84,14 +93,14 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 throw new BusinessException("Cant add expired card");
             }
             obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-        }else if (paymentMethod instanceof DDPaymentMethod) {
-	        DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod; 
-	        CustomerAccount customerAccount=ddpaymentMethod.getCustomerAccount();
-	        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
-	        if (paymentGateway != null) {
-	        createMandate(ddpaymentMethod);
-	        }      
-	    }  
+        } else if (paymentMethod instanceof DDPaymentMethod && automaticMandateCreation) {
+            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod;
+            CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
+            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+            if (paymentGateway != null) {
+                createMandate(ddpaymentMethod);
+            }
+        }
         super.create(paymentMethod);
 
         // Mark other payment methods as not preferred
@@ -101,10 +110,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
     }
 
-    public void createMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{  
+    public void createMandate(DDPaymentMethod ddpaymentMethod) throws BusinessException{
 
     	GatewayPaymentInterface gatewayPaymentInterface = null;
-    	
+
     	if (ddpaymentMethod.getBankCoordinates() == null) {
     		throw new BusinessException("Bank Coordinate is absent for Payment method " +ddpaymentMethod.getAlias());
     	}
@@ -118,20 +127,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     		}
     		try {
     			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-    		} catch (Exception e) { 
+    		} catch (Exception e) {
     			log.warn("Cant find payment gateway");
     		}
     	}
     	if (gatewayPaymentInterface != null && !StringUtils.isBlank(iban)) {
     		gatewayPaymentInterface.createMandate(customerAccount, iban,ddpaymentMethod.getMandateIdentification());
-    	} 
+    	}
     }
-    
+
     public void approveSepaDDMandate(String customerAccountCode,String tokenId) throws BusinessException{
 
-    	GatewayPaymentInterface gatewayPaymentInterface = null; 
-       
-        	
+    	GatewayPaymentInterface gatewayPaymentInterface = null;
+
+
         	CustomerAccount customerAccount =customerAccountService.findByCode(customerAccountCode);
         	if(customerAccount!=null) {
         		DDPaymentMethod ddpaymentMethod=new DDPaymentMethod();
@@ -143,7 +152,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         		}
         		try {
         			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-        		} catch (Exception e) { 
+        		} catch (Exception e) {
         			log.warn("Cant find payment gateway");
         		}
         		 if(tokenId==null){
@@ -155,16 +164,16 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
              		 ddpaymentMethod=(DDPaymentMethod)paymentMethod;
              		tokenId=ddpaymentMethod.getTokenId();
         		 }
-        		
-        	} 
-        
- 
-    	
+
+        	}
+
+
+
     	if (gatewayPaymentInterface != null && !StringUtils.isBlank(tokenId)) {
     		gatewayPaymentInterface.approveSepaDDMandate(tokenId,new Date());
-    	} 
+    	}
     }
-    
+
     public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode) throws BusinessException{
     	GatewayPaymentInterface gatewayPaymentInterface = null;
     	MandatInfoDto mandateInfoDto=null;
@@ -178,17 +187,17 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     		}
     		try {
     			gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-    		} catch (Exception e) { 
+    		} catch (Exception e) {
     			log.warn("Cant find payment gateway");
     		}
-    	}  
+    	}
     	if (gatewayPaymentInterface != null) {
     		mandateInfoDto= gatewayPaymentInterface.checkMandat(mandateReference,mandateId);
     	}
     	return mandateInfoDto;
     }
-    
-    
+
+
     /**
      * Test if the card with a TokenId and aoociated to a customer account Exist.
      *
@@ -259,7 +268,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     /**
      * Store payment information in payment gateway and return token id in a payment gateway.
-     * 
+     *
      * @param cardPaymentMethod Card payment method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
@@ -291,25 +300,27 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
     }
 
-    
+
     /**
      * Store payment information in payment gateway and return token id in a payment gateway.
      * Reserved to GlobalCollect platform
+     * 
      * @param ddPaymentMethod Direct debit method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
+     * 
      */
     public void obtainAndSetSepaToken(DDPaymentMethod ddpaymentMethod, CustomerAccount customerAccount) throws BusinessException {
         if (!StringUtils.isBlank(ddpaymentMethod.getTokenId())) {
             return;
         }
-        String alias = ddpaymentMethod.getAlias(); 
-        
+        String alias = ddpaymentMethod.getAlias();
+
         if (ddpaymentMethod.getBankCoordinates() == null) {
 			throw new BusinessException("Bank Coordinate is absent for Payment method " +alias);
 		}
         String iban = ddpaymentMethod.getBankCoordinates().getIban();
-        String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner(); 
+        String accountHolderName=ddpaymentMethod.getBankCoordinates().getAccountOwner();
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
         if (paymentGateway != null) {
@@ -327,7 +338,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             log.error("No payment gateway for customerAccount:" + customerAccount.getCode());
         }
     }
-    
+
     /**
      * Find by token id.
      *
@@ -342,7 +353,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     /**
      * Create a new DDPaymentMethod from the createMandate callBback.
-     * 
+     *
      * @param customerAccount Customer Account
      * @param mandatInfoDto Mandat info dto
      * @throws BusinessException Business Exception
@@ -375,7 +386,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (customerAccount == null) {
             throw new BusinessException("Can't found CustomerAccount with code:" + hostedCheckoutInput.getCustomerAccountCode());
         }
-        
+
         Seller seller = null;
 		if (!StringUtils.isBlank(hostedCheckoutInput.getSellerCode())) {
 			seller = sellerService.findByCode(hostedCheckoutInput.getSellerCode());
@@ -390,7 +401,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
-        
+
         GatewayPaymentInterface gatewayPaymentInterface = null;
         gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,seller);
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
@@ -434,7 +445,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         return gatewayPaymentInterface;
     }
-    
+
     /**
      * Check bank coordinates fields.
      *
@@ -477,20 +488,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
     public List<PaymentMethod> listByCustomerAccount(CustomerAccount customerAccount, Integer firstRow, Integer numberOfRows) {
         try {
             Query query = getEntityManager().createNamedQuery("PaymentMethod.listByCustomerAccount");
             query.setParameter("customerAccount", customerAccount);
-            
+
             if (firstRow != null) {
                 query.setFirstResult(firstRow);
             }
             if (numberOfRows != null) {
                 query.setMaxResults(numberOfRows);
             }
-            
+
             return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by customerAccount", e);
