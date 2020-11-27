@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ContractDto;
+import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
@@ -25,14 +26,24 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -54,6 +65,18 @@ public class ContractApi extends BaseApi{
 	private CustomerAccountService customerAccountService;
 	@Inject 
 	private CustomerService customerService;
+	@Inject
+	private ContractItemService contractItemService;
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
+	@Inject
+	private OfferTemplateService offerTemplateService;
+	@Inject
+	private ProductService productService;
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
+	@Inject
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACt_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
@@ -213,9 +236,117 @@ public class ContractApi extends BaseApi{
     	return result;
     }
     
+    public Long createContractLine(ContractItemDto contractItemDto) {
+    	checkParams(contractItemDto);
+    	ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
+    	if(item != null)
+    		throw new EntityAlreadyExistsException(ContractItem.class, contractItemDto.getCode());
+    	item = new ContractItem();
+    	final Contract contract = contractService.findByCode(contractItemDto.getContractCode());
+    	if(contract == null)
+    		throw new EntityDoesNotExistsException(Contract.class, contractItemDto.getContractCode());
+    	final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode());
+    	if(serviceTemplate == null)
+    		throw new EntityDoesNotExistsException(ServiceTemplate.class, contractItemDto.getServiceTemplateCode());
+    	final PricePlanMatrix planMatrix = pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode());
+    	if(planMatrix == null)
+    		throw new EntityDoesNotExistsException(PricePlanMatrix.class, contractItemDto.getPricePlanCode());
+    	
+    	item.setCode(contractItemDto.getCode());
+    	item.setContract(contract);
+    	item.setServiceTemplate(serviceTemplate);
+		item.setPricePlan(planMatrix);
+		
+    	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode()))
+    		item.setOfferTemplate(offerTemplateService.findByCode(contractItemDto.getServiceTemplateCode()));
+    	if(!Strings.isEmpty(contractItemDto.getProductCode()))
+    		item.setProduct(productService.findByCode(contractItemDto.getProductCode()));
+    	if(!Strings.isEmpty(contractItemDto.getPricePlanCode()))
+    		item.setPricePlan(pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode()));
+    	if(!Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
+    		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
+    	item.setRate(contractItemDto.getRate());
+    	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
+    	
+    	try {
+    		contractItemService.create(item);
+    		return item.getId();
+    	}catch(BusinessException e) {
+    		throw new MeveoApiException(e);
+    	}
+    }
+    
+    public void updateContractLine(ContractItemDto contractItemDto) {
+    	if(Strings.isEmpty(contractItemDto.getCode()))
+			missingParameters.add("code");
+    	handleMissingParameters();
+    	final ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
+    	if(item == null)
+    		throw new EntityDoesNotExistsException(ContractItem.class, contractItemDto.getCode());
+    	
+    	if(!Strings.isEmpty(contractItemDto.getContractCode())) {
+	    	final Contract contract = contractService.findByCode(contractItemDto.getContractCode());
+	    	if(contract == null)
+	    		throw new EntityDoesNotExistsException(Contract.class, contractItemDto.getContractCode());
+	    	item.setContract(contract);
+    	}
+    	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode())) {
+	    	final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode());
+	    	if(serviceTemplate == null)
+	    		throw new EntityDoesNotExistsException(ServiceTemplate.class, contractItemDto.getServiceTemplateCode());
+	    	item.setServiceTemplate(serviceTemplate);
+    	}
+    	if(!Strings.isEmpty(contractItemDto.getPricePlanCode())) {
+	    	final PricePlanMatrix planMatrix = pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode());
+	    	if(planMatrix == null)
+	    		throw new EntityDoesNotExistsException(PricePlanMatrix.class, contractItemDto.getPricePlanCode());
+			item.setPricePlan(planMatrix);
+    	}
+
+		
+    	if(!Strings.isEmpty(contractItemDto.getProductCode()))
+    		item.setProduct(productService.findByCode(contractItemDto.getProductCode()));
+    	if(!Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
+    		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
+    	item.setRate(contractItemDto.getRate());
+    	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
+    	
+    	try {
+    		contractItemService.updateContractItem(item);
+    	}catch(BusinessException e) {
+    		throw new MeveoApiException(e);
+    	}
+    	
+    }
+    
+    public void deleteContractLine(String contractItemCode) {
+    	if(Strings.isEmpty(contractItemCode))
+    		missingParameters.add("contractCode");
+    	handleMissingParameters();
+    	contractItemService.deleteContractItem(contractItemCode);
+    }
+    
+    public ContractItemDto getContractLines(String contractItemCode) {
+    	final ContractItem item = contractItemService.findByCode(contractItemCode);
+    	if(item == null)
+    		throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
+    	return new ContractItemDto(item);
+    }
+    
 	
 	
-	
+	private void checkParams(ContractItemDto contractItemDto) {
+    	if(Strings.isEmpty(contractItemDto.getContractCode()))
+    		missingParameters.add("contractCode");
+    	if(Strings.isEmpty(contractItemDto.getCode()))
+			missingParameters.add("code");
+    	if(Strings.isEmpty(contractItemDto.getServiceTemplateCode()))
+			missingParameters.add("serviceTemplateCode");
+    	if(Strings.isEmpty(contractItemDto.getPricePlanCode()))
+			missingParameters.add("pricePlanCode");
+    		
+    	handleMissingParameters();
+	}
 	
 	
 	private void checkParams(ContractDto dto) {

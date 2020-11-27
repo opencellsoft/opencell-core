@@ -187,8 +187,7 @@
         <createSequence sequenceName="cpq_quote_product_seq" />
         <createSequence sequenceName="cpq_quote_customer_service_seq" />
         <createSequence sequenceName="cpq_contract_seq" />
-        <createSequence sequenceName="cpq_contract_item_seq" />
-<!--         <createSequence sequenceName="cpq_service_type_seq" /> -->
+        <createSequence sequenceName="cpq_contract_item_seq" /> 
 
     </changeSet>
     
@@ -10089,7 +10088,7 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_grouped_service_seq" /> 
         <createSequence sequenceName="cpq_product_mapping_seq" />
         <createSequence sequenceName="cpq_accounting_article_seq" />
-         <createSequence sequenceName="cpq_service_type_seq" />
+        <createSequence sequenceName="cpq_service_type_seq" />
      </changeSet>  
      
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
@@ -10786,7 +10785,17 @@ $$ LANGUAGE plpgsql;
     		<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_contract_item_pkey" />
             </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="description" type="varchar(255)" />  
             <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
              
             <column name="cpq_contract_id" type="bigint" /> 
             <column name="offer_template_id" type="bigint" /> 
