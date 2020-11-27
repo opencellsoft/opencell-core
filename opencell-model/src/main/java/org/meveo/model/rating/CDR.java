@@ -56,8 +56,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 		@Parameter(name = "sequence_name", value = "rating_cdr_seq") })
 @NamedQueries({
     @NamedQuery(name = "CDR.checkFileNameExists", query = "SELECT originBatch FROM CDR where originBatch=:fileName"),
-    @NamedQuery(name = "CDR.checkRTBilledExists", query = "from RatedTransaction rt where Status = 'BILLED' and rt.edr.originBatch=:fileName"),
-    @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction rt where Status <> 'BILLED' and rt.edr in (select e from EDR e where e.originBatch=:fileName)"),
+    @NamedQuery(name = "CDR.checkRTBilledExists", query = "from RatedTransaction rt where status = 'BILLED' and rt.edr.originBatch=:fileName"),
+    @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction rt where status <> 'BILLED' and rt.edr in (select e from EDR e where e.originBatch=:fileName)"),
     @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation wo where wo.edr in (select e from EDR e where e.originBatch=:fileName)"),
     @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"),
     @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),

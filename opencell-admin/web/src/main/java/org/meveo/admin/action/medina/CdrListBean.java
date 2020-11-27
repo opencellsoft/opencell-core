@@ -19,13 +19,14 @@
 package org.meveo.admin.action.medina;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
+import org.apache.tools.ant.util.DateUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.util.view.LazyDataModelWSize;
@@ -48,10 +49,6 @@ public class CdrListBean extends CdrBean {
 
     @SuppressWarnings("rawtypes")
     public LazyDataModel<CDR> getFilteredLazyDataModel() {
-        
-        if(filters != null && !filters.isEmpty() && filters.size() > 0) {
-            return getLazyDataModel();
-        }
         if (cdrFileNames == null) {
             cdrFileNames = new LazyDataModelWSize<CDR>() {
 
@@ -59,26 +56,24 @@ public class CdrListBean extends CdrBean {
 
                 @Override
                 public List<CDR> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map mapfilters) {
-                    List<CDR> entities = cdrService.getCDRFileNames();
+                    Date fromRange = filters.get("fromRange created") != null ? (Date) filters.get("fromRange created") : null;
+                    Date toRange = filters.get("toRange created") != null ? (Date) filters.get("toRange created") : null;
+                    String originBatch = filters.get("originBatch") != null ? (String) filters.get("originBatch") : null;
+                    List<CDR> entities = null;
+                    if(filters != null && !filters.isEmpty() && 
+                            (fromRange != null || toRange != null || originBatch != null)) {
+                        String fromCreationDate = fromRange != null ? DateUtils.format(fromRange, "yyyy-MM-dd") : null;
+                        String toCreationDate = toRange != null ? DateUtils.format(toRange, "yyyy-MM-dd") : null;
+                        entities = cdrService.getCDRFileNames(originBatch, fromCreationDate, toCreationDate);
+                    } else {
+                        entities = cdrService.getCDRFileNames();
+                    }
                     setRowCount(entities.size());
                     if (getRowCount() > 0) {
                         return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
                     } else {
                         return new ArrayList<CDR>();
                     }
-
-                }
-                @Override
-                public Object getRowKey(CDR cdr) {
-                    return cdr.getId();
-                }
-                @Override
-                public CDR getRowData() {
-                    return null;
-                }
-                @Override
-                public CDR getRowData(String rowKey) {    
-                    return cdrService.findById(Long.getLong(rowKey));
                 }
             };
         } 
