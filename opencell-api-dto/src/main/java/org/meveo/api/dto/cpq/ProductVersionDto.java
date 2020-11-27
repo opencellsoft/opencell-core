@@ -1,7 +1,6 @@
 package org.meveo.api.dto.cpq;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
@@ -21,6 +19,10 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  * @author Mbarek-Ay
  * @version 10.0
  */ 
+/**
+ * @author Z.Audit
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductVersionDto extends BaseEntityDto {
     
@@ -46,6 +48,8 @@ public class ProductVersionDto extends BaseEntityDto {
     private Date startDate;
     /** The endDate */
     private Date endDate;
+    /** The endDate */
+    private Date modificationDate;
   
     
     /** The services template. */
@@ -221,6 +225,18 @@ public class ProductVersionDto extends BaseEntityDto {
 	 */
 	public void setTagList(Set<TagDto> tagList) {
 		this.tagList = tagList;
+	}
+	/**
+	 * @return the modificationDate
+	 */
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	/**
+	 * @param modificationDate the modificationDate to set
+	 */
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
      
     

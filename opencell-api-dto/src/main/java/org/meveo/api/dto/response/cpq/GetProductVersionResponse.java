@@ -28,10 +28,6 @@ public class GetProductVersionResponse extends BaseResponse{
 
 	private ProductVersionDto productVersionDto;
 
-    private Set<ServiceDTO> serviceList = new HashSet<>();
-    
-    private Set<TagDto> tagList = new HashSet<>();
-
 	public GetProductVersionResponse() {
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
@@ -55,33 +51,6 @@ public class GetProductVersionResponse extends BaseResponse{
 	}
 
 
-	/**
-	 * @return the serviceList
-	 */
-	public Set<ServiceDTO> getServiceList() {
-		return serviceList;
-	}
-
-	/**
-	 * @param serviceList the serviceList to set
-	 */
-	public void setServiceList(Set<ServiceDTO> serviceList) {
-		this.serviceList = serviceList;
-	}
-
-	/**
-	 * @return the tagList
-	 */
-	public Set<TagDto> getTagList() {
-		return tagList;
-	}
-
-	/**
-	 * @param tagList the tagList to set
-	 */
-	public void setTagList(Set<TagDto> tagList) {
-		this.tagList = tagList;
-	}
 
 	
 }
