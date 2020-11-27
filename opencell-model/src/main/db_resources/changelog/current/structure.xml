@@ -4135,6 +4135,8 @@ END $$;]]>
 	    
 	    <changeSet id="#65-20201127" author="TarikFAKHOURI">
 	    
+        	<createSequence sequenceName="quote_offer_seq" />
+        
 	        <createTable tableName="quote_offer">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_quote_offer_seq" />

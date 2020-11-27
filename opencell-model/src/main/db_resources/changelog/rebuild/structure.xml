@@ -10155,6 +10155,13 @@ $$ LANGUAGE plpgsql;
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
             </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+	            
             <column name="version" type="int4" />
             <column name="status" type="varchar(255)" />
              <column name="status_date" type="datetime" />
