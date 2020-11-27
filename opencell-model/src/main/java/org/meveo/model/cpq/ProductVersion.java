@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,7 +29,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.tags.Tag;
@@ -46,9 +45,9 @@ import org.meveo.model.cpq.tags.Tag;
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
-	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p where p.tags in (:tagIds)")
+	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)")
 })
-public class ProductVersion extends BaseEntity{
+public class ProductVersion extends AuditableEntity{
 
 
 	private static final long serialVersionUID = 1L;

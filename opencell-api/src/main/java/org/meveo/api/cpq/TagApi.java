@@ -1,6 +1,7 @@
 package org.meveo.api.cpq;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -128,10 +129,11 @@ public class TagApi extends BaseApi {
 		if(tag == null) {
 			throw new BusinessApiException("Missing Tag with code : " + codeTag);
 		}
-		
-		var productVersions = productVersionService.findByTags(Arrays.asList(new Long[] {tag.getId()}));
-		if(!productVersions.isEmpty()) {
-			throw new BusinessApiException("Tag contains product, it can not be deleted");
+		try {
+			
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw new BusinessApiException("This tag can not be deleted");
 		}
 		tagService.remove(tag);
 	}

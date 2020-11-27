@@ -441,13 +441,18 @@ public class ProductApi extends BaseApi {
 		OfferTemplate offerTemplate=offerTemplateService.findByCode(offerCode);
 		if(offerTemplate!=null) { 
 			List<OfferComponent> offerComponents=offerTemplate.getOfferComponents();
-			List<Product> prodByTags=productService.getProductsByTags(resultBaTags); 
+			
+			List<ProductVersion> prdVersionsByTags=productVersionService.findByTags(resultBaTags); 
+			Set<Product> products=new HashSet<Product>();
+			for(ProductVersion pdVersion:prdVersionsByTags) {
+				products.add(pdVersion.getProduct());
+			}
 			ProductDto prodDto=null;
 			Product product=null;
-			if(!offerComponents.isEmpty() && !prodByTags.isEmpty()) {
+			if(!offerComponents.isEmpty() && !prdVersionsByTags.isEmpty()) {
 				for(OfferComponent oc:offerComponents) {
 					product=oc.getProduct();
-					if(prodByTags.contains(product)) {
+					if(products.contains(product)) {
 						prodDto=new ProductDto(product);
 						result.addProduct(prodDto);
 				}}

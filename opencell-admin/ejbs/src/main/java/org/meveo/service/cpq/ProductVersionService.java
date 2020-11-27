@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -188,9 +189,17 @@ public class ProductVersionService extends
         }
         return  update(productVersion);
     }
-    
-    @SuppressWarnings("unchecked")
-	public List<ProductVersion> findByTags(List<Long> tagIds) {
-		return this.getEntityManager().createNamedQuery("ProductVersion.findByTags").setParameter("tagIds", tagIds).getResultList();
-	}
+
+	  @SuppressWarnings("unchecked")
+	    public List<ProductVersion> findByTags(Set<String> tagCodes) { 
+	    	List<ProductVersion> productVersions=new ArrayList<ProductVersion>();
+	    	try {
+	    		productVersions = (List<ProductVersion>)getEntityManager().createNamedQuery("ProductVersion.findByTags").setParameter("tagCodes", tagCodes).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("getProductsByTags error ", e.getMessage());
+	    	}
+
+	    	return productVersions;
+	    }
 }
