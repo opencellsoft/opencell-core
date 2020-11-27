@@ -187,8 +187,7 @@
         <createSequence sequenceName="cpq_quote_product_seq" />
         <createSequence sequenceName="cpq_quote_customer_service_seq" />
         <createSequence sequenceName="cpq_contract_seq" />
-        <createSequence sequenceName="cpq_contract_item_seq" />
-<!--         <createSequence sequenceName="cpq_service_type_seq" /> -->
+        <createSequence sequenceName="cpq_contract_item_seq" /> 
 
     </changeSet>
     
@@ -10089,7 +10088,7 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_grouped_service_seq" /> 
         <createSequence sequenceName="cpq_product_mapping_seq" />
         <createSequence sequenceName="cpq_accounting_article_seq" />
-         <createSequence sequenceName="cpq_service_type_seq" />
+        <createSequence sequenceName="cpq_service_type_seq" />
      </changeSet>  
      
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
