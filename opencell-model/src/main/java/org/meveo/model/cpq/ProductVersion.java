@@ -46,7 +46,7 @@ import org.meveo.model.cpq.tags.Tag;
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
-	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p where p.tags in (:tagIds)")
+	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)")
 })
 public class ProductVersion extends BaseEntity{
 

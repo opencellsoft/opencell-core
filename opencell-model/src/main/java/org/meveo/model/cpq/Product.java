@@ -33,12 +33,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.CustomerBrand;
 
 /**
@@ -54,7 +51,7 @@ import org.meveo.model.crm.CustomerBrand;
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })
 @NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id")
 @NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
-@NamedQuery(name = "Product.findByTags", query = "select p from Product p LEFT JOIN p.tags as tag WHERE tag.code IN (:tagCodes)")
+
 public class Product extends BusinessEntity {
 
 	/**
