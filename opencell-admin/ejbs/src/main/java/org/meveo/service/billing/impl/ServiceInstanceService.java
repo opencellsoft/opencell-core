@@ -800,7 +800,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
         }
         ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-        if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
+        if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED && !reactivateTerminatedCharges) {
             throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
         checkServiceAssociatedWithOffer(serviceInstance);

@@ -301,6 +301,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
 
         subscription.setSubscribedTillDate(terminationDate);
+        subscription.setToValidity(terminationDate);
         subscriptionRenewal.setTerminationReason(terminationReason);
         subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
         subscriptionRenewal.setAutoRenew(false);
@@ -339,6 +340,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
 
         }
+
+
+        subscription.setToValidity(terminationDate);
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
@@ -813,10 +817,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return activeSubscription.get();
         else {
             return subscriptions.stream()
-                    .sorted(Comparator.<Subscription, Date>comparing(a -> a.getAuditable().getUpdated()).reversed())
+                    .sorted(Comparator.<Subscription, Date>comparing(a -> getUpdated(a)).reversed())
                     .collect(Collectors.toList())
                     .get(0);
         }
+    }
+
+    private Date getUpdated(Subscription subscription) {
+        return subscription.getAuditable().getUpdated() != null ? subscription.getAuditable().getUpdated() : subscription.getAuditable().getCreated();
     }
 
     @Override
