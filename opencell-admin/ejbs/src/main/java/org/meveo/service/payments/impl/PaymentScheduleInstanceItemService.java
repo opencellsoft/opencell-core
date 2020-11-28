@@ -312,7 +312,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts.getAmountWithTax(), invoiceType, null, null);
         RecordedInvoice recordedInvoicePS = new RecordedInvoice();
         recordedInvoicePS.setDueDate(paymentScheduleInstanceItem.getDueDate());
-        recordedInvoicePS.setPaymentMethod(paymentMethodType);
         recordedInvoicePS.setAmount(amounts.getAmountWithTax());
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);

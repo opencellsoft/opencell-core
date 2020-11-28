@@ -70,7 +70,7 @@ public class UnitPaymentJobBean {
             if (customerAccount == null) {
                 return;
             }
-            PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+            PaymentResponseDto doPaymentResponseDto;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
                     doPaymentResponseDto = paymentService.payByCardToken(customerAccount, amountToPay, listAOids, createAO, matchingAO, paymentGateway);
