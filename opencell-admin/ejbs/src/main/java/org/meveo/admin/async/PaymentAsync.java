@@ -101,14 +101,14 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
+                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
                 log.info("listAoToPay size before filter :"+(listAoToPay==null?"null":listAoToPay.size()));
-                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, OperationCategoryEnum.DEBIT);
                 log.info("listAoToPay size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             } else {
-                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
+                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
                 log.info("listAoToRefund size before filter :"+(listAoToRefund==null?"null":listAoToRefund.size()));
-                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, OperationCategoryEnum.CREDIT);
                 log.info("listAoToRefund size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             }
             
@@ -139,15 +139,14 @@ public class PaymentAsync {
         return new AsyncResult<String>("OK");
     }
 
-    private List<AccountOperation> filterAoToPayOrRefund(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPay, PaymentMethodEnum paymentMethodType, OperationCategoryEnum aoCategory) {
+    private List<AccountOperation> filterAoToPayOrRefund(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPay, OperationCategoryEnum aoCategory) {
         if (aoFilterScript != null) {
             Map<String, Object> methodContext = new HashMap<>();
             methodContext.put(LIST_AO_TO_PAY, listAoToPay);
             List<AccountOperation> filteredAOs = aoFilterScript.filterAoToPay(methodContext);
             if (CollectionUtils.isNotEmpty(filteredAOs)) {
                 return filteredAOs.stream().filter( (ao) ->
-                        ( ao.getPaymentMethod() == paymentMethodType && 
-                          ao.getTransactionCategory() == aoCategory  && 
+                        ( ao.getTransactionCategory() == aoCategory  &&
                          (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
                          ))
                     .collect(Collectors.toList());

@@ -103,12 +103,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         payment.setTransactionDate(originalOTG.getTransactionDate());
         payment.setDueDate(originalOTG.getDueDate());
         payment.setMatchingStatus(MatchingStatusEnum.O);
-        // Additional payment information 1 - Bank Code
-        payment.setPaymentInfo1(originalOTG.getPaymentInfo1());
-        // Additional payment information 2 - Branch Code
-        payment.setPaymentInfo2(originalOTG.getPaymentInfo2());
-        // Additional payment information 3 - Account Number
-        payment.setPaymentInfo3(originalOTG.getPaymentInfo3());
         paymentService.create(payment);
 
         return payment;

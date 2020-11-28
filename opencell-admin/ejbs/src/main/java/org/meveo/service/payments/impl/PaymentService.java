@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -34,6 +35,7 @@ import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.exceptions.PaymentException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedRefund;
@@ -449,6 +451,7 @@ public class PaymentService extends PersistenceService<Payment> {
         }
         Payment payment = new Payment();
         payment.setPaymentMethod(paymentMethodType);
+
         payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         payment.setUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
@@ -542,14 +545,17 @@ public class PaymentService extends PersistenceService<Payment> {
             } else {
                 String occTemplateCode = null;
                 List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-                if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                PaymentMethodEnum aoPaymentMethod = null;
+                if (accountOperation instanceof Refund) {
+                    aoPaymentMethod = ((Refund)accountOperation).getPaymentMethod();
+                    if (PaymentMethodEnum.CARD == aoPaymentMethod) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
                 } else if (accountOperation instanceof Payment) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                    aoPaymentMethod = ((Payment)accountOperation).getPaymentMethod();
+                    if (PaymentMethodEnum.CARD == aoPaymentMethod) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
@@ -578,7 +584,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
                 rejectedPayment.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
-                rejectedPayment.setPaymentMethod(accountOperation.getPaymentMethod());
+                rejectedPayment.setPaymentMethod(aoPaymentMethod);
                 rejectedPayment.setTaxAmount(accountOperation.getTaxAmount());
                 rejectedPayment.setAmountWithoutTax(accountOperation.getAmountWithoutTax());
                 rejectedPayment.setOrderNumber(accountOperation.getOrderNumber());
