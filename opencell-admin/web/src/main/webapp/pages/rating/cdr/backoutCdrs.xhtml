@@ -15,8 +15,8 @@
 		</h:form>
 
 		<p:panel styleClass="confirm-dialog-content">	
-							<hftl:searchPanel   backingBean="#{cdrListBean}" renderNewButton="false" columns="3" >
-								<hftl:searchField label="CDR File name" field="originBatch" />
+							<hftl:searchPanel  backingBean="#{cdrListBean}" dataModel="#{cdrListBean.filteredLazyDataModel}" renderNewButton="false" columns="3" >
+								<hftl:searchField label="CDR File name" field="originBatch" maxlength="300" />
 								<hftl:searchField label="Creation Date" field="created" />
 								<ui:define name="buttons">
 									<p:button outcome="cdr"
@@ -24,7 +24,7 @@
 								</ui:define>
 							</hftl:searchPanel>																	
 							<br/>
-							<hftl:dataList backingBean="#{cdrListBean}"
+							<hftl:dataList backingBean="#{cdrListBean}" dataModel="#{cdrListBean.filteredLazyDataModel}"
 								exportToXml="false" exportXlsxButton="false" selectionMode="single" checkMany="false">						
 									<hftl:column label="CDR File Name" field="originBatch"/>
 									<hftl:column label="Creation Date" field="created"/>	
