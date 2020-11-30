@@ -152,7 +152,17 @@ public enum NotificationEventTypeEnum {
     /**
      * Dunning workflow status to R2
      */
-    TO_R2;
+    TO_R2,
+
+    /**
+     * New subscription version has been created
+     */
+    VERSION_CREATED,
+
+    /**
+     * Subscription version has been removed
+     */
+    VERSION_REMOVED;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

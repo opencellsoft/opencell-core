@@ -3697,7 +3697,25 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
 
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
+        <addColumn tableName="billing_subscription">
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_to" type="datetime"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9"/>
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
 
+        <addColumn tableName="cat_offer_template">
+            <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="offer_template_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
+                                 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
         <createTable tableName="billing_invoice_agr_amount">
             <column name="aggr_id" type="bigint" >
@@ -3708,9 +3726,9 @@ END $$;]]>
             </column>
             <column name="amountwithouttax" type="numeric(23, 12)" />
             <column name="amounttax" type="numeric(23, 12)" />
-            <column name="amountwithtax" type="numeric(23, 12)" />
+            <column name="amountwithtax" type="numeric(23, 12)" />   
         </createTable>
-
+    
     </changeSet>
 
     <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">

@@ -13,17 +13,20 @@ import org.meveo.model.IEntity;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class ListCustomSerializer extends StdSerializer<List> implements GenericSerializer{
 
     private JsonSerializer<Object> serializer;
     private final Set<String> nestedEntities;
     private final Set<IEntity> sharedEntityToSerialize;
+    private final Long nestedDepth;
 
-    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize) {
+    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize, Long nestedDepth) {
         super(List.class);
         this.nestedEntities = nestedEntities;
         this.sharedEntityToSerialize = sharedEntityToSerialize;
+        this.nestedDepth = nestedDepth;
     }
 
     @Override
@@ -33,33 +36,54 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
 
     @Override
     public void serialize(List list, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if(shouldReturnOnlyIds(list, gen.getCurrentValue(), gen.getOutputContext().getCurrentName(), getPathToRoot(gen))){
+        Object currentValue = gen.getCurrentValue();
+        String currentName = gen.getOutputContext().getCurrentName();
+        String pathToRoot = getPathToRoot(gen);
+
+        if(!list.isEmpty() && list.get(0) instanceof IEntity){
             List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
-            gen.writeStartArray(listIEntity.size());
-            for (IEntity iEntity : listIEntity) {
-                gen.writeStartObject();
-                gen.writeFieldName("id");
-                gen.writeNumber((Long) iEntity.getId());
-                gen.writeEndObject();
+            boolean nestedEntityCandidate = isNestedEntityCandidate(pathToRoot, currentName);
+
+            boolean isDepthToBig;
+            List<String> referencedNestedEntitiesOnPath = referencedNestedEntitiesOnPath(pathToRoot);
+
+            if(referencedNestedEntitiesOnPath.isEmpty()){
+                isDepthToBig = pathToRoot.split("\\.").length <= nestedDepth + 1;
+            } else {
+                String referencedNestedEntity = referencedNestedEntitiesOnPath.get(0);
+                isDepthToBig = pathToRoot.split("\\.").length - referencedNestedEntity.split("\\.").length <= nestedDepth;
             }
-            gen.writeEndArray();
-        }else if(!list.isEmpty() && list.get(0) instanceof IEntity){
-            List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
-            gen.writeStartArray(listIEntity.size());
-            for (IEntity iEntity : listIEntity) {
-                sharedEntityToSerialize.add(iEntity);
-                gen.writeObject(iEntity);
+
+            if (currentValue instanceof GenericPaginatedResource || nestedEntityCandidate || isDepthToBig) {
+                gen.writeStartArray(listIEntity.size());
+                for (IEntity iEntity : listIEntity) {
+                    sharedEntityToSerialize.add(iEntity);
+                    gen.writeObject(iEntity);
+                }
+                gen.writeEndArray();
+            } else {
+                gen.writeStartArray(listIEntity.size());
+                for (IEntity iEntity : listIEntity) {
+                    gen.writeStartObject();
+                    gen.writeFieldName("id");
+                    gen.writeNumber((Long) iEntity.getId());
+                    gen.writeEndObject();
+                }
+                gen.writeEndArray();
             }
-            gen.writeEndArray();
-        }else{
+        }
+
+        else{
             resolveSerializer(provider).serialize(list, gen, provider);
         }
     }
 
-    private boolean shouldReturnOnlyIds(List list, Object currentValue, String currentName, String pathToRoot) {
-        return (!list.isEmpty() && list.get(0) instanceof IEntity)
-                && !(currentValue instanceof GenericPaginatedResource)
-                && !isNestedEntityCandidate(pathToRoot, currentName);
+    private List<String> referencedNestedEntitiesOnPath(String pathToRoot) {
+        return getNestedEntities()
+                .stream()
+                .filter(n -> pathToRoot.toLowerCase().contains(n.toLowerCase()))
+                .sorted((a, b) -> Integer.compare(b.split("\\.").length, a.split("\\.").length))
+                .collect(Collectors.toList());
     }
 
     private JsonSerializer resolveSerializer(SerializerProvider provider) throws JsonMappingException {
