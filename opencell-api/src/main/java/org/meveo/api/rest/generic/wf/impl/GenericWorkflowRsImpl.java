@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.generic.wf.impl;
 
+import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
 import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
@@ -30,6 +31,7 @@ import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
 import org.meveo.api.dto.response.generic.wf.GenericWorkflowResponseDto;
 import org.meveo.api.dto.response.generic.wf.GenericWorkflowsResponseDto;
 import org.meveo.api.dto.response.generic.wf.WorkflowInsHistoryResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.generic.wf.GenericWorkflowApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.generic.wf.GenericWorkflowRs;
@@ -177,8 +179,10 @@ public class GenericWorkflowRsImpl extends BaseRs implements GenericWorkflowRs {
             response = genericWorkflowApi.executeTransition(baseEntityName, entityInstanceCode, workflowCode, transitionUUID, ignoreConditionEL);
         } catch (Exception exception) {
             response.setStatus(FAIL);
-            response.setMessage(exception.getMessage());
-            processException(exception, response);
+            if (exception instanceof MeveoApiException && ((MeveoApiException) exception).getErrorCode().equals(CONDITION_FALSE)) {
+                processException(exception, response);
+            }
+            processException(new MeveoApiException(exception), response);
         }
         return response;
     }

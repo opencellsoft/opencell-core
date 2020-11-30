@@ -34,9 +34,19 @@ public class DataCollectorDto extends EnableBusinessDto {
     @XmlAttribute(required = true)
     private Map<String, String> aliases;
 
+    /**
+     *  Parameters used in the SQL query
+     */
+    private Map<String, String> parameters;
+
+    /**
+     * Custom table code
+     *  Existing custom table to be used by the data collector
+     */
     private String customTableCode;
 
     /**
+     * Custom table information used to create new custom entity for the data collector
      * Custom table to use for data selector to store SQL query result
      */
     @XmlElement(name = "customTable")
@@ -86,6 +96,22 @@ public class DataCollectorDto extends EnableBusinessDto {
         this.entityTemplateDto = entityTemplateDto;
     }
 
+    public String getCustomTableCode() {
+        return customTableCode;
+    }
+
+    public void setCustomTableCode(String customTableCode) {
+        this.customTableCode = customTableCode;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
     public String buildQuery() {
         String columns = aliases.entrySet()
                                 .stream()
@@ -100,14 +126,7 @@ public class DataCollectorDto extends EnableBusinessDto {
         dto.setDescription(dataCollector.getDescription());
         dto.setSqlQuery(dataCollector.getSqlQuery());
         dto.setAliases(dataCollector.getAliases());
+        dto.setParameters(dataCollector.getParameters());
         return dto;
-    }
-
-    public String getCustomTableCode() {
-        return customTableCode;
-    }
-
-    public void setCustomTableCode(String customTableCode) {
-        this.customTableCode = customTableCode;
     }
 }

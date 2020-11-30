@@ -192,4 +192,17 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 
         return result;
     }
+
+    @Override
+    public AccountOperationsResponseDto findByCustomerAccount(String customerAccountCode, Integer offset, Integer limit) {
+        AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+        
+        try {
+            result = accountOperationApi.listByCustomerAccountCode(customerAccountCode, offset, limit);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }

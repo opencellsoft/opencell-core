@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -32,6 +31,7 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
+@Stateless
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
     /** The account operation service. */
@@ -40,7 +40,6 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
 
     @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
@@ -53,7 +52,6 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     }
     
 	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void addHistoryAOs(CustomerAccount customerAccount, Payment payment, Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage,
 			PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {

@@ -3583,7 +3583,7 @@ END $$;]]>
             <column name="apply_terminated_charge_to_date_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5510_20200923" author="anasseh">
 		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
     </changeSet>
@@ -3609,7 +3609,7 @@ END $$;]]>
             <column name="status" type="varchar(25)"/>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#5587_20201021" author="ZBariki">
         <createSequence sequenceName="bi_data_collector_seq" startValue="1" />
         <createTable tableName="bi_data_collector" >
@@ -3638,6 +3638,15 @@ END $$;]]>
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
                              disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
+    </changeSet>
+
+    <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
+        <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
+    <changeSet id="#5587_20201125" author="ZBariki">
+        <addColumn tableName="bi_data_collector">
+            <column name="parameters" type="text" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">

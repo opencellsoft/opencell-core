@@ -58,6 +58,7 @@ import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -886,5 +887,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
         entity.setLinkedInvoices(linkedInvoices);
+    }
+
+    public LazyDataModel<Invoice> getDueInvoices(DunningDocument dunningDocument){
+        if (!dunningDocument.isTransient()) {
+            filters.put("recordedInvoice.dunningDocument", dunningDocument);
+            return getLazyDataModel();
+        } else {
+            return null;
+        }
     }
 }

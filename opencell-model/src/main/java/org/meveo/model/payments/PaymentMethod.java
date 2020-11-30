@@ -18,11 +18,25 @@
 
 package org.meveo.model.payments;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.document.Document;
@@ -46,7 +60,8 @@ import org.meveo.model.document.Document;
         @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.customerAccount.id = :caId and pm.id =:id"),
         @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.customerAccount.id = :caId and pm.id <>:id"),
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
-        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true") })
+        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
+        @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount") })
 public abstract class PaymentMethod extends EnableEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
@@ -252,4 +267,63 @@ public abstract class PaymentMethod extends EnableEntity {
     public void setReferenceDocument(Document referenceDocument) {
         this.referenceDocument = referenceDocument;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if(obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        } 
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (this.getClass() == CardPaymentMethod.class) {
+
+            CardPaymentMethod thisCardPaymentMethod = (CardPaymentMethod) this;
+            CardPaymentMethod other = (CardPaymentMethod) obj;
+
+            if (thisCardPaymentMethod == other) {
+                return true;
+            } 
+
+            if (thisCardPaymentMethod.getId() != null && other.getId() != null
+                    && thisCardPaymentMethod.getId().equals(other.getId())) {
+                return true;
+            }
+
+            return StringUtils.compare(thisCardPaymentMethod.getHiddenCardNumber(),
+                other.getHiddenCardNumber()) == 0
+                && thisCardPaymentMethod.getMonthExpiration().equals(other.getMonthExpiration())
+                && thisCardPaymentMethod.getYearExpiration().equals(other.getYearExpiration());
+        }
+        
+        if (this.getClass() == DDPaymentMethod.class) {
+
+            DDPaymentMethod thisDDPaymentMethod = (DDPaymentMethod) this;
+            DDPaymentMethod other = (DDPaymentMethod) obj;
+
+            if (thisDDPaymentMethod == other) {
+                return true;
+            } 
+
+            if (thisDDPaymentMethod.getId() != null && other.getId() != null
+                    && thisDDPaymentMethod.getId().equals(other.getId())) {
+                return true;
+            }
+            if (thisDDPaymentMethod.getMandateIdentification() != null && thisDDPaymentMethod
+                    .getMandateIdentification().equals(other.getMandateIdentification())) {
+                return true;
+            }
+            if (thisDDPaymentMethod.getBankCoordinates() != null) {
+                return thisDDPaymentMethod.getBankCoordinates().equals(other.getBankCoordinates());
+            }
+            
+            return false;
+        }
+        
+        return true;
+    }
+
 }
