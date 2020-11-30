@@ -117,6 +117,7 @@ public class InvoicingApi extends BaseApi {
                 billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
             }
         }
+        billingRun.setCollectionDate(dto.getCollectionDate());
         billingRunService.create(billingRun);
 
         // populate customFields
