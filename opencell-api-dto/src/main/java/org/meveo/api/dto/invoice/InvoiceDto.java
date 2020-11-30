@@ -190,15 +190,17 @@ public class InvoiceDto extends AuditableEntityDto {
      * True if the invoice is sent, false otherwise
      */
     protected boolean sentByEmail;
-    
-    
+
     /**
      * list of existing RTs to include, identified by id
      * This option is allowed only if invoiceMode=="DETAILLED"
-     * 
      */
     protected List<Long> ratedTransactionsToLink;
 
+    /**
+     * Invoice payment collection date.
+     */
+    private Date intialCollectionDate;
 
     /**
      * Get the list of existing RTs to include.
@@ -206,8 +208,8 @@ public class InvoiceDto extends AuditableEntityDto {
      * @return the ratedTransactionsTolink
      */
     public List<Long> getRatedTransactionsTolink() {
-		return ratedTransactionsToLink;
-	}
+        return ratedTransactionsToLink;
+    }
 
     /**
      * Set the list of existing RTs to include.
@@ -777,5 +779,13 @@ public class InvoiceDto extends AuditableEntityDto {
 
     public void setSentByEmail(boolean sentByEmail) {
         this.sentByEmail = sentByEmail;
+    }
+
+    public Date getIntialCollectionDate() {
+        return intialCollectionDate;
+    }
+
+    public void setIntialCollectionDate(Date intialCollectionDate) {
+        this.intialCollectionDate = intialCollectionDate;
     }
 }
