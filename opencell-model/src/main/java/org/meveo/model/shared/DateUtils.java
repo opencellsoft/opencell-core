@@ -1069,7 +1069,8 @@ public class DateUtils {
             calendar.getCalendar().setInitDate(initDate);
             fromDate = datePeriod.getFrom();
             toDate = fromDate;
-            while (true) {
+            int i = 0;
+            while (i < 100) {
                 toDate = calendar.getCalendar().nextCalendarDate(fromDate);
                 if (toDate != null) {
                     if (toDate.after(datePeriod.getTo())) {
@@ -1081,6 +1082,10 @@ public class DateUtils {
                 if (fromDate == null || fromDate.equals(datePeriod.getTo()) || fromDate.after(datePeriod.getTo())) {
                     break;
                 }
+                i++;
+            }
+            if (i == 100) {
+                throw new IllegalArgumentException("Calendar " + calendar.getCalendar().getCode() + " is cyclic");
             }
         }
         return normalizeOverlapingDatePeriods(periods.toArray(new DatePeriodSplit[] {}));
