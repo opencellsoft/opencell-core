@@ -2947,7 +2947,7 @@ END $$;]]>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
 
     </changeSet>
-    
+
     <changeSet id="#5174_20200423" author="AbdelmounaimAkadid">
     	<addColumn tableName="ord_order_item">
     		<column name="code" type="varchar(255)">
@@ -2959,7 +2959,7 @@ END $$;]]>
             <column name="updater" type="varchar(100)" />
         </addColumn>
 	</changeSet>
-	
+
     <changeSet id="#2447_20200421" author="khalidHORRI">
         <addColumn tableName="cat_price_plan_matrix">
             <column name="parameter1_el" type="varchar(2000)"/>
@@ -2997,7 +2997,7 @@ END $$;]]>
                                  constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet author="MohammedELAZZOUZI"  id="#4004_ Add_CustomField_to_OrderItem">
         <addColumn tableName="ord_order_item">
             <column name="uuid" type="varchar(60)"/>
@@ -3027,11 +3027,11 @@ END $$;]]>
             <column name="sort_index_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>             
-    </changeSet> 
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
+    </changeSet>
     
     <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
         <dropColumn tableName="billing_counter_period">
@@ -3040,9 +3040,9 @@ END $$;]]>
             <column name="value_el"></column>
         </dropColumn>
      </changeSet>
-     
+
     <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
-        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>    
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="quantity" columnDataType="numeric(23, 12)"/>
     </changeSet>
     
     <changeSet id="#4156_20120719" author="anasseh">
@@ -3051,7 +3051,7 @@ END $$;]]>
 		</addColumn>
 		<sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation USING btree (ddrequest_item_id)</sql>
     </changeSet>
-    
+
     <changeSet id="#5461_20200901" author="Mohammed_EL-AZZOUZI">
         <addColumn tableName="crm_customer">
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
@@ -3069,18 +3069,18 @@ END $$;]]>
             <column name="threshold_per_entity" type="${type.boolean}" defaultValueNumeric="0">
             </column>
         </addColumn>
-    </changeSet> 
-    
+    </changeSet>
+
     <changeSet id="#5510_20200923" author="anasseh">
 		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
     </changeSet>
-    
+
     <changeSet id="#5501_20201007" author="MohammedELAZZOUZI">
    		<sql>create index billing_billing_account_minimum_amount_el_index on ${db.schema.adapted}billing_billing_account(minimum_amount_el) where minimum_amount_el is not null</sql>
         <sql>create index billing_subscription_minimum_amount_el_index on ${db.schema.adapted}billing_subscription(minimum_amount_el) where minimum_amount_el is not null</sql>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
-    
+
     <changeSet id="#5584_20201016" author="AbdelmounaimAkadid">
 		<sql>CREATE INDEX IF NOT EXISTS audit_field_ch_hist_id_index ON public.audit_field_changes_history USING btree (entity_id ASC NULLS LAST)</sql>
 		<sql>CREATE INDEX IF NOT EXISTS ar_matching_amount_account_operation_id_index ON public.ar_matching_amount USING btree (account_operation_id ASC NULLS LAST)</sql>
@@ -3172,6 +3172,24 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS adm_file_type_code_index</sql>
 		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
+    </changeSet>
+
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
+        <addColumn tableName="billing_subscription">
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_to" type="datetime"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9"/>
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
+
+        <addColumn tableName="cat_offer_template">
+            <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="offer_template_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
+                                 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

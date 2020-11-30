@@ -18,14 +18,13 @@
 
 package org.meveo.api.dto.billing;
 
-import java.util.Date;
+import org.meveo.api.dto.BaseEntityDto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.BaseEntityDto;
+import java.util.Date;
 
 /**
  * The Class OperationSubscriptionRequestDto.
@@ -42,6 +41,8 @@ public class OperationSubscriptionRequestDto extends BaseEntityDto {
     /** The subscription code. */
     @XmlElement(required = true)
     private String subscriptionCode;
+
+    private Date subscriptionValidityDate;
 
     /** The action date. */
     private Date actionDate;
@@ -80,6 +81,14 @@ public class OperationSubscriptionRequestDto extends BaseEntityDto {
      */
     public void setActionDate(Date suspensionDate) {
         this.actionDate = suspensionDate;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
     }
 
     @Override
