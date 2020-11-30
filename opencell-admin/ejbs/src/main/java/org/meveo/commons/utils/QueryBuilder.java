@@ -770,7 +770,7 @@ public class QueryBuilder {
         if (clazz != null) {
             Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
             if (field != null && field.getType().isAssignableFrom(String.class)) {
-                q.append(" UPPER(CAST(" + orderColumn + " AS string))");
+                q.append(" LOWER(CAST(" + orderColumn + " AS string))");
             } else {
                 q.append(orderColumn);
             }

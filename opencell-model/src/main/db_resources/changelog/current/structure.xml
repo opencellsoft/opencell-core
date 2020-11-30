@@ -3714,7 +3714,7 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
         <createTable tableName="billing_invoice_agr_amount">
@@ -3768,5 +3768,10 @@ END $$;]]>
     </changeSet>
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
+    </changeSet>
+    <changeSet id="#5587_20201125" author="ZBariki" failOnError="false">
+        <addColumn tableName="bi_data_collector">
+            <column name="parameters" type="text" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

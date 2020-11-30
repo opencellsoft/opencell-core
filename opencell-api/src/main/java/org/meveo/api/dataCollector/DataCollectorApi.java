@@ -1,5 +1,7 @@
 package org.meveo.api.dataCollector;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.BusinessException;
@@ -7,10 +9,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.CustomEntityTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.AggregatedDataDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.DataCollectorDto;
-import org.meveo.api.dto.response.AggregatedDataResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.bi.DataCollector;
@@ -21,8 +21,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Stateless
 public class DataCollectorApi extends BaseApi {
@@ -33,13 +32,20 @@ public class DataCollectorApi extends BaseApi {
     private DataCollectorService dataCollectorService;
 
     public DataCollectorDto create(DataCollectorDto postData) throws MeveoApiException, BusinessException {
-        if(postData.getEntityTemplateDto() == null && postData.getCustomTableCode() == null) {
-            throw new MeveoApiException("Custom table is missing");
-        }
+        validateInputs(postData);
         String customTableCode = customTableCode(postData);
         DataCollector dataCollector = from(postData, customTableCode);
         dataCollectorService.create(dataCollector);
         return DataCollectorDto.from(dataCollector);
+    }
+
+    private void validateInputs(DataCollectorDto postData) {
+        if(postData.getEntityTemplateDto() == null && postData.getCustomTableCode() == null) {
+            throw new MeveoApiException("Custom table is missing");
+        }
+        if (postData.getAliases() == null || postData.getAliases().isEmpty()) {
+            throw new MeveoApiException("Data collector aliases are missing");
+        }
     }
 
     private String customTableCode(DataCollectorDto postData) {
@@ -52,9 +58,10 @@ public class DataCollectorApi extends BaseApi {
         }
     }
 
-    public DataCollectorDto find(String code) {
-        DataCollector dataCollector = dataCollectorService.findByCode(code);
-        return DataCollectorDto.from(dataCollector);
+    public Optional<DataCollectorDto> find(String code) {
+        return ofNullable(dataCollectorService.findByCode(code))
+                .map(dc -> of(DataCollectorDto.from(dc)))
+                .orElse(empty());
     }
 
     private DataCollector from(DataCollectorDto postData, String tableCode) {
@@ -65,6 +72,8 @@ public class DataCollectorApi extends BaseApi {
         dataCollector.setSqlQuery(postData.buildQuery());
         dataCollector.setCustomTableCode(tableCode);
         dataCollector.setAliases(postData.getAliases());
+        ofNullable(postData.getParameters())
+                .ifPresent(params -> dataCollector.setParameters(params));
         return dataCollector;
     }
 
@@ -77,19 +86,9 @@ public class DataCollectorApi extends BaseApi {
         return result;
     }
 
-    public AggregatedDataResponseDto aggregatedData(AggregatedDataDto aggregationFields) {
-        List<Map<String, Object>> queryResult =  dataCollectorService.aggregatedData(aggregationFields.getCustomTableCode(),
-                aggregationFields.getDataCollectorCode(),
-                aggregationFields.getAggregatedFields(),
-                aggregationFields.getFields());
-        AggregatedDataResponseDto response = new AggregatedDataResponseDto();
-        response.setQueryResult(queryResult);
-        return response;
-    }
-
-    public void updateLastRunDate(String code) {
+    public void updateLastRunDate(String code, Date lastDateRun) {
         DataCollector dataCollector = dataCollectorService.findByCode(code);
-        dataCollector.setLastRunDate(new Date());
+        dataCollector.setLastRunDate(lastDateRun);
         dataCollectorService.update(dataCollector);
     }
 }

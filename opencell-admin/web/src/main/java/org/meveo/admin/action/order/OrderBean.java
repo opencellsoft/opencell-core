@@ -984,7 +984,10 @@ public class OrderBean extends CustomFieldBean<Order> {
     private OrderItem cloneOrderItem(OrderItem itemToClone) throws BusinessException {
 
         try {
-            return (OrderItem) BeanUtilsBean.getInstance().cloneBean(itemToClone);
+            OrderItem orderItem = (OrderItem) BeanUtilsBean.getInstance().cloneBean(itemToClone);
+            if(orderItem.getSubscription() != null)
+                orderItem.setSubscription(subscriptionService.refreshOrRetrieve(orderItem.getSubscription()));
+            return orderItem;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             log.error("Failed to clone orderItem for edit", e);
             throw new BusinessException(e);

@@ -33,7 +33,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Stateless
@@ -55,20 +57,24 @@ public class DataCollectorJobBean extends BaseJobBean {
         try {
             String report;
             if (!StringUtils.isBlank(parameter)) {
+                List<String> codes = new ArrayList<>();
                 String[] parameters =  parameter.split(SEPARATOR);
                 if(parameters.length > 1) {
                     Date from = guessDate(parameters[0].split(INPUT_DATE_SEPARATOR)[1], DATE_PATTERN);
                     Date to = guessDate(parameters[1].split(INPUT_DATE_SEPARATOR)[1], DATE_PATTERN);
                     log.info(format("Run DataCollector request between :%s and %s", from, to));
                     Map<String, Integer> executionResult = dataCollectorService.execute(from, to);
+                    codes.addAll(executionResult.keySet());
                     result.setNbItemsToProcess(executionResult.size());
                     report = buildReportFrom(executionResult);
                 } else {
                     log.info("Run request for DataCollector : ", parameter);
                     int recordImported = dataCollectorService.executeQuery(parameter);
+                    codes.add(parameter);
                     report = format("Number of records imported = [%d] for data collector [%s]",
                             recordImported , parameter);
                 }
+                dataCollectorService.updateLastRun(codes, new Date());
                 result.setReport(report);
                 result.registerSucces();
             }

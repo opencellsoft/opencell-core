@@ -179,9 +179,11 @@ public interface AccountOperationRs extends IBaseRs {
      * List accountOperations matching customer account
      * 
      * @param customerAccountCode The customer account's code.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
      * @return List of accountOperations
      */
     @GET
     @Path("/findByCustomerAccount")
-    public AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
+    public AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 }

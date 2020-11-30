@@ -76,14 +76,15 @@ public class UserInfoManagement {
 //        } catch (NoResultException e) {
 //            return false;
 
-            if (!userAuthTimeProducer.isUnsatisfied() && userAuthTimeProducer.get().getAuthTime() == 0 || userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
+            if (!userAuthTimeProducer.isUnsatisfied() && currentUser.getAuthenticationTokenId() != null && !currentUser.getAuthenticationTokenId().equals(userAuthTimeProducer.get().getAuthenticationTokenId())) {
 
                 log.debug("User username {} updated with a new login date", currentUser.getUserName());
 
                 int nrUpdated = em.createNamedQuery("User.updateLastLoginByUsername").setParameter("lastLoginDate", new Date()).setParameter("username", currentUser.getUserName().toLowerCase()).executeUpdate();
 
                 if (nrUpdated > 0) {
-                    userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
+                    userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
+                    userAuthTimeProducer.get().setAuthenticationTokenId(currentUser.getAuthenticationTokenId());
                     return true;
                 } else {
                     return false;
@@ -138,7 +139,8 @@ public class UserInfoManagement {
             log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
 
             if (!userAuthTimeProducer.isUnsatisfied()) {
-                userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
+                userAuthTimeProducer.get().setAuthenticatedAt(currentUser.getAuthenticatedAt());
+                userAuthTimeProducer.get().setAuthenticationTokenId(currentUser.getAuthenticationTokenId());
             }
 
             triggerNewUserNotification(user, forcedUsername);

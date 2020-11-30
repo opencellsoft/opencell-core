@@ -109,6 +109,10 @@ public class CdrBean extends BaseBean<CDR> {
         cdrService.reprocess(Arrays.asList(cdr.getId()));
     }
     
+    public List<CDR> getCDRFileNames() {
+        return cdrService.getCDRFileNames();
+    }
+
     public void writeOff() {
         if(StringUtils.isBlank(writeOffReason)) {
             return;
