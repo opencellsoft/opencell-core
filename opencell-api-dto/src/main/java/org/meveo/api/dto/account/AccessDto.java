@@ -50,6 +50,7 @@ public class AccessDto extends BaseEntityDto implements IEnableDto {
     /** Subscription. */
     @XmlElement(required = true)
     private String subscription;
+    private Date subscriptionValidityDate;
 
     /** Starting date. */
     private Date startDate;
@@ -189,6 +190,14 @@ public class AccessDto extends BaseEntityDto implements IEnableDto {
     @Override
     public Boolean isDisabled() {
         return disabled;
+    }
+
+    public void setSubscriptionValidity(Date validityDate) {
+        this.subscriptionValidityDate = validityDate;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate;
     }
 
     @Override

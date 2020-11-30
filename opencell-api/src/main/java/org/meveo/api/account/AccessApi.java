@@ -63,9 +63,9 @@ public class AccessApi extends BaseApi {
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription(), postData.getSubscriptionValidityDate());
         }
 
         Access access = new Access();
@@ -108,7 +108,7 @@ public class AccessApi extends BaseApi {
         }
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getSubscription(), postData.getSubscriptionValidityDate());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
@@ -137,7 +137,7 @@ public class AccessApi extends BaseApi {
         return access;
     }
 
-    public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate, Date usageDate) throws MeveoApiException {
+    public AccessDto find(String accessCode, String subscriptionCode, Date subscriptionValidityDate, Date startDate, Date endDate, Date usageDate) throws MeveoApiException {
 
         if (StringUtils.isBlank(accessCode)) {
             missingParameters.add("accessCode");
@@ -159,9 +159,9 @@ public class AccessApi extends BaseApi {
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
 
         Access access = accessService.findByUserIdAndSubscription(accessCode, subscription, startDate, endDate);
@@ -251,7 +251,7 @@ public class AccessApi extends BaseApi {
     public void createOrUpdatePartial(AccessDto accessDto) throws MeveoApiException, BusinessException {
         AccessDto existedAccessDto = null;
         try {
-            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), accessDto.getStartDate(), accessDto.getEndDate(), null);
+            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), accessDto.getSubscriptionValidityDate(), accessDto.getStartDate(), accessDto.getEndDate(), null);
         } catch (Exception e) {
             existedAccessDto = null;
         }

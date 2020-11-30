@@ -76,6 +76,9 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The status date. */
     private Date statusDate;
 
+    /** The validity date. */
+    private Date validityDate;
+
     /** The custom fields. */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
@@ -848,5 +851,13 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
+    }
+
+    public Date getValidityDate() {
+        return validityDate;
+    }
+
+    public void setValidityDate(Date validityDate) {
+        this.validityDate = validityDate;
     }
 }

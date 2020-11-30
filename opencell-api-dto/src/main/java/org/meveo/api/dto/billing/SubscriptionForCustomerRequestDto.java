@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
 
+import java.util.Date;
+import java.util.List;
+
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionForCustomerRequestDto extends BusinessEntityDto {
@@ -32,6 +35,7 @@ public class SubscriptionForCustomerRequestDto extends BusinessEntityDto {
     
     /** The subscription code. */
     private String subscriptionCode;
+    private Date subscriptionValidityDate;
     
     /** The subscription client id : corresponding to Customer code */
     private String subscriptionClientId;
@@ -55,4 +59,11 @@ public class SubscriptionForCustomerRequestDto extends BusinessEntityDto {
         this.subscriptionClientId = subscriptionClientId;
     }
 
+    public Date getSubscriptionValidityDate() {
+        return this.subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
+    }
 }
