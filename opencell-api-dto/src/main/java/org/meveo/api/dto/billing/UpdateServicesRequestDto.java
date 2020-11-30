@@ -19,6 +19,7 @@
 package org.meveo.api.dto.billing;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,6 +50,9 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
     /** The subscription code. */
     @XmlElement(required = true)
     private String subscriptionCode;
+
+    /** The subscription validity date. */
+    private Date subscriptionValidityDate;
 
     /** The services to update. */
     @XmlElement(name = "serviceToUpdate")
@@ -164,5 +168,13 @@ public class UpdateServicesRequestDto extends BaseEntityDto {
      */
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
     }
 }

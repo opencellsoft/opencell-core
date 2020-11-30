@@ -18,6 +18,7 @@
 
 package org.meveo.api.exception;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,11 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 	
 	public EntityDoesNotExistsException(String dbTableName, List<Long> ids) {
 		super(dbTableName + " with ids in( " + ids.stream().map(x->""+x).collect(Collectors.joining(",")) + " ) does not exists.");
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+	}
+
+	public EntityDoesNotExistsException(Class<?> clazz, String code, Date date){
+		super(clazz.getSimpleName() + " with code=" + code + (date == null ? "" : " and valid on " + date)  + " does not exists.");
 		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
 	}
 
