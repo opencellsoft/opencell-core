@@ -48,7 +48,12 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     @XmlElement(required = true)
     private String subscription;
 
-    /** The wallet. */
+
+    private Date subscriptionValidityDate;
+
+    /**
+     * The wallet.
+     */
     private String wallet;
 
     /** The create wallet. */
@@ -63,19 +68,19 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 
     /** The description. */
     private String description;
-    
+
     /** The amount without tax. */
     private BigDecimal amountWithoutTax;
-    
+
     /** The amount with tax. */
     private BigDecimal amountWithTax;
-    
+
     /** The criteria 1. */
     private String criteria1;
-    
+
     /** The criteria 2. */
     private String criteria2;
-    
+
     /** The criteria 3. */
     private String criteria3;
 
@@ -294,7 +299,15 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     public void setSubscription(String subscription) {
         this.subscription = subscription;
     }
-    
+
+    public Date getSubscriptionValidityDate() {
+        return this.subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
+    }
+
     @Override
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate

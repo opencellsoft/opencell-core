@@ -20,17 +20,15 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -42,6 +40,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -143,7 +142,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.updateSubscribedTillAndRenewalNotifyDates();
 
-        Subscription subscriptionOld = this.findByCode(subscription.getCode());
+        Subscription subscriptionOld = this.findById(subscription.getId());
         subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
@@ -216,7 +215,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
-                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate);
+                serviceInstanceService.serviceReactivation(serviceInstance, reactivationDate, true, false);
             }
         }
 
@@ -241,7 +240,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     /**
      * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
      * updated with a termination date and a reason.
-     * 
+     *
      * @param subscription Subscription to terminate
      * @param terminationDate Termination date
      * @param terminationReason Termination reason
@@ -257,7 +256,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     /**
      * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
      * updated with a termination date and a reason.
-     * 
+     *
      * @param subscription Subscription to terminate
      * @param terminationDate Termination date
      * @param terminationReason Termination reason
@@ -302,6 +301,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
 
         subscription.setSubscribedTillDate(terminationDate);
+        subscription.setToValidity(terminationDate);
         subscriptionRenewal.setTerminationReason(terminationReason);
         subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
         subscriptionRenewal.setAutoRenew(false);
@@ -340,6 +340,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
 
         }
+
+
+        subscription.setToValidity(terminationDate);
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
@@ -391,7 +394,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Subscription> listByCustomer(Customer customer) {
         try {
@@ -404,7 +407,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
-     * 
+     *
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
@@ -414,7 +417,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
-     * 
+     *
      * @param untillDate the subscription till date
      * @return A list of subscription ids
      */
@@ -452,7 +455,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
-     * 
+     *
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */
@@ -521,7 +524,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Computes a balance given a subscription. to and isDue parameters are ignored when isFuture is true.
-     * 
+     *
      * @param subscription of the customer
      * @param to compare the invoice due or transaction date here
      * @param isFuture includes the future due or transaction date
@@ -748,7 +751,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get OfferServiceTemplate which corresponds to serviceCode and offerTemplate
-     * 
+     *
      * @param serviceCode
      * @param offerTemplate
      * @return offerServiceTemplate
@@ -782,11 +785,64 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * List subscriptions that are associated with a given billing run
-     * 
+     *
      * @param billingRun Billing run
      * @return A list of Subscriptions
      */
     public List<Subscription> findSubscriptions(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
+
+    public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {
+        if(date == null)
+            return findByCode(subscriptionCode);
+
+        List<Subscription> subscriptions = getEntityManager().createNamedQuery("Subscription.findByValidity", Subscription.class)
+                .setParameter("code", subscriptionCode.toLowerCase())
+                .setParameter("validityDate", date)
+                .getResultList();
+
+        return getActiveOrLastUpdated(subscriptions);
+    }
+
+    private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {
+        if(subscriptions.isEmpty())
+            return null;
+
+        Optional<Subscription> activeSubscription = subscriptions.stream()
+                .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus()))
+                .findFirst();
+
+        if (activeSubscription.isPresent())
+            return activeSubscription.get();
+        else {
+            return subscriptions.stream()
+                    .sorted(Comparator.<Subscription, Date>comparing(a -> getUpdated(a)).reversed())
+                    .collect(Collectors.toList())
+                    .get(0);
+        }
+    }
+
+    private Date getUpdated(Subscription subscription) {
+        return subscription.getAuditable().getUpdated() != null ? subscription.getAuditable().getUpdated() : subscription.getAuditable().getCreated();
+    }
+
+    @Override
+    public Subscription findByCode(String code) {
+        List<Subscription> subscriptions = findListByCode(code);
+        return getActiveOrLastUpdated(subscriptions);
+    }
+
+    public List<Subscription> findListByCode(String code) {
+        TypedQuery<Subscription> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
+                .setParameter("code", code.toLowerCase());
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            return new ArrayList<>();
+        }
+
+
     }
 }

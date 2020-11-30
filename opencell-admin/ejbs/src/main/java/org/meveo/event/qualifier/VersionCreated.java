@@ -16,18 +16,22 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.notification;
+package org.meveo.event.qualifier;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * Subscription created event
+ *
  */
+@Qualifier
+@Target({ METHOD, FIELD, PARAMETER, TYPE })
+@Retention(RUNTIME)
+public @interface VersionCreated {
 
-public enum NotificationEventTypeEnum {
-    CREATED, UPDATED, REMOVED, TERMINATED, DISABLED, PROCESSED, REJECTED, REJECTED_CDR, LOGGED_IN, INBOUND_REQ, ENABLED,
-    LOW_BALANCE, FILE_UPLOAD, FILE_DOWNLOAD, FILE_RENAME, FILE_DELETE, COUNTER_DEDUCED, END_OF_TERM, STATUS_UPDATED, RENEWAL_UPDATED, VERSION_CREATED, VERSION_REMOVED;
-
-    public String getLabel() {
-        return this.getClass().getSimpleName() + "." + this.name();
-    }
 }

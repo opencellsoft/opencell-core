@@ -15,11 +15,10 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-
 package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.meveo.service.script.payment.AccountOperationFilterScript.DD_REQ_OP;
+
 
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +49,7 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -267,25 +267,27 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
      * @param ddrequestLotOp the ddrequest lot op
      * @return the due date range script
      */
-    private DateRangeScript getDueDateRangeScript(DDRequestLotOp ddrequestLotOp) {
-        try {
-            ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
-            if (scriptInstance != null) {
-            	 scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
-                final String scriptCode = scriptInstance.getCode();
-                if (scriptCode != null) {
-                    log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
-                    ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-                    if (si != null && si instanceof DateRangeScript) {
-                        return (DateRangeScript) si;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error(" Error on getDueDateRangeScript : [{}]", e.getMessage());
-        }
-        return null;
-    }
+	private DateRangeScript getDueDateRangeScript(DDRequestLotOp ddrequestLotOp) {
+		try {
+			ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
+			scriptInstance = scriptInstanceService.refreshOrRetrieve(scriptInstance);
+			if (scriptInstance != null) {
+
+				scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
+				final String scriptCode = scriptInstance.getCode();
+				if (scriptCode != null) {
+					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+					ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+					if (si != null && si instanceof DateRangeScript) {
+						return (DateRangeScript) si;
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error(" Error on getDueDateRangeScript", e);
+		}
+		return null;
+	}
 
     /**
      * Creates a new DDRequestLotOp instance, using the initial one's informations. <br>
@@ -328,7 +330,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
 			Map<String, Object> methodContext = new HashMap<>();				
-			 methodContext.put(DD_REQ_OP, ddRequestLotOp);
+			 methodContext.put(AccountOperationFilterScript.FROM_DUE_DATE, ddRequestLotOp.getFromDueDate());
+			 methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, ddRequestLotOp.getToDueDate());
+			 methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, PaymentMethodEnum.DIRECTDEBIT);
+			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess());
+
 			return aoFilterScript.filterAoToPay(methodContext);
 		}
 		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);

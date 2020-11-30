@@ -173,7 +173,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
-            serviceInstanceService.serviceReactivation(entity, new Date());
+            serviceInstanceService.serviceReactivation(entity, new Date(), true, false);
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
         } catch (BusinessException e) {
