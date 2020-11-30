@@ -145,6 +145,14 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_offer_change_restricted")
+    private Boolean isOfferChangeRestricted;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name="offer_template_id")
+    private List<OfferTemplate> allowedOffersChange;
+
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
     }
@@ -434,4 +442,19 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
+    public Boolean getOfferChangeRestricted() {
+        return isOfferChangeRestricted;
+    }
+
+    public void setOfferChangeRestricted(Boolean offerChangeRestricted) {
+        isOfferChangeRestricted = offerChangeRestricted;
+    }
+
+    public List<OfferTemplate> getAllowedOffersChange() {
+        return allowedOffersChange;
+    }
+
+    public void setAllowedOffersChange(List<OfferTemplate> allowedOffersChange) {
+        this.allowedOffersChange = allowedOffersChange;
+    }
 }

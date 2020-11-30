@@ -53,6 +53,8 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import java.util.Date;
+
 /**
  * @author Edward P. Legaspi
  * @author Youssef IZEM
@@ -216,7 +218,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -253,7 +255,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -266,7 +268,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate());
+            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate(), postData.getSubscriptionValidityDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -316,7 +318,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode));
+            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode, new Date()));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -328,7 +330,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
 
         try {
-            result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+            result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, null, invoiceNumber, invoiceTypeCode, orderCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -341,7 +343,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, serviceInstanceCode));
+            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, new Date(), serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -354,7 +356,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode, null);
         } catch (Exception e) {
             processException(e, result);
         }

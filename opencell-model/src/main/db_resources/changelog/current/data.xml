@@ -2128,4 +2128,31 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
 
+    <changeSet id="#5621_20201119_offer_template_data" author="NabilOUACHI">
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-14"></column>
+            <column name="uuid" value="9c268621-1ea7-4f10-ba00-4e3f03e412b9"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="VERSION_CREATED"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
+            <column name="event_type_filter" value="VERSION_CREATED"></column>
+        </insert>
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-15"></column>
+            <column name="uuid" value="f2e1867d-3608-46bd-a3bd-e2f64a849079"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="VERSION_REMOVED"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
+            <column name="event_type_filter" value="VERSION_REMOVED"></column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
