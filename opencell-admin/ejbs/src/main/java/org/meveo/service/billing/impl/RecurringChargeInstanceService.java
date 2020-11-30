@@ -103,15 +103,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return chargeInstance;
     }
 
-    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, String subscriptionCode) {
+    public List<Long> findIdsByStatusAndSubscriptionId(InstanceStatusEnum status, Date maxChargeDate, Long subscriptionId) {
 
         QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
         qb.addCriterionEnum("c.status", status);
         qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate, false, false);
-        qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+        qb.addValueIsEqualToField("c.subscription.id", subscriptionId, false,  false);
 
         List<Long> ids = qb.getIdQuery(getEntityManager()).getResultList();
-        log.trace("Found recurring charges by status {} and subscriptionCode {} . Result size found={}.", status, subscriptionCode, (ids != null ? ids.size() : "NULL"));
+        log.trace("Found recurring charges by status {} and subscriptionId {} . Result size found={}.", status, subscriptionId, (ids != null ? ids.size() : "NULL"));
 
         return ids;
     }
