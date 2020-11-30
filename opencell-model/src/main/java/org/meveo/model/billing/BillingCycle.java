@@ -131,7 +131,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Column(name = "due_date_delay_el", length = 2000, nullable = false)
     @Size(max = 2000)
-    @NotNull
     private String dueDateDelayEL;
 
     /**
@@ -182,7 +181,7 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
-    
+
     /**
      * check threshold per entity?
      */
@@ -204,13 +203,20 @@ public class BillingCycle extends BusinessCFEntity {
 	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-	
+
     /**
      * if true then subscriptions are grouped by paymentMethod and billed separately.
      */
     @Column(name = "split_per_payment_method")
     @Type(type = "numeric_boolean")
     private boolean splitPerPaymentMethod;
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String collectionDateDelayEl;
 
     /**
      * @return Invoicing calendar
@@ -476,5 +482,23 @@ public class BillingCycle extends BusinessCFEntity {
         } else {
             return this.description;
         }
+    }
+
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
     }
 }

@@ -204,25 +204,25 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of related payment schedule instances
-     * 
+     *
      */
     protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
 
     /**
      * associated dunning creation date
-     * 
+     *
      */
     protected Date dunningEntryDate;
 
     /**
      * associated dunning last update date
-     * 
+     *
      */
     protected Date dunningLastModification;
 
     /**
      * associated dunning current status
-     * 
+     *
      */
     protected String dunningStatus;
 
@@ -238,16 +238,20 @@ public class InvoiceDto extends AuditableEntityDto {
     protected List<Long> ratedTransactionsToLink;
     /**
      * paymentIncident
-     * 
+     *
      */
     protected List<String> paymentIncidents;
 
     /**
      * sendPaymentDate
-     * 
+     *
      */
     protected Date sendPaymentDate;
 
+    /**
+     * Invoice payment collection date.
+     */
+    private Date intialCollectionDate;
     /**
      * sum off writeOff accountOperations amounts
      */
@@ -931,5 +935,13 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
         this.realTimeStatus = realTimeStatus;
+    }
+
+    public Date getIntialCollectionDate() {
+        return intialCollectionDate;
+    }
+
+    public void setIntialCollectionDate(Date intialCollectionDate) {
+        this.intialCollectionDate = intialCollectionDate;
     }
 }
