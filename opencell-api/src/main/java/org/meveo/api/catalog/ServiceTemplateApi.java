@@ -41,6 +41,7 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.cpq.GroupedServiceDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ServiceDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -697,6 +698,16 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		});
 	}
 	
+	public void AddToGroup(String serviceCode, String groupedServiceCode) {
+		final ServiceTemplate template = serviceTemplateService.findByCode(serviceCode);
+		if(template == null) 
+			throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceCode);
+		if(template.getGroupedService() != null)
+			throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
+		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
+		template.setGroupedService(groupedService);
+		serviceTemplateService.update(template);
+	}
 	
 	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();

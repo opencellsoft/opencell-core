@@ -6,6 +6,8 @@ import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.GroupedServiceDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.GroupedService;
 import org.meveo.service.cpq.GroupedServiceService;
 import org.meveo.service.cpq.ProductService;
@@ -21,15 +23,19 @@ public class GroupedServiceApi extends BaseApi{
 	/**
 	 * @param groupedServiceDto
 	 */
-	public void createGroupedService(GroupedServiceDto groupedServiceDto) {
+	public Long createGroupedService(GroupedServiceDto groupedServiceDto) {
 		checkParams(groupedServiceDto);
 		final GroupedService groupedService = new GroupedService();
 		
+		if(groupedServiceService.findByCode(groupedServiceDto.getCode()) != null)
+				throw new EntityAlreadyExistsException(GroupedService.class, groupedServiceDto.getCode());
 		groupedService.setCode(groupedServiceDto.getCode());
 		groupedService.setDescription(groupedServiceDto.getDescription());
 		groupedService.setProduct(productService.findByCode(groupedServiceDto.getProductCode()));
 		
 		groupedServiceService.create(groupedService);
+		
+		return groupedService.getId();
 	}
 	
 	/**
@@ -41,7 +47,7 @@ public class GroupedServiceApi extends BaseApi{
 		
 		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceDto.getCode());
 		if(groupedService == null) {
-			throw new BusinessException("No Grouped Service found for code = " + groupedServiceDto.getCode());
+			throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceDto.getCode());
 		}
 
 		groupedService.setDescription(groupedServiceDto.getDescription());
@@ -62,34 +68,20 @@ public class GroupedServiceApi extends BaseApi{
 	public void removeGroupedService(String code) {
 		final GroupedService groupedService = groupedServiceService.findByCode(code);
 		if(groupedService == null) {
-			throw new BusinessException("No Grouped Service found for code = "+ code);
+			throw new EntityDoesNotExistsException(GroupedService.class, code);
 		}
 		groupedServiceService.remove(groupedService);
 	}
 
 	/**
-	 * find grouped service by id
-	 * @param id
-	 * @return throw BusinessException if no result found
-	 */
-	public GroupedServiceDto findGroupedServiceByCode(Long id) {
-		GroupedService groupedService = groupedServiceService.findById(id);
-
-		if(groupedService == null) {
-			throw new BusinessException("No Grouped Service found for id= " + id);
-		}
-		return new GroupedServiceDto(groupedService);
-	}
-	
-	/**
 	 * find grouped service by code
 	 * @param code
 	 * @return throw BusinessException if no result found
 	 */
-	public GroupedServiceDto findGroupedServiceById(String code) {
+	public GroupedServiceDto findGroupedServiceByCode(String code) {
 		GroupedService groupedService =  groupedServiceService.findByCode(code);
 		if(groupedService == null) {
-			throw new BusinessException("No Grouped Service found for code= " + code);
+			throw new EntityDoesNotExistsException(GroupedService.class, code);
 		}
 		return new GroupedServiceDto(groupedService);
 	}
