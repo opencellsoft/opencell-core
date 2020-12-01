@@ -3850,5 +3850,13 @@ END $$;]]>
             update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
         </sql>
     </changeSet>
+    <changeSet id="5687_20203011" author="khalidHORRI">
+        <addColumn tableName="billing_cycle">
+            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="compute_dates_validation" type="${type.boolean}"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

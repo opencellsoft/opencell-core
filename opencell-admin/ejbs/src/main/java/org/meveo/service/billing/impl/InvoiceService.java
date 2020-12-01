@@ -289,7 +289,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @XMLGenerated
     private Event<Invoice> xmlGeneratedEventProducer;
-    
+
     @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
@@ -2457,6 +2457,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        //recalculateDate(invoice.getB, billingRun);
         invoice = update(invoice);
     }
 

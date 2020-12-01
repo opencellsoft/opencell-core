@@ -169,6 +169,11 @@ public class BillingRunDto extends AuditableEntityDto {
     private Date collectionDate;
 
     /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    private Boolean computeDatesAtValidation;
+
+    /**
      * Instantiates a new billing run dto.
      */
     public BillingRunDto() {
@@ -660,6 +665,24 @@ public class BillingRunDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets computeDatesAtValidation.
+     *
+     * @return
+     */
+    public Boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * Sets computeDatesAtValidation
+     *
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
+    }
+
+    /**
      * Sets the from entity.
      *
      * @param billingRunEntity the new from entity
@@ -693,6 +716,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setLanguageCode(billingRunEntity.getLanguage() == null ? null : billingRunEntity.getLanguage().getLanguageCode());
         setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
         setCollectionDate(billingRunEntity.getCollectionDate());
+        setComputeDatesAtValidation(billingRunEntity.isComputeDatesAtValidation() == null ? null : billingRunEntity.isComputeDatesAtValidation());
     }
 
     @Override
