@@ -22,7 +22,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,25 +36,6 @@ import java.util.Map;
 public class AmendDuplicateConsumptionUnitJobBean {
 
     private static final String CF_POOL_PER_OFFER_MAP = "POOL_PER_OFFER_MAP";
-
-    private static final String COUNTER_OVERAGE_WO_QUERY = "select wo from WalletOperation wo \n" +
-            "left join wo.ratedTransaction rt \n" +
-            "where wo.subscription.id=:subId \n" +
-            " and wo.code=:overChargeCode \n" +
-            " and (wo.status = 'OPEN' or (wo.status = 'TREATED' and rt.status = 'OPEN')) \n" +
-            " and (wo.operationDate between :startMonth and :endMonth) \n" +
-            "order by wo.id";
-
-    private static final String POOL_OVERAGE_WO_QUERY = "select wo from WalletOperation wo \n" +
-            "left join wo.ratedTransaction rt \n" +
-            "inner join wo.subscription sub \n" +
-            "where wo.code like 'POOL%_USG_OVER' " +
-            " and wo.parameter1=:chargeType \n" +
-            " and wo.offerTemplate=:offer \n" +
-            " and sub.userAccount=:agency \n" +
-            " and (wo.status = 'OPEN' or (wo.status = 'TREATED' and rt.status = 'OPEN')) \n" +
-            " and (wo.operationDate between :startMonth and :endMonth) \n" +
-            "order by wo.id";
 
     @Inject
     @MeveoJpa
@@ -89,7 +69,9 @@ public class AmendDuplicateConsumptionUnitJobBean {
     @SuppressWarnings({"unchecked"})
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long canceledWOId, String activateStats) throws BusinessException {
+    public void execute(JobExecutionResultImpl result, Long canceledWOId, List<Long> overageWOList,
+                        String activateStats) throws BusinessException {
+
         log.info("Cancel consumption of a duplicated WOId={}", canceledWOId);
         AuditWOCancelation audit = null;
         long start = System.currentTimeMillis();
@@ -104,15 +86,12 @@ public class AmendDuplicateConsumptionUnitJobBean {
             if (statsActivated) {
                 audit = new AuditWOCancelation();
                 audit.woId = canceledWO.getId();
+                audit.dateConso = canceledWO.getOperationDate();
                 audit.subId = canceledWO.getSubscription().getId();
                 audit.offerId = canceledWO.getOfferTemplate().getId();
                 audit.originCanceledQT = canceledWO.getQuantity();
 
             }
-
-            List<WalletOperation> overageWOList = getOverageWalletOperationList(canceledWO, audit, statsActivated);
-            log.info("> ADCUnitJob > " + canceledWOId + " >2> overageWOList >"+ (System.currentTimeMillis()-start));
-            start = System.currentTimeMillis();
 
             if (statsActivated) {
                 audit.allOvers = overageWOList.size();
@@ -182,46 +161,6 @@ public class AmendDuplicateConsumptionUnitJobBean {
     }
 
     @SuppressWarnings("unchecked")
-    private List<WalletOperation> getOverageWalletOperationList(WalletOperation canceledWO,
-                                                                AuditWOCancelation audit, boolean statsActivated) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(canceledWO.getOperationDate());
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        // start month of usage date
-        calendar.set(year, month, 1, 0, 0, 0);
-        Date startMonth = calendar.getTime();
-        // end month of usage date
-        int lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        calendar.set(year, month, lastDayOfMonth, 23, 59, 59);
-        Date endMonth = calendar.getTime();
-
-        //trace
-        if (statsActivated) {
-            audit.startMonth = startMonth;
-            audit.endMonth = endMonth;
-        }
-
-        if (canceledWO.getCounter() != null) {
-            return emWrapper.getEntityManager().createQuery(COUNTER_OVERAGE_WO_QUERY, WalletOperation.class)
-                    .setParameter("subId", canceledWO.getSubscription().getId())
-                    .setParameter("overChargeCode", "CH_M2M_USG_" + canceledWO.getParameter1() + "_OVER")
-                    .setParameter("startMonth", startMonth)
-                    .setParameter("endMonth", endMonth)
-                    .getResultList();
-
-        } else {
-            return emWrapper.getEntityManager().createQuery(POOL_OVERAGE_WO_QUERY, WalletOperation.class)
-                    .setParameter("chargeType", canceledWO.getParameter1())
-                    .setParameter("offer", canceledWO.getOfferTemplate())
-                    .setParameter("agency", canceledWO.getSubscription().getUserAccount())
-                    .setParameter("startMonth", startMonth)
-                    .setParameter("endMonth", endMonth)
-                    .getResultList();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore,
                                                 AuditWOCancelation audit, boolean statsActivated) {
         long start = System.currentTimeMillis();
@@ -286,7 +225,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
     }
 
     @SuppressWarnings("unchecked")
-    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<WalletOperation> overageWOs,
+    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<Long> overageWOs,
                                                  AuditWOCancelation audit, boolean statsActivated) {
         long start = System.currentTimeMillis();
         BigDecimal canceledQuantity = canceledWO.getQuantity();
@@ -296,7 +235,11 @@ public class AmendDuplicateConsumptionUnitJobBean {
         BigDecimal newOversQT = BigDecimal.ZERO;
 
         //if we are here, so overageWOs wouldn't be empty
-        for (WalletOperation overageWO : overageWOs) {
+        for (Long overageWOId : overageWOs) {
+            WalletOperation overageWO = walletOperationService.findById(overageWOId);
+            if (overageWO.getStatus() == WalletOperationStatusEnum.CANCELED) {
+                continue;
+            }
             //trace
             BigDecimal originQT = overageWO.getInputQuantity();
             originOversQT = originOversQT.add(overageWO.getInputQuantity());
@@ -414,15 +357,14 @@ public class AmendDuplicateConsumptionUnitJobBean {
         BigDecimal originCounterQT;
         BigDecimal newCounterQT;
         Long offerId;
-        Date startMonth;
-        Date endMonth;
+        Date dateConso;
         Integer allOvers;
 
         void trace() {
             String sqlString = "INSERT INTO amend_stat(wo_id, sub_id, canceled_qt, new_qt, restored_qt, " +
                     "nbr_overs, overs_ids, overs_qt, overs_new_qt, time_op, cn_qt, cn_new_qt, offer_id," +
-                    "start_month, end_month, all_overs, instant)\n" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "date_conso, all_overs, instant)\n" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             walletOperationService.getEntityManager().createNativeQuery(sqlString)
                     .setParameter(1, woId)
                     .setParameter(2, subId)
@@ -437,10 +379,9 @@ public class AmendDuplicateConsumptionUnitJobBean {
                     .setParameter(11, originCounterQT != null ? originCounterQT : BigDecimal.ZERO)
                     .setParameter(12, newCounterQT != null ? newCounterQT : BigDecimal.ZERO)
                     .setParameter(13, offerId)
-                    .setParameter(14, startMonth)
-                    .setParameter(15, endMonth)
-                    .setParameter(16, allOvers)
-                    .setParameter(17, String.valueOf(System.currentTimeMillis()))
+                    .setParameter(14, dateConso)
+                    .setParameter(15, allOvers)
+                    .setParameter(16, String.valueOf(System.currentTimeMillis()))
                     .executeUpdate();
         }
     }

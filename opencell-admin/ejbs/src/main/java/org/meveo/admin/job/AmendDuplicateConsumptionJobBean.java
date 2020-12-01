@@ -43,11 +43,10 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
             "    cn_qt numeric(23, 12),\n" +
             "    cn_new_qt numeric(23, 12),\n" +
             "    offer_id bigint,\n" +
-            "    start_month timestamp,\n" +
-            "    end_month timestamp,\n" +
+            "    date_conso timestamp,\n" +
             "    all_overs integer,\n" +
             "    instant varchar,\n" +
-            "    PRIMARY KEY (wo_id)\n" +
+            "    PRIMARY KEY (wo_id, instant)\n" +
             ")";
 
     private static final String OFFERS_WITH_DUPLICATED_WO_QUERY = "select distinct wo.offer_id\n" +
