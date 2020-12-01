@@ -19,8 +19,11 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -32,8 +35,10 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
@@ -62,12 +67,31 @@ public class SendInvoiceJobBean extends BaseJobBean {
         if(this.getParamOrCFValue(jobInstance, "sendDraft") != null) {
             sendDraft = (Boolean) this.getParamOrCFValue(jobInstance, "sendDraft");
         }
+
+        List<String> billingRunCodes = null;
+        Date invoiceDateRangeFrom = null;
+        Date invoiceDateRangeTo = null;
+
+        if(this.getParamOrCFValue(jobInstance, "SendInvoiceJob_billingCycle") != null){
+            billingRunCodes = ((List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "SendInvoiceJob_billingRun"))
+                    .stream()
+                    .map(EntityReferenceWrapper::getCode)
+                    .collect(Collectors.toList());
+
+        }
+        if(this.getParamOrCFValue(jobInstance, "invoiceDateRangeFrom") != null){
+           invoiceDateRangeFrom = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobInstance, "invoiceDateRangeFrom"), new HashMap<>(), Date.class);
+        }
+        if(this.getParamOrCFValue(jobInstance, "invoiceDateRangeTo") != null){
+            invoiceDateRangeTo = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobInstance, "invoiceDateRangeTo"), new HashMap<>(), Date.class);
+        }
+
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("context", jobInstance);
         String overrideEmailEl = (String) this.getParamOrCFValue(jobInstance, "overrideEmailEl");
         try {
 
-            List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend();
+            List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend(billingRunCodes, invoiceDateRangeFrom, invoiceDateRangeTo);
             result.setNbItemsToProcess(invoices.size());
             int i = 0;
             for (Invoice invoice : invoices) {
