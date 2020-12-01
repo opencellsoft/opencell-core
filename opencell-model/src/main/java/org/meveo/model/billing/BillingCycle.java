@@ -190,6 +190,13 @@ public class BillingCycle extends BusinessCFEntity {
     private boolean splitPerPaymentMethod;
 
     /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String collectionDateDelayEl;
+
+    /**
      * To decide whether or not dates should be recomputed at invoice validation.
      */
     @Column(name = "compute_dates_validation")
@@ -444,6 +451,24 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setSplitPerPaymentMethod(boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
     }
 
     /**
