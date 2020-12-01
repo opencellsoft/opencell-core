@@ -10430,7 +10430,7 @@ $$ LANGUAGE plpgsql;
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
 			
-			<column name="product_id" type="bigint" /> 
+			<column name="product_version_id" type="bigint" /> 
 			<column name="mandatory" type="${type.boolean}" >
 				<constraints nullable="false" />
 			</column>
@@ -10950,8 +10950,8 @@ $$ LANGUAGE plpgsql;
      </changeSet> 
       
      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-28">
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     
         <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-29">

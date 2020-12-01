@@ -412,6 +412,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for usage charges
         createServiceChargeTemplateUsage(postData, serviceTemplate);
+        
+        
 
         return serviceTemplate;
     }
@@ -667,8 +669,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
 
     }
-
-	/**
+    
+    /**
 	 * <ul>
 	 *  <li>check if groupedServiceCode already exist if no throw an exception</li>
 	 *	<li>check if all serviceTemplateCodes exist , if no throw an exception</li>
@@ -678,12 +680,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	 * @param groupedServiceCode
 	 * @param serviceTemplateCodes
 	 */
-	public void groupeServices(String groupedServiceCode, String... serviceTemplateCodes) {
+	public void addToGroup(String groupedServiceCode, List<String> serviceTemplateCodes) {
 		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
 		if(groupedService == null)
             throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
 		
-		var templates = Stream.of(serviceTemplateCodes).map(code -> {
+		var templates = serviceTemplateCodes.stream().map(code -> {
 							final ServiceTemplate template = serviceTemplateService.findByCode(code);
 							if(template == null) 
 								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
@@ -698,16 +700,18 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		});
 	}
 	
-	public void AddToGroup(String serviceCode, String groupedServiceCode) {
+	/*public void addToGroup(String serviceCode, String groupedServiceCode) {
 		final ServiceTemplate template = serviceTemplateService.findByCode(serviceCode);
 		if(template == null) 
 			throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceCode);
 		if(template.getGroupedService() != null)
 			throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
 		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
+		if(groupedService == null)
+            throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
 		template.setGroupedService(groupedService);
 		serviceTemplateService.update(template);
-	}
+	}*/
 	
 	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();
