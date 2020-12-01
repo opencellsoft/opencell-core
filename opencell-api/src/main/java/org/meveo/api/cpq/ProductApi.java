@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
@@ -27,6 +26,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -58,9 +58,7 @@ public class ProductApi extends BaseApi {
 	@Inject
 	private CustomerBrandService brandService;
 	@Inject
-	private BillingAccountService billingAccountService;
-	@Inject
-	private ProductLineApi productLineApi;
+	private BillingAccountService billingAccountService; 
 	
 	@Inject
 	private ProductVersionService productVersionService;
@@ -152,33 +150,8 @@ public class ProductApi extends BaseApi {
 		return new ProductDto(productService.findByCode(code));
 	}
 	
-	
-
-	/**
-	 * @param dto
-	 * @return
-	 */
-	public Long createProductLine(ProductLineDto dto){
-		return productLineApi.createProductLine(dto);
-	}
-
-	/**
-	 * @param dto
-	 * @return
-	 */
-	public ProductLineDto updateProductLine(ProductLineDto dto){
-			return productLineApi.updateProductLine(dto);
-	}
-
-	/**
-	 * @param code
-	 * @return
-	 */
-	public ProductLineDto findProductLineByCode(String code) {
-		return new ProductLineDto(productLineService.findByCode(code));
-	}
-	
-	
+ 
+ 
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
         String description = postData.getShortDescription();
         String productCode = postData.getProductCode();
