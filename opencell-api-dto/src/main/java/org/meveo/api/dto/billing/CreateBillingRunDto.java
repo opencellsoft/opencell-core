@@ -99,6 +99,11 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private Date collectionDate;
 
     /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    private Boolean computeDatesAtValidation;
+
+    /**
      * Instantiates a new creates the billing run dto.
      */
     public CreateBillingRunDto() {
@@ -265,6 +270,24 @@ public class CreateBillingRunDto extends BaseEntityDto {
      */
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
+    }
+
+    /**
+     * Gets computeDatesAtValidation.
+     *
+     * @return
+     */
+    public Boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * Sets computeDatesAtValidation
+     *
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 
     @Override

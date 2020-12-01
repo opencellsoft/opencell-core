@@ -201,7 +201,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Column(name = "compute_dates_validation")
     @Type(type = "numeric_boolean")
-    private boolean computeDatesAtValidation;
+    private Boolean computeDatesAtValidation = false;
 
     /**
      * @return Invoicing calendar
@@ -474,14 +474,14 @@ public class BillingCycle extends BusinessCFEntity {
     /**
      * @return
      */
-    public boolean isComputeDatesAtValidation() {
+    public Boolean isComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
     /**
      * @param computeDatesAtValidation
      */
-    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }

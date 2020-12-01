@@ -213,7 +213,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
+                invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo, billingRun);
 
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);

@@ -1011,17 +1011,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             boolean instantiateMinRts = !includesFirstRun && (minAmountForAccounts.isMinAmountCalculationActivated());
 
-            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created. {}", billingRun.getId(), (billableEntities != null ? billableEntities.size() : 0), type,
-                instantiateMinRts ? "" : "NOT",
-                !instantiateMinRts ? ""
-                        : "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() + ", subscription " + minAmountForAccounts.isSubscriptionHasMinAmount()
-                                + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
+            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created. {}", billingRun.getId(),
+                    (billableEntities != null ? billableEntities.size() : 0), type, instantiateMinRts ? "" : "NOT", !instantiateMinRts ?
+                            "" :
+                            "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() + ", subscription " + minAmountForAccounts
+                                    .isSubscriptionHasMinAmount() + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
             MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!includesFirstRun);
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, minAmountForAccountsIncludesFirstRun);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERRATED, null);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERATED, null);
             billingRun = billingRunExtensionService.findById(billingRun.getId());
         }
-        if (BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus())) {
+        if (BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus())) {
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
             billingRunService.applyThreshold(billingRun);
             rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
@@ -1257,10 +1257,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         case PREINVOICED:
         case PREVALIDATED:
             createAgregatesAndInvoice(billingRun, 1, 0, null);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERRATED, null);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERATED, null);
             break;
 
-        case INVOICES_GENERRATED:
+        case INVOICES_GENERATED:
             billingRunService.applyThreshold(billingRun);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             break;

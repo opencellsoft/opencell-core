@@ -315,7 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Column(name = "compute_dates_validation")
     @Type(type = "numeric_boolean")
-    private boolean computeDatesAtValidation = false;
+    private Boolean computeDatesAtValidation = false;
 
     public Date getProcessDate() {
         return processDate;
@@ -718,14 +718,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * @return
      */
-    public boolean isComputeDatesAtValidation() {
+    public Boolean isComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
     /**
      * @param computeDatesAtValidation
      */
-    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }
