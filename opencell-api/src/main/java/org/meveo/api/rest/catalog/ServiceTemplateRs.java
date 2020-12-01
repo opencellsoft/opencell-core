@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.catalog;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -34,10 +36,12 @@ import javax.ws.rs.core.Response;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTypeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceTypeResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -438,4 +442,70 @@ public interface ServiceTemplateRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
     public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
+    
+    
+    
+    /**
+     * Create a new serviceType
+     * 
+     * @param postData The serviceType's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/cpq/serviceType/create")
+    ActionStatus createServiceType(ServiceTypeDto postData);
+
+    /**
+     * Search for a serviceType with a given code 
+     * 
+     * @param serviceTypeCode The serviceType's code
+     * @return A serviceType's data
+     */
+    @GET
+    @Path("/cpq/serviceType/find")
+    GetServiceTypeResponseDto findServiceType(@QueryParam("serviceTypeCode") String serviceTypeCode);
+ 
+
+    /**
+     * Update an existing serviceType
+     * 
+     * @param postData The serviceType's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/cpq/serviceType/update")
+    ActionStatus updateServiceType(ServiceTypeDto postData);
+
+    /**
+     * Remove an existing ServiceType with a given code 
+     * 
+     * @param serviceTypeCode The serviceType code
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/{serviceTypeCode}")
+    public ActionStatus removeServiceType(@PathParam("serviceTypeCode") String serviceTypeCode);
+
+    /**
+     * Create new or update an existing ServiceType
+     * 
+     * @param postData The ServiceType data
+     * @return Request processing status
+     */
+    @POST
+    @Path("cpq/serviceType/createOrUpdate")
+    ActionStatus createOrUpdateServiceType(ServiceTypeDto postData);
+    
+    
+    /**
+     * @param groupedServiceCode
+     * @param List of serviceTemplateCodes
+     * @return
+     */
+    @POST
+    @Path("/addToGroup/{groupedServiceCode}/")
+    public Response addToGroup(@PathParam("groupedServiceCode") String productCode,  List<String> serviceTemplateCode);
+   
+    
+    
 }

@@ -22,6 +22,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
@@ -105,10 +106,14 @@ public class ProductService extends BusinessService<Product> {
 		product.getProductVersions().size();
 		product.getDiscountList().size();
 		product.getModelChlidren().size();
+		product.getOfferComponents().size();
+
+		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
 		var modelChildren = new HashSet<>(product.getModelChlidren());
+		var offerComponents = new ArrayList<>(product.getOfferComponents());
 		
 		detach(product);
 
@@ -151,6 +156,7 @@ public class ProductService extends BusinessService<Product> {
 	   	 duplicate.setDiscountFlag(product.isDiscountFlag());
    		 duplicate.setPackageFlag(product.isPackageFlag());
    		 duplicate.setDiscountList(new HashSet<>());
+   		 duplicate.setOfferComponents(new ArrayList<>());
 	   	
 	   	 
 	   	 if(!preserveCode) {
@@ -165,7 +171,7 @@ public class ProductService extends BusinessService<Product> {
 	   	 }
 	   	 
 	   	 if(duplicateHierarchy) {
-	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren,  duplicate.getId() + "_");
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, duplicate.getId() + "_");
 	   	 }
 	   	 return duplicate;
 	}

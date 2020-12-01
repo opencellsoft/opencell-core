@@ -1,6 +1,7 @@
 package org.meveo.api.dto.response.cpq;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,10 +11,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.OfferComponentDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.OfferComponent;
 
 
 
@@ -30,6 +33,7 @@ public class GetProductDtoResponse extends BaseResponse{
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
     private Set<ProductVersionDto> productVersions = new HashSet<>();
+    private Set<OfferComponentDto> offerComponents = new HashSet<>();
     
     
     public GetProductDtoResponse(Product p) {
@@ -48,6 +52,10 @@ public class GetProductDtoResponse extends BaseResponse{
     			final ProductVersionDto service = new ProductVersionDto(d);
     			return service;
     		}).collect(Collectors.toSet());
+    	}
+    	
+    	if(p.getOfferComponents() != null && !p.getOfferComponents().isEmpty()) {
+    		p.getOfferComponents().stream().forEach(o -> offerComponents.add(new OfferComponentDto(o)));
     	}
     }
 	
@@ -95,6 +103,20 @@ public class GetProductDtoResponse extends BaseResponse{
 	 */
 	public void setDiscountList(Set<DiscountPlanDto> discountList) {
 		this.discountList = discountList;
+	}
+
+	/**
+	 * @return the offerComponents
+	 */
+	public Set<OfferComponentDto> getOfferComponents() {
+		return offerComponents;
+	}
+
+	/**
+	 * @param offerComponents the offerComponents to set
+	 */
+	public void setOfferComponents(Set<OfferComponentDto> offerComponents) {
+		this.offerComponents = offerComponents;
 	}
 	
 	

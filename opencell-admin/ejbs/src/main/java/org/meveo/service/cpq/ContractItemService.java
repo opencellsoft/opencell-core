@@ -1,7 +1,5 @@
 package org.meveo.service.cpq;
 
-import java.math.BigDecimal;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -14,7 +12,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -29,14 +27,13 @@ import org.slf4j.LoggerFactory;
  */
 
 @Stateless
-public class ContractItemService extends
-		PersistenceService<ContractItem> {
+public class ContractItemService extends BusinessService<ContractItem> {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractItemService.class);
 
-	private static final String PRODUCT_ATTRIBUTE_IS_REQUIRED = "attribute (%d) is missing for creation a new contract item attribute";	
+//	private static final String PRODUCT_ATTRIBUTE_IS_REQUIRED = "attribute (%d) is missing for creation a new contract item attribute";	
 	private static final String CONTRACT_STATUS_NOT_DRAFT = "can not add the new contract of item, cause the current contract it not DRAFT";	
-	private final static String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%d) can not be update nor delete because its status is %s";
+	private final static String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%s) can not be update nor delete because its status is %s";
 	
 	@Inject
 	private ContractService contractService;
@@ -59,29 +56,30 @@ public class ContractItemService extends
 		LOGGER.info("updating contract item code  {}", contractItem.getId());
 		final Contract contract = contractItem.getContract();
 		if(contract == null || contract.getId() == null) {
-			throw new EntityDoesNotExistsException(Contract.class, contractItem.getId());
+			throw new EntityDoesNotExistsException(Contract.class, contractItem.getCode());
 		}
 		if(contract.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			update(contractItem);
-			LOGGER.info("Updating item contract ({}) successfuly", contractItem.getId());
+			LOGGER.info("Updating item contract ({}) successfuly", contractItem.getCode());
+			return;
 		}
-		throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getId(), contract.getStatus().toString()));
+		throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getCode(), contract.getStatus().toString()));
 	}
 
 	/**
 	 * @param id
 	 * @throws ContractException
 	 */
-	public void deleteContractItem(Long id)  {
-		LOGGER.info("deleting item of contract ({})", id);
-		final ContractItem item = findById(id);
+	public void deleteContractItem(String contractItemCode)  {
+		LOGGER.info("deleting item of contract ({})", contractItemCode);
+		final ContractItem item = findByCode(contractItemCode);
 		if(item == null || item.getId() == null) {
-			throw new EntityDoesNotExistsException(ContractItem.class, id);
+			throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
 		}
 		if(item.getContract() != null && !item.getContract().getStatus().equals(ProductStatusEnum.DRAFT)) {
-			throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, id, item.getContract().getStatus().toString()));
+			throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
 		}
-		LOGGER.info("contract item ({}) successfully deleted", id);
+		LOGGER.info("contract item ({}) successfully deleted", contractItemCode);
 		remove(item);
 		
 	}

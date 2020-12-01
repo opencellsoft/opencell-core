@@ -41,6 +41,7 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.cpq.GroupedServiceDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ServiceDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -54,6 +55,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -72,6 +74,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.GroupedService;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ServiceType;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -88,6 +91,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.ServiceTypeService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.GroupedServiceService;
 import org.meveo.service.cpq.ProductService;
@@ -142,10 +146,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     private CounterTemplateService counterTemplateService;
 
     @Inject
-    private BusinessServiceModelService businessServiceModelService;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
+    private BusinessServiceModelService businessServiceModelService; 
 
     @Inject
     private SubscriptionApi subscriptionApi;
@@ -160,14 +161,13 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	private TagService tagService;
 	
 	@Inject
-	private OfferTemplateService offerTemplateService;
-	
-	@Inject
-	private ProductService productService;
-	
+	private OfferTemplateService offerTemplateService; 
 	
 	 @Inject
 	 private ProductVersionService productVersionService;
+	 
+	 @Inject
+	 private ServiceTypeService serviceTypeService;
 
     /**
      * Sets the service charge template.
@@ -308,9 +308,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
+        
+        if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+            missingParameters.add("serviceTypeCode");
+        }
 
         handleMissingParametersAndValidate(postData);
-
+ 
+        
         // check if code already exists
         if (serviceTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(ServiceTemplateService.class, postData.getCode());
@@ -338,6 +343,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
+        
+        // check if service type exists
+        ServiceType serviceType = serviceTypeService.findByCode(postData.getServiceTypeCode());
+        if (serviceType == null) {
+            throw new EntityDoesNotExistsException(ServiceType.class, postData.getServiceTypeCode());
+        }
 
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
@@ -348,6 +359,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        serviceTemplate.setServiceType(serviceType);
+        serviceTemplate.setMandatory(postData.isMandatory());
+        serviceTemplate.setDisplay(postData.isDisplay());
+        serviceTemplate.setParam(postData.getParam());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
@@ -397,6 +412,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for usage charges
         createServiceChargeTemplateUsage(postData, serviceTemplate);
+        
+        
 
         return serviceTemplate;
     }
@@ -406,6 +423,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
+        }
+        
+        if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+            missingParameters.add("serviceTypeCode");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -443,7 +464,19 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         }
-
+        
+        // check if service type exists
+        ServiceType serviceType = serviceTypeService.findByCode(postData.getServiceTypeCode());
+        if (serviceType == null) {
+            throw new EntityDoesNotExistsException(ServiceType.class, postData.getServiceTypeCode());
+        }
+        
+        serviceTemplate.setServiceType(serviceType);
+        serviceTemplate.setMandatory(postData.isMandatory());
+        serviceTemplate.setDisplay(postData.isDisplay());
+        if(!StringUtils.isBlank(postData.getParam())) {
+        serviceTemplate.setParam(postData.getParam());
+        }
         if (postData.getMinimumChargeTemplate() != null) {
             if (StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
                 serviceTemplate.setMinimumChargeTemplate(null);
@@ -636,8 +669,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
 
     }
-
-	/**
+    
+    /**
 	 * <ul>
 	 *  <li>check if groupedServiceCode already exist if no throw an exception</li>
 	 *	<li>check if all serviceTemplateCodes exist , if no throw an exception</li>
@@ -647,12 +680,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	 * @param groupedServiceCode
 	 * @param serviceTemplateCodes
 	 */
-	public void groupeServices(String groupedServiceCode, String... serviceTemplateCodes) {
+	public void addToGroup(String groupedServiceCode, List<String> serviceTemplateCodes) {
 		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
 		if(groupedService == null)
             throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
 		
-		var templates = Stream.of(serviceTemplateCodes).map(code -> {
+		var templates = serviceTemplateCodes.stream().map(code -> {
 							final ServiceTemplate template = serviceTemplateService.findByCode(code);
 							if(template == null) 
 								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
@@ -667,6 +700,18 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		});
 	}
 	
+	/*public void addToGroup(String serviceCode, String groupedServiceCode) {
+		final ServiceTemplate template = serviceTemplateService.findByCode(serviceCode);
+		if(template == null) 
+			throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceCode);
+		if(template.getGroupedService() != null)
+			throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
+		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
+		if(groupedService == null)
+            throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
+		template.setGroupedService(groupedService);
+		serviceTemplateService.update(template);
+	}*/
 	
 	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();

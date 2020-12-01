@@ -16,11 +16,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ContractDto;
+import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetContractDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListContractDtoResponse;
-import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
@@ -141,5 +141,67 @@ public interface ContractRs extends IBaseRs {
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
 	Response ListPost(PagingAndFiltering pagingAndFiltering);
+	
+
+	@POST
+	@Path("/contractLine")
+    @Operation(summary = "This endpoint allows to create new contract Line",
+    tags = { "Contract" },
+    description ="Creating a new contract Line",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the contract Line successfully added",
+            		content = @Content(schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "412", description = "missing required paramter for contractDto.The required params are : contractCode, code, serviceTemplateCode",
+            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "302", description = "code of the contract line already exist", 
+    				content = @Content(schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+            @ApiResponse(responseCode = "404", description = "one of these parameters contractCode, serviceTemplateCode doesn't exist", 
+    				content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+	Response createContractLine(@Parameter(description = "contract Line dto for a new insertion", required = true) ContractItemDto contractItemDto);
+	
+
+	@PUT
+	@Path("/contractLine")
+    @Operation(summary = "This endpoint allows to create new contract Line",
+    tags = { "Contract" },
+    description ="Creating a new contract Line",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the contract Line successfully added",
+            		content = @Content(schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "412", description = "missing required paramter for contractDto.The required params are : contractCode, code, serviceTemplateCode",
+            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "404", description = "one of these parameters contractCode, serviceTemplateCode doesn't exist", 
+    				content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+	Response updateContractLine(@Parameter(description = "contract Line dto for a new insertion", required = true) ContractItemDto contractItemDto);
+	
+	@DELETE
+	@Path("/contractLine/{contractCode}")
+    @Operation(summary = "This endpoint allows to  delete an existing Contract item",
+    description ="Deleting an existing Contract with its code",
+    tags = { "Contract" },
+    responses = {
+            @ApiResponse(responseCode="200", description = "The Contract item successfully deleted",
+            		content = @Content(schema = @Schema(implementation = ActionStatusEnum.class))),
+            @ApiResponse(responseCode = "404", description = "No Contract item found", 
+    		content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+            @ApiResponse(responseCode = "400", description = "Status of the contract is Active", 
+    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
+    })
+	Response deleteContractLine(@Parameter(description = "contract item code to be deleted", required = true) @PathParam("contractCode") String contractItemCode);
+	
+	@GET
+	@Path("/contractLine")
+    @Operation(summary = "This endpoint allows to find a Contract item by contractItemCode parameters",
+    description ="Find a Contract item type by contractItemCode parameters",
+    tags = { "Contract" },
+    responses = {
+            @ApiResponse(responseCode="200", description = "The Contract item successfully retrieved",
+            		content = @Content(schema = @Schema(implementation = GetListContractDtoResponse.class))),
+            @ApiResponse(responseCode = "412", description = "contractItemCode is missing",
+    		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+    })
+	Response getContractLines(@Parameter(description = "contract item code", required = true) @QueryParam("contractItemCode")  String contractItemCode);
 	
 }

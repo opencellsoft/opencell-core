@@ -31,4 +31,22 @@ public class ServiceType extends BusinessEntity{
 	@Enumerated(EnumType.STRING)
 	@Column(name = "service_type", nullable = false, length = 100)
 	private ServiceTypeEnum serviceType;
+
+	/**
+	 * @return the serviceType
+	 */
+	public ServiceTypeEnum getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(ServiceTypeEnum serviceType) {
+		this.serviceType = serviceType;
+	}
+	
+	
+	
 }
+

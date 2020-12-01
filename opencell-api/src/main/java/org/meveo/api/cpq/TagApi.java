@@ -1,8 +1,5 @@
 package org.meveo.api.cpq;
 
-import java.util.Arrays;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -230,18 +227,18 @@ public class TagApi extends BaseApi {
 	public void deleteTagType(String codeTag) {
 		tagTypeService.removeTagType(codeTag);
 	}
+	 
 	
-	/**
-	 * retrieve tag type from code
+	 /**
 	 * @param code
-	 * @return
+	 * @return TagTypeDto
 	 */
-	public TagTypeDto findTagTypeByCode(String code) {
-		try {
-			return new TagTypeDto(tagTypeService.findByCode(code));
-		} catch (BusinessApiException e) {
-			throw new BusinessApiException(e);
+	public TagTypeDto findTagTypeByCode(String code){
+		if(Strings.isEmpty(code)) {
+			missingParameters.add("code");
 		}
+		handleMissingParameters();
+		return new TagTypeDto(tagTypeService.findByCode(code));
 	}
 	
 	

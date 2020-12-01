@@ -51,11 +51,12 @@ public class GroupedServiceRsImpl  extends BaseRs implements GroupedServiceRs {
 	public ActionStatus find(String groupedServiceCode) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	groupedServiceApi.findGroupedServiceById(groupedServiceCode);
+	        	groupedServiceApi.findGroupedServiceByCode(groupedServiceCode);
 	        } catch (Exception e) {
 	            processException(e, result);
 	        }
 	        return result;
 	}
+
 
 }

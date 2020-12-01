@@ -1,7 +1,6 @@
 package org.meveo.api.rest.catalog.impl;
 
 import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -107,7 +106,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response removeProductLine(String codeProductLine) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	productLineApi.removeProductLine(codeProductLine);
+	        	productLineApi.remove(codeProductLine);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
@@ -117,25 +116,22 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	@Override
 	public Response createOrUpdateProductLine(ProductLineDto dto) {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
-	        try {
-	        	Long id = null;
-	        	if(dto.getId() == null) {
-	        		id = productLineApi.createProductLine(dto);
-	            	return  Response.ok().entity(Collections.singletonMap("id", id)).build();
-	        	}else
-	        		 productLineApi.updateProductLine(dto);
-	            return Response.ok(result).build();
+	        try { 
+	        	productLineApi.createOrUpdate(dto); 
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());
 	        }
+	        return Response.ok(result).build();
 	}
+
+ 
 
 	@Override
 	public Response findProductLineByCode(String code) {
 		GetProductLineDtoResponse result = new GetProductLineDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-        	result.setProductLineDto(productLineApi.findProductLineByCode(code));  
+        	result.setProductLineDto(productLineApi.findByCode(code));  
             return Response.ok(result).build();      
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

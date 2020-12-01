@@ -7,11 +7,12 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ContractApi;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ContractDto;
+import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetContractDtoResponse;
+import org.meveo.api.dto.response.cpq.GetContractLineDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListContractDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.ContractRs;
@@ -84,6 +85,49 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 		 try {
 		    	result.setActionStatus(status);
 		    	result = contractApi.list(pagingAndFiltering);
+		        return Response.ok(result).build();
+		    } catch (MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+		    }
+	}
+
+	@Override
+	public Response createContractLine(ContractItemDto contractItemDto) {
+		 try {
+	            Long id = contractApi.createContractLine(contractItemDto);
+	            return Response.ok(Collections.singletonMap("id", id)).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e);
+	        }
+	}
+
+	@Override
+	public Response updateContractLine(ContractItemDto contractItemDto) {
+		ActionStatus result = new ActionStatus();
+		 try {
+			 contractApi.updateContractLine(contractItemDto);;
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+	}
+
+	@Override
+	public Response deleteContractLine(String contractItemCode) {
+		ActionStatus result = new ActionStatus();
+		 try {
+			 contractApi.deleteContractLine(contractItemCode);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+	}
+
+	@Override
+	public Response getContractLines(String contractItemCode) {
+		GetContractLineDtoResponse result = new GetContractLineDtoResponse();
+		 try {
+		    	result.setContractItem(contractApi.getContractLines(contractItemCode));
 		        return Response.ok(result).build();
 		    } catch (MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());

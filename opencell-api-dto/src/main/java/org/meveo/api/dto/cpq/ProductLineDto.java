@@ -23,44 +23,49 @@ public class ProductLineDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = -7359760632077227886L;
 	private Long id;
-	private String codeProductLine;
+	private String code;
 	private String label;
-	private String codeSeller;
+	private String sellerCode;
 	private String longDescription;
-	private Long idCodeParentLine;
+	private String parentLineCode;
 	
 	
-	public ProductLineDto(String codeProductLine, String label, String codeSeller, String longDescription,
-			Long idCodeParentLine) {
-		this.codeProductLine = codeProductLine;
+	public ProductLineDto(String codeProductLine, String label, String sellerCode, String longDescription,
+			String parentLineCode) {
+		this.code = codeProductLine;
 		this.label = label;
-		this.codeSeller = codeSeller;
+		this.sellerCode = sellerCode;
 		this.longDescription = longDescription;
-		this.idCodeParentLine = idCodeParentLine;
+		this.parentLineCode = parentLineCode;
 	}
 	
 	public ProductLineDto(ProductLine p) {
 		this.id = p.getId();
-		this.codeProductLine = p.getCode();
+		this.code = p.getCode();
 		this.label = p.getDescription();
-		this.codeSeller = p.getSeller() != null ? p.getSeller().getCode() : null;
+		this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
 		this.longDescription = p.getLongDescription();
-		this.idCodeParentLine = p.getParentLine() != null ? p.getParentLine().getId() : null;
+		this.parentLineCode = p.getParentLine() != null ? p.getParentLine().getCode() : null;
 	}
 	public ProductLineDto() {
 	}
+ 
+	
+	
 	/**
-	 * @return the codeProductLine
+	 * @return the code
 	 */
-	public String getCodeProductLine() {
-		return codeProductLine;
+	public String getCode() {
+		return code;
 	}
+
 	/**
-	 * @param codeProductLine the codeProductLine to set
+	 * @param code the code to set
 	 */
-	public void setCodeProductLine(String codeProductLine) {
-		this.codeProductLine = codeProductLine;
+	public void setCode(String code) {
+		this.code = code;
 	}
+
 	/**
 	 * @return the label
 	 */
@@ -73,18 +78,21 @@ public class ProductLineDto extends BaseEntityDto{
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 	/**
-	 * @return the codeSeller
+	 * @return the sellerCode
 	 */
-	public String getCodeSeller() {
-		return codeSeller;
+	public String getSellerCode() {
+		return sellerCode;
 	}
+
 	/**
-	 * @param codeSeller the codeSeller to set
+	 * @param sellerCode the sellerCode to set
 	 */
-	public void setCodeSeller(String codeSeller) {
-		this.codeSeller = codeSeller;
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
 	}
+
 	/**
 	 * @return the longDescription
 	 */
@@ -97,21 +105,25 @@ public class ProductLineDto extends BaseEntityDto{
 	public void setLongDescription(String longDescription) {
 		this.longDescription = longDescription;
 	}
+
+	
 	/**
-	 * @return the idCodeParentLine
+	 * @return the parentLineCode
 	 */
-	public Long getIdCodeParentLine() {
-		return idCodeParentLine;
+	public String getParentLineCode() {
+		return parentLineCode;
 	}
+
 	/**
-	 * @param idCodeParentLine the idCodeParentLine to set
+	 * @param parentLineCode the parentLineCode to set
 	 */
-	public void setIdCodeParentLine(Long idCodeParentLine) {
-		this.idCodeParentLine = idCodeParentLine;
+	public void setParentLineCode(String parentLineCode) {
+		this.parentLineCode = parentLineCode;
 	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(codeProductLine, codeSeller, idCodeParentLine, label, longDescription);
+		return Objects.hash(code, sellerCode, parentLineCode, label, longDescription);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -122,8 +134,8 @@ public class ProductLineDto extends BaseEntityDto{
 		if (getClass() != obj.getClass())
 			return false;
 		ProductLineDto other = (ProductLineDto) obj;
-		return Objects.equals(codeProductLine, other.codeProductLine) && Objects.equals(codeSeller, other.codeSeller)
-				&& Objects.equals(idCodeParentLine, other.idCodeParentLine) && Objects.equals(label, other.label)
+		return Objects.equals(code, other.code) && Objects.equals(sellerCode, other.sellerCode)
+				&& Objects.equals(parentLineCode, other.parentLineCode) && Objects.equals(label, other.label)
 				&& Objects.equals(longDescription, other.longDescription);
 	}
 	/**

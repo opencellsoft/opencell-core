@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,12 +36,10 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.cpq.enums.ServiceTypeEnum;
+import org.meveo.model.cpq.ServiceType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.List;
 
 /**
  * The Class ServiceTemplateDto.
@@ -78,7 +78,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     /** The mandatory. */
     @Deprecated
-    private boolean mandatory;
+    private boolean mandatory=Boolean.FALSE;
 
     /**
      * BusinessServiceModel code.
@@ -136,12 +136,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      * Corresponding to minimum one shot charge template code.
      */
     private String groupedServiceCode;
-    
-    /**
-     * Corresponding to minimum one shot charge template code.
-     */
-    private ServiceTypeEnum serviceType;
-    
+     
     /**
      * Corresponding to predefined allowed values
      */
@@ -152,6 +147,20 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      * Corresponding to the value validator (regex expression)
      */
     private String valueValidator;
+    
+    
+    /** The service type code */
+    private String  serviceTypeCode;
+    
+
+    /** The display . */ 
+    private boolean display=Boolean.FALSE;
+    
+    
+    /**
+     * this field will contain the additional information entered in the "CPQ configurator" and linked to the type of service
+     */
+    private String param;
 
     /**
      * Instantiates a new service template dto.
@@ -621,13 +630,21 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 	public void setGroupedServiceCode(String groupedServiceCode) {
 		this.groupedServiceCode = groupedServiceCode;
 	}
+ 
 
-	public ServiceTypeEnum getServiceType() {
-		return serviceType;
+
+	/**
+	 * @return the serviceTypeCode
+	 */
+	public String getServiceTypeCode() {
+		return serviceTypeCode;
 	}
 
-	public void setServiceType(ServiceTypeEnum serviceType) {
-		this.serviceType = serviceType;
+	/**
+	 * @param serviceTypeCode the serviceTypeCode to set
+	 */
+	public void setServiceTypeCode(String serviceTypeCode) {
+		this.serviceTypeCode = serviceTypeCode;
 	}
 
 	public List<Object> getValues() {
@@ -645,5 +662,35 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 	public void setValueValidator(String valueValidator) {
 		this.valueValidator = valueValidator;
 	}
+
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
+	}
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
+	}
+
+	/**
+	 * @return the param
+	 */
+	public String getParam() {
+		return param;
+	}
+
+	/**
+	 * @param param the param to set
+	 */
+	public void setParam(String param) {
+		this.param = param;
+	}
+	
+	
     
 }

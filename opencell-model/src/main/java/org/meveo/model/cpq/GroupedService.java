@@ -36,8 +36,8 @@ public class GroupedService extends BusinessEntity {
 	 * the attached product
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "id")
-	private Product product;
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
+	private ProductVersion productVersion;
 
 	  /**
      * Mandatory
@@ -57,20 +57,6 @@ public class GroupedService extends BusinessEntity {
 
     @Column(name = "sequence")
     private Integer sequence;
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
 
 
 	/**
@@ -118,6 +104,22 @@ public class GroupedService extends BusinessEntity {
 	 */
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
 	}
 
 

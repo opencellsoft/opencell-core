@@ -257,7 +257,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
     @NotNull
-    protected Boolean mandatory=Boolean.FALSE;
+    protected boolean mandatory=Boolean.FALSE;
     
     
     /**
@@ -307,7 +307,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "numeric_boolean")
     @Column(name = "display")
     @NotNull
-    protected Boolean display;
+    protected boolean display;
     
     
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
@@ -613,14 +613,14 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	/**
 	 * @return the mandatory
 	 */
-	public Boolean getMandatory() {
+	public boolean getMandatory() {
 		return mandatory;
 	}
 
 	/**
 	 * @param mandatory the mandatory to set
 	 */
-	public void setMandatory(Boolean mandatory) {
+	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 
@@ -736,7 +736,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	/**
 	 * @return the display
 	 */
-	public Boolean getDisplay() {
+	public boolean getDisplay() {
 		return display;
 	}
 
