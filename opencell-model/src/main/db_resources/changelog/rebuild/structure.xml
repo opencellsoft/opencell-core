@@ -183,7 +183,6 @@
          <createSequence sequenceName="cpq_price_plan_version_seq" />
         <createSequence sequenceName="cpq_price_plan_matrix_item_seq" />
         <createSequence sequenceName="cpq_quote_version_seq" />
-        <createSequence sequenceName="cpq_quote_price_seq" />
         <createSequence sequenceName="cpq_quote_product_seq" />
         <createSequence sequenceName="cpq_quote_customer_service_seq" />
         <createSequence sequenceName="cpq_contract_seq" />
@@ -10154,6 +10153,13 @@ $$ LANGUAGE plpgsql;
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
             </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+	            
             <column name="version" type="int4" />
             <column name="status" type="varchar(255)" />
              <column name="status_date" type="datetime" />
@@ -10424,7 +10430,7 @@ $$ LANGUAGE plpgsql;
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
 			
-			<column name="product_id" type="bigint" /> 
+			<column name="product_version_id" type="bigint" /> 
 			<column name="mandatory" type="${type.boolean}" >
 				<constraints nullable="false" />
 			</column>
@@ -10617,62 +10623,12 @@ $$ LANGUAGE plpgsql;
     </changeSet>
     
      
-    <changeSet id="21112020-540-23-entity-quotePrice" author="TarikFAKHOURI">
-    	<createTable tableName="cpq_quote_price">
-    		<column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_price_pkey" />
-            </column>
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />  
-            <column name="version" type="int4" />
-            <column name="creator" type="varchar(100)" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="updater" type="varchar(100)" /> 
-            <column name="quote_item_id" type="bigint"  >
-                <constraints nullable="false" />
-            </column> 
-            <column name="charge_code" type="varchar(20)" >
-                <constraints nullable="false" />
-            </column>
-            <column name="price_type" type="int4" >
-                <constraints nullable="false" />
-            </column>  
-            <column name="recurence_duration" type="int4" />
-            <column name="recurence_periodicity" type="int4" />
-            <column name="oneshot_type" type="int4" />
-            <column name="param1" type="varchar(50)" />
-            <column name="param2" type="varchar(50)" />
-            <column name="param3" type="varchar(50)" />
-            <column name="param4" type="varchar(50)" />
-            <column name="overcharge" type="${type.boolean}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="price_matrix" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="dim1_matrix" type="varchar(50)" />
-            <column name="dim2_matrix" type="varchar(50)" />
-            <column name="dim3_matrix" type="varchar(50)" />
-            <column name="usage_code" type="varchar(20)" >
-                <constraints nullable="false" />
-            </column>
-            <column name="quantity" type="numeric(23, 12)" />
-            <column name="unite_price_without_tax" type="numeric(23, 12)" />
-            <column name="price_without_tax" type="numeric(23, 12)" />
-            <column name="tax_code" type="numeric(23, 12)" />
-            <column name="tax_rate" type="int4" />
-            <column name="price_with_tax" type="numeric(23, 12)" />
-    	</createTable>
-    </changeSet>
     
      
      <changeSet id="21112020-540-23-entity-quoteProduct" author="TarikFAKHOURI">
     	<createTable tableName="cpq_quote_product">
     		<column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_price_product_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_product_pkey" />
             </column>
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
@@ -10880,10 +10836,6 @@ $$ LANGUAGE plpgsql;
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
      </changeSet>  
      
-      <changeSet id="current-str-fk-29" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_item_id" baseTableName="cpq_quote_price" constraintName="fk_quote_item_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote_item" />
-     </changeSet>  
      
       <changeSet id="current-str-fk-30" author="TarikFAKHOURI">
         <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_quote_id" deferrable="false" initiallyDeferred="false"
@@ -10998,8 +10950,8 @@ $$ LANGUAGE plpgsql;
      </changeSet> 
       
      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-28">
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     
         <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-29">

@@ -4133,6 +4133,50 @@ END $$;]]>
              
 	    </changeSet> 
 	    
+	    <changeSet id="#65-20201127" author="TarikFAKHOURI">
+	    
+        	<createSequence sequenceName="quote_offer_seq" />
+        
+	        <createTable tableName="quote_offer">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_quote_offer_seq" />
+	            </column>
+	            <column name="version" type="int4" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            
+				<column name="offer_template_id" type="bigint">
+					<constraints nullable="false"/>
+				</column>
+				<column name="billable_account_id" type="bigint" />
+				<column name="quote_version_id" type="bigint">
+					<constraints nullable="false"/>
+				</column>
+				<column name="quote_customer_service_id" type="bigint" />
+	            <column name="sequence" type="INT4" />
+	        </createTable>
+	        
+	        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="quote_offer" constraintName="fk_quote_offer_offer_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            
+	        <addColumn tableName="cpq_quote_product">
+	            <column name="offer_quote_id" type="bigint" />
+	        </addColumn>
+	        
+	        <addForeignKeyConstraint baseColumnNames="offer_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_offer_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+	    </changeSet>
+	    
 	    
     <!-- end MediaPost -->
     

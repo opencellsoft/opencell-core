@@ -18,6 +18,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.offer.OfferQuote;
 
 @SuppressWarnings("serial")
 @Entity
@@ -69,6 +70,11 @@ public class QuoteProduct extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billable_account_id", referencedColumnName = "id")
     private BillingAccount billableAccount;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
+    private OfferQuote offerQuote;
 
 	/**
 	 * @return the quote

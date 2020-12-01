@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.catalog;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -495,6 +497,14 @@ public interface ServiceTemplateRs extends IBaseRs {
     ActionStatus createOrUpdateServiceType(ServiceTypeDto postData);
     
     
+    /**
+     * @param groupedServiceCode
+     * @param List of serviceTemplateCodes
+     * @return
+     */
+    @POST
+    @Path("/addToGroup/{groupedServiceCode}/")
+    public Response addToGroup(@PathParam("groupedServiceCode") String productCode,  List<String> serviceTemplateCode);
    
     
     

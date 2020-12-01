@@ -18,9 +18,12 @@
 
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.ServiceTemplateApi;
@@ -239,6 +242,17 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
 	        return result;
 	    }
+
+		@Override
+		public Response addToGroup(String groupedServiceCode, List<String> serviceTemplateCode) {
+			 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		        try {
+		        	serviceTemplateApi.addToGroup(groupedServiceCode, serviceTemplateCode);
+		        } catch (Exception e) {
+		            processException(e, result);
+		        }
+		        return Response.ok(result).build();
+		}
  
 	
 	
