@@ -2780,6 +2780,7 @@
             </column>
             <column name="version" type="int4" />
             <column name="amount_tax" type="numeric(23, 12)" />
+            <column name="updated" type="datetime" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="code" type="varchar(255)" />
