@@ -1,5 +1,6 @@
 package org.meveo.model.cpq.offer;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -61,7 +62,15 @@ public class OfferComponent extends BaseEntity {
 		)
 	private Set<Tag> tagsList = new HashSet<>();
 
-
+	public OfferComponent() {
+		
+	}
+	
+	public OfferComponent(OfferComponent copy) {
+		this.offerTemplate = copy.getCommercialOffer();
+		this.product = copy.getProduct();
+		this.tagsList = new HashSet<>(copy.getTagsList());
+	}
 	/**
 	 * @return the commercialOffer
 	 */

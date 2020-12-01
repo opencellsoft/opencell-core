@@ -23,9 +23,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,7 +65,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
@@ -76,6 +73,7 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -148,6 +146,9 @@ public class CatalogHierarchyBuilderService {
     
     @Inject 
     private DiscountPlanItemService discountPlanItemService;
+    
+    @Inject
+    private OfferComponentService offerComponentService;
 
     @Inject
     @CurrentUser
@@ -173,7 +174,7 @@ public class CatalogHierarchyBuilderService {
         }
     }
    
-	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, String prefix) {
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, List<OfferComponent> offerComponents, String prefix) {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
@@ -210,8 +211,26 @@ public class CatalogHierarchyBuilderService {
     			entity.getModelChlidren().add(model);
     		});
     	}
+    	
+    	if(offerComponents != null) {
+    		entity.setOfferComponents(new ArrayList<>());
+    		offerComponents.forEach(oc -> {
+    	    	offerComponentService.detach(oc);
+    			OfferComponent newOffer = new OfferComponent(oc);
+    			newOffer.setProduct(entity);
+    			var tags = newOffer.getTagsList();
+    	        if(tags != null) {
+    	        	newOffer.setTagsList(new HashSet<>());
+    	        	for (Tag tag : tags) {
+    	        		newOffer.getTagsList().add(tag);
+    				}
+    	        }
+    			offerComponentService.create(newOffer);
+    			entity.getOfferComponents().add(newOffer);
+    		});
+    	}
     }
-
+	
 	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
 		if(entity.getDiscountPlanItems() != null && !entity.getDiscountPlanItems().isEmpty()) {
 			entity.getDiscountPlanItems().forEach(dp -> {
