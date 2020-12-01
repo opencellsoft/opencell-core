@@ -17,10 +17,8 @@ public class TagTypeDto {
 		if(tagType != null) {
 			this.code = tagType.getCode();
 			this.description = tagType.getDescription();
-			this.id = tagType.getId();
-			if(tagType.getSeller() != null) {
-				this.sellerCode = tagType.getSeller().getCode();
-			}
+			this.sellerCode = tagType.getSeller() != null ? tagType.getSeller().getCode() : null;
+			this.id = tagType.getId(); 
 		}
 	}
 
