@@ -2400,7 +2400,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo, BillingRun billingRun) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
         Invoice invoice = findById(invoiceId);
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
@@ -2410,16 +2410,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        //recalculateDate(invoice.getB, billingRun);
         invoice = update(invoice);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void recalculateDates(Long invoiceId) {
+        Invoice invoice = findById(invoiceId);
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        recalculateDate(invoice, invoice.getBillingRun(), billingAccount);
+        update(invoice);
+    }
+
+    public void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount) {
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
+        if (billingRun != null) {
+            billingCycle = billingRun.getBillingCycle();
+        }
+        if (billingRun != null) {
+            int delay = billingCycle.getInvoiceDateDelayEL() == null ?
+                    0 :
+                    InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+            Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
+            invoiceDate = DateUtils.setTimeToZero(invoiceDate);
+            invoice.setInvoiceDate(invoiceDate);
+            setInvoiceDueDate(invoice, billingCycle);
+            setInitialCollectionDate(invoice, billingCycle, billingRun);
+        }
     }
 
     /**
      * Increment BA invoice date.
-     * 
+     *
      * @param billingRun
      * @param billingAccount Billing account
-     * 
      * @throws BusinessException business exception
      */
     private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
