@@ -304,6 +304,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    @Column(name = "compute_dates_validation")
+    @Type(type = "numeric_boolean")
+    private boolean computeDatesAtValidation = false;
+
     public Date getProcessDate() {
         return processDate;
     }
@@ -682,5 +689,19 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     public void setReferenceDate(ReferenceDateEnum referenceDate) {
         this.referenceDate = referenceDate;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }
