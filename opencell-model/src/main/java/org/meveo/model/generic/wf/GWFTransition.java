@@ -17,13 +17,18 @@
  */
 package org.meveo.model.generic.wf;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -100,6 +105,10 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
     @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     private String conditionEl;
+
+    @OneToMany(mappedBy = "transition", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("priority ASC")
+    private List<Action> actions = new ArrayList<>();
 
     public String getUuid() {
         return uuid;
@@ -181,6 +190,14 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
 
     public void setActionScript(ScriptInstance actionScript) {
         this.actionScript = actionScript;
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 
     @Override

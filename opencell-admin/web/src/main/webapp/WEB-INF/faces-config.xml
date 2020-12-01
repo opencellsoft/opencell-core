@@ -1218,6 +1218,10 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<redirect include-view-params="true" />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>gWFTransitions</from-outcome>
+		<to-view-id>/pages/admin/workflow/actions.xhtml</to-view-id>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>genericWorkflows</from-outcome>
 		<to-view-id>/pages/admin/workflow/genericWorkflows.xhtml</to-view-id>
 	</navigation-case>

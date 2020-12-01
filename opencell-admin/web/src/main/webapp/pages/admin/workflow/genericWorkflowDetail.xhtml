@@ -188,7 +188,7 @@
                                 <p:commandButton id="addTransition" rendered="#{!genericWorkflowBean.showDetailPage}" action="#{genericWorkflowBean.newTransition}"
                                     value="#{messages['dunningPlanTransition.addNew']}"
 									 update=":genericWFFormId:tabView:dunningPlanTransition_panel,:genericWFFormId:tabView:formDunningPlanTransition"
-									 process="@this"/>
+									 process="@this" />
                             </hftl:decorateFormField>
                         </p:panel>
                         <p:panel rendered="#{genericWorkflowBean.showDetailPage}">
@@ -206,10 +206,8 @@
 
                                     <hftl:formField label="#{messages['transition.description']}" field="description" required="true" edit="#{genericWorkflowBean.edit}" />
 
-                                    <hftl:formField
-                                    	id="scriptSelectId" label="#{messages['generic.wf.actionScript']}" field="actionScript" valueLabelField="code" popup="true" 
-                                    	showResetButton="true" popupId="actionScriptPopup" edit="#{genericWorkflowBean.edit}" required="false" />
-                                </p:panel>
+
+								</p:panel>
 
                                 <ui:param name="buttons" value="true" />
                                 <p:panel id="buttons">
