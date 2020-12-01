@@ -217,8 +217,8 @@ public class InvoicingAsync {
                 break;
             }
             try {
+                invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
-
             } catch (Exception e) {
                 if (result != null) {
                     result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
