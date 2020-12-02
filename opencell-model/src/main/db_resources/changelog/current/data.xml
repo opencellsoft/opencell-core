@@ -1513,7 +1513,7 @@ public class ValidateBRScript extends Script {
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="now()" />
             <column name="code" value="invoiceDateRangeTo"/>
-            <column name="description" value="To invoice date EL/>
+            <column name="description" value="To invoice date EL" />
             <column name="field_type" value="STRING"/>
             <column name="value_required" value="0"/>
             <column name="creator" value="applicationInitializer"/>
