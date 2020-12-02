@@ -411,6 +411,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Size(max = 255)
     private String externalRef;
 
+    /**
+     * Invoice payment collection date.
+     */
+    @Column(name = "initial_collection_date")
+    private Date intialCollectionDate;
+
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -1105,5 +1111,23 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public List<RatedTransaction> getDraftRatedTransactions() {
         return draftRatedTransactions;
+    }
+
+    /**
+     * Gets the invoice payment collection date
+     *
+     * @return Invoice payment collection date
+     */
+    public Date getIntialCollectionDate() {
+        return intialCollectionDate;
+    }
+
+    /**
+     * Sets Invoice payment collection date
+     *
+     * @param intialCollectionDate
+     */
+    public void setIntialCollectionDate(Date intialCollectionDate) {
+        this.intialCollectionDate = intialCollectionDate;
     }
 }

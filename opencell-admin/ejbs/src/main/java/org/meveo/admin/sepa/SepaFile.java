@@ -483,7 +483,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
 		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
 		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
-		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		PaymentMethod preferedPaymentMethod = customerAccountService.getPreferredPaymentMethod(dDRequestItem.getAccountOperations().get(0), PaymentMethodEnum.DIRECTDEBIT);
 		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}
@@ -628,8 +628,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @throws Exception the exception
 	 */
 	private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) throws Exception {
-		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
-		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
+		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
+		PaymentMethod preferedPaymentMethod = customerAccountService.getPreferredPaymentMethod(dDRequestItem.getAccountOperations().get(0), PaymentMethodEnum.DIRECTDEBIT);
 		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}

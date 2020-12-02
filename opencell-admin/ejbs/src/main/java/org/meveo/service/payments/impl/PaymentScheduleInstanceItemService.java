@@ -327,6 +327,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setAmountWithoutTax(amounts.getAmountWithoutTax());
         recordedInvoicePS.setPaymentScheduleInstanceItem(paymentScheduleInstanceItem);
         recordedInvoicePS.setInvoice(invoice);
+        recordedInvoicePS.setSeller(invoice.getSeller());
+        recordedInvoicePS.setSubscription(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription());
         recordedInvoiceService.create(recordedInvoicePS);
         return recordedInvoicePS;
 
