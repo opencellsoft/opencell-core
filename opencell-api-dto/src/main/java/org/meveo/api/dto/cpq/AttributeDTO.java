@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.ServiceTypeEnum;
 

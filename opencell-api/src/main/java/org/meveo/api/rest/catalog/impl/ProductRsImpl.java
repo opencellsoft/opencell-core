@@ -1,7 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
@@ -34,38 +32,41 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	
 	
 	@Override
-	public Response addNewProduct(ProductDto productDto) {
+	public Response createProduct(ProductDto productDto) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	Long id=productApi.addNewProduct(productDto);
-            return  Response.ok().entity(Collections.singletonMap("id", id))
-                    .build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e, null);
+        	productApi.addNewProduct(productDto);
+        	return Response.ok(result).build();
+        } catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
         }
+        
 	}
 
 	@Override
 	public Response updateProduct(ProductDto productDto) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
         	productApi.updateProduct(productDto);
-            return Response.ok().build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e, null);
+        	return Response.ok(result).build();
+        } catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 
 	@Override
-	public Response updateStatus(String codeProduct, ProductStatusEnum status) {
-	        try {
-	        	productApi.updateStatus(codeProduct, status);
-	            return Response.ok().build();
-	        } catch(MeveoApiException e) {
-			       return errorResponse(e,null);
-	        }
+	public Response updateProductStatus(String codeProduct, ProductStatusEnum status) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
+        try {
+        	productApi.updateStatus(codeProduct,status);
+        	return Response.ok(result).build();
+        } catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
 	}
 
 	@Override
-	public Response findByCode(String codeProduct) {
+	public Response findProductByCode(String codeProduct) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
@@ -76,7 +77,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         }
 	}
 	@Override
-	public Response listPost(PagingAndFiltering pagingAndFiltering) {
+	public Response listProducts(PagingAndFiltering pagingAndFiltering) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
 	        try {
@@ -90,7 +91,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listPost(OfferContextDTO offerContextDTO) {
+	public Response listCpqProducts(OfferContextDTO offerContextDTO) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
 	        try {

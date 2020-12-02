@@ -42,15 +42,6 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
     @Inject
     private QuoteApi quoteApi;
 
-    
-	/*private Response errorResponse(MeveoApiException e, ActionStatus result) {
-		if(result==null) {
-			result = new ActionStatus();
-		}
-		result.setStatus(ActionStatusEnum.FAIL);
-		result.setMessage(e.getMessage());
-		 return createResponseFromMeveoApiException(e, result).build();
-	}*/
 
 
 	@Override

@@ -40,12 +40,15 @@ public class ProductLineDto extends BaseEntityDto{
 	}
 	
 	public ProductLineDto(ProductLine p) {
-		this.id = p.getId();
-		this.code = p.getCode();
-		this.label = p.getDescription();
-		this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
-		this.longDescription = p.getLongDescription();
-		this.parentLineCode = p.getParentLine() != null ? p.getParentLine().getCode() : null;
+		if(p!=null) {
+			this.id = p.getId();
+			this.code = p.getCode();
+			this.label = p.getDescription();
+			this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
+			this.longDescription = p.getLongDescription();
+			this.parentLineCode = p.getParentLine() != null ? p.getParentLine().getCode() : null;
+		}
+	
 	}
 	public ProductLineDto() {
 	}

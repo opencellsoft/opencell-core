@@ -59,7 +59,7 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "302", description = "the product already existe with the given code"),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-	Response addNewProduct(@Parameter(description = "product dto for a new insertion", required = true) ProductDto productDto);
+	Response createProduct(@Parameter(description = "product dto for a new insertion", required = true) ProductDto productDto);
 	
 
 	/**
@@ -74,7 +74,7 @@ public interface ProductRs extends IBaseRs{
 	tags = { "Product" },
 	description ="duplicate a product with the published its version or a recent version",
 	responses = {
-	        @ApiResponse(responseCode="200", description = "the product successfully duplicated"),
+	        @ApiResponse(responseCode="200", description = "the product successfully duplicated", content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
 	        @ApiResponse(responseCode = "404", description = "the product with product code in param does not exist ", 
 	        	content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)) )
 	})
@@ -94,7 +94,7 @@ public interface ProductRs extends IBaseRs{
     description ="to update the product the status must be DRAFT otherwise exception will be thrown",
     responses = {
             @ApiResponse(responseCode="200", description = "the product successfully updated",
-                    content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "Unknown producth"),
             @ApiResponse(responseCode = "400", description = "the status of the product is different to DRAFT")
     })
@@ -116,7 +116,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
-	Response updateStatus(@Parameter @PathParam("productCode") String productCode,@Parameter @QueryParam("status") ProductStatusEnum status);
+	Response updateProductStatus(@Parameter @PathParam("productCode") String productCode,@Parameter @QueryParam("status") ProductStatusEnum status);
 	
 	/**
 	 * 
@@ -133,7 +133,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
-	Response findByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("productCode") String productCode);
+	Response findProductByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("productCode") String productCode);
 	
 	
     /**
@@ -150,7 +150,7 @@ public interface ProductRs extends IBaseRs{
     responses = {
             @ApiResponse(responseCode="200", description = "Products are successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
     })
-    public Response listPost(PagingAndFiltering pagingAndFiltering);
+    public Response listProducts(PagingAndFiltering pagingAndFiltering);
     
 
     @POST
@@ -164,7 +164,7 @@ public interface ProductRs extends IBaseRs{
     })
  
   
-    public Response listPost(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
+    public Response listCpqProducts(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
     
 	/**
 	 * 

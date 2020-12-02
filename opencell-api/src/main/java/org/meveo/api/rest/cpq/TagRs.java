@@ -3,8 +3,8 @@ package org.meveo.api.rest.cpq;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +17,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
+import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 
@@ -80,7 +81,7 @@ public interface TagRs extends IBaseRs {
     tags = { "Tag" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Tag successfully deleted",
-            		content = @Content(schema = @Schema(implementation = ActionStatusEnum.class))),
+            		content = @Content(schema = @Schema(implementation = GetTagDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "No Tag found for the codeTag parameter", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class))),
             @ApiResponse(responseCode = "400", description = "Impossible to delete a Tag, because it contains product", 
@@ -105,7 +106,7 @@ public interface TagRs extends IBaseRs {
     description ="Creating a new tag type",
     tags = { "Tag" },
     responses = {
-            @ApiResponse(responseCode="200", description = "the Tag type successfully added"),
+            @ApiResponse(responseCode="200", description = "the Tag type successfully added",content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required parameter is  code",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
     })
@@ -117,7 +118,7 @@ public interface TagRs extends IBaseRs {
     description ="updating a new tag type",
     tags = { "Tag" },
     responses = {
-            @ApiResponse(responseCode="200", description = "the Tag type successfully updated"),
+            @ApiResponse(responseCode="200", description = "the Tag type successfully updated",content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required parameter is  code",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
             @ApiResponse(responseCode = "400", description = "No tag type was found with the code", 
@@ -131,7 +132,7 @@ public interface TagRs extends IBaseRs {
     description ="Retrieving a tag type with code tag type parameter",
     tags = { "Tag" },
     responses = {
-            @ApiResponse(responseCode="200", description = "The Tag type successfully found"),
+            @ApiResponse(responseCode="200", description = "The Tag type successfully found",content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "No tag type was found with the code", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
@@ -144,8 +145,7 @@ public interface TagRs extends IBaseRs {
     description ="Deleting an existing Tag type",
     tags = { "Tag" },
     responses = {
-            @ApiResponse(responseCode="200", description = "The Tag type successfully deleted",
-            		content = @Content(schema = @Schema(implementation = ActionStatusEnum.class))),
+            @ApiResponse(responseCode="200", description = "The Tag type successfully deleted",content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "No Tag type found for the tagCode parameter", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class))),
             @ApiResponse(responseCode = "400", description = "Impossible to delete a Tag type,it is attached to a Tag", 
