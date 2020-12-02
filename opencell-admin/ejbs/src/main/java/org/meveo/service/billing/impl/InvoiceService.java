@@ -2796,7 +2796,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoiceDateRangeFrom != null)
             qb.addCriterionDateRangeFromTruncatedToDay("invoiceDate", invoiceDateRangeFrom);
         if(invoiceDateRangeTo != null)
-            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false);
+            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false, false);
         try {
             result = (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
