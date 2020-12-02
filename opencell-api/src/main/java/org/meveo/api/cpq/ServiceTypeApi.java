@@ -10,12 +10,12 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.cpq.ServiceType;
+import org.meveo.model.cpq.AttributeType;
 import org.meveo.model.cpq.enums.ServiceTypeEnum;
 import org.meveo.service.catalog.impl.ServiceTypeService;
 
 @Stateless
-public class ServiceTypeApi extends BaseCrudApi<ServiceType, ServiceTypeDto> {
+public class ServiceTypeApi extends BaseCrudApi<AttributeType, ServiceTypeDto> {
 	
 	@Inject
     private ServiceTypeService serviceTypeService;
@@ -28,7 +28,7 @@ public class ServiceTypeApi extends BaseCrudApi<ServiceType, ServiceTypeDto> {
 	 * @throws MeveoApiException meveo api exception
 	 * @throws BusinessException business exception.
 	 */
-	public ServiceType create(ServiceTypeDto postData) throws MeveoApiException, BusinessException {
+	public AttributeType create(ServiceTypeDto postData) throws MeveoApiException, BusinessException {
 
 		String serviceTypeCode = postData.getCode();
 		ServiceTypeEnum serviceTypeEnum = postData.getServiceType();
@@ -41,11 +41,11 @@ public class ServiceTypeApi extends BaseCrudApi<ServiceType, ServiceTypeDto> {
 		}
 
 		handleMissingParametersAndValidate(postData);
-		ServiceType serviceType = serviceTypeService.findByCode(serviceTypeCode);
+		AttributeType serviceType = serviceTypeService.findByCode(serviceTypeCode);
 		if (serviceType != null) {
-			throw new EntityAlreadyExistsException(ServiceType.class, serviceTypeCode);
+			throw new EntityAlreadyExistsException(AttributeType.class, serviceTypeCode);
 		}
-		serviceType = new ServiceType();
+		serviceType = new AttributeType();
 		serviceType.setCode(serviceTypeCode);
 		serviceType.setDescription(postData.getDescription());
 		serviceType.setServiceType(serviceTypeEnum); 
@@ -61,16 +61,16 @@ public class ServiceTypeApi extends BaseCrudApi<ServiceType, ServiceTypeDto> {
 	 * @throws MeveoApiException meveo api exception
 	 * @throws BusinessException business exception.
 	 */
-	public ServiceType update(ServiceTypeDto postData) throws MeveoApiException, BusinessException {
+	public AttributeType update(ServiceTypeDto postData) throws MeveoApiException, BusinessException {
 		String serviceTypeCode = postData.getCode();
 		if (StringUtils.isBlank(serviceTypeCode)) {
 			missingParameters.add("serviceTypeCode");
 		}
 		handleMissingParametersAndValidate(postData);
 
-		ServiceType serviceType = serviceTypeService.findByCode(serviceTypeCode);
+		AttributeType serviceType = serviceTypeService.findByCode(serviceTypeCode);
 		if (serviceType == null) {
-			throw new EntityDoesNotExistsException(ServiceType.class, serviceTypeCode);
+			throw new EntityDoesNotExistsException(AttributeType.class, serviceTypeCode);
 		}
 		serviceType.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		serviceType.setDescription(postData.getDescription());
@@ -96,9 +96,9 @@ public class ServiceTypeApi extends BaseCrudApi<ServiceType, ServiceTypeDto> {
 			missingParameters.add("serviceTypeCode");
 		}
 
-		ServiceType serviceType = serviceTypeService.findByCode(serviceTypeCode);
+		AttributeType serviceType = serviceTypeService.findByCode(serviceTypeCode);
 		if (serviceType == null) {
-			throw new EntityDoesNotExistsException(ServiceType.class, serviceTypeCode);
+			throw new EntityDoesNotExistsException(AttributeType.class, serviceTypeCode);
 		}
 
 		serviceTypeService.remove(serviceType);

@@ -2,7 +2,7 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -13,6 +13,6 @@ import org.meveo.service.base.BusinessService;
  */
 
 @Stateless
-public class GroupedServiceService extends BusinessService<GroupedService> {
+public class GroupedAttributeService extends BusinessService<GroupedAttributes> {
 
 }

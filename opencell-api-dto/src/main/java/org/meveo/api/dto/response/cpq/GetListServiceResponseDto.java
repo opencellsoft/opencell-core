@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.cpq.ServiceDTO;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.response.SearchResponse;
 
 /**
@@ -44,14 +44,14 @@ public class GetListServiceResponseDto extends SearchResponse {
    
 
     /** The list product template. */
-    private List<ServiceDTO> services;
+    private List<AttributeDTO> services;
 
     /**
      * Gets the service template list.
      *
      * @return the list service template
      */
-    public List<ServiceDTO> getServices() {
+    public List<AttributeDTO> getServices() {
         return services;
     }
 
@@ -60,11 +60,11 @@ public class GetListServiceResponseDto extends SearchResponse {
      *
      * @param listServiceTemplate the new list service template
      */
-    public void setServices(List<ServiceDTO> services) {
+    public void setServices(List<AttributeDTO> services) {
         this.services = services;
     }
 
-    public void addServiceTemplate(ServiceDTO serviceDto) {
+    public void addServiceTemplate(AttributeDTO serviceDto) {
         if (services == null) {
         	services = new ArrayList<>();
         }if(!services.contains(serviceDto)) {

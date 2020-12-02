@@ -41,9 +41,9 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
-import org.meveo.api.dto.cpq.GroupedServiceDto;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ServiceDTO;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
@@ -72,9 +72,10 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.ServiceType;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeType;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -93,7 +94,8 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.ServiceTypeService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.meveo.service.cpq.GroupedServiceService;
+import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
@@ -152,7 +154,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     private SubscriptionApi subscriptionApi;
     
 	@Inject
-	private GroupedServiceService groupedServiceService;
+	private GroupedAttributeService groupedAttributeService;
 	
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -168,6 +170,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	 
 	 @Inject
 	 private ServiceTypeService serviceTypeService;
+	 
+	 @Inject
+	 private AttributeService attributeService;
 
     /**
      * Sets the service charge template.
@@ -343,12 +348,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
-        
-        // check if service type exists
-        ServiceType serviceType = serviceTypeService.findByCode(postData.getServiceTypeCode());
-        if (serviceType == null) {
-            throw new EntityDoesNotExistsException(ServiceType.class, postData.getServiceTypeCode());
-        }
+     
 
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
@@ -359,10 +359,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
-        serviceTemplate.setServiceType(serviceType);
-        serviceTemplate.setMandatory(postData.isMandatory());
-        serviceTemplate.setDisplay(postData.isDisplay());
-        serviceTemplate.setParam(postData.getParam());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
@@ -465,18 +461,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         }
         
-        // check if service type exists
-        ServiceType serviceType = serviceTypeService.findByCode(postData.getServiceTypeCode());
-        if (serviceType == null) {
-            throw new EntityDoesNotExistsException(ServiceType.class, postData.getServiceTypeCode());
-        }
-        
-        serviceTemplate.setServiceType(serviceType);
-        serviceTemplate.setMandatory(postData.isMandatory());
-        serviceTemplate.setDisplay(postData.isDisplay());
-        if(!StringUtils.isBlank(postData.getParam())) {
-        serviceTemplate.setParam(postData.getParam());
-        }
+     
         if (postData.getMinimumChargeTemplate() != null) {
             if (StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
                 serviceTemplate.setMinimumChargeTemplate(null);
@@ -681,22 +666,22 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	 * @param serviceTemplateCodes
 	 */
 	public void addToGroup(String groupedServiceCode, List<String> serviceTemplateCodes) {
-		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
+		final GroupedAttributes groupedService = groupedAttributeService.findByCode(groupedServiceCode);
 		if(groupedService == null)
-            throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
+            throw new EntityDoesNotExistsException(GroupedAttributes.class, groupedServiceCode);
 		
 		var templates = serviceTemplateCodes.stream().map(code -> {
-							final ServiceTemplate template = serviceTemplateService.findByCode(code);
+							final Attribute template = attributeService.findByCode(code);
 							if(template == null) 
 								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
-							if(template.getGroupedService() != null)
-								throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
+							if(template.getGroupedAttributes() != null)
+								throw new BusinessException("Attribute code " + template.getCode() + " is already assigned to a group code " + template.getGroupedAttributes().getCode());
 							return template;
 						}).collect(Collectors.toList());
 		
 		templates.stream().forEach(template -> {
-			template.setGroupedService(groupedService);
-			serviceTemplateService.update(template);
+			template.setGroupedAttributes(groupedService);
+			attributeService.update(template);
 		});
 	}
 	
@@ -739,29 +724,30 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
 		if(!StringUtils.isBlank(offerContextDTO.getCurrentProductCode()) && !StringUtils.isBlank(offerContextDTO.getCurrentProductVersion())  ) {
 			ProductVersion prodVersion=productVersionService.findByProductAndVersion(offerContextDTO.getCurrentProductCode(), offerContextDTO.getCurrentProductVersion());
-			List<ServiceTemplate> services=prodVersion.getServices();
-			if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
-				for(ServiceTemplate service:services) {
-					if(serviceByTags.contains(service)) {
-						ServiceDTO serviceDto=new ServiceDTO(service);
-						result.addServiceTemplate(serviceDto);
-					}
-				} 
-			}
-		}else if(!StringUtils.isBlank(offerContextDTO.getOfferCode())){
-			OfferTemplate offerTemplate=offerTemplateService.findByCode(offerContextDTO.getOfferCode());
-			if(offerTemplate!=null) { 
-				List<OfferServiceTemplate> services=offerTemplate.getOfferServiceTemplates();
-				if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
-					for(OfferServiceTemplate service:services) {
-						if(serviceByTags.contains(service.getServiceTemplate())) {
-							ServiceDTO serviceDto=new ServiceDTO(service.getServiceTemplate());
-							result.addServiceTemplate(serviceDto);
-						}
-					}
-				}
-			}
+//			List<ServiceTemplate> services=prodVersion.getServices();
+//			if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
+//				for(ServiceTemplate service:services) {
+//					if(serviceByTags.contains(service)) {
+//						ServiceDTO serviceDto=new ServiceDTO(service);
+//						result.addServiceTemplate(serviceDto);
+//					}
+//				} 
+//			}
 		}
+//		else if(!StringUtils.isBlank(offerContextDTO.getOfferCode())){
+//			OfferTemplate offerTemplate=offerTemplateService.findByCode(offerContextDTO.getOfferCode());
+//			if(offerTemplate!=null) { 
+//				List<OfferServiceTemplate> services=offerTemplate.getOfferServiceTemplates();
+//				if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
+//					for(OfferServiceTemplate service:services) {
+//						if(serviceByTags.contains(service.getServiceTemplate())) {
+//							AttributeDTO serviceDto=new AttributeDTO(service.getServiceTemplate());
+//							result.addServiceTemplate(serviceDto);
+//						}
+//					}
+//				}
+//			}
+//		}
 		return result;	
 	}
 	

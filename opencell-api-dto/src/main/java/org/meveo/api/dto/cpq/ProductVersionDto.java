@@ -55,7 +55,7 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The services template. */
     @XmlElementWrapper(name = "services")
     @XmlElement(name = "services")
-    private Set<ServiceDTO> services;
+    private Set<AttributeDTO> services;
     
     /** The services template. */
     @XmlElementWrapper(name = "tags")
@@ -85,9 +85,9 @@ public class ProductVersionDto extends BaseEntityDto {
         this.startDate = productVersion.getStartDate();
         this.endDate = productVersion.getEndDate();
 
-    	if(productVersion.getServices() != null && !productVersion.getServices().isEmpty()) {
-    		services = productVersion.getServices().stream().map(d -> {
-    			final ServiceDTO service = new ServiceDTO(d);
+    	if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
+    		services = productVersion.getAttributes().stream().map(d -> {
+    			final AttributeDTO service = new AttributeDTO(d);
     			return service;
     		}).collect(Collectors.toSet());
     	}
@@ -199,13 +199,13 @@ public class ProductVersionDto extends BaseEntityDto {
     /**
 	 * @return the services
 	 */
-	public Set<ServiceDTO> getServices() {
+	public Set<AttributeDTO> getServices() {
 		return services;
 	}
 	/**
 	 * @param services the services to set
 	 */
-	public void setServices(Set<ServiceDTO> services) {
+	public void setServices(Set<AttributeDTO> services) {
 		this.services = services;
 	}
 	@Override

@@ -17,7 +17,7 @@ import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.ServiceDTO;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -35,6 +35,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -71,6 +72,9 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
+	
+	@Inject
+	private AttributeService  attributeService;
 	
 	/**
 	 * @return ProductDto
@@ -179,7 +183,7 @@ public class ProductApi extends BaseApi {
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(VersionStatusEnum.DRAFT);
         productVersion.setStatusDate(Calendar.getInstance().getTime());
-        processServices(postData,productVersion);
+        processAttributes(postData,productVersion);
         processTags(postData, productVersion); 
         productVersionService.create(productVersion);
         return productVersion;
@@ -218,7 +222,7 @@ public class ProductApi extends BaseApi {
         productVersion.setEndDate(postData.getEndDate());
         productVersion.setStartDate(postData.getStartDate());
         productVersion.setStatus(postData.getStatus());
-        processServices(postData,productVersion);
+        processAttributes(postData,productVersion);
         try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
@@ -445,12 +449,12 @@ public class ProductApi extends BaseApi {
 		}
 	}
 
-	private void processServices(ProductVersionDto postData, ProductVersion productVersion) {
-		Set<ServiceDTO> services = postData.getServices();
+	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<AttributeDTO> services = postData.getServices();
 		if(services != null && !services.isEmpty()){
-			productVersion.setServices(services
+			productVersion.setAttributes(services
 					.stream()
-					.map(serviceDto -> serviceTemplateService.findByCode(serviceDto.getCode()))
+					.map(serviceDto -> attributeService.findByCode(serviceDto.getCode()))
 					.collect(Collectors.toList()));
 		}
 	}

@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.GroupedAttributes;
 
-public class GroupedServiceDto {
+public class GroupedAttributeDto {
 
 	private String productCode;
 	private int prodcutVersion;
 	private String code;
 	private String description;
-	private List<String> serviceCodes = new ArrayList<String>();
+	private List<String> attributeCodes = new ArrayList<String>();
 	private boolean display;
 	private boolean mandatory;
 	
-	public GroupedServiceDto() {
+	public GroupedAttributeDto() {
 		
 	}
 	
-	public GroupedServiceDto(GroupedService groupedService) {
+	public GroupedAttributeDto(GroupedAttributes groupedService) {
 		if(groupedService != null) {
 			this.code = groupedService.getCode();
 			this.description = groupedService.getDescription();
@@ -31,11 +31,11 @@ public class GroupedServiceDto {
 		}
 	}
 	
-	public GroupedServiceDto(GroupedService groupedService, List<ServiceTemplate> serviceTemplateCodes) {
+	public GroupedAttributeDto(GroupedAttributes groupedService, List<ServiceTemplate> serviceTemplateCodes) {
 		this(groupedService);
 		if(serviceTemplateCodes != null)
 			serviceTemplateCodes.forEach( service -> {
-				serviceCodes.add(service.getCode());
+				attributeCodes.add(service.getCode());
 			});
 	}
 
@@ -95,18 +95,21 @@ public class GroupedServiceDto {
 		this.prodcutVersion = prodcutVersion;
 	}
 
+	
+	
+
 	/**
-	 * @return the serviceCodes
+	 * @return the attributeCodes
 	 */
-	public List<String> getServiceCodes() {
-		return serviceCodes;
+	public List<String> getAttributeCodes() {
+		return attributeCodes;
 	}
 
 	/**
-	 * @param serviceCodes the serviceCodes to set
+	 * @param attributeCodes the attributeCodes to set
 	 */
-	public void setServiceCodes(List<String> serviceCodes) {
-		this.serviceCodes = serviceCodes;
+	public void setAttributeCodes(List<String> attributeCodes) {
+		this.attributeCodes = attributeCodes;
 	}
 
 	/**

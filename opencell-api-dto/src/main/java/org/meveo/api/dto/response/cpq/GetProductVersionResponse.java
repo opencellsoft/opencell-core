@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.ServiceDTO;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.ProductVersion;

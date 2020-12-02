@@ -18,28 +18,16 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.ServiceTypeEnum;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.List;
 
 /**
  * The Class ServiceDto.
@@ -49,22 +37,11 @@ import java.util.List;
  */
 @XmlRootElement(name = "ServiceDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceDTO extends EnableBusinessDto {
+public class AttributeDTO extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6794700715161690227L;
 
-    /** The long description. */
-    private String longDescription;
-
-    /** The custom fields. */
-    private CustomFieldsDto customFields;
-
-    /** The image path. */
-    private String imagePath;
-
-    /** The image base 64. */
-    private String imageBase64;
 
   
     /**
@@ -89,13 +66,11 @@ public class ServiceDTO extends EnableBusinessDto {
     private String valueValidator;
 
     
-    /** The language descriptions. */
-    private List<LanguageDescriptionDto> languageDescriptions;
     
     /**
      * Instantiates a new service template dto.
      */
-    public ServiceDTO() {
+    public AttributeDTO() {
     }
 
  
@@ -105,93 +80,11 @@ public class ServiceDTO extends EnableBusinessDto {
      *
      * @param serviceTemplate the service template
      */
-    public ServiceDTO(ServiceTemplate serviceTemplate) {
-        super(serviceTemplate);
+    public AttributeDTO(Attribute attribute) {
+        super(attribute);
     }
 
  
-    /**
-     * Gets the custom fields.
-     *
-     * @return the custom fields
-     */
-    public CustomFieldsDto getCustomFields() {
-        return customFields;
-    }
-
-    /**
-     * Sets the custom fields.
-     *
-     * @param customFields the new custom fields
-     */
-    public void setCustomFields(CustomFieldsDto customFields) {
-        this.customFields = customFields;
-    }
-
-
-    /**
-     * Gets the long description.
-     *
-     * @return the long description
-     */
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    /**
-     * Sets the long description.
-     *
-     * @param longDescription the new long description
-     */
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
-    }
-
-    /**
-     * Gets the image path.
-     *
-     * @return the image path
-     */
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    /**
-     * Sets the image path.
-     *
-     * @param imagePath the new image path
-     */
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    /**
-     * Gets the image base 64.
-     *
-     * @return the image base 64
-     */
-    public String getImageBase64() {
-        return imageBase64;
-    }
-
-    /**
-     * Sets the image base 64.
-     *
-     * @param imageBase64 the new image base 64
-     */
-    public void setImageBase64(String imageBase64) {
-        this.imageBase64 = imageBase64;
-    }
-
-
-
-    public List<LanguageDescriptionDto> getLanguageDescriptions() {
-        return languageDescriptions;
-    }
-
-    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
-        this.languageDescriptions = languageDescriptions;
-    }
 
 	public String getGroupedServiceCode() {
 		return groupedServiceCode;

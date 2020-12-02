@@ -21,10 +21,10 @@ import org.meveo.model.BusinessEntity;
  *
  */
 @Entity
-@Table(name = "cpq_grouped_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_grouped_attributes", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_grouped_service_seq"), }) 
-public class GroupedService extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "cpq_grouped_attributes_seq"), }) 
+public class GroupedAttributes extends BusinessEntity {
 
 	/**
 	 * 

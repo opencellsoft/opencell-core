@@ -63,6 +63,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.offer.OfferComponent;
@@ -155,15 +156,13 @@ public class CatalogHierarchyBuilderService {
     protected MeveoUser currentUser;
 
 
-    public void duplicateProductVersion(ProductVersion entity, List<ServiceTemplate> offerServiceTemplates, List<Tag> tags, String prefix) throws BusinessException {
-       // List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
-        List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
-        List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-
-        if (offerServiceTemplates != null) {
-            for (ServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-                entity.getServices().add(duplicateServiceTemplate(offerServiceTemplate.getCode(), prefix, null, pricePlansInMemory, chargeTemplateInMemory));
-            }
+    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, String prefix) throws BusinessException {
+    
+        if(attributes != null) {
+        	entity.setAttributes(new ArrayList<Attribute>());
+        	for (Attribute attribute : attributes) {
+				entity.getAttributes().add(attribute);
+			}
         }
         
         if(tags != null) {
@@ -178,10 +177,10 @@ public class CatalogHierarchyBuilderService {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
-    		tmpProductVersion.getServices().size();
+    		tmpProductVersion.getAttributes().size();
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
-    		var serviceList = new ArrayList<>(tmpProductVersion.getServices());
+    		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
 
     		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
     		productVersionService.create(newProductVersion);    		

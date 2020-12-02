@@ -13,9 +13,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 
 /** 
  * @author Mbarek-Ay
@@ -45,51 +43,51 @@ public class ProductMapping extends BusinessEntity {
 	
 	
 	/**
-	 * Name of the first service product.
+	 * Name of the first  product attribute.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_1",referencedColumnName = "id")
-	private ServiceTemplate service1;
+    @JoinColumn(name = "attribute_1",referencedColumnName = "id")
+	private Attribute attribute1;
 	
 	
 	
 	/**
-	 * value of the first service product.
+	 * value of the first product attribute.
 	 */
-	@Column(name = "service_1_value", length = 100)
+	@Column(name = "attribute_1_value", length = 100)
 	@Size(max = 100)
-	private String service1Value;
+	private String attribute1Value;
 	
 	/**
-	 * Name of the second service product.
+	 * Name of the second product attribute.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_2",referencedColumnName = "id")
-	private ServiceTemplate service2;
+    @JoinColumn(name = "attribute_2",referencedColumnName = "id")
+	private Attribute attribute2;
 	
 	
 	/**
-	 * value of the second service product.
+	 * value of the second product attribute.
 	 */
-	@Column(name = "service_2_value", length = 100)
+	@Column(name = "attribute_2_value", length = 100)
 	@Size(max = 100)
-	private String service2Value;
+	private String attribute2Value;
 	
 	
 	/**
-	 * Name of the third service product.
+	 * Name of the third product attribute.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_3",referencedColumnName = "id")
-	private ServiceTemplate service3;
+    @JoinColumn(name = "attribute_3",referencedColumnName = "id")
+	private Attribute attribute3;
 	
 	
 	/**
-	 * value of the third service product.
+	 * value of the third product attribute.
 	 */
-	@Column(name = "service_3_value", length = 100)
+	@Column(name = "attribute_3_value", length = 100)
 	@Size(max = 100)
-	private String service3Value;
+	private String attribute3Value;
 	
 	   /**
      * Accounting article
@@ -125,10 +123,10 @@ public class ProductMapping extends BusinessEntity {
 
 	  
 	/**
-	 * @return the service1Value
+	 * @return the attribute1Value
 	 */
-	public String getService1Value() {
-		return service1Value;
+	public String getAttribute1Value() {
+		return attribute1Value;
 	}
 
 
@@ -138,10 +136,10 @@ public class ProductMapping extends BusinessEntity {
 	  
 
 	/**
-	 * @param service2Value the service2Value to set
+	 * @param attribute2Value the attribute2Value to set
 	 */
-	public void setService2Value(String service2Value) {
-		this.service2Value = service2Value;
+	public void setAttribute2Value(String attribute2Value) {
+		this.attribute2Value = attribute2Value;
 	}
 
 
@@ -149,18 +147,18 @@ public class ProductMapping extends BusinessEntity {
 
 
 	/**
-	 * @return the service3Value
+	 * @return the attribute3Value
 	 */
-	public String getService3Value() {
-		return service3Value;
+	public String getAttribute3Value() {
+		return attribute3Value;
 	}
 
 
 	/**
-	 * @param service3Value the service3Value to set
+	 * @param attribute3Value the attribute3Value to set
 	 */
-	public void setService3Value(String service3Value) {
-		this.service3Value = service3Value;
+	public void setAttribute3Value(String attribute3Value) {
+		this.attribute3Value = attribute3Value;
 	}
 
  
@@ -182,50 +180,50 @@ public class ProductMapping extends BusinessEntity {
 
 
 	/**
-	 * @return the service1
+	 * @return the attribute1
 	 */
-	public ServiceTemplate getService1() {
-		return service1;
+	public Attribute getAttribute1() {
+		return attribute1;
 	}
 
 
 	/**
-	 * @param service1 the service1 to set
+	 * @param attribute1 the attribute1 to set
 	 */
-	public void setService1(ServiceTemplate service1) {
-		this.service1 = service1;
+	public void setAttribute1(Attribute attribute1) {
+		this.attribute1 = attribute1;
 	}
 
 
 	/**
-	 * @return the service2
+	 * @return the attribute2
 	 */
-	public ServiceTemplate getService2() {
-		return service2;
+	public Attribute getAttribute2() {
+		return attribute2;
 	}
 
 
 	/**
-	 * @param service2 the service2 to set
+	 * @param attribute2 the attribute2 to set
 	 */
-	public void setService2(ServiceTemplate service2) {
-		this.service2 = service2;
+	public void setAttribute2(Attribute attribute2) {
+		this.attribute2 = attribute2;
 	}
 
 
 	/**
-	 * @return the service3
+	 * @return the attribute3
 	 */
-	public ServiceTemplate getService3() {
-		return service3;
+	public Attribute getAttribute3() {
+		return attribute3;
 	}
 
 
 	/**
-	 * @param service3 the service3 to set
+	 * @param attribute3 the attribute3 to set
 	 */
-	public void setService3(ServiceTemplate service3) {
-		this.service3 = service3;
+	public void setAttribute3(Attribute attribute3) {
+		this.attribute3 = attribute3;
 	}
 
 
@@ -246,18 +244,18 @@ public class ProductMapping extends BusinessEntity {
 
 
 	/**
-	 * @return the service2Value
+	 * @return the attribute2Value
 	 */
-	public String getService2Value() {
-		return service2Value;
+	public String getAttribute2Value() {
+		return attribute2Value;
 	}
 
 
 	/**
-	 * @param service1Value the service1Value to set
+	 * @param attribute1Value the attribute1Value to set
 	 */
-	public void setService1Value(String service1Value) {
-		this.service1Value = service1Value;
+	public void setAttribute1Value(String attribute1Value) {
+		this.attribute1Value = attribute1Value;
 	}
 
 

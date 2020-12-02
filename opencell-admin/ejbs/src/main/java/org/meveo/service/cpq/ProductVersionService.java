@@ -14,6 +14,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -87,18 +88,15 @@ public class ProductVersionService extends
     public ProductVersion duplicate(ProductVersion productVersion, boolean duplicateHierarchy) throws BusinessException{
     	productVersion = refreshOrRetrieve(productVersion);
     	
-    	productVersion.getServices().size();
+    	productVersion.getAttributes().size();
     	productVersion.getTags().size();
     	
-    	if(!productVersion.getServices().isEmpty()) {
-    		for (ServiceTemplate services : productVersion.getServices()) {
-    			services.getServiceRecurringCharges().size();
-    			services.getServiceSubscriptionCharges().size();
-    			services.getServiceTerminationCharges().size();
-    			services.getServiceUsageCharges().size();
+    	if(!productVersion.getAttributes().isEmpty()) {
+    		for (Attribute services : productVersion.getAttributes()) {
+    			services.getGroupedAttributes();
 			}
     	}
-    	var serviceTemplateList = productVersion.getServices();
+    	var serviceTemplateList = productVersion.getAttributes();
     	var tagList = new ArrayList<>(productVersion.getTags());
 
     	detach(productVersion);
@@ -114,7 +112,7 @@ public class ProductVersionService extends
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setTags(new HashSet<>());
-    	duplicate.setServices(new ArrayList<>());
+    	duplicate.setAttributes(new ArrayList<>());
 
     	// TODO : voir duplicate.getId()
 

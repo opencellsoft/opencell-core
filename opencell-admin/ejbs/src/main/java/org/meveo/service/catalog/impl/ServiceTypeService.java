@@ -19,13 +19,13 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.cpq.ServiceType;
+import org.meveo.model.cpq.AttributeType;
 import org.meveo.service.base.BusinessService;
 
 /**
  * ServiceType service implementation.
  */
 @Stateless
-public class ServiceTypeService extends BusinessService<ServiceType> {
+public class ServiceTypeService extends BusinessService<AttributeType> {
 
 }

@@ -39,7 +39,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -55,9 +54,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.cpq.AccountingArticle;
-import org.meveo.model.cpq.GroupedService;
-import org.meveo.model.cpq.ServiceType;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -231,45 +228,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 	
-	
-	/**
-	 * the grouped service
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
-	private GroupedService groupedService;
-	
-	 
-	
-	
-	/**
-	 * service type
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name =  "service_type_id", referencedColumnName = "id")
-	@NotNull
-	private ServiceType serviceType;
-	
-	
-	  /**
-     * Mandatory
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "mandatory")
-    @NotNull
-    protected boolean mandatory=Boolean.FALSE;
-    
-    
-    /**
-     * The lower number, the higher the priority is
-     */
-    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
-    private Integer priority = 0;
-     
-    
-    @Column(name = "param", columnDefinition = "TEXT")
-    @Size(max = 2000)
-    private String param;
+
     
     
     /**
@@ -279,36 +238,17 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @JoinTable(name = "cpq_service_template_tags", joinColumns = @JoinColumn(name = "service_template_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<Tag>();
     
-    
-    
-	  /**
-     *Indicates whether the service is a material (physical) component of the product or not
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "material")
-    @NotNull
-    protected Boolean material=false;
-    
-    
-    /**
-     * Accounting code
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
-    private AccountingArticle accountingArticle;
-    
-
-    @Column(name = "sequence")
-    protected Integer sequence;
-
-	  /**
-     * Display
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "display")
-    @NotNull
-    protected boolean display;
-    
+	/**
+	 * list of attributes attached to this product
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_serviceTemplate_attributes",
+				joinColumns = @JoinColumn(name = "serviceTemplate_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+			)
+    private List<Attribute> attributes = new ArrayList<>();
+	
     
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
@@ -596,63 +536,6 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     }
 
 
-	/**
-	 * @return the serviceType
-	 */
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
-
-	/**
-	 * @param serviceType the serviceType to set
-	 */
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
-	}
-
-	/**
-	 * @return the mandatory
-	 */
-	public boolean getMandatory() {
-		return mandatory;
-	}
-
-	/**
-	 * @param mandatory the mandatory to set
-	 */
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
-
-	/**
-	 * @return the priority
-	 */
-	public int getPriority() {
-		return priority;
-	}
-
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
- 
-
-	/**
-	 * @return the param
-	 */
-	public String getParam() {
-		return param;
-	}
-
-	/**
-	 * @param param the param to set
-	 */
-	public void setParam(String param) {
-		this.param = param;
-	}
-
 	
 	/**
 	 * @return the tags
@@ -669,86 +552,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	}
 
 	/**
-	 * @param priority the priority to set
+	 * @return the attributes
 	 */
-	public void setPriority(Integer priority) {
-		this.priority = priority;
+	public List<Attribute> getAttributes() {
+		return attributes;
 	}
 
 	/**
-	 * @return the material
+	 * @param attributes the attributes to set
 	 */
-	public Boolean getMaterial() {
-		return material;
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 
-	/**
-	 * @param material the material to set
-	 */
-	public void setMaterial(Boolean material) {
-		this.material = material;
-	}
-
-
-
-	/**
-	 * @return the accountingArticle
-	 */
-	public AccountingArticle getAccountingArticle() {
-		return accountingArticle;
-	}
-
-	/**
-	 * @param accountingArticle the accountingArticle to set
-	 */
-	public void setAccountingArticle(AccountingArticle accountingArticle) {
-		this.accountingArticle = accountingArticle;
-	}
-
-	/**
-	 * @return the groupedService
-	 */
-	public GroupedService getGroupedService() {
-		return groupedService;
-	}
-
-	/**
-	 * @param groupedService the groupedService to set
-	 */
-	public void setGroupedService(GroupedService groupedService) {
-		this.groupedService = groupedService;
-	}
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
-
-	/**
-	 * @return the display
-	 */
-	public boolean getDisplay() {
-		return display;
-	}
-
-	/**
-	 * @param display the display to set
-	 */
-	public void setDisplay(Boolean display) {
-		this.display = display;
-	}
-    
-    
-    
+	
     
     
 }

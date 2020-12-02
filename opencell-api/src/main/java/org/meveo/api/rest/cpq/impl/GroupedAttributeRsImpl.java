@@ -2,23 +2,23 @@ package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
 
-import org.meveo.api.cpq.GroupedServiceApi;
+import org.meveo.api.cpq.GroupedAttributesApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.GroupedServiceDto;
-import org.meveo.api.rest.cpq.GroupedServiceRs;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.rest.cpq.GroupedAttributesRs;
 import org.meveo.api.rest.impl.BaseRs;
 
-public class GroupedServiceRsImpl  extends BaseRs implements GroupedServiceRs {
+public class GroupedAttributeRsImpl  extends BaseRs implements GroupedAttributesRs {
 
 	@Inject
-	private GroupedServiceApi groupedServiceApi;
+	private GroupedAttributesApi groupedServiceApi;
 	
 	@Override
-	public ActionStatus create(GroupedServiceDto groupedServiceDto) { 
+	public ActionStatus create(GroupedAttributeDto groupedAttributeDto) { 
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	groupedServiceApi.createGroupedService(groupedServiceDto);
+	        	groupedServiceApi.createGroupedAttribute(groupedAttributeDto);
 	        } catch (Exception e) {
 	            processException(e, result);
 	        }
@@ -26,10 +26,10 @@ public class GroupedServiceRsImpl  extends BaseRs implements GroupedServiceRs {
 	}
 
 	@Override
-	public ActionStatus update(GroupedServiceDto groupedServiceDto) {
+	public ActionStatus update(GroupedAttributeDto groupedAttributeDto) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	groupedServiceApi.updateGroupedService(groupedServiceDto);
+	        	groupedServiceApi.updateGroupedAttribute(groupedAttributeDto);
 	        } catch (Exception e) {
 	            processException(e, result);
 	        }
@@ -40,7 +40,7 @@ public class GroupedServiceRsImpl  extends BaseRs implements GroupedServiceRs {
 	public ActionStatus remove(String groupedServiceCode) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	groupedServiceApi.removeGroupedService(groupedServiceCode);
+	        	groupedServiceApi.removeGroupedAttribute(groupedServiceCode);
 	        } catch (Exception e) {
 	            processException(e, result);
 	        }
@@ -51,7 +51,7 @@ public class GroupedServiceRsImpl  extends BaseRs implements GroupedServiceRs {
 	public ActionStatus find(String groupedServiceCode) {
 		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	groupedServiceApi.findGroupedServiceByCode(groupedServiceCode);
+	        	groupedServiceApi.findGroupedAttributeByCode(groupedServiceCode);
 	        } catch (Exception e) {
 	            processException(e, result);
 	        }

@@ -20,7 +20,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
@@ -79,7 +79,7 @@ public class TradeRuleHeader extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
-	private GroupedService groupedService;
+	private GroupedAttributes groupedService;
 	
 	
 	/**
@@ -214,14 +214,14 @@ public class TradeRuleHeader extends BusinessEntity {
 	/**
 	 * @return the groupedService
 	 */
-	public GroupedService getGroupedService() {
+	public GroupedAttributes getGroupedService() {
 		return groupedService;
 	}
 
 	/**
 	 * @param groupedService the groupedService to set
 	 */
-	public void setGroupedService(GroupedService groupedService) {
+	public void setGroupedService(GroupedAttributes groupedService) {
 		this.groupedService = groupedService;
 	}
 

@@ -32,10 +32,10 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.cpq.GroupedServiceDto;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.model.cpq.GroupedService;
+import org.meveo.model.cpq.GroupedAttributes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,75 +45,75 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 /**
  * @author Tarik FA.
  **/
-@Path("/cpq/groupedService")
+@Path("/cpq/groupedAttributes")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
-public interface GroupedServiceRs extends IBaseRs {
+public interface GroupedAttributesRs extends IBaseRs {
 
     /**
-     * Create a new Grouped Service
+     * Create a new Grouped Attribute
      * 
-     * @param groupedServiceDto
+     * @param groupedAttributeDto
      * @return Request processing status
      */
     @POST
     @Path("/")
-    ActionStatus create(GroupedServiceDto groupedServiceDto);
+    ActionStatus create(GroupedAttributeDto groupedAttributeDto);
 
     /**
-     * Update an existing Grouped Service
+     * Update an existing Grouped Attribute
      *
-     * @param groupedServiceDto
+     * @param groupedAttributeDto
      * @return Request processing status
      */
     @PUT
     @Path("/")
-    @Operation(summary = "updating a existing grouped service by its code",
-    description ="check if the code is not null for updating a existing grouped service",
+    @Operation(summary = "updating a existing grouped attribute by its code",
+    description ="check if the code is not null for updating a existing grouped attribute",
     responses = {
-            @ApiResponse(responseCode="200", description = "the grouped service successfully updated"),
-            @ApiResponse(responseCode = "404", description = "the grouped service with groupedServiceDto in param does not exist or null"),
-            @ApiResponse(responseCode = "500", description = "the code of grouped service is missing or null", 
+            @ApiResponse(responseCode="200", description = "the grouped attribute successfully updated"),
+            @ApiResponse(responseCode = "404", description = "the grouped attribute with groupedAttributeDto in param does not exist or null"),
+            @ApiResponse(responseCode = "500", description = "the code of grouped attribute is missing or null", 
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-            @ApiResponse(responseCode = "500", description = "No grouped service is found for the groupedServiceCode param", 
+            @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus update(GroupedServiceDto groupedServiceDto);
+    ActionStatus update(GroupedAttributeDto groupedAttributeDto);
 
    
     /**
-     * Remove an Grouped Service with a given code.
+     * Remove an Grouped Attribute with a given code.
      * 
-     * @param groupedServiceCode
+     * @param groupedAttributeCode
      * @return Request processing status
      */
     @DELETE
-    @Path("/{groupedServiceCode}")
-    @Operation(summary = "remove a grouped service",
-    tags = { "GroupedService" },
-    description ="Remove an Grouped Service with a given grouped service code",
+    @Path("/{groupedAttributeCode}")
+    @Operation(summary = "remove a grouped attribute",
+    tags = { "GroupedAttribute" },
+    description ="Remove an Grouped Attribute with a given grouped attribute code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the grouped service successfully removed"),
-            @ApiResponse(responseCode = "404", description = "the grouped service with groupedServiceCode in param does not exist"),
-            @ApiResponse(responseCode = "500", description = "No grouped service is found for the groupedServiceCode param", 
+            @ApiResponse(responseCode="200", description = "the grouped attribute successfully removed"),
+            @ApiResponse(responseCode = "404", description = "the grouped attribute with groupedAttributeCode in param does not exist"),
+            @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus remove(@PathParam("groupedServiceCode") String groupedServiceCode);
+    ActionStatus remove(@PathParam("groupedAttributeCode") String groupedAttributeCode);
     
     @GET
     @Path("/")
-    @Operation(summary = "This endpoint allows to retrieve a Grouped service information by its code",
-    tags = { "GroupedService" },
-    description ="retrieve and return an existing grouped service",
+    @Operation(summary = "This endpoint allows to retrieve a Grouped attribute information by its code",
+    tags = { "GroupedAttribute" },
+    description ="retrieve and return an existing grouped attribute",
     responses = {
-            @ApiResponse(responseCode="200", description = "the grouped service successfully retrieved",
-                    content = @Content(schema = @Schema(implementation = GroupedService.class))),
-            @ApiResponse(responseCode = "404", description = "the grouped service with groupedServiceCode in param does not exist"),
-            @ApiResponse(responseCode = "500", description = "No grouped service is found for the groupedServiceCode param", 
+            @ApiResponse(responseCode="200", description = "the grouped attribute successfully retrieved",
+                    content = @Content(schema = @Schema(implementation = GroupedAttributes.class))),
+            @ApiResponse(responseCode = "404", description = "the grouped attribute with groupedAttributeCode in param does not exist"),
+            @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
             		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus find(@QueryParam("groupedServiceCode") String groupedServiceCode);
+    ActionStatus find(@QueryParam("groupedAttributeCode") String groupedAttributeCode);
 
 
 }

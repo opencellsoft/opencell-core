@@ -130,15 +130,15 @@ public class ProductVersion extends AuditableEntity{
     
 
 	/**
-	 * list of services attached to this product
+	 * list of attributes attached to this product
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-				name = "cpq_product_version_services",
+				name = "cpq_product_version_attributes",
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id")				
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
-    private List<ServiceTemplate> services = new ArrayList<>();
+    private List<Attribute> attributes = new ArrayList<>();
     
     
 	public ProductVersion() {}
@@ -153,7 +153,7 @@ public class ProductVersion extends AuditableEntity{
 		else
 			this.setProduct(copy.getProduct());
 		this.setTags(new HashSet<>());
-		this.setServices(new ArrayList<>());
+		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());
 		this.setStartDate(copy.getStartDate());
 		this.setEndDate(copy.getEndDate());
@@ -228,22 +228,21 @@ public class ProductVersion extends AuditableEntity{
 		this.product = product;
 	}
 
-	/**
-	 * @return the services
-	 */
-	public List<ServiceTemplate> getServices() {
-		return services;
-	}
 
 
 	/**
-	 * @param services the services to set
+	 * @return the attributes
 	 */
-	public void setServices(List<ServiceTemplate> services) {
-		this.services = services;
+	public List<Attribute> getAttributes() {
+		return attributes;
 	}
 
-	
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
+	}
 
 	/**
 	 * @return the tags
