@@ -304,9 +304,9 @@ public class DefaultObserver {
      * @param Subscription subscription
      * @throws BusinessException General business exception
      */
-    public void versionCreated(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Subscription version removed, id: ", subscription.getId());
-        checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
+    public void versionCreated(@Observes @VersionCreated Subscription subscription) throws BusinessException {
+        log.debug("Defaut observer: Subscription version created, id: ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
     }
 
     /**
@@ -316,8 +316,8 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Subscription version created, id: ", subscription.getId());
-        checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
+        log.debug("Defaut observer: Subscription version removed, id: ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
