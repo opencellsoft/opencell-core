@@ -2472,8 +2472,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(existingSubscription.getOffer().getCode().toLowerCase())) {
-            if(existingSubscription.getOffer().getOfferChangeRestricted() == null
-                    || existingSubscription.getOffer().getOfferChangeRestricted()
+            if((existingSubscription.getOffer().getOfferChangeRestricted() != null && existingSubscription.getOffer().getOfferChangeRestricted())
                     || existingSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
 
             ){
