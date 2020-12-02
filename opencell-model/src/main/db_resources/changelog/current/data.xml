@@ -2154,5 +2154,73 @@ public class ValidateBRScript extends Script {
             <column name="event_type_filter" value="VERSION_REMOVED"></column>
         </insert>
     </changeSet>
+    
+        <changeSet id="5657_20201201" author="NabilOuachi">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="SendInvoiceJob_billingRun"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="description" value="Billing Runs"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="LIST"/>
+            <column name="gui_position" value=""/>
+            <column name="allow_edit" value="1"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="invoiceDateRangeFrom"/>
+            <column name="description" value="From invoice date EL"/>
+            <column name="field_type" value="STRING"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="trigger_end_period_event" value="0"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="allow_edit" value="1"/>
+            <column name="max_value" value="9223372036854775807"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="invoiceDateRangeTo"/>
+            <column name="description" value="To invoice date EL"/>
+            <column name="field_type" value="STRING"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="trigger_end_period_event" value="0"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="allow_edit" value="1"/>
+            <column name="max_value" value="9223372036854775807"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+    </changeSet>
 
 </databaseChangeLog>
