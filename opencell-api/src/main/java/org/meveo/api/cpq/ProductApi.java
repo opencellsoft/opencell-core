@@ -280,18 +280,19 @@ public class ProductApi extends BaseApi {
 		}
     }
     
-    public ProductVersion findProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
-        ProductVersion productVersion;
+    public ProductVersionDto findProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+         
 		try {
-			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
+			ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        return productVersion;
+	        return new ProductVersionDto(productVersion);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
     }
+     
     
     public Product duplicateProduct(String codeProduct, boolean duplicateHierarchy, boolean preserveCode) throws MeveoApiException, BusinessException {
     	

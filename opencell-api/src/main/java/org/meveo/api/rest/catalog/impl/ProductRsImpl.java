@@ -72,7 +72,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
         	result.setProductDto(productApi.findByCode(codeProduct));
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
+        	return errorResponse(e, result.getActionStatus());
         }
 	}
 	@Override
@@ -216,8 +216,8 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	@Override
 	public Response findProductVersion(String productCode, int productVersion) {
 		GetProductVersionResponse result = new GetProductVersionResponse();
-		try {
-			result = new GetProductVersionResponse(productApi.findProductVersion(productCode, productVersion));
+		try { 
+			result.setProductVersionDto(productApi.findProductVersion(productCode, productVersion));
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
