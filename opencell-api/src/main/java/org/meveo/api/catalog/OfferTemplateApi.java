@@ -218,12 +218,26 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
 
         OfferTemplate offerTemplate = offerTemplateToUpdate;
-        
+
         if (offerTemplate == null) {
             offerTemplate = new OfferTemplate();
             if (postData.isDisabled() != null) {
                 offerTemplate.setDisabled(postData.isDisabled());
             }
+        }
+
+        offerTemplate.setOfferChangeRestricted(postData.isOfferChangeRestricted());
+
+        if(postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()){
+            List<OfferTemplate> allowedOffers = new ArrayList<>();
+            for (String offerTemplateCode : postData.getAllowedOfferChange()){
+                OfferTemplate allowedOffer = offerTemplateService.findByCode(offerTemplateCode);
+                if(allowedOffer == null){
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+                }
+                allowedOffers.add(allowedOffer);
+            }
+            offerTemplate.setAllowedOffersChange(allowedOffers);
         }
         
         Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
