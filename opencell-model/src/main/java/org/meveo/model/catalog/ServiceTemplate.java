@@ -243,8 +243,8 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-				name = "cpq_serviceTemplate_attributes",
-				joinColumns = @JoinColumn(name = "serviceTemplate_id", referencedColumnName = "id"),
+				name = "cpq_service_template_attributes",
+				joinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
     private List<Attribute> attributes = new ArrayList<>();
