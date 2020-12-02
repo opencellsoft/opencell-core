@@ -198,7 +198,7 @@
         ]]></sql>
 
         <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueNumeric="-1"></column>
+            <column name="id" valueNumeric="-10"></column>
             <column name="version" value="0"></column>
             <column name="disabled" value="0"></column>
             <column name="created" valueDate="now()"></column>
@@ -221,7 +221,7 @@
         </insert>
 
         <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueNumeric="-2"></column>
+            <column name="id" valueNumeric="-11"></column>
             <column name="version" value="0"></column>
             <column name="disabled" value="0"></column>
             <column name="created" valueDate="now()"></column>
@@ -244,7 +244,7 @@
         </insert>
 
         <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueNumeric="-3"></column>
+            <column name="id" valueNumeric="-12"></column>
             <column name="version" value="0"></column>
             <column name="disabled" value="0"></column>
             <column name="created" valueDate="now()"></column>
