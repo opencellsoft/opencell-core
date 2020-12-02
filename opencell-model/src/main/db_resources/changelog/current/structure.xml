@@ -4184,6 +4184,97 @@ END $$;]]>
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
 	    </changeSet>
 	    
+	    <changeSet id="540-69-20201202" author="TarikFA">
+	    
+        <createSequence sequenceName="cpq_attribute_seq" />
+        <createSequence sequenceName="cpq_grouped_attributes_seq" />
+        
+	        <createTable tableName="cpq_attribute">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_attribute" />
+	            </column>
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+	            <column name="version" type="int4" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="disabled" type="${type.boolean}">
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="uuid" type="varchar(60)">
+	            	<constraints nullable="false" unique="true"/>
+	            </column>
+            	<column name="cf_values" type="${type.json}" />
+            	<column name="cf_values_accum" type="${type.json}" />
+            	
+	            <column name="grouped_attributes_id" type="bigint" />
+	            <column name="attribute_type_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="mandatory" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="priority" type="int4" />
+	            <column name="sequence" type="int4" />
+	            <column name="display" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        
+	        <createTable tableName="cpq_grouped_attributes">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_grouped_attributes" />
+	            </column>
+	            <!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	            <column name="product_version_id" type="bigint" />
+	            <column name="mandatory" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="priority" type="int4" />
+	            <column name="display" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        
+		    <createTable tableName="cpq_attribute_allowed_values">
+	            <column name="attribute_id" type="bigint" />
+	            <column name="allowed_values" type="varchar(100)" />
+	        </createTable>
+	        
+	        
+		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_type_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_attribute_type_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute_type" />
+		            
+		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_attributes" constraintName="fk_cpq_grouped_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		            
+		        <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_allowed_values" constraintName="fk_cpq_attribute_allowed_values_attribute_type_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+	        
+	    </changeSet>
+	    
     <!-- end MediaPost -->
     
 </databaseChangeLog>
