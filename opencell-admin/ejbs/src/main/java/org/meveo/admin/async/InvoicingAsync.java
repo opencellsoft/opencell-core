@@ -37,6 +37,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -213,6 +214,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
+
                 invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
 
