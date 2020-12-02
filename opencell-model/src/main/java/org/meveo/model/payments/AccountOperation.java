@@ -58,6 +58,8 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
@@ -359,14 +361,18 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
-    
+
 
     @ManyToMany
-    @JoinTable(
-      name = "ar_ao_payment_histories", 
-      joinColumns = @JoinColumn(name = "ao_id"), 
-      inverseJoinColumns = @JoinColumn(name = "history_id"))
+    @JoinTable(name = "ar_ao_payment_histories", joinColumns = @JoinColumn(name = "ao_id"), inverseJoinColumns = @JoinColumn(name = "history_id"))
     private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
+
+    /**
+     * A collection date.
+     */
+    @Column(name = "collection_date")
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+    private Date collectionDate;
 
     public Date getDueDate() {
         return dueDate;
@@ -835,14 +841,29 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.subscription = subscription;
     }
 
-	public List<PaymentHistory> getPaymentHistories() {
-		return paymentHistories;
-	}
+    public List<PaymentHistory> getPaymentHistories() {
+        return paymentHistories;
+    }
 
-	public void setPaymentHistories(List<PaymentHistory> paymentHistories) {
-		this.paymentHistories = paymentHistories;
-	}
+    public void setPaymentHistories(List<PaymentHistory> paymentHistories) {
+        this.paymentHistories = paymentHistories;
+    }
 
-	
-    
+    /**
+     * Gets Collection Date
+     *
+     * @return a CollectionDate
+     */
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    /**
+     * Sets Collection Date
+     *
+     * @param collectionDate
+     */
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
+    }
 }

@@ -73,34 +73,54 @@ public class BillingRunDto extends AuditableEntityDto {
     /** The producible amount without tax. */
     private BigDecimal producibleAmountWithoutTax;
 
-    /** The producible amount tax. */
+    /**
+     * The producible amount tax.
+     */
     private BigDecimal producibleAmountTax;
 
-    /** The Invoice number. */
+    /**
+     * The Invoice number.
+     */
     private Integer InvoiceNumber;
 
-    /** The producible amount with tax. */
+    /**
+     * The producible amount with tax.
+     */
     private BigDecimal producibleAmountWithTax;
 
-    /** The pr amount without tax. */
+    /**
+     * The pr amount without tax.
+     */
     private BigDecimal prAmountWithoutTax;
 
-    /** The pr amount with tax. */
+    /**
+     * The pr amount with tax.
+     */
     private BigDecimal prAmountWithTax;
 
-    /** The pr amount tax. */
+    /**
+     * The pr amount tax.
+     */
     private BigDecimal prAmountTax;
 
-    /** The process type. */
+    /**
+     * The process type.
+     */
     private BillingProcessTypesEnum processType;
 
-    /** The start date. */
+    /**
+     * The start date.
+     */
     private Date startDate;
 
-    /** The end date. */
+    /**
+     * The end date.
+     */
     private Date endDate;
 
-    /** The invoice date. */
+    /**
+     * The invoice date.
+     */
     private Date invoiceDate;
 
     /**
@@ -108,26 +128,45 @@ public class BillingRunDto extends AuditableEntityDto {
      */
     private Date lastTransactionDate;
 
-    /** The reference date. */
+    /**
+     * The reference date.
+     */
     private ReferenceDateEnum referenceDate;
 
-    /** The rejection reason. */
+    /**
+     * The rejection reason.
+     */
     private String rejectionReason;
 
-    /** The currency code. */
+    /**
+     * The currency code.
+     */
     private String currencyCode;
 
-    /** The country code. */
+    /**
+     * The country code.
+     */
     private String countryCode;
 
-    /** The language code. */
+    /**
+     * The language code.
+     */
     private String languageCode;
 
-    /** The selected billing accounts. */
+    /**
+     * The selected billing accounts.
+     */
     private String selectedBillingAccounts;
 
-    /** Custom fields. */
+    /**
+     * Custom fields.
+     */
     private CustomFieldsDto customFields;
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    private Date collectionDate;
 
     /**
      * Instantiates a new billing run dto.
@@ -603,6 +642,24 @@ public class BillingRunDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets Collection Date.
+     *
+     * @return ollection Date.
+     */
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    /**
+     * Sets Collection Date.
+     *
+     * @param collectionDate
+     */
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
+    }
+
+    /**
      * Sets the from entity.
      *
      * @param billingRunEntity the new from entity
@@ -635,7 +692,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setCountryCode(billingRunEntity.getCountry() == null ? null : billingRunEntity.getCountry().getCountryCode());
         setLanguageCode(billingRunEntity.getLanguage() == null ? null : billingRunEntity.getLanguage().getLanguageCode());
         setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
-
+        setCollectionDate(billingRunEntity.getCollectionDate());
     }
 
     @Override
