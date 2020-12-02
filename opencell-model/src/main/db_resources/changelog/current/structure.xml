@@ -4214,9 +4214,6 @@ END $$;]]>
             	<column name="cf_values_accum" type="${type.json}" />
             	
 	            <column name="grouped_attributes_id" type="bigint" />
-	            <column name="attribute_type_id" type="bigint" >
-	            	<constraints nullable="false"/>
-	            </column>
 	            <column name="mandatory" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
 	            </column>
@@ -4225,6 +4222,7 @@ END $$;]]>
 	            <column name="display" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
 	            </column>
+	            <column name="service_type" type="varchar(100)" />
 	        </createTable>
 	        
 	        <createTable tableName="cpq_grouped_attributes">
@@ -4236,6 +4234,7 @@ END $$;]]>
 					<constraints nullable="false" unique="true" />
 				</column>
 				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
 				<!-- BusinessEntity End -->
 				<!-- Auditable Start -->
 	            <column name="created" type="datetime">
@@ -4253,6 +4252,7 @@ END $$;]]>
 	            <column name="display" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
 	            </column>
+	            <column name="sequence" type="int4" />
 	        </createTable>
 	        
 		    <createTable tableName="cpq_attribute_allowed_values">
@@ -4260,11 +4260,27 @@ END $$;]]>
 	            <column name="allowed_values" type="varchar(100)" />
 	        </createTable>
 	        
+		    <createTable tableName="cpq_product_version_attributes">
+	            <column name="product_version_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        
+		    <createTable tableName="cpq_service_template_attributes">
+	            <column name="service_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        
 	        
 		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
-		        <addForeignKeyConstraint baseColumnNames="attribute_type_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_attribute_type_id" deferrable="false" initiallyDeferred="false"
-		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute_type" />
 		            
 		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_attributes" constraintName="fk_cpq_grouped_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
@@ -4272,6 +4288,20 @@ END $$;]]>
 		        <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
 		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_allowed_values" constraintName="fk_cpq_attribute_allowed_values_attribute_type_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+		            
+		       <addPrimaryKey columnNames="product_version_id,attribute_id" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		            
+		       
+		       <addPrimaryKey columnNames="service_template_id,attribute_id" constraintName="cpq_service_template_attributes_pkey" tableName="cpq_service_template_attributes" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+		        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_serviceTemplate_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+		       
 	        
 	    </changeSet>
 	    

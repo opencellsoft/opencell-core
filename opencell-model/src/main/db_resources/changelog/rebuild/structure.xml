@@ -10078,7 +10078,6 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_tag_seq" /> 
         <createSequence sequenceName="cpq_tag_filter_seq" />
         <createSequence sequenceName="cpq_tag_type_seq" /> 
-        <createSequence sequenceName="cpq_attribute_type_seq" /> 
         <createSequence sequenceName="cpq_media_seq" />
         <createSequence sequenceName="cpq_offer_component_seq" /> 
         <createSequence sequenceName="cpq_trade_rule_header_seq" /> 
@@ -10087,7 +10086,6 @@ $$ LANGUAGE plpgsql;
         <createSequence sequenceName="cpq_grouped_service_seq" /> 
         <createSequence sequenceName="cpq_product_mapping_seq" />
         <createSequence sequenceName="cpq_accounting_article_seq" />
-        <createSequence sequenceName="cpq_service_type_seq" />
      </changeSet>  
      
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
@@ -10244,27 +10242,6 @@ $$ LANGUAGE plpgsql;
         </createTable>
     </changeSet>
 
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-09">
-		<createTable tableName="cpq_attribute_type">
-			<column name="id" type="bigint" autoIncrement="${id.auto}">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="cpq_attribute_type_pkey" />
-			</column>
-			<column name="version" type="int4" />
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="datetime" />
-			<column name="code" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(255)" />
-			<column name="creator" type="varchar(100)" />
-			<column name="updater" type="varchar(100)" />
-			<column name="attribute_type" type="varchar(20)" />
-			<column name="label" type="varchar(255)" />
-		</createTable>
-	</changeSet>
 	
 	
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-10">
@@ -10460,14 +10437,15 @@ $$ LANGUAGE plpgsql;
 			<column name="updater" type="varchar(100)" />
 			
 			<column name="product_id" type="bigint" />
-			<column name="service_1" type="bigint" /> 
-			<column name="service_1_value" type="varchar(100)" />
-			<column name="service_2" type="bigint" /> 
-			<column name="service_2_value" type="varchar(100)" />
-			<column name="service_3" type="bigint" /> 
-			<column name="service_3_value" type="varchar(100)" /> 
+			<column name="attribute_1" type="bigint" /> 
+			<column name="attribute_1_value" type="varchar(100)" />
+			<column name="attribute_2" type="bigint" /> 
+			<column name="attribute_2_value" type="varchar(100)" />
+			<column name="attribute_3" type="bigint" /> 
+			<column name="attribute_3_value" type="varchar(100)" /> 
 			<column name="accounting_article_id" type="bigint" /> 
 			<column name="charge_template_id" type="bigint" /> 
+			
 		</createTable>
 	</changeSet> 
 	
@@ -10959,21 +10937,21 @@ $$ LANGUAGE plpgsql;
       </changeSet>
       
        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-30">
-        <addForeignKeyConstraint baseColumnNames="service_1" baseTableName="cpq_product_mapping" constraintName="fk1-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_1" baseTableName="cpq_product_mapping" constraintName="fk1-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-31">
-        <addForeignKeyConstraint baseColumnNames="service_2" baseTableName="cpq_product_mapping" constraintName="fk2-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk2-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-32">
-        <addForeignKeyConstraint baseColumnNames="service_2" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-33">
-        <addForeignKeyConstraint baseColumnNames="service_3" baseTableName="cpq_product_mapping" constraintName="fk4-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_3" baseTableName="cpq_product_mapping" constraintName="fk4-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
       </changeSet>
       

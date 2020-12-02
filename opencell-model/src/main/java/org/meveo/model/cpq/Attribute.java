@@ -10,6 +10,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.cpq.enums.ServiceTypeEnum;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -48,14 +51,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	
 	 
 	
-	
-	/**
-	 * service type
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name =  "attribute_type_id", referencedColumnName = "id")
-	@NotNull
-	private AttributeType attributeType;
 	
 	
 	  /**
@@ -86,6 +81,10 @@ public class Attribute extends EnableBusinessCFEntity{
 
     @Column(name = "sequence")
     protected Integer sequence;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "service_type")
+    protected ServiceTypeEnum serviceType;
 
 	  /**
      * Display
@@ -109,22 +108,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
-	}
-
-	
-
-	/**
-	 * @return the attributeType
-	 */
-	public AttributeType getAttributeType() {
-		return attributeType;
-	}
-
-	/**
-	 * @param attributeType the attributeType to set
-	 */
-	public void setAttributeType(AttributeType attributeType) {
-		this.attributeType = attributeType;
 	}
 
 	/**
@@ -197,6 +180,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setDisplay(boolean display) {
 		this.display = display;
+	}
+
+	/**
+	 * @return the serviceType
+	 */
+	public ServiceTypeEnum getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(ServiceTypeEnum serviceType) {
+		this.serviceType = serviceType;
 	}
     
     

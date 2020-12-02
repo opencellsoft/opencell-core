@@ -444,59 +444,6 @@ public interface ServiceTemplateRs extends IBaseRs {
     public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     
     
-    
-    /**
-     * Create a new serviceType
-     * 
-     * @param postData The serviceType's data
-     * @return Request processing status
-     */
-    @POST
-    @Path("/cpq/serviceType/create")
-    ActionStatus createServiceType(ServiceTypeDto postData);
-
-    /**
-     * Search for a serviceType with a given code 
-     * 
-     * @param serviceTypeCode The serviceType's code
-     * @return A serviceType's data
-     */
-    @GET
-    @Path("/cpq/serviceType/find")
-    GetServiceTypeResponseDto findServiceType(@QueryParam("serviceTypeCode") String serviceTypeCode);
- 
-
-    /**
-     * Update an existing serviceType
-     * 
-     * @param postData The serviceType's data
-     * @return Request processing status
-     */
-    @PUT
-    @Path("/cpq/serviceType/update")
-    ActionStatus updateServiceType(ServiceTypeDto postData);
-
-    /**
-     * Remove an existing ServiceType with a given code 
-     * 
-     * @param serviceTypeCode The serviceType code
-     * @return Request processing status
-     */
-    @DELETE
-    @Path("/{serviceTypeCode}")
-    public ActionStatus removeServiceType(@PathParam("serviceTypeCode") String serviceTypeCode);
-
-    /**
-     * Create new or update an existing ServiceType
-     * 
-     * @param postData The ServiceType data
-     * @return Request processing status
-     */
-    @POST
-    @Path("cpq/serviceType/createOrUpdate")
-    ActionStatus createOrUpdateServiceType(ServiceTypeDto postData);
-    
-    
     /**
      * @param groupedServiceCode
      * @param List of serviceTemplateCodes

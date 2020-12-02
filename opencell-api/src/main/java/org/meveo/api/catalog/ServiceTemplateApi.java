@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -41,9 +40,7 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
-import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
@@ -55,13 +52,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -72,10 +66,9 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeType;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -83,7 +76,6 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
@@ -92,11 +84,9 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.catalog.impl.ServiceTypeService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.primefaces.model.SortOrder;
@@ -167,9 +157,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 	
 	 @Inject
 	 private ProductVersionService productVersionService;
-	 
-	 @Inject
-	 private ServiceTypeService serviceTypeService;
 	 
 	 @Inject
 	 private AttributeService attributeService;
