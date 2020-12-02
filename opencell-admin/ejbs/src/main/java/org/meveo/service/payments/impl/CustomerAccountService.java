@@ -51,6 +51,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -745,5 +746,19 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("The recipient customer account with code : " + toCustomerAccountCode + " is not found");
         }
         transferAccount(fromCustomerAccount, toCustomerAccount, amount);
-    }
+	}
+
+	public PaymentMethod getPreferredPaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethodType) {
+
+		if (ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType) {
+			return ao.getSubscription().getPaymentMethod();
+		}
+		if (ao instanceof RecordedInvoice) {
+			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod() != null
+					&& ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType) {
+				return ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
+			}
+		}
+		return ao.getCustomerAccount().getPreferredPaymentMethod();
+	}
 }
