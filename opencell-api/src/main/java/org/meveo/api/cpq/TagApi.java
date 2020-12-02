@@ -10,6 +10,7 @@ import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.tags.Tag;
@@ -206,19 +207,22 @@ public class TagApi extends BaseApi {
 	 * update tag type
 	 * @param tagTypeDto
 	 */
-	public TagTypeDto update(TagTypeDto tagTypeDto) {
-		checkCodeTagTypeExist(tagTypeDto);
-		TagType tagType = null;
+	public TagType update(TagTypeDto tagTypeDto) throws MeveoApiException {
+		checkCodeTagTypeExist(tagTypeDto); 
+		TagType tagType =null;
 		try {
 			tagType = tagTypeService.findByCode(tagTypeDto.getCode());
-		} catch (BusinessApiException e) {
-			throw new BusinessApiException(e);
+			if (tagType == null) {
+				throw new EntityDoesNotExistsException(TagType.class, tagTypeDto.getCode());
+			}
+			tagType.setDescription(tagTypeDto.getDescription());
+			tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
+			tagTypeService.update(tagType);
+		} catch (MeveoApiException e) {
+			throw new MeveoApiException(e);
 		}
-		tagType.setDescription(tagTypeDto.getDescription());
-		tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
-		
-		tagTypeService.update(tagType);
-		return tagTypeDto;
+
+		return tagType;
 	}
 	
 	/**
