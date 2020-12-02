@@ -138,6 +138,10 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
+                if(clazzStr.equals(Subscription.class.getName()) ) {
+                    events.add(NotificationEventTypeEnum.VERSION_CREATED);
+                    events.add(NotificationEventTypeEnum.VERSION_REMOVED);
+                }
             } else if (clazzStr.equals(Job.class.getName())) {
                 events.add(NotificationEventTypeEnum.PROCESSED);
             } else if (clazzStr.equals(Invoice.class.getName())) {
@@ -150,7 +154,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
             // No longer is being used
 //            if (clazzStr.equals(MeveoFtpFile.class.getName())) {
 //                events = Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD, NotificationEventTypeEnum.FILE_DOWNLOAD, NotificationEventTypeEnum.FILE_DELETE, NotificationEventTypeEnum.FILE_RENAME);
-//            } else 
+//            } else
             if (clazzStr.equals(CDR.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
             }

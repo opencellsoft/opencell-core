@@ -2536,6 +2536,18 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
         }
+
+        if (isNotBlank(subscriptionPatchDto.getOfferTemplate()) && !subscriptionPatchDto.getOfferTemplate().toLowerCase().equals(existingSubscription.getOffer().getCode().toLowerCase())) {
+            if(existingSubscription.getOffer().getOfferChangeRestricted() == null
+                    || existingSubscription.getOffer().getOfferChangeRestricted()
+                    || existingSubscription.getOffer().getAllowedOffersChange().stream().noneMatch(offer -> offer.getCode().toLowerCase().equals(subscriptionPatchDto.getOfferTemplate().toLowerCase()))
+
+            ){
+                throw new InvalidParameterException(String.format("Offer change from %s to %s is not allowed", existingSubscription.getOffer().getCode(), subscriptionPatchDto.getOfferTemplate()));
+            }
+            existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
+        }
+
         subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
 
 
@@ -2546,9 +2558,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionPatchDto.getResetRenewalTerms()) {
             existingSubscriptionDto.setRenewalRule(null);
         }
-        if (isNotBlank(subscriptionPatchDto.getOfferTemplate())) {
-            existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
-        }
+
         if (isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())) {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
