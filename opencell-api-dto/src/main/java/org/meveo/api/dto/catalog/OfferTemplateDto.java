@@ -66,6 +66,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElement(name = "allowedDiscountPlans")
     private List<DiscountPlanDto> allowedDiscountPlans;
 
+    private boolean isOfferChangeRestricted;
+
+    private List<String> allowedOfferChange;
+
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
 
@@ -356,5 +360,21 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
+    public boolean isOfferChangeRestricted() {
+        return isOfferChangeRestricted;
+    }
+
+    public void setOfferChangeRestricted(boolean offerChangeRestricted) {
+        isOfferChangeRestricted = offerChangeRestricted;
+    }
+
+    public List<String> getAllowedOfferChange() {
+        return allowedOfferChange;
+    }
+
+    public void setAllowedOfferChange(List<String> allowedOfferChange) {
+        this.allowedOfferChange = allowedOfferChange;
     }
 }
