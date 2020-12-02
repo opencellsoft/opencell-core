@@ -140,6 +140,10 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
+                if(clazzStr.equals(Subscription.class.getName()) ) {
+                    events.add(NotificationEventTypeEnum.VERSION_CREATED);
+                    events.add(NotificationEventTypeEnum.VERSION_REMOVED);
+                }
             }
         } else if (hasNotificableEntity(clazz)) {
             if (clazzStr.equals(MeveoFtpFile.class.getName())) {
