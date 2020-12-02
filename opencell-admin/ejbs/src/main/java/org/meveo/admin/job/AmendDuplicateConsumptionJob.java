@@ -24,6 +24,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
 import javax.ejb.Stateless;
@@ -41,16 +42,19 @@ import java.util.Map;
 @Stateless
 public class AmendDuplicateConsumptionJob extends Job {
 
-    /** The rated transactions job bean. */
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
+    
     @Inject
     private AmendDuplicateConsumptionJobBean amendDuplicateConsumptionJobBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        String activateStats = (String) appProvider.getCfValue("activateAmendConsoStats");
-        amendDuplicateConsumptionJobBean.createStatsTable(activateStats);
-        amendDuplicateConsumptionJobBean.execute(result, jobInstance, activateStats);
+        String activateStats = (String) customFieldInstanceService.getCFValue(appProvider, "activateAmendConsoStats");
+        boolean statsActivated = Boolean.parseBoolean(activateStats);
+        amendDuplicateConsumptionJobBean.createStatsTable(statsActivated);
+        amendDuplicateConsumptionJobBean.execute(result, jobInstance, statsActivated);
     }
 
     @Override

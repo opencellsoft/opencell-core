@@ -6,13 +6,11 @@ package org.meveo.admin.async;
 import org.meveo.admin.job.AmendDuplicateConsumptionUnitJobBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -81,7 +79,7 @@ public class AmendDuplicateConsumptionAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser, String activateStats) {
+    public Future<String> launchAndForget(List<BigInteger> offerIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser, boolean statsActivated) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         log.info("Start amend new group of canceled duplicated WO thread to process. WorkSet of offers={}", offerIds.size());
@@ -126,7 +124,7 @@ public class AmendDuplicateConsumptionAsync {
                         (!subId.equals(previousSubId) || !chargeType.equals(previousChargeType) || !dateConso.equals(previousDateConso))) {
                     overageWOList = getOverageWalletOperationList(isSharedPool, offerId.longValue(), null, subId, chargeType, dateConso);
                 }
-                amendDuplicateConsumptionUnitJobBean.execute(result, walletOperationId, overageWOList, activateStats);
+                amendDuplicateConsumptionUnitJobBean.execute(result, walletOperationId, overageWOList, statsActivated);
 
                 previousAgenceId = agenceId;
                 previousSubId = subId;

@@ -79,7 +79,7 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @SuppressWarnings("unchecked")
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance, String activateStats) {
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance, boolean statsActivated) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
@@ -96,7 +96,6 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
             log.info("Total of WOs with offers shared pools to check: {}", WOsCount.longValue());
             result.setNbItemsToProcess(WOsCount.longValue());
 
-            @SuppressWarnings("unchecked")
             List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_WITH_DUPLICATED_WO_QUERY)
                     .getResultList();
 
@@ -107,7 +106,7 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             while (subListCreator.isHasNext()) {
-                futures.add(amendDuplicateConsumptionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser, activateStats));
+                futures.add(amendDuplicateConsumptionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser, statsActivated));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -140,8 +139,8 @@ public class AmendDuplicateConsumptionJobBean extends BaseJobBean {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createStatsTable(String activateStats) {
-        if ("TRUE".equalsIgnoreCase(activateStats)) {
+    public void createStatsTable(boolean statsActivated) {
+        if (statsActivated) {
             emWrapper.getEntityManager().createNativeQuery(CREATE_TABLE_AMEND_STATS)
                     .executeUpdate();
         }

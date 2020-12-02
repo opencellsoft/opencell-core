@@ -11,7 +11,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -45,9 +44,6 @@ public class AmendDuplicateConsumptionUnitJobBean {
     private Logger log;
 
     @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-
-    @Inject
     private ServiceTemplateService serviceTemplateService;
 
     @Inject
@@ -66,17 +62,15 @@ public class AmendDuplicateConsumptionUnitJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    @SuppressWarnings({"unchecked"})
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long canceledWOId, List<Long> overageWOList,
-                        String activateStats) throws BusinessException {
+                        boolean statsActivated) throws BusinessException {
 
         log.info("Cancel consumption of a duplicated WOId={}", canceledWOId);
         AuditWOCancelation audit = null;
         long start = System.currentTimeMillis();
         try {
-            boolean statsActivated = "TRUE".equalsIgnoreCase(activateStats);
 
             WalletOperation canceledWO = walletOperationService.findById(canceledWOId);
             log.info("> ADCUnitJob > " + canceledWOId + " >1> canceledWO >"+ (System.currentTimeMillis()-start));
@@ -90,7 +84,6 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 audit.subId = canceledWO.getSubscription().getId();
                 audit.offerId = canceledWO.getOfferTemplate().getId();
                 audit.originCanceledQT = canceledWO.getQuantity();
-
             }
 
             if (statsActivated) {
