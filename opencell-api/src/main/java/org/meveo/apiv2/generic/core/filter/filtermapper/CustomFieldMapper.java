@@ -6,6 +6,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -18,11 +19,13 @@ import java.util.function.Function;
 public class CustomFieldMapper extends FilterMapper {
     private final Function<Class, PersistenceService> serviceFunction;
     private final Class clazz;
+    private final String cetCode;
 
-    public CustomFieldMapper(String property, Object value, Class clazz, Function<Class, PersistenceService> serviceFunction) {
+    public CustomFieldMapper(String property, Object value, Class clazz, String cetCode, Function<Class, PersistenceService> serviceFunction) {
         super(property, value);
         this.serviceFunction = serviceFunction;
         this.clazz = clazz;
+        this.cetCode = cetCode;
     }
 
     @Override
@@ -38,9 +41,7 @@ public class CustomFieldMapper extends FilterMapper {
 
     @Override
     public CustomFieldValues mapStrategy(Object value) {
-        Map<String, CustomFieldTemplate> customFieldTemplates = ((CustomFieldTemplateService) serviceFunction
-                .apply(CustomFieldTemplate.class))
-                .findByAppliesTo(clazz.getSimpleName());
+        Map<String, CustomFieldTemplate> customFieldTemplates = getCFTByAppliesTo(clazz, cetCode);
         CustomFieldValues customFieldValues = new CustomFieldValues();
         ((Map) value).keySet()
                 .stream()
@@ -48,6 +49,19 @@ public class CustomFieldMapper extends FilterMapper {
                 .map(key -> toCustomFieldValues((String) key, resolveCFValue((Map) value, customFieldTemplates, key)).getValuesByCode())
                 .forEach(cfValueMap -> customFieldValues.getValuesByCode().putAll((Map<? extends String, ? extends List<CustomFieldValue>>) cfValueMap));
         return customFieldValues.getValuesByCode().isEmpty() ? null : customFieldValues;
+    }
+
+    private Map<String, CustomFieldTemplate> getCFTByAppliesTo(Class clazz, String cetCode) {
+        if(CustomEntityInstance.class.equals(clazz) && (cetCode==null || cetCode.isBlank())){
+            throw new IllegalArgumentException("cetCode value must be provided when filtering on CustomEntityInstance");
+        }else if(CustomEntityInstance.class.equals(clazz)){
+            return ((CustomFieldTemplateService) serviceFunction
+                    .apply(CustomFieldTemplate.class))
+                    .findByAppliesTo("CE_"+cetCode);
+        }
+        return ((CustomFieldTemplateService) serviceFunction
+                .apply(CustomFieldTemplate.class))
+                .findByAppliesTo(this.clazz.getSimpleName());
     }
 
     private CustomFieldValue resolveCFValue(Map value, Map<String, CustomFieldTemplate> customFieldTemplates, Object key) {
