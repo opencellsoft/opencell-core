@@ -205,6 +205,7 @@ public class UnitSepaDirectDebitJobBean {
 			throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
 		}
 
+		automatedPayment.setPaymentMethod(paymentMethodEnum);
 		automatedPayment.setAmount(amount);
 		automatedPayment.setUnMatchingAmount(amount);
 		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
@@ -215,6 +216,9 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 		automatedPayment.setCustomerAccount(customerAccount);
 		automatedPayment.setReference(reference);
+		automatedPayment.setBankLot(bankLot);
+		automatedPayment.setDepositDate(depositDate);
+		automatedPayment.setBankCollectionDate(bankCollectionDate);
 		automatedPayment.setDueDate(dueDate);
 		automatedPayment.setTransactionDate(transactionDate);
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
@@ -222,18 +226,6 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setDdRequestItem(ddRequestItem);
 		automatedPayment.setSeller(ddRequestItem.getDdRequestLOT().getSeller());
-
-		if (automatedPayment instanceof AutomatedPayment) {
-			((AutomatedPayment) automatedPayment).setPaymentMethod(paymentMethodEnum);
-			((AutomatedPayment) automatedPayment).setBankLot(bankLot);
-			((AutomatedPayment) automatedPayment).setDepositDate(depositDate);
-			((AutomatedPayment) automatedPayment).setBankCollectionDate(bankCollectionDate);
-		} else {
-			((AutomatedRefund) automatedPayment).setPaymentMethod(paymentMethodEnum);
-			((AutomatedRefund) automatedPayment).setBankLot(bankLot);
-			((AutomatedRefund) automatedPayment).setDepositDate(depositDate);
-			((AutomatedRefund) automatedPayment).setBankCollectionDate(bankCollectionDate);
-		}
 
 		accountOperationService.create(automatedPayment);
 		if (isToMatching) {

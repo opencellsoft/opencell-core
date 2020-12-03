@@ -130,74 +130,46 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     /** The rejected payment. */
     private RejectedPaymentDto rejectedPayment;
 
-    /**
-     * The bank lot.
-     */
+    /** The bank lot. */
     private String bankLot;
 
-    /**
-     * The bank reference.
-     */
+    /** The bank reference. */
     private String bankReference;
 
-    /**
-     * The bank collection date.
-     */
+    /** The bank collection date. */
     private Date bankCollectionDate;
 
-    /**
-     * The deposit date.
-     */
+    /** The deposit date. */
     private Date depositDate;
 
-    /**
-     * The payment method.
-     */
+    /** The payment method. */
     private String paymentMethod;
 
-    /**
-     * The custom fields.
-     */
+    /** The custom fields. */
     private CustomFieldsDto customFields;
 
-    /**
-     * The payment info.
-     */
+    /** The payment info. */
     private String paymentInfo;// IBAN for direct debit
 
-    /**
-     * The payment info 1.
-     */
+    /** The payment info 1. */
     private String paymentInfo1;// bank code
 
-    /**
-     * The payment info 2.
-     */
+    /** The payment info 2. */
     private String paymentInfo2;// code guichet
 
-    /**
-     * The payment info 3.
-     */
+    /** The payment info 3. */
     private String paymentInfo3;// Num compte
 
-    /**
-     * The payment info 4.
-     */
+    /** The payment info 4. */
     private String paymentInfo4;// RIB
 
-    /**
-     * The payment info 5.
-     */
+    /** The payment info 5. */
     private String paymentInfo5;// bankName
 
-    /**
-     * The payment info 6.
-     */
+    /** The payment info 6. */
     private String paymentInfo6;// bic
 
-    /**
-     * The billing account name.
-     */
+    /** The billing account name. */
     private String billingAccountName;
 
     @XmlElementWrapper(name = "paymentHistories")
@@ -643,6 +615,78 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     }
 
     /**
+     * Gets the bank lot.
+     *
+     * @return the bank lot
+     */
+    public String getBankLot() {
+        return bankLot;
+    }
+
+    /**
+     * Sets the bank lot.
+     *
+     * @param bankLot the new bank lot
+     */
+    public void setBankLot(String bankLot) {
+        this.bankLot = bankLot;
+    }
+
+    /**
+     * Gets the bank reference.
+     *
+     * @return the bank reference
+     */
+    public String getBankReference() {
+        return bankReference;
+    }
+
+    /**
+     * Sets the bank reference.
+     *
+     * @param bankReference the new bank reference
+     */
+    public void setBankReference(String bankReference) {
+        this.bankReference = bankReference;
+    }
+
+    /**
+     * Gets the bank collection date.
+     *
+     * @return the bank collection date
+     */
+    public Date getBankCollectionDate() {
+        return bankCollectionDate;
+    }
+
+    /**
+     * Sets the bank collection date.
+     *
+     * @param bankCollectionDate the new bank collection date
+     */
+    public void setBankCollectionDate(Date bankCollectionDate) {
+        this.bankCollectionDate = bankCollectionDate;
+    }
+
+    /**
+     * Gets the deposit date.
+     *
+     * @return the deposit date
+     */
+    public Date getDepositDate() {
+        return depositDate;
+    }
+
+    /**
+     * Sets the deposit date.
+     *
+     * @param depositDate the new deposit date
+     */
+    public void setDepositDate(Date depositDate) {
+        this.depositDate = depositDate;
+    }
+
+    /**
      * Gets the accounting code.
      *
      * @return the accounting code
@@ -730,6 +774,150 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
      */
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    /**
+     * Gets the payment method.
+     *
+     * @return the paymentMethod
+     */
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * Sets the payment method.
+     *
+     * @param paymentMethod the paymentMethod to set
+     */
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    /**
+     * Gets the payment info.
+     *
+     * @return the paymentInfo
+     */
+    public String getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    /**
+     * Sets the payment info.
+     *
+     * @param paymentInfo the paymentInfo to set
+     */
+    public void setPaymentInfo(String paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
+
+    /**
+     * Gets the payment info 1.
+     *
+     * @return the paymentInfo1
+     */
+    public String getPaymentInfo1() {
+        return paymentInfo1;
+    }
+
+    /**
+     * Sets the payment info 1.
+     *
+     * @param paymentInfo1 the paymentInfo1 to set
+     */
+    public void setPaymentInfo1(String paymentInfo1) {
+        this.paymentInfo1 = paymentInfo1;
+    }
+
+    /**
+     * Gets the payment info 2.
+     *
+     * @return the paymentInfo2
+     */
+    public String getPaymentInfo2() {
+        return paymentInfo2;
+    }
+
+    /**
+     * Sets the payment info 2.
+     *
+     * @param paymentInfo2 the paymentInfo2 to set
+     */
+    public void setPaymentInfo2(String paymentInfo2) {
+        this.paymentInfo2 = paymentInfo2;
+    }
+
+    /**
+     * Gets the payment info 3.
+     *
+     * @return the paymentInfo3
+     */
+    public String getPaymentInfo3() {
+        return paymentInfo3;
+    }
+
+    /**
+     * Sets the payment info 3.
+     *
+     * @param paymentInfo3 the paymentInfo3 to set
+     */
+    public void setPaymentInfo3(String paymentInfo3) {
+        this.paymentInfo3 = paymentInfo3;
+    }
+
+    /**
+     * Gets the payment info 4.
+     *
+     * @return the paymentInfo4
+     */
+    public String getPaymentInfo4() {
+        return paymentInfo4;
+    }
+
+    /**
+     * Sets the payment info 4.
+     *
+     * @param paymentInfo4 the paymentInfo4 to set
+     */
+    public void setPaymentInfo4(String paymentInfo4) {
+        this.paymentInfo4 = paymentInfo4;
+    }
+
+    /**
+     * Gets the payment info 5.
+     *
+     * @return the paymentInfo5
+     */
+    public String getPaymentInfo5() {
+        return paymentInfo5;
+    }
+
+    /**
+     * Sets the payment info 5.
+     *
+     * @param paymentInfo5 the paymentInfo5 to set
+     */
+    public void setPaymentInfo5(String paymentInfo5) {
+        this.paymentInfo5 = paymentInfo5;
+    }
+
+    /**
+     * Gets the payment info 6.
+     *
+     * @return the paymentInfo6
+     */
+    public String getPaymentInfo6() {
+        return paymentInfo6;
+    }
+
+    /**
+     * Sets the payment info 6.
+     *
+     * @param paymentInfo6 the paymentInfo6 to set
+     */
+    public void setPaymentInfo6(String paymentInfo6) {
+        this.paymentInfo6 = paymentInfo6;
     }
 
     /**
