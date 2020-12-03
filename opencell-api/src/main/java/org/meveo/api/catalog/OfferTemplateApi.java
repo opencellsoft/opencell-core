@@ -453,13 +453,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         List<OfferComponentDto> offerComponentDtos = postData.getOfferComponents();  
             List<OfferComponent> newOfferComponents = new ArrayList<>();
             OfferComponent offerComponent = null;
+            boolean hasOfferComponentDtos = offerComponentDtos != null && !offerComponentDtos.isEmpty();
+            if(hasOfferComponentDtos) {
             for (OfferComponentDto offerComponentDto : offerComponentDtos) {
             	offerComponent = getOfferComponentFromDto(offerComponentDto);
             	offerComponent.setOfferTemplate(offerTemplate);
             	newOfferComponents.add(offerComponent);
             }
             offerTemplate.getOfferComponents().addAll(newOfferComponents);
- 
+            }
     }
     
     
@@ -532,7 +534,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     
     private OfferComponent getOfferComponentFromDto(OfferComponentDto offerComponentDto) throws MeveoApiException, BusinessException {
-
         ProductDto productDto = offerComponentDto.getProduct();
         Product product = null;
         if (productDto != null) {
