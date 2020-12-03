@@ -43,6 +43,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
+import org.meveo.api.dto.cpq.OfferComponentDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -77,6 +78,8 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -90,6 +93,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -145,6 +149,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private ProductService productService;
+    
+    @Inject
+    private OfferComponentService offerComponentService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -345,6 +352,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
+        processOfferComponents(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -396,8 +404,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     .collect(Collectors.toList()));
         }
     }
-    
- 
+     
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
@@ -441,6 +448,22 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.getOfferServiceTemplates().removeAll(existingServiceTemplates);
         }
     }
+    
+    private void processOfferComponents(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
+        List<OfferComponentDto> offerComponentDtos = postData.getOfferComponents();  
+            List<OfferComponent> newOfferComponents = new ArrayList<>();
+            OfferComponent offerComponent = null;
+            for (OfferComponentDto offerComponentDto : offerComponentDtos) {
+            	offerComponent = getOfferComponentFromDto(offerComponentDto);
+            	offerComponent.setOfferTemplate(offerTemplate);
+            	newOfferComponents.add(offerComponent);
+            }
+            offerTemplate.getOfferComponents().addAll(newOfferComponents);
+ 
+    }
+    
+    
+    
 
     private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
@@ -505,6 +528,22 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         return offerServiceTemplate;
+    }
+    
+    
+    private OfferComponent getOfferComponentFromDto(OfferComponentDto offerComponentDto) throws MeveoApiException, BusinessException {
+
+        ProductDto productDto = offerComponentDto.getProduct();
+        Product product = null;
+        if (productDto != null) {
+        	product = productService.findByCode(productDto.getCode());
+            if (product == null) {
+                throw new MeveoApiException(String.format("productCode %s does not exist.", productDto.getCode()));
+            }
+        }
+        OfferComponent offerComponent = new OfferComponent(); 
+        offerComponent.setProduct(product);  
+        return offerComponent;
     }
 
     private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto) throws MeveoApiException, BusinessException {

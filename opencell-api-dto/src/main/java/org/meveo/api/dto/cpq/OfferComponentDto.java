@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
@@ -23,6 +24,10 @@ public class OfferComponentDto extends BaseEntityDto {
    
     private String prodcutCode;
     private String offerTemplateCode;
+    
+    /** The product dto. */
+    private ProductDto product;
+    
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private Set<TagDto> tagList = new HashSet<>();
@@ -84,7 +89,22 @@ public class OfferComponentDto extends BaseEntityDto {
 	public void setTagList(Set<TagDto> tagList) {
 		this.tagList = tagList;
 	}
+
+	/**
+	 * @return the product
+	 */
+	public ProductDto getProduct() {
+		return product;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProduct(ProductDto product) {
+		this.product = product;
+	}
    
+	
      
     
 }
