@@ -29,6 +29,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -58,6 +60,12 @@ import org.meveo.model.payments.CustomerAccount;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
+@NamedQueries({
+    @NamedQuery(name = "Customer.getProspects", query = "select c from Customer c left join c.customerAccounts as ca left join ca.billingAccounts as ba "
+            + "left join ba.invoices as inv left join ba.usersAccounts as ua left join ua.subscriptions as sub "
+            + "where sub.id is null and inv.id is null and c.auditable.created < :creationDate")})
+
+
 public class Customer extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();

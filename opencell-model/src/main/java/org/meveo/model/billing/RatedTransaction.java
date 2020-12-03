@@ -132,6 +132,8 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.amountWithoutTax<>0 and r.status='BILLED' order by r.usageDate"),
+        @NamedQuery(name = "RatedTransaction.detachRTsFromSubscription", query = "UPDATE RatedTransaction set serviceInstance = null where serviceInstance.id IN (SELECT id from ServiceInstance where subscription=:subscription)"),
+        @NamedQuery(name = "RatedTransaction.detachRTsFromInvoice", query = "UPDATE RatedTransaction set invoice = null, invoiceAgregateF = null where invoiceAgregateF.id IN (SELECT id from SubCategoryInvoiceAgregate where invoice=:invoice)"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.invoiceAgregateF=:invoiceAgregateF and r.status='BILLED' order by r.usageDate") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 

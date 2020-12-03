@@ -6,7 +6,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -16,8 +16,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.intcrm.impl.ContactService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.util.ApplicationProvider;
@@ -67,7 +67,7 @@ public class GDPRJobBean extends BaseJobBean {
 	private AccountOperationService accountOperationService;
 
 	@Inject
-	private ContactService contactService;
+	private CustomerService customerService;
 
 	@Inject
 	private GDPRJobAsync gdprJobAsync;
@@ -130,10 +130,10 @@ public class GDPRJobBean extends BaseJobBean {
 			}
 
 			if(gdprConfiguration.isDeleteCustomerProspect()) {
-				List<Contact> oldCustomerProspects = contactService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
+				List<Customer> oldCustomerProspects = customerService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
 				log.info("Found {} old customer prospects", oldCustomerProspects.size());
 				if (!oldCustomerProspects.isEmpty()) {
-					futures.put("old prospects", gdprJobAsync.contactBulkDelete(oldCustomerProspects));
+					futures.put("old prospects", gdprJobAsync.customerBulkDelete(oldCustomerProspects));
 				}
 			}
 

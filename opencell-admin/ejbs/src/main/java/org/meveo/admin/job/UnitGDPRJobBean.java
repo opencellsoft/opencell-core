@@ -22,13 +22,13 @@ package org.meveo.admin.job;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.intcrm.impl.ContactService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
@@ -47,6 +47,9 @@ import java.util.List;
 public class UnitGDPRJobBean {
 
     @Inject
+    private RatedTransactionService ratedTransactionService;
+
+    @Inject
     private SubscriptionService subscriptionService;
 
     @Inject
@@ -59,17 +62,17 @@ public class UnitGDPRJobBean {
     private AccountOperationService accountOperationService;
 
     @Inject
-    private ContactService contactService;
+    private CustomerService customerService;
 
     /**
      * Remove subscription entity in a separate Tx
      *
-     * @param result
      * @param subscription subscription to remove
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void subscriptionRemove(Subscription subscription) {
+        ratedTransactionService.detachRTsFromSubscription(subscription);
         subscriptionService.remove(subscription);
     }
 
@@ -92,6 +95,7 @@ public class UnitGDPRJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void invoiceRemove(Invoice invoice) {
+        ratedTransactionService.detachRTsFromInvoice(invoice);
         invoiceService.remove(invoice);
     }
 
@@ -113,7 +117,7 @@ public class UnitGDPRJobBean {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void contactRemove(Contact contact) {
-        contactService.remove(contact);
+    public void customerRemove(Customer contact) {
+        customerService.remove(contact);
     }
 }
