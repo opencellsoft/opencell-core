@@ -309,7 +309,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         Seller ddReqOpSeller = sellerService.refreshOrRetrieve(ddRequestLotOp.getSeller());
         if (CollectionUtils.isNotEmpty(listAoToPay)) {
             listAoToPay =  listAoToPay.stream()
-                .filter((ao) -> (ao.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && ao.getTransactionCategory() == ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess()
+                .filter((ao) -> (ao.getTransactionCategory() == ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess()
                         && (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
                         && (ddReqOpSeller == null || ao.getSeller().equals(ddReqOpSeller))))
                 .collect(Collectors.toList());
