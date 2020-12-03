@@ -4026,15 +4026,7 @@ END $$;]]>
        </changeSet>
     
       <changeSet id="#5569_54052_20201117" author="TarikFAKHOURI">
-	         <sql>ALTER TABLE ${db.schema.adapted}ord_quote RENAME COLUMN billing_account_id TO applicant_account_id;</sql>   
              
-			<addColumn tableName="ord_quote">
-	            <column name="billable_account_id" type="bigint" />
-	        </addColumn>
-	        
-	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="ord_quote" constraintName="fk_billable_account_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-	            
 	        
 			<addColumn tableName="cpq_quote_product">
 	            <column name="billable_account_id" type="bigint" />
@@ -4304,7 +4296,80 @@ END $$;]]>
 		       
 	        
 	    </changeSet>
+	    <changeSet id="540-75-20201203" author="TarikFA">
 	    
+        	<createSequence sequenceName="cpq_quote_seq" />
+        	
+	    	<createTable tableName="cpq_quote">
+	    	  <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_quote" />
+	            </column>
+	            <!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+            	<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+            	
+	            <column name="seller_id" type="bigint" />
+	            <column name="billing_account_id" type="bigint" />
+	            <column name="contract_id" type="bigint" />
+	            <column name="status_version" type="int4" />
+	            <column name="status_date" type="datetime" />
+	            <column name="send_date" type="datetime" />
+	            <column name="prestation_date_begin" type="datetime" />
+	            <column name="prestation_duration" type="int4" />
+	            <column name="opportunity_ref" type="varchar(50)" />
+	            <column name="customer_ref" type="varchar(50)" />
+	            <column name="customer_name" type="varchar(52)" />
+	            <column name="contact_name" type="varchar(52)" />
+	            <column name="register_number" type="varchar(50)" />
+	            <column name="sales_person_name" type="varchar(52)" />
+	            <column name="billable_account_id" type="bigint" />
+	            <column name="applicant_account_id" type="bigint" />
+	    	</createTable>
+	    	
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+	            
+	            <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_seller_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+     
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	      
+	        <addForeignKeyConstraint baseColumnNames="applicant_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_applicant_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	     
+	        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_contract_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_product" constraintName="fk_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_customer_service" constraintName="fk_cpq_quote_customer_service_cpq_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+            
+	    </changeSet>
+	    
+      <changeSet id="current-str-fk-35" author="TarikFAKHOURI">
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="ord_quote_item" constraintName="fk_cpq_quote_item_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="ord_quote_item" constraintName="fk_cpq_quote_item_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+     </changeSet>  
     <!-- end MediaPost -->
     
 </databaseChangeLog>

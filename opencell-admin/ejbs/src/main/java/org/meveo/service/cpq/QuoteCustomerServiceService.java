@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteCustomerService;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.quote.QuoteService;
 import org.slf4j.Logger;
@@ -22,20 +23,14 @@ public class QuoteCustomerServiceService extends BusinessService<QuoteCustomerSe
 	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteCustomerServiceService.class);
 	
 	@Inject
-	private QuoteService quoteService;
+	private QuoteVersionService quoteVersionService;
 	
 	public QuoteCustomerService addNewQuoteCustomerService(QuoteCustomerService qcs, Long idQuote)  {
 		LOGGER.info("adding a new quote customer service [code : {}, quoteId : {}]", qcs.getCode(), idQuote);
 		
-		final Quote quote = quoteService.findById(idQuote);
+		final QuoteVersion quote = quoteVersionService.findById(idQuote);
 		if(quote == null) 
 			throw new EntityDoesNotExistsException(Quote.class, idQuote);
-		QuoteCustomerService lastQuoteCustomerService = findLastVersionByCode(quote.getCode());
-		if(lastQuoteCustomerService == null) {
-			qcs.setQuoteVersion(1);
-		}else {
-			qcs.setQuoteVersion(lastQuoteCustomerService.getQuoteVersion() + 1 );
-		}
 		/*qcs.setCode(code);
 		qcs.setQuote(quote);
 		qcs.setName(name);
