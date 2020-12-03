@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -34,7 +33,6 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedRefund;
@@ -283,7 +281,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws NoAllOperationUnmatchedException exception t<hrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
      */
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
@@ -458,7 +456,6 @@ public class PaymentService extends PersistenceService<Payment> {
         }
         Payment payment = new Payment();
         payment.setPaymentMethod(paymentMethodType);
-
         payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         payment.setUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
@@ -555,17 +552,14 @@ public class PaymentService extends PersistenceService<Payment> {
             } else {
                 String occTemplateCode = null;
                 List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-                PaymentMethodEnum aoPaymentMethod = null;
-                if (accountOperation instanceof Refund) {
-                    aoPaymentMethod = ((Refund)accountOperation).getPaymentMethod();
-                    if (PaymentMethodEnum.CARD == aoPaymentMethod) {
+                if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
+                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
                 } else if (accountOperation instanceof Payment) {
-                    aoPaymentMethod = ((Payment)accountOperation).getPaymentMethod();
-                    if (PaymentMethodEnum.CARD == aoPaymentMethod) {
+                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
@@ -594,7 +588,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
                 rejectedPayment.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
-                rejectedPayment.setPaymentMethod(aoPaymentMethod);
+                rejectedPayment.setPaymentMethod(accountOperation.getPaymentMethod());
                 rejectedPayment.setTaxAmount(accountOperation.getTaxAmount());
                 rejectedPayment.setAmountWithoutTax(accountOperation.getAmountWithoutTax());
                 rejectedPayment.setOrderNumber(accountOperation.getOrderNumber());
