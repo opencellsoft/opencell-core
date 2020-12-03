@@ -18,6 +18,7 @@
 
 package org.meveo.api.exception;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 	}
 
 	public EntityDoesNotExistsException(Class<?> clazz, String code, Date date){
-		super(clazz.getSimpleName() + " with code=" + code + (date == null ? "" : " and valid on " + date)  + " does not exists.");
+		super(clazz.getSimpleName() + " with code=" + code + (date == null ? "" : " and valid on " + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").format(date))  + " does not exists.");
 		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
 	}
 
