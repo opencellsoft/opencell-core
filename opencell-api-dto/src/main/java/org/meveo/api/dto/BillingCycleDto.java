@@ -231,7 +231,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
-            computeDatesAtValidation = billingCycleEntity.isComputeDatesAtValidation() == null ? null : billingCycleEntity.isComputeDatesAtValidation();
+            computeDatesAtValidation = billingCycleEntity.isComputeDatesAtValidation();
         }
     }
 
@@ -636,7 +636,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      *
      * @return
      */
-    public Boolean isComputeDatesAtValidation() {
+    public boolean isComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
@@ -645,7 +645,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      *
      * @param computeDatesAtValidation
      */
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }
