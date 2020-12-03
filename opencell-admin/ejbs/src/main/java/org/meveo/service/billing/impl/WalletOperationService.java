@@ -452,11 +452,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             boolean isFirstCharge = false;
 
             // First time charge
-            if (applyChargeFromDate == null) {
+            if (chargeInstance.getChargedToDate() == null) {
                 applyChargeFromDate = chargeInstance.getSubscriptionDate();
                 isFirstCharge = true;
             } else {
-                isFirstCharge = applyChargeFromDate.equals(chargeInstance.getSubscriptionDate());
+                isFirstCharge = chargeInstance.getChargedToDate().equals(chargeInstance.getSubscriptionDate());
             }
 
             DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
@@ -486,7 +486,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 // Determine if subscription charge should be prorated
                 prorateFirstPeriodFromDate = period.getFrom();
-                if (prorateFirstPeriodFromDate.before(applyChargeFromDate)) {
+                if (period.getFrom().before(applyChargeFromDate)) {
 
                     boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() == null ? false : recurringChargeTemplate.getSubscriptionProrata();
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
@@ -500,6 +500,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     prorateFirstPeriod = false;
                     prorateFirstPeriodFromDate = null;
                 }
+
+                // If it is not a first time charge, it might still be need to prorate first period when rerating.
+                // e.g. initial charge WO was 01/10 to 01/11. A change came in on 22/10 and two WOs were created instead: 01/10-22/10 and 22/10-01/11.
+                // A second change came in on 27/10 and three WOs were created instead: 01/10-22/10, 22/10-27/10 and 27/10-01/11.
+                // When processing a second change and rerating a period 22/10-01/11, it should be aware that proration shall be applied as initial full period was 01/10-01/11
+            } else if (chargeMode == ChargeApplicationModeEnum.RERATING && period.getFrom().before(applyChargeFromDate)) {
+                prorateFirstPeriod = true;
+                prorateFirstPeriodFromDate = period.getFrom();
             }
 
             applyChargeToDate = chargeToDate != null ? chargeToDate : applyChargeToDate;
@@ -532,7 +540,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 effectiveChargeFromDate = currentPeriodFromDate;
                 if (periodIndex == 0 && prorateFirstPeriodFromDate != null) {
                     currentPeriodFromDate = prorateFirstPeriodFromDate;
-                    prorate = true && prorateFirstPeriod;
+                    prorate = prorateFirstPeriod;
                 }
 
                 // Take care of the last charge period that termination date falls into
