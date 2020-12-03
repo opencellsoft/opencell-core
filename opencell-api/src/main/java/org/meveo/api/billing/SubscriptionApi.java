@@ -125,6 +125,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -237,6 +238,8 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     @VersionRemoved
     private Event<Subscription> versionRemovedEvent;
+
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private void setRenewalTermination(SubscriptionRenewal renewal, String terminationReason) throws EntityDoesNotExistsException {
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(terminationReason);
@@ -834,7 +837,7 @@ public class SubscriptionApi extends BaseApi {
 
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(instantiateServicesDto.getSubscription(), instantiateServicesDto.getSubscriptionValidityDate());
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, instantiateServicesDto.getSubscription());
+            throw new EntityDoesNotExistsException(Subscription.class, instantiateServicesDto.getSubscription(), instantiateServicesDto.getSubscriptionValidityDate());
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
@@ -2529,7 +2532,7 @@ public class SubscriptionApi extends BaseApi {
         ) {
             String from = existingSubscription.getValidity().getFrom() == null ? "-" : existingSubscription.getValidity().getFrom().toString();
             String to = existingSubscription.getValidity().getTo() == null ? "-" : existingSubscription.getValidity().getTo().toString();
-            throw new InvalidParameterException("A version already exists for effectiveDate=" + effectiveDate + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
+            throw new InvalidParameterException("A version already exists for effectiveDate=" + formatter.format(effectiveDate) + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
