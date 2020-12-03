@@ -563,12 +563,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 boolean chargeDatesAlreadyAdvanced = false;
 
-                boolean filterExpression = isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression());
-                List<WalletOperation> woList = chargeInstance.getWalletOperations();
-
                 // If charge is not applicable for current period, skip it
-                if ((!filterExpression && woList.isEmpty()) || (filterExpression && woList.isEmpty() && chargeMode.isReimbursement())) {
-                    log.debug("IPIEL: not rating chargeInstance with id={}, chargeApplication mode={}", chargeInstance.getId(), chargeMode.name());
+                if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+                    log.debug("IPIEL: not rating chargeInstance with id={}, filter expression evaluated to FALSE", chargeInstance.getId());
 
                 } else {
 
