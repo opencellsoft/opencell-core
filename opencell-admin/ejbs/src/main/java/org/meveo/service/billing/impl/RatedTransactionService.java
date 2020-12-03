@@ -1856,6 +1856,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class).setParameter("invoice", subCategoryInvoiceAgregate.getInvoice())
             .setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
     }
+    
+    /**
+     * Detach RTs From subscription.
+     *
+     * @param subscription subscription
+     */
+    public void detachRTsFromSubscription(Subscription subscription) {
+        getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
+    
+    /**
+     * Detach RTs From invoice.
+     *
+     * @param invoice invoice
+     */
+    public void detachRTsFromInvoice(Invoice invoice) {
+        getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromInvoice").setParameter("invoice", invoice).executeUpdate();
+    }
 
     /**
      * @param firstDate
