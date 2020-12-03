@@ -16,8 +16,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
@@ -35,9 +35,9 @@ public class QuoteProduct extends BusinessEntity {
      * quote
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
-    private Quote quote;
+    private CpqQuote quote;
 
     /**
      * quote Version
@@ -79,14 +79,14 @@ public class QuoteProduct extends BusinessEntity {
 	/**
 	 * @return the quote
 	 */
-	public Quote getQuote() {
+	public CpqQuote getQuote() {
 		return quote;
 	}
 
 	/**
 	 * @param quote the quote to set
 	 */
-	public void setQuote(Quote quote) {
+	public void setQuote(CpqQuote quote) {
 		this.quote = quote;
 	}
 

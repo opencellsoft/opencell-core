@@ -6221,23 +6221,6 @@
             <column name="user_account_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
-            
-            <column name="seller_id" type="bigint" />
-            <column name="billing_account_id" type="bigint" />
-            <column name="contract_id" type="bigint" />
-            <column name="status_version" type="int4" />
-            <column name="status_date" type="datetime" />
-            <column name="send_date" type="datetime" />
-            <column name="prestation_date_begin" type="datetime" />
-            <column name="prestation_duration" type="int4" />
-            <column name="opportunity_ref" type="varchar(50)" />
-            <column name="customer_ref" type="varchar(50)" />
-            <column name="customer_name" type="varchar(52)" />
-            <column name="contact_name" type="varchar(52)" />
-            <column name="register_number" type="varchar(50)" />
-            <column name="sales_person_name" type="varchar(52)" />
-<!--             <column name="billable_account_id" type="varchar(50)" /> -->
-<!--             <column name="appliquant_account_id" type="varchar(50)" /> -->
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-346">
@@ -10595,7 +10578,9 @@ $$ LANGUAGE plpgsql;
             <column name="name" type="varchar(50)" /> 
             <column name="duration" type="int4" />
             <column name="execution_date" type="datetime" />
-            <column name="quote_id" type="bigint" />  
+            <column name="cpq_quote_version_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
     	</createTable>
     </changeSet>
     
@@ -10618,10 +10603,6 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
-             
-            <column name="quote_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>  
             <column name="quote_version_id" type="bigint" >
                 <constraints nullable="false" />
             </column>   
@@ -10631,6 +10612,9 @@ $$ LANGUAGE plpgsql;
             </column>  
             <column name="product_id" type="bigint" /> 
             <column name="quantity" type="numeric(23, 12)" /> 
+            <column name="cpq_quote_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>  
     	</createTable>
      </changeSet>
      
@@ -10640,7 +10624,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_version_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="quote_id" type="bigint" >
+            <column name="cpq_quote_id" type="bigint" >
             	<constraints nullable="false"/>
             </column>  
             <column name="quote_version" type="int4" >
@@ -10807,22 +10791,8 @@ $$ LANGUAGE plpgsql;
             </column>
     	</createTable>
     </changeSet>
-      
-      <changeSet id="current-str-fk-28" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_customer_service" constraintName="fk_cpq_quote_customer_service_quote_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
-     </changeSet>  
      
      
-      <changeSet id="current-str-fk-30" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_quote_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
-     </changeSet>  
-     
-      <changeSet id="current-str-fk-31" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_product" constraintName="fk_quote_version_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
-     </changeSet>  
      
       <changeSet id="current-str-fk-32" author="TarikFAKHOURI">
         <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_product" constraintName="fk_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
@@ -10838,38 +10808,7 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_quote_product" constraintName="fk_product_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
      </changeSet>  
-     
-      <changeSet id="current-str-fk-35" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_quote_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
-     </changeSet>
-     
-     
-      <changeSet id="current-str-fk-36" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="ord_quote" constraintName="fk_seller_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
-     </changeSet>  
-     
-      <changeSet id="current-str-fk-37" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="ord_quote" constraintName="fk_billing_account_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-     </changeSet>  
-     
-      <changeSet id="current-str-fk-38" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="ord_quote" constraintName="fk_contract_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
-     </changeSet> 
-     
-      <changeSet id="current-str-fk-39" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="ord_quote_item" constraintName="fk_quote_version_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
-     </changeSet> 
-     
-      <changeSet id="current-str-fk-40" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="ord_quote_item" constraintName="fk_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
-     </changeSet> 
-     
+
       <changeSet id="current-str-fk-41" author="TarikFAKHOURI">
         <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="ord_quote_item" constraintName="fk_quote_product_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />

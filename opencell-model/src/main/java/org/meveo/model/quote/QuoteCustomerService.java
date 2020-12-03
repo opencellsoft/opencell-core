@@ -22,11 +22,11 @@ import org.meveo.model.BusinessEntity;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "quote_version"}))
+@Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_customer_service_seq"), })
-@NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
-@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
+//@NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
+//@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
 public class QuoteCustomerService extends BusinessEntity {
 
 
@@ -35,15 +35,10 @@ public class QuoteCustomerService extends BusinessEntity {
      * quote
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "cpq_quote_version_id", nullable = false, referencedColumnName = "id")
 	@NotNull
-    private Quote quote;
+    private QuoteVersion quoteVersion;
     
-	/**
-	 * quoteVersion
-	 */
-	@Column(name = "quote_version", nullable = false)
-	private Integer quoteVersion;
 	
 	/**
 	 * name 
@@ -58,34 +53,6 @@ public class QuoteCustomerService extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "execution_date")
 	private Date executionDate;
-
-	/**
-	 * @return the quote
-	 */
-	public Quote getQuote() {
-		return quote;
-	}
-
-	/**
-	 * @param quote the quote to set
-	 */
-	public void setQuote(Quote quote) {
-		this.quote = quote;
-	}
-
-	/**
-	 * @return the quoteVersion
-	 */
-	public Integer getQuoteVersion() {
-		return quoteVersion;
-	}
-
-	/**
-	 * @param quoteVersion the quoteVersion to set
-	 */
-	public void setQuoteVersion(Integer quoteVersion) {
-		this.quoteVersion = quoteVersion;
-	}
 
 	/**
 	 * @return the name
@@ -133,7 +100,7 @@ public class QuoteCustomerService extends BusinessEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(duration, executionDate, name, quote, quoteVersion);
+		result = prime * result + Objects.hash(duration, executionDate, name, quoteVersion);
 		return result;
 	}
 
@@ -147,7 +114,7 @@ public class QuoteCustomerService extends BusinessEntity {
 			return false;
 		QuoteCustomerService other = (QuoteCustomerService) obj;
 		return duration == other.duration && Objects.equals(executionDate, other.executionDate)
-				&& Objects.equals(name, other.name) && Objects.equals(quote, other.quote)
+				&& Objects.equals(name, other.name) 
 				&& Objects.equals(quoteVersion, other.quoteVersion);
 	}
 	

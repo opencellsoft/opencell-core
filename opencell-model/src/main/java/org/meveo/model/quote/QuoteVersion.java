@@ -9,7 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,11 +22,12 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "quote_id" , "quote_version"}))
+@Table(name = "cpq_quote_version", uniqueConstraints = @UniqueConstraint(columnNames = { "cpq_quote_id" , "quote_version"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_version_seq"), })
 @NamedQueries({ 
@@ -43,9 +43,9 @@ public class QuoteVersion extends BaseEntity{
      * quote
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
-    private Quote quote;
+    private CpqQuote quote;
     
 	/**
 	 * quoteVersion
@@ -180,14 +180,14 @@ public class QuoteVersion extends BaseEntity{
 	/**
 	 * @return the quote
 	 */
-	public Quote getQuote() {
+	public CpqQuote getQuote() {
 		return quote;
 	}
 
 	/**
 	 * @param quote the quote to set
 	 */
-	public void setQuote(Quote quote) {
+	public void setQuote(CpqQuote quote) {
 		this.quote = quote;
 	}
 
