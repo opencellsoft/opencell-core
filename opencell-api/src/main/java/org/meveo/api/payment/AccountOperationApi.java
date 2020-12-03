@@ -144,6 +144,8 @@ public class AccountOperationApi extends BaseApi {
             if (postData.getRejectedPayment() != null) {
                 rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
+                rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
+                rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
                 rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
                 rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
                 rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
@@ -184,10 +186,18 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
         accountOperation.setCustomerAccount(customerAccount);
 
+        accountOperation.setBankLot(postData.getBankLot());
+        accountOperation.setBankReference(postData.getBankReference());
+        accountOperation.setDepositDate(postData.getDepositDate());
+        accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
+
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
         accountOperation.setCode(postData.getCode());
         accountOperation.setDescription(postData.getDescription());
+        if (!StringUtils.isBlank(postData.getPaymentMethod())) {
+            accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+        }
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());

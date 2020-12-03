@@ -187,7 +187,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     public List<AccountOperation> getAOsToPayOrRefundByCA(Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
             Long customerAccountId) {
         try {
-            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefund")
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefundByCA")
                 .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate)
                 .setParameter("opCatToProcessIN", opCatToProcess).getResultList();
         } catch (NoResultException e) {
