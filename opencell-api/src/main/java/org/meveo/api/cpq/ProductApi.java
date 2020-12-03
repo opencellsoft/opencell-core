@@ -451,9 +451,9 @@ public class ProductApi extends BaseApi {
 	}
 
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
-		Set<AttributeDTO> services = postData.getServices();
-		if(services != null && !services.isEmpty()){
-			productVersion.setAttributes(services
+		Set<AttributeDTO> attributes = postData.getAttributes();
+		if(attributes != null && !attributes.isEmpty()){
+			productVersion.setAttributes(attributes
 					.stream()
 					.map(serviceDto -> attributeService.findByCode(serviceDto.getCode()))
 					.collect(Collectors.toList()));

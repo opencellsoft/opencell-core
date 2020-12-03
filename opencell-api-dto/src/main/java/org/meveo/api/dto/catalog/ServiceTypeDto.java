@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.cpq.enums.ServiceTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
  * The Class ServiceTypeDto.
@@ -39,7 +39,7 @@ public class ServiceTypeDto extends BusinessEntityDto {
  
 
     /** The language descriptions. */
-    private ServiceTypeEnum serviceType;;
+    private AttributeTypeEnum serviceType;;
 
     /**
      * Instantiates a new title dto.
@@ -50,7 +50,7 @@ public class ServiceTypeDto extends BusinessEntityDto {
     
     
 
-	public ServiceTypeDto(ServiceTypeEnum serviceType) {
+	public ServiceTypeDto(AttributeTypeEnum serviceType) {
 		super();
 		this.serviceType = serviceType;
 	}
@@ -59,7 +59,7 @@ public class ServiceTypeDto extends BusinessEntityDto {
 	/**
 	 * @return the serviceType
 	 */
-	public ServiceTypeEnum getServiceType() {
+	public AttributeTypeEnum getServiceType() {
 		return serviceType;
 	}
 
@@ -68,7 +68,7 @@ public class ServiceTypeDto extends BusinessEntityDto {
 	/**
 	 * @param serviceType the serviceType to set
 	 */
-	public void setServiceType(ServiceTypeEnum serviceType) {
+	public void setServiceType(AttributeTypeEnum serviceType) {
 		this.serviceType = serviceType;
 	}
 

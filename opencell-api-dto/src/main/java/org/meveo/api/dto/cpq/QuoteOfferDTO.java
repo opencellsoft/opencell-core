@@ -18,7 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,77 +26,62 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.quote.QuoteItem;
-import org.meveo.model.quote.QuoteStatusEnum;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * DTO to create or update a quote
+ * DTO to create or update a quoteOffer
  * 
  * @author Rachid.AIT
  * @lastModiedVersion 11.0 
  */
-@XmlRootElement(name = "QuoteItemDto")
+@XmlRootElement(name = "QuoteOfferDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteItemDTO extends BaseEntityDto{
+public class QuoteOfferDTO extends BaseEntityDto{
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 	
-	private Long quoteItemId;
+	private Long quoteOfferId;
 	
-    private String quote;
+    private String quoteCode;
 
     private Integer quoteVersion;
 
     private String customerServiceCode;
     
     private String offerCode;
-    
-    private String productCode;
-    
-    private Integer productQuantity;
-    
-    private Integer serviceQuantity;
-    
-    private String serviceCode;
-    
-    private Object serviceValue;
 
     private String billableAccountCode;
     
-    
+    private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
+
 	/**
-	 * @return the quoteItemId
+	 * @return the quoteOfferId
 	 */
-	public Long getQuoteItemId() {
-		return quoteItemId;
+	public Long getQuoteOfferId() {
+		return quoteOfferId;
 	}
 
 	/**
-	 * @param quoteItemId the quoteItemId to set
+	 * @param quoteOfferId the quoteOfferId to set
 	 */
-	public void setQuoteItemId(Long quoteItemId) {
-		this.quoteItemId = quoteItemId;
+	public void setQuoteOfferId(Long quoteOfferId) {
+		this.quoteOfferId = quoteOfferId;
 	}
 
 	/**
-	 * @return the quote
+	 * @return the quoteCode
 	 */
-	public String getQuote() {
-		return quote;
+	public String getQuoteCode() {
+		return quoteCode;
 	}
 
 	/**
-	 * @param quote the quote to set
+	 * @param quoteCode the quoteCode to set
 	 */
-	public void setQuote(String quote) {
-		this.quote = quote;
+	public void setQuoteCode(String quoteCode) {
+		this.quoteCode = quoteCode;
 	}
 
 	/**
@@ -142,76 +127,6 @@ public class QuoteItemDTO extends BaseEntityDto{
 	}
 
 	/**
-	 * @return the productCode
-	 */
-	public String getProductCode() {
-		return productCode;
-	}
-
-	/**
-	 * @param productCode the productCode to set
-	 */
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-
-	/**
-	 * @return the serviceCode
-	 */
-	public String getServiceCode() {
-		return serviceCode;
-	}
-
-	/**
-	 * @param serviceCode the serviceCode to set
-	 */
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-
-	/**
-	 * @return the serviceValue
-	 */
-	public Object getServiceValue() {
-		return serviceValue;
-	}
-
-	/**
-	 * @param serviceValue the serviceValue to set
-	 */
-	public void setServiceValue(Object serviceValue) {
-		this.serviceValue = serviceValue;
-	}
-
-	/**
-	 * @return the productQuantity
-	 */
-	public Integer getProductQuantity() {
-		return productQuantity;
-	}
-
-	/**
-	 * @param productQuantity the productQuantity to set
-	 */
-	public void setProductQuantity(Integer productQuantity) {
-		this.productQuantity = productQuantity;
-	}
-
-	/**
-	 * @return the serviceQuantity
-	 */
-	public Integer getServiceQuantity() {
-		return serviceQuantity;
-	}
-
-	/**
-	 * @param serviceQuantity the serviceQuantity to set
-	 */
-	public void setServiceQuantity(Integer serviceQuantity) {
-		this.serviceQuantity = serviceQuantity;
-	}
-
-	/**
 	 * @return the billableAccountCode
 	 */
 	public String getBillableAccountCode() {
@@ -224,10 +139,25 @@ public class QuoteItemDTO extends BaseEntityDto{
 	public void setBillableAccountCode(String billableAccountCode) {
 		this.billableAccountCode = billableAccountCode;
 	}
+
+	/**
+	 * @return the products
+	 */
+	public List<QuoteProductDTO> getProducts() {
+		return products;
+	}
+
+	/**
+	 * @param products the products to set
+	 */
+	public void setProducts(List<QuoteProductDTO> products) {
+		this.products = products;
+	}
     
     
     
-	
+    
+    
     
    
 }
