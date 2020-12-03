@@ -4222,7 +4222,7 @@ END $$;]]>
 	            <column name="display" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
 	            </column>
-	            <column name="service_type" type="varchar(100)" />
+	            <column name="attribute_type" type="varchar(100)" />
 	        </createTable>
 	        
 	        <createTable tableName="cpq_grouped_attributes">

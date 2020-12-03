@@ -5,7 +5,7 @@ package org.meveo.model.cpq.enums;
  * @author Tarik FAKHOURI.
  * @version 10.0
  */
-public enum ServiceTypeEnum {
+public enum AttributeTypeEnum {
 
 	/** No value to enter, a message entered during the configuration of the service (for example a secondary description) 
 	 * is available to be used in the CPQ or in the estimate **/

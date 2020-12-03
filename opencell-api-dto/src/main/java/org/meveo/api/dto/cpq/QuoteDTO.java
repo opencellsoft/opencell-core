@@ -58,11 +58,7 @@ public class QuoteDTO extends BaseEntityDto{
 
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
     
-    private List<QuoteItemDTO > quoteItems = new ArrayList<QuoteItemDTO>();
-    
-    private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
-
-    private String userAccountCode;
+    private List<QuoteOfferDTO > quoteItems = new ArrayList<QuoteOfferDTO>();
 	private String applicantAccountCode;
 	private String billableAccountCode;
 	
@@ -159,7 +155,7 @@ public class QuoteDTO extends BaseEntityDto{
 	/**
 	 * @return the quoteItems
 	 */
-	public List<QuoteItemDTO> getQuoteItems() {
+	public List<QuoteOfferDTO> getQuoteItems() {
 		return quoteItems;
 	}
 
@@ -167,40 +163,8 @@ public class QuoteDTO extends BaseEntityDto{
 	/**
 	 * @param quoteItems the quoteItems to set
 	 */
-	public void setQuoteItems(List<QuoteItemDTO> quoteItems) {
+	public void setQuoteItems(List<QuoteOfferDTO> quoteItems) {
 		this.quoteItems = quoteItems;
-	}
-
-
-	/**
-	 * @return the accountingArticlePrices
-	 */
-	public List<AccountingArticlePricesDTO> getAccountingArticlePrices() {
-		return accountingArticlePrices;
-	}
-
-
-	/**
-	 * @param accountingArticlePrices the accountingArticlePrices to set
-	 */
-	public void setAccountingArticlePrices(List<AccountingArticlePricesDTO> accountingArticlePrices) {
-		this.accountingArticlePrices = accountingArticlePrices;
-	}
-
-
-	/**
-	 * @return the userAccountCode
-	 */
-	public String getUserAccountCode() {
-		return userAccountCode;
-	}
-
-
-	/**
-	 * @param userAccountCode the userAccountCode to set
-	 */
-	public void setUserAccountCode(String userAccountCode) {
-		this.userAccountCode = userAccountCode;
 	}
 
 
