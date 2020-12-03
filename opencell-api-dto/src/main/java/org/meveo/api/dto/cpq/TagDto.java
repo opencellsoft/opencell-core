@@ -2,8 +2,13 @@ package org.meveo.api.dto.cpq;
 
 import org.meveo.model.cpq.tags.Tag;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
 public class TagDto {
 
+	@ApiModelProperty(required = true)
 	private String code;
     private String description;
     private Long id;
