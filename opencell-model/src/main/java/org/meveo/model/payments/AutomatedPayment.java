@@ -31,5 +31,4 @@ import javax.validation.constraints.Size;
 @DiscriminatorValue(value = "AP")
 public class AutomatedPayment extends Payment {
     private static final long serialVersionUID = 1L;
-
 }

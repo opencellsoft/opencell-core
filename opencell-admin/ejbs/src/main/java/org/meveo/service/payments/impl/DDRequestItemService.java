@@ -7,7 +7,9 @@ import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.DDRequestItem;
+import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -35,26 +37,18 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
      */
     public DDRequestItem createDDRequestItem(BigDecimal amountToPay, DDRequestLOT ddRequestLOT, String caFullName, String errorMsg, List<AccountOperation> listAO)
             throws BusinessException {
-        CustomerAccount ca = listAO.get(0).getCustomerAccount();
-        PaymentMethod pm = ca.getPreferredPaymentMethod();
-        if (pm == null || pm.getPaymentType() != PaymentMethodEnum.DIRECTDEBIT
-                || !(pm instanceof DDPaymentMethod)) {
-            throw new BusinessException("can' create DDR Item. CA preferred PM is null or it's not a DDPayment method");
-        }
-        DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) pm;
-
         DDRequestItem ddDequestItem = new DDRequestItem();
         ddDequestItem.setErrorMsg(errorMsg);
         ddDequestItem.setAmount(amountToPay);
         ddDequestItem.setDdRequestLOT(ddRequestLOT);
         ddDequestItem.setBillingAccountName(caFullName);
         ddDequestItem.setDueDate(listAO.get(0).getDueDate());
-        ddDequestItem.setPaymentInfo(ddPaymentMethod.getMandateIdentification());
-        ddDequestItem.setPaymentInfo1(ddPaymentMethod.getInfo1());
-        ddDequestItem.setPaymentInfo2(ddPaymentMethod.getInfo2());
-        ddDequestItem.setPaymentInfo3(ddPaymentMethod.getInfo3());
-        ddDequestItem.setPaymentInfo4(ddPaymentMethod.getInfo4());
-        ddDequestItem.setPaymentInfo5(ddPaymentMethod.getInfo5());
+        ddDequestItem.setPaymentInfo(listAO.get(0).getPaymentInfo());
+        ddDequestItem.setPaymentInfo1(listAO.get(0).getPaymentInfo1());
+        ddDequestItem.setPaymentInfo2(listAO.get(0).getPaymentInfo2());
+        ddDequestItem.setPaymentInfo3(listAO.get(0).getPaymentInfo3());
+        ddDequestItem.setPaymentInfo4(listAO.get(0).getPaymentInfo4());
+        ddDequestItem.setPaymentInfo5(listAO.get(0).getPaymentInfo5());
         ddDequestItem.setAccountOperations(listAO);
         if(listAO.size() == 1 && !StringUtils.isBlank(listAO.get(0).getReference())) {
             ddDequestItem.setReference(listAO.get(0).getReference());
