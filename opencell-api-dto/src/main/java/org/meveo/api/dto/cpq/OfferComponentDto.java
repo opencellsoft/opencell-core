@@ -21,8 +21,7 @@ public class OfferComponentDto extends BaseEntityDto {
     
      /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7824004884683019697L;  
-   
-    private String prodcutCode;
+    
     private String offerTemplateCode;
     
     /** The product dto. */
@@ -39,7 +38,9 @@ public class OfferComponentDto extends BaseEntityDto {
     }
     
     public OfferComponentDto(OfferComponent o) {  
-       this.prodcutCode = o.getProduct().getCode();
+    	 if (o.getProduct() != null) {
+    		 product = new ProductDto(o.getProduct());
+         }
        this.offerTemplateCode = o.getCommercialOffer().getCode();
        if(o.getTagsList() != null && !o.getTagsList().isEmpty()) {
     	   o.getTagsList().forEach(t -> {
@@ -48,19 +49,7 @@ public class OfferComponentDto extends BaseEntityDto {
        }
     }
 
-	/**
-	 * @return the prodcutCode
-	 */
-	public String getProdcutCode() {
-		return prodcutCode;
-	}
-
-	/**
-	 * @param prodcutCode the prodcutCode to set
-	 */
-	public void setProdcutCode(String prodcutCode) {
-		this.prodcutCode = prodcutCode;
-	}
+ 
 
 	/**
 	 * @return the offerTemplateCode
