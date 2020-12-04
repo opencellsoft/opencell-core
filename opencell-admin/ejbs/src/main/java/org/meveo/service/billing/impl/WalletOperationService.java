@@ -159,8 +159,23 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
+    /**
+     * Apply a one shot charge
+     * 
+     * @param subscription Subscription
+     * @param chargeInstance Charge instance to apply
+     * @param inputQuantity Quantity to apply
+     * @param quantityInChargeUnits Quantity to apply in charge units
+     * @param applicationDate Charge application date
+     * @param isVirtual Is it a virtual charge
+     * @param orderNumberOverride Order number to override
+     * @param chargeMode Charge mode
+     * @return Wallet operation
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
     public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
-            String orderNumberOverride) throws BusinessException, RatingException {
+            String orderNumberOverride, ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -174,7 +189,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             new Object[] { subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
-            ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
+            chargeMode, null, false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 

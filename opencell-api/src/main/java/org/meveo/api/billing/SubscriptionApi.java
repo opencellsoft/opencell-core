@@ -57,6 +57,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
@@ -1015,7 +1016,7 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService
                     .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true);
+                            postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
