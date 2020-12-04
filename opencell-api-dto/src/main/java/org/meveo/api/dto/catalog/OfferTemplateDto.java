@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.api.dto.cpq.OfferComponentDto;
+import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.commons.utils.StringUtils;
@@ -70,7 +70,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The offer component. */
     @XmlElementWrapper(name = "offerComponents")
     @XmlElement(name = "offerComponent")
-    private List<OfferComponentDto> offerComponents;
+    private List<OfferProductsDto> offerComponents;
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
@@ -433,14 +433,14 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	/**
 	 * @return the offerComponents
 	 */
-	public List<OfferComponentDto> getOfferComponents() {
+	public List<OfferProductsDto> getOfferComponents() {
 		return offerComponents;
 	}
 
 	/**
 	 * @param offerComponents the offerComponents to set
 	 */
-	public void setOfferComponents(List<OfferComponentDto> offerComponents) {
+	public void setOfferComponents(List<OfferProductsDto> offerComponents) {
 		this.offerComponents = offerComponents;
 	}
 
