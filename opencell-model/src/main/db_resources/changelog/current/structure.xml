@@ -3515,7 +3515,7 @@ END $$;]]>
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
         <addColumn tableName="billing_billing_run">
-            <column name="compute_dates_validation" type="${type.boolean}"/>
+            <column name="compute_dates_validation" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
 

@@ -471,17 +471,11 @@ public class BillingCycle extends BusinessCFEntity {
         this.collectionDateDelayEl = collectionDateDelayEl;
     }
 
-    /**
-     * @return
-     */
-    public boolean isComputeDatesAtValidation() {
+    public Boolean getComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
-    /**
-     * @param computeDatesAtValidation
-     */
-    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }

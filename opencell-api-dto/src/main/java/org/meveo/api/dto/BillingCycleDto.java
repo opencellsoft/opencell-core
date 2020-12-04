@@ -231,7 +231,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
-            computeDatesAtValidation = billingCycleEntity.isComputeDatesAtValidation();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
         }
     }
 

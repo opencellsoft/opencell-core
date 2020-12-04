@@ -2354,7 +2354,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine a date to use in calendar to calculate the next invoice date
-     * 
+     *
      * @param billingRun Billing run
      * @param billingAccount Billing account
      * @return Reference date
@@ -2429,13 +2429,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingCycle = billingRun.getBillingCycle();
         }
         billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
-        if (billingRun == null || !billingRun.getComputeDatesAtValidation()) {
+        if (billingRun == null) {
             return;
         }
-        if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.isComputeDatesAtValidation()) {
+        if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
             return;
         }
-        if (billingRun.getComputeDatesAtValidation() || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
+        if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        }
+        if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
@@ -2475,7 +2482,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Increment BA invoice date.
-     * 
+     *
      * @param billingRun Billing run
      * @param billingAccountId Billing account identifier
      * 
@@ -3468,7 +3475,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice production date delay for a given billing run
-     * 
+     *
      * @param el EL expression to resolve
      * @param billingRun Billing run
      * @return An integer value
@@ -3504,7 +3511,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return new Object[] { recalculatedTax, !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
-    
+
     /**
      * Create an invoice from an InvoiceDto
      *
@@ -3530,7 +3537,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param seller
      * @param billingAccount
      * @param invoiceType
-     * @param subscription 
+     * @param subscription
      * @return invoice
      * @throws EntityDoesNotExistsException
      * @throws BusinessApiException
@@ -4154,7 +4161,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice production date delay for a given billing run
-     * 
+     *
      * @param el EL expression to resolve
      * @param billingRun Billing run
      * @return An integer value
@@ -4165,7 +4172,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Resolve Invoice date delay for given parameters
-     * 
+     *
      * @param el EL expression to resolve
      * @param parameters A list of parameters
      * @return An integer value
