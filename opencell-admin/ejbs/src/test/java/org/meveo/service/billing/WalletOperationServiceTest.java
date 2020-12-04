@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -584,11 +585,11 @@ public class WalletOperationServiceTest {
 
         assertThat(wos.size()).isEqualTo(2);
 
-        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(67.85d); // 19/28 days
+        assertThat(wos.get(0).getQuantity().setScale(2, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(67.86d).setScale(2, RoundingMode.HALF_UP));// 19/28 days
         assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 10, 0, 0, 0));
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 10, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
-        assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2019, 2, 1, 0, 0, 0)));
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
         assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
