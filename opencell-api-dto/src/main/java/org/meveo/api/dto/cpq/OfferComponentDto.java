@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
@@ -20,9 +21,12 @@ public class OfferComponentDto extends BaseEntityDto {
     
      /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7824004884683019697L;  
-   
-    private String prodcutCode;
+    
     private String offerTemplateCode;
+    
+    /** The product dto. */
+    private ProductDto product;
+    
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private Set<TagDto> tagList = new HashSet<>();
@@ -34,7 +38,9 @@ public class OfferComponentDto extends BaseEntityDto {
     }
     
     public OfferComponentDto(OfferComponent o) {  
-       this.prodcutCode = o.getProduct().getCode();
+    	 if (o.getProduct() != null) {
+    		 product = new ProductDto(o.getProduct());
+         }
        this.offerTemplateCode = o.getCommercialOffer().getCode();
        if(o.getTagsList() != null && !o.getTagsList().isEmpty()) {
     	   o.getTagsList().forEach(t -> {
@@ -43,19 +49,7 @@ public class OfferComponentDto extends BaseEntityDto {
        }
     }
 
-	/**
-	 * @return the prodcutCode
-	 */
-	public String getProdcutCode() {
-		return prodcutCode;
-	}
-
-	/**
-	 * @param prodcutCode the prodcutCode to set
-	 */
-	public void setProdcutCode(String prodcutCode) {
-		this.prodcutCode = prodcutCode;
-	}
+ 
 
 	/**
 	 * @return the offerTemplateCode
@@ -84,7 +78,22 @@ public class OfferComponentDto extends BaseEntityDto {
 	public void setTagList(Set<TagDto> tagList) {
 		this.tagList = tagList;
 	}
+
+	/**
+	 * @return the product
+	 */
+	public ProductDto getProduct() {
+		return product;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProduct(ProductDto product) {
+		this.product = product;
+	}
    
+	
      
     
 }

@@ -28,10 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.OfferComponentDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * The Class OfferTemplateDto.
@@ -65,10 +67,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
     
-    /** The offer product. */
-    @XmlElementWrapper(name = "offerProducts")
-    @XmlElement(name = "offerProducts")
-    private List<ProductDto> offerProducts;
+    /** The offer component. */
+    @XmlElementWrapper(name = "offerComponents")
+    @XmlElement(name = "offerComponent")
+    private List<OfferComponentDto> offerComponents;
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
@@ -384,13 +386,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
-	public List<ProductDto> getOfferProducts() {
-		return offerProducts;
-	}
 
-	public void setOfferProducts(List<ProductDto> offerProducts) {
-		this.offerProducts = offerProducts;
-	}
 
 	/**
 	 * @return the tags
@@ -433,7 +429,25 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	public void setServices(List<ServiceTemplateDto> services) {
 		this.services = services;
 	}
+
+	/**
+	 * @return the offerComponents
+	 */
+	public List<OfferComponentDto> getOfferComponents() {
+		return offerComponents;
+	}
+
+	/**
+	 * @param offerComponents the offerComponents to set
+	 */
+	public void setOfferComponents(List<OfferComponentDto> offerComponents) {
+		this.offerComponents = offerComponents;
+	}
+
+ 
     
+	
+	
 	
     
 }
