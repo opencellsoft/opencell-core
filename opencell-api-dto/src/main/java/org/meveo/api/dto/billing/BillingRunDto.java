@@ -716,7 +716,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setLanguageCode(billingRunEntity.getLanguage() == null ? null : billingRunEntity.getLanguage().getLanguageCode());
         setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
         setCollectionDate(billingRunEntity.getCollectionDate());
-        setComputeDatesAtValidation(billingRunEntity.isComputeDatesAtValidation() == null ? null : billingRunEntity.isComputeDatesAtValidation());
+        setComputeDatesAtValidation(billingRunEntity.getComputeDatesAtValidation() == null ? null : billingRunEntity.getComputeDatesAtValidation());
     }
 
     @Override
