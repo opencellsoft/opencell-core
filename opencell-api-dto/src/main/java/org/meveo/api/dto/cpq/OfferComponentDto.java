@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,6 +23,7 @@ public class OfferComponentDto extends BaseEntityDto {
     private static final long serialVersionUID = -7824004884683019697L;  
    
     private String prodcutCode;
+    @NotNull
     private String offerTemplateCode;
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")

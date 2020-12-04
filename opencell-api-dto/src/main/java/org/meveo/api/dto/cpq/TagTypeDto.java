@@ -1,10 +1,12 @@
 package org.meveo.api.dto.cpq;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.model.cpq.tags.TagType;
 
 public class TagTypeDto {
 
-    private Long id;
+	@NotNull
 	private String code;
     private String description;
 	private String sellerCode;
@@ -18,7 +20,6 @@ public class TagTypeDto {
 			this.code = tagType.getCode();
 			this.description = tagType.getDescription();
 			this.sellerCode = tagType.getSeller() != null ? tagType.getSeller().getCode() : null;
-			this.id = tagType.getId(); 
 		}
 	}
 
@@ -48,20 +49,6 @@ public class TagTypeDto {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	/**

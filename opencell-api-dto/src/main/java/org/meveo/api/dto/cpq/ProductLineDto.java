@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,7 +23,7 @@ public class ProductLineDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -7359760632077227886L;
-	private Long id;
+    @NotNull
 	private String code;
 	private String label;
 	private String sellerCode;
@@ -41,7 +42,6 @@ public class ProductLineDto extends BaseEntityDto{
 	
 	public ProductLineDto(ProductLine p) {
 		if(p!=null) {
-			this.id = p.getId();
 			this.code = p.getCode();
 			this.label = p.getDescription();
 			this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
@@ -140,18 +140,6 @@ public class ProductLineDto extends BaseEntityDto{
 		return Objects.equals(code, other.code) && Objects.equals(sellerCode, other.sellerCode)
 				&& Objects.equals(parentLineCode, other.parentLineCode) && Objects.equals(label, other.label)
 				&& Objects.equals(longDescription, other.longDescription);
-	}
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
 	}
 	
 	

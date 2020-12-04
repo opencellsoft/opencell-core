@@ -3,6 +3,7 @@ package org.meveo.api.dto.cpq;
 import java.util.Date;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,7 +23,7 @@ public class ProductDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
-	private Long id;
+    @NotNull
 	private String code;
 	private String label;
 	private ProductStatusEnum status;
@@ -32,7 +33,9 @@ public class ProductDto extends BaseEntityDto{
 	private String reference;
 	private String model;
 	private Set<String> modelChildren;
+    @NotNull
 	private boolean discountFlag;
+    @NotNull
     private boolean packageFlag;
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -42,7 +45,6 @@ public class ProductDto extends BaseEntityDto{
     public ProductDto() {}
     
     public ProductDto(Product p) {
-    	this.id = p.getId();
     	this.code = p.getCode();
     	this.label = p.getDescription();
     	this.status = p.getStatus();
@@ -84,19 +86,6 @@ public class ProductDto extends BaseEntityDto{
 		this.statusDate = statusDate;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the code

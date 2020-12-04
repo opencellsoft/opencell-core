@@ -26,9 +26,12 @@ public class QuoteVersionDto extends BaseEntityDto {
     @XmlElement(required = true)
     private String quoteCode;
     /** The currentVersion. */
+    @NotNull
     private int currentVersion;
+    @NotNull
     /** The status. */
     private VersionStatusEnum status;
+    @NotNull
     /** The statusDate. */
     private Date statusDate;
     /** The longDescription */

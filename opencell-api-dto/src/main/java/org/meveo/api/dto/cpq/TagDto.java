@@ -1,19 +1,19 @@
 package org.meveo.api.dto.cpq;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.model.cpq.tags.Tag;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel
 public class TagDto {
 
-	@ApiModelProperty(required = true)
+	@NotNull
 	private String code;
     private String description;
     private Long id;
 	private String sellerCode;
+    @NotNull
 	private String name;
+	@NotNull
 	private String tagTypeCode;
 	private String parentTagCode;
 	private String filterEl;

@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,6 +49,7 @@ public class BusinessEntityDto extends AuditableEntityDto implements IEntityDto 
      */
     // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
     @XmlAttribute(required = true)
+    @NotNull
     protected String code;
 
     /**
