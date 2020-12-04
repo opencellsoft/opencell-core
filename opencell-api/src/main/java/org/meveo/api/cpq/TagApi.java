@@ -86,20 +86,18 @@ public class TagApi extends BaseApi {
 	public TagDto update(TagDto tagDto) {
 
 		checkParams(tagDto);
-		final Tag tag = tagService.findByCode(tagDto.getCode());
-		if(tag == null || tag.getId() == null) {
-			throw new BusinessApiException("Tag unknown from code " + tagDto.getCode());
+		final Tag tag = tagService.findByCode(tagDto.getCode()); 
+		if (tag == null) {
+			throw new EntityDoesNotExistsException(Tag.class, tagDto.getCode());
 		}
-
+		
 		if(!StringUtils.isBlank(tagDto.getTagTypeCode())) {
 			TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
 			if(tagType == null) {
 				throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 			}
 			tag.setTagType(tagType);
-		}else {
-			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
-		}
+		} 
 		
 		if(!StringUtils.isBlank(tagDto.getSellerCode())) {
 			Seller seller = sellerService.findByCode(tagDto.getSellerCode());
@@ -107,7 +105,6 @@ public class TagApi extends BaseApi {
 				tag.setSeller(seller);
 			}
 		}
-		
 		tag.setDescription(tagDto.getDescription());		
 		tag.setName(tagDto.getName());
 		tag.setParentTag(tagService.findByCode(tagDto.getParentTagCode()));
@@ -125,15 +122,15 @@ public class TagApi extends BaseApi {
 	public void removeTag(String codeTag) {
 		final Tag tag = tagService.findByCode(codeTag);
 		if(tag == null) {
-			throw new BusinessApiException("Missing Tag with code : " + codeTag);
+			throw new EntityDoesNotExistsException(Tag.class, codeTag);
 		}
 		try {
-			
+			tagService.remove(tag);
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 			throw new BusinessApiException("This tag can not be deleted");
 		}
-		tagService.remove(tag);
+		
 	}
 	
 	/**
@@ -152,17 +149,7 @@ public class TagApi extends BaseApi {
 		}
 		return new TagDto(tag);
 	}
-	
-	/**
-	 * retrieve tag from id
-	 * @param id
-	 * @return
-	 */
-	public TagDto findTagById(Long id) {
-		final Tag tag = tagService.findById(id);
-		if(tag == null) return null;
-		return new TagDto(tag);
-	}
+	 
 	
 	
 	/**
@@ -196,7 +183,7 @@ public class TagApi extends BaseApi {
 		final TagType tagType = new TagType();
 		
 		tagType.setCode(tagTypeDto.getCode());
-		tagType.setDescription(tagType.getDescription());
+		tagType.setDescription(tagTypeDto.getDescription());
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getSellerCode()));
 		
 		tagTypeService.create(tagType);
@@ -216,7 +203,7 @@ public class TagApi extends BaseApi {
 				throw new EntityDoesNotExistsException(TagType.class, tagTypeDto.getCode());
 			}
 			tagType.setDescription(tagTypeDto.getDescription());
-			tagType.setSeller(sellerService.findByCode(tagTypeDto.getCode()));
+			tagType.setSeller(sellerService.findByCode(tagTypeDto.getSellerCode()));
 			tagTypeService.update(tagType);
 		} catch (MeveoApiException e) {
 			throw new MeveoApiException(e);
@@ -242,7 +229,11 @@ public class TagApi extends BaseApi {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		return new TagTypeDto(tagTypeService.findByCode(code));
+		TagType tagType =tagTypeService.findByCode(code);
+		if (tagType == null) {
+			throw new EntityDoesNotExistsException(TagType.class, code);
+		}
+		return new TagTypeDto(tagType);
 	}
 	
 	

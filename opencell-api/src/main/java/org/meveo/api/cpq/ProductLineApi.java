@@ -8,13 +8,11 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.cpq.ProductLineService;
@@ -77,7 +75,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 	        } 
 		ProductLine productLine = new ProductLine();
 		productLine.setCode(dto.getCode());
-		productLine.setDescription(dto.getLabel());
+		productLine.setDescription(dto.getDescription());
 		productLine.setLongDescription(dto.getLongDescription());
 		updateProductLineParent(productLine,dto.getParentLineCode());
 		
@@ -101,7 +99,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 			throw new MeveoApiException(dto.getCode());
 		
 		productLine.setLongDescription(dto.getLongDescription());
-		productLine.setDescription(dto.getLabel());
+		productLine.setDescription(dto.getDescription());
 		updateProductLineParent(productLine,dto.getParentLineCode());
 		
 		if(StringUtils.isBlank(dto.getSellerCode())) {
@@ -116,7 +114,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 	            if (isNotBlank(prodLineParentCode)) {
 	                ProductLine parentProductLine =productLineService.findByCode(prodLineParentCode);
 	                if (parentProductLine == null) {
-	                    throw new EntityDoesNotExistsException(Seller.class, prodLineParentCode);
+	                    throw new EntityDoesNotExistsException(ProductLine.class, prodLineParentCode);
 	                }
 
 	                productLine.setParentLine(parentProductLine);
@@ -131,13 +129,21 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 		 * @param code
 		 * @return ProductLineDto
 		 */
-		public ProductLineDto findByCode(String code){
-			if(Strings.isEmpty(code)) {
-				missingParameters.add("code");
-			}
-			handleMissingParameters();
-			return new ProductLineDto(productLineService.findByCode(code));
-		}
+	 public ProductLineDto findByCode(String code){
+		 if(Strings.isEmpty(code)) {
+			 missingParameters.add("code");
+		 }
+		 handleMissingParameters();
+		 ProductLine prodcutLine=productLineService.findByCode(code);
+
+		 if (prodcutLine == null) {
+			 throw new EntityDoesNotExistsException(ProductLine.class, code);
+		 }
+		 ProductLineDto productLineDto= new ProductLineDto(prodcutLine);
+		 return productLineDto;
+	 }
+		
+		
  
 
 }

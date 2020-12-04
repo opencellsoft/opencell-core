@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.ProductLine;
 
 /**
@@ -16,24 +16,21 @@ import org.meveo.model.cpq.ProductLine;
  */
 @XmlRootElement(name = "ProductLineDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductLineDto extends BaseEntityDto{
+public class ProductLineDto extends BusinessEntityDto{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7359760632077227886L;
-	private Long id;
-	private String code;
-	private String label;
+	private static final long serialVersionUID = -7359760632077227886L;  
 	private String sellerCode;
 	private String longDescription;
 	private String parentLineCode;
 	
 	
-	public ProductLineDto(String codeProductLine, String label, String sellerCode, String longDescription,
+	public ProductLineDto(String codeProductLine, String description, String sellerCode, String longDescription,
 			String parentLineCode) {
 		this.code = codeProductLine;
-		this.label = label;
+		this.description = description;
 		this.sellerCode = sellerCode;
 		this.longDescription = longDescription;
 		this.parentLineCode = parentLineCode;
@@ -43,7 +40,7 @@ public class ProductLineDto extends BaseEntityDto{
 		if(p!=null) {
 			this.id = p.getId();
 			this.code = p.getCode();
-			this.label = p.getDescription();
+			this.description = p.getDescription();
 			this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
 			this.longDescription = p.getLongDescription();
 			this.parentLineCode = p.getParentLine() != null ? p.getParentLine().getCode() : null;
@@ -69,18 +66,7 @@ public class ProductLineDto extends BaseEntityDto{
 		this.code = code;
 	}
 
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
-	/**
-	 * @param label the label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
+	 
 
 	/**
 	 * @return the sellerCode
@@ -126,7 +112,7 @@ public class ProductLineDto extends BaseEntityDto{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(code, sellerCode, parentLineCode, label, longDescription);
+		return Objects.hash(code, sellerCode, parentLineCode, description, longDescription);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -138,21 +124,19 @@ public class ProductLineDto extends BaseEntityDto{
 			return false;
 		ProductLineDto other = (ProductLineDto) obj;
 		return Objects.equals(code, other.code) && Objects.equals(sellerCode, other.sellerCode)
-				&& Objects.equals(parentLineCode, other.parentLineCode) && Objects.equals(label, other.label)
+				&& Objects.equals(parentLineCode, other.parentLineCode) && Objects.equals(description, other.description)
 				&& Objects.equals(longDescription, other.longDescription);
 	}
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
+ 
+
+	@Override
+	public String toString() {
+		return "ProductLineDto [code=" + code + ", label=" + description + ", sellerCode=" + sellerCode + ", longDescription="
+				+ longDescription + ", parentLineCode=" + parentLineCode + "]";
 	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+	
+	
+	
 	
 	
 }
