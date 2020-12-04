@@ -401,15 +401,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "prepaid", nullable = false)
     @NotNull
     protected boolean prepaid;
-    
+
     /**
      * External reference
      */
     @Column(name = "external_ref", length = 255)
     @Size(max = 255)
     private String externalRef;
-    
-    
+
+    /**
+     * Invoice payment collection date.
+     */
+    @Column(name = "initial_collection_date")
+    private Date intialCollectionDate;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -1078,13 +1082,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.prepaid = prepaid;
     }
 
-	public String getExternalRef() {
-		return externalRef;
-	}
+    public String getExternalRef() {
+        return externalRef;
+    }
 
-	public void setExternalRef(String externalRef) {
-		this.externalRef = externalRef;
-	}
-    
-    
+    public void setExternalRef(String externalRef) {
+        this.externalRef = externalRef;
+    }
+
+    /**
+     * Gets the invoice payment collection date
+     *
+     * @return Invoice payment collection date
+     */
+    public Date getIntialCollectionDate() {
+        return intialCollectionDate;
+    }
+
+    /**
+     * Sets Invoice payment collection date
+     *
+     * @param intialCollectionDate
+     */
+    public void setIntialCollectionDate(Date intialCollectionDate) {
+        this.intialCollectionDate = intialCollectionDate;
+    }
 }

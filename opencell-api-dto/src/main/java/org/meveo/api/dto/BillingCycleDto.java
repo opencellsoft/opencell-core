@@ -177,6 +177,17 @@ public class BillingCycleDto extends BusinessEntityDto {
     private ThresholdOptionsEnum checkThreshold;
 
     /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @XmlElement
+    private String collectionDateDelayEl;
+
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    private boolean computeDatesAtValidation;
+
+    /**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -219,6 +230,8 @@ public class BillingCycleDto extends BusinessEntityDto {
             splitPerPaymentMethod = billingCycleEntity.isSplitPerPaymentMethod();
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
+            collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
         }
     }
 
@@ -598,5 +611,41 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setSplitPerPaymentMethod(Boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @return
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+
+    /**
+     * Check if invoice dates can be recalcukated
+     *
+     * @return
+     */
+    public boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * Sets computeDatesAtValidation
+     *
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }

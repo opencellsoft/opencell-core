@@ -190,6 +190,20 @@ public class BillingCycle extends BusinessCFEntity {
     private boolean splitPerPaymentMethod;
 
     /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String collectionDateDelayEl;
+
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    @Column(name = "compute_dates_validation")
+    @Type(type = "numeric_boolean")
+    private boolean computeDatesAtValidation = false;
+
+    /**
      * @return Invoicing calendar
      */
     public Calendar getCalendar() {
@@ -405,7 +419,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Gets the threshold option.
-     * 
+     *
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -414,7 +428,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Sets the threshold option.
-     * 
+     *
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
@@ -437,5 +451,31 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setSplitPerPaymentMethod(boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+
+    public Boolean getComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }
