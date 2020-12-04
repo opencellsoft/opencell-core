@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -222,9 +221,6 @@ public class QuoteApi extends BaseApi {
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
         quote.setGeneratePdf(productQuote.isGeneratePdf());
         quote.setVirtual(productQuote.isVirtual());
-        quote.setPrestationDateBegin(productQuote.getCustomerServiceDateBegin());
-        quote.setPrestationDuration(productQuote.getCustomerServiceDuration());
-        quote.setOpportunityRef(productQuote.getOpportunityRef());
         if (productQuote.getValidFor() != null) {
             quote.setValidity(productQuote.getValidFor().toDatePeriod());
         }
@@ -985,9 +981,6 @@ public class QuoteApi extends BaseApi {
         productQuote.setState(quote.getStatus().getApiState());
         productQuote.setVirtual(quote.isVirtual());
         productQuote.setGeneratePdf(quote.isGeneratePdf());
-        productQuote.setCustomerServiceDateBegin(quote.getPrestationDateBegin());
-        productQuote.setCustomerServiceDuration(quote.getPrestationDuration());
-        productQuote.setOpportunityRef(quote.getOpportunityRef());
         List<ProductQuoteItem> productQuoteItems = new ArrayList<>();
         productQuote.setQuoteItem(productQuoteItems);
 
@@ -1235,7 +1228,7 @@ public class QuoteApi extends BaseApi {
 			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
 			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-			quoteVersion.setQuote(quote);
+			//TODO : change with CpqQuote quoteVersion.setQuote(quote);
 			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 			
 			quoteVersionService.createQuoteVersion(quoteVersion);
@@ -1254,7 +1247,7 @@ public class QuoteApi extends BaseApi {
 		if(quote == null) {
 			throw new EntityDoesNotExistsException(Quote.class, quoteVersionDto.getQuoteCode());
 		}
-		quoteVersion.setQuote(quote);
+		//TODO : change with CpqQuote quoteVersion.setQuote(quote);
 		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 		quoteVersion.setBillingPlanCode(null); // TODO : add association with belling plan code

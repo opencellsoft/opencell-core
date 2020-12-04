@@ -24,13 +24,10 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.meveo.api.billing.QuoteApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.billing.CpqQuoteApi;
+import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
-import org.meveo.api.dto.cpq.QuoteItemDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -40,17 +37,8 @@ import org.meveo.api.rest.impl.BaseRs;
 public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
     @Inject
-    private QuoteApi quoteApi;
+    private CpqQuoteApi cpqQuoteApi;
 
-    
-	/*private Response errorResponse(MeveoApiException e, ActionStatus result) {
-		if(result==null) {
-			result = new ActionStatus();
-		}
-		result.setStatus(ActionStatusEnum.FAIL);
-		result.setMessage(e.getMessage());
-		 return createResponseFromMeveoApiException(e, result).build();
-	}*/
 
 
 	@Override
@@ -82,7 +70,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response updateQuoteItem(String code, QuoteItemDTO quoteitem, UriInfo info) {
+	public Response updateQuoteItem(String code, QuoteAttributeDTO quoteitem, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -103,7 +91,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response createQuoteItem(QuoteItemDTO quoteItem, UriInfo info) {
+	public Response createQuoteItem(QuoteAttributeDTO quoteItem, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}

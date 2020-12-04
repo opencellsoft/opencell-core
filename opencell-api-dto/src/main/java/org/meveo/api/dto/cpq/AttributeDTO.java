@@ -18,16 +18,15 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.enums.ServiceTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
  * The Class ServiceDto.
@@ -35,7 +34,7 @@ import org.meveo.model.cpq.enums.ServiceTypeEnum;
  * @author Rachid.AIT
  * @lastModifiedVersion 11.00
  */
-@XmlRootElement(name = "ServiceDTO")
+@XmlRootElement(name = "AttributeDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AttributeDTO extends EnableBusinessDto {
 
@@ -47,25 +46,35 @@ public class AttributeDTO extends EnableBusinessDto {
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private String groupedServiceCode;
+    private String groupedAttributeCode;
     
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private ServiceTypeEnum serviceType;
+    private AttributeTypeEnum attributeType;
     
     /**
      * Corresponding to predefined allowed values
      */
-    private List<Object> values;
-    
+    private Set<String> allowedValues;
+	  /**
+     * Display
+     */
+    protected boolean display;
+    /**
+     * attribute order in the GUI
+     */
+    protected Integer sequence;
     
     /**
-     * Corresponding to the value validator (regex expression)
+     * The lower number, the higher the priority is
      */
-    private String valueValidator;
+    private Integer priority ;
+    /**
+     * Mandatory
+     */
+    protected boolean mandatory=Boolean.FALSE;
 
-    
     
     /**
      * Instantiates a new service template dto.
@@ -82,40 +91,124 @@ public class AttributeDTO extends EnableBusinessDto {
      */
     public AttributeDTO(Attribute attribute) {
         super(attribute);
+        mandatory=attribute.isMandatory();
+        sequence=attribute.getSequence();
+        priority=attribute.getPriority();
+        allowedValues=attribute.getAllowedValues();
+        attributeType=attribute.getAttributeType();
+        groupedAttributeCode=attribute.getGroupedAttributes()!=null?attribute.getGroupedAttributes().getCode():null;
+        display=attribute.isDisplay();
     }
 
  
 
-	public String getGroupedServiceCode() {
-		return groupedServiceCode;
+	public String getGroupedAttributeCode() {
+		return groupedAttributeCode;
 	}
 
-	public void setGroupedServiceCode(String groupedServiceCode) {
-		this.groupedServiceCode = groupedServiceCode;
+	public void setGroupedAttributeCode(String groupedAttributeCode) {
+		this.groupedAttributeCode = groupedAttributeCode;
 	}
 
-	public ServiceTypeEnum getServiceType() {
-		return serviceType;
+	public AttributeTypeEnum getAttributeType() {
+		return attributeType;
 	}
 
-	public void setServiceType(ServiceTypeEnum serviceType) {
-		this.serviceType = serviceType;
+	public void setAttributeType(AttributeTypeEnum serviceType) {
+		this.attributeType = serviceType;
 	}
 
-	public List<Object> getValues() {
-		return values;
+
+
+	/**
+	 * @return the allowedValues
+	 */
+	public Set<String> getAllowedValues() {
+		return allowedValues;
 	}
 
-	public void setValues(List<Object> values) {
-		this.values = values;
+
+
+	/**
+	 * @param allowedValues the allowedValues to set
+	 */
+	public void setAllowedValues(Set<String> allowedValues) {
+		this.allowedValues = allowedValues;
 	}
 
-	public String getValueValidator() {
-		return valueValidator;
+
+
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
 	}
 
-	public void setValueValidator(String valueValidator) {
-		this.valueValidator = valueValidator;
+
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
 	}
+
+
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+
+
+	/**
+	 * @return the priority
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+
+
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
+
+
+	/**
+	 * @return the mandatory
+	 */
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+
+
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+
+
     
 }

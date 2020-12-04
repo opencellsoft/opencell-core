@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -23,35 +24,36 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	
 	@Override
 	public Response createTag(TagDto tagDto) {
+      
+        GetTagDtoResponse result = new GetTagDtoResponse();
         try {
-            Long id = tagApi.create(tagDto);
-            return Response.ok(Collections.singletonMap("id", id)).build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e);
+        	tagApi.create(tagDto);
+        	return Response.ok(result).build();
+        } catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
         }
 	}
 
 	@Override
 	public Response updateTag(TagDto tagDto) {
-        try {
-            tagApi.update(tagDto);
-            return Response.ok().build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e);
-        }
+	     GetTagDtoResponse result = new GetTagDtoResponse();
+	        try {
+	        	tagApi.update(tagDto);
+	        	return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
 	}
 
 	@Override
 	public Response deleteTag(String codeTag) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-	    Response.ResponseBuilder responseBuilder = null;
-	    try {
-	        tagApi.removeTag(codeTag);
-	        responseBuilder = Response.ok(result);
-	        return responseBuilder.build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e, result);
-	    }
+	     GetTagDtoResponse result = new GetTagDtoResponse();
+	        try {
+	        	tagApi.removeTag(codeTag);
+	        	return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
 	}
 
 
@@ -68,22 +70,24 @@ public class TagRsImpl extends BaseRs implements TagRs {
 
 	@Override
 	public Response createTagType(TagTypeDto tagTypeDto) {
-	    try {
-	        Long id = tagApi.create(tagTypeDto);
-	        return Response.ok(Collections.singletonMap("id", id)).build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e);
-	    }
+		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
+	        try {
+	        	tagApi.create(tagTypeDto);
+	        	return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
 	}
 
 	@Override
 	public Response updateTagType(TagTypeDto tagTypeDto) {
-	    try {
-	    	tagApi.update(tagTypeDto);
-	        return Response.ok().build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e);
-	    }
+		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
+	        try {
+	        	tagApi.update(tagTypeDto);
+	        	return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
 	}
 
 	@Override
@@ -99,12 +103,12 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	
 	@Override
 	public Response deleteTagType(String codeTag) {
-		ActionStatus result = new ActionStatus();
-	    try {
-	        tagApi.deleteTagType(codeTag);
-	        return Response.ok(result).build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e, result);
-	    }
+		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
+	        try {
+	        	tagApi.deleteTagType(codeTag);
+	        	return Response.ok(result).build();
+	        } catch(MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
 	}
 }

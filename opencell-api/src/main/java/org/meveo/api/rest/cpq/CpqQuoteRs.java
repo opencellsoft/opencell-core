@@ -34,10 +34,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
-import org.meveo.api.dto.cpq.OfferContextListDTO;
+import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
-import org.meveo.api.dto.cpq.QuoteItemDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.response.cpq.GetListQuotesDtoResponse;
+import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 
@@ -71,7 +72,7 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "The quote is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+            @ApiResponse(responseCode="200", description = "The quote is succeffully created",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
     })
     public Response createQuote(@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
 
@@ -88,7 +89,7 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = QuoteDTO.class)))
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
     })
     public Response getQuote(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String code, @Context UriInfo info);
 
@@ -104,7 +105,7 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "quotes are succeffully retrieved",content = @Content(schema = @Schema(implementation = QuoteDTO.class)))
+            @ApiResponse(responseCode="200", description = "quotes are succeffully retrieved",content = @Content(schema = @Schema(implementation = GetListQuotesDtoResponse.class)))
     })
     public Response findQuotes(@Context UriInfo info);
 
@@ -145,7 +146,7 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
     public Response updateQuoteItem(@Parameter(description = "Product quote code", required = false) @PathParam("quoteItemCode") String code,
-    		@Parameter(description = "Product quote information", required = false) QuoteItemDTO quoteitem, @Context UriInfo info);
+    		@Parameter(description = "Product quote information", required = false) QuoteAttributeDTO quoteitem, @Context UriInfo info);
 
     /**
      * Delete a quote.
@@ -196,7 +197,7 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote item is succeffully created",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response createQuoteItem(@Parameter(description = "Product quote item information", required = false) QuoteItemDTO quoteItem, @Context UriInfo info);
+    public Response createQuoteItem(@Parameter(description = "Product quote item information", required = false) QuoteAttributeDTO quoteItem, @Context UriInfo info);
 
     
     @POST

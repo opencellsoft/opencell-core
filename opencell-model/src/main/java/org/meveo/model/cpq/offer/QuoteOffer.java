@@ -25,7 +25,7 @@ import org.meveo.model.quote.QuoteVersion;
 @Table(name="quote_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
-public class OfferQuote extends AuditableEntity {
+public class QuoteOffer extends AuditableEntity {
 
 
 	/**

@@ -16,74 +16,69 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.response.cpq;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.meveo.api.dto.cpq;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.response.SearchResponse;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
- * The Class GetListProductsResponseDto.
+ * DTO to create or update a quote
  * 
  * @author Rachid.AIT
+ * @lastModiedVersion 11.0 
  */
-@XmlRootElement(name = "GetListProductsResponseDto")
+@XmlRootElement(name = "QuoteAttributeDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetListProductsResponseDto extends SearchResponse {
+public class QuoteAttributeDTO extends BaseEntityDto{
 
     /**
 	 * 
-	 *
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 4603307996134173567L;
-   
-
-    /** products list. */
-    @XmlElementWrapper(name = "products")
-    @XmlElement(name = "products")
-    private List<ProductDto> products  = new ArrayList<>();;
-
-    /**
-     * Instantiates a new gets the list offer template response dto.
-     */
-    public GetListProductsResponseDto() {
-
-    }
-
-
-    /**
-     * Get products
-     * @return products
-     */
-    public List<ProductDto> getProducts() {
-		return products;
-	}
-
-
-	/**
-	 * @param products
 	 */
-	public void setProducts(List<ProductDto> products) {
-		this.products = products;
+	private static final long serialVersionUID = 8115890992793236496L;
+	
+	private Long quoteItemId;
+    
+    private AttributeDTO attributeDTO;
+    
+    
+	/**
+	 * @return the quoteItemId
+	 */
+	public Long getQuoteItemId() {
+		return quoteItemId;
 	}
-
 
 	/**
-     * Adds the offer template.
-     *
-     * @param product the offer template
-     */
-	public void addProduct(ProductDto product) { 
-		if(!products.contains(product)) {
-			products.add(product);
-		}
+	 * @param quoteItemId the quoteItemId to set
+	 */
+	public void setQuoteItemId(Long quoteItemId) {
+		this.quoteItemId = quoteItemId;
 	}
+
+	/**
+	 * @return the attributeDTO
+	 */
+	public AttributeDTO getAttributeDTO() {
+		return attributeDTO;
+	}
+
+	/**
+	 * @param attributeDTO the attributeDTO to set
+	 */
+	public void setAttributeDTO(AttributeDTO attributeDTO) {
+		this.attributeDTO = attributeDTO;
+	}
+
+
+
+
+	
+    
+    
+	
+    
+   
 }

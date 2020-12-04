@@ -23,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.cpq.enums.ServiceTypeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -79,12 +79,15 @@ public class Attribute extends EnableBusinessCFEntity{
     
     
 
+    /**
+     * attribute order in the GUI
+     */
     @Column(name = "sequence")
     protected Integer sequence;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "service_type")
-    protected ServiceTypeEnum serviceType;
+    @Column(name = "attribute_type")
+    protected AttributeTypeEnum attributeType;
 
 	  /**
      * Display
@@ -185,15 +188,15 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the serviceType
 	 */
-	public ServiceTypeEnum getServiceType() {
-		return serviceType;
+	public AttributeTypeEnum getAttributeType() {
+		return attributeType;
 	}
 
 	/**
-	 * @param serviceType the serviceType to set
+	 * @param attributeType the serviceType to set
 	 */
-	public void setServiceType(ServiceTypeEnum serviceType) {
-		this.serviceType = serviceType;
+	public void setAttributeType(AttributeTypeEnum attributeType) {
+		this.attributeType = attributeType;
 	}
     
     
