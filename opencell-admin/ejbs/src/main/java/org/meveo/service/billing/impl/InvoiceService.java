@@ -95,6 +95,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -289,7 +290,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @XMLGenerated
     private Event<Invoice> xmlGeneratedEventProducer;
-    
+
     @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
@@ -2461,11 +2462,57 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Re-computed invoice date, due date and collection date when the invoice is validated.
+     *
+     * @param invoice
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void recalculateDates(Long invoiceId) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(invoice.getBillingAccount());
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
+        BillingRun billingRun = billingRunService.refreshOrRetrieve(invoice.getBillingRun());
+        if (billingRun != null) {
+            billingCycle = billingRun.getBillingCycle();
+        }
+        billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
+        if (billingRun == null) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        }
+        if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        }
+    }
+
+    private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
+
+        int delay =
+                billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
+        invoiceDate = DateUtils.setTimeToZero(invoiceDate);
+        invoice.setInvoiceDate(invoiceDate);
+        setInvoiceDueDate(invoice, billingCycle);
+        setInitialCollectionDate(invoice, billingCycle, billingRun);
+
+    }
+
+    /**
      * Increment BA invoice date.
-     * 
+     *
      * @param billingRun
      * @param billingAccount Billing account
-     *
      * @throws BusinessException business exception
      */
     private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
