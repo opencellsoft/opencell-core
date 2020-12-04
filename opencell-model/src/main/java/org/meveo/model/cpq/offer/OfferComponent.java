@@ -117,7 +117,23 @@ public class OfferComponent extends BaseEntity {
 	public void setTagsList(Set<Tag> tagsList) {
 		this.tagsList = tagsList;
 	}
+	
+	
 
+
+	/**
+	 * @return the offerTemplate
+	 */
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	/**
+	 * @param offerTemplate the offerTemplate to set
+	 */
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
 
 	@Override
 	public int hashCode() {

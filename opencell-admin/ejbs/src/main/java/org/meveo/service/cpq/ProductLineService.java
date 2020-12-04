@@ -37,7 +37,7 @@ public class ProductLineService extends
 			log.warn("this product line ({}) can not be delete, it attached to product", productLine.getCode());
 			throw new BusinessException(productLine.getCode());
 		}
-		this.remove(productLine);
+		super.remove(productLine);
 	}
  
 }
