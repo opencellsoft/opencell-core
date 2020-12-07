@@ -1,12 +1,14 @@
 package org.meveo.api.dto.cpq;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.tags.Tag;
 
-public class TagDto {
-
-	private String code;
-    private String description;
-    private Long id;
+public class TagDto extends BusinessEntityDto {
+ 
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; 
 	private String sellerCode;
 	private String name;
 	private String tagTypeCode;
@@ -18,7 +20,7 @@ public class TagDto {
 	public TagDto(Tag tag) {
 		if(tag != null) {
 			this.code = tag.getCode();
-			this.billingAccountCode = tag.getDescription();
+			this.description = tag.getDescription(); 
 			this.id = tag.getId();
 			this.name = tag.getName();
 			if(tag.getSeller() != null) {
@@ -37,30 +39,7 @@ public class TagDto {
 			
 		}
 	}
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+ 
 	/**
 	 * @return the id
 	 */
@@ -145,6 +124,15 @@ public class TagDto {
 	public void setBillingAccountCode(String billingAccountCode) {
 		this.billingAccountCode = billingAccountCode;
 	}
+	@Override
+	public String toString() {
+		return "TagDto [id=" + id + ", sellerCode=" + sellerCode + ", name=" + name + ", tagTypeCode=" + tagTypeCode
+				+ ", parentTagCode=" + parentTagCode + ", filterEl=" + filterEl + ", billingAccountCode="
+				+ billingAccountCode + ", code=" + code + ", description=" + description + ", updatedCode="
+				+ updatedCode + "]";
+	}
+	
+	
 	
 	
 	

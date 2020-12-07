@@ -28,7 +28,7 @@ import org.meveo.model.cpq.contract.Contract;
 @Entity
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_quote_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
 public class CpqQuote extends BusinessEntity {
 
 	/**

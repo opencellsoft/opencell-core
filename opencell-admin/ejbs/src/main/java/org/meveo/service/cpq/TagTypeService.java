@@ -5,10 +5,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.tags.TagType;
 import org.meveo.service.base.BusinessService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mbarek-Ay
@@ -20,24 +19,21 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TagTypeService extends BusinessService<TagType> {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TagTypeService.class);
-	private static final String TAG_TYPE_ATTACHED = "Impossible to remove a type of tag %s, it is attached to tag";
-	private static final String UNKNOWN_TAG_TYPE = "Unknown Tag type from code %s";
+	 
+	private static final String TAG_TYPE_ATTACHED = "Impossible to remove a type of tag %s, it is attached to tag"; 
 	
 	@Inject
 	private TagService tagService;
 	
-	public void removeTagType(String codeTagType) {
-		LOGGER.info("removing tag type {}", codeTagType);
+	public void removeTagType(String codeTagType) { 
 		boolean isTagTypeAttached;
 			TagType tag = this.findByCode(codeTagType);
 			if(tag == null) {
-				throw new EntityDoesNotExistsException(String.format(UNKNOWN_TAG_TYPE, codeTagType));
+				throw new EntityDoesNotExistsException(Tag.class, codeTagType);
 			}
 			isTagTypeAttached = this.tagService.isTagTypeExist(tag.getId());
 			if(isTagTypeAttached) {
-				LOGGER.warn("Impossible to remove  tag type {}, because it attached to a tag", codeTagType);
+				log.warn("Impossible to remove  tag type {}, because it attached to a tag", codeTagType);
 				throw new BusinessException(String.format(TAG_TYPE_ATTACHED, codeTagType));
 			}
 			this.remove(tag.getId());

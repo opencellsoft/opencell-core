@@ -4088,22 +4088,6 @@ END $$;]]>
 	        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_accounting_article_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
 	          
-			<addColumn tableName="ord_quote_item">
-	            <column name="quote_article_line_id" type="bigint">
-	            	<constraints nullable="false"/>
-	            </column>
-	        </addColumn>    
-	        <addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_quote_article_line_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-	         
-			<addColumn tableName="ord_quote_item">
-	            <column name="product_id" type="bigint" >
-	            	<constraints nullable="false"/>
-	            </column>
-	        </addColumn>    
-	        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_product_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-	            
 			<addColumn tableName="cat_service_template">
 	            <column name="sequence" type="INT4" />
 	            <column name="display" type="${type.boolean}" />
@@ -4114,11 +4098,6 @@ END $$;]]>
       
 	    
 	    <changeSet author="Mbarek-Ay" id="#51-20201123">    
-            
-           <dropColumn tableName="ord_quote_item">
-            <column name="offer_component_id"/>
-           </dropColumn>
-           
             <dropColumn tableName="cpq_quote_product">
             <column name="offer_component_id"/>
            </dropColumn>
@@ -4366,10 +4345,38 @@ END $$;]]>
 	    </changeSet>
 	    
       <changeSet id="current-str-fk-35" author="TarikFAKHOURI">
-	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="ord_quote_item" constraintName="fk_cpq_quote_item_quote_version_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
 	            
-	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="ord_quote_item" constraintName="fk_cpq_quote_item_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            
+        	<createSequence sequenceName="cpq_quote_attribute_seq" />
+        	
+	    	<createTable tableName="cpq_quote_attribute">
+	    	  <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_quote_attribute" />
+	            </column>
+	            <!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+            	<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+            	
+	            <column name="cpq_attribute_id" type="bigint" />
+	            <column name="cpq_quote_product_id" type="bigint" />
+            	<column name="value" type="varchar(255)" />
+	    	</createTable>
+	    	
+	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_product_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_product_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
      </changeSet>  
     <!-- end MediaPost -->
