@@ -2,6 +2,8 @@ package org.meveo.api.dto.cpq;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.contract.Contract;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @SuppressWarnings("serial")
 public class ContractDto extends BusinessEntityDto {
 
+    @NotNull
 	private String sellerCode;
 	private String billingAccountCode;
 	private String customerAccountCode;
@@ -23,12 +26,16 @@ public class ContractDto extends BusinessEntityDto {
 	private ProductStatusEnum status;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date statusDate;
+    @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date contractDate;
+    @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date beginDate;
+    @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date endDate;
+    @NotNull
 	private boolean renewal;
 	private int contractDuration;
     

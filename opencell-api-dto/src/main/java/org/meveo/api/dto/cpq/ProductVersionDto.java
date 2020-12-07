@@ -36,6 +36,8 @@ public class ProductVersionDto extends BaseEntityDto {
     @NotNull
     @XmlElement(required = true)
     private String productCode;
+    
+    @NotNull
     /** The currentVersion. */
     private int currentVersion;
     /** The status. */

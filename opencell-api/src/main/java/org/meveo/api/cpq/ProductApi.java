@@ -160,9 +160,6 @@ public class ProductApi extends BaseApi {
         String description = postData.getShortDescription();
         String productCode = postData.getProductCode();
         int currentVersion = postData.getCurrentVersion();
-        if (StringUtils.isBlank(description)) {
-            missingParameters.add("description");
-        }
         if (StringUtils.isBlank(productCode)) {
             missingParameters.add("productCode");
         }
@@ -362,7 +359,6 @@ public class ProductApi extends BaseApi {
     
     public Product populateProduct(ProductDto productDto) {
     	Product product=new Product();
-    	product.setId(productDto.getId());
     	product.setCode(productDto.getCode());
     	product.setDescription(productDto.getLabel());
 		if(productDto.getProductLineCode() != null) {

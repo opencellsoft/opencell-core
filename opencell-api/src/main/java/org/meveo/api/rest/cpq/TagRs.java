@@ -21,8 +21,13 @@ import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,7 +62,8 @@ public interface TagRs extends IBaseRs {
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
 	
-	Response createTag(@Parameter(description = "tag dto for a new insertion", required = true) TagDto tagDto);
+	Response createTag(	@Parameter( name = "tagDto",
+									description = "tag dto for a new insertion")TagDto tagDto);
 	
 	@PUT
 	@Path("/")

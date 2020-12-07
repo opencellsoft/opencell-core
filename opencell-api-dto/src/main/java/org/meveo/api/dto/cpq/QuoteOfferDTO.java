@@ -21,6 +21,7 @@ package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,11 +42,11 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
-	
-	private Long quoteOfferId;
-	
+
+    @NotNull
     private String quoteCode;
 
+    @NotNull
     private Integer quoteVersion;
 
     private String customerServiceCode;
@@ -56,19 +57,6 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
 
-	/**
-	 * @return the quoteOfferId
-	 */
-	public Long getQuoteOfferId() {
-		return quoteOfferId;
-	}
-
-	/**
-	 * @param quoteOfferId the quoteOfferId to set
-	 */
-	public void setQuoteOfferId(Long quoteOfferId) {
-		this.quoteOfferId = quoteOfferId;
-	}
 
 	/**
 	 * @return the quoteCode

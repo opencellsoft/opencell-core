@@ -20,6 +20,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -73,6 +74,7 @@ public class AttributeDTO extends EnableBusinessDto {
     /**
      * Mandatory
      */
+    @NotNull
     protected boolean mandatory=Boolean.FALSE;
 
     

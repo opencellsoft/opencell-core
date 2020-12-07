@@ -14,9 +14,6 @@
 	<artifactId>opencell-api</artifactId>
 	<name>Opencell API</name>
 	<properties>
-		<swagger.version>2.0.7</swagger.version>
-		<springfox.swagger.version>2.8.0</springfox.swagger.version>
-		<swagger.ui.version>2.8.0</swagger.ui.version>
 		<swagger.server.link>http://localhost:8080/opencell/api/rest</swagger.server.link>
 	</properties>
 	<dependencies>
@@ -170,28 +167,23 @@
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-jaxrs2</artifactId>
-			<version>${swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-core</artifactId>
-			<version>${swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
-			<version>${swagger.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>${springfox.swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${swagger.ui.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.jws</groupId>
