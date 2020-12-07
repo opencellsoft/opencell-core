@@ -155,7 +155,7 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = false) @PathParam("quoteItemCode") String code,
+    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = true) @PathParam("quoteItemCode") String code,
     		@Parameter(description = "Product quote information", required = false) QuoteAttributeDTO quoteitem, @Context UriInfo info);
 
     /**

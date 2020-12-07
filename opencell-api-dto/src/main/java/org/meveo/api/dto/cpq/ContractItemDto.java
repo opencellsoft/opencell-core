@@ -2,10 +2,10 @@ package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.contract.ContractItem;
-
-import com.google.gson.Gson;
 
 /**
  * @author Tarik FAKHOURI
@@ -14,9 +14,11 @@ import com.google.gson.Gson;
 @SuppressWarnings("serial")
 public class ContractItemDto extends BusinessEntityDto {
 
+    @NotNull
 	private String contractCode;
 	private String offerTemplateCode;
 	private String productCode;
+    @NotNull
 	private String pricePlanCode;
 	private String chargeTemplateCode;
 	private String serviceTemplateCode;
@@ -40,6 +42,7 @@ public class ContractItemDto extends BusinessEntityDto {
     		this.serviceTemplateCode = c.getServiceTemplate().getCode();
     	this.rate = c.getRate();
     	this.amountWithoutTax = c.getAmountWithoutTax();
+    	this.code = c.getCode();
     }
     
 	/**
@@ -138,6 +141,7 @@ public class ContractItemDto extends BusinessEntityDto {
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
 	}
+
 
 
     

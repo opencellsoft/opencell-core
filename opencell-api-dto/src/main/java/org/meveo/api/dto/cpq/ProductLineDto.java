@@ -21,7 +21,7 @@ public class ProductLineDto extends BusinessEntityDto{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7359760632077227886L;  
+	private static final long serialVersionUID = -7359760632077227886L;
 	private String sellerCode;
 	private String longDescription;
 	private String parentLineCode;
@@ -38,7 +38,6 @@ public class ProductLineDto extends BusinessEntityDto{
 	
 	public ProductLineDto(ProductLine p) {
 		if(p!=null) {
-			this.id = p.getId();
 			this.code = p.getCode();
 			this.description = p.getDescription();
 			this.sellerCode = p.getSeller() != null ? p.getSeller().getCode() : null;
@@ -128,7 +127,6 @@ public class ProductLineDto extends BusinessEntityDto{
 				&& Objects.equals(longDescription, other.longDescription);
 	}
  
-
 	@Override
 	public String toString() {
 		return "ProductLineDto [code=" + code + ", label=" + description + ", sellerCode=" + sellerCode + ", longDescription="

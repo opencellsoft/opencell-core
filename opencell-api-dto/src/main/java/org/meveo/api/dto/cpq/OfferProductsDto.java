@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,7 +23,10 @@ import org.meveo.model.cpq.offer.OfferComponent;
 public class OfferProductsDto extends BaseEntityDto {
     
      /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -7824004884683019697L;   
+    private static final long serialVersionUID = -7824004884683019697L;  
+    private String prodcutCode;
+    @NotNull
+    private String offerTemplateCode;
     
     /** The product dto. */
     private ProductDto product;
@@ -88,8 +92,18 @@ public class OfferProductsDto extends BaseEntityDto {
 	}
 
 	/**
-	 * @return the incompatibleProducts
+	 * @return the prodcutCode
 	 */
+	public String getProdcutCode() {
+		return prodcutCode;
+	}
+
+	/**
+	 * @param prodcutCode the prodcutCode to set
+	 */
+	public void setProdcutCode(String prodcutCode) {
+		this.prodcutCode = prodcutCode;
+	}
 	public List<ProductDto> getIncompatibleProducts() {
 		return incompatibleProducts;
 	}
@@ -100,10 +114,5 @@ public class OfferProductsDto extends BaseEntityDto {
 	public void setIncompatibleProducts(List<ProductDto> incompatibleProducts) {
 		this.incompatibleProducts = incompatibleProducts;
 	}
-	
-	
    
-	
-     
-    
 }

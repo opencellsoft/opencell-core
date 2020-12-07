@@ -3,11 +3,14 @@ package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.GroupedAttributes;
 
 public class GroupedAttributeDto {
 
+    @NotNull
 	private String productCode;
 	private int prodcutVersion;
 	private String code;

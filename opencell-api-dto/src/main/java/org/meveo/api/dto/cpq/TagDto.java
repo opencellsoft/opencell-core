@@ -1,5 +1,7 @@
 package org.meveo.api.dto.cpq;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -10,7 +12,9 @@ public class TagDto extends BusinessEntityDto {
 	 */
 	private static final long serialVersionUID = 1L; 
 	private String sellerCode;
+    @NotNull
 	private String name;
+	@NotNull
 	private String tagTypeCode;
 	private String parentTagCode;
 	private String filterEl;

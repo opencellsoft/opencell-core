@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,7 +49,6 @@ public class QuoteDTO extends BusinessEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 	
-	private Long quoteId;
 	
     private Integer quoteVersion;
 
@@ -59,6 +59,7 @@ public class QuoteDTO extends BusinessEntityDto{
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
     
     private List<QuoteOfferDTO > quoteItems = new ArrayList<QuoteOfferDTO>();
+    @NotNull
 	private String applicantAccountCode;
 	private String billableAccountCode;
 	
@@ -73,23 +74,6 @@ public class QuoteDTO extends BusinessEntityDto{
 
 
     private String externalId;
-
-
-	/**
-	 * @return the quoteId
-	 */
-	public Long getQuoteId() {
-		return quoteId;
-	}
-
-
-	/**
-	 * @param quoteId the quoteId to set
-	 */
-	public void setQuoteId(Long quoteId) {
-		this.quoteId = quoteId;
-	}
-
 
 	/**
 	 * @return the quoteVersion

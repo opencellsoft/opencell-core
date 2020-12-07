@@ -21,6 +21,7 @@ package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -43,29 +44,20 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 7231556751341912018L;
 
-	private Long quoteProductId;
-    
+    @NotNull
+	private String cpqQuoteCode;
+    @NotNull
     private String productCode;
+
+    @NotNull
+    private int quoteVersion;
     
     private Integer productVersion;
-    
+
+    @NotNull
     private Integer quantity;
     
     private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
-
-	/**
-	 * @return the quoteProductId
-	 */
-	public Long getQuoteProductId() {
-		return quoteProductId;
-	}
-
-	/**
-	 * @param quoteProductId the quoteProductId to set
-	 */
-	public void setQuoteProductId(Long quoteProductId) {
-		this.quoteProductId = quoteProductId;
-	}
 
 	/**
 	 * @return the productCode
@@ -121,6 +113,34 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteAttributes(List<QuoteAttributeDTO> quoteAttributes) {
 		this.quoteAttributes = quoteAttributes;
+	}
+
+	/**
+	 * @return the cpqQuoteCode
+	 */
+	public String getCpqQuoteCode() {
+		return cpqQuoteCode;
+	}
+
+	/**
+	 * @param cpqQuoteCode the cpqQuoteCode to set
+	 */
+	public void setCpqQuoteCode(String cpqQuoteCode) {
+		this.cpqQuoteCode = cpqQuoteCode;
+	}
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public int getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersion(int quoteVersion) {
+		this.quoteVersion = quoteVersion;
 	}
 
 

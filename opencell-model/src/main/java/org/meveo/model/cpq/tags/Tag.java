@@ -55,7 +55,7 @@ public class Tag extends BusinessEntity {
 	/**
 	 * translate the code of the tag to different language
 	 */
-	@Column(name = "name", nullable = false, length = 20)
+	@Column(name = "name", length = 20, nullable = false)
 	@Size(max = 20)
 	@NotNull
 	private String name;
