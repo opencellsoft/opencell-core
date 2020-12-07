@@ -6228,17 +6228,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
             </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
 
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
 
             <column name="quote_id" type="bigint">
@@ -6256,40 +6246,6 @@
             <column name="user_account_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            
-            <column name="quote_version_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="quote_customer_service_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="quote_product_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="offer_component_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="service_code" type="varchar(20)">
-                <constraints nullable="false" />
-            </column>
-            <column name="service_type" type="int4" >
-                <constraints nullable="false" />
-            </column>
-            <column name="value" type="text" />
-            <column name="os_price_without_tax" type="numeric(23, 12)" />
-            <column name="os_tax_code" type="numeric(23, 12)" />
-            
-            <column name="os_tax_rate" type="int4" />
-            <column name="os_price_with_tax" type="numeric(23, 12)" />
-            <column name="recurrence_duration" type="int4" />
-            
-            <column name="recurrence_periodicity" type="int4" />
-            <column name="rc_unite_price_without_tax" type="numeric(23, 12)" />
-            <column name="rc_price_without_tax" type="numeric(23, 12)" />
-            
-            <column name="rc_tax_code" type="numeric(23, 12)" />
-            <column name="rc_tax_rate" type="int4" />
-            <column name="rc_price_with_tax" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-347">
@@ -10809,16 +10765,6 @@ $$ LANGUAGE plpgsql;
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
      </changeSet>  
 
-      <changeSet id="current-str-fk-41" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="ord_quote_item" constraintName="fk_quote_product_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
-     </changeSet> 
-     
-      <changeSet id="current-str-fk-42" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="offer_component_id" baseTableName="ord_quote_item" constraintName="fk_offer_component_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_offer_component" />
-     </changeSet> 
-     
       <changeSet id="current-str-fk-43" author="TarikFAKHOURI">
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_seller_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />

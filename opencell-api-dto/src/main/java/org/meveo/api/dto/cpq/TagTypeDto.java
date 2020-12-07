@@ -1,14 +1,14 @@
 package org.meveo.api.dto.cpq;
 
-import javax.validation.constraints.NotNull;
-
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.tags.TagType;
 
-public class TagTypeDto {
-
-	@NotNull
-	private String code;
-    private String description;
+public class TagTypeDto extends BusinessEntityDto {
+ 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String sellerCode;
 	
 	public TagTypeDto() {
@@ -51,6 +51,7 @@ public class TagTypeDto {
 		this.description = description;
 	}
 
+	 
 	/**
 	 * @return the sellerCode
 	 */
@@ -64,4 +65,13 @@ public class TagTypeDto {
 	public void setSellerCode(String sellerCode) {
 		this.sellerCode = sellerCode;
 	}
+
+	@Override
+	public String toString() {
+		return "TagTypeDto [sellerCode=" + sellerCode + ", id=" + id + ", code=" + code + ", description=" + description
+				+ ", updatedCode=" + updatedCode + "]";
+	}
+	
+	
+	
 }

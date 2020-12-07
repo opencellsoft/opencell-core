@@ -87,7 +87,7 @@ public class Tag extends BusinessEntity {
 	 * billing account associated to the entity
 	 */
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 	

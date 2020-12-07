@@ -27,14 +27,4 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class QuoteItemService extends PersistenceService<QuoteItem> {
 
-	public QuoteItem findByCode(String code) {
-		try {
-			return (QuoteItem) this.getEntityManager()
-										.createNamedQuery("QuoteItem.findByCode")
-											.setParameter("code", code)
-												.getSingleResult();
-		}catch(NoResultException e) {
-			return null;
-		}
-	}
 }
