@@ -495,58 +495,6 @@ public class AccountOperationApi extends BaseApi {
     }
 
     /**
-     * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
-     *
-     * @param customerAccountCode the customer account code
-     * @param aoId the ao id
-     * @param paymentMethod the payment method
-     * @throws MissingParameterException the missing parameter exception
-     * @throws EntityDoesNotExistsException the entity does not exists exception
-     * @throws BusinessException the business exception
-     */
-    public void updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod)
-            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-        if (StringUtils.isBlank(customerAccountCode) && StringUtils.isBlank(aoId)) {
-            missingParameters.add("customerAccountCode or aoId");
-        }
-        if (StringUtils.isBlank(paymentMethod)) {
-            missingParameters.add("paymentMethod");
-        }
-        handleMissingParameters();
-
-        if (!StringUtils.isBlank(customerAccountCode)) {
-            CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-            if (customerAccount == null) {
-                throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-            }
-            for (AccountOperation ao : customerAccount.getAccountOperations()) {
-                updatePaymentMethod(ao, paymentMethod);
-            }
-        } else {
-            AccountOperation ao = accountOperationService.findById(aoId);
-            if (ao == null) {
-                throw new EntityDoesNotExistsException(AccountOperation.class, aoId);
-            }
-            updatePaymentMethod(ao, paymentMethod);
-        }
-
-    }
-
-    /**
-     * Update payment method.
-     *
-     * @param ao the ao
-     * @param paymentMethod the payment method
-     * @throws BusinessException the business exception
-     */
-    private void updatePaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethod) throws BusinessException {
-        if (MatchingStatusEnum.O == ao.getMatchingStatus()) {
-            ao.setPaymentMethod(paymentMethod);
-            accountOperationService.update(ao);
-        }
-    }
-
-    /**
      * List matched operations.
      *
      * @param accountOperationId the account operation id
