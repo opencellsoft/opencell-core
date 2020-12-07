@@ -334,7 +334,7 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
-            seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null);
+            seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null, null);
 
         ratedTransaction.setInvoice(entity);
         if(selectedAccountingCode != null) {
@@ -739,7 +739,7 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
                         rt.getAmountWithTax(), rt.getAmountTax(), RatedTransactionStatusEnum.BILLED, ua.getWallet(), entity.getBillingAccount(), ua, rt.getInvoiceSubCategory(), rt.getParameter1(), rt.getParameter2(),
                         rt.getParameter3(), null, rt.getOrderNumber(), null, rt.getUnityDescription(), rt.getRatingUnitDescription(), null, null, null, rt.getCode(), rt.getDescription(), rt.getStartDate(),
                         rt.getEndDate(), rt.getSeller(), taxInfo != null ? taxInfo.tax : rt.getTax(), taxInfo != null ? taxInfo.tax.getPercent() : rt.getTax().getPercent(), null,
-                        taxInfo != null ? taxInfo.taxClass : null, null);
+                        taxInfo != null ? taxInfo.taxClass : null, null, rt.getType());
 
                     newRT.setInvoice(entity);
 
