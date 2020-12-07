@@ -606,7 +606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(true, isDraft, null, null, null);
             }
 
-            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
+            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + ((paymentMethod == null)?"":"_" + paymentMethod.getId());
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
 
             if (rtGroup == null) {
