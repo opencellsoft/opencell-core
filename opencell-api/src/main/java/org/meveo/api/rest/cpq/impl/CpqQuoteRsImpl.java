@@ -27,15 +27,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.CpqQuoteApi;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -70,16 +72,27 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response findQuotes(UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response findQuotes(PagingAndFiltering pagingAndFiltering, UriInfo info) {
+		CpqQuotesListResponseDto result = new CpqQuotesListResponseDto();
+		try {
+			result = cpqQuoteApi.findQuotes(pagingAndFiltering);
+			result.setActionStatus(new ActionStatus());
+            return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 
 	@Override
 	public Response updateQuote(String code, QuoteDTO quote, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.updateQuote(code, quote);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 

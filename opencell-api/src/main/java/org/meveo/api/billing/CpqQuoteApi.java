@@ -19,19 +19,35 @@
 package org.meveo.api.billing;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteDTO;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetListQuotesDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.cpq.ContractService;
@@ -95,6 +111,7 @@ public class CpqQuoteApi extends BaseApi {
 		return cpqQuote.getId();
 	}
 	
+	
 	public QuoteDTO getQuote(String quoteCode) {
 		if(Strings.isEmpty(quoteCode)) {
 			missingParameters.add("quoteCode");
@@ -106,17 +123,87 @@ public class CpqQuoteApi extends BaseApi {
 		return populateToDto(quote);
 	}
 	
-	public void updateQuote(String quoteCode, QuoteDTO quote) {
+	public void updateQuote(String quoteCode, QuoteDTO quoteDto) {
 		if(Strings.isEmpty(quoteCode)) {
 			missingParameters.add("quoteCode");
 		}
+		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+		if(quote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		
+		if(!Strings.isEmpty(quoteDto.getSellerCode())) {
+			quote.setSeller(sellerService.findByCode(quoteDto.getSellerCode()));
+		}
+		if(!Strings.isEmpty(quoteDto.getApplicantAccountCode())) {
+			final BillingAccount billingAccount = billingAccountService.findByCode(quoteDto.getApplicantAccountCode());
+			if(billingAccount == null) 
+					throw new EntityDoesNotExistsException(BillingAccount.class, quoteDto.getApplicantAccountCode());
+			quote.setApplicantAccount(billingAccount);
+		}
+		if(!Strings.isEmpty(quoteDto.getContractCode())) {
+			quote.setContract(contractService.findByCode(quoteDto.getContractCode()));
+		}
+		quote.setSendDate(quoteDto.getSendDate());
+		
+		quote.setQuoteLotDateBegin(quoteDto.getQuoteLotDateBegin());
+		quote.setQuoteLotDuration(quoteDto.getQuoteLotDuration());
+		quote.setOpportunityRef(quoteDto.getOpportunityRef());
+		quote.setCustomerRef(quoteDto.getExternalId());
+		quote.setValidity(quoteDto.getValidity());
+		if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {
+			quote.setBillableAccount(billingAccountService.findByCode(quoteDto.getBillableAccountCode()));
+		}
+
+		try {
+			cpqQuoteService.update(quote);
+		}catch(BusinessApiException e) {
+			throw new MeveoApiException(e);
+		}
+		
+	}
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
+	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "quoteDto", 
+    			itemPropertiesToFilter = { 
+    							@FilterProperty(property = "sellerCode", entityClass = Seller.class),
+    							@FilterProperty(property = "billableAccountCode", entityClass = BillingAccount.class),
+    							@FilterProperty(property = "applicantAccountCode", entityClass = BillingAccount.class),
+    							@FilterProperty(property = "contractCode", entityClass = Contract.class) }, totalRecords = "listSize")
+	public CpqQuotesListResponseDto findQuotes(PagingAndFiltering pagingAndFiltering) {
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+	        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+	            sortBy = pagingAndFiltering.getSortBy();
+	        }
+
+	        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, CpqQuote.class);
+
+	        Long totalCount = cpqQuoteService.count(paginationConfiguration);
+
+	        CpqQuotesListResponseDto result = new CpqQuotesListResponseDto();
+
+	        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+	        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+	        
+	        if(totalCount > 0 ) {
+	        	List<CpqQuote> quotes = cpqQuoteService.list(paginationConfiguration);
+	        	if(quotes != null)
+	        		quotes.forEach(c -> {
+	        			result.getQuotes().getQuoteDtos().add(populateToDto(c));
+	        		});
+	        }
+
+		return result;
 	}
 	
-	/*
-	 *
+	public void deleteQuote(String quoteCode) {
+		if(Strings.isEmpty(quoteCode))
+			missingParameters.add("quoteCode");
+		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+		if(quote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		cpqQuoteService.remove(quote);
+	}
 	
-    private String externalId;
-	 */
 	private QuoteDTO populateToDto(CpqQuote c) {
 		final QuoteDTO dto = new QuoteDTO();
 		dto.setQuoteVersion(null); // TODO : doesnt exist on CpqQuote
