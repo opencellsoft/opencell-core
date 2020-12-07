@@ -37,6 +37,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -217,8 +218,9 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
 
+                invoiceService.recalculateDates(invoiceId);
+                invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
             } catch (Exception e) {
                 if (result != null) {
                     result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
@@ -227,7 +229,7 @@ public class InvoicingAsync {
         }
         return new AsyncResult<String>("OK");
     }
-    
+
     /**
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
@@ -242,7 +244,7 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> incrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> baIds, 
+    public Future<String> incrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> baIds,
             Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -262,8 +264,8 @@ public class InvoicingAsync {
         }
         return new AsyncResult<String>("OK");
     }
-    
-    
+
+
     /**
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
@@ -326,11 +328,11 @@ public class InvoicingAsync {
             try {
                 invoiceService.produceInvoicePdfInNewTransaction(invoiceId, new ArrayList<>());
                 result.registerSucces();
-                
+
             } catch (Exception e) {
 
                 jobExecutionErrorService.registerJobError(result.getJobInstance(), invoiceId, e);
-                
+
                 result.registerError(invoiceId, e.getMessage());
                 log.error("Failed to create PDF invoice for invoice {}", invoiceId, e);
             }
@@ -368,7 +370,7 @@ public class InvoicingAsync {
             } catch (Exception e) {
 
                 jobExecutionErrorService.registerJobError(result.getJobInstance(), invoiceId, e);
-                
+
                 result.registerError(invoiceId, e.getMessage());
                 allOk = false;
                 log.error("Failed to create XML invoice for invoice {}", invoiceId, e);
