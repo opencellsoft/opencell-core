@@ -177,7 +177,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Gets the a os to pay.
      *
-     * @param paymentMethodEnum the payment method enum
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
      * @param opCatToProcess the op cat to process
@@ -185,10 +184,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPayOrRefundByCA(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
+    public List<AccountOperation> getAOsToPayOrRefundByCA(Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
             Long customerAccountId) {
         try {
-            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefundByCA")
                 .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate)
                 .setParameter("opCatToProcessIN", opCatToProcess).getResultList();
         } catch (NoResultException e) {

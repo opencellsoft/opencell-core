@@ -105,7 +105,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     /** The invoice sub category country service. */
     @Inject
     private TaxService taxService;
-    
+
     @Inject
     private TaxClassService taxClassService;
 
@@ -161,33 +161,33 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
 
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
         	InvoiceDto invoiceDTO = new InvoiceDto();
-        	
+
         	invoiceDTO.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
         	invoiceDTO.setInvoiceType(invoiceType.getCode());
         	invoiceDTO.setBillingAccountCode(billingAccount.getCode());
-        	
+
         	invoiceDTO.setInvoiceDate(paymentScheduleInstanceItem.getDueDate());
         	invoiceDTO.setDueDate(paymentScheduleInstanceItem.getDueDate());
         	invoiceDTO.setSellerCode(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller().getCode());
-        	
+
         	List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
         	CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
         	categoryInvoiceAgregateDto.setCategoryInvoiceCode(invoiceSubCat.getInvoiceCategory().getCode());
         	categoryInvoiceAgregateDto.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
-        	
+
         	List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto = new ArrayList<SubCategoryInvoiceAgregateDto>();
-        	
+
         	SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new  SubCategoryInvoiceAgregateDto();
         	subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(invoiceSubCat.getCode());
         	subCategoryInvoiceAgregateDto.setDescription(invoiceSubCat.getDescription());
         	subCategoryInvoiceAgregateDto.setAmountWithoutTax(amounts.getAmountWithoutTax());
         	subCategoryInvoiceAgregateDto.setAmountWithTax(amounts.getAmountWithTax());
         	subCategoryInvoiceAgregateDto.setAmountTax(amounts.getAmountTax());
-        	listSubCategoryInvoiceAgregateDto.add(subCategoryInvoiceAgregateDto);        	
-        	categoryInvoiceAgregateDto.setListSubCategoryInvoiceAgregateDto(listSubCategoryInvoiceAgregateDto);        	
-        	categoryInvoiceAgregates.add(categoryInvoiceAgregateDto);        	
+        	listSubCategoryInvoiceAgregateDto.add(subCategoryInvoiceAgregateDto);
+        	categoryInvoiceAgregateDto.setListSubCategoryInvoiceAgregateDto(listSubCategoryInvoiceAgregateDto);
+        	categoryInvoiceAgregates.add(categoryInvoiceAgregateDto);
         	invoiceDTO.setCategoryInvoiceAgregates(categoryInvoiceAgregates);
-        	invoice = invoiceService.createInvoice(invoiceDTO, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), billingAccount, invoiceType);        	        	
+        	invoice = invoiceService.createInvoice(invoiceDTO, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), billingAccount, invoiceType);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
         aoIdsToPay.add(recordedInvoicePS.getId());
@@ -306,7 +306,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts.getAmountWithTax(), invoiceType, null, null);
         RecordedInvoice recordedInvoicePS = new RecordedInvoice();
         recordedInvoicePS.setDueDate(paymentScheduleInstanceItem.getDueDate());
-        recordedInvoicePS.setPaymentMethod(paymentMethodType);
         recordedInvoicePS.setAmount(amounts.getAmountWithTax());
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
