@@ -43,7 +43,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
-import org.meveo.api.dto.cpq.OfferComponentDto;
+import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -450,12 +450,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processOfferComponents(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferComponentDto> offerComponentDtos = postData.getOfferComponents();  
+        List<OfferProductsDto> offerComponentDtos = postData.getOfferComponents();  
             List<OfferComponent> newOfferComponents = new ArrayList<>();
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerComponentDtos != null && !offerComponentDtos.isEmpty();
             if(hasOfferComponentDtos) {
-            for (OfferComponentDto offerComponentDto : offerComponentDtos) {
+            for (OfferProductsDto offerComponentDto : offerComponentDtos) {
             	offerComponent = getOfferComponentFromDto(offerComponentDto);
             	offerComponent.setOfferTemplate(offerTemplate);
             	newOfferComponents.add(offerComponent);
@@ -533,7 +533,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     
-    private OfferComponent getOfferComponentFromDto(OfferComponentDto offerComponentDto) throws MeveoApiException, BusinessException {
+    private OfferComponent getOfferComponentFromDto(OfferProductsDto offerComponentDto) throws MeveoApiException, BusinessException {
         ProductDto productDto = offerComponentDto.getProduct();
         Product product = null;
         if (productDto != null) {
