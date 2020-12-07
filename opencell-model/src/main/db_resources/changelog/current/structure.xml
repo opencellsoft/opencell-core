@@ -4335,6 +4335,8 @@ END $$;]]>
 	            <column name="sales_person_name" type="varchar(52)" />
 	            <column name="billable_account_id" type="bigint" />
 	            <column name="applicant_account_id" type="bigint" />
+	            <column name="valid_from" type="datetime" />
+	            <column name="valid_to" type="datetime" />
 	    	</createTable>
 	    	
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"

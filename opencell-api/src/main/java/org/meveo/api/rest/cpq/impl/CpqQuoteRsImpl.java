@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.cpq.impl;
 
+import java.util.Collections;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -28,9 +30,12 @@ import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -43,15 +48,24 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response createQuote(QuoteDTO quote, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		 try {
+	            Long id = cpqQuoteApi.createQuote(quote);
+	            return Response.ok(Collections.singletonMap("id", id)).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e);
+	        }
 	}
 
 
 	@Override
 	public Response getQuote(String code, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
+		 try {
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.getQuote(code));
+	            return Response.ok(getQuoteDtoResponse).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
+	        }
 	}
 
 

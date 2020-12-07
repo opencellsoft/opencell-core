@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -41,7 +41,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @XmlRootElement(name = "QuoteDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteDTO extends BaseEntityDto{
+public class QuoteDTO extends BusinessEntityDto{
 
     /**
 	 * 
@@ -64,9 +64,12 @@ public class QuoteDTO extends BaseEntityDto{
 	
 	private String contractCode;
 	@JsonSerialize(using = CustomDateSerializer.class)
-	private Date customerServiceDateBegin;
-	private int customerServiceDuration;
+	private Date quoteLotDateBegin;
+	private int quoteLotDuration;
 	private String opportunityRef;
+	private String sellerCode;
+	@JsonSerialize(using = CustomDateSerializer.class)
+	private Date sendDate;
 
 
     private String externalId;
@@ -215,39 +218,6 @@ public class QuoteDTO extends BaseEntityDto{
 		this.contractCode = contractCode;
 	}
 
-
-	/**
-	 * @return the customerServiceDateBegin
-	 */
-	public Date getCustomerServiceDateBegin() {
-		return customerServiceDateBegin;
-	}
-
-
-	/**
-	 * @param customerServiceDateBegin the customerServiceDateBegin to set
-	 */
-	public void setCustomerServiceDateBegin(Date customerServiceDateBegin) {
-		this.customerServiceDateBegin = customerServiceDateBegin;
-	}
-
-
-	/**
-	 * @return the customerServiceDuration
-	 */
-	public int getCustomerServiceDuration() {
-		return customerServiceDuration;
-	}
-
-
-	/**
-	 * @param customerServiceDuration the customerServiceDuration to set
-	 */
-	public void setCustomerServiceDuration(int customerServiceDuration) {
-		this.customerServiceDuration = customerServiceDuration;
-	}
-
-
 	/**
 	 * @return the opportunityRef
 	 */
@@ -277,6 +247,70 @@ public class QuoteDTO extends BaseEntityDto{
 	 */
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+
+
+	/**
+	 * @return the sellerCode
+	 */
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+
+	/**
+	 * @param sellerCode the sellerCode to set
+	 */
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
+
+
+	/**
+	 * @return the quoteLotDateBegin
+	 */
+	public Date getQuoteLotDateBegin() {
+		return quoteLotDateBegin;
+	}
+
+
+	/**
+	 * @param quoteLotDateBegin the quoteLotDateBegin to set
+	 */
+	public void setQuoteLotDateBegin(Date quoteLotDateBegin) {
+		this.quoteLotDateBegin = quoteLotDateBegin;
+	}
+
+
+	/**
+	 * @return the quoteLotDuration
+	 */
+	public int getQuoteLotDuration() {
+		return quoteLotDuration;
+	}
+
+
+	/**
+	 * @param quoteLotDuration the quoteLotDuration to set
+	 */
+	public void setQuoteLotDuration(int quoteLotDuration) {
+		this.quoteLotDuration = quoteLotDuration;
+	}
+
+
+	/**
+	 * @return the sendDate
+	 */
+	public Date getSendDate() {
+		return sendDate;
+	}
+
+
+	/**
+	 * @param sendDate the sendDate to set
+	 */
+	public void setSendDate(Date sendDate) {
+		this.sendDate = sendDate;
 	}
 
 

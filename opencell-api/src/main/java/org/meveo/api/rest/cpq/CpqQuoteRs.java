@@ -40,7 +40,9 @@ import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.cpq.GetListQuotesDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -72,7 +74,10 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "The quote is succeffully created",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
+            @ApiResponse(responseCode="200", description = "The quote is succeffully created",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+            @ApiResponse(responseCode = "412", description = "the parameter quote.applicantAccountCode is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "302", description = "The quote already exist", content = @Content(schema = @Schema(implementation = EntityAlreadyExistsException.class))),
+            @ApiResponse(responseCode = "404", description = "Applicant account is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
     public Response createQuote(@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
 
@@ -89,9 +94,10 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+            @ApiResponse(responseCode="404", description = "The quote is missing",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
-    public Response getQuote(@Parameter(description = "Product quote code", required = false) @PathParam("quoteCode") String code, @Context UriInfo info);
+    public Response getQuote(@Parameter(description = "Product quote code", required = true) @PathParam("quoteCode") String code, @Context UriInfo info);
 
     /**
      * Get a list of quotes optionally filtered by some criteria
