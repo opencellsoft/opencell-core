@@ -281,7 +281,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws NoAllOperationUnmatchedException exception t<hrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
      */
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,

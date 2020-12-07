@@ -143,19 +143,6 @@ public interface AccountOperationRs extends IBaseRs {
     AccountOperationResponseDto find(@QueryParam("id") Long id);
 
     /**
-     * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
-     * 
-     * @param customerAccountCode Customer account code
-     * @param aoId Account operation Id
-     * @param paymentMethod Payment method
-     * @return Request processing status
-     */
-    @PUT
-    @Path("/updatePaymentMethod")
-    ActionStatus updatePaymentMethod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("aoId") Long aoId,
-            @QueryParam("paymentMethod") PaymentMethodEnum paymentMethod);
-
-    /**
      * List matched operations for a given account operation
      * 
      * @param accountOperationId Account operation identifier

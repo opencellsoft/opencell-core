@@ -1203,17 +1203,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-        return result;
-    }
-
-    @Override
     public ActionStatus enableBusinessAccountModel(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
