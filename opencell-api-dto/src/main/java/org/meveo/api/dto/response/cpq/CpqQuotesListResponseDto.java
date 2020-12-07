@@ -37,7 +37,7 @@ public final class CpqQuotesListResponseDto extends SearchResponse {
     private static final long serialVersionUID = 5980154480190489704L;
 
     /** The quotes. */
-    private CpqQuotesListDto quotes;
+    private CpqQuotesListDto quotes = new CpqQuotesListDto();
 
 	/**
 	 * @return the quotes

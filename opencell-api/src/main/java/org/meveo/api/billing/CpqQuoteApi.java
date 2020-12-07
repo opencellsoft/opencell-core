@@ -73,6 +73,9 @@ public class CpqQuoteApi extends BaseApi {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
 			missingParameters.add("applicantAccountCode");
 		}
+		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
+			missingParameters.add("code");
+		}
 		handleMissingParameters();
 		if(cpqQuoteService.findByCode(quote.getCode()) != null) {
 			throw new EntityAlreadyExistsException(CpqQuote.class, quote.getCode());

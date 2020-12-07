@@ -39,7 +39,6 @@ import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
-import org.meveo.api.dto.response.cpq.GetListQuotesDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -108,7 +107,7 @@ public interface CpqQuoteRs {
      * @return A list of quotes matching search criteria
      */
     @POST
-    @Path("/")
+    @Path("/list")
     @Operation(summary = "Get a list of quotes optionally filtered by some criteria",
     tags = { "Quote management" },
     description ="",

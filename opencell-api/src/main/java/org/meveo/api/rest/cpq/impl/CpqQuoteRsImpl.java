@@ -76,6 +76,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 		CpqQuotesListResponseDto result = new CpqQuotesListResponseDto();
 		try {
 			result = cpqQuoteApi.findQuotes(pagingAndFiltering);
+			result.getQuotes().setListSize(result.getQuotes().getQuoteDtos().size());
 			result.setActionStatus(new ActionStatus());
             return Response.ok(result).build();
 		}catch(MeveoApiException e) {
@@ -105,8 +106,13 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response deleteQuote(String code, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.deleteQuote(code);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 
