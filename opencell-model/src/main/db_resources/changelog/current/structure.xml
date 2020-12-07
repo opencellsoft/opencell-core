@@ -3192,4 +3192,10 @@ END $$;]]>
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#5632_20201207_RT_TYPE" author="NabilOUACHI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="type" type="VARCHAR(25)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

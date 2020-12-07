@@ -317,6 +317,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
 
         ratedTransaction.setCode(code);
+        ratedTransaction.setType(RatedTransactionTypeEnum.AGGREGATED);
         ratedTransaction.setDescription(description);
         ratedTransaction.setTax(tax);
         ratedTransaction.setTaxPercent(tax.getPercent());
@@ -680,7 +681,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             TaxInfo taxInfo = taxMappingService.determineTax(oneShotChargeTemplate.getTaxClass(), seller, billingAccount, null, minRatingDate, true, false);
 
             String code = getMinAmountRTCode(entity, accountClass);
-            RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, taxInfo, diff, code);
+            RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, taxInfo, diff, code, RatedTransactionTypeEnum.MINIMUM);
 
             minAmountsResult.addMinAmountRT(ratedTransaction);
 
@@ -997,15 +998,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param taxInfo the tax info
      * @param rtMinAmount the rated transaction amount
      * @param code the rated transaction code.
+     * @param minimum
      * @return a rated transaction
      */
     private RatedTransaction getNewRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, BusinessEntity entity, Seller seller,
-            InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code) {
+                                                    InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code, RatedTransactionTypeEnum type) {
         Tax tax = taxInfo.tax;
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         RatedTransaction rt = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount,
-            null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass);
+            null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass, type);
         if (entity instanceof ServiceInstance) {
             rt.setServiceInstance((ServiceInstance) entity);
         }
@@ -1763,6 +1765,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 ratedTransaction.setSeller(seller);
             }
 
+            ratedTransaction.setType(RatedTransactionTypeEnum.MANUAL);
             ratedTransaction.setUsageDate(dto.getUsageDate());
             ratedTransaction.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
             ratedTransaction.setUnitAmountWithTax(dto.getUnitAmountWithTax());

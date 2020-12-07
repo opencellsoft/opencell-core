@@ -153,7 +153,7 @@ import org.meveo.model.tax.TaxClass;
                 "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                         + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
-        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice.id IN (:invoicesIds)") })
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.type='MANUAL' and r.invoice.id IN (:invoicesIds)") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -481,6 +481,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @Column(name = "sort_index")
     private Integer sortIndex;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private RatedTransactionTypeEnum type;
+
     public RatedTransaction() {
         super();
     }
@@ -489,11 +493,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
             BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
             UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
             Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, OfferTemplate offerTemplate, EDR edr, String code,
-            String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass) {
+            String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass, RatedTransactionTypeEnum type) {
 
         super();
 
         this.code = code;
+        this.type = type;
         this.description = description;
         this.usageDate = usageDate;
         this.unitAmountWithoutTax = unitAmountWithoutTax;
@@ -1166,5 +1171,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+
+    public RatedTransactionTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(RatedTransactionTypeEnum type) {
+        this.type = type;
     }
 }
