@@ -289,7 +289,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @XMLGenerated
     private Event<Invoice> xmlGeneratedEventProducer;
-    
+
     @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
@@ -3830,7 +3830,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED,
                 userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount, invoiceSubCategory, null, null, null,
                 null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(),
-                ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null);
+                ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
         // #3355 : setting params 1,2,3
