@@ -2154,8 +2154,8 @@ public class ValidateBRScript extends Script {
             <column name="event_type_filter" value="VERSION_REMOVED"></column>
         </insert>
     </changeSet>
-    
-        <changeSet id="5657_20201201" author="NabilOuachi">
+
+    <changeSet id="5657_20201201" author="NabilOuachi">
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
@@ -2221,6 +2221,13 @@ public class ValidateBRScript extends Script {
             <column name="cf_protectable" value="0"/>
         </insert>
 
+    </changeSet>
+
+    <changeSet id="#5632_20201207_RT_TYPE_DATA" author="NabilOUACHI">
+        <update tableName="billing_rated_transaction">
+            <column name="type" value="MINIMUM"/>
+            <where>code like 'RT_MIN%' and wallet_id is null</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
