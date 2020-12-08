@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -76,6 +78,13 @@ public class AttributeDTO extends EnableBusinessDto {
      */
     @NotNull
     protected boolean mandatory=Boolean.FALSE;
+    
+    
+    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+    
+   private boolean selectable=Boolean.TRUE;
+    
+    private boolean ruled=Boolean.FALSE;
 
     
     /**
@@ -208,6 +217,60 @@ public class AttributeDTO extends EnableBusinessDto {
 	 */
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+
+
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+
+
+	/**
+	 * @return the selectable
+	 */
+	public boolean isSelectable() {
+		return selectable;
+	}
+
+
+
+	/**
+	 * @param selectable the selectable to set
+	 */
+	public void setSelectable(boolean selectable) {
+		this.selectable = selectable;
+	}
+
+
+
+	/**
+	 * @return the ruled
+	 */
+	public boolean isRuled() {
+		return ruled;
+	}
+
+
+
+	/**
+	 * @param ruled the ruled to set
+	 */
+	public void setRuled(boolean ruled) {
+		this.ruled = ruled;
 	}
 
 

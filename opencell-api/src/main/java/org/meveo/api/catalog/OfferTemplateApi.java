@@ -450,7 +450,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processOfferComponents(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferProductsDto> offerComponentDtos = postData.getOfferComponents();  
+        List<OfferProductsDto> offerComponentDtos = postData.getOfferProducts();  
             List<OfferComponent> newOfferComponents = new ArrayList<>();
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerComponentDtos != null && !offerComponentDtos.isEmpty();

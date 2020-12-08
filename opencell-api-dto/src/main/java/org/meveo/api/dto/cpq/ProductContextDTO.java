@@ -20,6 +20,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.LinkedHashMap;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,16 +41,17 @@ public class ProductContextDTO extends BaseEntityDto {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
 
-
-
-    /**
-     * The billing account code
-     */
-    private String billingAccountCode; 
     /**
      * The selected product code in the quote
      */
+	@NotNull
     private String productCode;
+    
+    /**
+     * The selected product version in the quote
+     */
+	@NotNull
+    private Integer producVersion;
     
     /**
      * The product quantity
@@ -60,26 +62,44 @@ public class ProductContextDTO extends BaseEntityDto {
      */
     // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
     @XmlElement
-    private LinkedHashMap<String, Object> selectedServices;
+    private LinkedHashMap<String, Object> selectedAttributes;
     
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
-	 
+
+	/**
+	 * @return the productCode
+	 */
 	public String getProductCode() {
 		return productCode;
 	}
+	/**
+	 * @param productCode the productCode to set
+	 */
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
-	public LinkedHashMap<String, Object> getSelectedServices() {
-		return selectedServices;
+	/**
+	 * @return the producVersion
+	 */
+	public Integer getProducVersion() {
+		return producVersion;
 	}
-	public void setSelectedServices(LinkedHashMap<String, Object> selectedServices) {
-		this.selectedServices = selectedServices;
+	/**
+	 * @param producVersion the producVersion to set
+	 */
+	public void setProducVersion(Integer producVersion) {
+		this.producVersion = producVersion;
+	}
+	/**
+	 * @return the selectedAttributes
+	 */
+	public LinkedHashMap<String, Object> getSelectedAttributes() {
+		return selectedAttributes;
+	}
+	/**
+	 * @param selectedAttributes the selectedAttributes to set
+	 */
+	public void setSelectedAttributes(LinkedHashMap<String, Object> selectedAttributes) {
+		this.selectedAttributes = selectedAttributes;
 	}
 	/**
 	 * @return the quantity

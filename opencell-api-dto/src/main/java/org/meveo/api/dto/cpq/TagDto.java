@@ -18,7 +18,6 @@ public class TagDto extends BusinessEntityDto {
 	private String tagTypeCode;
 	private String parentTagCode;
 	private String filterEl;
-	private String billingAccountCode;
 	
 	public TagDto() {}
 	public TagDto(Tag tag) {
@@ -37,9 +36,6 @@ public class TagDto extends BusinessEntityDto {
 				this.parentTagCode = tag.getParentTag().getCode();
 			}
 			this.filterEl = tag.getFilterEl();
-			if(tag.getBillingAccount() != null) {
-				this.billingAccountCode = tag.getBillingAccount().getCode();
-			}
 			
 		}
 	}
@@ -116,23 +112,11 @@ public class TagDto extends BusinessEntityDto {
 	public void setParentTagCode(String parentTagCode) {
 		this.parentTagCode = parentTagCode;
 	}
-	/**
-	 * @return the billingAccountCode
-	 */
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-	/**
-	 * @param billingAccountCode the billingAccountCode to set
-	 */
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
+
 	@Override
 	public String toString() {
 		return "TagDto [id=" + id + ", sellerCode=" + sellerCode + ", name=" + name + ", tagTypeCode=" + tagTypeCode
-				+ ", parentTagCode=" + parentTagCode + ", filterEl=" + filterEl + ", billingAccountCode="
-				+ billingAccountCode + ", code=" + code + ", description=" + description + ", updatedCode="
+				+ ", parentTagCode=" + parentTagCode + ", filterEl=" + filterEl + ", description=" + description + ", updatedCode="
 				+ updatedCode + "]";
 	}
 	

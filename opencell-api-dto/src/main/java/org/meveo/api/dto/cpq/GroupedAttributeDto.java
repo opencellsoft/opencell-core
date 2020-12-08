@@ -5,19 +5,23 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 
 public class GroupedAttributeDto {
 
     @NotNull
 	private String productCode;
-	private int prodcutVersion;
+    @NotNull
+	private int productVersion;
+    @NotNull
 	private String code;
 	private String description;
-	private List<String> attributeCodes = new ArrayList<String>();
+	private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
 	private boolean display;
 	private boolean mandatory;
+	
+    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
 	
 	public GroupedAttributeDto() {
 		
@@ -34,11 +38,11 @@ public class GroupedAttributeDto {
 		}
 	}
 	
-	public GroupedAttributeDto(GroupedAttributes groupedService, List<ServiceTemplate> serviceTemplateCodes) {
-		this(groupedService);
-		if(serviceTemplateCodes != null)
-			serviceTemplateCodes.forEach( service -> {
-				attributeCodes.add(service.getCode());
+	public GroupedAttributeDto(GroupedAttributes groupedAttribues, List<Attribute> attributes) {
+		this(groupedAttribues);
+		if(attributes != null)
+			attributes.forEach( attribute -> {
+				this.attributes.add(new AttributeDTO(attribute));
 			});
 	}
 
@@ -84,35 +88,37 @@ public class GroupedAttributeDto {
 		this.description = description;
 	}
 
-	/**
-	 * @return the prodcutVersion
-	 */
-	public int getProdcutVersion() {
-		return prodcutVersion;
-	}
-
-	/**
-	 * @param prodcutVersion the prodcutVersion to set
-	 */
-	public void setProdcutVersion(int prodcutVersion) {
-		this.prodcutVersion = prodcutVersion;
-	}
-
 	
 	
 
 	/**
-	 * @return the attributeCodes
+	 * @return the productVersion
 	 */
-	public List<String> getAttributeCodes() {
-		return attributeCodes;
+	public int getProductVersion() {
+		return productVersion;
 	}
 
 	/**
-	 * @param attributeCodes the attributeCodes to set
+	 * @param productVersion the productVersion to set
 	 */
-	public void setAttributeCodes(List<String> attributeCodes) {
-		this.attributeCodes = attributeCodes;
+	public void setProductVersion(int productVersion) {
+		this.productVersion = productVersion;
+	}
+
+
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
 
 	/**
@@ -142,4 +148,20 @@ public class GroupedAttributeDto {
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+	
+	
 }
