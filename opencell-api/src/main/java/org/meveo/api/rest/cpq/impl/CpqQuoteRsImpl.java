@@ -128,8 +128,8 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	@Override
 	public Response createQuoteItem(QuoteOfferDTO quoteItem, UriInfo info) {
 		 try {
-	            QuoteOfferDTO id = cpqQuoteApi.createQuoteItem(quoteItem);
-	            return Response.ok(id).build();
+	           // QuoteOfferDTO id = cpqQuoteApi.createQuoteItem(quoteItem);
+	            return Response.ok().build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e);
 	        }
