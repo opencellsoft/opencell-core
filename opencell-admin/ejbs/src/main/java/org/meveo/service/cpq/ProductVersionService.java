@@ -168,9 +168,24 @@ public class ProductVersionService extends
         }
         Query query = getEntityManager().createNamedQuery("ProductVersion.findByProductAndVersion")
                 .setParameter("productCode", productCode).setParameter("currentVersion", currentVersion);
-        List<ProductVersion> productVersion=(List<ProductVersion>)query.getResultList();
-        return productVersion.isEmpty() ? null : productVersion.get(0);
+        List<ProductVersion> productVersions=(List<ProductVersion>)query.getResultList();
+        return productVersions.isEmpty() ? null : productVersions.get(0);
     }
+    
+    
+    
+    
+    @SuppressWarnings("unchecked")
+ 	public  List<ProductVersion> findByProduct(String productCode) throws BusinessException{
+         Product product=productService.findByCode(productCode);
+         if(product == null) {
+             log.warn("the product with code={} inexistent",productCode);
+             throw new EntityDoesNotExistsException(Product.class,productCode);
+         } 
+         List<ProductVersion> productVersions=product.getProductVersions();
+         return productVersions;
+     }
+    
     /**
      * change the status of product version
      * @param product version
