@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.cpq.impl;
 
+import java.util.Collections;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -25,9 +27,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.CpqQuoteApi;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -43,29 +50,50 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response createQuote(QuoteDTO quote, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		 try {
+	            Long id = cpqQuoteApi.createQuote(quote);
+	            return Response.ok(Collections.singletonMap("id", id)).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e);
+	        }
 	}
 
 
 	@Override
 	public Response getQuote(String code, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
+		 try {
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.getQuote(code));
+	            return Response.ok(getQuoteDtoResponse).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
+	        }
 	}
 
 
 	@Override
-	public Response findQuotes(UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response findQuotes(PagingAndFiltering pagingAndFiltering, UriInfo info) {
+		CpqQuotesListResponseDto result = new CpqQuotesListResponseDto();
+		try {
+			result = cpqQuoteApi.findQuotes(pagingAndFiltering);
+			result.getQuotes().setListSize(result.getQuotes().getQuoteDtos().size());
+			result.setActionStatus(new ActionStatus());
+            return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 
 	@Override
 	public Response updateQuote(String code, QuoteDTO quote, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.updateQuote(code, quote);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 
@@ -78,8 +106,13 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response deleteQuote(String code, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.deleteQuote(code);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 

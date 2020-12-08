@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,6 +41,8 @@ public class GetListQuotesDtoResponse extends BaseResponse{
 	 * @return the quoteDto
 	 */
 	public List<QuoteDTO> getQuoteDto() {
+		if(quoteDto == null)
+			quoteDto = new ArrayList<>();
 		return quoteDto;
 	}
 
@@ -52,8 +55,5 @@ public class GetListQuotesDtoResponse extends BaseResponse{
 		this.quoteDto = quoteDto;
 	}
 
-
-	
-	
 	
 }

@@ -2,7 +2,10 @@ package org.meveo.model.cpq;
 
 import java.util.Date;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,6 +19,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.Contract;
@@ -71,12 +75,12 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prestation_date_begin")
-	private Date prestationDateBegin;
+	private Date quoteLotDateBegin;
 	/**
 	 * prestationDuration
 	 */
 	@Column(name = "prestation_duration")
-	private Integer prestationDuration;
+	private Integer quoteLotDuration;
 	/**
 	 * opportunityRef
 	 */
@@ -120,6 +124,14 @@ public class CpqQuote extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billable_account_id")
 	private BillingAccount billableAccount;
+	
+
+    /**
+     * Quote validity dates
+     */
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    private DatePeriod validity = new DatePeriod();
     
 	/**
 	 * @return the seller
@@ -180,30 +192,6 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	public void setSendDate(Date sendDate) {
 		this.sendDate = sendDate;
-	}
-	/**
-	 * @return the prestationDateBegin
-	 */
-	public Date getPrestationDateBegin() {
-		return prestationDateBegin;
-	}
-	/**
-	 * @param prestationDateBegin the prestationDateBegin to set
-	 */
-	public void setPrestationDateBegin(Date prestationDateBegin) {
-		this.prestationDateBegin = prestationDateBegin;
-	}
-	/**
-	 * @return the prestationDuration
-	 */
-	public Integer getPrestationDuration() {
-		return prestationDuration;
-	}
-	/**
-	 * @param prestationDuration the prestationDuration to set
-	 */
-	public void setPrestationDuration(Integer prestationDuration) {
-		this.prestationDuration = prestationDuration;
 	}
 	/**
 	 * @return the opportunityRef
@@ -288,5 +276,41 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	public void setBillableAccount(BillingAccount billableAccount) {
 		this.billableAccount = billableAccount;
+	}
+	/**
+	 * @return the quoteLotDateBegin
+	 */
+	public Date getQuoteLotDateBegin() {
+		return quoteLotDateBegin;
+	}
+	/**
+	 * @param quoteLotDateBegin the quoteLotDateBegin to set
+	 */
+	public void setQuoteLotDateBegin(Date quoteLotDateBegin) {
+		this.quoteLotDateBegin = quoteLotDateBegin;
+	}
+	/**
+	 * @return the quoteLotDuration
+	 */
+	public Integer getQuoteLotDuration() {
+		return quoteLotDuration;
+	}
+	/**
+	 * @param quoteLotDuration the quoteLotDuration to set
+	 */
+	public void setQuoteLotDuration(Integer quoteLotDuration) {
+		this.quoteLotDuration = quoteLotDuration;
+	}
+	/**
+	 * @return the validity
+	 */
+	public DatePeriod getValidity() {
+		return validity;
+	}
+	/**
+	 * @param validity the validity to set
+	 */
+	public void setValidity(DatePeriod validity) {
+		this.validity = validity;
 	}
 }
