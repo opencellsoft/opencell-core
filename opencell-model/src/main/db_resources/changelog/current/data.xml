@@ -2131,7 +2131,7 @@ public class ValidateBRScript extends Script {
     <changeSet id="#5632_20201207_RT_TYPE_DATA" author="NabilOUACHI">
         <update tableName="billing_rated_transaction">
             <column name="type" value="MINIMUM"/>
-            <where>code like 'MIN_RT%' and wallet_id is null</where>
+            <where>code like 'RT_MIN%' and wallet_id is null</where>
         </update>
     </changeSet>
 
