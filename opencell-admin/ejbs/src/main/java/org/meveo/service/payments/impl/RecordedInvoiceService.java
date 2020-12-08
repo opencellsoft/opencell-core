@@ -32,7 +32,6 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -41,10 +40,8 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RecordedInvoiceCatAgregate;
 import org.meveo.model.shared.DateUtils;
@@ -432,7 +429,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setAmountWithoutTax(amountWithoutTax);
         recordedInvoice.setTaxAmount(amountTax);
         recordedInvoice.setSeller(invoice.getSeller());
-
+        recordedInvoice.setCollectionDate(invoice.getIntialCollectionDate());
         try {
             recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
         } catch (Exception e) {
@@ -448,24 +445,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             throw new ImportInvoiceException("Error on invoiceDate");
         }
 
-        PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
-            recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
-            BankCoordinates bankCoordiates = null;
-            if (preferedPaymentMethod instanceof DDPaymentMethod) {
-                bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-            }
-            if (bankCoordiates != null) {
-                recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
-                recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
-                recordedInvoice.setPaymentInfo2(bankCoordiates.getBranchCode());
-                recordedInvoice.setPaymentInfo3(bankCoordiates.getAccountNumber());
-                recordedInvoice.setPaymentInfo4(bankCoordiates.getKey());
-                recordedInvoice.setPaymentInfo5(bankCoordiates.getBankName());
-                recordedInvoice.setPaymentInfo6(bankCoordiates.getBic());
-                recordedInvoice.setBillingAccountName(bankCoordiates.getAccountOwner());
-            }
-        }
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 
         return recordedInvoice;

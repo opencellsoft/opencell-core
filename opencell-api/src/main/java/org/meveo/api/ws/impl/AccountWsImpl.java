@@ -500,7 +500,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode, startDate, endDate, null));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode, null, startDate, endDate, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1199,17 +1199,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
             processException(e, result.getActionStatus());
         }
 
-        return result;
-    }
-
-    @Override
-    public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
-        } catch (Exception e) {
-            processException(e, result);
-        }
         return result;
     }
 

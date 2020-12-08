@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				xmlns:f="http://xmlns.jcp.org/jsf/core"
+				xmlns:h="http://xmlns.jcp.org/jsf/html"
+				xmlns:hftl="http://hftl.org"
+				xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+>
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{actionBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<h:form id="crumbmenuForm">
+		<p:breadCrumb homeDisplay="text" id="crumbmenu">
+			<p:menuitem value="#{messages['menu.dataCollector']}" disabled="true" />
+			<p:menuitem value="#{messages['menu.dataCollector']}" outcome="dataCollectors" />
+			<p:menuitem value="#{messages['commons.new']} #{messages['dataCollector.title']}"
+						disabled="true" rendered="#{actionBean.entity.transient}" />
+			<p:menuitem
+					value="#{messages['dataCollector.title']} - #{actionBean.entity.uuid}"
+					disabled="true" rendered="#{!actionBean.entity.transient}" />
+		</p:breadCrumb>
+	</h:form>
+
+	<ui:define name="body">
+		<hftl:entityPopup id="actionScriptPopup"
+						  header="#{messages['scriptInstance.title']}"
+						  backingBean="#{scriptInstanceBean}"
+						  searchField1Label="#{messages['BusinessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+						  column1="code"
+						  selection="#{actionBean.entity.actionScript}"
+						  column2Label="#{messages['BusinessEntity.description']}"
+						  column2="description"
+						  updateField=":actionsId:tabView:scriptSelectId
+						 :actionsId:tabView:scriptSelectId_text">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="notificationPopup"
+						  header="#{messages['scriptInstance.title']}"
+						  backingBean="#{notificationBean}"
+						  searchField1Label="#{messages['BusinessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+						  column1="code"
+						  selection="#{actionBean.entity.notification}"
+						  column2Label="#{messages['BusinessEntity.description']}"
+						  column2="description"
+						  updateField=":actionsId:tabView:notifSelectId
+						 :actionsId:tabView:notifSelectId_text">
+		</hftl:entityPopup>
+
+		<hftl:formPanel formId="actionsId" backingBean="#{actionBean}" showEnableDisableButton="true" ajaxSubmit="true">
+			<p:tabView id="tabView" activeIndex="#{actionBean.activeTab}">
+				<p:tab title="Action">
+					<hftl:formField label="#{messages['action.conditionEl']}" field="conditionEl" required="true" textArea="true" rows="1" maxlength="2000"/>
+					<hftl:formField label="#{messages['action.description']}" field="description"  required="true"/>
+					<hftl:formField label="#{messages['action.priority']}" field="priority" required="true"/>
+					<hftl:formField label="#{messages['action.type']}" field="type" required="true" listValues="#{actionBean.types}" />
+					<hftl:formField label="#{messages['action.asynchronous']}" field="asynchronous" />
+					<hftl:formField label="#{messages['action.valueEl']}" field="valueEl" textArea="true" rows="1" maxlength="2000"/>
+					<hftl:formField label="#{messages['action.logLevel']}" field="logLevel" listValues="#{actionBean.logLevel}"/>
+					<hftl:formField label="#{messages['action.fieldToUpdate']}" field="fieldToUpdate" isMessage="true" listValues="#{actionBean.fields}"/>
+					<hftl:formField id="scriptSelectId" label="#{messages['generic.wf.actionScript']}" field="actionScript" valueLabelField="code" popup="true"
+							showResetButton="true" popupId="actionScriptPopup" edit="#{actionBean.edit}" required="false" />
+					<hftl:formField id="notifSelectId" label="#{messages['entity.notification']}" field="notification" valueLabelField="code" popup="true"
+									showResetButton="true" popupId="notificationPopup" edit="#{actionBean.edit}" required="false" />
+
+					<ui:param name="buttons" value="true" />
+					<p:panel id="buttons">
+						<p:commandButton action="#{actionBean.saveAction}" value="#{messages['action.addAction']}" process="@form" update=":actionsId:tabView"/>
+						<p:commandButton action="#{actionBean.cancelAction}" value="#{messages['action.cancel']}" process="@this"
+										 update=":actionsId:tabView"/>
+					</p:panel>
+
+					<p:outputPanel id="actionList">
+						<hftl:dataList backingBean="#{actionBean}" dataModel="#{actionBean.transition.actions}"
+									   resultsId="actions_results" exportXlsxButton="false">
+							<hftl:column label="#{messages['action.type']}" field="type" />
+							<hftl:column label="#{messages['action.conditionEl']}" field="conditionEl" />
+							<hftl:column label="#{messages['action.description']}" field="description" />
+							<hftl:column label="#{messages['action.priority']}" field="priority" />
+							<hftl:column label="#{messages['action.uuid']}" field="uuid" />
+
+							<p:column styleClass="actions-column" rendered="#{actionBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton id="moveUpAction" icon="ui-icon-arrowthick-1-n" action="#{actionBean.moveUpAction(entity)}"
+												 update=":actionsId:tabView:actionList" process="@this"/>
+								<p:commandButton id="moveDownAction" icon="ui-icon-arrowthick-1-s" action="#{actionBean.moveDownAction(entity)}"
+												 update=":actionsId:tabView:actionList" process="@this" />
+								<p:commandButton id="deleteAction" action="#{actionBean.deleteAction(entity)}" icon="ui-icon-trash"
+												 update=":actionsId:tabView:actionList" process="@this"/>
+							</p:column>
+
+						</hftl:dataList>
+					</p:outputPanel>
+				</p:tab>
+			</p:tabView>
+
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

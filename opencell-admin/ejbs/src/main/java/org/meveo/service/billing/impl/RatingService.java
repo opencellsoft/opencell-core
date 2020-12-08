@@ -1039,7 +1039,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
             operation.setUnitAmountWithoutTax(null);
             operation.setUnitAmountWithTax(null);
             operation.setUnitAmountTax(null);
-
+            operation.setChargeMode(ChargeApplicationModeEnum.RERATING);
+            
             rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
                 priceplan != null ? priceplan.getTradingCurrency() : null);
         }

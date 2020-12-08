@@ -492,10 +492,6 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     AccountOperationResponseDto findAccountOperation(@WebParam(name = "id") Long id);
 
-    @WebMethod
-    ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "aoId") Long aoId,
-            @WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
-
     // title
 
     @WebMethod

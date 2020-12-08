@@ -3135,15 +3135,15 @@ END $$;]]>
         <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
 
     </changeSet>
-
+    
     <changeSet id="#5257_20200527" author="AndriusKarpavicius" dbms="postgresql" >
         <addColumn tableName="billing_wallet_operation">
             <column name="reject_reason" type="text"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="#4895_20200515" author="MohammedAmineTazi">
-       <createSequence sequenceName="cat_fixed_date_seq"/>
+    <changeSet id="#4895_20200515" author="MohammedAmineTazi">        
+       <createSequence sequenceName="cat_fixed_date_seq"/> 
         <createTable tableName="cat_fixed_date">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_pkey" />
@@ -3156,16 +3156,16 @@ END $$;]]>
             </column>
             <column name="cat_calendar_id" type="bigint" >
             	<constraints nullable="false" />
-            </column>
+            </column>           
             <column name="version" type="int4" />
         </createTable>
         <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />  
     </changeSet>
 
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>               
     </changeSet>
     
     <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
@@ -3212,26 +3212,26 @@ END $$;]]>
             <column name="invoice_date_delay_el" type="varchar(2000)"/>
             <column name="transaction_date_el" type="varchar(2000)"/>
         </addColumn>
-
+        
         <sql>update ${db.schema.adapted}billing_cycle set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set due_date_delay_el = due_date_delay where due_date_delay_el is null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set transaction_date_delay_el = transaction_date_delay where transaction_date_delay is not null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set invoice_date_production_delay_el = invoice_date_production_delay where invoice_date_production_delay is not null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set invoice_date_delay_el = invoice_date_delay where invoice_date_delay is not null</sql>
-
+                
         <dropColumn tableName="billing_cycle" columnName="transaction_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="invoice_date_production_delay"/>
         <dropColumn tableName="billing_cycle" columnName="invoice_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="due_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="billing_template_name"/>
     </changeSet>
-
-
+    
+    
     <changeSet id="#5372_20200711" author="AndriusKarpavicius">
         <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
-        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>
+        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
-
+    
     <changeSet id="#5303_20200629" author="hznibar" >
         <addColumn tableName="rating_cdr">
             <column name="times_tried" type="int4"/>
@@ -3298,9 +3298,9 @@ END $$;]]>
         <addColumn tableName="wo_aggregation_settings">
             <column name="aggregation_rounding" type="int4" defaultValueNumeric="2"/>
             <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
-        </addColumn>
+        </addColumn>     
      </changeSet>
-
+ 
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
@@ -3380,7 +3380,7 @@ END $$;]]>
         <createSequence sequenceName="document_seq" startValue="1"/>
         <createSequence sequenceName="document_category_seq" startValue="1"/>
     </changeSet>
-
+    
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
             <column name="low_balance_level_el" type="varchar(2000)"/>
@@ -3413,7 +3413,7 @@ END $$;]]>
             <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#4156_20120719" author="anasseh">
 		<addColumn tableName="meveo_filter">
 			<column name="polling_query" type="text"/>
@@ -3586,7 +3586,7 @@ END $$;]]>
     <changeSet id="#5510_20200923" author="anasseh">
 		<sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation USING btree (reference)</sql>
     </changeSet>
-    
+
     <changeSet id="#5534_20200929" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FilteringJob'</sql>
     </changeSet>
@@ -3674,7 +3674,7 @@ END $$;]]>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
     
-
+    
      <changeSet id="#5155_20200928" author="Mbarek-Ay">
         <addColumn tableName="cust_cet">
             <column name="disableable" type="${type.boolean}" defaultValueNumeric="0">
@@ -3697,6 +3697,24 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
 
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
+        <addColumn tableName="billing_subscription">
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_to" type="datetime"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9"/>
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
+
+        <addColumn tableName="cat_offer_template">
+            <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="offer_template_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
+                                 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
         <createTable tableName="billing_invoice_agr_amount">
@@ -3712,7 +3730,27 @@ END $$;]]>
         </createTable>
 
     </changeSet>
+   <changeSet id="#5416_20120809" author="anasseh">
+       <createTable tableName="ar_ao_payment_histories">
+           <column name="ao_id" type="bigint"/>
+           <column name="history_id" type="bigint"/>
+       </createTable>
+       <addForeignKeyConstraint
+               baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
+               constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
+               onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+               referencedTableName="ar_account_operation"/>
+       <addForeignKeyConstraint
+               baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
+               constraintName="fk_histo_id" deferrable="false"
+               initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+               referencedColumnNames="id" referencedTableName="ar_payment_history"/>
 
+        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
+	    <dropColumn tableName="ar_account_operation">
+            <column name="payment_history_id"></column>
+        </dropColumn>
+	</changeSet>
     <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
         <addColumn tableName="dunning_document">
             <column name="status" type="varchar(25)"/>
@@ -3748,12 +3786,76 @@ END $$;]]>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
                              disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
     </changeSet>
+
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
+
     <changeSet id="#5587_20201125" author="ZBariki" failOnError="false">
         <addColumn tableName="bi_data_collector">
             <column name="parameters" type="text" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5214_20201117" author="ZBariki">
+        <createSequence sequenceName="wf_generic_action_seq" startValue="1" />
+        <createTable tableName="wf_generic_action" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_action_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="description" type="varchar(255)" />
+            <column name="uuid" type="varchar(255)" />
+            <column name="priority" type="int4" />
+            <column name="condition_el" type="varchar(2000)" />
+            <column name="value_el" type="varchar(2000)" />
+            <column name="type" type="varchar(255)" />
+            <column name="log_level" type="varchar(255)" />
+            <column name="field_to_update" type="varchar(255)" />
+            <column name="is_asynchronous" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="action_script_id" type="bigint" />
+            <column name="notification_id" type="bigint" />
+            <column name="transition_id" type="bigint" />
+        </createTable>
+        <addUniqueConstraint columnNames="uuid" constraintName="uk_wf_generic_action_uuid" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="wf_generic_action" />
+
+        <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_transition_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="wf_generic_transition" />
+
+        <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="wf_generic_action"
+                                 constraintName="fk_wf_generic_action_notification_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_script_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    <changeSet id="#5680_20201126" author="khalidHORRI">
+        <addColumn tableName="billing_invoice">
+            <column name="initial_collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="collection_date_delay_el" type="varchar(2000)"/>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <sql>
+            update ${db.schema.adapted}billing_invoice set initial_collection_date = due_date;
+            update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
+        </sql>
+    </changeSet>
+    <changeSet id="5687_20203011" author="khalidHORRI">
+        <addColumn tableName="billing_cycle">
+            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="compute_dates_validation" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
 

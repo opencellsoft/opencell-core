@@ -518,7 +518,7 @@ public class CustomTableCreatorService implements Serializable {
         addFKConstraintStatement.setConstraintName(constraintName);
         addFKConstraintStatement.setBaseTableName(baseTable);
         addFKConstraintStatement.setBaseColumnNames(baseColumn);
-        addFKConstraintStatement.setReferencedTableName(referencedTable);
+        addFKConstraintStatement.setReferencedTableName(referencedTable.toLowerCase());
         addFKConstraintStatement.setReferencedColumnNames(referencedColumn);
 
         changeSet.addChange(addFKConstraintStatement);

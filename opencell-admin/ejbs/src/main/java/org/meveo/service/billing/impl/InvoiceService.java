@@ -95,6 +95,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -649,7 +650,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             paymentMethod = resolvePaymentMethod(billingAccount, billingCycle, defaultPaymentMethod, rt);
 
-            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
+            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + ((paymentMethod == null)?"":"_" + paymentMethod.getId());
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
 
             if (rtGroup == null) {
@@ -1000,6 +1001,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     setInvoiceDueDate(invoice, rtGroup.getBillingCycle());
+                    setInitialCollectionDate(invoice, rtGroup.getBillingCycle(), billingRun);
 
 // End of alternative 1 for 4326   
 // Start of alternative 2 for 4326       
@@ -1085,6 +1087,56 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return invoiceList;
 
+    }
+
+    private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
+
+        if (billingCycle.getCollectionDateDelayEl() == null) {
+            invoice.setIntialCollectionDate(invoice.getDueDate());
+            return;
+        }
+        if (billingRun != null && billingRun.getCollectionDate() != null) {
+            invoice.setIntialCollectionDate(billingRun.getCollectionDate());
+            return;
+        }
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        Order order = invoice.getOrder();
+
+        // Determine invoice due date delay either from Order, Customer account or Billing cycle
+        Integer delay = 0;
+        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        if (delay == null) {
+            throw new BusinessException("collection date delay is null");
+        }
+
+        Date initailCollectionDate = DateUtils.addDaysToDate(invoice.getDueDate(), delay);
+
+        invoice.setIntialCollectionDate(initailCollectionDate);
+
+    }
+
+    private Integer evaluateCollectionDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) {
+        Integer result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put("invoice", invoice);
+        }
+        if (expression.indexOf("order") >= 0) {
+            userMap.put("order", order);
+        }
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+        try {
+            result = (Integer) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to Integer but " + res);
+        }
+        return result;
     }
 
     /**
@@ -2410,11 +2462,57 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Re-computed invoice date, due date and collection date when the invoice is validated.
+     *
+     * @param invoice
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void recalculateDates(Long invoiceId) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(invoice.getBillingAccount());
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
+        BillingRun billingRun = billingRunService.refreshOrRetrieve(invoice.getBillingRun());
+        if (billingRun != null) {
+            billingCycle = billingRun.getBillingCycle();
+        }
+        billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
+        if (billingRun == null) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        }
+        if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        }
+    }
+
+    private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
+
+        int delay =
+                billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
+        invoiceDate = DateUtils.setTimeToZero(invoiceDate);
+        invoice.setInvoiceDate(invoiceDate);
+        setInvoiceDueDate(invoice, billingCycle);
+        setInitialCollectionDate(invoice, billingCycle, billingRun);
+
+    }
+
+    /**
      * Increment BA invoice date.
      *
      * @param billingRun
      * @param billingAccount Billing account
-     *
      * @throws BusinessException business exception
      */
     private BillingAccount incrementBAInvoiceDate(BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
@@ -2613,12 +2711,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public void bulkDelete(List<Invoice> inactiveInvoices) throws BusinessException {
-        for (Invoice e : inactiveInvoices) {
-            remove(e);
-        }
-    }
-
     /**
      * Nullify BR's invoices file names (xml and pdf).
      *
@@ -2786,13 +2878,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *
      * @return a list of invoices
      * @throws BusinessException
+     * @param billingCycleCodes
+     * @param invoiceDateRangeFrom
+     * @param invoiceDateRangeTo
      */
     @SuppressWarnings("unchecked")
-    public List<Invoice> findByNotAlreadySentAndDontSend() throws BusinessException {
+    public List<Invoice> findByNotAlreadySentAndDontSend(List<String> billingCycleCodes, Date invoiceDateRangeFrom, Date invoiceDateRangeTo) throws BusinessException {
         List<Invoice> result = new ArrayList<Invoice>();
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
         qb.addCriterionEntity("alreadySent", false);
         qb.addCriterionEntity("dontSend", false);
+        if(billingCycleCodes != null)
+            qb.addCriterionEntityInList("billingRun.code", billingCycleCodes);
+        if(invoiceDateRangeFrom != null)
+            qb.addCriterionDateRangeFromTruncatedToDay("invoiceDate", invoiceDateRangeFrom);
+        if(invoiceDateRangeTo != null)
+            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false, false);
         try {
             result = (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {

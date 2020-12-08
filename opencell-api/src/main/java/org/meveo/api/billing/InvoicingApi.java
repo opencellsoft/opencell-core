@@ -112,10 +112,15 @@ public class InvoicingApi extends BaseApi {
             if (billingCycle.getLastTransactionDateEL() != null) {
                 billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
             } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
-                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
+                billingRun.setLastTransactionDate(DateUtils
+                        .addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
             } else {
                 billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
             }
+        }
+        billingRun.setCollectionDate(dto.getCollectionDate());
+        if (dto.isComputeDatesAtValidation() != null) {
+            billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
         billingRunService.create(billingRun);
 

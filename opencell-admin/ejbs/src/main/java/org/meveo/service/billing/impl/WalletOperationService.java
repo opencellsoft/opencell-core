@@ -159,8 +159,23 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
+    /**
+     * Apply a one shot charge
+     * 
+     * @param subscription Subscription
+     * @param chargeInstance Charge instance to apply
+     * @param inputQuantity Quantity to apply
+     * @param quantityInChargeUnits Quantity to apply in charge units
+     * @param applicationDate Charge application date
+     * @param isVirtual Is it a virtual charge
+     * @param orderNumberOverride Order number to override
+     * @param chargeMode Charge mode
+     * @return Wallet operation
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
     public WalletOperation applyOneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date applicationDate, boolean isVirtual,
-            String orderNumberOverride) throws BusinessException, RatingException {
+            String orderNumberOverride, ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -174,7 +189,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             new Object[] { subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
-            ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
+            chargeMode, null, false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
@@ -452,11 +467,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             boolean isFirstCharge = false;
 
             // First time charge
-            if (applyChargeFromDate == null) {
+            if (chargeInstance.getChargedToDate() == null) {
                 applyChargeFromDate = chargeInstance.getSubscriptionDate();
                 isFirstCharge = true;
             } else {
-                isFirstCharge = applyChargeFromDate.equals(chargeInstance.getSubscriptionDate());
+                isFirstCharge = chargeInstance.getChargedToDate().equals(chargeInstance.getSubscriptionDate());
             }
 
             DatePeriod period = getRecurringPeriod(chargeInstance, applyChargeFromDate);
@@ -486,7 +501,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 // Determine if subscription charge should be prorated
                 prorateFirstPeriodFromDate = period.getFrom();
-                if (prorateFirstPeriodFromDate.before(applyChargeFromDate)) {
+                if (period.getFrom().before(applyChargeFromDate)) {
 
                     boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() == null ? false : recurringChargeTemplate.getSubscriptionProrata();
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
@@ -500,6 +515,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     prorateFirstPeriod = false;
                     prorateFirstPeriodFromDate = null;
                 }
+
+                // If it is not a first time charge, it might still be need to prorate first period when rerating.
+                // e.g. initial charge WO was 01/10 to 01/11. A change came in on 22/10 and two WOs were created instead: 01/10-22/10 and 22/10-01/11.
+                // A second change came in on 27/10 and three WOs were created instead: 01/10-22/10, 22/10-27/10 and 27/10-01/11.
+                // When processing a second change and rerating a period 22/10-01/11, it should be aware that proration shall be applied as initial full period was 01/10-01/11
+            } else if (chargeMode == ChargeApplicationModeEnum.RERATING && period.getFrom().before(applyChargeFromDate)) {
+                prorateFirstPeriod = true;
+                prorateFirstPeriodFromDate = period.getFrom();
             }
 
             applyChargeToDate = chargeToDate != null ? chargeToDate : applyChargeToDate;
@@ -532,7 +555,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 effectiveChargeFromDate = currentPeriodFromDate;
                 if (periodIndex == 0 && prorateFirstPeriodFromDate != null) {
                     currentPeriodFromDate = prorateFirstPeriodFromDate;
-                    prorate = true && prorateFirstPeriod;
+                    prorate = prorateFirstPeriod;
                 }
 
                 // Take care of the last charge period that termination date falls into
@@ -563,12 +586,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 boolean chargeDatesAlreadyAdvanced = false;
 
-                boolean filterExpression = isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression());
-                List<WalletOperation> woList = chargeInstance.getWalletOperations();
-
                 // If charge is not applicable for current period, skip it
-                if ((!filterExpression && woList.isEmpty()) || (filterExpression && woList.isEmpty() && chargeMode.isReimbursement())) {
-                    log.debug("IPIEL: not rating chargeInstance with id={}, chargeApplication mode={}", chargeInstance.getId(), chargeMode.name());
+                if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+                    log.debug("IPIEL: not rating chargeInstance with id={}, filter expression evaluated to FALSE", chargeInstance.getId());
 
                 } else {
 

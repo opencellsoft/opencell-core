@@ -54,6 +54,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -426,7 +427,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             oneShotChargeInstanceService.oneShotChargeApplication(entity, null, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(), oneShotChargeInstance.getChargeDate(),
                 oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstance.getQuantity(), oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-                oneShotChargeInstance.getCriteria3(), description, null, null, true);
+                oneShotChargeInstance.getCriteria3(), description, null, null, true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
             oneShotChargeInstance = null;
             oneShotChargeInstances = null;

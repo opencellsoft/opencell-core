@@ -42,23 +42,7 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.EndOfTerm;
-import org.meveo.event.qualifier.InboundRequestReceived;
-import org.meveo.event.qualifier.InstantiateWF;
-import org.meveo.event.qualifier.InvoiceNumberAssigned;
-import org.meveo.event.qualifier.LoggedIn;
-import org.meveo.event.qualifier.LowBalance;
-import org.meveo.event.qualifier.PDFGenerated;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.event.qualifier.Rejected;
-import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Terminated;
-import org.meveo.event.qualifier.Updated;
-import org.meveo.event.qualifier.XMLGenerated;
+import org.meveo.event.qualifier.*;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -67,6 +51,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -304,13 +289,35 @@ public class DefaultObserver {
 
     /**
      * Handle Invoice number assigned event
-     * 
+     *
      * @param invoice Invoice
      * @throws BusinessException General business exception
      */
     public void invoiceNumberAssigned(@Observes @InvoiceNumberAssigned Invoice invoice) throws BusinessException {
-        log.debug("Defaut observer: Assigned a number to the invoice {} ", invoice.getId());
+        log.debug("Defaut observer: Subscription version created, id ", invoice.getId());
         checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
+    }
+
+    /**
+     * Handle Subscription version
+     *
+     * @param Subscription subscription
+     * @throws BusinessException General business exception
+     */
+    public void versionCreated(@Observes @VersionCreated Subscription subscription) throws BusinessException {
+        log.debug("Defaut observer: Subscription version created, id: ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
+    }
+
+    /**
+     * Handle Subscription version
+     *
+     * @param Subscription subscription
+     * @throws BusinessException General business exception
+     */
+    public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
+        log.debug("Defaut observer: Subscription version removed, id: ", subscription.getId());
+        checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {

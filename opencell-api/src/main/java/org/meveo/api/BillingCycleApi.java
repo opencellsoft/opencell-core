@@ -232,7 +232,12 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getSplitPerPaymentMethod() != null) {
             entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
         }
-
+        if (dto.getCollectionDateDelayEl() != null) {
+            entity.setCollectionDateDelayEl(dto.getCollectionDateDelayEl());
+        }
+        if (dto.isComputeDatesAtValidation() != null) {
+            entity.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        }
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);
