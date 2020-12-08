@@ -30,6 +30,7 @@ import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
+import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
@@ -51,6 +52,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	@Override
 	public Response createQuote(QuoteDTO quote, UriInfo info) {
 		 try {
+			 //TODO: return GetQuoteDtoResponse
 	            Long id = cpqQuoteApi.createQuote(quote);
 	            return Response.ok(Collections.singletonMap("id", id)).build();
 	        } catch (MeveoApiException e) {
@@ -124,15 +126,18 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response createQuoteItem(QuoteAttributeDTO quoteItem, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response createQuoteItem(QuoteOfferDTO quoteItem, UriInfo info) {
+		 try {
+	            QuoteOfferDTO id = cpqQuoteApi.createQuoteItem(quoteItem);
+	            return Response.ok(id).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e);
+	        }
 	}
 
 
 	@Override
 	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
