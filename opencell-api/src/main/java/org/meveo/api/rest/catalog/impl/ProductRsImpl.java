@@ -12,6 +12,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
@@ -227,18 +228,29 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	public Response findProductVersions(String productCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response listProductVersions(OfferContextDTO offerContextDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
+		try { 
+			result.getProductVersions().addAll(productApi.findProductVersionByProduct(productCode));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 	@Override
 	public Response listProductVersions(PagingAndFiltering pagingAndFiltering) {
+		GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
+
+		try {
+			result = productApi.listProductVersions(pagingAndFiltering);
+			return Response.ok(result).build(); 
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response listProductVersions(OfferContextDTO offerContextDTO) {
 		// TODO Auto-generated method stub
 		return null;
 	}
