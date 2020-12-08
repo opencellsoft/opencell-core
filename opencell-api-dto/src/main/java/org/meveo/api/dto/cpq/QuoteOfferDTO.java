@@ -49,7 +49,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
     @NotNull
     private Integer quoteVersion;
 
-    private String customerServiceCode;
+    private String quoteLotCode;
     
     private String offerCode;
 
@@ -89,15 +89,15 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	/**
 	 * @return the customerServiceCode
 	 */
-	public String getCustomerServiceCode() {
-		return customerServiceCode;
+	public String getQuoteLotCode() {
+		return quoteLotCode;
 	}
 
 	/**
-	 * @param customerServiceCode the customerServiceCode to set
+	 * @param quoteLotCode the quoteLotCode to set
 	 */
-	public void setCustomerServiceCode(String customerServiceCode) {
-		this.customerServiceCode = customerServiceCode;
+	public void setQuoteLotCode(String quoteLotCode) {
+		this.quoteLotCode = quoteLotCode;
 	}
 
 	/**

@@ -50,7 +50,7 @@ public class QuoteDTO extends BusinessEntityDto{
 	private static final long serialVersionUID = 8115890992793236496L;
 	
 	
-    private Integer quoteVersion;
+    private QuoteVersionDto quoteVersion;
 
     private Date quoteDate = new Date();
 
@@ -58,7 +58,7 @@ public class QuoteDTO extends BusinessEntityDto{
 
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
     
-    private List<QuoteOfferDTO > quoteItems = new ArrayList<QuoteOfferDTO>();
+    private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
     @NotNull
 	private String applicantAccountCode;
 	private String billableAccountCode;
@@ -78,7 +78,7 @@ public class QuoteDTO extends BusinessEntityDto{
 	/**
 	 * @return the quoteVersion
 	 */
-	public Integer getQuoteVersion() {
+	public QuoteVersionDto getQuoteVersion() {
 		return quoteVersion;
 	}
 
@@ -86,7 +86,7 @@ public class QuoteDTO extends BusinessEntityDto{
 	/**
 	 * @param quoteVersion the quoteVersion to set
 	 */
-	public void setQuoteVersion(Integer quoteVersion) {
+	public void setQuoteVersion(QuoteVersionDto quoteVersion) {
 		this.quoteVersion = quoteVersion;
 	}
 
