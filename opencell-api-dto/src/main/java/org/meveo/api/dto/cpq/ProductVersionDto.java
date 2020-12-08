@@ -17,12 +17,10 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
  * 
  * @author Mbarek-Ay
- * @version 10.0
+ * @author Rachid.AITYAAZZA
+ * @version 11.0
  */ 
-/**
- * @author Z.Audit
- *
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductVersionDto extends BaseEntityDto {
     
@@ -59,10 +57,16 @@ public class ProductVersionDto extends BaseEntityDto {
     @XmlElement(name = "attributes")
     private Set<AttributeDTO> attributes;
     
+    @XmlElementWrapper(name = "groupedAttributes")
+    @XmlElement(name = "groupedAttributes")
+    private Set<GroupedAttributeDto> groupedAttributes = new HashSet<>();
+    
     /** The services template. */
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private Set<TagDto> tagList = new HashSet<>();
+    
+
     
     /**
      * Instantiates a new product version dto.

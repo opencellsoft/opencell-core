@@ -70,7 +70,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The offer component. */
     @XmlElementWrapper(name = "offerComponents")
     @XmlElement(name = "offerComponent")
-    private List<OfferProductsDto> offerComponents;
+    private List<OfferProductsDto> offerProducts;
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
@@ -117,12 +117,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
-    
-    
-    /** The products. */
-    @XmlElementWrapper(name = "product")
-    @XmlElement(name = "products")
-    private List<ProductDto> products;
     
     
     /** The services template. */
@@ -402,19 +396,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.tags = tags;
 	}
 
-	/**
-	 * @return the products
-	 */
-	public List<ProductDto> getProducts() {
-		return products;
-	}
-
-	/**
-	 * @param products the products to set
-	 */
-	public void setProducts(List<ProductDto> products) {
-		this.products = products;
-	}
 
 	/**
 	 * @return the services
@@ -433,15 +414,15 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	/**
 	 * @return the offerComponents
 	 */
-	public List<OfferProductsDto> getOfferComponents() {
-		return offerComponents;
+	public List<OfferProductsDto> getOfferProducts() {
+		return offerProducts;
 	}
 
 	/**
 	 * @param offerComponents the offerComponents to set
 	 */
-	public void setOfferComponents(List<OfferProductsDto> offerComponents) {
-		this.offerComponents = offerComponents;
+	public void setOfferProduct(List<OfferProductsDto> offerComponents) {
+		this.offerProducts = offerComponents;
 	}
 
  

@@ -61,10 +61,6 @@ public class TagApi extends BaseApi {
 			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 		}
 		tag.setTagType(tagType);
-		BillingAccount ba = billingAccountService.findByCode(tagDto.getBillingAccountCode());
-		if(ba!=null) {
-			tag.setBillingAccount(ba);
-		}
 
 		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
 			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());

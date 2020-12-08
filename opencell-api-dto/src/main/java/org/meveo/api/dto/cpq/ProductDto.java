@@ -1,6 +1,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -33,12 +34,12 @@ public class ProductDto extends BaseEntityDto{
 	private String reference;
 	private String model;
 	private Set<String> modelChildren;
-    @NotNull
-	private boolean discountFlag;
-    @NotNull
-    private boolean packageFlag;
+	private boolean discountFlag=Boolean.FALSE;
+    private boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+   
 
     
     
@@ -228,6 +229,8 @@ public class ProductDto extends BaseEntityDto{
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+
 
 
 	

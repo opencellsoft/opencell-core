@@ -62,6 +62,11 @@ public class CustomerContextDTO extends BaseEntityDto {
     private String contractCode;
     
     /**
+     * requested tag types
+     */
+     private List<String> requestedTagTypes;
+    
+    /**
      * paging And Filtering
      */
     private PagingAndFiltering pagingAndFiltering;
@@ -109,6 +114,18 @@ public class CustomerContextDTO extends BaseEntityDto {
 	 */
 	public void setCustomerTags(List<String> customerTags) {
 		this.customerTags = customerTags;
+	}
+	/**
+	 * @return the requestedTagTypes
+	 */
+	public List<String> getRequestedTagTypes() {
+		return requestedTagTypes;
+	}
+	/**
+	 * @param requestedTagTypes the requestedTagTypes to set
+	 */
+	public void setRequestedTagTypes(List<String> requestedTagTypes) {
+		this.requestedTagTypes = requestedTagTypes;
 	}
 
 

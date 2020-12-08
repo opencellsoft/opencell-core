@@ -672,18 +672,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		});
 	}
 	
-	/*public void addToGroup(String serviceCode, String groupedServiceCode) {
-		final ServiceTemplate template = serviceTemplateService.findByCode(serviceCode);
-		if(template == null) 
-			throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceCode);
-		if(template.getGroupedService() != null)
-			throw new BusinessException("Service code " + template.getCode() + " is already assigned to a group code " + template.getGroupedService().getCode());
-		final GroupedService groupedService = groupedServiceService.findByCode(groupedServiceCode);
-		if(groupedService == null)
-            throw new EntityDoesNotExistsException(GroupedService.class, groupedServiceCode);
-		template.setGroupedService(groupedService);
-		serviceTemplateService.update(template);
-	}*/
+
 	
 	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
 		GetListServiceResponseDto result = new GetListServiceResponseDto();
@@ -707,34 +696,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 		resultBaTags.addAll(tagCodes);
 		resultBaTags.addAll(sellerTags);
 		resultBaTags.addAll(customerTags); 
-		List<ServiceTemplate> serviceByTags=serviceTemplateService.getServiceByTags(resultBaTags); 
 
-		if(!StringUtils.isBlank(offerContextDTO.getCurrentProductCode()) && !StringUtils.isBlank(offerContextDTO.getCurrentProductVersion())  ) {
-			ProductVersion prodVersion=productVersionService.findByProductAndVersion(offerContextDTO.getCurrentProductCode(), offerContextDTO.getCurrentProductVersion());
-//			List<ServiceTemplate> services=prodVersion.getServices();
-//			if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
-//				for(ServiceTemplate service:services) {
-//					if(serviceByTags.contains(service)) {
-//						ServiceDTO serviceDto=new ServiceDTO(service);
-//						result.addServiceTemplate(serviceDto);
-//					}
-//				} 
-//			}
-		}
-//		else if(!StringUtils.isBlank(offerContextDTO.getOfferCode())){
-//			OfferTemplate offerTemplate=offerTemplateService.findByCode(offerContextDTO.getOfferCode());
-//			if(offerTemplate!=null) { 
-//				List<OfferServiceTemplate> services=offerTemplate.getOfferServiceTemplates();
-//				if(!services.isEmpty() && !serviceByTags.isEmpty() ) {
-//					for(OfferServiceTemplate service:services) {
-//						if(serviceByTags.contains(service.getServiceTemplate())) {
-//							AttributeDTO serviceDto=new AttributeDTO(service.getServiceTemplate());
-//							result.addServiceTemplate(serviceDto);
-//						}
-//					}
-//				}
-//			}
-//		}
 		return result;	
 	}
 	

@@ -11,39 +11,40 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * 
  * @author Tarik FAKHOURI
  * @author Mbarek-Ay
- * @version 10.0
+ * @version 11.0
  */ 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferProductsDto extends BaseEntityDto {
     
      /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7824004884683019697L;  
-    private String prodcutCode;
     @NotNull
     private String offerTemplateCode;
     
     /** The product dto. */
+    private ProductVersionDto productVersion;
+    
     private ProductDto product;
     
-    /** The prerequisite Products */
-    @XmlElementWrapper(name = "prerequisiteProducts")
-    @XmlElement(name = "prerequisiteProducts")
-    private List<ProductDto> prerequisiteProducts= new ArrayList<>();
+    /** Discount plans allowed for this product. */
+    @XmlElementWrapper(name = "allowedDiscountPlans")
+    @XmlElement(name = "allowedDiscountPlans")
+    private List<DiscountPlanDto> allowedDiscountPlans;
     
-    /** The incompatible Products. */
-    @XmlElementWrapper(name = "incompatibleProducts")
-    @XmlElement(name = "incompatibleProducts")
-    private List<ProductDto> incompatibleProducts= new ArrayList<>();
+    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+
+    private boolean selectable=Boolean.TRUE;
     
-    @XmlElementWrapper(name = "tags")
-    @XmlElement(name = "tags")
-    private Set<TagDto> tagList = new HashSet<>();
+    private Integer sequence=0;
+    
+    private boolean ruled=Boolean.FALSE;
     
     /**
      * Instantiates a new Offer Component dto.
@@ -53,28 +54,66 @@ public class OfferProductsDto extends BaseEntityDto {
     
     public OfferProductsDto(OfferComponent o) {  
     	 if (o.getProduct() != null) {
-    		 product = new ProductDto(o.getProduct());
+    		 productVersion = new ProductVersionDto();
          } 
-       if(o.getTagsList() != null && !o.getTagsList().isEmpty()) {
-    	   o.getTagsList().forEach(t -> {
-    		   tagList.add(new TagDto(t));
-    	   });
-       }
+     
     }
 
- 
+
 	/**
-	 * @return the tagList
+	 * @return the allowedDiscountPlans
 	 */
-	public Set<TagDto> getTagList() {
-		return tagList;
+	public List<DiscountPlanDto> getAllowedDiscountPlans() {
+		return allowedDiscountPlans;
 	}
 
 	/**
-	 * @param tagList the tagList to set
+	 * @param allowedDiscountPlans the allowedDiscountPlans to set
 	 */
-	public void setTagList(Set<TagDto> tagList) {
-		this.tagList = tagList;
+	public void setAllowedDiscountPlans(List<DiscountPlanDto> allowedDiscountPlans) {
+		this.allowedDiscountPlans = allowedDiscountPlans;
+	}
+
+	/**
+	 * @return the offerTemplateCode
+	 */
+	public String getOfferTemplateCode() {
+		return offerTemplateCode;
+	}
+
+	/**
+	 * @param offerTemplateCode the offerTemplateCode to set
+	 */
+	public void setOfferTemplateCode(String offerTemplateCode) {
+		this.offerTemplateCode = offerTemplateCode;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersionDto getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersionDto productVersion) {
+		this.productVersion = productVersion;
 	}
 
 	/**
@@ -92,27 +131,47 @@ public class OfferProductsDto extends BaseEntityDto {
 	}
 
 	/**
-	 * @return the prodcutCode
+	 * @return the selectable
 	 */
-	public String getProdcutCode() {
-		return prodcutCode;
+	public boolean isSelectable() {
+		return selectable;
 	}
 
 	/**
-	 * @param prodcutCode the prodcutCode to set
+	 * @param selectable the selectable to set
 	 */
-	public void setProdcutCode(String prodcutCode) {
-		this.prodcutCode = prodcutCode;
-	}
-	public List<ProductDto> getIncompatibleProducts() {
-		return incompatibleProducts;
+	public void setSelectable(boolean selectable) {
+		this.selectable = selectable;
 	}
 
 	/**
-	 * @param incompatibleProducts the incompatibleProducts to set
+	 * @return the sequence
 	 */
-	public void setIncompatibleProducts(List<ProductDto> incompatibleProducts) {
-		this.incompatibleProducts = incompatibleProducts;
+	public Integer getSequence() {
+		return sequence;
 	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	/**
+	 * @return the ruled
+	 */
+	public boolean isRuled() {
+		return ruled;
+	}
+
+	/**
+	 * @param ruled the ruled to set
+	 */
+	public void setRuled(boolean ruled) {
+		this.ruled = ruled;
+	}
+
+	
    
 }
