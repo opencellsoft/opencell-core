@@ -79,14 +79,14 @@ public class GenericCodeApi extends BaseApi {
         sequenceService.update(sequence);
     }
 
-    public String newCode(GenericCodeDto genericCodeDto) {
+    public String getGenericCode(GenericCodeDto genericCodeDto) {
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService
                 .findByClass(genericCodeDto.getEntityClass())).orElseThrow(() -> new MeveoApiException("Generic code does not exists"));
         String result;
         if (genericCodeDto.getPrefixOverride() != null) {
-          result = serviceSingleton.genericCode(customGenericEntityCode, genericCodeDto.getPrefixOverride());
+          result = serviceSingleton.getGenericCode(customGenericEntityCode, genericCodeDto.getPrefixOverride());
         } else {
-            result = serviceSingleton.genericCode(customGenericEntityCode);
+            result = serviceSingleton.getGenericCode(customGenericEntityCode);
         }
         return result;
     }

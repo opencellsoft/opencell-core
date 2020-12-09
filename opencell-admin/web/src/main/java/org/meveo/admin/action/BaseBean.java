@@ -335,7 +335,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String generateCode(String entityClass) {
         CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
         if(customGenericEntityCode != null) {
-            return serviceSingleton.genericCode(customGenericEntityCode);
+            return serviceSingleton.getGenericCode(customGenericEntityCode);
         }
         return null;
     }

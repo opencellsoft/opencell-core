@@ -43,9 +43,9 @@ public class GenericCodeRsImpl extends BaseRs implements GenericCodeRs {
 	private GenericCodeApi genericCodeApi;
 
 	@Override
-	public GenericCodeResponseDto newCode(GenericCodeDto codeDto) {
+	public GenericCodeResponseDto getGenericCode(GenericCodeDto codeDto) {
 		GenericCodeResponseDto genericCodeResponseDto = new GenericCodeResponseDto();
-		genericCodeResponseDto.setGeneratedCode(genericCodeApi.newCode(codeDto));
+		genericCodeResponseDto.setGeneratedCode(genericCodeApi.getGenericCode(codeDto));
 		ofNullable(codeDto.getSequence())
 				.ifPresent(sequenceDto-> genericCodeResponseDto.setSequenceType(sequenceDto.getSequenceType().name()));
 		return genericCodeResponseDto;

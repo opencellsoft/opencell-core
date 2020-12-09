@@ -18,7 +18,7 @@ public interface GenericCodeRs extends IBaseRs {
 
     @POST
     @Path("/newCode")
-    GenericCodeResponseDto newCode(GenericCodeDto codeDto);
+    GenericCodeResponseDto getGenericCode(GenericCodeDto codeDto);
 
     @POST
     @Path("/")

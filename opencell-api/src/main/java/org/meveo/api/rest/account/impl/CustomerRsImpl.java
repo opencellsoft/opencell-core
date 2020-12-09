@@ -382,7 +382,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         GenericCodeResponseDto result = new GenericCodeResponseDto();
 
         try {
-            result.setGeneratedCode(genericCodeApi.newCode(genericCodeDto));
+            result.setGeneratedCode(genericCodeApi.getGenericCode(genericCodeDto));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
