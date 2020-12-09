@@ -3590,7 +3590,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 null, null, null, ratedTransactionDto.getUnityDescription(),
                                 null, null, null, null, ratedTransactionDto.getCode(),
                                 ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(),
-                                seller, tax, tax.getPercent(), null, taxClass);
+                                seller, tax, tax.getPercent(), null, taxClass, null);
 
                         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
                         // #3355 : setting params 1,2,3

@@ -1292,7 +1292,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<>();
         if(ratedTransactions != null) {
             for (RatedTransaction ratedTransaction : ratedTransactions) {
-                if (ratedTransaction.getWallet() == null) {
+                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM) {
 
                     Element subCategory = null;
                     InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
