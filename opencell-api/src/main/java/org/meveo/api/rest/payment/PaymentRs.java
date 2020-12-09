@@ -48,6 +48,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceItemDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
@@ -59,10 +60,11 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.payments.PaymentScheduleInstanceItem;
 
 /**
  * The Interface PaymentRs.
- * 
+ *
  * @author anasseh
  * @author Said Ramli
  * @author Edward P. Legaspi
@@ -78,7 +80,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Creates automated payment. It also process if a payment is matching or not Deprecated and replaced by "reatePayment" using /payment path
-     * 
+     *
      * @param postData Payment's data
      * @return payment action status
      */
@@ -89,7 +91,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Creates automated payment. It also process if a payment is matching or not
-     * 
+     *
      * @param postData Payment's data
      * @return payment action status
      */
@@ -99,9 +101,9 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Returns a list of account operations along with the balance of a customer.
-     * 
+     *
      * @param customerAccountCode customer account code
-     * @param pagingAndFiltering     
+     * @param pagingAndFiltering
      * @return list of customer's response.
      */
     @GET
@@ -114,7 +116,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Add a new card payment method. It will be marked as preferred.
-     * 
+     *
      * @param cardPaymentMethod Card payment method DTO
      * @return Token id in payment gateway
      */
@@ -124,7 +126,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Update existing card payment method.
-     * 
+     *
      * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
@@ -134,7 +136,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
+     *
      * @param id Id
      * @return Action status
      */
@@ -144,8 +146,8 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List available card payment methods for a given customer account identified either by id or by code.
-     * 
-     * @param customerAccountId Customer account id
+     *
+     * @param customerAccountId   Customer account id
      * @param customerAccountCode Customer account code
      * @return A list of card payment methods
      */
@@ -156,7 +158,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Retrieve card payment method by its id.
-     * 
+     *
      * @param id Id
      * @return Card payment DTO
      */
@@ -169,7 +171,7 @@ public interface PaymentRs extends IBaseRs {
     /************************************************************************************************/
     /**
      * Add a new payment method. It will be marked as preferred.
-     * 
+     *
      * @param paymentMethod payment method DTO
      * @return Token id in payment gateway
      */
@@ -179,7 +181,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Update existing payment method.
-     * 
+     *
      * @param ddPaymentMethod payment method DTO
      * @return Action status
      */
@@ -189,7 +191,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
+     *
      * @param id Id
      * @return Action status
      */
@@ -199,7 +201,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List Payment Methods matching a given criteria
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma
      * @param offset Pagination - from record number
@@ -212,11 +214,11 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentMethod/list")
     public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
-    
-    
+
+
     /**
      * List Payment Methods matching a customer account
-     * 
+     *
      * @param customerAccountCode customer account code.
      * @param offset Pagination - from record number
      * @param limit Pagination - number of records to retrieve
@@ -228,7 +230,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List Payment Methods matching a given criteria
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return An payment method list
      */
@@ -238,7 +240,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Retrieve payment method by its id.
-     * 
+     *
      * @param id Id
      * @return payment DTO
      */
@@ -248,7 +250,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Enable a Payment method with a given id
-     * 
+     *
      * @param id Payment method id
      * @return Request processing status
      */
@@ -258,7 +260,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Disable a Payment method with a given id
-     * 
+     *
      * @param id Payment method id
      * @return Request processing status
      */
@@ -271,7 +273,7 @@ public interface PaymentRs extends IBaseRs {
     /************************************************************************************************/
     /**
      * Add a new payment gateway.
-     * 
+     *
      * @param paymentGateway payment gateway DTO
      * @return the paymentGateway dto created
      */
@@ -281,7 +283,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Update existing payment gateway.
-     * 
+     *
      * @param paymentGateway payment gateway DTO
      * @return Action status
      */
@@ -291,7 +293,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Remove payment gateway.
-     * 
+     *
      * @param code payment gateway's code
      * @return Action status
      */
@@ -301,7 +303,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List payment gateways matching a given criteria
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma
      * @param offset Pagination - from record number
@@ -317,7 +319,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List payment gateways matching a given criteria.
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return An payment gateway list
      */
@@ -327,7 +329,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Retrieve payment gateway by its code.
-     * 
+     *
      * @param code payment gateway's code
      * @return payment DTO
      */
@@ -337,7 +339,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Create or update payment gateway.
-     * 
+     *
      * @param paymentGateway payment gateway DTO
      * @return the paymentGateway dto created
      */
@@ -347,7 +349,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Enable a Payment gateway with a given code
-     * 
+     *
      * @param code Payment gateway code
      * @return Request processing status
      */
@@ -357,14 +359,14 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Disable a Payment gateway with a given code
-     * 
+     *
      * @param code Payment gateway code
      * @return Request processing status
      */
     @POST
     @Path("/paymentGateway/{code}/disable")
     ActionStatus disablePaymentGateway(@PathParam("code") String code);
-    
+
     /**
      * Creates a RUM sequence associated to the given payment gateway.
      * @param postData the RUM sequence details
@@ -373,7 +375,7 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/paymentGateway/rumSequence")
     ActionStatus createRumSequence(PaymentGatewayRumSequenceDto postData);
-    
+
     /**
      * Updates a RUM sequence associated to the given payment gateway.
      * @param postData the RUM sequence details
@@ -382,7 +384,7 @@ public interface PaymentRs extends IBaseRs {
     @PUT
     @Path("/paymentGateway/rumSequence")
     ActionStatus updateRumSequence(PaymentGatewayRumSequenceDto postData);
-    
+
     /**
      * Finds the RUM sequence with the specified code.
      * @param code code of the RUM sequence 
@@ -391,7 +393,7 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/paymentGateway/rumSequence/{code}")
     PaymentGatewayRumSequenceResponseDto findRumSequence(@PathParam("code") String code);
-    
+
     /**
      * Deletes the RUM sequence with the specified code.
      * @param code code of the RUM sequence
@@ -400,19 +402,20 @@ public interface PaymentRs extends IBaseRs {
     @DELETE
     @Path("/paymentGateway/rumSequence/{code}")
     ActionStatus deleteRumSequence(@PathParam("code") String code);
-    
+
     /**
-	 * Generates the next RUM sequence number.
-	 * @param code code of the sequence
-	 * @return sequence value dto
-	 */
-	@POST
-	@Path("/paymentGateway/rumSequence/{code}/next")
-	GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(@PathParam("code") String code);
+     * Generates the next RUM sequence number.
+     *
+     * @param code code of the sequence
+     * @return sequence value dto
+     */
+    @POST
+    @Path("/paymentGateway/rumSequence/{code}/next")
+    GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(@PathParam("code") String code);
 
     /**
      * List Payment matching a given criteria.
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @param offset Pagination - from record number
@@ -428,21 +431,20 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List invoices matching a given criteria.
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return An invoice list
      */
     @POST
     @Path("/history/list")
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
-    
 
     /************************************************************************************************/
     /****                             DDRequest Builder                                          ****/
     /************************************************************************************************/
     /**
      * Add a new ddRequest builder.
-     * 
+     *
      * @param ddRequestBuilder ddRequest builder DTO
      * @return the ddRequestBuilder dto created
      */
@@ -452,7 +454,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Update existing ddRequest builder.
-     * 
+     *
      * @param ddRequestBuilder ddRequest builder DTO
      * @return Action status
      */
@@ -462,7 +464,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Remove ddRequest builder.
-     * 
+     *
      * @param code ddRequest builder's code
      * @return Action status
      */
@@ -472,7 +474,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List DDRequest Builders matching a given criteria
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma
      * @param offset Pagination - from record number
@@ -488,7 +490,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * List DDRequest Builders matching a given criteria.
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return An ddRequest builder list
      */
@@ -498,7 +500,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Retrieve ddRequest builder by its code.
-     * 
+     *
      * @param code ddRequest builder's code
      * @return ddRequest builder DTO
      */
@@ -508,7 +510,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Create or update ddRequest builder.
-     * 
+     *
      * @param ddRequestBuilder ddRequest builder DTO
      * @return the ddRequestBuilder dto created
      */
@@ -518,7 +520,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Enable a ddRequest builder with a given code
-     * 
+     *
      * @param code ddRequest builder code
      * @return Request processing status
      */
@@ -528,7 +530,7 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Disable a ddRequest builder with a given code
-     * 
+     *
      * @param code ddRequest builder code
      * @return Request processing status
      */
@@ -553,46 +555,40 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentGateway/getHostedCheckoutUrl")
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
-                                                                 @QueryParam("returnUrl") String returnUrl,
-                                                                 @DefaultValue("fr_FR") @QueryParam("locale") String locale,
-                                                                 @DefaultValue("100") @QueryParam("amount") String amount,
-                                                                 @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
-                                                                 @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
-                                                                 @DefaultValue("fr") @QueryParam("countryCode") String countryCode,
-                                                                 @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
-                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
-                                                                 @DefaultValue("101") @QueryParam("variant") String variant,
-                                                                 @QueryParam("seller") String sellerCode
-    );
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode, @QueryParam("returnUrl") String returnUrl,
+            @DefaultValue("fr_FR") @QueryParam("locale") String locale, @DefaultValue("100") @QueryParam("amount") String amount,
+            @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode, @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
+            @DefaultValue("fr") @QueryParam("countryCode") String countryCode, @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
+            @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName, @DefaultValue("101") @QueryParam("variant") String variant,
+            @QueryParam("seller") String sellerCode);
 
-    
     /************************************************************************************************/
     /****                           Payment Schedules                                            ****/
     /************************************************************************************************/
-    
+
     /**
      * Create or update payment Schedules template.
-     * 
+     *
      * @param paymentScheduleTemplateDto payment Schedule Template Dto 
      * @return Request processing status
      */
     @POST
     @Path("/paymentScheduleTemplate/createOrUpdate")
     public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+
     /**
      * Create  payment Schedules template.
-     * 
+     *
      * @param paymentScheduleTemplateDto payment Schedule Template Dto 
      * @return Request processing status
      */
     @POST
     @Path("/paymentScheduleTemplate")
     public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
-    
+
     /**
      * Create  payment Schedules template.
-     * 
+     *
      * @param paymentScheduleTemplateDto payment Schedule Template Dto 
      * @return Request processing status
      */
@@ -600,40 +596,39 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentScheduleTemplate")
     public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 
-
     /**
      * remove  payment Schedules template.
-     * 
+     *
      * @param paymentScheduleTemplateCode payment Schedule Template Code  to remove
      * @return Request processing status
      */
     @DELETE
     @Path("/paymentScheduleTemplate")
     public ActionStatus removePaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
-    
+
     /**
      * find  payment Schedules template.
-     * 
+     *
      * @param paymentScheduleTemplateCode payment Schedule Template Code  to find
      * @return Request processing status
      */
     @GET
     @Path("/paymentScheduleTemplate")
     public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode")  String paymentScheduleTemplateCode);
-      
+
     /**
      * List  PaymentScheduleTemplate matching a given criteria
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria.
      * @return An paymentScheduleTemplate dto list
      */
     @POST
     @Path("/paymentScheduleTemplate/list")
     public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * List  PaymentScheduleTemplate matching a given criteria
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @param offset Pagination - from record number
@@ -647,20 +642,19 @@ public interface PaymentRs extends IBaseRs {
     public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
-    
     /**
      * Update  payment Schedules instance.
-     * 
-     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     *
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto
      * @return Request processing status
      */
     @PUT
     @Path("/paymentScheduleInstance")
     public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
-    
+
     /**
      * Find  PaymentScheduleInstance by ID
-     * 
+     *
      * @param id PaymentScheduleInstance ID
      * @return A paymentScheduleInstance dto
      */
@@ -668,20 +662,19 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentScheduleInstance")
     public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(@QueryParam("id") Long id);
 
-    
     /**
      * List  PaymentScheduleInstance matching a given criteria
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria.
      * @return An PaymentScheduleInstance dto list
      */
     @POST
     @Path("/paymentScheduleInstance/list")
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * List  paymentScheduleInstance matching a given criteria
-     * 
+     *
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @param offset Pagination - from record number
@@ -697,29 +690,29 @@ public interface PaymentRs extends IBaseRs {
 
     /**
      * Terminate  payment Schedules instance.
-     * 
+     *
      * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
      * @return Request processing status
      */
     @PUT
     @Path("/paymentScheduleInstance/terminate")
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
-    
+
     /**
      * Cancel  payment Schedules instance.
-     * 
-     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     *
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto
      * @return Request processing status
      */
     @PUT
     @Path("/paymentScheduleInstance/cancel")
     public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
-     
-    
-    
+
+
+
     /**
      * Gets a created mandate.
-     * 
+     *
      * @param mandateReference mandate reference
      * @param mandateId mandate Id
      * @param customerAccountCode customer account code
@@ -728,10 +721,21 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/paymentGateway/checkMandate")
     public MandatInfoDto checkMandate(@QueryParam("mandateReference") String mandateReference,@QueryParam("mandateId") String mandateId,@QueryParam("customerAccountCode") String customerAccountCode);
-    
+
     @GET
     @Path("/paymentGateway/approveSepaDDMandate")
     public ActionStatus approveSepaDDMandate(@QueryParam("customerAccountCode") String customerAccountCode,@QueryParam("tokenId")String tokenId);
-    
-    
+
+
+
+    /**
+     * Update Payment schedule instance item, the update is only about amount and requestPaymentDate.
+     *
+     * @param paymentScheduleInstanceItemDto
+     * @return
+     */
+    @PUT
+    @Path("/paymentScheduleInstance/{{paymentScheduleInstanceId}}/items")
+    ActionStatus updatePaymentScheduleInstanceItem(@PathParam("paymentScheduleInstanceId") Long paymentScheduleInstanceId,
+            PaymentScheduleInstanceItemDto paymentScheduleInstanceItemDto);
 }

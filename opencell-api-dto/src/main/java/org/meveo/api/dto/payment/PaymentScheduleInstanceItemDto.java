@@ -21,6 +21,7 @@
  */
 package org.meveo.api.dto.payment;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -52,23 +53,33 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     
     /** The request payment date. */
     private Date requestPaymentDate;
-    
-    /** The recorded invoice. */
+
+    /**
+     * The recorded invoice.
+     */
     private RecordedInvoiceDto recordedInvoice;
-    
-    /** The last. */
+
+    /**
+     * The last.
+     */
     private boolean last;
-    
-    /** The paid. */
+
+    /**
+     * The paid.
+     */
     private boolean paid;
-    
+    /**
+     * Amount
+     */
+    private BigDecimal amount;
+
     /**
      * Instantiates a new payment schedule instance item dto.
      */
-    public PaymentScheduleInstanceItemDto(){
-        
+    public PaymentScheduleInstanceItemDto() {
+
     }
-    
+
     /**
      * Instantiates a new payment schedule instance item dto.
      *
@@ -80,7 +91,8 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
         this.requestPaymentDate = paymentScheduleInstanceItem.getRequestPaymentDate();
         this.recordedInvoice = paymentScheduleInstanceItem.getRecordedInvoice() == null ? null : new RecordedInvoiceDto(paymentScheduleInstanceItem.getRecordedInvoice());
         this.last = paymentScheduleInstanceItem.isLast();
-        this.paid = paymentScheduleInstanceItem.isPaid();        
+        this.paid = paymentScheduleInstanceItem.isPaid();
+        this.amount = paymentScheduleInstanceItem.getAmount();
     }
     
     /**
@@ -181,7 +193,7 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     public boolean isPaid() {
         return paid;
     }
-    
+
     /**
      * Sets the paid.
      *
@@ -190,7 +202,23 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     public void setPaid(boolean paid) {
         this.paid = paid;
     }
-    
-    
+
+    /**
+     * Gets Amount.
+     *
+     * @return the payment schedule item amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * Sets Amount
+     *
+     * @param amount the amount to set
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
 }

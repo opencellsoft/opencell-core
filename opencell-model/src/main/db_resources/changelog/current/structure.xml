@@ -3859,6 +3859,12 @@ END $$;]]>
             <column name="compute_dates_validation" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
+    <changeSet id="5697_20201208" author="khalidHORRI">
+        <addColumn tableName="ar_payment_schedule_inst_item">
+            <column name="amount" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
 
     <changeSet id="#5632_20201207_RT_TYPE" author="NabilOUACHI">
         <addColumn tableName="billing_rated_transaction">
