@@ -18,7 +18,6 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -50,11 +49,6 @@ public class AccountingArticlePricesDTO extends EnableBusinessDto {
      * The accounting article label
      */
     private String accountingArticleLabel;
-    
-    /**
-     * The accounting article label
-     */
-    private String customerServiceCode;
     
     /**
      * List of accouting article prices
@@ -106,14 +100,6 @@ public class AccountingArticlePricesDTO extends EnableBusinessDto {
 
 	public void setAccountingArticleLabel(String accountingArticleLabel) {
 		this.accountingArticleLabel = accountingArticleLabel;
-	}
-
-	public String getCustomerServiceCode() {
-		return customerServiceCode;
-	}
-
-	public void setCustomerServiceCode(String customerServiceCode) {
-		this.customerServiceCode = customerServiceCode;
 	}
 
 	public String getDiscountPlanItemCode() {

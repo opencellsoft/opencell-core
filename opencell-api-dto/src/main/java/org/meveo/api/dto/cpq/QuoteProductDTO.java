@@ -45,7 +45,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 	private static final long serialVersionUID = 7231556751341912018L;
 
     @NotNull
-	private String cpqQuoteCode;
+	private String quoteCode;
     @NotNull
     private String productCode;
 
@@ -118,15 +118,15 @@ public class QuoteProductDTO extends BaseEntityDto{
 	/**
 	 * @return the cpqQuoteCode
 	 */
-	public String getCpqQuoteCode() {
-		return cpqQuoteCode;
+	public String getQuoteCode() {
+		return quoteCode;
 	}
 
 	/**
 	 * @param cpqQuoteCode the cpqQuoteCode to set
 	 */
-	public void setCpqQuoteCode(String cpqQuoteCode) {
-		this.cpqQuoteCode = cpqQuoteCode;
+	public void setQuoteCode(String cpqQuoteCode) {
+		this.quoteCode = cpqQuoteCode;
 	}
 
 	/**

@@ -39,30 +39,30 @@ public class OfferContextDTO extends BaseEntityDto {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2850157608109341441L;
 
-
-	private CustomerContextDTO customerContextDTO;
-	
-	private String customerServiceCode ;
-	
 	  /**
      * The offer code
      */
-    
     private String offerCode;
+    
+	private CustomerContextDTO customerContextDTO;
+	
+	private String quoteLotCode ;
+	
+	
 	
     /**
      * The selected products in the quote
      */
-    private List<ProductContextDTO> products;
+    private List<ProductContextDTO> selectedProducts;
     
    
     
 	 
-	public List<ProductContextDTO> getProducts() {
-		return products;
+	public List<ProductContextDTO> getSelectedProducts() {
+		return selectedProducts;
 	}
-	public void setProducts(List<ProductContextDTO> products) {
-		this.products = products;
+	public void setSelectedProducts(List<ProductContextDTO> selectedProducts) {
+		this.selectedProducts = selectedProducts;
 	}
 	public CustomerContextDTO getCustomerContextDTO() {
 		return customerContextDTO;
@@ -73,14 +73,14 @@ public class OfferContextDTO extends BaseEntityDto {
 	/**
 	 * @return the customerServiceCode
 	 */
-	public String getCustomerServiceCode() {
-		return customerServiceCode;
+	public String getQuoteLotCode() {
+		return quoteLotCode;
 	}
 	/**
 	 * @param customerServiceCode the customerServiceCode to set
 	 */
-	public void setCustomerServiceCode(String customerServiceCode) {
-		this.customerServiceCode = customerServiceCode;
+	public void setQuoteLotCode(String quoteLotCode) {
+		this.quoteLotCode = quoteLotCode;
 	}
 	/**
 	 * @return the offerCode

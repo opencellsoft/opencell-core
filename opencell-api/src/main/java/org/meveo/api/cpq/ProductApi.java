@@ -12,13 +12,15 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,7 +28,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -41,6 +42,7 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerBrandService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Tarik FAKHOURI
@@ -75,6 +77,8 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private AttributeService  attributeService;
+	
+	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
 	/**
 	 * @return ProductDto
@@ -451,9 +455,73 @@ public class ProductApi extends BaseApi {
 		if(attributes != null && !attributes.isEmpty()){
 			productVersion.setAttributes(attributes
 					.stream()
-					.map(serviceDto -> attributeService.findByCode(serviceDto.getCode()))
+					.map(attributeDto -> attributeService.findByCode(attributeDto.getCode()))
 					.collect(Collectors.toList()));
 		}
 	}
+	
+	
+	 public List<ProductVersionDto> findProductVersionByProduct(String productCode)  throws MeveoApiException, BusinessException  { 
+			try {
+				List<ProductVersionDto> productVersionsDto=new ArrayList<ProductVersionDto>();
+				List<ProductVersion> productVersions = productVersionService.findByProduct(productCode); 
+				ProductVersionDto productVersionDto=null;
+				if(!productVersions.isEmpty()) {
+				for(ProductVersion prodversion:productVersions) {
+					productVersionDto=new ProductVersionDto(prodversion);
+					productVersionsDto.add(productVersionDto);
+				}
+				}
+		        return productVersionsDto;
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e);
+			}
+	    }
+	 
+	 
+	 public GetListProductVersionsResponseDto listProductVersions (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+		 if (pagingAndFiltering == null) {
+			 pagingAndFiltering = new PagingAndFiltering();
+		 }
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+			 sortBy = pagingAndFiltering.getSortBy();
+		 }
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, ProductVersion.class);
+		 Long totalCount = productVersionService.count(paginationConfiguration);
+		 GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
+		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		 if(totalCount > 0) {
+			 productVersionService.list(paginationConfiguration).stream().forEach(p -> {
+				 result.getProductVersions().add(new ProductVersionDto(p));
+			 });
+		 }
+		 return result;
+	 }
+	 
+	 
+	 public GetListProductsResponseDto listProducts (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+		 if (pagingAndFiltering == null) {
+			 pagingAndFiltering = new PagingAndFiltering();
+		 }
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+			 sortBy = pagingAndFiltering.getSortBy();
+		 }
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Product.class);
+		 Long totalCount = productService.count(paginationConfiguration);
+		 GetListProductsResponseDto result = new GetListProductsResponseDto();
+		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		 if(totalCount > 0) {
+			 productService.list(paginationConfiguration).stream().forEach(p -> {
+				 result.getProducts().add(new ProductDto(p));
+			 });
+		 }
+		 return result;
+	 }
 	
 }

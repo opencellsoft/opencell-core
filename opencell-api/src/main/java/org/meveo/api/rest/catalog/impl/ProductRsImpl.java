@@ -12,6 +12,8 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
@@ -80,28 +82,16 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response listProducts(PagingAndFiltering pagingAndFiltering) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
-	        try {
-	        	/*****@TODO RAY : create a new method in ProductAPI that get products matching given criteria**/
+	        try {  
+	    			result = productApi.listProducts(pagingAndFiltering);
+	    			return Response.ok(result).build(); 
 	        	
-	        } catch (Exception e) {
-	            processException(e, result.getActionStatus());
-	        }
-
-	        return Response.ok().entity(result).build();
+	        } catch (MeveoApiException e) { 
+	            return errorResponse(e, result.getActionStatus());
+	        } 
 	}
+	        
 
-	@Override
-	public Response listCpqProducts(OfferContextDTO offerContextDTO) {
-		 GetListProductsResponseDto result = new GetListProductsResponseDto();
-
-	        try {
-	        	result=productApi.list(offerContextDTO);
-	        } catch (Exception e) {
-	            processException(e, result.getActionStatus());
-	        }
-
-	        return Response.ok().entity(result).build();
-	}
 	
 	@Override
 	public Response removeProductLine(String codeProductLine) {
@@ -227,20 +217,37 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	public Response findProductVersions(String productCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response listProductVersions(OfferContextDTO offerContextDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
+		try { 
+			result.getProductVersions().addAll(productApi.findProductVersionByProduct(productCode));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 	@Override
 	public Response listProductVersions(PagingAndFiltering pagingAndFiltering) {
-		// TODO Auto-generated method stub
-		return null;
+		GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
+
+		try {
+			result = productApi.listProductVersions(pagingAndFiltering);
+			return Response.ok(result).build(); 
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response listPost(OfferContextDTO quoteContext) {
+		
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+	    try {
+	    	/****@TODO implement it****/
+	        return Response.ok(result).build();
+	    } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+	    }
 	}
 
 

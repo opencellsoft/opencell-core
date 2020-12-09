@@ -55,7 +55,7 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The services template. */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    private Set<AttributeDTO> attributes;
+    private Set<AttributeDTO> attributes=new HashSet<>();;
     
     @XmlElementWrapper(name = "groupedAttributes")
     @XmlElement(name = "groupedAttributes")
@@ -93,8 +93,8 @@ public class ProductVersionDto extends BaseEntityDto {
 
     	if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
     		attributes = productVersion.getAttributes().stream().map(d -> {
-    			final AttributeDTO service = new AttributeDTO(d);
-    			return service;
+    			final AttributeDTO attributeDto = new AttributeDTO(d);
+    			return attributeDto;
     		}).collect(Collectors.toSet());
     	}
     	if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
@@ -102,7 +102,7 @@ public class ProductVersionDto extends BaseEntityDto {
     			final TagDto dto = new TagDto(t);
     			return dto;
     		}).collect(Collectors.toSet());
-    	}
+    	} 
     }
     /**
      * @return the shortDescription
@@ -243,6 +243,18 @@ public class ProductVersionDto extends BaseEntityDto {
 	 */
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+	/**
+	 * @return the groupedAttributes
+	 */
+	public Set<GroupedAttributeDto> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+	/**
+	 * @param groupedAttributes the groupedAttributes to set
+	 */
+	public void setGroupedAttributes(Set<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
 	}
      
     

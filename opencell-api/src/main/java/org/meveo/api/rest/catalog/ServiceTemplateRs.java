@@ -426,32 +426,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 				}
 	)
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
-    
-    
-    
-    @POST
-    @Path("/cpq/list")
-    @Operation(summary = "Lists services matching the customer, seller, and quote contexts",
-    tags = { "Catalog browsing" },
-    description ="if billingAccountCode/offer/product are given, this API returns all available services for an offer taking into account the customer and quote context",
-    responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListServiceResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "selected service does not exist")
-    })
-    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
-    
-    
-    /**
-     * @param groupedServiceCode
-     * @param List of serviceTemplateCodes
-     * @return
-     */
-    @POST
-    @Path("/addToGroup/{groupedServiceCode}/")
-    public Response addToGroup(@PathParam("groupedServiceCode") String productCode,  List<String> serviceTemplateCode);
+  
    
     
     

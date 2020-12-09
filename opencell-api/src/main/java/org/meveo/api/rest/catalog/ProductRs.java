@@ -18,6 +18,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -127,7 +128,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="retrieving a product with its code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product successfully retrieved",
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
@@ -146,23 +147,11 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="Get products matching the given criteria",
     responses = {
-            @ApiResponse(responseCode="200", description = "Products are successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
     })
     public Response listProducts(PagingAndFiltering pagingAndFiltering);
     
 
-    @POST
-    @Path("/cpq/list")
-    @Operation(summary = "Get products matching the customer, seller, and quote contexts",
-    tags = { "Catalog browsing" },
-    description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
-    responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
-    })
- 
-  
-    public Response listCpqProducts(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
     
 	/**
 	 * 
@@ -228,7 +217,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="retrieving a product line with its code",
     responses = {
-            @ApiResponse(responseCode="200", description = "the product line is successfully retrieved",
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",
                     content = @Content(schema = @Schema(implementation = GetProductLineDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "productLineCode parameter is missing"),
             @ApiResponse(responseCode = "404", description = "Unkonw product line"),
@@ -332,7 +321,7 @@ public interface ProductRs extends IBaseRs{
 	tags = { "Product" },
 	description ="find a product version",
 	responses = {
-	        @ApiResponse(responseCode="200", description = "the product version successfully retrieved",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
+	        @ApiResponse(responseCode="200", description = "The search operation is succefully executed",  content = @Content(schema = @Schema(implementation = GetProductVersionResponse.class))),
 	        @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
 	})
 	Response findProductVersion(@Parameter @PathParam("productCode") String productCode,
@@ -350,26 +339,26 @@ public interface ProductRs extends IBaseRs{
 	tags = { "Product" },
 	description ="find product versions by product code",
 	responses = {
-	        @ApiResponse(responseCode="200", description = "product versions are successfully retrieved",  content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class)))
+	        @ApiResponse(responseCode="200", description = "The search operation is succefully executed",  content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class)))
 	})
 	Response findProductVersions(@Parameter @PathParam("productCode") String productCode);
 	
 
     @POST
-    @Path("/cpq/productVersion/list")
-    @Operation(summary = "Get product versions matching the customer, seller, and quote contexts",
+    @Path("/cpq/list")
+    @Operation(summary = "Get products with their attributes that match the quote offer context",
     tags = { "Catalog browsing" },
-    description ="Returns all available product versions for an offer taking into account the customer and seller context",
+    description ="Get products with their attributes that match the quote offer context",
     responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billing Account Code does not exist"),
-            @ApiResponse(responseCode = "404", description = "offer code does not exist")
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
- 
-  
-    public Response listProductVersions(@Parameter(description = "The Offer context", required = false) OfferContextDTO offerContextDTO);
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     
-    
+
 	
     /**
      * List offerTemplates matching a given criteria
@@ -383,7 +372,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Product" },
     description ="Get product versions matching the given criteria",
     responses = {
-            @ApiResponse(responseCode="200", description = "Product versions are successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class)))
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class)))
     })
     public Response listProductVersions(PagingAndFiltering pagingAndFiltering);
 	
