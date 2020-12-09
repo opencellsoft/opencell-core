@@ -18,6 +18,8 @@
 
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,11 +29,15 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
+import org.meveo.api.dto.cpq.QuoteOfferDTO;
+import org.meveo.api.dto.cpq.QuoteProductDTO;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
-import org.meveo.api.dto.response.cpq.GetListQuotesDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -43,15 +49,30 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteLot;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteAttributeService;
+import org.meveo.service.cpq.QuoteLotService;
+import org.meveo.service.cpq.QuoteProductService;
+import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.quote.QuoteOfferService;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -68,12 +89,28 @@ public class CpqQuoteApi extends BaseApi {
 	private BillingAccountService billingAccountService;
 	@Inject
 	private ContractService contractService;
+	@Inject
+	private QuoteOfferService quoteOfferService;
+	@Inject
+	private QuoteVersionService quoteVersionService;
+	@Inject 
+	private QuoteLotService quoteLotService;
+	@Inject
+	private OfferTemplateService offerTemplateService;
+	@Inject
+	private AttributeService attributeService;
+	@Inject
+	private QuoteAttributeService quoteAttributeService;
+	@Inject
+	private QuoteProductService quoteProductService;
+	@Inject
+	private ProductVersionService productVersionService;
 	
-	public Long createQuote(QuoteDTO quote) {
+	public QuoteDTO createQuote(QuoteDTO quote) {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
 			missingParameters.add("applicantAccountCode");
 		}
-		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
+		if(Strings.isEmpty(quote.getCode())) {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
@@ -107,12 +144,45 @@ public class CpqQuoteApi extends BaseApi {
 		
 		try {
 			cpqQuoteService.create(cpqQuote);
+			quoteVersionService.create(populateNewQuoteVersion(quote.getQuoteVersion(), cpqQuote));
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
 		}
-		
-		return cpqQuote.getId();
+		return quote;
 	}
+	
+	private QuoteVersion populateNewQuoteVersion(QuoteVersionDto quoteVersionDto, CpqQuote cpqQuote) {
+		QuoteVersion quoteVersion = new QuoteVersion();
+		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
+		quoteVersion.setQuoteVersion(1);
+		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
+		quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		quoteVersion.setQuote(cpqQuote);
+		return quoteVersion;
+	}
+	
+	public QuoteVersionDto createQuoteVersion(QuoteVersionDto quoteVersionDto) {
+		if(Strings.isEmpty(quoteVersionDto.getQuoteCode()))
+			missingParameters.add("quoteCode");
+		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, null);
+		if(quoteVersion.getQuote() == null) {
+			final CpqQuote quote = cpqQuoteService.findByCode(quoteVersionDto.getQuoteCode());
+			if(quote == null)
+				throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
+			quoteVersion.setQuote(quote);
+		}
+		try {
+			quoteVersionService.create(quoteVersion);
+		}catch(BusinessApiException e) {
+			throw new MeveoApiException(e);
+		}
+		return quoteVersionDto;
+	}
+	
+	
 	
 	
 	public QuoteDTO getQuote(String quoteCode) {
@@ -126,7 +196,7 @@ public class CpqQuoteApi extends BaseApi {
 		return populateToDto(quote);
 	}
 	
-	public void updateQuote(String quoteCode, QuoteDTO quoteDto) {
+	public QuoteDTO updateQuote(String quoteCode, QuoteDTO quoteDto) {
 		if(Strings.isEmpty(quoteCode)) {
 			missingParameters.add("quoteCode");
 		}
@@ -159,11 +229,32 @@ public class CpqQuoteApi extends BaseApi {
 
 		try {
 			cpqQuoteService.update(quote);
+			final QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
+			if(quoteVersionDto != null) {
+				final QuoteVersion qv = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteVersionDto.getCurrentVersion());
+				if(qv != null) {
+					if(!Strings.isEmpty(quoteVersionDto.getShortDescription()))
+						qv.setShortDescription(quoteVersionDto.getShortDescription());
+					if(quoteVersionDto.getStartDate() != null)
+						qv.setStartDate(quoteVersionDto.getStartDate());
+					if(quoteVersionDto.getEndDate() != null)
+						qv.setEndDate(quoteVersionDto.getEndDate());
+					if(quoteVersionDto.getStatus() != null) {
+						qv.setStatus(quoteVersionDto.getStatus());
+						qv.setStatusDate(Calendar.getInstance().getTime());
+					}
+					if(!Strings.isEmpty(quoteVersionDto.getBillingPlanCode()))
+						qv.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+					quoteVersionService.update(qv);
+				}
+			}
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
 		}
+		return quoteDto;
 		
 	}
+	
     private static final String DEFAULT_SORT_ORDER_ID = "id";
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "quoteDto", 
@@ -227,6 +318,166 @@ public class CpqQuoteApi extends BaseApi {
 		dto.setExternalId(c.getCustomerRef()); // TODO : not sure if it is the correct field
 		return dto;
 	}
+	
+
+	public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteItem) {
+		if(Strings.isEmpty(quoteItem.getOfferCode()))
+			missingParameters.add("offerCode");
+		if(quoteItem.getQuoteVersion() == null)
+			missingParameters.add("quoteVersion");
+		if(Strings.isEmpty(quoteItem.getQuoteCode()))
+			missingParameters.add("quoteCode");
+		handleMissingParameters();
+		final CpqQuote quote = cpqQuoteService.findByCode(quoteItem.getQuoteCode());
+		if(quote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteItem.getQuoteCode());
+		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteItem.getQuoteCode(), quoteItem.getQuoteVersion());
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteItem.getQuoteCode() + "," + quoteItem.getQuoteVersion() + ")");
+		var quoteOffer = new QuoteOffer();
+		QuoteLot  quoteLot = null;
+		if(!Strings.isEmpty(quoteItem.getQuoteLotCode())) {
+			quoteLot = quoteLotService.findByCode(quoteItem.getQuoteLotCode());
+			quoteOffer.setQuoteCustomerService(quoteLot);
+		}
+		if(!Strings.isEmpty(quoteItem.getOfferCode()))
+			quoteOffer.setOfferTemplate(offerTemplateService.findByCode(quoteItem.getOfferCode()));
+		BillingAccount BillableAccounte = null;
+		if(!Strings.isEmpty(quoteItem.getBillableAccountCode())) {
+			BillableAccounte = billingAccountService.findByCode(quoteItem.getBillableAccountCode());
+			quoteOffer.setBillableAccount(BillableAccounte);
+		}
+		quoteOffer.setQuoteVersion(quoteVersion);
+		
+		if(quoteItem.getProducts() != null)
+			for (QuoteProductDTO q : quoteItem.getProducts()) {
+				quoteOffer.getQuoteProduct().add(processQuoteProductDTO(q, quote, quoteVersion, quoteLot, BillableAccounte, quoteOffer));
+			}
+		try {
+			quoteOfferService.create(quoteOffer);
+		}catch(BusinessApiException e) {
+			throw new MeveoApiException(e);
+		}
+		return quoteItem;
+	}
+	
+	
+	private QuoteAttribute processQuoteAttributeDTO(QuoteAttributeDTO qad, QuoteProduct quoteProduct) {
+		final QuoteAttribute qa = new QuoteAttribute();
+		if(qad.getAttributeDTO() != null) {
+			AttributeDTO dto = qad.getAttributeDTO();
+			if(Strings.isEmpty(dto.getCode()))
+				missingParameters.add("QuoteAttributeDTO.code");
+			handleMissingParameters();
+			Attribute attr = attributeService.findByCode(dto.getCode());
+			if(attr == null)
+				throw new EntityDoesNotExistsException(Attribute.class, dto.getCode());
+			qa.setAttribute(attr);
+		}else
+			throw new BusinessApiException("Attribute for QuoteAttribute for quote code "+quoteProduct.getQuote().getCode()+" is missing");
+		
+		qa.setQuoteProduct(quoteProduct);
+		quoteAttributeService.create(qa);
+		return qa;
+	}
+	
+	private QuoteProduct processQuoteProductDTO(QuoteProductDTO q, CpqQuote quote, QuoteVersion quoteVersion, QuoteLot quoteLot, BillingAccount BillableAccounte, QuoteOffer quoteOffer) {
+		final QuoteProduct quoteProduct = new QuoteProduct();
+		quoteProduct.setQuote(quote);
+		quoteProduct.setQuoteVersion(quoteVersion);
+		quoteProduct.setQuoteLot(quoteLot);
+		if(!Strings.isEmpty(q.getProductCode())) {
+			ProductVersion p = productVersionService.findByProductAndVersion(q.getProductCode(), q.getQuoteVersion());
+			if(p == null)
+				throw new EntityDoesNotExistsException(ProductVersion.class, q.getProductCode());
+			quoteProduct.setProductVersion(p);
+		}
+		quoteProduct.setQuantity(new BigDecimal(q.getQuantity()));
+		quoteProduct.setBillableAccount(BillableAccounte);
+		quoteProduct.setQuoteOffre(quoteOffer);
+		quoteProductService.create(quoteProduct);
+		if(q.getQuoteAttributes() != null) {
+			for (QuoteAttributeDTO qad : q.getQuoteAttributes()) {
+					processQuoteAttributeDTO(qad, quoteProduct);
+			}
+		}
+		return quoteProduct;
+		
+	}
+	
+	public void updateQuoteItem(QuoteOfferDTO quoteOfferDTO) {
+		if(quoteOfferDTO.getQuoteOfferId() == null) 
+			missingParameters.add("QuoteOfferId");
+			
+		handleMissingParameters();
+		
+		final QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
+		if(quoteOffer == null)
+			throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
+		// adding offer template if exist
+		if(!Strings.isEmpty(quoteOfferDTO.getOfferCode())) {
+			final OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDTO.getOfferCode());
+			if(offerTemplate == null)
+				throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferCode());
+			quoteOffer.setOfferTemplate(offerTemplate);
+		}
+		// adding quote version if exist
+		if(quoteOfferDTO.getQuoteVersion() != null) {
+			final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDTO.getQuoteCode(), quoteOfferDTO.getQuoteVersion());
+			if(quoteVersion == null)
+				throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDTO.getQuoteCode() + "," + quoteOfferDTO.getQuoteVersion() + ")");
+			quoteOffer.setQuoteVersion(quoteVersion);
+		}
+		// billing account
+		if(!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode()))
+			quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
+		if(!Strings.isEmpty(quoteOfferDTO.getQuoteLotCode()))
+			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDTO.getQuoteLotCode()));
+		processQuoteProduct(quoteOfferDTO, quoteOffer);
+	}
+	
+	private void processQuoteProduct(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
+		var quoteProductDtos = quoteOfferDTO.getProducts();
+		var hasQuoteProductDtos = quoteProductDtos != null && !quoteProductDtos.isEmpty();
+		
+		var existencQuoteProducts = quoteOffer.getQuoteProduct();
+		var hasExistingQuotes = existencQuoteProducts != null && !existencQuoteProducts.isEmpty();
+		
+		if(hasQuoteProductDtos) {
+			var newQuoteProducts = new ArrayList<QuoteProduct>();
+			QuoteProduct quoteProduct = null;
+			for (QuoteProductDTO quoteProductDto : quoteProductDtos) {
+				quoteProduct = getQuoteProductFromDto(quoteProductDto, quoteOffer);
+				if(quoteProductDto.getQuoteAttributes() != null) {
+					for (QuoteAttributeDTO quoteAttributeDTO : quoteProductDto.getQuoteAttributes()) {
+						getQuoteAttributeFromDto(quoteAttributeDTO, quoteProduct);
+					}
+				}
+				newQuoteProducts.add(quoteProduct);
+			}
+		}else if(hasExistingQuotes){
+			quoteOffer.getQuoteProduct().removeAll(existencQuoteProducts);
+		}
+	}
+	
+	private QuoteProduct getQuoteProductFromDto(QuoteProductDTO dto, QuoteOffer quoteOffer) {
+		final ProductVersion productVersion = productVersionService.findByProductAndVersion(dto.getProductCode(), dto.getProductVersion());
+		if(productVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, dto.getProductCode() + "," + dto.getProductVersion());
+		final QuoteProduct qp = quoteProductService.findByQuoteVersionAndQuoteOffer(productVersion.getId(), quoteOffer.getId());
+		if(qp == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, productVersion.getId() + "," + quoteOffer.getId());
+		
+		return qp;
+	}
+	
+	private void getQuoteAttributeFromDto(QuoteAttributeDTO dto, QuoteProduct quoteProduct) {
+		//QuoteAttribute attribute = quoteAttributeService.find
+	}
+	/**
+	 * 
+	 */
+	
 	
 	
    

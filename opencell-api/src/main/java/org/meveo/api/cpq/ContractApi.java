@@ -1,6 +1,7 @@
 package org.meveo.api.cpq;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -172,7 +173,6 @@ public class ContractApi extends BaseApi{
 		}else {
 			contract.setCustomer(null);
 		}
-
 		try {
 			contractService.updateContract(contract);
 		}catch(BusinessException e) {

@@ -14,23 +14,22 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "product_version_id", "offer_quote_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id")
 @NamedQuery(name = "QuoteProduct.findByQuoteCode", query = "select q from QuoteProduct q where q.quote.code=:code")
-@NamedQuery(name = "QuoteProduct.findByCode", query = "select q from QuoteProduct q where q.code=:code")
-public class QuoteProduct extends BusinessEntity {
+@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
+public class QuoteProduct extends AuditableEntity {
 
-    
     /**
      * quote
      */
@@ -53,15 +52,15 @@ public class QuoteProduct extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_customer_service_id", referencedColumnName = "id")
 	@NotNull
-    private QuoteCustomerService quoteCustomer;
+    private QuoteLot quoteLot;
 
     /**
      * product
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	@NotNull
-    private Product product;
+    private ProductVersion productVersion;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
@@ -74,7 +73,7 @@ public class QuoteProduct extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
-    private QuoteOffer offerQuote;
+    private QuoteOffer quoteOffre;
 
 	/**
 	 * @return the quote
@@ -104,33 +103,7 @@ public class QuoteProduct extends BusinessEntity {
 		this.quoteVersion = quoteVersion;
 	}
 
-	/**
-	 * @return the quoteCustomer
-	 */
-	public QuoteCustomerService getQuoteCustomer() {
-		return quoteCustomer;
-	}
 
-	/**
-	 * @param quoteCustomer the quoteCustomer to set
-	 */
-	public void setQuoteCustomer(QuoteCustomerService quoteCustomer) {
-		this.quoteCustomer = quoteCustomer;
-	}
-
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
 
 	/**
 	 * @return the quantity
@@ -158,5 +131,48 @@ public class QuoteProduct extends BusinessEntity {
 	 */
 	public void setBillableAccount(BillingAccount billableAccount) {
 		this.billableAccount = billableAccount;
+	}
+
+
+	/**
+	 * @return the quoteLot
+	 */
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	/**
+	 * @param quoteLot the quoteLot to set
+	 */
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
+	}
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	/**
+	 * @return the quoteOffre
+	 */
+	public QuoteOffer getQuoteOffre() {
+		return quoteOffre;
+	}
+
+	/**
+	 * @param quoteOffre the quoteOffre to set
+	 */
+	public void setQuoteOffre(QuoteOffer quoteOffre) {
+		this.quoteOffre = quoteOffre;
 	}
 }

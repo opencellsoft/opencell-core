@@ -4080,7 +4080,7 @@ END $$;]]>
 	    	</createTable>
     	
 	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 	            
 	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
@@ -4138,10 +4138,12 @@ END $$;]]>
 	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_version_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
 	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 	            
 	        <addColumn tableName="cpq_quote_product">
-	            <column name="offer_quote_id" type="bigint" />
+	            <column name="offer_quote_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
 	        </addColumn>
 	        
 	        <addForeignKeyConstraint baseColumnNames="offer_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_offer_quote_id" deferrable="false" initiallyDeferred="false"
@@ -4339,7 +4341,7 @@ END $$;]]>
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_cpq_quote_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
 	            
-	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_customer_service" constraintName="fk_cpq_quote_customer_service_cpq_quote_version_id" deferrable="false" initiallyDeferred="false"
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_lot" constraintName="fk_cpq_quote_lot_cpq_quote_version_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
             
 	    </changeSet>
@@ -4353,11 +4355,6 @@ END $$;]]>
 	    	  <column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_quote_attribute" />
 	            </column>
-	            <!-- BusinessEntity Start -->
-				<column name="code" type="varchar(255)" >
-					<constraints nullable="false" unique="true" />
-				</column>
-				<column name="description" type="varchar(255)" />
             	<column name="version" type="int4" />
             	<!-- Auditable Start -->
 	            <column name="created" type="datetime">
@@ -4368,17 +4365,27 @@ END $$;]]>
 	            <column name="updater" type="varchar(100)" />
 				<!-- Auditable End -->
             	
-	            <column name="cpq_attribute_id" type="bigint" />
-	            <column name="cpq_quote_product_id" type="bigint" />
+	            <column name="cpq_attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="cpq_quote_product_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
             	<column name="value" type="varchar(255)" />
 	    	</createTable>
 	    	
 	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 	            
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_product_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_product_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_customer_service" />
-     </changeSet>  
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+     </changeSet> 
+     
+     <changeSet id="540-84-20201209" author="TarikFa">
+	    	<addUniqueConstraint columnNames="cpq_attribute_id,cpq_quote_product_id" tableName="cpq_quote_attribute" constraintName="uniquekey_attribute_quote_product_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
+	    	<addUniqueConstraint columnNames="offer_template_id,quote_version_id" tableName="quote_offer" constraintName="uniquekey_offer_template_quote_version_id_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
+	    	<addUniqueConstraint columnNames="product_version_id,offer_quote_id" tableName="cpq_quote_product" constraintName="uniquekey_product_version_offer_quote_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
+	 </changeSet> 
     <!-- end MediaPost -->
     
 </databaseChangeLog>
