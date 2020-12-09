@@ -43,6 +43,8 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 
+	private Long quoteOfferId;
+	
     @NotNull
     private String quoteCode;
 
@@ -57,6 +59,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
 
+   
 
 	/**
 	 * @return the quoteCode
@@ -140,6 +143,20 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setProducts(List<QuoteProductDTO> products) {
 		this.products = products;
+	}
+
+	/**
+	 * @return the quoteOfferId
+	 */
+	public Long getQuoteOfferId() {
+		return quoteOfferId;
+	}
+
+	/**
+	 * @param quoteOfferId the quoteOfferId to set
+	 */
+	public void setQuoteOfferId(Long quoteOfferId) {
+		this.quoteOfferId = quoteOfferId;
 	}
     
     

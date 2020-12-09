@@ -155,8 +155,7 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response updateQuoteItem(@Parameter(description = "Product quote code", required = true) @PathParam("quoteItemCode") String code,
-    		@Parameter(description = "Product quote information", required = false) QuoteAttributeDTO quoteitem, @Context UriInfo info);
+    public Response updateQuoteItem(@Parameter(description = "Product quote information", required = true) QuoteOfferDTO quoteitem, @Context UriInfo info);
 
     /**
      * Delete a quote.
@@ -255,14 +254,15 @@ public interface CpqQuoteRs {
      * @return Response status
      */
     @DELETE
-    @Path("/quoteItem/{quoteItemCode}")
+    @Path("/quoteItem/{quoteItemId}")
     @Operation(summary = "Delete a quote item",
     tags = { "Quote management" },
     description ="",
     responses = {
             @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemCode") String code, @Context UriInfo info);
+    //String offerCode, String cpqQuote, int quoteVersion
+    public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemId") Long quoteItemId, @Context UriInfo info);
 
     @GET
     @Path("/quoteQuotation")
