@@ -12,6 +12,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -91,18 +92,6 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 	        
 
-	@Override
-	public Response listCpqProducts(OfferContextDTO offerContextDTO) {
-		 GetListProductsResponseDto result = new GetListProductsResponseDto();
-
-	        try {
-	        	result=productApi.list(offerContextDTO);
-	        } catch (Exception e) {
-	            processException(e, result.getActionStatus());
-	        }
-
-	        return Response.ok().entity(result).build();
-	}
 	
 	@Override
 	public Response removeProductLine(String codeProductLine) {
@@ -250,9 +239,15 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response listProductVersions(OfferContextDTO offerContextDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response listPost(OfferContextDTO quoteContext) {
+		
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+	    try {
+	    	/****@TODO implement it****/
+	        return Response.ok(result).build();
+	    } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+	    }
 	}
 
 

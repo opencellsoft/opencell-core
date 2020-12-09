@@ -73,17 +73,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
         }
 	}
 
-	@Override
-	public Response listPost(OfferContextDTO quoteContext) {
-		
-		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
-	    try {
-	    	/****@TODO implement it****/
-	        return Response.ok(result).build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
-	    }
-	}
+
 
 	 
 

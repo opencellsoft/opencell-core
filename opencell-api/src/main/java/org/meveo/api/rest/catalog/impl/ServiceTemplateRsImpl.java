@@ -18,22 +18,17 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
-import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -156,30 +151,6 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         return result;
     }
 
-	@Override
-	public Response listPost(OfferContextDTO quoteContext) {
-		GetListServiceResponseDto result = new GetListServiceResponseDto();
-
-	        try {
-	        	result= serviceTemplateApi.list(quoteContext);
-	        } catch (Exception e) {
-	            processException(e, result.getActionStatus());
-	        }
-
-	        return Response.ok().entity(result).build();
-	}
-	
-
-		@Override
-		public Response addToGroup(String groupedServiceCode, List<String> serviceTemplateCode) {
-			 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		        try {
-		        	serviceTemplateApi.addToGroup(groupedServiceCode, serviceTemplateCode);
-		        } catch (Exception e) {
-		            processException(e, result);
-		        }
-		        return Response.ok(result).build();
-		}
  
 	
 	

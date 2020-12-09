@@ -58,6 +58,10 @@ public class QuoteOfferDTO extends BaseEntityDto{
     private String billableAccountCode;
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
+    
+    private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
+    
+    
 
    
 
@@ -157,6 +161,20 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setQuoteOfferId(Long quoteOfferId) {
 		this.quoteOfferId = quoteOfferId;
+	}
+
+	/**
+	 * @return the accountingArticlePrices
+	 */
+	public List<AccountingArticlePricesDTO> getAccountingArticlePrices() {
+		return accountingArticlePrices;
+	}
+
+	/**
+	 * @param accountingArticlePrices the accountingArticlePrices to set
+	 */
+	public void setAccountingArticlePrices(List<AccountingArticlePricesDTO> accountingArticlePrices) {
+		this.accountingArticlePrices = accountingArticlePrices;
 	}
     
     

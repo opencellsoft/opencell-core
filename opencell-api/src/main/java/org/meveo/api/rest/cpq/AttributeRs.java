@@ -112,19 +112,7 @@ public interface AttributeRs extends IBaseRs {
 	Response createOrUpdateAttribute(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
 	
 	
-    @POST
-    @Path("/cpq/list")
-    @Operation(summary = "Get products with their attributes that match the context of the quote offer",
-    tags = { "Catalog browsing" },
-    description ="Get products with their attributes that match the context of the quote offer",
-    responses = {
-            @ApiResponse(responseCode="200", description = "All attributes are successfully retrieved",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "selected service does not exist")
-    })
-    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
+
 	
 	 
 }

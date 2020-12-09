@@ -18,6 +18,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -151,18 +152,6 @@ public interface ProductRs extends IBaseRs{
     public Response listProducts(PagingAndFiltering pagingAndFiltering);
     
 
-    @POST
-    @Path("/cpq/list")
-    @Operation(summary = "Get products matching the customer, seller, and quote contexts",
-    tags = { "Catalog browsing" },
-    description ="if billingAccountCode/offer are given, this API returns all available products for an offer taking into account the customer and quote context",
-    responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist")
-    })
- 
-  
-    public Response listCpqProducts(@Parameter(description = "The Offer context information", required = false) OfferContextDTO offerContextDTO);
     
 	/**
 	 * 
@@ -356,18 +345,18 @@ public interface ProductRs extends IBaseRs{
 	
 
     @POST
-    @Path("/cpq/productVersion/list")
-    @Operation(summary = "Get product versions matching the customer, seller, and quote contexts",
+    @Path("/cpq/list")
+    @Operation(summary = "Get products with their attributes that match the quote offer context",
     tags = { "Catalog browsing" },
-    description ="Returns all available product versions for an offer taking into account the customer and seller context",
+    description ="Get products with their attributes that match the quote offer context",
     responses = {
-            @ApiResponse(responseCode="200", description = "All prducts successfully retrieved",content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billing Account Code does not exist"),
-            @ApiResponse(responseCode = "404", description = "offer code does not exist")
+            @ApiResponse(responseCode="200", description = "All attributes are successfully retrieved",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
- 
-  
-    public Response listProductVersions(@Parameter(description = "The Offer context", required = false) OfferContextDTO offerContextDTO);
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     
     
 	
