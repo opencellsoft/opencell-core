@@ -453,10 +453,16 @@ public class ServiceSingleton {
         return sequence;
     }
 
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String genericCode(CustomGenericEntityCode customGenericEntityCode) {
         return genericCode(customGenericEntityCode, null);
     }
 
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String genericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride) {
         Sequence sequence = customGenericEntityCode.getSequence();
         String generatedCode = null;
