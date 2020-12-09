@@ -46,7 +46,10 @@ public interface AttributeRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the Attribute successfully added",
             		content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for AttributeDto.The required params are : code",
-            		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "400", description = "No grouped attribute is found for the parameter GroupedAttributeCode", 
+    		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+            
     })
 	
 	Response create(	@Parameter( name = "attributeDto",
@@ -61,7 +64,9 @@ public interface AttributeRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the Attribute successfully updated",
             		content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
             @ApiResponse(responseCode = "412", description = "missing required paramter for AttributeDTO.The required params are : code",
-            		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "400", description = "No grouped attribute is found for the parameter GroupedAttributeCode", 
+    		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
     })
 	Response update(@Parameter(description = "attribute dto for updating an existing attribute", required = true) AttributeDTO attributeDTO);
 	
@@ -88,6 +93,20 @@ public interface AttributeRs extends IBaseRs {
             		content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
     })
 	Response findByCode(@Parameter(description = "retrieving a attribute with its code") @QueryParam("code") String code);
+	
+	
+	@POST
+	@Path("/attribute")
+    @Operation(summary = "This endpoint allows to create or update a attribute",
+    tags = { "Attribute" },
+    description ="create a attribute if it doesn't exist or update an existing attribute",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the attribute successfully created or updated",
+                    content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Unkonw grouped attribute to attach to attribute"),
+            @ApiResponse(responseCode = "400", description = "the attribute with code in param does not exist ")
+    })
+	Response createOrUpdateAttribute(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
 	
 	 
 }
