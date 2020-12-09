@@ -199,6 +199,8 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+    
+    
 
 
 }

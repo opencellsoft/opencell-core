@@ -53,7 +53,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response createQuote(QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
+			// getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
 	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
@@ -91,7 +91,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response updateQuote(String code, QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(code, quote));
+			// getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(code, quote));
 	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());

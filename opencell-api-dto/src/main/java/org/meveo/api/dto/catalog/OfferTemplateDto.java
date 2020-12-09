@@ -117,12 +117,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
-    
-    
-    /** The services template. */
-    @XmlElementWrapper(name = "services")
-    @XmlElement(name = "services")
-    private List<ServiceTemplateDto> services;
 
     /**
      * Instantiates a new offer template dto.
@@ -396,20 +390,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.tags = tags;
 	}
 
-
-	/**
-	 * @return the services
-	 */
-	public List<ServiceTemplateDto> getServices() {
-		return services;
-	}
-
-	/**
-	 * @param services the services to set
-	 */
-	public void setServices(List<ServiceTemplateDto> services) {
-		this.services = services;
-	}
 
 	/**
 	 * @return the offerComponents
