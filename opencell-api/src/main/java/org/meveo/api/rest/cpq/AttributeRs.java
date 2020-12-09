@@ -14,7 +14,10 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 
@@ -30,7 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 10.0
  *
  */
-@Path("/cpq/attributes")
+@Path("/attribute")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -96,7 +99,7 @@ public interface AttributeRs extends IBaseRs {
 	
 	
 	@POST
-	@Path("/attribute")
+	@Path("/")
     @Operation(summary = "This endpoint allows to create or update a attribute",
     tags = { "Attribute" },
     description ="create a attribute if it doesn't exist or update an existing attribute",
@@ -107,6 +110,21 @@ public interface AttributeRs extends IBaseRs {
             @ApiResponse(responseCode = "400", description = "the attribute with code in param does not exist ")
     })
 	Response createOrUpdateAttribute(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
+	
+	
+    @POST
+    @Path("/cpq/list")
+    @Operation(summary = "Lists products and attributes matching the quote offer context",
+    tags = { "Catalog browsing" },
+    description ="Lists products and attributes matching the quote offer context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "All attributes are successfully retrieved",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+    })
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
 	
 	 
 }
