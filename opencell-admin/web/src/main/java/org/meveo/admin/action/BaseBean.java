@@ -53,6 +53,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
@@ -60,9 +61,11 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
@@ -132,6 +135,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     protected FacesContext facesContext;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<>();
@@ -316,10 +325,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 throw new IllegalStateException("could not instantiate a class, constructor not accessible");
             }
         }
-
+        if(entity instanceof BusinessEntity) {
+            String entityClass = entity.getClass().getSimpleName();
+            ((BusinessEntity) entity).setCode(generateCode(entityClass));
+        }
         return entity;
     }
 
+    private String generateCode(String entityClass) {
+        CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+        if(customGenericEntityCode != null) {
+            return serviceSingleton.genericCode(customGenericEntityCode);
+        }
+        return null;
+    }
     /**
      * Force to initialize entity with a given ID.
      * 
