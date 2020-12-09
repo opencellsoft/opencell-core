@@ -19,14 +19,12 @@ public class QuoteVersionDto extends BaseEntityDto {
     private static final long serialVersionUID = -7824004884683019697L;  
     /** The shortDescription. */
     @XmlAttribute()
-    @NotNull
     private String shortDescription;
     /** The product code. */
     @NotNull
     @XmlElement(required = true)
     private String quoteCode;
     /** The currentVersion. */
-    @NotNull
     private int currentVersion;
     @NotNull
     /** The status. */

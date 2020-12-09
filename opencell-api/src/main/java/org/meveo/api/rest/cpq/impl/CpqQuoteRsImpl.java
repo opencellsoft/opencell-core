@@ -51,12 +51,12 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response createQuote(QuoteDTO quote, UriInfo info) {
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			 //TODO: return GetQuoteDtoResponse
-	            Long id = cpqQuoteApi.createQuote(quote);
-	            return Response.ok(Collections.singletonMap("id", id)).build();
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
+	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
-			       return errorResponse(e);
+			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
 	        }
 	}
 
@@ -89,18 +89,18 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response updateQuote(String code, QuoteDTO quote, UriInfo info) {
-		ActionStatus status = new ActionStatus();
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			 cpqQuoteApi.updateQuote(code, quote);
-	            return Response.ok(status).build();
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(code, quote));
+	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
-			       return errorResponse(e, status);
+			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
 	        }
 	}
 
 
 	@Override
-	public Response updateQuoteItem(String code, QuoteAttributeDTO quoteitem, UriInfo info) {
+	public Response updateQuoteItem(QuoteOfferDTO quoteOfferDTO, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -157,7 +157,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response deleteQuoteItem(String code, UriInfo info) {
+	public Response deleteQuoteItem(Long quoteItemId, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}
