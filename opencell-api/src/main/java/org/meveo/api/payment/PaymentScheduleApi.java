@@ -19,7 +19,10 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -46,9 +49,12 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -511,6 +517,7 @@ public class PaymentScheduleApi extends BaseApi {
 
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getAmount())) {
             paymentScheduleInstance.setAmount(paymentScheduleInstanceDto.getAmount());
+            updatePaymentScheduleInstanceItem(paymentScheduleInstance);
         }
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getPaymentDayInMonth())) {
             paymentScheduleInstance.setPaymentDayInMonth(paymentScheduleInstanceDto.getPaymentDayInMonth());
@@ -535,13 +542,28 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleInstanceService.update(paymentScheduleInstance);
     }
 
+    private void updatePaymentScheduleInstanceItem(PaymentScheduleInstance paymentScheduleInstance) {
+        if (paymentScheduleInstance.getPaymentScheduleInstanceItems() == null) {
+            // TODO Create new ones
+            return;
+        }
+        List<Long> openPaymentScheduleInstanceItemIds = paymentScheduleInstance.getPaymentScheduleInstanceItems().stream().filter(item -> !item.isPaid())
+                .map(PaymentScheduleInstanceItem::getId).collect(Collectors.toList());
+        if (openPaymentScheduleInstanceItemIds == null || openPaymentScheduleInstanceItemIds.isEmpty()) {
+            log.debug("No items to process");
+            return;
+        }
+        paymentScheduleInstanceItemService.remove(new HashSet<>(openPaymentScheduleInstanceItemIds));
+        paymentScheduleInstanceService.createNewPaymentScheduleIntanceItems(paymentScheduleInstance, openPaymentScheduleInstanceItemIds.size());
+    }
+
     /**
      * Terminate payment schedule instance.
      *
      * @param paymentScheduleInstanceDto the payment schedule instance dto
-     * @throws MissingParameterException the missing parameter exception
+     * @throws MissingParameterException    the missing parameter exception
      * @throws EntityDoesNotExistsException the entity does not exists exception
-     * @throws BusinessException the business exception
+     * @throws BusinessException            the business exception
      */
     public void terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
