@@ -85,6 +85,8 @@ public class AttributeDTO extends EnableBusinessDto {
    private boolean selectable=Boolean.TRUE;
     
     private boolean ruled=Boolean.FALSE;
+    
+    private Object value;
 
     
     /**
@@ -271,6 +273,24 @@ public class AttributeDTO extends EnableBusinessDto {
 	 */
 	public void setRuled(boolean ruled) {
 		this.ruled = ruled;
+	}
+
+
+
+	/**
+	 * @return the value
+	 */
+	public Object getValue() {
+		return value;
+	}
+
+
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(Object value) {
+		this.value = value;
 	}
 
 

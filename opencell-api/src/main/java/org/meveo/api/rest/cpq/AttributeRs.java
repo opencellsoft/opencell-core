@@ -114,9 +114,9 @@ public interface AttributeRs extends IBaseRs {
 	
     @POST
     @Path("/cpq/list")
-    @Operation(summary = "Lists products and attributes matching the quote offer context",
+    @Operation(summary = "Get products with their attributes that match the context of the quote offer",
     tags = { "Catalog browsing" },
-    description ="Lists products and attributes matching the quote offer context",
+    description ="Get products with their attributes that match the context of the quote offer",
     responses = {
             @ApiResponse(responseCode="200", description = "All attributes are successfully retrieved",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),

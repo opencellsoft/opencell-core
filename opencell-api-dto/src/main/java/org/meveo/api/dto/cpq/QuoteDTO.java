@@ -57,8 +57,7 @@ public class QuoteDTO extends BusinessEntityDto{
     private DatePeriod validity = new DatePeriod();
 
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
-    
-    private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
+ 
     @NotNull
 	private String applicantAccountCode;
 	private String billableAccountCode;
@@ -138,21 +137,6 @@ public class QuoteDTO extends BusinessEntityDto{
 		this.status = status;
 	}
 
-
-	/**
-	 * @return the quoteItems
-	 */
-	public List<QuoteOfferDTO> getQuoteItems() {
-		return quoteItems;
-	}
-
-
-	/**
-	 * @param quoteItems the quoteItems to set
-	 */
-	public void setQuoteItems(List<QuoteOfferDTO> quoteItems) {
-		this.quoteItems = quoteItems;
-	}
 
 
 	/**
