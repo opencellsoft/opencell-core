@@ -15,7 +15,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.AttributeDTO;
-import org.meveo.api.dto.cpq.ContractDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -34,7 +33,6 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -498,6 +496,29 @@ public class ProductApi extends BaseApi {
 		 if(totalCount > 0) {
 			 productVersionService.list(paginationConfiguration).stream().forEach(p -> {
 				 result.getProductVersions().add(new ProductVersionDto(p));
+			 });
+		 }
+		 return result;
+	 }
+	 
+	 
+	 public GetListProductsResponseDto listProducts (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+		 if (pagingAndFiltering == null) {
+			 pagingAndFiltering = new PagingAndFiltering();
+		 }
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+			 sortBy = pagingAndFiltering.getSortBy();
+		 }
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Product.class);
+		 Long totalCount = productService.count(paginationConfiguration);
+		 GetListProductsResponseDto result = new GetListProductsResponseDto();
+		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		 if(totalCount > 0) {
+			 productService.list(paginationConfiguration).stream().forEach(p -> {
+				 result.getProducts().add(new ProductDto(p));
 			 });
 		 }
 		 return result;

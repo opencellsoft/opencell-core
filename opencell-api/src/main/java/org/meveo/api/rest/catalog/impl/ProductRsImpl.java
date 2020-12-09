@@ -81,15 +81,15 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response listProducts(PagingAndFiltering pagingAndFiltering) {
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 
-	        try {
-	        	/*****@TODO RAY : create a new method in ProductAPI that get products matching given criteria**/
+	        try {  
+	    			result = productApi.listProducts(pagingAndFiltering);
+	    			return Response.ok(result).build(); 
 	        	
-	        } catch (Exception e) {
-	            processException(e, result.getActionStatus());
-	        }
-
-	        return Response.ok().entity(result).build();
+	        } catch (MeveoApiException e) { 
+	            return errorResponse(e, result.getActionStatus());
+	        } 
 	}
+	        
 
 	@Override
 	public Response listCpqProducts(OfferContextDTO offerContextDTO) {
