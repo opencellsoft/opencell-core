@@ -244,6 +244,18 @@ public class ProductVersionDto extends BaseEntityDto {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
+	/**
+	 * @return the groupedAttributes
+	 */
+	public Set<GroupedAttributeDto> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+	/**
+	 * @param groupedAttributes the groupedAttributes to set
+	 */
+	public void setGroupedAttributes(Set<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
      
     
 }

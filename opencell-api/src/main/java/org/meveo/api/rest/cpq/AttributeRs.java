@@ -15,9 +15,8 @@ import javax.ws.rs.core.Response;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
-import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
+import org.meveo.api.dto.response.cpq.GetQuoteProductDtoResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 
@@ -112,7 +111,20 @@ public interface AttributeRs extends IBaseRs {
 	Response createOrUpdateAttribute(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
 	
 	
-
+    
+    @POST
+    @Path("/cpq/list/{productCode}/{productVersion}")
+    @Operation(summary = "Get attributes related to the given product that match the quote offer context",
+    tags = { "Catalog browsing" },
+    description ="Get attributes related to the given product that match the quote offer context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+    })
+    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
 	
 	 
 }

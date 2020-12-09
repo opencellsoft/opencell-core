@@ -26,10 +26,10 @@ public class QuoteVersionDto extends BaseEntityDto {
     private String quoteCode;
     /** The currentVersion. */
     private int currentVersion;
-    @NotNull
+   
     /** The status. */
     private VersionStatusEnum status;
-    @NotNull
+    
     /** The statusDate. */
     private Date statusDate;
     /** The longDescription */

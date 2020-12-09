@@ -89,7 +89,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response updateQuote(String code, QuoteDTO quote, UriInfo info) {
+	public Response updateQuote(QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
 			// getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(code, quote));
@@ -126,7 +126,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response placeOrder(String id, UriInfo info) {
+	public Response placeOrder(String quoteCode, int quoteVersion, UriInfo info) {
 		// TODO Auto-generated method stub
 		return null;
 	}
