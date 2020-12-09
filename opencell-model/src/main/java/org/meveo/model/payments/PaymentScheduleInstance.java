@@ -44,6 +44,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 
@@ -104,6 +106,7 @@ public class PaymentScheduleInstance extends EnableBusinessCFEntity {
     /** The amount. */
     @Column(name = "amount")
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private BigDecimal amount;
 
     /** The calendar. */
