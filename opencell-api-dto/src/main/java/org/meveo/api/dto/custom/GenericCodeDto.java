@@ -3,6 +3,7 @@ package org.meveo.api.dto.custom;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "GenericCodeDto")
@@ -12,6 +13,7 @@ public class GenericCodeDto {
     private String formatEL;
     private String entityClass;
     private String prefixOverride;
+    @XmlElement(name = "sequence")
     private SequenceDto sequenceDto;
 
     public String getFormatEL() {

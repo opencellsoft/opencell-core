@@ -38,9 +38,13 @@ public class GenericCodeApi extends BaseApi {
             throw new MeveoApiException("Missing sequence");
         }
         String sequenceCode = genericCodeDto.getSequence().getCode();
+        if (genericCodeDto.getSequence() != null && genericCodeDto.getSequence().getCode() == null)  {
+            throw new MeveoApiException("Missing sequence code");
+        }
         Sequence sequence = sequenceService.findByCode(sequenceCode);
         if(sequence == null) {
             createSequence(genericCodeDto.getSequence());
+            sequence = sequenceService.findByCode(sequenceCode);
         }
         CustomGenericEntityCode customGenericEntityCode = from(genericCodeDto, sequence);
         customGenericEntityCodeService.create(customGenericEntityCode);

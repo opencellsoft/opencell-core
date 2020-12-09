@@ -18,13 +18,13 @@
 
 package org.meveo.service.billing.impl;
 
+import static java.time.Instant.*;
 import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
 import static org.meveo.model.sequence.SequenceTypeEnum.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import com.mifmif.common.regex.Generex;
-import org.apache.commons.text.RandomStringGenerator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -109,6 +109,10 @@ public class ServiceSingleton {
 
     @Inject
     private SequenceService sequenceService;
+
+    private static Map<Character, Character> mapper = Map.of('0', 'Q',
+            '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
+            'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
 
     /**
@@ -471,14 +475,19 @@ public class ServiceSingleton {
 
         if(sequence.getSequenceType() == NUMERIC) {
             Random random = new Random();
-            generatedCode = String.valueOf(random.nextLong());
+            generatedCode = String.valueOf(random.nextLong()) + now().toEpochMilli();
         }
 
         if(sequence.getSequenceType() == ALPHA_UP) {
-            RandomStringGenerator randomStringGenerator = new RandomStringGenerator
-                    .Builder()
-                    .build();
-            generatedCode = randomStringGenerator.generate(sequence.getSequenceSize()).toUpperCase();
+            int leftLimit = 97;
+            int rightLimit = 122;
+            Random random = new Random();
+            String generatedString = random.ints(leftLimit, rightLimit + 1)
+                    .limit(sequence.getSequenceSize())
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+            String timeStamp = replaceDigitsWithChars(now().toEpochMilli());
+            generatedCode = (generatedString + timeStamp).toUpperCase();
         }
 
         if(sequence.getSequenceType() == UUID) {
@@ -503,5 +512,16 @@ public class ServiceSingleton {
             return resultCode + context.get("generatedCode");
         }
         return resultCode;
+    }
+
+    private String replaceDigitsWithChars(long epochTimestamp) {
+        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
+                                    .mapToObj(character ->  replaceNumber((char) character))
+                                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+        return result.toString();
+    }
+
+    private char replaceNumber(char character) {
+        return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 }

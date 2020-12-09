@@ -17,10 +17,6 @@ import javax.ws.rs.*;
 public interface GenericCodeRs extends IBaseRs {
 
     @POST
-    @Path("/newCode")
-    GenericCodeResponseDto getGenericCode(GenericCodeDto codeDto);
-
-    @POST
     @Path("/")
     ActionStatus create(GenericCodeDto codeDto);
 
@@ -31,6 +27,10 @@ public interface GenericCodeRs extends IBaseRs {
     @GET
     @Path("/")
     GetGenericCodeResponseDto find(@QueryParam("entityClass") String entityClass);
+
+    @POST
+    @Path("/generateCode")
+    GenericCodeResponseDto getGenericCode(GenericCodeDto codeDto);
 
     @POST
     @Path("/sequence/")
