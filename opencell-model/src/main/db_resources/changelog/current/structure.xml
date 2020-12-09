@@ -3917,9 +3917,9 @@ END $$;]]>
         <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, created, sequence_id)
             VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Order', '12/09/2020',
             (select id from ${db.schema.adapted}generic_sequence where code = 'order_quote_sequence'))</sql>
-        <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
-            SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'seller_sequence')
-            WHERE entity_class = 'Seller'</sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Seller', '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'seller_sequence'))</sql>
         <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
             SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'customer_sequence')
             WHERE entity_class = 'Customer'</sql>
