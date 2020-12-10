@@ -53210,6 +53210,18 @@
 					"item": [
 						{
 							"name": "Rated transaction job",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "57dd40b3-5627-4ec0-9918-210fe71ce2a5",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -53254,7 +53266,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"INV_PDFXML\",\r\n    \"description\": \"XML and PDF invoice type\",\r\n    \"occTemplateCode\": \"INV_STD\",\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"Fact_\",\r\n        \"sequenceSize\": \"9\"\r\n    },\r\n    \"matchingAuto\":false,\r\n    \"billingTemplateNameEL\":\"#{invoice.billingAccount.tradingLanguage.language.languageCode.equals('ENG') ? 'RETAIL' : 'TELECOM'}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}__IT_PDFXML\",\r\n    \"description\": \"XML and PDF invoice type\",\r\n    \"occTemplateCode\": \"INV_STD\",\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"Fact_\",\r\n        \"sequenceSize\": \"9\"\r\n    },\r\n    \"matchingAuto\":false,\r\n    \"billingTemplateNameEL\":\"#{invoice.billingAccount.tradingLanguage.language.languageCode.equals('ENG') ? 'RETAIL' : 'TELECOM'}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -53281,7 +53293,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\":\"INV_BC_PDFXML\",\r\n    \"description\":\"Monthly invoice cycle\",\r\n    \"dueDateDelay\": 1,\r\n    \"calendar\":\"MONTHLY\",\r\n    \"invoiceDateDelay\": 1,\r\n    \"invoiceTypeCode\":\"{{baseEntityPrefix}}__IT_PDFXML\"\r\n}",
+									"raw": "{\r\n    \"code\":\"{{entityPrefix}}_{{index}}_BC_PDFXML\",\r\n    \"description\":\"Monthly invoice cycle\",\r\n    \"dueDateDelay\": 1,\r\n    \"calendar\":\"MONTHLY\",\r\n    \"invoiceDateDelay\": 1,\r\n    \"invoiceTypeCode\":\"{{baseEntityPrefix}}__IT_PDFXML\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -53336,7 +53348,35 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n\t\"description\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n    \"serviceChargeTemplateUsag\": [\r\n\t\t\t{\r\n\t\t\t\t\"code\": \"{{baseEntityPrefix}}_USAGE1\"\r\n\t\t\t}\r\n\t\t]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SERVICE1\",\r\n\t\"description\": \"{{baseEntityPrefix}}_INV_SERVICE1\",\r\n    \"serviceChargeTemplateUsages\": {\r\n        \"serviceChargeTemplateUsage\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_USAGE1\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"serviceTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create service 2",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SERVICE2\",\r\n\t\"description\": \"{{baseEntityPrefix}}_INV_SERVICE2\",\r\n    \"serviceChargeTemplateUsages\": {\r\n        \"serviceChargeTemplateUsage\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_USAGE1\"\r\n            }\r\n        ]\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -53386,6 +53426,34 @@
 							"response": []
 						},
 						{
+							"name": "Create User Account",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"UA_{{baseEntityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"billingAccount\":\"{{baseEntityPrefix}}_BA\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Create subscription",
 							"request": {
 								"method": "POST",
@@ -53420,7 +53488,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SUB_ACCESS\",\r\n    \"subscription\": \"{{baseEntityPrefix}}_INV_SUB\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SUB_ACCESS\",\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_INV_SUB\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -53470,7 +53538,7 @@
 							"response": []
 						},
 						{
-							"name": "Create account hierarchy FR",
+							"name": "Create account hierarchy FR K.O",
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -53491,6 +53559,34 @@
 									"path": [
 										"account",
 										"accountHierarchy",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User Account 2",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"UA_{{baseEntityPrefix}}_{{index}}_INV_CUST1_FR\",\r\n    \"billingAccount\":\"{{baseEntityPrefix}}_BA\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
 										"createOrUpdate"
 									]
 								}
@@ -53532,7 +53628,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SUB_ACCESS_FR\",\r\n    \"subscription\": \"{{baseEntityPrefix}}_INV_SUB_FR\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_INV_SUB_ACCESS_FR\",\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_INV_SUB_FR\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -53730,7 +53826,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n    \"invoicingDate\":\"2020-12-15\",\r\n    \"firstTransactionDate\":\"2020-01-01\",\r\n    \"lastTransactionDate\":\"2020-12-12\",\r\n    \"generateXML\":false\r\n}\r\n",
+									"raw": "{\r\n    \"targetCode\":\"BA_{{entityPrefix}}_{{index}}_INV_CUST1\",\r\n    \"targetType\":\"BILLINGACCOUNT\",\r\n    \"invoicingDate\":\"2020-12-15\",\r\n    \"firstTransactionDate\":\"2020-01-01\",\r\n    \"lastTransactionDate\":\"2020-12-12\",\r\n    \"generateXML\":false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -54368,7 +54464,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"INV_PDFXML\",\r\n    \"description\": \"XML and PDF invoice type\",\r\n    \"occTemplateCode\": \"INV_STD\",\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"Fact_\",\r\n        \"sequenceSize\": \"9\"\r\n    },\r\n    \"matchingAuto\":false,\r\n    \"billingTemplateNameEL\":\"#{invoice.billingAccount.tradingLanguage.language.languageCode.equals('ENG') ? 'RETAIL' : 'TELECOM'}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{baseEntityPrefix}}_SELLER_HIE\",\r\n    \"description\": \"XML and PDF invoice type\",\r\n    \"occTemplateCode\": \"INV_STD\",\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"Fact_\",\r\n        \"sequenceSize\": \"9\"\r\n    },\r\n    \"matchingAuto\":false,\r\n    \"billingTemplateNameEL\":\"#{invoice.billingAccount.tradingLanguage.language.languageCode.equals('ENG') ? 'RETAIL' : 'TELECOM'}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -54395,7 +54491,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\":\"INV_BC_PDFXML\",\r\n    \"description\":\"Monthly invoice cycle\",\r\n    \"dueDateDelay\": 1,\r\n    \"calendar\":\"MONTHLY\",\r\n    \"invoiceDateDelay\": 1,\r\n    \"invoiceTypeCode\":\"{{baseEntityPrefix}}__IT_PDFXML\"\r\n}",
+									"raw": "{\r\n    \"code\":\"{{entityPrefix}}_{{index}}_SELLER_HIE\",\r\n    \"description\":\"Monthly invoice cycle\",\r\n    \"dueDateDelay\": 1,\r\n    \"calendar\":\"MONTHLY\",\r\n    \"invoiceDateDelay\": 1,\r\n    \"invoiceTypeCode\":\"{{baseEntityPrefix}}__IT_PDFXML\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -54498,6 +54594,34 @@
 							"response": []
 						},
 						{
+							"name": "Create User Account",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"UA_{{baseEntityPrefix}}_{{index}}_SELLER_HIE_CUST\",\r\n    \"billingAccount\":\"{{baseEntityPrefix}}_BA\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Create subscription",
 							"request": {
 								"method": "POST",
@@ -54532,7 +54656,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SELLER_HIE\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"2020-12-02\"\r\n            },\r\n             {\r\n                \"code\": \"{{baseEntityPrefix}}_SERVICE2\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"2020-12-02\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
+									"raw": "{\r\n    \"subscription\": \"{{entityPrefix}}_{{index}}_INV_SUB\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_INV_SERVICE1\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"2020-12-01\"\r\n            },\r\n            {\r\n                \"code\": \"{{baseEntityPrefix}}_INV_SERVICE2\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"2020-12-01\"\r\n            }\r\n        ]\r\n    }\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -54643,7 +54767,7 @@
 						"id": "2cc75602-2c4c-4e4c-b43c-8fa2273049f9",
 						"type": "text/javascript",
 						"exec": [
-							""
+							"pm.variables.set(\"message\",\"\");"
 						]
 					}
 				},
@@ -54653,23 +54777,22 @@
 						"id": "634862ec-1d1a-4f9c-9ae7-afde934afb91",
 						"type": "text/javascript",
 						"exec": [
+							"var data = pm.response.json();",
+							"",
 							"pm.test(request.name + \" - Check Code\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
 							"pm.test(request.name + \" - Check Status\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+							"    pm.expect((data.actionStatus ? data.actionStatus.status :data.status)).to.eql(\"SUCCESS\");",
 							"});",
 							"",
 							"pm.test(request.name + \" - Check ErrorCode\", function () {",
-							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.errorCode).to.eql();",
 							"});",
 							"",
 							"pm.test(request.name + \" - Check Message\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.message).to.eql(\"\");",
+							"    pm.expect(jsonData.message).to.eql(\"message\");",
 							"});"
 						]
 					}
@@ -62994,6 +63117,21 @@
 			"protocolProfileBehavior": {}
 		}
 	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "opencell.admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "opencell.admin",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -63018,82 +63156,82 @@
 	],
 	"variable": [
 		{
-			"id": "579f66b8-a04c-46bb-b45a-377a6de90d2e",
+			"id": "38e5be7f-0576-476d-a4ea-be2c7129bb19",
 			"key": "opencell.base",
 			"value": "https://baq.d2.opencell.work/opencell"
 		},
 		{
-			"id": "54178f8b-dd1a-423b-b30d-98228583970a",
+			"id": "6d4ad44e-ca54-4f68-a149-2f94addcef43",
 			"key": "opencell.url",
 			"value": "{{opencell.base}}/api/rest"
 		},
 		{
-			"id": "3a0b534d-c24b-417a-b19e-3feadf2c3bb4",
+			"id": "a333ea73-f585-490d-9fba-c2b67ca1ffd1",
 			"key": "opencell.username",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "644bff19-14f9-4b6f-ac2d-5e114791d53f",
+			"id": "44f3625d-bc9b-4c7e-bde5-5adcff03cfad",
 			"key": "opencell.password",
 			"value": "opencell.admin"
 		},
 		{
-			"id": "c46fc674-cdda-4489-a05d-da0b76f82c54",
+			"id": "8d0072cd-b2ab-496c-b480-68a3bab39a7c",
 			"key": "opencell.superusername",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "158a00c9-e971-48d6-b919-c07f146daffd",
+			"id": "3f119402-01b5-4666-b9d9-8e40eb5c2aa7",
 			"key": "opencell.superpassword",
 			"value": "opencell.superadmin"
 		},
 		{
-			"id": "58a88a05-ce72-46f6-869e-e324292c0d73",
+			"id": "c0655db6-30dc-4554-a6c7-b340d75834d0",
 			"key": "entityPrefix",
 			"value": "RS_FULL"
 		},
 		{
-			"id": "ed5a7124-06d8-4289-88e5-cf8c76e67dd4",
+			"id": "84456ea1-b266-4235-a2b5-140fc22b7464",
 			"key": "baseEntityPrefix",
 			"value": "RS_BASE"
 		},
 		{
-			"id": "0135b0d4-71c5-4914-bacc-b4b58ba288e0",
+			"id": "ef1bdf1f-6913-4557-b589-a22d5cfd0f0f",
 			"key": "seller.code",
 			"value": "MAIN_SELLER"
 		},
 		{
-			"id": "0ce85520-a0fc-42c2-ae24-33498ab98855",
+			"id": "fa3ee1f3-ff48-4adc-b7ea-5fc7016e4cef",
 			"key": "template.code",
 			"value": "SIMPLE"
 		},
 		{
-			"id": "a19b6f97-2afa-4360-97f5-93065c1b20e5",
+			"id": "9057a92c-fcd4-4741-87bf-01f6181e631e",
 			"key": "template.label",
 			"value": "Simple usage"
 		},
 		{
-			"id": "93cbd8cf-d222-42f9-99a8-c139f2149463",
+			"id": "c4ec3f62-35bb-4476-aca4-d8ef597837b4",
 			"key": "project.code",
 			"value": "SimpleUsage-001"
 		},
 		{
-			"id": "1a9ad644-eb4f-48f2-abbe-1cfa140240ba",
+			"id": "d39ccde1-94e1-4fd0-8a8f-5e472aba31b7",
 			"key": "project.description",
 			"value": "Simple usage offer"
 		},
 		{
-			"id": "dfd789c8-a84b-407d-9e0f-e1132ca5b975",
+			"id": "4771d1d5-5d5f-4f9f-afaf-79ef5bbcd5a6",
 			"key": "project.type",
 			"value": "Setup"
 		},
 		{
-			"id": "7cfbb713-9145-49f0-90e9-8b5ae80b1835",
+			"id": "75984220-20ef-4564-8f71-41589cb6b57e",
 			"key": "project.version",
 			"value": "9.2+"
 		},
 		{
-			"id": "8419f002-7bec-47db-9451-c30c800d3645",
+			"id": "e0dd530f-951a-4477-a314-d767f829fa3f",
 			"key": "serviceId",
 			"value": ""
 		}
