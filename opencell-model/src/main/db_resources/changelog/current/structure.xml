@@ -3863,6 +3863,10 @@ END $$;]]>
         <addColumn tableName="ar_payment_schedule_inst_item">
             <column name="amount" type="numeric(23, 12)"/>
         </addColumn>
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="use_banking_calender" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+
     </changeSet>
 
 
