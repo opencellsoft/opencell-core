@@ -62,6 +62,8 @@ import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 
+import java.util.List;
+
 /**
  * The Interface PaymentRs.
  *
@@ -708,11 +710,12 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Update Payment schedule instance item, the update is only about amount and requestPaymentDate.
      *
-     * @param paymentScheduleInstanceItemDto
-     * @return
+     * @param paymentScheduleInstanceItemDto a list of paymentScheduleInstanceItemDto
+     * @param paymentScheduleInstanceId      the paymentScheduleInstance's Id
+     * @return Request processing status
      */
     @PUT
     @Path("/paymentScheduleInstance/{{paymentScheduleInstanceId}}/items")
-    ActionStatus updatePaymentScheduleInstanceItem(@PathParam("paymentScheduleInstanceId") Long paymentScheduleInstanceId,
-            PaymentScheduleInstanceItemDto paymentScheduleInstanceItemDto);
+    ActionStatus replacePaymentScheduleInstanceItem(@PathParam("paymentScheduleInstanceId") Long paymentScheduleInstanceId,
+            List<PaymentScheduleInstanceItemDto> paymentScheduleInstanceItemDto);
 }

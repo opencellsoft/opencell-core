@@ -24,8 +24,11 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -270,9 +273,9 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
 
         Calendar cal = paymentScheduleInstance.getCalendar();
         cal = CalendarService.initializeCalendar(cal, paymentScheduleInstance.getStartDate(), serviceInstance, subscription);
-                
+
         Date date = paymentScheduleInstance.getStartDate();
-        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();        
+        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
         while (date.before(paymentScheduleInstance.getEndDate())) {
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
             paymentScheduleInstanceItem.setDueDate(calendarBankingService.getNextBankWorkingDate(DateUtils.addDaysToDate(date, dueDateDelay)));
@@ -282,7 +285,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             }
             paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
             paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, date, dueDateDelay));
-
+            paymentScheduleInstanceItem.setAmount(paymentScheduleInstance.getAmount());
             date = cal.nextCalendarDate(date);
             if (!date.before(paymentScheduleInstance.getEndDate())) {
                 paymentScheduleInstanceItem.setLast(true);
@@ -294,9 +297,6 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
         return paymentScheduleInstance;
     }
-    
-
-    
 
     /**
      * Compute request payment date.
@@ -375,6 +375,61 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             paymentScheduleInstanceItem.setAmount(paymentScheduleInstance.getAmount());
             paymentScheduleInstanceItemService.update(paymentScheduleInstanceItem);
         }
+
+    }
+
+    /**
+     * Replace (Remove/create) payment Schedule Instance Items.
+     *
+     * @param paymentScheduleInstance      the payment schedule instance.
+     * @param paymentScheduleInstanceItems new Items to create
+     */
+    public void replacePaymentScheduleInstanceItems(PaymentScheduleInstance paymentScheduleInstance, List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems) {
+        List<PaymentScheduleInstanceItem> unPaidPaymentScheduleInstanceItems = null;
+
+        if (paymentScheduleInstance.getPaymentScheduleInstanceItems() != null) {
+            unPaidPaymentScheduleInstanceItems = paymentScheduleInstance.getPaymentScheduleInstanceItems().stream().filter(item -> !item.isPaid()).collect(Collectors.toList());
+        }
+        if (unPaidPaymentScheduleInstanceItems != null) {
+            Set<Long> paymentScheduleInstanceItemIds = unPaidPaymentScheduleInstanceItems.stream().map(PaymentScheduleInstanceItem::getId).collect(Collectors.toSet());
+            paymentScheduleInstanceItemService.remove(new HashSet<>(paymentScheduleInstanceItemIds));
+            paymentScheduleInstance.getPaymentScheduleInstanceItems().removeAll(unPaidPaymentScheduleInstanceItems);
+        }
+        ServiceInstance serviceInstance = paymentScheduleInstance.getServiceInstance();
+        Subscription subscription = serviceInstance.getSubscription();
+
+        Integer dueDateDelay = serviceInstance.getPaymentDayInMonthPS() == null ?
+                paymentScheduleInstance.getPaymentScheduleTemplate().getPaymentDayInMonth() :
+                serviceInstance.getPaymentDayInMonthPS();
+        Long result = paymentScheduleTemplateService
+                .evaluatePaymentDayInMonthExpression(paymentScheduleInstance.getPaymentScheduleTemplate().getPaymentDayInMonthEl(), serviceInstance);
+        if (result != null) {
+            dueDateDelay = Math.toIntExact(result);
+        }
+        Calendar cal = paymentScheduleInstance.getCalendar();
+        cal = CalendarService.initializeCalendar(cal, paymentScheduleInstance.getStartDate(), serviceInstance, subscription);
+
+        Date date = paymentScheduleInstance.getStartDate();
+        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
+        for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstanceItems) {
+
+            paymentScheduleInstanceItem.setDueDate(calendarBankingService.getNextBankWorkingDate(DateUtils.addDaysToDate(date, dueDateDelay)));
+            if (paymentScheduleInstance.getPaymentScheduleTemplate().getUseBankingCalendar() == null || paymentScheduleInstance.getPaymentScheduleTemplate()
+                    .getUseBankingCalendar()) {
+                paymentScheduleInstanceItem.setDueDate(computeDueDate(customerAccount, paymentScheduleInstanceItem.getRequestPaymentDate()));
+            }
+            paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
+
+            date = cal.nextCalendarDate(date);
+            if (!date.before(paymentScheduleInstance.getEndDate())) {
+                paymentScheduleInstanceItem.setLast(true);
+            } else {
+                paymentScheduleInstanceItem.setLast(false);
+            }
+            paymentScheduleInstanceItemService.create(paymentScheduleInstanceItem);
+            paymentScheduleInstance.getPaymentScheduleInstanceItems().add(paymentScheduleInstanceItem);
+        }
+        update(paymentScheduleInstance);
 
     }
 }

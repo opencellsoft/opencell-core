@@ -24,6 +24,7 @@ package org.meveo.api.dto.payment;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,6 +53,7 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     private Date dueDate;
     
     /** The request payment date. */
+    @NotNull
     private Date requestPaymentDate;
 
     /**
@@ -71,6 +73,7 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     /**
      * Amount
      */
+    @NotNull
     private BigDecimal amount;
 
     /**
