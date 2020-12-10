@@ -106,7 +106,7 @@ public class PaymentScheduleInstance extends EnableBusinessCFEntity {
     /** The amount. */
     @Column(name = "amount")
     @NotNull
-    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private BigDecimal amount;
 
     /** The calendar. */
