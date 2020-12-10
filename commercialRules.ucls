@@ -165,49 +165,41 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="43" name="sourceAttribute"/>      
-      <multiplicity id="44" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="45">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="46" name="targetProductVersion"/>      
-      <multiplicity id="47" minimum="0" maximum="1"/>    
+      <attribute id="43" name="targetProductVersion"/>      
+      <multiplicity id="44" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="48">    
+  <association id="45">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="49" name="attribute"/>      
-      <multiplicity id="50" minimum="0" maximum="1"/>    
+      <attribute id="46" name="attribute"/>      
+      <multiplicity id="47" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="51">    
+  <association id="48">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="52" name="tags"/>      
-      <multiplicity id="53" minimum="0" maximum="2147483647"/>    
+      <attribute id="49" name="tags"/>      
+      <multiplicity id="50" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="54">    
+  <association id="51">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="55" name="groupedService"/>      
-      <multiplicity id="56" minimum="0" maximum="1"/>    
+      <attribute id="52" name="groupedService"/>      
+      <multiplicity id="53" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="57">    
+  <association id="54">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="58" name="tradeRuleItem"/>      
-      <multiplicity id="59" minimum="0" maximum="1"/>    
+      <attribute id="55" name="tradeRuleItem"/>      
+      <multiplicity id="56" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  

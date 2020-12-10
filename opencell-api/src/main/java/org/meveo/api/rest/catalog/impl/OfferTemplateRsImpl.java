@@ -19,7 +19,6 @@
 package org.meveo.api.rest.catalog.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,6 +32,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -132,7 +132,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     
 	@Override
 	public Response listPost(CustomerContextDTO customerContextDto) {
-		 GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
+		GetListCpqOfferResponseDto result = new GetListCpqOfferResponseDto();
 
 	        try {
 	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 

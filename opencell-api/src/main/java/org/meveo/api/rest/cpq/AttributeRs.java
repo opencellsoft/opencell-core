@@ -87,8 +87,8 @@ public interface AttributeRs extends IBaseRs {
 
 	@GET
 	@Path("/")
-    @Operation(summary = "This endpoint allows to find a attribute by code parameter",
-    description ="Find a attribute by code parameter",
+    @Operation(summary = "This endpoint allows to find an attribute by its code",
+    description ="Finding an attribute by its code ",
     tags = { "Attribute" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Attribute successfully retrieved",
