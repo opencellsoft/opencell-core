@@ -66,6 +66,8 @@ import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
 
+import java.util.List;
+
 /**
  * The implementation for PaymentRs.
  * 
@@ -895,11 +897,19 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     /**
      * Update Payment schedule instance item, the update is only about amount and requestPaymentDate.
      *
-     * @param paymentScheduleInstanceItemDto
+     * @param paymentScheduleInstanceItemDtos
      * @return
      */
     @Override
-    public ActionStatus updatePaymentScheduleInstanceItem(Long paymentScheduleInstanceId, PaymentScheduleInstanceItemDto paymentScheduleInstanceItemDto) {
-        return null;
+    public ActionStatus replacePaymentScheduleInstanceItem(Long paymentScheduleInstanceId, List<PaymentScheduleInstanceItemDto> paymentScheduleInstanceItemDtos) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentScheduleApi.replacePaymentScheduleInstanceItems(paymentScheduleInstanceId, paymentScheduleInstanceItemDtos);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
     }
 }
