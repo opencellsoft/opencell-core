@@ -2230,5 +2230,24 @@ public class ValidateBRScript extends Script {
             <where>code like 'RT_MIN%' and wallet_id is null</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
+     	<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-30" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="APIv2PermissionsSyncJob" />
+            <column name="description" value="APIv2PermissionsSyncJob" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="APIv2PermissionsSyncJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="uuid" value="APIv2PermissionsSyncJob" />
+       	</insert>
+	</changeSet>
 
 </databaseChangeLog>
