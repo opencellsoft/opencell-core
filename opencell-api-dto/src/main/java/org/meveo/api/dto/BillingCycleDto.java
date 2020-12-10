@@ -183,6 +183,11 @@ public class BillingCycleDto extends BusinessEntityDto {
     private String collectionDateDelayEl;
 
     /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    private boolean computeDatesAtValidation;
+
+    /**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -226,6 +231,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             customFields = customFieldInstances;
             checkThreshold = billingCycleEntity.getCheckThreshold();
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
         }
     }
 
@@ -623,5 +629,23 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setCollectionDateDelayEl(String collectionDateDelayEl) {
         this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+
+    /**
+     * Check if invoice dates can be recalcukated
+     *
+     * @return
+     */
+    public boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * Sets computeDatesAtValidation
+     *
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }

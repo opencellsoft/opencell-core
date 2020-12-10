@@ -229,6 +229,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getCollectionDateDelayEl() != null) {
             entity.setCollectionDateDelayEl(dto.getCollectionDateDelayEl());
         }
+        entity.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);
