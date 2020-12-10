@@ -500,7 +500,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft invoice Ids that belong to the given Billing Run and not having PDF generated yet.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -515,7 +515,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having PDF generated yet.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -872,7 +872,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Create invoices and aggregates for a given entity to invoice and date interval.
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param billingRun Billing run
      * @param ratedTransactionFilter Filter returning a list of rated transactions
@@ -2089,7 +2089,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Create pending Rated transactions and generate invoice for the billingAccount. DOES assign an invoice number AND create XML/PDF files or account operation if requested.
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param generateInvoiceRequestDto Generate invoice request
      * @param ratedTxFilter A filter to select rated transactions
@@ -2144,7 +2144,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Generate invoice for the billingAccount. Asumes tha all Rated transactions are created already. DOES NOT assign an invoice number NOR create XML/PDF files nor account
      * operation. Use generateInvoice() instead.
-     * 
+     *
      * @param entity Entity to invoice
      * @param generateInvoiceRequestDto Generate invoice request
      * @param ratedTxFilter A filter to select rated transactions
@@ -2223,7 +2223,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Generate Recorded invoice account operation
-     * 
+     *
      * @param invoiceId Invoice identifier
      * @throws InvoiceExistException Invoice already exists exception
      * @throws ImportInvoiceException Failed to import invoice exception
@@ -2315,14 +2315,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine invoice type given the following criteria
-     * 
+     *
      * If is a prepaid invoice, default prepaid type is used.<br/>
      * If is a draft invoice, default draft type is used.<br/>
      * Otherwise invoice type is determined in the following order:<br/>
      * 1. billingCycle.invoiceTypeEl expression evaluated with billingRun and billingAccount a parameters, <br/>
      * 2. bilingCycle.invoiceType, <br/>
      * 3. Default commercial invoice type
-     * 
+     *
      * @param isPrepaid Is it for prepaid invoice. If True, default prepaid type is used. Excludes other criteria.
      * @param isDraft Is it a draft invoice. If true, default draft type is used. Excludes other criteria.
      * @param billingCycle Billing cycle
@@ -2533,7 +2533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *
      * @param billingRun Billing run
      * @param billingAccountId Billing account identifier
-     * 
+     *
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
@@ -2575,8 +2575,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft invoice Ids that belong to the given Billing Run and not having XML generated yet.
-     * 
-     * 
+     *
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2589,8 +2589,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having XML generated yet.
-     * 
-     * 
+     *
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2765,7 +2765,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Send the invoice by email
-     * 
+     *
      * @param invoice the invoice
      * @param mailingTypeEnum : Mailing type
      * @param overrideEmail : override Email
@@ -2875,7 +2875,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Return a list of invoices that not already sent and can be sent : dontsend:false.
-     * 
+     *
      * @return a list of invoices
      * @throws BusinessException
      * @param billingCycleCodes
@@ -2904,7 +2904,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Check if an invoice is draft.
-     * 
+     *
      * @param invoice the invoice
      * @return true if is draft else return false.
      * @throws BusinessException
@@ -2918,7 +2918,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Evaluate the override Email EL
-     * 
+     *
      * @param overrideEmailEl override Email
      * @param userMap the userMap
      * @param invoice the invoice
@@ -2937,7 +2937,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Append invoice aggregates to an invoice. Retrieves all to-invoice Rated transactions for a given billing account
-     * 
+     *
      * @param billingAccount Billing Account
      * @param invoice Invoice to append invoice aggregates to
      * @param firstTransactionDate First transaction date
@@ -2962,7 +2962,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Creates Invoice aggregates from given Rated transactions and appends them to an invoice
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param billingAccount Billing Account
      * @param invoice Invoice to append invoice aggregates to
@@ -3587,7 +3587,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Recalculate tax to see if it has changed
-     * 
+     *
      * @param tax Previous tax
      * @param isExonerated Is Billing account exonerated from taxes
      * @param invoice Invoice in reference
@@ -3924,7 +3924,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
             ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount,
             invoiceSubCategory, null, null, null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null);
+            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
         // #3355 : setting params 1,2,3
