@@ -45,7 +45,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * the grouped service
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes groupedAttributes;
 	

@@ -51,6 +51,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		Attribute attribute = new Attribute();
 		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
+		attribute.setGroupedAttributes(groupedAttributes);
 		attribute.setPriority(postData.getPriority());
 		attribute.setDisplay(postData.isDisplay());
 		attribute.setMandatory(postData.isMandatory());
@@ -81,7 +82,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (groupedAttributes == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, postData.getGroupedAttributeCode());
 		}  
+		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
+		attribute.setGroupedAttributes(groupedAttributes);
 		attribute.setPriority(postData.getPriority());
 		attribute.setDisplay(postData.isDisplay());
 		attribute.setMandatory(postData.isMandatory());
