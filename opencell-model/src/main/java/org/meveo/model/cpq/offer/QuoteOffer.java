@@ -1,6 +1,8 @@
 package org.meveo.model.cpq.offer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -125,6 +127,8 @@ public class QuoteOffer extends AuditableEntity {
 	 * @return the quoteProduct
 	 */
 	public List<QuoteProduct> getQuoteProduct() {
+		if(quoteProduct == null)
+			quoteProduct = new ArrayList<>();
 		return quoteProduct;
 	}
 
@@ -168,6 +172,28 @@ public class QuoteOffer extends AuditableEntity {
 	 */
 	public void setQuoteLot(QuoteLot quoteLot) {
 		this.quoteLot = quoteLot;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(billableAccount, offerTemplate, quoteLot, quoteProduct, quoteVersion, sequence);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteOffer other = (QuoteOffer) obj;
+		return Objects.equals(billableAccount, other.billableAccount)
+				&& Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(quoteLot, other.quoteLot)
+				&& Objects.equals(quoteProduct, other.quoteProduct) && Objects.equals(quoteVersion, other.quoteVersion)
+				&& sequence == other.sequence;
 	}
 	
 	

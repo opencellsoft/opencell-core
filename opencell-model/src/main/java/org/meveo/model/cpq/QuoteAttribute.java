@@ -1,15 +1,19 @@
 package org.meveo.model.cpq;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
@@ -19,6 +23,7 @@ import org.meveo.model.quote.QuoteProduct;
 @Table(name = "cpq_quote_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "cpq_attribute_id", "cpq_quote_product_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
+@NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qa.code=:attributeCode and qq.id=:quoteProductId")
 public class QuoteAttribute extends AuditableEntity{
 
 	
@@ -37,7 +42,7 @@ public class QuoteAttribute extends AuditableEntity{
 	@Column(name = "value")
 	private String value;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
 	@NotNull
 	private QuoteProduct quoteProduct;

@@ -1,13 +1,19 @@
 package org.meveo.model.quote;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -18,6 +24,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
@@ -74,7 +81,23 @@ public class QuoteProduct extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
     private QuoteOffer quoteOffre;
+    
 
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
+    
+
+	public void update(QuoteProduct other) {
+    	this.quoteOffre = other.quoteOffre;
+    	this.quote = other.quote;
+		this.quoteVersion = other.quoteVersion;
+		this.quoteLot = other.quoteLot;
+		this.productVersion = other.productVersion;
+		this.quantity = other.quantity;
+		this.billableAccount = other.billableAccount;
+		this.quoteOffre = other.quoteOffre;
+    }
 	/**
 	 * @return the quote
 	 */
@@ -174,5 +197,37 @@ public class QuoteProduct extends AuditableEntity {
 	 */
 	public void setQuoteOffre(QuoteOffer quoteOffre) {
 		this.quoteOffre = quoteOffre;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(billableAccount, productVersion, quantity, quote, quoteLot, quoteOffre, quoteVersion);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteProduct other = (QuoteProduct) obj;
+		return Objects.equals(billableAccount, other.billableAccount)
+				&& Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
+				&& Objects.equals(quote, other.quote) && Objects.equals(quoteLot, other.quoteLot)
+				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
+	}
+	/**
+	 * @return the quoteAttributes
+	 */
+	public List<QuoteAttribute> getQuoteAttributes() {
+		return quoteAttributes;
+	}
+	/**
+	 * @param quoteAttributes the quoteAttributes to set
+	 */
+	public void setQuoteAttributes(List<QuoteAttribute> quoteAttributes) {
+		this.quoteAttributes = quoteAttributes;
 	}
 }

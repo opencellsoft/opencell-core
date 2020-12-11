@@ -147,7 +147,7 @@ public interface CpqQuoteRs {
      * @return An updated quote information
      */
     @PUT
-    @Path("/quoteItem/{quoteItemCode}")
+    @Path("/quoteItem")
     @Operation(summary = "Modify a quote item",
     tags = { "Quote management" },
     description ="",

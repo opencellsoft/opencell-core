@@ -4375,10 +4375,10 @@ END $$;]]>
 	    	</createTable>
 	    	
 	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 	            
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_product_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_product_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
      </changeSet> 
      
      <changeSet id="540-84-20201209" author="TarikFa">

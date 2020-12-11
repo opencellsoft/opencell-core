@@ -10104,8 +10104,12 @@ $$ LANGUAGE plpgsql;
             <column name="long_description" type="text" /> 
             <column name="start_date" type="datetime" />
             <column name="end_date" type="datetime" />
-            <column name="product_id" type="bigint" />
-            <column name="current_version" type="int4" />   
+            <column name="product_id" type="bigint" >
+	                <constraints nullable="false" />
+	        </column>
+            <column name="current_version" type="int4" >
+	                <constraints nullable="false" />
+	        </column>   
         </createTable>
     </changeSet>
     

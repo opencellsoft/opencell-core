@@ -73,6 +73,12 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
         }
 	}
 
+	@Override
+	public Response listPost(OfferContextDTO quoteContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 	 
