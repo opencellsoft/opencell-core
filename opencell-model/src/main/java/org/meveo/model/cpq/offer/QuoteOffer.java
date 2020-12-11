@@ -1,30 +1,35 @@
 package org.meveo.model.cpq.offer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.quote.QuoteCustomerService;
+import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 
 
 @Entity
-@Table(name="quote_offer")
+@Table(name="quote_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"offer_template_id", "quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
+@NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")
 public class QuoteOffer extends AuditableEntity {
 
 
@@ -53,10 +58,10 @@ public class QuoteOffer extends AuditableEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_customer_service_id")
-	private QuoteCustomerService quoteCustomerService;
+	private QuoteLot quoteLot;
 	
 
-    @OneToMany(mappedBy = "offerQuote", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteOffre", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteProduct> quoteProduct;
 	
@@ -107,21 +112,23 @@ public class QuoteOffer extends AuditableEntity {
 	/**
 	 * @return the quoteCustomerService
 	 */
-	public QuoteCustomerService getQuoteCustomerService() {
-		return quoteCustomerService;
+	public QuoteLot getQuoteCustomerService() {
+		return quoteLot;
 	}
 
 	/**
 	 * @param quoteCustomerService the quoteCustomerService to set
 	 */
-	public void setQuoteCustomerService(QuoteCustomerService quoteCustomerService) {
-		this.quoteCustomerService = quoteCustomerService;
+	public void setQuoteCustomerService(QuoteLot quoteCustomerService) {
+		this.quoteLot = quoteCustomerService;
 	}
 
 	/**
 	 * @return the quoteProduct
 	 */
 	public List<QuoteProduct> getQuoteProduct() {
+		if(quoteProduct == null)
+			quoteProduct = new ArrayList<>();
 		return quoteProduct;
 	}
 
@@ -151,6 +158,42 @@ public class QuoteOffer extends AuditableEntity {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/**
+	 * @return the quoteLot
+	 */
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	/**
+	 * @param quoteLot the quoteLot to set
+	 */
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(billableAccount, offerTemplate, quoteLot, quoteProduct, quoteVersion, sequence);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteOffer other = (QuoteOffer) obj;
+		return Objects.equals(billableAccount, other.billableAccount)
+				&& Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(quoteLot, other.quoteLot)
+				&& Objects.equals(quoteProduct, other.quoteProduct) && Objects.equals(quoteVersion, other.quoteVersion)
+				&& sequence == other.sequence;
 	}
 	
 	

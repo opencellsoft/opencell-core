@@ -18,8 +18,6 @@
 
 package org.meveo.api.rest.cpq.impl;
 
-import java.util.Collections;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -28,7 +26,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -105,7 +102,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 		// TODO Auto-generated method stub
 		GetQuoteOfferDtoResponse result=new GetQuoteOfferDtoResponse();
 		 try {
-	           // QuoteOfferDTO id = cpqQuoteApi.updateQuoteItem(quoteItem);
+			 result.setQuoteOfferDto(cpqQuoteApi.updateQuoteItem(quoteOfferDTO));
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e);
@@ -136,10 +133,10 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response createQuoteItem(QuoteOfferDTO quoteItem, UriInfo info) {
 		GetQuoteOfferDtoResponse result=new GetQuoteOfferDtoResponse();
 		 try {
-	           // QuoteOfferDTO id = cpqQuoteApi.createQuoteItem(quoteItem);
+	            result.setQuoteOfferDto(cpqQuoteApi.createQuoteItem(quoteItem));
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
-			       return errorResponse(e);
+			       return errorResponse(e, result.getActionStatus());
 	        }
 	}
 
