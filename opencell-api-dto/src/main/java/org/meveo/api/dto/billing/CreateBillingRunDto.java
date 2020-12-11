@@ -46,34 +46,57 @@ import org.meveo.model.billing.ReferenceDateEnum;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreateBillingRunDto extends BaseEntityDto {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** The billing cycle code. */
+    /**
+     * The billing cycle code.
+     */
     @XmlAttribute(required = true)
     private String billingCycleCode;
 
-    /** The billing run type enum. */
+    /**
+     * The billing run type enum.
+     */
     @XmlAttribute(required = true)
     private BillingProcessTypesEnum billingRunTypeEnum;
 
-    /** The start date. */
+    /**
+     * The start date.
+     */
     private Date startDate;
 
-    /** The end date. */
+    /**
+     * The end date.
+     */
     private Date endDate;
 
-    /** The invoice date. */
+    /**
+     * The invoice date.
+     */
     private Date invoiceDate;
 
-    /** The last transaction date. */
+    /**
+     * The last transaction date.
+     */
     private Date lastTransactionDate;
 
-    /** The reference date. */
+    /**
+     * The reference date.
+     */
     private ReferenceDateEnum referenceDate;
-    
-    /** Custom fields. */
+
+    /**
+     * Custom fields.
+     */
     private CustomFieldsDto customFields;
+
+    /**
+     * Collection Date used for payment collection date.
+     */
+    private Date collectionDate;
 
     /**
      * Instantiates a new creates the billing run dto.
@@ -226,17 +249,28 @@ public class CreateBillingRunDto extends BaseEntityDto {
         this.customFields = customFields;
     }
 
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDate
+     */
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
+    }
+
     @Override
     public String toString() {
-        return "CreateBillingRunDto{" +
-                "billingCycleCode='" + billingCycleCode + '\'' +
-                ", billingRunTypeEnum=" + billingRunTypeEnum +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", invoiceDate=" + invoiceDate +
-                ", lastTransactionDate=" + lastTransactionDate +
-                ", referenceDate=" + referenceDate +
-                ", customFields=" + customFields +
-                '}';
+        return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
+                + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields
+                + '}';
     }
 }

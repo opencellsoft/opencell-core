@@ -175,9 +175,15 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
-    
+
     /**
-     * 
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @XmlElement
+    private String collectionDateDelayEl;
+
+    /**
+     *
      * check the threshold per entity/invoice.
      */
     @XmlElement
@@ -237,6 +243,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             if(billingCycleEntity.getCheckThreshold()!=null) {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
+            collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
         }
     }
 
@@ -616,5 +623,23 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setSplitPerPaymentMethod(Boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @return
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
     }
 }

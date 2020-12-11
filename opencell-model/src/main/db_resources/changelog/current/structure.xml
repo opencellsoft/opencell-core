@@ -3593,6 +3593,7 @@ END $$;]]>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
 
+
      <changeSet id="#5546_20201023" author="AbdelmounaimAkadid" dbms="postgresql">
         <sql>DROP INDEX IF EXISTS agregate_index_category_invoice_agregate</sql>
         <sql>DROP INDEX IF EXISTS billing_user_account_id_index</sql>
@@ -3603,7 +3604,7 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS ord_quote_index_upper_code</sql>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
-    
+
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
@@ -3621,7 +3622,7 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
@@ -3675,7 +3676,6 @@ END $$;]]>
         <addUniqueConstraint columnNames="code" constraintName="uk_bi_data_collector_code" deferrable="false"
                              disabled="false" initiallyDeferred="false" tableName="bi_data_collector" />
     </changeSet>
-
     <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
         <addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
     </changeSet>
@@ -3689,6 +3689,24 @@ END $$;]]>
         <addColumn tableName="billing_rated_transaction">
             <column name="type" type="VARCHAR(25)"/>
         </addColumn>
+    </changeSet>
+    <changeSet id="#5680_20201126" author="khalidHORRI">
+        <addColumn tableName="billing_invoice">
+            <column name="initial_collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="collection_date_delay_el" type="varchar(2000)"/>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <sql>
+            update ${db.schema.adapted}billing_invoice set initial_collection_date = due_date;
+            update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
+        </sql>
     </changeSet>
 
 </databaseChangeLog>

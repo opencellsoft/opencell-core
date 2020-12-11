@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -128,52 +130,84 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     /** The rejected payment. */
     private RejectedPaymentDto rejectedPayment;
 
-    /** The bank lot. */
+    /**
+     * The bank lot.
+     */
     private String bankLot;
 
-    /** The bank reference. */
+    /**
+     * The bank reference.
+     */
     private String bankReference;
 
-    /** The bank collection date. */
+    /**
+     * The bank collection date.
+     */
     private Date bankCollectionDate;
 
-    /** The deposit date. */
+    /**
+     * The deposit date.
+     */
     private Date depositDate;
 
-    /** The payment method. */
+    /**
+     * The payment method.
+     */
     private String paymentMethod;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
 
-    /** The payment info. */
+    /**
+     * The payment info.
+     */
     private String paymentInfo;// IBAN for direct debit
 
-    /** The payment info 1. */
+    /**
+     * The payment info 1.
+     */
     private String paymentInfo1;// bank code
 
-    /** The payment info 2. */
+    /**
+     * The payment info 2.
+     */
     private String paymentInfo2;// code guichet
 
-    /** The payment info 3. */
+    /**
+     * The payment info 3.
+     */
     private String paymentInfo3;// Num compte
 
-    /** The payment info 4. */
+    /**
+     * The payment info 4.
+     */
     private String paymentInfo4;// RIB
 
-    /** The payment info 5. */
+    /**
+     * The payment info 5.
+     */
     private String paymentInfo5;// bankName
 
-    /** The payment info 6. */
+    /**
+     * The payment info 6.
+     */
     private String paymentInfo6;// bic
 
-    /** The billing account name. */
+    /**
+     * The billing account name.
+     */
     private String billingAccountName;
-    
-    
+
     @XmlElementWrapper(name = "paymentHistories")
     @XmlElement(name = "paymentHistory")
     private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
+
+    /**
+     * A collection date.
+     */
+    private Date collectionDate;
 
     /**
      * Instantiates a new account operation dto.
@@ -244,8 +278,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         if (accountOp.getRejectedPayment() != null) {
             setRejectedPayment(new RejectedPaymentDto(accountOp.getRejectedPayment()));
         }
-
-      
+        setCollectionDate(accountOp.getCollectionDate());
         setCustomFields(customFieldsDto);
     }
 
@@ -933,13 +966,19 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         this.billingAccountName = billingAccountName;
     }
 
-	public List<PaymentHistoryDto> getPaymentHistories() {
-		return paymentHistories;
-	}
+    public List<PaymentHistoryDto> getPaymentHistories() {
+        return paymentHistories;
+    }
 
-	public void setPaymentHistories(List<PaymentHistoryDto> paymentHistories) {
-		this.paymentHistories = paymentHistories;
-	}
+    public void setPaymentHistories(List<PaymentHistoryDto> paymentHistories) {
+        this.paymentHistories = paymentHistories;
+    }
 
-	
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
+    }
 }
