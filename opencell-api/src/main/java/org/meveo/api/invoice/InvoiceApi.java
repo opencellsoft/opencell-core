@@ -21,7 +21,6 @@ package org.meveo.api.invoice;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -48,7 +46,6 @@ import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -1044,7 +1041,7 @@ public class InvoiceApi extends BaseApi {
         dto.setDiscount(invoice.getDiscount());
         dto.setCheckAlreadySent(invoice.isAlreadySent());
         dto.setSentByEmail(invoice.isDontSend());
-        dto.setIntialCollectionDate(invoice.getIntialCollectionDate());
+        dto.setInitialCollectionDate(invoice.getInitialCollectionDate());
 
         List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<>();
         List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<>();

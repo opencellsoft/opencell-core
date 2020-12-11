@@ -200,7 +200,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * Invoice payment collection date.
      */
-    private Date intialCollectionDate;
+    private Date initialCollectionDate;
 
     /**
      * Get the list of existing RTs to include.
@@ -781,11 +781,11 @@ public class InvoiceDto extends AuditableEntityDto {
         this.sentByEmail = sentByEmail;
     }
 
-    public Date getIntialCollectionDate() {
-        return intialCollectionDate;
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
     }
 
-    public void setIntialCollectionDate(Date intialCollectionDate) {
-        this.intialCollectionDate = intialCollectionDate;
+    public void setInitialCollectionDate(Date intialCollectionDate) {
+        this.initialCollectionDate = intialCollectionDate;
     }
 }
