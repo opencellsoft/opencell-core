@@ -29,7 +29,7 @@
                 <f:facet name="header">
                     <h:outputText value="#{messages['role.id']}" />
                 </f:facet>
-                <h:link id="showInvoices" outcome="postInvoicingReports" rendered="#{entity.status.toString() == 'VALIDATED'}" value="#{entity.id}">
+                <h:link id="showInvoices" outcome="postInvoicingReports" rendered="#{entity.status.toString() == 'VALIDATED' || entity.status.toString() == 'REJECTED'}" value="#{entity.id}">
                     <f:param name="objectId" value="#{entity.id}" />
                     <f:param name="postReport" value="true" />
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
@@ -52,7 +52,7 @@
                     <f:param name="preReport" value="true" />
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
-                <p:button id="postReportLink" outcome="postInvoicingReports" rendered="#{entity.status.toString() == 'POSTINVOICED'}"
+                <p:button id="postReportLink" outcome="postInvoicingReports" rendered="#{entity.status.toString() == 'POSTINVOICED' or entity.status.toString() == 'REJECTED'}"
                     value="#{messages['button.postInvoicingRepport']}">
                     <f:param name="objectId" value="#{entity.id}" />
                     <f:param name="postReport" value="true" />

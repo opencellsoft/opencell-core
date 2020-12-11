@@ -63,6 +63,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomScript.countScriptInstanceOnError", query = "select count (*) from ScriptInstance o where o.error=:isError "),
         @NamedQuery(name = "CustomScript.getScriptInstanceOnError", query = "from ScriptInstance o where o.error=:isError "),
+        @NamedQuery(name = "CustomScript.getBillingRunValidationScriptInstanceCodes", query = "select distinct si.code from ScriptInstance SI, InvoiceType T, Invoice I where SI.id=T.billingRunValidationScript.id and T.id=I.invoiceType.id and i.billingRun.id=:id"),
         @NamedQuery(name = "CustomScript.getScriptInstanceByTypeActive", query = "from ScriptInstance o where o.sourceTypeEnum=:sourceTypeEnum and o.disabled = false") })
 public class ScriptInstance extends EnableBusinessEntity {
 
