@@ -415,7 +415,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Invoice payment collection date.
      */
     @Column(name = "initial_collection_date")
-    private Date intialCollectionDate;
+    private Date initialCollectionDate;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -1118,16 +1118,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      *
      * @return Invoice payment collection date
      */
-    public Date getIntialCollectionDate() {
-        return intialCollectionDate;
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
     }
 
     /**
-     * Sets Invoice payment collection date
+     * Sets Invoice payment collection date.
      *
-     * @param intialCollectionDate
+     * @param initialCollectionDate
      */
-    public void setIntialCollectionDate(Date intialCollectionDate) {
-        this.intialCollectionDate = intialCollectionDate;
+    public void setInitialCollectionDate(Date initialCollectionDate) {
+        this.initialCollectionDate = initialCollectionDate;
     }
 }

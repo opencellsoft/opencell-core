@@ -233,7 +233,7 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
-     * 
+     *
      */
     protected List<Long> ratedTransactionsToLink;
     /**
@@ -251,7 +251,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * Invoice payment collection date.
      */
-    private Date intialCollectionDate;
+    private Date initialCollectionDate;
     /**
      * sum off writeOff accountOperations amounts
      */
@@ -937,11 +937,11 @@ public class InvoiceDto extends AuditableEntityDto {
         this.realTimeStatus = realTimeStatus;
     }
 
-    public Date getIntialCollectionDate() {
-        return intialCollectionDate;
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
     }
 
-    public void setIntialCollectionDate(Date intialCollectionDate) {
-        this.intialCollectionDate = intialCollectionDate;
+    public void setInitialCollectionDate(Date intialCollectionDate) {
+        this.initialCollectionDate = intialCollectionDate;
     }
 }
