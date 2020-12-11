@@ -390,20 +390,21 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.tags = tags;
 	}
 
-
 	/**
-	 * @return the offerComponents
+	 * @return the offerProducts
 	 */
 	public List<OfferProductsDto> getOfferProducts() {
 		return offerProducts;
 	}
 
 	/**
-	 * @param offerComponents the offerComponents to set
+	 * @param offerProducts the offerProducts to set
 	 */
-	public void setOfferProduct(List<OfferProductsDto> offerComponents) {
-		this.offerProducts = offerComponents;
+	public void setOfferProducts(List<OfferProductsDto> offerProducts) {
+		this.offerProducts = offerProducts;
 	}
+
+
 
  
     

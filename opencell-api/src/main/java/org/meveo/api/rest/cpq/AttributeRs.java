@@ -87,8 +87,8 @@ public interface AttributeRs extends IBaseRs {
 
 	@GET
 	@Path("/")
-    @Operation(summary = "This endpoint allows to find a attribute by code parameter",
-    description ="Find a attribute by code parameter",
+    @Operation(summary = "This endpoint allows to find an attribute by its code",
+    description ="Finding an attribute by its code ",
     tags = { "Attribute" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Attribute successfully retrieved",
@@ -98,7 +98,7 @@ public interface AttributeRs extends IBaseRs {
 	
 	
 	@POST
-	@Path("/")
+	@Path("/createOrUpdate")
     @Operation(summary = "This endpoint allows to create or update a attribute",
     tags = { "Attribute" },
     description ="create a attribute if it doesn't exist or update an existing attribute",
@@ -108,7 +108,7 @@ public interface AttributeRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "Unkonw grouped attribute to attach to attribute"),
             @ApiResponse(responseCode = "400", description = "the attribute with code in param does not exist ")
     })
-	Response createOrUpdateAttribute(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
+	Response createOrUpdate(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
 	
 	
     

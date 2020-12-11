@@ -12,7 +12,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -226,22 +226,11 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		}
 	}
 
-	@Override
-	public Response listProductVersions(PagingAndFiltering pagingAndFiltering) {
-		GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
-
-		try {
-			result = productApi.listProductVersions(pagingAndFiltering);
-			return Response.ok(result).build(); 
-		} catch (MeveoApiException e) {
-			return errorResponse(e, result.getActionStatus());
-		}
-	}
 
 	@Override
 	public Response listPost(OfferContextDTO quoteContext) {
 		
-		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+		GetCpqOfferResponseDto result = new GetCpqOfferResponseDto();
 	    try {
 	    	/****@TODO implement it****/
 	        return Response.ok(result).build();

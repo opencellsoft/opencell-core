@@ -18,7 +18,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductLineDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -350,7 +350,7 @@ public interface ProductRs extends IBaseRs{
     tags = { "Catalog browsing" },
     description ="Get products with their attributes that match the quote offer context",
     responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetOfferTemplateResponseDto.class))),
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetCpqOfferResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
             @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),
@@ -359,21 +359,6 @@ public interface ProductRs extends IBaseRs{
     public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     
 
-	
-    /**
-     * List offerTemplates matching a given criteria
-     * 
-     * @param pagingAndFiltering Pagination and filtering criteria
-     * @return List of offer templates
-     */
-    @POST
-    @Path("/productVersion/list")
-    @Operation(summary = "Get product versions matching the given criteria",
-    tags = { "Product" },
-    description ="Get product versions matching the given criteria",
-    responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductVersionsResponseDto.class)))
-    })
-    public Response listProductVersions(PagingAndFiltering pagingAndFiltering);
+
 	
 }
