@@ -63,7 +63,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
  
 
 	@Override
-	public Response createOrUpdateAttribute(AttributeDTO postData) {
+	public Response createOrUpdate(AttributeDTO postData) {
 		GetAttributeDtoResponse result = new GetAttributeDtoResponse();
         try {
         	attributeApi.createOrUpdate(postData);
@@ -78,6 +78,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 		// TODO Auto-generated method stub
 		return null;
 	}
+ 
 
 
 
