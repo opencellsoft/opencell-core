@@ -22,12 +22,12 @@ import org.meveo.model.BusinessEntity;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_customer_service", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
+@Table(name = "cpq_quote_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_quote_customer_service_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_quote_lot_seq"), })
 //@NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
 //@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
-public class QuoteCustomerService extends BusinessEntity {
+public class QuoteLot extends BusinessEntity {
 
 
 
@@ -112,7 +112,7 @@ public class QuoteCustomerService extends BusinessEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		QuoteCustomerService other = (QuoteCustomerService) obj;
+		QuoteLot other = (QuoteLot) obj;
 		return duration == other.duration && Objects.equals(executionDate, other.executionDate)
 				&& Objects.equals(name, other.name) 
 				&& Objects.equals(quoteVersion, other.quoteVersion);

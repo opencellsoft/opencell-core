@@ -6,26 +6,25 @@ import javax.persistence.NoResultException;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.quote.Quote;
-import org.meveo.model.quote.QuoteCustomerService;
+import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.quote.QuoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Khairi
+ * @author Tarik FA.
  * @version 10.0
  */
 @Stateless
-public class QuoteCustomerServiceService extends BusinessService<QuoteCustomerService> {
+public class QuoteLotService extends BusinessService<QuoteLot> {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteCustomerServiceService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteLotService.class);
 	
 	@Inject
 	private QuoteVersionService quoteVersionService;
 	
-	public QuoteCustomerService addNewQuoteCustomerService(QuoteCustomerService qcs, Long idQuote)  {
+	public QuoteLot addNewQuoteCustomerService(QuoteLot qcs, Long idQuote)  {
 		LOGGER.info("adding a new quote customer service [code : {}, quoteId : {}]", qcs.getCode(), idQuote);
 		
 		final QuoteVersion quote = quoteVersionService.findById(idQuote);
@@ -42,9 +41,9 @@ public class QuoteCustomerServiceService extends BusinessService<QuoteCustomerSe
 		return qcs;
 	}
 	
-	public QuoteCustomerService findLastVersionByCode(String codeQuoteCustomerService) {
+	public QuoteLot findLastVersionByCode(String codeQuoteCustomerService) {
 		try {
-			return (QuoteCustomerService) this.getEntityManager().createNamedQuery("QuoteCustomerService.findLastVersionByCode")
+			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteCustomerService.findLastVersionByCode")
 											.setParameter("codeQuote", codeQuoteCustomerService)
 											.setMaxResults(1).getSingleResult();
 					
@@ -53,9 +52,9 @@ public class QuoteCustomerServiceService extends BusinessService<QuoteCustomerSe
 		}
 	}
 	
-	public QuoteCustomerService findByCodeAndQuoteVersion(String quoteCustomerServiceCode, int quoteVersion) {
+	public QuoteLot findByCodeAndQuoteVersion(String quoteCustomerServiceCode, int quoteVersion) {
 		try {
-			return (QuoteCustomerService) this.getEntityManager().createNamedQuery("QuoteCustomerService.findByCodeAndVersion")
+			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteCustomerService.findByCodeAndVersion")
 																	.setParameter("code", quoteCustomerServiceCode)
 																		.setParameter("quoteVersion", quoteVersion).getSingleResult();
 		}catch(NoResultException e) {

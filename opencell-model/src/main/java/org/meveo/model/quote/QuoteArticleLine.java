@@ -36,7 +36,7 @@ public class QuoteArticleLine extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_customer_service_id", nullable = false, referencedColumnName = "id")
 	@NotNull
-	private QuoteCustomerService quoteCustomerService;
+	private QuoteLot quoteLot;
 
     /**
      * billable account
@@ -90,19 +90,6 @@ public class QuoteArticleLine extends BusinessEntity {
     @Column(name = "rc_price_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal rcPriceWithTax;
 
-	/**
-	 * @return the quoteCustomerService
-	 */
-	public QuoteCustomerService getQuoteCustomerService() {
-		return quoteCustomerService;
-	}
-
-	/**
-	 * @param quoteCustomerService the quoteCustomerService to set
-	 */
-	public void setQuoteCustomerService(QuoteCustomerService quoteCustomerService) {
-		this.quoteCustomerService = quoteCustomerService;
-	}
 
 	/**
 	 * @return the billableAccount
@@ -298,6 +285,20 @@ public class QuoteArticleLine extends BusinessEntity {
 	 */
 	public void setServiceQuantity(BigDecimal serviceQuantity) {
 		this.serviceQuantity = serviceQuantity;
+	}
+
+	/**
+	 * @return the quoteLot
+	 */
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	/**
+	 * @param quoteLot the quoteLot to set
+	 */
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
 	}
     
     

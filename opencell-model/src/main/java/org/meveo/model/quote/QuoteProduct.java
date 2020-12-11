@@ -1,36 +1,42 @@
 package org.meveo.model.quote;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "product_version_id", "offer_quote_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id")
 @NamedQuery(name = "QuoteProduct.findByQuoteCode", query = "select q from QuoteProduct q where q.quote.code=:code")
-@NamedQuery(name = "QuoteProduct.findByCode", query = "select q from QuoteProduct q where q.code=:code")
-public class QuoteProduct extends BusinessEntity {
+@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
+public class QuoteProduct extends AuditableEntity {
 
-    
     /**
      * quote
      */
@@ -53,15 +59,15 @@ public class QuoteProduct extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_customer_service_id", referencedColumnName = "id")
 	@NotNull
-    private QuoteCustomerService quoteCustomer;
+    private QuoteLot quoteLot;
 
     /**
      * product
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	@NotNull
-    private Product product;
+    private ProductVersion productVersion;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
@@ -74,8 +80,24 @@ public class QuoteProduct extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
-    private QuoteOffer offerQuote;
+    private QuoteOffer quoteOffre;
+    
 
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
+    
+
+	public void update(QuoteProduct other) {
+    	this.quoteOffre = other.quoteOffre;
+    	this.quote = other.quote;
+		this.quoteVersion = other.quoteVersion;
+		this.quoteLot = other.quoteLot;
+		this.productVersion = other.productVersion;
+		this.quantity = other.quantity;
+		this.billableAccount = other.billableAccount;
+		this.quoteOffre = other.quoteOffre;
+    }
 	/**
 	 * @return the quote
 	 */
@@ -104,33 +126,7 @@ public class QuoteProduct extends BusinessEntity {
 		this.quoteVersion = quoteVersion;
 	}
 
-	/**
-	 * @return the quoteCustomer
-	 */
-	public QuoteCustomerService getQuoteCustomer() {
-		return quoteCustomer;
-	}
 
-	/**
-	 * @param quoteCustomer the quoteCustomer to set
-	 */
-	public void setQuoteCustomer(QuoteCustomerService quoteCustomer) {
-		this.quoteCustomer = quoteCustomer;
-	}
-
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
 
 	/**
 	 * @return the quantity
@@ -158,5 +154,80 @@ public class QuoteProduct extends BusinessEntity {
 	 */
 	public void setBillableAccount(BillingAccount billableAccount) {
 		this.billableAccount = billableAccount;
+	}
+
+
+	/**
+	 * @return the quoteLot
+	 */
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	/**
+	 * @param quoteLot the quoteLot to set
+	 */
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
+	}
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	/**
+	 * @return the quoteOffre
+	 */
+	public QuoteOffer getQuoteOffre() {
+		return quoteOffre;
+	}
+
+	/**
+	 * @param quoteOffre the quoteOffre to set
+	 */
+	public void setQuoteOffre(QuoteOffer quoteOffre) {
+		this.quoteOffre = quoteOffre;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(billableAccount, productVersion, quantity, quote, quoteLot, quoteOffre, quoteVersion);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteProduct other = (QuoteProduct) obj;
+		return Objects.equals(billableAccount, other.billableAccount)
+				&& Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
+				&& Objects.equals(quote, other.quote) && Objects.equals(quoteLot, other.quoteLot)
+				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
+	}
+	/**
+	 * @return the quoteAttributes
+	 */
+	public List<QuoteAttribute> getQuoteAttributes() {
+		return quoteAttributes;
+	}
+	/**
+	 * @param quoteAttributes the quoteAttributes to set
+	 */
+	public void setQuoteAttributes(List<QuoteAttribute> quoteAttributes) {
+		this.quoteAttributes = quoteAttributes;
 	}
 }

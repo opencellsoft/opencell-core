@@ -83,7 +83,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.OfferComponentService;
-import org.meveo.service.cpq.QuoteCustomerServiceService;
+import org.meveo.service.cpq.QuoteLotService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -166,7 +166,7 @@ public class QuoteApi extends BaseApi {
     private OfferComponentService offerComponentService;
     
     @Inject
-    private QuoteCustomerServiceService quoteCustomerServiceService;
+    private QuoteLotService quoteCustomerServiceService;
     
     @Inject 
     private BillingAccountService billingAccountService;
