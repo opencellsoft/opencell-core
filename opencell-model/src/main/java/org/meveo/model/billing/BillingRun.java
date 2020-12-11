@@ -304,6 +304,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "skip_validation_script")
+    private boolean skipValidationScript = false;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -708,4 +712,50 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
     }
+
+    /**
+     * @return
+     */
+    public Boolean getComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
+    }
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "reject_auto_action")
+    private BillingRunAutomaticActionEnum rejectAutoAction;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "suspect_auto_action")
+    private BillingRunAutomaticActionEnum suspectAutoAction;
+    
+    public BillingRunAutomaticActionEnum getRejectAutoAction() {
+		return rejectAutoAction;
+	}
+
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum autoRejectAction) {
+		this.rejectAutoAction = autoRejectAction;
+	}
+
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
+
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum autoSuspectAction) {
+		this.suspectAutoAction = autoSuspectAction;
+	}
+
+	public boolean isSkipValidationScript() {
+		return skipValidationScript;
+	}
+
+	public void setSkipValidationScript(boolean skipValidationScript) {
+		this.skipValidationScript = skipValidationScript;
+	}
 }
