@@ -3,6 +3,7 @@ package org.meveo.apiv2.article.service;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.billing.impl.article.ArticleMappingService;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
@@ -11,11 +12,10 @@ import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 
-@Stateless
-public class ArticleMappingService implements ApiService<ArticleMapping> {
+public class ArticleMappingApiService implements ApiService<ArticleMapping> {
 
     @Inject
-    private org.meveo.service.billing.impl.article.ArticleMappingService articleMappingService;
+    private ArticleMappingService articleMappingService;
     @Inject
     private ScriptInstanceService scriptInstanceService;
 

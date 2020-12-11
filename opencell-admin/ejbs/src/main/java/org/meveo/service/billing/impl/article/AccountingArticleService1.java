@@ -6,7 +6,7 @@ import org.meveo.service.base.BusinessService;
 import javax.ejb.Stateless;
 
 @Stateless
-public class AccountingArticleService extends BusinessService<AccountingArticle> {
+public class AccountingArticleService1 extends BusinessService<AccountingArticle> {
 
 
 }

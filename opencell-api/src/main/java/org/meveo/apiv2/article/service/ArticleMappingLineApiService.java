@@ -4,6 +4,9 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.article.ArticleMappingLine;
+import org.meveo.service.billing.impl.article.AccountingArticleService1;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
+import org.meveo.service.billing.impl.article.ArticleMappingService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,15 +14,14 @@ import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 
-@Stateless
-public class ArticleMappingLineService implements ApiService<ArticleMappingLine> {
+public class ArticleMappingLineApiService implements ApiService<ArticleMappingLine> {
 
     @Inject
-    private AccountingArticleService accountingArticleService;
+    private AccountingArticleService1 accountingArticleApiService;
     @Inject
-    private ArticleMappingService articleMappingService;
+    private ArticleMappingService articleMappingApiService;
     @Inject
-    private org.meveo.service.billing.impl.article.ArticleMappingLineService articleMappingLineService;
+    private ArticleMappingLineService articleMappingLineService;
 
     @Override
     public List<ArticleMappingLine> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -38,14 +40,14 @@ public class ArticleMappingLineService implements ApiService<ArticleMappingLine>
 
     @Override
     public ArticleMappingLine create(ArticleMappingLine articleMappingLine) {
-        Optional<AccountingArticle> accountingArticle = accountingArticleService.findById(articleMappingLine.getAccountingArticle().getId());
-        if(!accountingArticle.isPresent())
+        AccountingArticle accountingArticle = accountingArticleApiService.findById(articleMappingLine.getAccountingArticle().getId());
+        if(accountingArticle == null)
             throw new BadRequestException("No accounting article found with id: " + articleMappingLine.getAccountingArticle().getId());
-        Optional<ArticleMapping> articleMapping = articleMappingService.findById(articleMappingLine.getArticleMapping().getId());
-        if(!articleMapping.isPresent())
+        ArticleMapping articleMapping = articleMappingApiService.findById(articleMappingLine.getArticleMapping().getId());
+        if(articleMapping == null)
             throw new BadRequestException("No article mapping found with id: " + articleMappingLine.getArticleMapping().getId());
-        articleMappingLine.setAccountingArticle(accountingArticle.get());
-        articleMappingLine.setArticleMapping(articleMapping.get());
+        articleMappingLine.setAccountingArticle(accountingArticle);
+        articleMappingLine.setArticleMapping(articleMapping);
         articleMappingLineService.create(articleMappingLine);
         return articleMappingLine;
     }

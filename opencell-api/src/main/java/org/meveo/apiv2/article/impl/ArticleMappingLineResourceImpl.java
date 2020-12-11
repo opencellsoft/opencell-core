@@ -3,7 +3,7 @@ package org.meveo.apiv2.article.impl;
 import org.meveo.apiv2.article.ArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.resource.ArticleMappingLineResource;
-import org.meveo.apiv2.article.service.ArticleMappingLineService;
+import org.meveo.apiv2.article.service.ArticleMappingLineApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 
 import javax.ejb.Stateless;
@@ -14,13 +14,13 @@ import javax.ws.rs.core.Response;
 public class ArticleMappingLineResourceImpl implements ArticleMappingLineResource {
 
     @Inject
-    private ArticleMappingLineService articleMappingLineService;
+    private ArticleMappingLineApiService articleMappingLineApiService;
 
     private ArticleMappingLineMapper mapper = new ArticleMappingLineMapper();
 
     @Override
     public Response createArticleMappingLine(ArticleMappingLine articleMappingLine) {
-        org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = articleMappingLineService.create(mapper.toEntity(articleMappingLine));
+        org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = articleMappingLineApiService.create(mapper.toEntity(articleMappingLine));
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(ArticleMappingLineResource.class, articleMappingLineEntity.getId()).build())
                 .entity(toResourceOrderWithLink(mapper.toResource(articleMappingLineEntity)))

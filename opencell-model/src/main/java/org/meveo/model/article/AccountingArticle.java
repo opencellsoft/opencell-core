@@ -20,9 +20,9 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
-@Table(name = "billing_article")
+@Table(name = "billing_accounting_article")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_seq"), })
+        parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
 public class AccountingArticle extends BusinessEntity {
 
     @OneToOne(fetch = LAZY, cascade = ALL)
@@ -41,7 +41,7 @@ public class AccountingArticle extends BusinessEntity {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
-    @OneToOne(mappedBy = "article")
+    @OneToOne(mappedBy = "accountingArticle")
     private ArticleMappingLine articleMappingLine;
 
     @Column(name = "analytic_code_1")

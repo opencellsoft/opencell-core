@@ -7,6 +7,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.article.AccountingArticleService1;
 import org.meveo.service.billing.impl.article.ArticleFamilyService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.tax.TaxClassService;
@@ -17,11 +18,10 @@ import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 
-@Stateless
-public class AccountingArticleService implements ApiService<AccountingArticle> {
+public class AccountingArticleApiService implements ApiService<AccountingArticle> {
 
     @Inject
-    private org.meveo.service.billing.impl.article.AccountingArticleService accountingArticleService;
+    private AccountingArticleService1 accountingArticleService1;
     @Inject
     private AccountingCodeService accountingCodeService;
     @Inject
@@ -53,7 +53,7 @@ public class AccountingArticleService implements ApiService<AccountingArticle> {
                 throw new BadRequestException("No article family found with id: " + accountingArticle.getArticleFamily().getId());
         }
 
-        accountingArticleService.create(accountingArticle);
+        accountingArticleService1.create(accountingArticle);
         return accountingArticle;
     }
 
@@ -69,7 +69,7 @@ public class AccountingArticleService implements ApiService<AccountingArticle> {
 
     @Override
     public Optional<AccountingArticle> findById(Long id) {
-        return Optional.of(accountingArticleService.findById(id));
+        return Optional.of(accountingArticleService1.findById(id));
     }
 
     @Override

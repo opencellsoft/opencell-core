@@ -4388,8 +4388,8 @@ END $$;]]>
 	 </changeSet> 
     <!-- end MediaPost -->
     <changeSet id = "#FEAT-761-2020-10-19" author = "ZBariki">
-        <createSequence sequenceName="billing_accouting_article_seq" startValue="1" />
-        <createTable tableName="billing_article" >
+        <createSequence sequenceName="billing_accounting_article_seq" startValue="1" />
+        <createTable tableName="billing_accounting_article" >
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_pk"/>
             </column>
@@ -4420,6 +4420,7 @@ END $$;]]>
             </column>
             <column name="accounting_code_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
+            <column name="description_i18n" type="${type.json}"></column>
         </createTable>
 
         <createSequence sequenceName="billing_article_family_seq" startValue="1" />
@@ -4431,6 +4432,7 @@ END $$;]]>
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
+            <column name="uuid" type="varchar(60)" />
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -4444,6 +4446,9 @@ END $$;]]>
                 <constraints nullable="false"/>
             </column>
             <column name="article_family_ref_id" type="bigint" />
+            <column name="cf_values" type="${type.json}"/>
+            <column name="cf_values_accum" type="${type.json}"/>
+            <column name="description_i18n" type="${type.json}"></column>
         </createTable>
 
         <createSequence sequenceName="billing_article_mapping_seq" startValue="1" />
@@ -4473,6 +4478,12 @@ END $$;]]>
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_mapping_line_pk"/>
             </column>
             <column name="version" type="int4" />
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+            <column name="created" type="datetime"/>
+            <column name="creator" type="varchar(50)"/>
+            <column name="updater" type="varchar(50)"/>
+            <column name="updated" type="datetime"/>
             <column name="article_mapping_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -4495,6 +4506,12 @@ END $$;]]>
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_attribute_mapping_pk"/>
             </column>
             <column name="version" type="int4" />
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+            <column name="created" type="datetime"/>
+            <column name="creator" type="varchar(50)"/>
+            <column name="updater" type="varchar(50)"/>
+            <column name="updated" type="datetime"/>
 
             <column name="article_mapping_line_id" type="bigint">
                 <constraints nullable="false"/>
@@ -4509,20 +4526,20 @@ END $$;]]>
             <column name="article_id" type="bigint"/>
         </addColumn>
 
-        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_article"
-                                 constraintName="fk_billing_article_tax_class" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_tax_class" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_tax_class" />
-        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_article"
-                                 constraintName="fk_billing_article_invoice_sub_category" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_invoice_sub_category" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
-        <addForeignKeyConstraint baseColumnNames="article_family_id" baseTableName="billing_article"
-                                 constraintName="fk_billing_article_article_family" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="article_family_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_article_family" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_article_family" />
-        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_article"
-                                 constraintName="fk_billing_article_accounting_code" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_accounting_code" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_code" />
 
@@ -4548,7 +4565,7 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="article_id" baseTableName="billing_article_mapping_line"
                                  constraintName="fk_billing_article_mapping_line_article" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="billing_article" />
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 
         <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="billing_article_mapping_line"
                                  constraintName="fk_billing_article_mapping_line_charge_template" deferrable="false"
@@ -4566,7 +4583,7 @@ END $$;]]>
                                  referencedColumnNames="id" referencedTableName="cat_service_template" />
 
         <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="article_id"
-                                 constraintName="rated_transaction_article_fk" referencedTableName="billing_article"
+                                 constraintName="rated_transaction_article_fk" referencedTableName="billing_accounting_article"
                                  referencedColumnNames="id"/>
 
         <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="article_mapping_line_id"

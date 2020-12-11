@@ -2,7 +2,7 @@ package org.meveo.apiv2.article.impl;
 
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
 import org.meveo.apiv2.article.resource.AccountingArticleResource;
-import org.meveo.apiv2.article.service.AccountingArticleService;
+import org.meveo.apiv2.article.service.AccountingArticleApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.article.AccountingArticle;
 
@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
 
     @Inject
-    private AccountingArticleService accountingArticleService;
+    private AccountingArticleApiService accountingArticleApiService;
     private AccountingArticleMapper mapper = new AccountingArticleMapper();
 
 
@@ -22,7 +22,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
 
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
-        accountingArticleEntity = accountingArticleService.create(accountingArticleEntity);
+        accountingArticleEntity = accountingArticleApiService.create(accountingArticleEntity);
 
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())

@@ -94,7 +94,7 @@ public class ProductMapping extends BusinessEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
-    private AccountingArticle accountingArticle;
+    private CpqAccountingArticle cpqAccountingArticle;
 	
 	
     /**
@@ -230,16 +230,16 @@ public class ProductMapping extends BusinessEntity {
 	/**
 	 * @return the accountingArticle
 	 */
-	public AccountingArticle getAccountingArticle() {
-		return accountingArticle;
+	public CpqAccountingArticle getCpqAccountingArticle() {
+		return cpqAccountingArticle;
 	}
 
 
 	/**
-	 * @param accountingArticle the accountingArticle to set
+	 * @param cpqAccountingArticle the accountingArticle to set
 	 */
-	public void setAccountingArticle(AccountingArticle accountingArticle) {
-		this.accountingArticle = accountingArticle;
+	public void setCpqAccountingArticle(CpqAccountingArticle cpqAccountingArticle) {
+		this.cpqAccountingArticle = cpqAccountingArticle;
 	}
 
 
