@@ -62,7 +62,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	}
  
 
-	@Override
+	/*@Override
 	public Response createOrUpdateAttribute(AttributeDTO postData) {
 		GetAttributeDtoResponse result = new GetAttributeDtoResponse();
         try {
@@ -71,10 +71,16 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
         } catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
         }
-	}
+	}*/
 
 	@Override
 	public Response listPost(OfferContextDTO quoteContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response createOrUpdate(AttributeDTO postData) {
 		// TODO Auto-generated method stub
 		return null;
 	}

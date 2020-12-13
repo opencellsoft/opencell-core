@@ -25,7 +25,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "cpq_quote_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_lot_seq"), })
-//@NamedQuery(name = "QuoteCustomerService.findByCodeAndVersion", query = "select q from QuoteCustomerService q where q.quote.code=:code and q.quoteVersion=:quoteVersion")
+@NamedQuery(name = "QuoteLot.findByCodeAndVersion", query = "select q from QuoteLot q where q.code=:code and q.quoteVersion.id=:quoteVersionId")
 //@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
 public class QuoteLot extends BusinessEntity {
 

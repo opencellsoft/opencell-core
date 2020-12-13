@@ -1,5 +1,7 @@
 package org.meveo.model.cpq;
 
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +25,7 @@ import org.meveo.model.quote.QuoteProduct;
 @Table(name = "cpq_quote_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "cpq_attribute_id", "cpq_quote_product_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
-@NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qa.code=:attributeCode and qq.id=:quoteProductId")
+@NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId")
 public class QuoteAttribute extends AuditableEntity{
 
 	
@@ -35,7 +37,6 @@ public class QuoteAttribute extends AuditableEntity{
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_attribute_id", nullable = false)
-	@NotNull
 	private Attribute attribute;
 	
 	
@@ -44,7 +45,6 @@ public class QuoteAttribute extends AuditableEntity{
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
-	@NotNull
 	private QuoteProduct quoteProduct;
 
 	/**
@@ -87,6 +87,35 @@ public class QuoteAttribute extends AuditableEntity{
 	 */
 	public void setQuoteProduct(QuoteProduct quoteProduct) {
 		this.quoteProduct = quoteProduct;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(attribute, quoteProduct, value);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteAttribute other = (QuoteAttribute) obj;
+		return Objects.equals(attribute, other.attribute) && Objects.equals(quoteProduct, other.quoteProduct)
+				&& Objects.equals(value, other.value);
+	}
+
+	public void update(QuoteAttribute other) {
+		this.value = other.value;
+		this.attribute = other.attribute;
+		this.auditable = other.auditable;
+		this.quoteProduct = other.quoteProduct;
+		this.id = other.id;
+		this.version = other.version;
+		
 	}
 
 }

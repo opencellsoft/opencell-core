@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteProduct;
 
 /**
  * DTO to create or update a quoteOffer
@@ -38,7 +40,12 @@ import org.meveo.api.dto.BaseEntityDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteOfferDTO extends BaseEntityDto{
 
-    /**
+    public QuoteOfferDTO() {
+		super();
+	}
+    
+
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
@@ -52,7 +59,8 @@ public class QuoteOfferDTO extends BaseEntityDto{
     private Integer quoteVersion;
 
     private String quoteLotCode;
-    
+
+    @NotNull
     private String offerCode;
 
     private String billableAccountCode;

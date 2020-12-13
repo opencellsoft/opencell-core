@@ -11,7 +11,7 @@ public class QuoteOfferService extends PersistenceService<QuoteOffer> {
 
 	public QuoteOffer findByTemplateAndQuoteVersion(String offerTemplateCode, String CpqQuoteCode, int quoteVersion ) {
 		try {
-			return (QuoteOffer) this.getEntityManager().createNamedQuery("")
+			return (QuoteOffer) this.getEntityManager().createNamedQuery("QuoteOffer.findByTemplateAndQuoteVersion")
 											.setParameter("offerTemplateCode", offerTemplateCode)
 												.setParameter("cpqQuoteCode", CpqQuoteCode)
 													.setParameter("quoteVersion", quoteVersion)
