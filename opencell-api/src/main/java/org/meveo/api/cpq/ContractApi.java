@@ -1,7 +1,6 @@
 package org.meveo.api.cpq;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,6 +101,7 @@ public class ContractApi extends BaseApi{
 		contract.setContractDate(dto.getContractDate());
 		contract.setRenewal(dto.isRenewal());
 		contract.setContractDuration(dto.getContractDuration());
+		contract.setDescription(dto.getDescription());
 		//retrieve seller
 		final Seller seller = sellerService.findByCode(dto.getSellerCode());
 //		if(seller == null)
@@ -142,13 +142,24 @@ public class ContractApi extends BaseApi{
 		//check the status of the contract
 		if(!ProductStatusEnum.DRAFT.equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
+		}else {
+			contract.setStatus(dto.getStatus());
 		}
+		/*if(ProductStatusEnum.ACTIVE.equals(contract.getStatus())) {
+			if(ProductStatusEnum.DRAFT.equals(dto.getStatus())) {
+				throw new MeveoApiException("Current Contract is active, can not be DRAFT anymore");
+			}
+			contract.setStatus(dto.getStatus());
+		}else if(ProductStatusEnum.CLOSED.equals(contract.getStatus())) {
+			throw new MeveoApiException("Current Contract is already close");
+		}*/
 		contract.setCode(dto.getCode());
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
 		contract.setContractDate(dto.getContractDate());
 		contract.setRenewal(dto.isRenewal());
 		contract.setContractDuration(dto.getContractDuration());
+		contract.setDescription(dto.getDescription());
 		
 		if(contract.getSeller() != null && !contract.getSeller().getCode().equals(dto.getSellerCode())) {
 			final Seller seller = sellerService.findByCode(dto.getSellerCode());
@@ -174,7 +185,7 @@ public class ContractApi extends BaseApi{
 			contract.setCustomer(null);
 		}
 		try {
-			contractService.updateContract(contract);
+			contractService.update(contract);
 		}catch(BusinessException e) {
 			throw new MeveoApiException(e);
 		}
