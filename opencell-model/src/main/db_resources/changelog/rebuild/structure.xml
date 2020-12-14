@@ -10562,7 +10562,7 @@ $$ LANGUAGE plpgsql;
             <column name="quote_version_id" type="bigint" >
                 <constraints nullable="false" />
             </column>   
-            <column name="quote_customer_service_id" type="bigint" />  
+            <column name="quote_lot_id" type="bigint" />  
             <column name="offer_component_id" type="bigint" >
                 <constraints nullable="false" />
             </column>  
@@ -10750,7 +10750,7 @@ $$ LANGUAGE plpgsql;
      
      
       <changeSet id="current-str-fk-32" author="TarikFAKHOURI">
-        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_product" constraintName="fk_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_quote_product" constraintName="fk_quote_lot_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
      </changeSet>  
      

@@ -59,8 +59,7 @@ public class QuoteProduct extends AuditableEntity {
      * quote customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_customer_service_id",nullable = false, referencedColumnName = "id")
-	@NotNull
+	@JoinColumn(name = "quote_lot_id", referencedColumnName = "id")
     private QuoteLot quoteLot;
 
     /**
