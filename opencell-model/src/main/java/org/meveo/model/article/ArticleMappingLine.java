@@ -26,26 +26,26 @@ import static javax.persistence.FetchType.LAZY;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq"), })
 public class ArticleMappingLine extends BusinessEntity {
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "article_mapping_id")
     private ArticleMapping articleMapping;
 
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "article_id")
     private AccountingArticle accountingArticle;
 
     @OneToMany(mappedBy = "articleMappingLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeMapping> attributesMapping;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 

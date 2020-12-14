@@ -301,9 +301,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             missingParameters.add("code");
         }
         
-        if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+       /* if (StringUtils.isBlank(postData.getServiceTypeCode())) {
             missingParameters.add("serviceTypeCode");
-        }
+        }*/
 
         handleMissingParametersAndValidate(postData);
  
@@ -408,9 +408,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             missingParameters.add("code");
         }
         
-        if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+        /*if (StringUtils.isBlank(postData.getServiceTypeCode())) {
             missingParameters.add("serviceTypeCode");
-        }
+        }*/
 
         handleMissingParametersAndValidate(postData);
 
