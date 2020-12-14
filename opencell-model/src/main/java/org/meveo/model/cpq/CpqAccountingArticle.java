@@ -17,7 +17,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "cpq_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_accounting_article_seq"), })
-public class AccountingArticle extends BusinessEntity {
+public class CpqAccountingArticle extends BusinessEntity {
  
 	private static final long serialVersionUID = 1L;
 

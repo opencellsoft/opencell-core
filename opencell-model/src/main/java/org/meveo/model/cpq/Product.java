@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -49,9 +50,10 @@ import org.meveo.model.crm.CustomerBrand;
 @Table(name = "cpq_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })
-@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id")
-@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
-
+@NamedQueries({
+		@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id"),
+		@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
+})
 public class Product extends BusinessEntity {
 
 	/**

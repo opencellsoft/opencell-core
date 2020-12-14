@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -34,8 +35,10 @@ import org.meveo.model.crm.Customer;
 @Table(name = "cpq_tag", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_tag_seq"), })
-@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id")
-@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
+@NamedQueries({
+		@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id"),
+		@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
+})
 public class Tag extends BusinessEntity {
 
 	/**
