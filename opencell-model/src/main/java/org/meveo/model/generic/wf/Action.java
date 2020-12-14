@@ -9,6 +9,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "wf_generic_action", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
@@ -161,5 +162,34 @@ public class Action extends BaseEntity implements Comparable<Action> {
     @Override
     public int compareTo(Action action) {
         return this.priority - action.priority;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Action)) {
+            return false;
+        }
+        Action other = (Action) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (uuid == null) {
+            if (other.getUuid() != null) {
+                return false;
+            }
+        } else if (!uuid.equals(other.getUuid())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), uuid, priority, conditionEl, type, description,
+                logLevel, fieldToUpdate, asynchronous, valueEL, actionScript, notification, transition);
     }
 }
