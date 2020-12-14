@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,7 +33,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -45,7 +48,8 @@ import org.meveo.model.cpq.tags.Tag;
         @Parameter(name = "sequence_name", value = "cpq_product_version_seq"), })
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
-	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)")
+	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)"),
+	 @NamedQuery(name = "ProductVersion.findByCurrentValidity", query = "select p from ProductVersion p WHERE p.validity.from<=:currentDate and :currentDate<=p.validity.to")
 })
 public class ProductVersion extends AuditableEntity{
 
@@ -107,18 +111,11 @@ public class ProductVersion extends AuditableEntity{
     private String longDescription;
     
     /**
-     * start date 
+     * validity dates
      */
-    @Column(name = "start_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
-
-    /**
-     * date end 
-     */
-    @Column(name = "end_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    private DatePeriod validity = new DatePeriod();
      
     
     /**
@@ -130,7 +127,7 @@ public class ProductVersion extends AuditableEntity{
     
 
 	/**
-	 * list of attributes attached to this product
+	 * list of attributes attached to this product version
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -138,7 +135,20 @@ public class ProductVersion extends AuditableEntity{
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
-    private List<Attribute> attributes = new ArrayList<>();
+    private List<Attribute> attributes = new ArrayList<Attribute>();
+	
+	
+
+	/**
+	 * list of grouped attribute attached to this product version
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_product_version_grouped_attributes",
+				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")				
+			)
+    private List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
     
     
 	public ProductVersion() {}
@@ -155,8 +165,7 @@ public class ProductVersion extends AuditableEntity{
 		this.setTags(new HashSet<>());
 		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());
-		this.setStartDate(copy.getStartDate());
-		this.setEndDate(copy.getEndDate());
+		this.setValidity(copy.getValidity()); 
 	}
 
 	public void setId(Long id) {
@@ -204,21 +213,7 @@ public class ProductVersion extends AuditableEntity{
 		this.longDescription = longDescription;
 	}
 
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+	 
 
 	public Product getProduct() {
 		return product;
@@ -258,11 +253,41 @@ public class ProductVersion extends AuditableEntity{
 	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
+	 
 
+	/**
+	 * @return the groupedAttributes
+	 */
+	public List<GroupedAttributes> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+
+	/**
+	 * @param groupedAttributes the groupedAttributes to set
+	 */
+	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
+	
+	
+
+	/**
+	 * @return the validity
+	 */
+	public DatePeriod getValidity() {
+		return validity;
+	}
+
+	/**
+	 * @param validity the validity to set
+	 */
+	public void setValidity(DatePeriod validity) {
+		this.validity = validity;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(endDate, id, longDescription, product, shortDescription, startDate, status, statusDate,
+		return Objects.hash(id, longDescription, product, shortDescription, validity, status, statusDate,
 				tags, version);
 	}
 
@@ -275,10 +300,9 @@ public class ProductVersion extends AuditableEntity{
 		if (getClass() != obj.getClass())
 			return false;
 		ProductVersion other = (ProductVersion) obj;
-		return Objects.equals(endDate, other.endDate) && Objects.equals(id, other.id)
+		return Objects.equals(validity, other.validity) && Objects.equals(id, other.id)
 				&& Objects.equals(longDescription, other.longDescription) && Objects.equals(product, other.product)
-				&& Objects.equals(shortDescription, other.shortDescription)
-				&& Objects.equals(startDate, other.startDate) && status == other.status
+				&& Objects.equals(shortDescription, other.shortDescription) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate) && Objects.equals(tags, other.tags)
 				&& version == other.version;
 	}

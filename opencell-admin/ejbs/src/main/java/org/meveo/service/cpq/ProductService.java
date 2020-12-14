@@ -122,7 +122,7 @@ public class ProductService extends BusinessService<Product> {
     		Collections.sort(productVersions, new Comparator<ProductVersion>() {
 				@Override
 				public int compare(ProductVersion o1, ProductVersion o2) {
-					return o2.getStartDate().compareTo(o1.getStartDate());
+					return o2.getValidity().getFrom().compareTo(o1.getValidity().getFrom());
 				}
 			});
     		for (ProductVersion pv : productVersions) {

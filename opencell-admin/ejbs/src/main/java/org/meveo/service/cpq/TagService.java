@@ -13,8 +13,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.BusinessService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mbarek-Ay
@@ -25,8 +23,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TagService extends BusinessService<Tag> {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TagService.class);
+ 
 	//private static final String TAG_CODE_UNKNOWN = "Tag code %s is missing";
 	private static final String TAG_IS_ATTACHED_TO_PRODUCT = "Impossible to remove a tag(%s), it attached to product code %s";
 	
@@ -36,16 +33,16 @@ public class TagService extends BusinessService<Tag> {
 	private ProductVersionService productVersionService;
 
 	public boolean isTagTypeExist(Long id) {
-		LOGGER.info("check if the list of tag exist with id tag type is {}", id);
+		log.info("check if the list of tag exist with id tag type is {}", id);
 		var tags = this.getEntityManager().createNamedQuery(QUERY_FIND_TAG_TYPE).setParameter("id", id).getResultList();
 		if(!tags.isEmpty())
 			return true;
-		LOGGER.info("no tag type {} exist for tag ", id);
+		log.info("no tag type {} exist for tag ", id);
 		return false;
 	}
 	
 	public void removeTag(Long id, Long idProductVersion) {
-		LOGGER.info("removing tag {}", id);
+		log.info("removing tag {}", id);
 		final Tag tag = this.findById(id);
 		if(tag == null || tag.getId() == null) {
 			throw new EntityDoesNotExistsException(Tag.class, id);
@@ -63,7 +60,7 @@ public class TagService extends BusinessService<Tag> {
 		}else {
 			this.remove(tag);
 		}
-		LOGGER.info("removing tag {} successfully!", id);
+		log.info("removing tag {} successfully!", id);
 	}
 
 //	public Tag findByCode(String parentTagCode) {
@@ -83,6 +80,17 @@ public class TagService extends BusinessService<Tag> {
 		try {
 			return qb.getQuery(getEntityManager()).getResultList();
 
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Tag> findByTagType(String tagTypeCode) {
+		QueryBuilder qb = new QueryBuilder(Tag.class, "ta");
+		qb.addCriterionEntity("ta.tagType.code", tagTypeCode);
+		try {
+			return qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

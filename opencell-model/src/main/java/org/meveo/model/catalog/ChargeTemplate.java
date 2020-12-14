@@ -374,7 +374,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "price_matrix")
     @NotNull
-    protected Boolean priceMatrix;
+    protected Boolean priceMatrix=Boolean.FALSE;
     
     
     
