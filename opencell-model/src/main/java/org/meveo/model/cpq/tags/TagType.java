@@ -1,5 +1,7 @@
 package org.meveo.model.cpq.tags;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -7,13 +9,17 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceSubCategory;
 /**
  * 
  * @author Tarik F.
@@ -40,6 +46,13 @@ public class TagType extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
+	
+	
+	 /**
+     * A list of tags
+     */ 
+    @OneToMany(mappedBy = "tagType", fetch = FetchType.LAZY)
+    private List<Tag> tags=new ArrayList<Tag>();
 
 
 	public Seller getSeller() {
@@ -49,6 +62,24 @@ public class TagType extends BusinessEntity {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+	
+	
+
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
 
 
