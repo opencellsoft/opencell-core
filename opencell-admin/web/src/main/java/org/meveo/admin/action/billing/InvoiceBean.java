@@ -900,7 +900,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
     
     public void cancelInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.inValidateInvoice(invoice);
+        invoiceService.cancelInvoiceWithoutDelete(invoice);
     }
     
     public void validateInvoice(Invoice invoice) throws BusinessException {
