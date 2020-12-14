@@ -166,8 +166,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.info("ddrequestOps found:" + ddrequestOps.size());
-				result.setNbItemsToProcess(ddrequestOps.size());
+				log.info("ddrequestOps found:" + ddrequestOps.size());				
 
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
