@@ -59,6 +59,8 @@ public class QuoteProductDTO extends BaseEntityDto{
     
     private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
 
+    private String quoteLotCode;
+
 	/**
 	 * @return the productCode
 	 */
@@ -141,6 +143,20 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteVersion(int quoteVersion) {
 		this.quoteVersion = quoteVersion;
+	}
+
+	/**
+	 * @return the quoteLotCode
+	 */
+	public String getQuoteLotCode() {
+		return quoteLotCode;
+	}
+
+	/**
+	 * @param quoteLotCode the quoteLotCode to set
+	 */
+	public void setQuoteLotCode(String quoteLotCode) {
+		this.quoteLotCode = quoteLotCode;
 	}
 
 

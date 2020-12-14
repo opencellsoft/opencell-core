@@ -33,11 +33,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 @Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "product_version_id", "offer_quote_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
-@NamedQueries({
-		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
-		@NamedQuery(name = "QuoteProduct.findByQuoteCode", query = "select q from QuoteProduct q where q.quote.code=:code"),
-		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
-})
+
+@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id")
+@NamedQuery(name = "QuoteProduct.findByQuoteCode", query = "select q from QuoteProduct q where q.quote.code=:code")
+@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
 public class QuoteProduct extends AuditableEntity {
 
     /**
@@ -60,7 +59,7 @@ public class QuoteProduct extends AuditableEntity {
      * quote customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_customer_service_id", referencedColumnName = "id")
+	@JoinColumn(name = "quote_customer_service_id",nullable = false, referencedColumnName = "id")
 	@NotNull
     private QuoteLot quoteLot;
 
@@ -100,6 +99,7 @@ public class QuoteProduct extends AuditableEntity {
 		this.quantity = other.quantity;
 		this.billableAccount = other.billableAccount;
 		this.quoteOffre = other.quoteOffre;
+		this.quoteAttributes = other.quoteAttributes;
     }
 	/**
 	 * @return the quote
@@ -225,6 +225,8 @@ public class QuoteProduct extends AuditableEntity {
 	 * @return the quoteAttributes
 	 */
 	public List<QuoteAttribute> getQuoteAttributes() {
+		if(quoteAttributes == null)
+			quoteAttributes = new ArrayList<QuoteAttribute>();
 		return quoteAttributes;
 	}
 	/**

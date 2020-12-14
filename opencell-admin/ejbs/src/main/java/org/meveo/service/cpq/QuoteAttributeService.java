@@ -14,10 +14,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class QuoteAttributeService extends PersistenceService<QuoteAttribute> {
 
-	public QuoteAttribute findByAttributeAndQuoteProduct(String attributeCode, Long quoteProductId) {
+	public QuoteAttribute findByAttributeAndQuoteProduct(Long attributeId, Long quoteProductId) {
 		try {
 			return (QuoteAttribute) this.getEntityManager().createNamedQuery("QuoteAttribute.findByAttributeAndQuoteProduct")
-																.setParameter("attributeCode", attributeCode)
+																.setParameter("attributeId", attributeId)
 																.setParameter("quoteProductId", quoteProductId)
 																.getSingleResult();
 		}catch(NoResultException e) {
