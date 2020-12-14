@@ -14,6 +14,9 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.catalog.OfferTemplateApi;
+import org.meveo.api.dto.catalog.CpqOfferDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
@@ -33,6 +36,7 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -77,6 +81,9 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private AttributeService  attributeService;
+	
+	@Inject
+	private OfferTemplateApi  offerTemplateApi;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -180,8 +187,7 @@ public class ProductApi extends BaseApi {
         productVersion.setShortDescription(description);
         productVersion.setLongDescription(postData.getLongDescription());
         productVersion.setCurrentVersion(currentVersion);
-        productVersion.setEndDate(postData.getEndDate());
-        productVersion.setStartDate(postData.getStartDate());
+        productVersion.setValidity(postData.getValidity());
         productVersion.setStatus(VersionStatusEnum.DRAFT);
         productVersion.setStatusDate(Calendar.getInstance().getTime());
         processAttributes(postData,productVersion);
@@ -219,9 +225,7 @@ public class ProductApi extends BaseApi {
        }
         productVersion.setShortDescription(postData.getShortDescription());
         productVersion.setLongDescription(postData.getLongDescription());
-        productVersion.setStartDate(postData.getStartDate());
-        productVersion.setEndDate(postData.getEndDate());
-        productVersion.setStartDate(postData.getStartDate());
+        productVersion.setValidity(postData.getValidity());
         productVersion.setStatus(postData.getStatus());
         processAttributes(postData,productVersion);
         try {
@@ -522,6 +526,22 @@ public class ProductApi extends BaseApi {
 			 });
 		 }
 		 return result;
+	 }
+	 
+	 
+	 public CpqOfferDto listPost(OfferContextDTO  offerContextDTO ) {
+		 List<String> requestedTagTypes=offerContextDTO.getCustomerContextDTO().getRequestedTagTypes();
+		 String offerCode=offerContextDTO.getOfferCode();
+		 if(Strings.isEmpty(offerCode)) {
+			 missingParameters.add("offerCode");
+		 }
+		 OfferTemplate offerTemplate=offerTemplateService.findByCode(offerCode);
+		 if (offerTemplate == null) {
+			 throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode,"offerCode");
+		 }   
+		 log.info("OfferTemplateApi requestedTagTypes={}",requestedTagTypes);   
+		 OfferTemplateDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
+		 return new CpqOfferDto(offertemplateDTO);
 	 }
 	
 }
