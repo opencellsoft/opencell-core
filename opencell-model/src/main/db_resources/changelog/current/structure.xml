@@ -4415,9 +4415,7 @@ END $$;]]>
             <column name="invoice_sub_category_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="article_family_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="article_family_id" type="bigint"/>
             <column name="accounting_code_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}"></column>

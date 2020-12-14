@@ -37,7 +37,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
         AccountingArticle accountingArticleEntity = new AccountingArticle(resource.getCode(), resource.getDescription(), taxClass, invoiceSubCategory);
         if(resource.getAccountingCode() != null) {
             AccountingCode accountingCode = new AccountingCode();
-            accountingCode.setId(resource.getId());
+            accountingCode.setId(resource.getAccountingCode().getId());
             accountingArticleEntity.setAccountingCode(accountingCode);
         }
         if(resource.getArticleFamily() != null){
