@@ -337,7 +337,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                 // instantiated from bsm
                 ServiceTemplate stSource = serviceTemplateServiceByCodes.stream()
                         .filter(serviceTemplate -> serviceTemplate.getCode().equalsIgnoreCase(serviceCodeDto.getCode()))
-                        .findFirst().orElseGet(null);
+                        .findFirst().orElse(null);
                 if (stSource != null) {
                     // check if exists in bsm or is from offer entity
                     // (meaning not from bsm = non transient)
