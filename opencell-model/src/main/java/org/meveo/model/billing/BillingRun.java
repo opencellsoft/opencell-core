@@ -735,11 +735,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     
     @Enumerated(value = EnumType.STRING)
     @Column(name = "reject_auto_action")
-    private BillingRunAutomaticActionEnum rejectAutoAction;
+    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
     
     @Enumerated(value = EnumType.STRING)
     @Column(name = "suspect_auto_action")
-    private BillingRunAutomaticActionEnum suspectAutoAction;
+    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
     
     public BillingRunAutomaticActionEnum getRejectAutoAction() {
 		return rejectAutoAction;

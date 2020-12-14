@@ -2285,28 +2285,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Cancel invoice.
+     * Cancel invoice and delete it.
      *
      * @param invoice invoice to cancel
      * @throws BusinessException business exception
      */
     public void cancelInvoice(Invoice invoice) throws BusinessException {
-        if (invoice.getRecordedInvoice() != null) {
+        cancelInvoice(invoice, true);
+    }
+    
+    /**
+     * Cancel invoice without delete.
+     *
+     * @param invoice invoice to cancel
+     * @throws BusinessException business exception
+     */
+    public void cancelInvoiceWithoutDelete(Invoice invoice) throws BusinessException {
+        cancelInvoice(invoice, true);
+    }
+
+	public void cancelInvoice(Invoice invoice, boolean remove) {
+		if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
-
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
-
-        super.remove(invoice);
-
+        invoice.setBillingRun(null);
+        if(remove) {
+        	super.remove(invoice);
+        }
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
-    }
+	}
 
     
     
     public void validateInvoice(Invoice invoice) {
-        invoice.setStatus(InvoiceStatusEnum.CREATED);
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         update(invoice);
     }
     
@@ -2366,7 +2380,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void cancelInvoices(Long billingRunId, List<Long> invoiceIds, Boolean deleteCanceledInvoices) {
 		
 		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED));
-		invoices.stream().forEach(invoice -> cancelInvoice(invoice));
+		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
 		if(deleteCanceledInvoices) {
 			deleteInvoices(billingRunId);
 		}
@@ -2374,9 +2388,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	/**
 	 * @param billingRunId
+	 * @param invoiceIds
+	 */
+	public void moveInvoices(Long billingRunId, List<Long> invoiceIds) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * @param id
 	 * @param invoices
 	 */
-	public void moveInvoices(Long billingRunId, List<Long> invoices) {
+	private void moveInvoices(List<Invoice> invoices, Long billingRunId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -4434,4 +4457,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public static Integer resolveImmediateInvoiceDateDelay(String el, Object... parameters) {
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
     }
+
+	/**
+	 * @param billingRun 
+	 * @param toMove
+	 */
+	public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
+		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toMove);
+		moveInvoices(invoices, billingRun.getId());
+		
+	}
+
+	/**
+	 * @param toCancel
+	 */
+	public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
+		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
+		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+	}
+	
 }

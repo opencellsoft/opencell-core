@@ -196,6 +196,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Override
     public Invoice initEntity() {
     	final String id = facesContext.getExternalContext().getRequestParameterMap().get("objectId");
+    	initialRTList = new ArrayList<RatedTransaction>();
 		if (id != null) {
     		setObjectId(Long.parseLong(id));
     		entity = super.initEntity();
