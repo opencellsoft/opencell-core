@@ -41,6 +41,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
@@ -57,9 +58,11 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
@@ -1093,7 +1096,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if (isFullAutomaticBR) {
             billingRun = billingRunExtensionService.findById(billingRun.getId());
             applyAutomaticValidationActions(billingRun);
-            if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+            if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) || BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
                 billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
             }
@@ -1108,18 +1111,41 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
 	public BillingRunStatusEnum validateBillingRun(BillingRun billingRun) {
-		BillingRunStatusEnum status = BillingRunStatusEnum.POSTINVOICED;
-		if(!isBillingRunValid(billingRun)) {
-			status = BillingRunStatusEnum.REJECTED;
+		if(BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+			BillingRunStatusEnum status = BillingRunStatusEnum.POSTINVOICED;
+			if(!isBillingRunValid(billingRun)) {
+				status = BillingRunStatusEnum.REJECTED;
+			}
+			return status;
 		}
-		return status;
+		return null;
 	}
 
     /**
 	 * @param billingRun
 	 */
 	private void applyAutomaticValidationActions(BillingRun billingRun) {
-		
+		if(BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
+			List<InvoiceStatusEnum> toMove = new ArrayList<InvoiceStatusEnum>();
+			List<InvoiceStatusEnum> toCancel = new ArrayList<InvoiceStatusEnum>();
+			if(billingRun.getRejectAutoAction()!=null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
+				toCancel.add(InvoiceStatusEnum.REJECTED);
+			} else {
+				toMove.add(InvoiceStatusEnum.REJECTED);
+			}
+			
+			if(billingRun.getSuspectAutoAction()!=null && billingRun.getSuspectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
+				toCancel.add(InvoiceStatusEnum.SUSPECT);
+			} else {
+				toMove.add(InvoiceStatusEnum.SUSPECT);
+			}
+			if(CollectionUtils.isNotEmpty(toMove)) {
+				invoiceService.moveInvoicesByStatus(billingRun, toMove);
+			}
+			if(CollectionUtils.isNotEmpty(toCancel)) {
+				invoiceService.cancelInvoicesByStatus(billingRun, toCancel);
+			}
+		}
 	}
 
 	/**

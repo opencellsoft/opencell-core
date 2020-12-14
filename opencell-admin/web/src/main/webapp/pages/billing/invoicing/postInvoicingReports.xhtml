@@ -292,6 +292,7 @@
             <h:form id="operationsForm" rendered="#{!edit}">
                 <div class="action-buttons" style="margin: 0 auto; width: 200px; height: 50px;">
                     <p:commandButton action="#{billingRunBean.validateInvoicing()}"
+                    				
                                      value="#{messages['action.validate']}"
                                      rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
                     <!-- <h:commandButton
@@ -300,7 +301,7 @@
                     <p:commandButton
                             action="#{billingRunBean.cancel()}"
                             value="#{messages['action.cancel']}"
-                            rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
+                            rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}" disabled="#{billingRunBean.entity.status.toString() == 'REJECTED'}"
                             onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}"/>
 
                     <p:button id="backToBillingRuns" outcome="billingRuns"

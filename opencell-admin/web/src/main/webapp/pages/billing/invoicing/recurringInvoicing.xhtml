@@ -58,14 +58,14 @@
 					<hftl:formField id="referenceDate" label="#{messages['billingRun.referenceDate']}" field="referenceDate"/>
 					<hftl:formField id="collectionDate" label="#{messages['billingRun.collectionDate']}" field="collectionDate"/>
 					<hftl:formField id="computeDatesAtValidation" label="#{messages['billingRun.computeDatesAtValidation']}" field="computeDatesAtValidation"/>
-                    <p:panelGrid columns="1" styleClass="ui-noborder"> 
-                      	<p:outputLabel for="@next" value="#{messages['billingRun.skipValidationScript']}" cellpadding="5" />
-                      	<p:selectBooleanButton value="${billingRunBean.entity.skipValidationScript}" onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
-	                </p:panelGrid>
 	                <hftl:formField label="#{messages['billingRun.rejectAutoAction']}"
 						field="rejectAutoAction" disabled="false" />
 					<hftl:formField label="#{messages['billingRun.suspectAutoAction']}"
 						field="suspectAutoAction" disabled="false" />
+					<p:panelGrid columns="1" styleClass="ui-noborder"> 
+                      	<p:outputLabel for="@next" value="#{messages['billingRun.skipValidationScript']}" cellpadding="5" />
+                      	<p:selectBooleanButton value="${billingRunBean.entity.skipValidationScript}" onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
+	                </p:panelGrid>
 						
                     
                 </p:tab>
