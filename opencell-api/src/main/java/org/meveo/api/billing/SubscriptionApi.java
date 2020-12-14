@@ -654,6 +654,13 @@ public class SubscriptionApi extends BaseApi {
                 if (!StringUtils.isBlank(serviceToActivateDto.getMinimumLabelEl())) {
                     serviceInstance.setMinimumLabelEl(serviceToActivateDto.getMinimumLabelEl());
                 }
+                if (serviceToActivateDto.getSubscribedTillDate() != null) {
+                    serviceInstance.setSubscribedTillDate(serviceToActivateDto.getSubscribedTillDate());
+                }
+                if (serviceToActivateDto.getServiceRenewal() != null) {
+                    SubscriptionRenewal serviceRenewal = subscriptionRenewalFromDto(serviceInstance.getServiceRenewal(), serviceToActivateDto.getServiceRenewal(), serviceInstance.isRenewed());
+                    serviceInstance.setServiceRenewal(serviceRenewal);
+                }
                 if (!StringUtils.isBlank(serviceToActivateDto.getMinimumInvoiceSubCategory())) {
                     InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(serviceToActivateDto.getMinimumInvoiceSubCategory());
                     if (minimumInvoiceSubCategory == null) {
