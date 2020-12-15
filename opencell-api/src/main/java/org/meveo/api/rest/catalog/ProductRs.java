@@ -347,7 +347,7 @@ public interface ProductRs extends IBaseRs{
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Get products with their attributes that match the quote offer context",
-    tags = { "Product" },
+    tags = { "Catalog browsing" },
     description ="Get products with their attributes that match the offer context",
     responses = {
             @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetCpqOfferResponseDto.class))),
