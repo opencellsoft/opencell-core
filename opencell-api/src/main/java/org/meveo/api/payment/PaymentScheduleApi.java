@@ -547,14 +547,20 @@ public class PaymentScheduleApi extends BaseApi {
         if (paymentScheduleInstance.getPaymentScheduleInstanceItems() == null) {
             return;
         }
+        paymentScheduleInstance = paymentScheduleInstanceService.refreshOrRetrieve(paymentScheduleInstance);
+        //List<PaymentScheduleInstanceItem> paymentScheduleInstanceItem = paymentScheduleInstanceItemService
+        //       .refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleInstanceItems());
         List<PaymentScheduleInstanceItem> openPaymentScheduleInstanceItem = paymentScheduleInstance.getPaymentScheduleInstanceItems().stream().filter(item -> !item.isPaid())
                 .collect(Collectors.toList());
         if (openPaymentScheduleInstanceItem == null || openPaymentScheduleInstanceItem.isEmpty()) {
             log.debug("No items to process");
             return;
         }
+        for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : openPaymentScheduleInstanceItem) {
+            paymentScheduleInstanceItem.setAmount(paymentScheduleInstance.getAmount());
+        }
 
-        paymentScheduleInstanceService.updatePaymentScheduleIntanceItems(paymentScheduleInstance, openPaymentScheduleInstanceItem);
+        //paymentScheduleInstanceService.updatePaymentScheduleIntanceItems(paymentScheduleInstance, openPaymentScheduleInstanceItem);
     }
 
     /**
