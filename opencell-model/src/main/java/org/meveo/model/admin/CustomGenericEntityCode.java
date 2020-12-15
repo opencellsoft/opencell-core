@@ -18,10 +18,9 @@
 
 package org.meveo.model.admin;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,6 +28,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.sequence.Sequence;
 
 /**
  * Custom generic entity code.
@@ -50,21 +50,22 @@ public class CustomGenericEntityCode extends AuditableEntity {
     public CustomGenericEntityCode() {
     }
 
-    @Column(name = "entity_class", length = 255)
+    @Column(name = "entity_class")
     @Size(max = 255)
     @NotNull
     private String entityClass;
 
-    @Column(name = "code_el", nullable = false, length = 255)
+    @Column(name = "code_el", nullable = false)
     @Size(max = 255, min = 1)
-    @NotNull
     private String codeEL;
 
-    @Column(name = "sequence_size")
-    private Integer sequenceSize = 9;
+    @Column(name = "format_el", length = 2000)
+    @Size(max = 2000)
+    private String formatEL;
 
-    @Column(name = "sequence_current_value")
-    private Long sequenceCurrentValue = 0L;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "sequence_id")
+    private Sequence sequence;
 
     /**
      * @return the entityClass
@@ -92,34 +93,6 @@ public class CustomGenericEntityCode extends AuditableEntity {
      */
     public void setCodeEL(String codeEL) {
         this.codeEL = codeEL;
-    }
-
-    /**
-     * @return the sequenceSize
-     */
-    public Integer getSequenceSize() {
-        return sequenceSize;
-    }
-
-    /**
-     * @param sequenceSize the sequenceSize to set
-     */
-    public void setSequenceSize(Integer sequenceSize) {
-        this.sequenceSize = sequenceSize;
-    }
-
-    /**
-     * @return the sequenceCurrentValue
-     */
-    public Long getSequenceCurrentValue() {
-        return sequenceCurrentValue;
-    }
-
-    /**
-     * @param sequenceCurrentValue the sequenceCurrentValue to set
-     */
-    public void setSequenceCurrentValue(Long sequenceCurrentValue) {
-        this.sequenceCurrentValue = sequenceCurrentValue;
     }
 
     /* (non-Javadoc)
@@ -158,7 +131,22 @@ public class CustomGenericEntityCode extends AuditableEntity {
      */
     @Override
     public String toString() {
-        return "CustomGenericEntityCode [entityClass=" + entityClass + ", codeEL=" + codeEL + ", sequenceSize=" + sequenceSize + ", sequenceCurrentValue=" + sequenceCurrentValue + "]";
+        return "CustomGenericEntityCode [entityClass=" + entityClass + ", codeEL=" + codeEL + ", sequenceSize=" + sequence.getSequenceSize() + ", sequenceCurrentValue=" + sequence.getCurrentNumber() + "]";
     }
 
+    public String getFormatEL() {
+        return formatEL;
+    }
+
+    public void setFormatEL(String formatEL) {
+        this.formatEL = formatEL;
+    }
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
 }

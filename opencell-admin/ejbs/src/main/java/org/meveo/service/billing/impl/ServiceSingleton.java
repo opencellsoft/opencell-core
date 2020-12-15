@@ -18,16 +18,13 @@
 
 package org.meveo.service.billing.impl;
 
-import java.util.Date;
+import static java.time.Instant.*;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.meveo.model.sequence.SequenceTypeEnum.*;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
+import com.mifmif.common.regex.Generex;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -45,14 +42,21 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.sequence.GenericSequence;
+import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+
+import javax.ejb.*;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.util.*;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
@@ -102,6 +106,14 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
+
+    @Inject
+    private SequenceService sequenceService;
+
+    private static Map<Character, Character> mapper = Map.of('0', 'Q',
+            '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
+            'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
+
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
@@ -162,7 +174,7 @@ public class ServiceSingleton {
 
         if (sequence == null) {
             sequence = new InvoiceSequence();
-            sequence.setCurrentInvoiceNb(0L);
+            sequence.setCurrentNumber(0L);
             sequence.setSequenceSize(9);
             sequence.setCode(invoiceType.getCode());
             invoiceSequenceService.create(sequence);
@@ -170,21 +182,21 @@ public class ServiceSingleton {
         }
 
         if (currentNbFromCF != null) {
-            sequence.setCurrentInvoiceNb(currentNbFromCF);
+            sequence.setCurrentNumber(currentNbFromCF);
         } else {
             if (invoiceType.isUseSelfSequence()) {
-                if (sequence.getCurrentInvoiceNb() == null) {
-                    sequence.setCurrentInvoiceNb(0L);
+                if (sequence.getCurrentNumber() == null) {
+                    sequence.setCurrentNumber(0L);
                 }
-                previousInvoiceNb = sequence.getCurrentInvoiceNb();
-                sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
+                previousInvoiceNb = sequence.getCurrentNumber();
+                sequence.setCurrentNumber(sequence.getCurrentNumber() + incrementBy);
                 // invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
 
                 previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
-                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setCurrentNumber(previousInvoiceNb + incrementBy);
                 sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
                 invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
                 return sequenceGlobal;
@@ -283,17 +295,17 @@ public class ServiceSingleton {
     public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
         Provider provider = providerService.findById(Provider.CURRENT_PROVIDER_ID, true);
         GenericSequence sequence = provider.getRumSequence();
-        if (type == SequenceTypeEnum.CUSTOMER_NO) {
+        if (type == CUSTOMER_NO) {
             sequence = provider.getCustomerNoSequence();
         }
         if (sequence == null) {
             sequence = new GenericSequence();
         }
         sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
-        if (SequenceTypeEnum.CUSTOMER_NO == type) {
+        if (CUSTOMER_NO == type) {
             provider.setCustomerNoSequence(sequence);
         }
-        if (SequenceTypeEnum.RUM == type) {
+        if (RUM == type) {
             provider.setRumSequence(sequence);
         }
 
@@ -333,7 +345,9 @@ public class ServiceSingleton {
         if (!StringUtils.isBlank(entityClass)) {
             customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
             if (customGenericEntityCode != null) {
-                customGenericEntityCode.setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
+                Sequence sequence = customGenericEntityCode.getSequence();
+                sequence.setCurrentNumber(sequence.getCurrentNumber() != null
+                        ? sequence.getCurrentNumber() + 1 : 0);
             }
         }
         return customGenericEntityCode;
@@ -386,7 +400,7 @@ public class ServiceSingleton {
         seller = sellerService.refreshOrRetrieve(seller);
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        int sequenceSize = sequence.getSequenceSize();
+        long sequenceSize = sequence.getSequenceSize();
 
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
         InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
@@ -408,7 +422,7 @@ public class ServiceSingleton {
             prefix = "";
         }
 
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        long nextInvoiceNb = sequence.getCurrentNumber();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
@@ -441,5 +455,73 @@ public class ServiceSingleton {
         }
 
         return sequence;
+    }
+
+    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode) {
+        return getGenericCode(customGenericEntityCode, null);
+    }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride) {
+        Sequence sequence = customGenericEntityCode.getSequence();
+        String generatedCode = null;
+        Map<Object, Object> context = new HashMap<>();
+        context.put("entity", customGenericEntityCode.getEntityClass());
+        if (sequence.getSequenceType() == SEQUENCE) {
+            generatedCode = String.valueOf(sequenceService.generateSequence(sequence).getCurrentNumber());
+        }
+
+        if(sequence.getSequenceType() == NUMERIC) {
+            Random random = new Random();
+            generatedCode = String.valueOf(random.nextLong()) + now().toEpochMilli();
+        }
+
+        if(sequence.getSequenceType() == ALPHA_UP) {
+            int leftLimit = 97;
+            int rightLimit = 122;
+            Random random = new Random();
+            String generatedString = random.ints(leftLimit, rightLimit + 1)
+                    .limit(sequence.getSequenceSize())
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+            String timeStamp = replaceDigitsWithChars(now().toEpochMilli());
+            generatedCode = (generatedString + timeStamp).toUpperCase();
+        }
+
+        if(sequence.getSequenceType() == UUID) {
+            generatedCode = randomUUID().toString();
+        }
+
+        if(sequence.getSequenceType() == REGEXP) {
+            Generex generex = new Generex(sequence.getSequencePattern());
+            generatedCode = generex.random(sequence.getSequenceSize());
+        }
+        context.put("generatedCode", generatedCode);
+        return prefixOverride == null ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
+                : prefixOverride + generatedCode;
+    }
+
+    private String formatCode(String formatEL, Map<Object, Object> context) {
+        if (formatEL.isEmpty()) {
+            return (String) context.get("generatedCode");
+        }
+        String resultCode = evaluateExpression(formatEL, context, String.class);
+        if(formatEL.contains("generatedCode")) {
+            return resultCode + context.get("generatedCode");
+        }
+        return resultCode;
+    }
+
+    private String replaceDigitsWithChars(long epochTimestamp) {
+        StringBuilder result = Long.toString(epochTimestamp, 26).chars()
+                                    .mapToObj(character ->  replaceNumber((char) character))
+                                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+        return result.toString();
+    }
+
+    private char replaceNumber(char character) {
+        return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 }

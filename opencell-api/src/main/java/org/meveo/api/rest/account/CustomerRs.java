@@ -22,13 +22,14 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.custom.GenericCodeDto;
+import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -296,7 +297,7 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/sequence")
-	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
+	ActionStatus createCustomerSequence(GenericCodeDto postData);
 	
 	/**
 	 * Updates a new customer sequence with a given code.
@@ -305,7 +306,7 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/sequence")
-	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
+	ActionStatus updateCustomerSequence(GenericCodeDto postData);
 	
 	/**
 	 * Generates the next customer sequence number.
@@ -313,8 +314,8 @@ public interface CustomerRs extends IBaseRs {
 	 * @return sequence value dto
 	 */
 	@POST
-	@Path("/sequence/{code}/next")
-	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
+	@Path("/sequence/next")
+    GenericCodeResponseDto getNextCustomerSequenceNumber(GenericCodeDto genericCodeDto);
 
     /**
      * Filter counters by period date.

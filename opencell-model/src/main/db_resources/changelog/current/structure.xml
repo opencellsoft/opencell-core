@@ -3850,6 +3850,7 @@ END $$;]]>
             update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
         </sql>
     </changeSet>
+
     <changeSet id="5687_20203011" author="khalidHORRI">
         <addColumn tableName="billing_cycle">
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -3865,4 +3866,62 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#4427_20201202" author="ZBariki">
+        <createSequence sequenceName="generic_sequence_seq" startValue="1" />
+        <createTable tableName="generic_sequence" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="generic_sequence_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="sequence_type" type="varchar(255)" />
+            <column name="sequence_size" type="int" />
+            <column name="current_number" type="bigint" />
+            <column name="sequence_pattern" type="varchar(255)" />
+        </createTable>
+        <addColumn tableName="billing_seq_invoice">
+            <column name="sequence_type" type="varchar(255)"/>
+            <column name="sequence_pattern" type="varchar(255)"/>
+        </addColumn>
+        <renameColumn tableName="billing_seq_invoice" newColumnName="current_number" oldColumnName="current_invoice_nb"
+                      columnDataType="bigint"/>
+        <addColumn tableName="adm_custom_generic_entity_code">
+            <column name="format_el" type="varchar(2000)"/>
+            <column name="sequence_id" type="bigint"/>
+        </addColumn>
+        <dropColumn columnName="sequence_size" tableName="adm_custom_generic_entity_code" />
+        <dropColumn columnName="sequence_current_value" tableName="adm_custom_generic_entity_code" />
+        <addForeignKeyConstraint baseColumnNames="sequence_id" baseTableName="adm_custom_generic_entity_code"
+                                 constraintName="fk_dm_custom_generic_entity_code_sequence_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="generic_sequence" />
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1, 'order_quote_sequence', 'Order and Quote', 'UUID') </sql>
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type, sequence_size, current_number)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1, 'seller_sequence', 'Seller sequence', 'SEQUENCE', 9, 0)</sql>
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type, sequence_size, current_number)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1,'customer_sequence', 'Customer sequence', 'SEQUENCE', 5, 0) </sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Quote', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'order_quote_sequence'))</sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Order', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'order_quote_sequence'))</sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Seller', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'seller_sequence'))</sql>
+        <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
+            SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'customer_sequence')
+            WHERE entity_class = 'Customer'</sql>
+    </changeSet>
 </databaseChangeLog>
