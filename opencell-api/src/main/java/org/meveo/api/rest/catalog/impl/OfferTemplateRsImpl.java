@@ -35,6 +35,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -199,6 +200,18 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+
+	@Override
+	public Response duplicateOffer(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+		try {
+            result.setOfferTemplate(offerTemplateApi.duplicate(offerTemplateCode, duplicateHierarchy, preserveCode));
+        	return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+
+	}
     
     
 

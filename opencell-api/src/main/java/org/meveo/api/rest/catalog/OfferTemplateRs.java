@@ -481,5 +481,11 @@ public interface OfferTemplateRs extends IBaseRs {
 			}
 	)
     ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+    
+    @POST
+    @Path("/duplicate/{offerTemplateCode}")
+    Response duplicateOffer(@Parameter(description = "code of the offer that will be duplicate", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
+            @Parameter(description = "copy the hierarchy of the offer") @QueryParam("duplicateHierarchy") boolean duplicateHierarchy,
+            @Parameter(description = "preserve code of offer") @QueryParam("preserveCode") boolean preserveCode);
 
 }
