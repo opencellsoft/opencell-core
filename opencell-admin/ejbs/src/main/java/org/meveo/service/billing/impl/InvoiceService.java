@@ -17,11 +17,10 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.ordinalIndexOf;
-import static org.meveo.commons.utils.NumberUtils.round;
-import static java.util.stream.Collectors.toList;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -36,7 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,10 +43,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Set;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -112,6 +110,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -132,7 +131,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
@@ -1159,8 +1157,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
 					ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
 					if (scriptInstance != null) {
-						String invoiceAutomaticValidationScript = scriptInstance.getCode();
-						ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceAutomaticValidationScript);
+						ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
 						if (script != null) {
 							Map<String, Object> methodContext = new HashMap<String, Object>();
 							methodContext.put(Script.CONTEXT_ENTITY, invoice);
@@ -2310,7 +2307,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
-        invoice.setBillingRun(null);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
         if(remove) {
         	super.remove(invoice);
@@ -2385,8 +2381,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param invoiceIds
 	 */
 	public void moveInvoices(Long billingRunId, List<Long> invoiceIds) {
-		// TODO Auto-generated method stub
-		
+		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
+		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRunId);
+		getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
 	}
 	
 	/**
@@ -2394,8 +2391,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param invoices
 	 */
 	private void moveInvoices(List<Invoice> invoices, Long billingRunId) {
-		// TODO Auto-generated method stub
-		
+		moveInvoices(billingRunId, invoices.stream().map(x->x.getId()).collect(Collectors.toList()));
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
@@ -4370,9 +4366,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param toMove
 	 */
 	public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
-		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toMove);
-		moveInvoices(invoices, billingRun.getId());
-		
+		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+		getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
 	}
 
 	/**

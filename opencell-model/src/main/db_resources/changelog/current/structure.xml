@@ -3735,18 +3735,23 @@ END $$;]]>
         <addColumn tableName="billing_billing_run">
             <column name="reject_auto_action" type="varchar(255)"/>
         </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="next_billing_run_id" type="bigint"/>
+        </addColumn>
         
         <addColumn tableName="billing_invoice">
             <column name="reject_reason" type="varchar(255)"/>
         </addColumn>
         
-        <addColumn tableName="billing_invoice_type">
+        <addColumn tableName="billing_cycle">
             <column name="billing_run_validation_script_id" type="bigint"/>
         </addColumn>
         <addColumn tableName="billing_invoice_type">
             <column name="invoice_validation_script_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_billing_run_validation_script"
+        <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
+              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
               referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
         <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
               referencedColumnNames="id" referencedTableName="meveo_script_instance"/>

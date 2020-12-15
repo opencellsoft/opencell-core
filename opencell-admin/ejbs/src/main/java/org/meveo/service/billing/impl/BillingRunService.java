@@ -41,6 +41,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.InvoicingAsync;
@@ -59,6 +60,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.BillingRunList;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
@@ -1087,9 +1089,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 		if (isFullAutomaticBR) {
             billingRun = billingRunExtensionService.findById(billingRun.getId());
-            applyAutomaticValidationActions(billingRun);
             if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) || BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
-                billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
+            	applyAutomaticValidationActions(billingRun);
+            	billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
             }
 		}
@@ -1149,9 +1151,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
 				return false;
 			}
-			billingRun = refreshOrRetrieve(billingRun);
-			for (String invoiceAutomaticValidationScript : getBillingRunValidationScriptInstanceCodes(billingRun.getId())) {
-				ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceAutomaticValidationScript);
+			final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
+			if(billingRunValidationScript!=null) {
+				ScriptInterface script = scriptInstanceService.getScriptInstance(billingRunValidationScript.getCode());
 				if (script != null) {
 					Map<String, Object> methodContext = new HashMap<String, Object>();
 					methodContext.put(Script.CONTEXT_ENTITY, billingRun);
@@ -1574,16 +1576,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
     
     /**
-     * Get all BillingRun validation ScriptInstances codes for a given billingRun id.
-     * @param billingRunId 
-     *
-     * @return list of custom script codes.
-     */
-    public List<String> getBillingRunValidationScriptInstanceCodes(Object billingRunId) {
-        return ((List<String>) getEntityManager().createNamedQuery("CustomScript.getBillingRunValidationScriptInstanceCodes", String.class).setParameter("id",billingRunId).getResultList());
-    }
-    
-    /**
      * Check any invoice is rejected for a given billingRun id.
      * @param billingRunId 
      *
@@ -1592,4 +1584,43 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public boolean isBillingRunContainingRejectedInvoices(Long billingRunId) {
         return ((Long) getEntityManager().createNamedQuery("Invoice.countRejectedByBillingRun", Long.class).setParameter("billingRunId",billingRunId).getSingleResult())>0;
     }
+
+	/**
+	 * Search if a next BR exist for the given BR ID. if next BR is not found, a new one is created and associated to the BR
+	 * return null if no BR is found for the input id
+	 * 
+	 * @param billingRunId
+	 * @return
+	 */
+	public BillingRun findOrCreateNextBR(Long billingRunId) {
+		 BillingRun billingRun = findById(billingRunId);
+		if (billingRun != null) {
+			if (billingRun.getNextBillingRun() != null) {
+				return billingRun.getNextBillingRun();
+			}
+			BillingRun nextBillingRun = new BillingRun();
+			try {
+				BeanUtils.copyProperties(nextBillingRun, billingRun);
+				final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<BillingAccount>();
+				selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
+				Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
+				billingRunLists.addAll(billingRun.getBillingRunLists());
+				List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+				rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
+				nextBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
+				nextBillingRun.setBillingRunLists(billingRunLists );
+				nextBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
+				nextBillingRun.setInvoices(new ArrayList<Invoice>());
+				nextBillingRun.setId(null);
+				create(nextBillingRun);
+				billingRun.setNextBillingRun(nextBillingRun);
+				update(billingRun);
+				return nextBillingRun;
+			} catch (Exception e) {
+				log.error(e.getMessage());
+				throw new BusinessException(e);
+			}
+		}
+		return null;
+	}
 }
