@@ -347,14 +347,11 @@ public interface ProductRs extends IBaseRs{
     @POST
     @Path("/cpq/list")
     @Operation(summary = "Get products with their attributes that match the quote offer context",
-    tags = { "Catalog browsing" },
-    description ="Get products with their attributes that match the quote offer context",
+    tags = { "Product" },
+    description ="Get products with their attributes that match the offer context",
     responses = {
             @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetCpqOfferResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist")
     })
     public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
     

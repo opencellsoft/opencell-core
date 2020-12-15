@@ -225,18 +225,18 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 		       return errorResponse(e, result.getActionStatus());
 		}
 	}
-
-
+ 
+	
 	@Override
-	public Response listPost(OfferContextDTO quoteContext) {
-		
+	public Response listPost(OfferContextDTO offerContextDto) {
 		GetCpqOfferResponseDto result = new GetCpqOfferResponseDto();
-	    try {
-	    	/****@TODO implement it****/
-	        return Response.ok(result).build();
-	    } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
-	    }
+		try {  
+			result = productApi.listPost(offerContextDto);
+			return Response.ok(result).build(); 
+
+		} catch (MeveoApiException e) { 
+			return errorResponse(e, result.getActionStatus());
+		} 
 	}
 
 

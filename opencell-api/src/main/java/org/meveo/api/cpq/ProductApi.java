@@ -23,6 +23,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -529,7 +530,8 @@ public class ProductApi extends BaseApi {
 	 }
 	 
 	 
-	 public CpqOfferDto listPost(OfferContextDTO  offerContextDTO ) {
+	 public GetCpqOfferResponseDto listPost(OfferContextDTO  offerContextDTO ) {
+		 GetCpqOfferResponseDto result=new GetCpqOfferResponseDto();
 		 List<String> requestedTagTypes=offerContextDTO.getCustomerContextDTO().getRequestedTagTypes();
 		 String offerCode=offerContextDTO.getOfferCode();
 		 if(Strings.isEmpty(offerCode)) {
@@ -541,7 +543,8 @@ public class ProductApi extends BaseApi {
 		 }   
 		 log.info("OfferTemplateApi requestedTagTypes={}",requestedTagTypes);   
 		 OfferTemplateDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
-		 return new CpqOfferDto(offertemplateDTO);
+		 result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
+		 return result;
 	 }
 	
 }
