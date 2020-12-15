@@ -214,20 +214,20 @@ public class ProductVersionService extends
 	    	}
 
 	    	return productVersions;
-	    }
+	    } 
 	  
 	  @SuppressWarnings("unchecked")
-	  public ProductVersion getProductVersionsByValidity(Date currentDate){
-		 	List<ProductVersion> productVersions=new ArrayList<ProductVersion>();
-	    	try { 
-	    		productVersions = (List<ProductVersion>)getEntityManager().createNamedQuery("ProductVersion.findByCurrentValidity").setParameter("currentDate", currentDate).getResultList();
+	    public List<ProductVersion> getVersionsByStatusAndProduct(VersionStatusEnum status, String productCode) { 
+	    	List<ProductVersion> productVersions=new ArrayList<ProductVersion>();
+	    	try {
+	    		productVersions = (List<ProductVersion>)getEntityManager().createNamedQuery("ProductVersion.getProductVerionsByStatusAndProduct").setParameter("status", status).setParameter("productCode", productCode).getResultList();
 	    	} catch (Exception e) {
 	    		e.printStackTrace();
-	    		log.error("getProductVersionsByValidity error ", e.getMessage());
+	    		log.error("getProductsByTags error ", e.getMessage());
 	    	}
 
-	    	return productVersions.isEmpty()?null:productVersions.get(0);
-	  }
+	    	return productVersions;
+	    } 
 	  
 	  
 	  

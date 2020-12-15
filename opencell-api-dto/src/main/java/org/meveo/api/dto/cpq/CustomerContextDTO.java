@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -64,7 +65,7 @@ public class CustomerContextDTO extends BaseEntityDto {
     /**
      * requested tag types
      */
-     private List<String> requestedTagTypes;
+     private List<String> requestedTagTypes=new ArrayList<String>();
     
     /**
      * paging And Filtering

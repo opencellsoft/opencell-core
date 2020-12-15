@@ -29,7 +29,7 @@ public class OfferProductsDto extends BaseEntityDto {
     private String offerTemplateCode;
     
     /** The product dto. */
-    private ProductVersionDto productVersion;
+    private List<ProductVersionDto> productVersions=new ArrayList<ProductVersionDto>();
     
     private ProductDto product;
     
@@ -51,13 +51,7 @@ public class OfferProductsDto extends BaseEntityDto {
      */
     public OfferProductsDto() {
     }
-    
-    public OfferProductsDto(OfferComponent o) {  
-    	 if (o.getProduct() != null) {
-    		 productVersion = new ProductVersionDto();
-         } 
-     
-    }
+   
 
 
 	/**
@@ -102,19 +96,25 @@ public class OfferProductsDto extends BaseEntityDto {
 		this.commercialRules = commercialRules;
 	}
 
-	/**
-	 * @return the productVersion
-	 */
-	public ProductVersionDto getProductVersion() {
-		return productVersion;
-	}
+	
 
 	/**
-	 * @param productVersion the productVersion to set
+	 * @return the productVersions
 	 */
-	public void setProductVersion(ProductVersionDto productVersion) {
-		this.productVersion = productVersion;
+	public List<ProductVersionDto> getProductVersions() {
+		return productVersions;
 	}
+
+
+
+	/**
+	 * @param productVersions the productVersions to set
+	 */
+	public void setProductVersions(List<ProductVersionDto> productVersions) {
+		this.productVersions = productVersions;
+	}
+
+
 
 	/**
 	 * @return the product
