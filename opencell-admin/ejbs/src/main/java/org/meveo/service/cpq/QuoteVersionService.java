@@ -69,8 +69,14 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 	
 
 	@SuppressWarnings("unchecked")
-	public List<QuoteVersion> findByQuoteId(Long idQuote) {
+	public List<QuoteVersion> findByQuoteIdAndStatusActive(Long idQuote) {
 			return (List<QuoteVersion>) this.getEntityManager().createNamedQuery("QuoteVersion.findByQuoteIdAndStatusActive")
+															.setParameter("id", idQuote).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<QuoteVersion> findByQuoteId(Long idQuote) {
+			return (List<QuoteVersion>) this.getEntityManager().createNamedQuery("QuoteVersion.findByQuoteId")
 															.setParameter("id", idQuote).getResultList();
 	}
 
@@ -104,7 +110,7 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		if(quote == null) {
 			throw new BusinessException(String.format(MISSING_QUOTE_ID, idQuote));
 		}
-		findByQuoteId(idQuote).stream().forEach(q -> {
+		findByQuoteIdAndStatusActive(idQuote).stream().forEach(q -> {
 			q.setStatus(VersionStatusEnum.CLOSED);
 			q.setStatusDate(Calendar.getInstance().getTime());
 			this.update(q);
