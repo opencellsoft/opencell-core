@@ -2248,5 +2248,13 @@ public class ValidateBRScript extends Script {
             <column name="uuid" value="APIv2PermissionsSyncJob" />
        	</insert>
 	</changeSet>
+	
+	<changeSet id="5743_20201215" author="AmineBENAICHA">
+        <update tableName="meveo_job_instance" >
+            <column name="cf_values"
+                    value='{"PurgeMediationDataJob_edrStatusCf":[ { "listString":[ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "PurgeMediationDataJob_firstTransactionDate":[ { "date":null } ], "PurgeMediationDataJob_woStatusCf":[ { "listString":[ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "PurgeMediationDataJob_rtStatusCf":[ { "listString":[ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ] }'/>
+            <where>id = -24</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
