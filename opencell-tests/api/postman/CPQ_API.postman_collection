@@ -877,7 +877,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Offer Template [re. contract line..]",
+			"name": "Offer Template",
 			"item": [
 				{
 					"name": "Create New Offer Template",
@@ -1129,12 +1129,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Service Template [ ]",
-			"item": [],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Contract [#86]",
+			"name": "Contract",
 			"item": [
 				{
 					"name": "Create New Contract",
@@ -1198,7 +1193,7 @@
 					"response": []
 				},
 				{
-					"name": "Update The Contract K.O",
+					"name": "Update The Contract",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1512,7 +1507,7 @@
 							"script": {
 								"id": "c39485ab-883d-4a38-a108-c18d3f861f7b",
 								"exec": [
-									"//pm.variables.set(\"executeQuotation\",true);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1522,7 +1517,8 @@
 							"script": {
 								"id": "02ae10f5-9aff-417c-b035-f9a6f064e13b",
 								"exec": [
-									"pm.collectionVariables.set(\"quoteCode\",JSON.parse(pm.request.body).quoteVersion.quoteCode);"
+									"pm.collectionVariables.set(\"quoteCode\",JSON.parse(pm.request.body).quoteVersion.quoteCode);\r",
+									"pm.collectionVariables.set(\"quoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
 								],
 								"type": "text/javascript"
 							}
@@ -1612,12 +1608,24 @@
 				},
 				{
 					"name": "Update The Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8f6a30f6-2b1c-4f84-8a44-747dba46b955",
+								"exec": [
+									"pm.collectionVariables.set(\"quoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"TEST_QUOTE\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteVersion\": {\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"quoteCode\": \"TEST_QUOTE\",\r\n        \"currentVersion\": 1,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"longDescription\": \"This is an updated long test description of a quote version \",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    },\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"InProgress\",\r\n    \"applicantAccountCode\": \"TEST_BA\",\r\n    \"billableAccountCode\": \"TEST_BA\",\r\n    \"contractCode\": \"TEST_CONTRACT\",\r\n    \"sellerCode\": \"SELLER_FR\"\r\n}",
+							"raw": "{\r\n    \"code\": \"TEST_QUOTE\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteVersion\": {\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"quoteCode\": \"TEST_QUOTE\",\r\n        \"currentVersion\": 2,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"longDescription\": \"This is an updated long test description of a quote version \",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    },\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"InProgress\",\r\n    \"applicantAccountCode\": \"TEST_BA\",\r\n    \"billableAccountCode\": \"TEST_BA\",\r\n    \"contractCode\": \"TEST_CONTRACT\",\r\n    \"sellerCode\": \"SELLER_US\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1907,68 +1915,78 @@
 	],
 	"variable": [
 		{
-			"id": "ac38b309-21ab-4c4d-a2b1-95119a27126f",
+			"id": "1b7b39b9-fc1a-44c7-9219-2a02e2996cc0",
 			"key": "entityCode",
 			"value": "TEST"
 		},
 		{
-			"id": "9fe62aa9-79fd-443f-9532-7f513ec7acb3",
+			"id": "44fb0cff-f1e5-43dc-a1f4-ba9c029f4598",
 			"key": "productLineCode",
 			"value": ""
 		},
 		{
-			"id": "dcdd8971-b1f4-4ac7-96a4-3dd70d2f6151",
+			"id": "f45049cc-d143-4b30-90ae-c6c63acce72c",
 			"key": "productCode",
 			"value": ""
 		},
 		{
-			"id": "91e4c231-ed12-418e-8fdc-95f29ff15b83",
+			"id": "aecbf920-3f4c-4314-bb60-a68dadac4f37",
 			"key": "productVersion",
 			"value": ""
 		},
 		{
-			"id": "2c4608d4-60c3-494c-8397-f94a5a36aee8",
+			"id": "3765449d-58a6-4ce7-84df-40c9babfdbce",
 			"key": "codeTagType",
 			"value": ""
 		},
 		{
-			"id": "5acdb6b5-b19b-4f7d-8d3e-ef564091fd52",
+			"id": "814af9ad-9741-42f6-89b6-115f4955a1fb",
 			"key": "sellerCode",
 			"value": ""
 		},
 		{
-			"id": "66ab82dd-b8a3-4aa2-ab93-f1a75f9a00c7",
+			"id": "370d3a34-1fff-4993-8f6c-3359bb3c1019",
 			"key": "billingAccount",
 			"value": ""
 		},
 		{
-			"id": "2ddcec2e-2db4-491b-bba6-beb7fb6effbd",
+			"id": "5e655863-69fa-4e97-8f6e-4ec553f1a943",
 			"key": "codeTag",
 			"value": ""
 		},
 		{
-			"id": "24a45bcd-3c9b-4af2-a58a-907f7d6e70c7",
+			"id": "db0cc7d7-a546-4dd0-ac14-29d6946f31fa",
 			"key": "contractCode",
 			"value": ""
 		},
 		{
-			"id": "ce0d8126-f9bd-466a-95a4-6cbcc4f6c58e",
+			"id": "824bd87e-1f94-49b9-b1ac-7e33051b2847",
 			"key": "contractAccountLevel",
 			"value": ""
 		},
 		{
-			"id": "9193fdbf-c5f7-46a1-9345-7641f8ad8d52",
+			"id": "ba1309cc-1881-41b2-9298-6831500e670c",
 			"key": "customerCode",
 			"value": ""
 		},
 		{
-			"id": "8cfd3ed5-d7e5-4a58-ba74-3ed13de7409c",
+			"id": "12bc4392-7fa3-4862-b3bf-849a02d0f287",
 			"key": "quoteCode",
 			"value": ""
 		},
 		{
-			"id": "137ffd44-7841-483b-a247-3cba45051b0a",
+			"id": "37bfc1ad-d8da-486b-8819-d0352df036ba",
 			"key": "executeQuotation",
+			"value": ""
+		},
+		{
+			"id": "e5d4ec3a-5ef5-44b3-9d6a-3a1a8bde0c50",
+			"key": "quoteVersion",
+			"value": ""
+		},
+		{
+			"id": "df58a62d-f691-4e83-9ed5-f2894707cb5b",
+			"key": "quoteItemCode",
 			"value": ""
 		}
 	],
