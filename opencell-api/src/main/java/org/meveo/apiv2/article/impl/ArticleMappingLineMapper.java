@@ -72,12 +72,11 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     }
 
     private Iterable<? extends org.meveo.apiv2.article.AttributeMapping> getAttributesMappingResources(List<AttributeMapping> attributesMapping) {
-        /*return attributesMapping != null ?
+        return attributesMapping != null ?
                 attributesMapping.stream()
-                        //.map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).build()).attributeValue(am.getAttributeValue()).build())
+                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).build()).attributeValue(am.getAttributeValue()).build())
                         .collect(Collectors.toList())
-                : null;*/
-        return null;
+                : null;
     }
 
     private ImmutableResource createResource(Long id) {
