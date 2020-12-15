@@ -676,23 +676,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         			product = offerComponent.getProduct();
         			offerProductsDto = new OfferProductsDto();
         			if (product != null) {
-        				//check if product has a publish version with validity date
-        				// if validity date is null get all product version else get product version has new date in validity date 
 
         				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
         					offerProductsDto.setProduct(new ProductDto(product));
         					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
         					for(ProductVersion productVersion : productVersionList) {  
-        						if(productVersion.getValidity()!=null &&  (productVersion.getValidity().isCorrespondsToPeriod(new Date()))) {
+        						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
         							setTags( loadTags,requestedTagTypes, productVersion) ; 
         							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
         							offerProductsDto.getProductVersions().add(productVersionDto);
         							break;
-        						}else {
-        							setTags( loadTags,requestedTagTypes, productVersion) ;
-        							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
-        							offerProductsDto.getProductVersions().add(productVersionDto);
         						}
         					} 
         				}
