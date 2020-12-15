@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -309,7 +310,23 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "skip_validation_script")
     private boolean skipValidationScript = false;
 
-    public Date getProcessDate() {
+    
+    /**
+     * The next BillingRun where rejected/suspect invoices may be moved.
+     */
+    @OneToOne
+    @JoinColumn(name = "next_billing_run_id")
+    private BillingRun nextBillingRun;
+
+    public BillingRun getNextBillingRun() {
+		return nextBillingRun;
+	}
+
+	public void setNextBillingRun(BillingRun nextBillingRun) {
+		this.nextBillingRun = nextBillingRun;
+	}
+
+	public Date getProcessDate() {
         return processDate;
     }
 

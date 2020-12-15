@@ -46,6 +46,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -1103,8 +1104,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
 					ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
 					if (scriptInstance != null) {
-						String invoiceAutomaticValidationScript = scriptInstance.getCode();
-						ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceAutomaticValidationScript);
+						ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
 						if (script != null) {
 							Map<String, Object> methodContext = new HashMap<String, Object>();
 							methodContext.put(Script.CONTEXT_ENTITY, invoice);
@@ -2258,7 +2258,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
-        invoice.setBillingRun(null);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
         if(remove) {
         	super.remove(invoice);
@@ -2333,8 +2332,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param invoiceIds
 	 */
 	public void moveInvoices(Long billingRunId, List<Long> invoiceIds) {
-		// TODO Auto-generated method stub
-		
+		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
+		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRunId);
+		getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
 	}
 	
 	/**
@@ -2342,8 +2342,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param invoices
 	 */
 	private void moveInvoices(List<Invoice> invoices, Long billingRunId) {
-		// TODO Auto-generated method stub
-		
+		moveInvoices(billingRunId, invoices.stream().map(x->x.getId()).collect(Collectors.toList()));
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
@@ -4288,9 +4287,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param toMove
 	 */
 	public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
-		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toMove);
-		moveInvoices(invoices, billingRun.getId());
-		
+		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+		getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
 	}
 
 	/**
