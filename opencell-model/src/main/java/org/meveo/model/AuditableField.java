@@ -125,12 +125,6 @@ public class AuditableField extends BaseEntity {
     public AuditableField() {
     }
 
-    public AuditableField(MeveoUser actor) {
-        super();
-        this.actor = actor.getUserName();
-        this.created = new Date();
-    }
-
     /**
      * Gets the entity class
      *
