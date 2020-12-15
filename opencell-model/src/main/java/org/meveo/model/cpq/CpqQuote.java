@@ -7,6 +7,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,6 +26,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.quote.QuoteStatusEnum;
 
 
 @Entity
@@ -57,6 +61,14 @@ public class CpqQuote extends BusinessEntity {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 	
+
+    /**
+     * Order processing status as defined by the workflow.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    @NotNull
+    private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
 	/**
 	 * statusDate
 	 */
@@ -312,5 +324,17 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	public void setValidity(DatePeriod validity) {
 		this.validity = validity;
+	}
+	/**
+	 * @return the status
+	 */
+	public QuoteStatusEnum getStatus() {
+		return status;
+	}
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(QuoteStatusEnum status) {
+		this.status = status;
 	}
 }

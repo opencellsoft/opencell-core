@@ -34,6 +34,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 	@NamedQuery(name = "QuoteVersion.findByCode", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code order by qv.quoteVersion desc"),
 	@NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=1"),
+	@NamedQuery(name = "QuoteVersion.findByQuoteId", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion")
 })
 public class QuoteVersion extends BaseEntity{

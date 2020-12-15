@@ -4306,6 +4306,9 @@ END $$;]]>
 	            <column name="billing_account_id" type="bigint" />
 	            <column name="contract_id" type="bigint" />
 	            <column name="status_version" type="int4" />
+	            <column name="status" type="varchar(20)">
+	                <constraints nullable="false" />
+	            </column>
 	            <column name="status_date" type="datetime" />
 	            <column name="send_date" type="datetime" />
 	            <column name="prestation_date_begin" type="datetime" />
