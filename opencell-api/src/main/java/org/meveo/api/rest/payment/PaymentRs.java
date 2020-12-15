@@ -49,6 +49,7 @@ import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceItemDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
@@ -733,12 +734,11 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Update Payment schedule instance item, the update is only about amount and requestPaymentDate.
      *
-     * @param paymentScheduleInstanceItemDto a list of paymentScheduleInstanceItemDto
-     * @param paymentScheduleInstanceId      the paymentScheduleInstance's Id
+     * @param paymentScheduleInstanceItemsDto a list of paymentScheduleInstanceItemDto
+     * @param paymentScheduleInstanceId       the paymentScheduleInstance's Id
      * @return Request processing status
      */
     @PUT
-    @Path("/paymentScheduleInstance/{{paymentScheduleInstanceId}}/items")
-    ActionStatus replacePaymentScheduleInstanceItem(@PathParam("paymentScheduleInstanceId") Long paymentScheduleInstanceId,
-            List<PaymentScheduleInstanceItemDto> paymentScheduleInstanceItemDto);
+    @Path("/paymentScheduleInstance/{id}/items")
+    ActionStatus replacePaymentScheduleInstanceItem(@PathParam("id") Long paymentScheduleInstanceId, PaymentScheduleInstanceItemsDto paymentScheduleInstanceItemsDto);
 }
