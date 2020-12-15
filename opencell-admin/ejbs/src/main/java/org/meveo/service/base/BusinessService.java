@@ -18,6 +18,7 @@
 package org.meveo.service.base;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -68,7 +69,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
         if (codes == null || codes.isEmpty()) {
             return null;
         }
-        codes.forEach(s -> s.toLowerCase());
+        codes = codes.stream().map(s -> s.toLowerCase()).collect(Collectors.toList());
         TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(be.code) IN :codes", entityClass)
                 .setParameter("codes", codes);
         try {
