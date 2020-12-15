@@ -40,7 +40,7 @@ public class MyTest {
 		ci.setEmail("rachidweb@gmail.com");
 		
 		Address address=new Address();
-		address.setAddress1("address1");
+		address.setAddress1("2578");
 		address.setCity("Paris");
 		Country country=new Country();
 		country.setDescription("France");
@@ -59,8 +59,8 @@ public class MyTest {
 		customerAccount.setAddress(address);
 		customerAccount.setName(name);
 		customerAccount.setExternalRef1("cust1");
-		//createMandate(customerAccount, "FR7630001007941234567890185", "BPIAB0000000001521FD02024");
-		checkMandat("BPIAB0000000001521FD02024", null);
+		createMandate(customerAccount, "FR7630001007941234567890185", "BPIAB0000000001521FD02032");
+		checkMandat("BPIAB0000000001521FD02032", null);
 	}
 	
     public static void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
@@ -83,7 +83,7 @@ public class MyTest {
     		MandatePersonalName name = new MandatePersonalName();
     		MandatePersonalInformation personalInformation =new MandatePersonalInformation();
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(customerAccount.getName().getFirstName());
+    			name.setFirstName("-");
     			name.setSurname(customerAccount.getName().getLastName()); 
     			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
     		}  
@@ -93,7 +93,7 @@ public class MyTest {
     		customer.setContactDetails(contactDetails);
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
-
+    		customer.setCompanyName(customerAccount.getName().getLastName());
     		
     		CreateMandateRequest body = new CreateMandateRequest();
     		body.setUniqueMandateReference(mandateReference);

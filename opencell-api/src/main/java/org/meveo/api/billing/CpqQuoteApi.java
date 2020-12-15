@@ -21,6 +21,7 @@ package org.meveo.api.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -58,6 +59,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -136,6 +138,7 @@ public class CpqQuoteApi extends BaseApi {
 		cpqQuote.setOpportunityRef(quote.getOpportunityRef());
 		cpqQuote.setCustomerRef(quote.getExternalId());
 		cpqQuote.setValidity(quote.getValidity());
+		cpqQuote.setDescription(quote.getDescription());
 		if(!Strings.isEmpty(quote.getBillableAccountCode())) {
 			cpqQuote.setBillableAccount(billingAccountService.findByCode(quote.getBillableAccountCode()));
 		}
@@ -190,8 +193,6 @@ public class CpqQuoteApi extends BaseApi {
 					missingParameters.add("products["+index+"].quoteCode");
 				if(quoteProductDTO.getQuoteVersion() <= 0 )
 					throw new MeveoApiException("Quote version for products["+index+"] must be greater than 0");
-				if(Strings.isEmpty(quoteProductDTO.getQuoteLotCode()))
-					missingParameters.add("products["+index+"].quoteLot");
 				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
 					missingParameters.add("products["+index+"].productCode");
 				handleMissingParameters();
@@ -202,19 +203,17 @@ public class CpqQuoteApi extends BaseApi {
 				QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
 				if(quoteVersion == null)
 					throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
-				QuoteLot quoteLot = quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId());
-				if(quoteLot == null)
-					throw new EntityDoesNotExistsException("can not found quote lot for : products["+index+"] = (" + quoteProductDTO.getQuoteLotCode() +","+ quoteProductDTO.getQuoteVersion() + ")");
 				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 				if(productVersion == null)
 					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
-
 				QuoteProduct quoteProduct = null;
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
+				if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
+					quoteProduct.setQuoteLot(quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId()));
+				}
 				quoteProduct.setQuote(cpqQuote);
 				quoteProduct.setQuoteVersion(quoteVersion);
-				quoteProduct.setQuoteLot(quoteLot);
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(new BigDecimal(quoteProductDTO.getQuantity()));
 				quoteProduct.setBillableAccount(quoteOffer.getBillableAccount());
@@ -229,7 +228,6 @@ public class CpqQuoteApi extends BaseApi {
 	
 	private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
 		if(quoteAttributes != null) {
-			List<QuoteAttribute> oldProducts = quoteProduct.getQuoteAttributes();
 			quoteProduct.getQuoteAttributes().clear();
 			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
 				if(Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
@@ -598,6 +596,37 @@ public class CpqQuoteApi extends BaseApi {
 		if(quoteOffer == null)
 			throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
 		quoteOfferService.remove(quoteOffer);
+	}
+	
+	public void placeOrder(String quoteCode, int version) {
+		CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteCode);
+		if(cpqQuote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException("No quote version found for quote: " + quoteCode + ", and version : " + version);
+		if(cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED) || cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED))
+			throw new MeveoApiException("quote status can not be publish because of its current status : " + cpqQuote.getStatus().getApiState());
+		if(quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED))
+			throw new MeveoApiException("Version of quote must not be CLOSED");
+		
+		Date now = Calendar.getInstance().getTime();
+		cpqQuote.setStatus(QuoteStatusEnum.ACCEPTED);
+		cpqQuote.setStatusDate(now);
+		quoteVersion.setStatus(VersionStatusEnum.PUBLISHED);
+		quoteVersion.setStatusDate(now);
+		
+		cpqQuoteService.update(cpqQuote);
+		quoteVersionService.update(quoteVersion);
+		
+		List<QuoteVersion> versions = quoteVersionService.findByQuoteId(cpqQuote.getId());
+		versions.stream().filter(q -> q.getId() != quoteVersion.getId()).forEach(q -> {
+			q.setStatus(VersionStatusEnum.CLOSED);
+			q.setStatusDate(now);
+			quoteVersionService.update(q);
+			
+		});
+			
 	}
    
 }

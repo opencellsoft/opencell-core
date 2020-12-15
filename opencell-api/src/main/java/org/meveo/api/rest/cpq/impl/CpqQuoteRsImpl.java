@@ -124,8 +124,13 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response placeOrder(String quoteCode, int quoteVersion, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.placeOrder(quoteCode, quoteVersion);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 

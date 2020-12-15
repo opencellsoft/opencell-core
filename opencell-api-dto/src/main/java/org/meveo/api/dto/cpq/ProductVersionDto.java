@@ -88,6 +88,15 @@ public class ProductVersionDto extends BaseEntityDto {
  
     }
     public ProductVersionDto(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
+    	
+        this.shortDescription = productVersion.getShortDescription();
+        this.productCode = productVersion.getProduct().getCode();
+        this.currentVersion = productVersion.getCurrentVersion();
+        this.status = productVersion.getStatus();
+        this.statusDate = productVersion.getStatusDate();
+        this.longDescription =productVersion.getLongDescription();
+        this.validity = productVersion.getValidity(); 
+        
     	if(loadAttributes) {
     		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
     			attributes = productVersion.getAttributes().stream().map(d -> {

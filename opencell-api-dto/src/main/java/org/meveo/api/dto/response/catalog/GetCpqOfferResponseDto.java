@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.catalog.CpqOfferDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
@@ -38,29 +37,29 @@ public class GetCpqOfferResponseDto extends BaseResponse {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8776189890084137788L;
 
-    /** The offer template. */
-    private CpqOfferDto offerTemplate;
+    /** The CpqOfferDto*/
+    private CpqOfferDto CpqOfferDto;
 
-    /**
-     * Gets the offer template.
-     *
-     * @return the offer template
-     */
-    public CpqOfferDto getOfferTemplate() {
-        return offerTemplate;
-    }
+	/**
+	 * @return the cpqOfferDto
+	 */
+	public CpqOfferDto getCpqOfferDto() {
+		return CpqOfferDto;
+	}
 
-    /**
-     * Sets the offer template.
-     *
-     * @param offerTemplate the new offer template
-     */
-    public void setOfferTemplate(CpqOfferDto offerTemplate) {
-        this.offerTemplate = offerTemplate;
-    }
+	/**
+	 * @param cpqOfferDto the cpqOfferDto to set
+	 */
+	public void setCpqOfferDto(CpqOfferDto cpqOfferDto) {
+		CpqOfferDto = cpqOfferDto;
+	}
 
-    @Override
-    public String toString() {
-        return "GetOfferTemplateResponse [offerTemplate=" + offerTemplate + ", toString()=" + super.toString() + "]";
-    }
+	@Override
+	public String toString() {
+		return "GetCpqOfferResponseDto [CpqOfferDto=" + CpqOfferDto + "]";
+	}
+
+ 
+    
+    
 }

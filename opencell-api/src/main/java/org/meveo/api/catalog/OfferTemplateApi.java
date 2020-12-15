@@ -670,52 +670,32 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         		List<OfferProductsDto> offerProducts = new ArrayList<>();
         		OfferProductsDto offerProductsDto = null;
         		ProductVersionDto productVersionDto=null;
-        		Product product = null;
-        		List<Tag> requestedTags=new ArrayList<>();
-        		List<Tag> extractTags=new ArrayList<>();
-        		
-        		if(loadTags && !requestedTagTypes.isEmpty()) {
-        		for(String tagTypeCode:requestedTagTypes) {
-					TagType tagType=tagTypeService.findByCode(tagTypeCode);
-					requestedTags.addAll(tagType.getTags());
-				} 
-        		}
-        		
+        		Product product = null; 
+
         		for (OfferComponent offerComponent : offerComponents) {
         			product = offerComponent.getProduct();
         			offerProductsDto = new OfferProductsDto();
         			if (product != null) {
-        				//check if product has a publish version with validity date
-        				// if validity date is null get all product version else get product version has new date in validity date 
-        				offerProductsDto.setProduct(new ProductDto(product));
-        				offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());  
-        				productVersionList=product.getProductVersions();
-        				
-        				if(productVersionList!=null && !productVersionList.isEmpty()) { 
-        					for(ProductVersion productVersion : productVersionList) {
-        						if(VersionStatusEnum.PUBLISHED.equals(productVersion.getStatus())) { 
-        						if(productVersion.getValidity()!=null) {
-        							productVersion=productVersionService.getProductVersionsByValidity(new Date());
-        							if(productVersion!=null) {
-        								continue;
-        							}
+
+        				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
+        				if(productVersionList!=null && !productVersionList.isEmpty()) {  
+        					offerProductsDto.setProduct(new ProductDto(product));
+        					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
+        					for(ProductVersion productVersion : productVersionList) {  
+        						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
+        							setTags( loadTags,requestedTagTypes, productVersion) ; 
+        							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
+        							offerProductsDto.getProductVersions().add(productVersionDto);
+        							break;
         						}
-        						if(loadTags && !requestedTagTypes.isEmpty()) {
-    								extractTags=productVersion.getTags().stream()
-    										.filter(e -> requestedTags.contains(e))
-    										.collect(Collectors.toList());
-    								productVersion.setTags(new HashSet<Tag>(extractTags));
-    							}
-    							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
-    							offerProductsDto.setProductVersion(productVersionDto);
-        					}
-        					}
-        				} 
-        			}
-        			offerProducts.add(offerProductsDto);
+        					} 
+        				}
+        				offerProducts.add(offerProductsDto);
+        			} 
 
         		}
         		dto.setOfferProducts(offerProducts);
+
         	}
         }
 
@@ -735,7 +715,24 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         return dto;
     }
-
+		private void setTags(boolean loadTags,List<String> requestedTagType,ProductVersion productVersion) {
+			if(loadTags && !requestedTagType.isEmpty()) {
+			List<Tag> requestedTags=new ArrayList<Tag>();
+			List<Tag> tagList=new ArrayList<Tag>();;
+			for(String tagTypeCode:requestedTagType) {
+				TagType tagType=tagTypeService.findByCode(tagTypeCode);
+				if (tagType == null) {
+		            throw new EntityDoesNotExistsException(TagType.class, tagTypeCode);
+		        }
+				requestedTags.addAll(tagType.getTags());
+			} 
+			tagList=productVersion.getTags().stream()
+					.filter(e -> requestedTags.contains(e))
+					.collect(Collectors.toList());
+			
+			productVersion.setTags(new HashSet<Tag>(tagList)); 
+			}
+		}
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
      * 
