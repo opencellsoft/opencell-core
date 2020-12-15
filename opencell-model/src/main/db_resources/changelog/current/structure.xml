@@ -4552,6 +4552,9 @@ END $$;]]>
             <column name="article_mapping_line_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
 
             <column name="attribute" type="varchar(30)"/>
             <column name="attribute_value" type="varchar(255)"/>
@@ -4624,6 +4627,10 @@ END $$;]]>
 
         <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="article_mapping_line_id"
                                  constraintName="attribute_mapping_article_mapping_line_fk" referencedTableName="billing_article_mapping_line"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="attribute_id"
+                                 constraintName="attribute_mapping_attribute_fk" referencedTableName="cpq_attribute"
                                  referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
