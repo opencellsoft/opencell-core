@@ -1458,6 +1458,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .getResultList();
 	}
 
+	public long purge(Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
+        return getEntityManager().createNamedQuery("WalletOperation.deleteWOByLastTransactionDateAndStatus")
+                .setParameter("status", targetStatusList)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .executeUpdate();
+    }
+
 	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
 		return getEntityManager().createNamedQuery("WalletOperation.deleteWObetweenTwoDatesByStatus")
 				.setParameter("status", targetStatusList)
