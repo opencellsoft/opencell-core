@@ -113,6 +113,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "duration_unit", length = 50)
 	private DurationPeriodUnitEnum durationUnit = DurationPeriodUnitEnum.DAY;
+	
+	
+	/**
+	 * DP type
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "discount_plan_type", length = 100)
+	private DiscountPlanItemTypeEnum discountPlanType;
 
 	public enum DurationPeriodUnitEnum {
 		/**

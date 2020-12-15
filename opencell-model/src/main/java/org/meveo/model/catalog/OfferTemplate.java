@@ -18,7 +18,9 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -160,6 +162,18 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<Tag>();
+    
+
+	/**
+	 * list of discount attached to this product
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_offer_discount_plan",
+				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "discount_id", referencedColumnName = "id")				
+			)
+	private Set<DiscountPlan> discountList = new HashSet<>();
     
 	 
      
@@ -484,6 +498,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	public void setOfferComponents(List<OfferComponent> offerComponents) {
 		this.offerComponents = offerComponents;
+	}
+
+	/**
+	 * @return the discountList
+	 */
+	public Set<DiscountPlan> getDiscountList() {
+		return discountList;
+	}
+
+	/**
+	 * @param discountList the discountList to set
+	 */
+	public void setDiscountList(Set<DiscountPlan> discountList) {
+		this.discountList = discountList;
 	}
 
 	

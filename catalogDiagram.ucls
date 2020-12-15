@@ -3,7 +3,7 @@
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="org.meveo.model.catalog.OfferTemplate" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/catalog/OfferTemplate.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="723" y="42"/>    
+    <position height="-1" width="-1" x="701" y="37"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="true" package="false" protected="true" private="true" static="false"/>      
@@ -32,7 +32,7 @@
   <class id="4" language="java" name="org.meveo.model.cpq.offer.OfferComponent" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/cpq/offer/OfferComponent.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1149" y="-71"/>    
+    <position height="-1" width="-1" x="1270" y="-15"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="true" package="false" protected="true" private="true" static="false"/>      
@@ -68,7 +68,7 @@
   </class>  
   <class id="8" language="java" name="org.meveo.model.cpq.ProductLine" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/cpq/ProductLine.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1318" y="-2"/>    
+    <position height="-1" width="-1" x="1448" y="25"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="true" package="false" protected="true" private="true" static="false"/>      
@@ -93,16 +93,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="org.meveo.model.cpq.AccountingArticle" project="opencell-model" 
-    file="/opencell-model/src/main/java/org/meveo/model/cpq/AccountingArticle.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="467" y="663"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
-      sort-features="false" accessors="true" visibility="false">      
-      <attributes public="true" package="false" protected="true" private="true" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="org.meveo.model.AuditableEntity" project="opencell-model" 
+  <class id="11" language="java" name="org.meveo.model.AuditableEntity" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/AuditableEntity.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1379" y="498"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
@@ -111,7 +102,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="org.meveo.model.Auditable" project="opencell-model" 
+  <class id="12" language="java" name="org.meveo.model.Auditable" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/Auditable.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1311" y="684"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
@@ -120,7 +111,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="org.meveo.model.cpq.Attribute" project="opencell-model" 
+  <class id="13" language="java" name="org.meveo.model.cpq.Attribute" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/cpq/Attribute.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="651" y="466"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
@@ -129,7 +120,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="org.meveo.model.catalog.ProductOffering" project="opencell-model" 
+  <class id="14" language="java" name="org.meveo.model.catalog.ProductOffering" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/catalog/ProductOffering.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="268" y="-60"/>    
@@ -139,228 +130,235 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="16">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="17" name="tags">        
+  <enumeration id="15" language="java" name="org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum" 
+    project="opencell-model" file="/opencell-model/src/main/java/org/meveo/model/catalog/DiscountPlan.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="633" y="-177"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="false">      
+      <attributes public="true" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="16" language="java" name="org.meveo.model.catalog.DiscountPlan" project="opencell-model" 
+    file="/opencell-model/src/main/java/org/meveo/model/catalog/DiscountPlan.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1125" y="-167"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="false">      
+      <attributes public="true" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <association id="17">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="18" name="auditable">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="18" minimum="0" maximum="2147483647">        
+      <multiplicity id="19" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="19">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="20" name="attributes">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="21" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="23" name="product">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="25">    
+  <association id="20">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="26" name="tagsList">        
+      <attribute id="21" name="tagsList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="27" minimum="0" maximum="2147483647">        
+      <multiplicity id="22" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="28">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="29" name="attributes">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="30" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="31">    
+  <generalization id="23">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <association id="24">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="32" name="tagType">        
+      <attribute id="25" name="tagType">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="33" minimum="0" maximum="1">        
+      <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="34">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="35" name="productVersions">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="36" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="37">    
+  <association id="27">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="38" name="productVersion">        
+      <attribute id="28" name="productVersion">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
+      <multiplicity id="29" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="41" name="parentLine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="42" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+  <association id="30">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="31" name="durationUnit"/>      
+      <multiplicity id="32" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="15" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="43">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="44" name="product">        
+  <association id="33">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="34" name="offerComponents">        
+        <position height="0" width="0" x="121" y="56"/>      
+      </attribute>      
+      <multiplicity id="35" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="121" y="56"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="36">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="37" name="product">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="45" minimum="0" maximum="1">        
+      <multiplicity id="38" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="46">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="47" name="offerTemplate">        
+  <association id="39">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="40" name="productVersions">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="48" minimum="0" maximum="1">        
+      <multiplicity id="41" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="49">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="50" name="tags">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="51" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="52">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="53" name="accountingArticle">        
-        <position height="0" width="0" x="322" y="-32"/>      
-      </attribute>      
-      <multiplicity id="54" minimum="0" maximum="1">        
-        <position height="0" width="0" x="322" y="-32"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="55">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="56" name="tags">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="57" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="58">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="59" name="groupedAttributes"/>      
-      <multiplicity id="60" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="61">    
+  <generalization id="42">    
     <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="12"/>  
+    <end type="TARGET" refId="11"/>  
   </generalization>  
-  <association id="62">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="63" name="parentTag">        
+  <association id="43">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="44" name="attributes">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="64" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="65">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
-  </generalization>  
-  <association id="66">    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="67" name="auditable">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
+      <multiplicity id="45" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="69">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <association id="70">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="71" name="attribute1">        
+  <association id="46">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="47" name="offerTemplate">        
+        <position height="0" width="0" x="-22" y="-5"/>      
+      </attribute>      
+      <multiplicity id="48" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-22" y="-5"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="49">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="50" name="product">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="72" minimum="0" maximum="1">        
+      <multiplicity id="51" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="52">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="53" name="discountList"/>      
+      <multiplicity id="54" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="55">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="56" name="allowedDiscountPlans"/>      
+      <multiplicity id="57" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="58">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="59" name="productLine">        
+        <position height="0" width="0" x="130" y="27"/>      
+      </attribute>      
+      <multiplicity id="60" minimum="0" maximum="1">        
+        <position height="0" width="0" x="130" y="27"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="61">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="62" name="tags">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="63" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="64">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="65" name="tags">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="66" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="67">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="68" name="parentTag">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="69" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="70">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="71" name="attributes">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="72" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="73">    
@@ -372,7 +370,7 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="76">    
@@ -384,55 +382,95 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="79">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="80" name="product">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="80" name="discountList"/>      
+      <multiplicity id="81" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="82">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="83" name="groupedAttributes">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="81" minimum="0" maximum="1">        
+      <multiplicity id="84" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="85">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <association id="86">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="87" name="product">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="88" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="82">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="83" name="offerComponents">        
-        <position height="0" width="0" x="0" y="0"/>      
+  <association id="89">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="90" name="parentLine">        
+        <position height="0" width="0" x="130" y="27"/>      
       </attribute>      
-      <multiplicity id="84" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="85">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="86" name="productLine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="87" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="91" minimum="0" maximum="1">        
+        <position height="0" width="0" x="130" y="27"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="88">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="89" name="offerComponents">        
+  <association id="92">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="93" name="attribute1">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="90" minimum="0" maximum="2147483647">        
+      <multiplicity id="94" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="95">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="96" name="offerComponents">        
+        <position height="0" width="0" x="121" y="56"/>      
+      </attribute>      
+      <multiplicity id="97" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="121" y="56"/>      
+      </multiplicity>    
+    </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="98">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="15"/>  
+  </nesting>  
+  <association id="99">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="100" name="tags">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="101" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
