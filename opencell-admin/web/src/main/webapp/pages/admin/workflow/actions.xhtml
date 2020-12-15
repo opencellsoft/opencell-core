@@ -3,8 +3,7 @@
 				xmlns:f="http://xmlns.jcp.org/jsf/core"
 				xmlns:h="http://xmlns.jcp.org/jsf/html"
 				xmlns:hftl="http://hftl.org"
-				xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
->
+				xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -14,12 +13,12 @@
 
 	<h:form id="crumbmenuForm">
 		<p:breadCrumb homeDisplay="text" id="crumbmenu">
-			<p:menuitem value="#{messages['menu.dataCollector']}" disabled="true" />
-			<p:menuitem value="#{messages['menu.dataCollector']}" outcome="dataCollectors" />
-			<p:menuitem value="#{messages['commons.new']} #{messages['dataCollector.title']}"
+			<p:menuitem value="#{messages['menu.actions']}" disabled="true" />
+			<p:menuitem value="#{messages['menu.actions']}" outcome="actions" />
+			<p:menuitem value="#{messages['commons.new']} #{messages['actions.title']}"
 						disabled="true" rendered="#{actionBean.entity.transient}" />
 			<p:menuitem
-					value="#{messages['dataCollector.title']} - #{actionBean.entity.uuid}"
+					value="#{messages['actions.title']} - #{actionBean.entity.uuid}"
 					disabled="true" rendered="#{!actionBean.entity.transient}" />
 		</p:breadCrumb>
 	</h:form>
@@ -38,7 +37,7 @@
 						 :actionsId:tabView:scriptSelectId_text">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="notificationPopup"
-						  header="#{messages['scriptInstance.title']}"
+						  header="#{messages['entity.notification']}"
 						  backingBean="#{notificationBean}"
 						  searchField1Label="#{messages['BusinessEntity.code']}"
 						  searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
@@ -52,8 +51,9 @@
 
 		<hftl:formPanel formId="actionsId" backingBean="#{actionBean}" showEnableDisableButton="true" ajaxSubmit="true">
 			<p:tabView id="tabView" activeIndex="#{actionBean.activeTab}">
-				<p:tab title="Action">
+				<p:tab title="Transition actions">
 					<hftl:formField label="#{messages['action.conditionEl']}" field="conditionEl" required="true" textArea="true" rows="1" maxlength="2000"/>
+					<hftl:formField label="#{messages['action.valueEl']}" field="valueEL" required="true" textArea="true" rows="1" maxlength="2000"/>
 					<hftl:formField label="#{messages['action.description']}" field="description"  required="true"/>
 					<hftl:formField label="#{messages['action.priority']}" field="priority" required="true"/>
 					<hftl:formField label="#{messages['action.type']}" field="type" required="true" listValues="#{actionBean.types}" />
@@ -69,8 +69,6 @@
 					<ui:param name="buttons" value="true" />
 					<p:panel id="buttons">
 						<p:commandButton action="#{actionBean.saveAction}" value="#{messages['action.addAction']}" process="@form" update=":actionsId:tabView"/>
-						<p:commandButton action="#{actionBean.cancelAction}" value="#{messages['action.cancel']}" process="@this"
-										 update=":actionsId:tabView"/>
 					</p:panel>
 
 					<p:outputPanel id="actionList">
@@ -82,7 +80,7 @@
 							<hftl:column label="#{messages['action.priority']}" field="priority" />
 							<hftl:column label="#{messages['action.uuid']}" field="uuid" />
 
-							<p:column styleClass="actions-column" rendered="#{actionBean.edit}">
+							<p:column styleClass="actions-column">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>

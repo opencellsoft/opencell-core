@@ -154,9 +154,7 @@ public class GWFTransitionApi extends BaseApi {
             if (isUpdate && StringUtils.isBlank(gwfTransitionDto.getUuid())) {
                 missingParameters.add("uuid");
             }
-            if (StringUtils.isBlank(gwfTransitionDto.getFromStatus())) {
-                missingParameters.add("FromStatus");
-            }
+
             if (StringUtils.isBlank(gwfTransitionDto.getToStatus())) {
                 missingParameters.add("ToStatus");
             }
