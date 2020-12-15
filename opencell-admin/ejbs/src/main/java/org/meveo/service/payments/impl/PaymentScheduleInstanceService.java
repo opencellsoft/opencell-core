@@ -150,18 +150,18 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      */
     @Override
     public PaymentScheduleInstance update(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
-        PaymentScheduleInstance oldPaymentScheduleInstance = findById(paymentScheduleInstance.getId());
-        if (oldPaymentScheduleInstance.getStatus() != PaymentScheduleStatusEnum.IN_PROGRESS) {
+        //PaymentScheduleInstance oldPaymentScheduleInstance = findById(paymentScheduleInstance.getId());
+        if (paymentScheduleInstance.getStatus() != PaymentScheduleStatusEnum.IN_PROGRESS) {
             throw new BusinessException("Can only update instance that in progress");
         }
-        if (paymentScheduleInstance.getStatus() == PaymentScheduleStatusEnum.IN_PROGRESS) {
+        /*if (paymentScheduleInstance.getStatus() == PaymentScheduleStatusEnum.IN_PROGRESS) {
             oldPaymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.OBSOLETE);
             oldPaymentScheduleInstance.setStatusDate(new Date());
             super.update(oldPaymentScheduleInstance);
             return instanciateFromPsInstance(paymentScheduleInstance.getPaymentScheduleTemplate(), paymentScheduleInstance);
-        } else {
-            return super.update(paymentScheduleInstance);
-        }
+        } else {*/
+        return super.update(paymentScheduleInstance);
+        //}
 
     }
 
@@ -393,7 +393,6 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         if (unPaidPaymentScheduleInstanceItems != null) {
             Set<Long> paymentScheduleInstanceItemIds = unPaidPaymentScheduleInstanceItems.stream().map(PaymentScheduleInstanceItem::getId).collect(Collectors.toSet());
             paymentScheduleInstanceItemService.remove(new HashSet<>(paymentScheduleInstanceItemIds));
-            paymentScheduleInstance.getPaymentScheduleInstanceItems().removeAll(unPaidPaymentScheduleInstanceItems);
         }
         ServiceInstance serviceInstance = paymentScheduleInstance.getServiceInstance();
         Subscription subscription = serviceInstance.getSubscription();

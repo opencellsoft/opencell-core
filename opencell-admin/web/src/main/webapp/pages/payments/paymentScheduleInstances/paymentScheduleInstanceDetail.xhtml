@@ -43,7 +43,7 @@
 					
 					<hftl:dataList backingBean="#{paymentScheduleInstanceItemBean}" dataModel="#{paymentScheduleInstanceItemBean.getItemsForInstance(paymentScheduleInstanceBean.entity)}" 
 	                label="#{messages['paymentScheduleInstanceItem.title']}" sortBy="dueDate" exportButton="false" checkMany="false">														
-							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="paymentScheduleInstance.amount" />
+							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.dueDate']}" field="dueDate" isDate="true"/>
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.requestPaymentDate']}" field="requestPaymentDate" isDate="true"/>
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="paid" isMessage="true"/>														
