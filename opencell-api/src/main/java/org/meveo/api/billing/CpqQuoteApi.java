@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -47,6 +48,7 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
@@ -163,13 +165,13 @@ public class CpqQuoteApi extends BaseApi {
 	public QuoteVersionDto createQuoteVersion(QuoteVersionDto quoteVersionDto) {
 		if(Strings.isEmpty(quoteVersionDto.getQuoteCode()))
 			missingParameters.add("quoteCode");
-		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, null);
-		if(quoteVersion.getQuote() == null) {
-			final CpqQuote quote = cpqQuoteService.findByCode(quoteVersionDto.getQuoteCode());
-			if(quote == null)
-				throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
-			quoteVersion.setQuote(quote);
-		}
+		if(quoteVersionDto.getCurrentVersion() <= 0)
+			throw new MeveoApiException("current version must be greater than 0");
+		final CpqQuote quote = cpqQuoteService.findByCode(quoteVersionDto.getQuoteCode());
+		if(quote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
+		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
+		quoteVersion.setVersion(quoteVersionDto.getCurrentVersion());
 		try {
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {
@@ -177,6 +179,75 @@ public class CpqQuoteApi extends BaseApi {
 		}
 		return quoteVersionDto;
 	}
+	
+	
+	private void newPopulateProduct(List<QuoteProductDTO> quoteProductDtos, QuoteOffer quoteOffer) {
+		if(quoteProductDtos != null) {
+			int index = 1;
+			quoteOffer.getQuoteProduct().size();
+			for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
+				if(Strings.isEmpty(quoteProductDTO.getQuoteCode()))
+					missingParameters.add("products["+index+"].quoteCode");
+				if(quoteProductDTO.getQuoteVersion() <= 0 )
+					throw new MeveoApiException("Quote version for products["+index+"] must be greater than 0");
+				if(Strings.isEmpty(quoteProductDTO.getQuoteLotCode()))
+					missingParameters.add("products["+index+"].quoteLot");
+				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
+					missingParameters.add("products["+index+"].productCode");
+				handleMissingParameters();
+				
+				CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode());
+				if(cpqQuote == null)
+					throw new EntityDoesNotExistsException(CpqQuote.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode());
+				QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
+				if(quoteVersion == null)
+					throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
+				QuoteLot quoteLot = quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId());
+				if(quoteLot == null)
+					throw new EntityDoesNotExistsException("can not found quote lot for : products["+index+"] = (" + quoteProductDTO.getQuoteLotCode() +","+ quoteProductDTO.getQuoteVersion() + ")");
+				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
+				if(productVersion == null)
+					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
+
+				QuoteProduct quoteProduct = null;
+				if(quoteProduct == null)
+					quoteProduct = new QuoteProduct();
+				quoteProduct.setQuote(cpqQuote);
+				quoteProduct.setQuoteVersion(quoteVersion);
+				quoteProduct.setQuoteLot(quoteLot);
+				quoteProduct.setProductVersion(productVersion);
+				quoteProduct.setQuantity(new BigDecimal(quoteProductDTO.getQuantity()));
+				quoteProduct.setBillableAccount(quoteOffer.getBillableAccount());
+				quoteProduct.setQuoteOffre(quoteOffer);
+				quoteProductService.create(quoteProduct);
+				newPopulateQuoteAttribute(quoteProductDTO.getQuoteAttributes(), quoteProduct);
+				quoteOffer.getQuoteProduct().add(quoteProduct);
+				++index;
+			}
+		}
+	}
+	
+	private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
+		if(quoteAttributes != null) {
+			List<QuoteAttribute> oldProducts = quoteProduct.getQuoteAttributes();
+			quoteProduct.getQuoteAttributes().clear();
+			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
+				if(Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
+					missingParameters.add("quoteAttributeCode");
+				handleMissingParameters();
+				Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
+				if(attribute == null)
+					throw new EntityDoesNotExistsException(QuoteLot.class, quoteAttributeDTO.getQuoteAttributeCode());
+				QuoteAttribute quoteAttribute = new QuoteAttribute();
+				quoteAttribute.setAttribute(attribute);
+				quoteAttribute.setValue(quoteAttributeDTO.getValue());
+				quoteProduct.getQuoteAttributes().add(quoteAttribute);
+				quoteAttributeService.create(quoteAttribute);
+				quoteAttribute.setQuoteProduct(quoteProduct);
+				}
+					
+			}
+		}
 	
 	
 	
@@ -192,9 +263,10 @@ public class CpqQuoteApi extends BaseApi {
 		return populateToDto(quote);
 	}
 	
-	public QuoteDTO updateQuote(String quoteCode, QuoteDTO quoteDto) {
+	public QuoteDTO updateQuote(QuoteDTO quoteDto) {
+		String quoteCode = quoteDto.getCode();
 		if(Strings.isEmpty(quoteCode)) {
-			missingParameters.add("quoteCode");
+			missingParameters.add("code");
 		}
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
 		if(quote == null)
@@ -316,126 +388,87 @@ public class CpqQuoteApi extends BaseApi {
 	}
 	
 
-	public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteItem) {
-		if(Strings.isEmpty(quoteItem.getOfferCode()))
-			missingParameters.add("offerCode");
-		if(quoteItem.getQuoteVersion() == null)
-			missingParameters.add("quoteVersion");
-		if(Strings.isEmpty(quoteItem.getQuoteCode()))
-			missingParameters.add("quoteCode");
-		handleMissingParameters();
-		final CpqQuote quote = cpqQuoteService.findByCode(quoteItem.getQuoteCode());
-		if(quote == null)
-			throw new EntityDoesNotExistsException(CpqQuote.class, quoteItem.getQuoteCode());
-		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteItem.getQuoteCode(), quoteItem.getQuoteVersion());
-		if(quoteVersion == null)
-			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteItem.getQuoteCode() + "," + quoteItem.getQuoteVersion() + ")");
-		// TODO : check if the quote exist
-		var quoteOffer = new QuoteOffer();
-		QuoteLot  quoteLot = null;
-		if(!Strings.isEmpty(quoteItem.getQuoteLotCode())) {
-			quoteLot = quoteLotService.findByCode(quoteItem.getQuoteLotCode());
-			quoteOffer.setQuoteCustomerService(quoteLot);
-		}
-		if(!Strings.isEmpty(quoteItem.getOfferCode()))
-			quoteOffer.setOfferTemplate(offerTemplateService.findByCode(quoteItem.getOfferCode()));
-		BillingAccount BillableAccounte = null;
-		if(!Strings.isEmpty(quoteItem.getBillableAccountCode())) {
-			BillableAccounte = billingAccountService.findByCode(quoteItem.getBillableAccountCode());
-			quoteOffer.setBillableAccount(BillableAccounte);
-		}
-		quoteOffer.setQuoteVersion(quoteVersion);
+	public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
 
-		try {
-			quoteOfferService.create(quoteOffer);
-		}catch(BusinessApiException e) {
-			throw new MeveoApiException(e);
-		}
-		if(quoteItem.getProducts() != null) {
-			for (QuoteProductDTO q : quoteItem.getProducts()) {
-				QuoteProduct qp = processQuoteProductDTO(q, quote, quoteVersion, quoteLot, BillableAccounte, quoteOffer);
-				quoteOffer.getQuoteProduct().add(qp);
-			}
-			quoteOfferService.update(quoteOffer);
-		}
-		return quoteItem;
+		if(Strings.isEmpty(quoteOfferDto.getOfferCode()))
+			missingParameters.add("offerCode");
+		if(quoteOfferDto.getQuoteVersion() == null)
+			missingParameters.add("quoteVersion");
+		if(Strings.isEmpty(quoteOfferDto.getQuoteCode()))
+			missingParameters.add("quoteCode");
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+		if(offerTemplate == null)
+			throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
+		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
+		QuoteOffer quoteOffer = quoteOfferService.findByTemplateAndQuoteVersion(quoteOfferDto.getOfferCode(), quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
+		if(quoteOffer != null)
+			throw new EntityAlreadyExistsException(QuoteOffer.class, quoteOfferDto.getOfferCode() + "," + quoteOfferDto.getOfferCode() + "," + quoteOfferDto.getQuoteVersion() );
+		else
+			quoteOffer = new QuoteOffer();
+		quoteOffer.setOfferTemplate(offerTemplate);
+		quoteOffer.setQuoteVersion(quoteVersion);
+		if(Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
+			quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
+		if(Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
+			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
+//		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
+		quoteOfferService.create(quoteOffer);
+		newPopulateProduct(quoteOfferDto.getProducts(), quoteOffer);
+		return quoteOfferDto;
 	}
 	
-	
-	private QuoteAttribute processQuoteAttributeDTO(QuoteAttributeDTO qad) {
-		final QuoteAttribute qa = new QuoteAttribute();
-		Attribute attr = attributeService.findByCode(qad.getQuoteAttributeCode());
-		if(attr == null)
-			throw new EntityDoesNotExistsException(Attribute.class, qa.getAttribute().getCode());
-		qa.setAttribute(attr);
-		return qa;
-	}
-	
-	private QuoteProduct processQuoteProductDTO(QuoteProductDTO q, CpqQuote quote, QuoteVersion quoteVersion, QuoteLot quoteLot, BillingAccount BillableAccounte, QuoteOffer quoteOffer) {
-		final QuoteProduct quoteProduct = new QuoteProduct();
-		quoteProduct.setQuote(quote);
-		quoteProduct.setQuoteVersion(quoteVersion);
-		quoteProduct.setQuoteLot(quoteLot);
-		if(!Strings.isEmpty(q.getProductCode())) {
-			ProductVersion p = productVersionService.findByProductAndVersion(q.getProductCode(), q.getQuoteVersion());
-			if(p == null)
-				throw new EntityDoesNotExistsException(ProductVersion.class, q.getProductCode());
-			quoteProduct.setProductVersion(p);
-		}
-		quoteProduct.setQuantity(new BigDecimal(q.getQuantity()));
-		quoteProduct.setBillableAccount(BillableAccounte);
-		quoteProduct.setQuoteOffre(quoteOffer);
-		quoteProductService.create(quoteProduct);
-		if(q.getQuoteAttributes() != null) {
-			for (QuoteAttributeDTO qad : q.getQuoteAttributes()) {
-				QuoteAttribute qatt = processQuoteAttributeDTO(qad);
-				qatt.setQuoteProduct(quoteProduct);
-				quoteAttributeService.create(qatt);
-			}
-		}
-		return quoteProduct;
-		
-	}
 	
 	public QuoteOfferDTO updateQuoteItem(QuoteOfferDTO quoteOfferDTO) {
-		if(quoteOfferDTO.getQuoteOfferId() == null) 
-			missingParameters.add("QuoteOfferId");
-			
+
+		if(quoteOfferDTO.getQuoteOfferId() == null)
+			missingParameters.add("quoteOfferId");
 		handleMissingParameters();
-		
-		final QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
+		QuoteOffer quoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
 		if(quoteOffer == null)
 			throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
-		// adding offer template if exist
-		//boolean isOfferTemplateChange = false;
-		/*OfferTemplate offerTemplate = null;
+		// check offer template if exist
 		if(!Strings.isEmpty(quoteOfferDTO.getOfferCode())) {
-			offerTemplate = offerTemplateService.findByCode(quoteOfferDTO.getOfferCode());
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDTO.getOfferCode());
 			if(offerTemplate == null)
 				throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferCode());
 			quoteOffer.setOfferTemplate(offerTemplate);
-			isOfferTemplateChange = true;
-		}*/
-		// adding quote version if exist
-		//boolean isQuoteVersionChange = false;
-		/*QuoteVersion quoteVersion = null;
-		if(quoteOfferDTO.getQuoteVersion() != null) {
-			quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDTO.getQuoteCode(), quoteOfferDTO.getQuoteVersion());
+		}
+		
+		// check quote version
+		boolean isUniqueKeyChanged = false;
+		if(!Strings.isEmpty(quoteOfferDTO.getQuoteCode())) {
+			if(quoteOfferDTO.getQuoteVersion() == null)
+				missingParameters.add("quoteVersion");
+			handleMissingParameters();
+			CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteOfferDTO.getQuoteCode());
+			if(cpqQuote == null)
+				throw new EntityDoesNotExistsException("can not find Quote version with qoute code : " + quoteOfferDTO.getQuoteCode());
+			QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDTO.getQuoteCode(), quoteOfferDTO.getQuoteVersion());
 			if(quoteVersion == null)
-				throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDTO.getQuoteCode() + "," + quoteOfferDTO.getQuoteVersion() + ")");
+				throw new EntityDoesNotExistsException("can not find Quote version with qoute code : " + quoteOfferDTO.getQuoteCode() +" and version : " + quoteOfferDTO.getQuoteVersion());
 			quoteOffer.setQuoteVersion(quoteVersion);
-			isQuoteVersionChange = true;
-		}*/
-		/*if(isOfferTemplateChange || isQuoteVersionChange) {
-			if(quoteOfferService.findByTemplateAndQuoteVersion(quoteOffer.getOfferTemplate().getCode(), quoteVersion.getQuote().getCode(), quoteVersion.getQuoteVersion()) != null)
-				throw new EntityAlreadyExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId() + "");
-		}*/
-		// billing account
+			isUniqueKeyChanged = true;
+		}
+		if(isUniqueKeyChanged) {
+			QuoteOffer tmpQuoteOffer = quoteOfferService.findById(quoteOfferDTO.getQuoteOfferId());
+			if(tmpQuoteOffer.getOfferTemplate().getId() != quoteOffer.getOfferTemplate().getId()  
+					||  tmpQuoteOffer.getQuoteVersion().getId() != quoteOffer.getQuoteVersion().getId()) {
+//				throw new EntityAlreadyExistsException("Quote Offer already exist with offer template : " + 
+//																		tmpQuoteOffer.getOfferTemplate().getCode() + ", and quote version (" + 
+//																				quoteOfferDTO.getQuoteCode() + ", " + quoteOfferDTO.getQuoteVersion()  );
+				
+			}
+		}
 		if(!Strings.isEmpty(quoteOfferDTO.getBillableAccountCode()))
 			quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDTO.getBillableAccountCode()));
 		if(!Strings.isEmpty(quoteOfferDTO.getQuoteLotCode()))
 			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDTO.getQuoteLotCode()));
 		processQuoteProduct(quoteOfferDTO, quoteOffer);
+		
+		quoteOfferService.update(quoteOffer);
+	
 		return quoteOfferDTO;
 	}
 	
@@ -448,25 +481,12 @@ public class CpqQuoteApi extends BaseApi {
 		
 		if(hasQuoteProductDtos) {
 			var newQuoteProducts = new ArrayList<QuoteProduct>();
-
-			CpqQuote quote = null;
-			if(!Strings.isEmpty(quoteOfferDTO.getQuoteCode())) {
-				quote = cpqQuoteService.findByCode(quoteOfferDTO.getQuoteCode());
-				if(quote == null)
-					throw new EntityDoesNotExistsException(CpqQuote.class, quoteOfferDTO.getQuoteCode());
-			}
-			
 			QuoteProduct quoteProduct = null;
+			int i=1;
 			for (QuoteProductDTO quoteProductDto : quoteProductDtos) {
-				quoteProduct = getQuoteProductFromDto(quoteProductDto, quoteOffer);
-				if(quote != null)
-					quoteProduct.setQuote(quote);
-				if(quoteProductDto.getQuoteAttributes() != null) {
-					for (QuoteAttributeDTO quoteAttributeDTO : quoteProductDto.getQuoteAttributes()) {
-						getQuoteAttributeFromDto(quoteAttributeDTO, quoteProduct);
-					}
-				}
+				quoteProduct = getQuoteProductFromDto(quoteProductDto, quoteOffer, i);
 				newQuoteProducts.add(quoteProduct);
+				i++;
 			}
 			if(!hasExistingQuotes) {
 				quoteOffer.getQuoteProduct().addAll(newQuoteProducts);
@@ -474,7 +494,7 @@ public class CpqQuoteApi extends BaseApi {
 				existencQuoteProducts.retainAll(newQuoteProducts);
 				for (QuoteProduct qpNew : newQuoteProducts) {
 					int index = existencQuoteProducts.indexOf(qpNew);
-					if(index > 0) {
+					if(index >= 0) {
 						QuoteProduct old = existencQuoteProducts.get(index);
 						old.update(qpNew);
 					}else {
@@ -487,28 +507,97 @@ public class CpqQuoteApi extends BaseApi {
 		}
 	}
 	
-	private QuoteProduct getQuoteProductFromDto(QuoteProductDTO dto, QuoteOffer quoteOffer) {
-		final ProductVersion productVersion = productVersionService.findByProductAndVersion(dto.getProductCode(), dto.getProductVersion());
+	private QuoteProduct getQuoteProductFromDto(QuoteProductDTO quoteProductDTO, QuoteOffer quoteOffer, int index) {
+		CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode());
+		if(cpqQuote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode());
+		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
+		QuoteLot quoteLot = quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId());
+		if(quoteLot == null)
+			throw new EntityDoesNotExistsException("can not found quote lot for : products["+index+"] = (" + quoteProductDTO.getQuoteLotCode() +","+ quoteProductDTO.getQuoteVersion() + ")");
+		ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 		if(productVersion == null)
-			throw new EntityDoesNotExistsException(QuoteVersion.class, dto.getProductCode() + "," + dto.getProductVersion());
-		final QuoteProduct qp = quoteProductService.findByQuoteVersionAndQuoteOffer(productVersion.getId(), quoteOffer.getId());
-		if(qp == null)
-			throw new EntityDoesNotExistsException(QuoteVersion.class, productVersion.getId() + "," + quoteOffer.getId());
+			throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
+		QuoteProduct q = quoteProductService.findByProductVersionAndQuoteOffer(productVersion.getId(), quoteOffer.getId());
+		if(q == null)
+			throw new EntityDoesNotExistsException("products["+index+"] : doesn't exist");
 		
-		return qp;
+		q.setBillableAccount(quoteOffer.getBillableAccount());
+		q.setQuoteLot(quoteLot);
+		q.setQuantity(new BigDecimal(quoteProductDTO.getQuantity()));
+		processQuoteProduct(quoteProductDTO, q);
+		return q;
 	}
-	
-	private QuoteAttribute getQuoteAttributeFromDto(QuoteAttributeDTO dto, QuoteProduct quoteProduct) {
-		QuoteAttribute attribute = quoteAttributeService.findByAttributeAndQuoteProduct(dto.getQuoteAttributeCode(), quoteProduct.getId());
+	private void processQuoteProduct(QuoteProductDTO quoteProductDTO, QuoteProduct q) {
+		var quoteAttributeDtos = quoteProductDTO.getQuoteAttributes();
+		var hasQuoteProductDtos = quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty();
+		
+		var existencQuoteProducts = q.getQuoteAttributes();
+		var hasExistingQuotes = existencQuoteProducts != null && !existencQuoteProducts.isEmpty();
+		
+		if(hasQuoteProductDtos) {
+			var newQuoteProducts = new ArrayList<QuoteAttribute>();
+			QuoteAttribute quoteAttribute = null;
+			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
+				quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDTO, q);
+				newQuoteProducts.add(quoteAttribute);
+			}
+			if(!hasExistingQuotes) {
+				q.getQuoteAttributes().addAll(newQuoteProducts);
+			}else {
+				existencQuoteProducts.retainAll(newQuoteProducts);
+				for (QuoteAttribute qpNew : newQuoteProducts) {
+					int index = existencQuoteProducts.indexOf(qpNew);
+					if(index >= 0) {
+						QuoteAttribute old = existencQuoteProducts.get(index);
+						old.update(qpNew);
+					}else {
+						existencQuoteProducts.add(qpNew);
+					}
+				}
+			}
+		}else if(hasExistingQuotes){
+			q.getQuoteAttributes().removeAll(existencQuoteProducts);
+		}
+	}
+	private QuoteAttribute getQuoteAttributeFromDto(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct) {
+		Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 		if(attribute == null)
-			throw new EntityDoesNotExistsException(QuoteAttribute.class, dto.getQuoteAttributeCode() + ","+ quoteProduct.getId());
-		return attribute;
+			throw new EntityDoesNotExistsException(QuoteLot.class, quoteAttributeDTO.getQuoteAttributeCode());
+		QuoteAttribute quoteAttribute = quoteAttributeService.findByAttributeAndQuoteProduct(attribute.getId(), quoteProduct.getId());
+		if(quoteAttribute == null) {
+			quoteAttribute = new QuoteAttribute();
+			quoteAttributeService.create(quoteAttribute);
+		}
+		
+		quoteAttribute.setAttribute(attribute);
+		quoteAttribute.setValue(quoteAttributeDTO.getValue());
+		quoteProduct.getQuoteAttributes().add(quoteAttribute);
+		quoteAttribute.setQuoteProduct(quoteProduct);
+		return quoteAttribute;
 	}
-	/**
-	 * 
-	 */
 	
 	
+	public void deleteQuoteVersion(String quoteCode, int quoteVersion) {
+		if(Strings.isEmpty(quoteCode))
+			missingParameters.add("quoteCode");
+		handleMissingParameters();
+		QuoteVersion version = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteVersion);
+		if(version == null)
+			throw new EntityDoesNotExistsException("quote version is unknown for quote code : " + quoteCode + ", and version : " + quoteVersion);
+		quoteVersionService.remove(version);
+	}
 	
+	public void deleteQuoteItem(Long quoteItemId) {
+		if(quoteItemId == null)
+			missingParameters.add("quoteItemId");
+		handleMissingParameters();
+		QuoteOffer quoteOffer = quoteOfferService.findById(quoteItemId);
+		if(quoteOffer == null)
+			throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
+		quoteOfferService.remove(quoteOffer);
+	}
    
 }

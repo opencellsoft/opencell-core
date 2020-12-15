@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
@@ -44,14 +45,9 @@ public class ProductVersionDto extends BaseEntityDto {
     private Date statusDate;
     /** The longDescription */
     private String longDescription ;
-    /** The startDate */
-    private Date startDate;
-    /** The endDate */
-    private Date endDate;
-    /** The endDate */
-    private Date modificationDate;
-  
-    
+    /**The validity Date*/
+    private DatePeriod validity = new DatePeriod();
+ 
     /** The services template. */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
@@ -88,22 +84,37 @@ public class ProductVersionDto extends BaseEntityDto {
         this.status = productVersion.getStatus();
         this.statusDate = productVersion.getStatusDate();
         this.longDescription =productVersion.getLongDescription();
-        this.startDate = productVersion.getStartDate();
-        this.endDate = productVersion.getEndDate();
+        this.validity = productVersion.getValidity(); 
+ 
+    }
+    public ProductVersionDto(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
+    	if(loadAttributes) {
+    		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
+    			attributes = productVersion.getAttributes().stream().map(d -> {
+    				final AttributeDTO attributeDto = new AttributeDTO(d);
+    				return attributeDto;
+    			}).collect(Collectors.toSet());
+    		}
+    		if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
+    			groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
+    				final GroupedAttributeDto groupedAttributesDto = new GroupedAttributeDto(d);
+    				return groupedAttributesDto;
+    			}).collect(Collectors.toSet());
+    		}
 
-    	if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-    		attributes = productVersion.getAttributes().stream().map(d -> {
-    			final AttributeDTO attributeDto = new AttributeDTO(d);
-    			return attributeDto;
-    		}).collect(Collectors.toSet());
     	}
-    	if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
-    		tagList = productVersion.getTags().stream().map(t -> {
-    			final TagDto dto = new TagDto(t);
-    			return dto;
-    		}).collect(Collectors.toSet());
+    	if(loadTags) { 
+    		if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
+    			tagList = productVersion.getTags().stream().map(t -> {
+    				final TagDto dto = new TagDto(t);
+    				return dto;
+    			}).collect(Collectors.toSet());
+    		} 
     	} 
     }
+    
+    
+    
     /**
      * @return the shortDescription
      */
@@ -176,30 +187,8 @@ public class ProductVersionDto extends BaseEntityDto {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
-    /**
-     * @return the startDate
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-    /**
-     * @return the endDate
-     */
-    public Date getEndDate() {
-        return endDate;
-    }
-    /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+   
+ 
     
     
     /**
@@ -218,7 +207,7 @@ public class ProductVersionDto extends BaseEntityDto {
     public String toString() {
         return "ProductVersionDto [shortDescription=" + shortDescription + ", productCode=" + productCode
                 + ", currentVersion=" + currentVersion + ", status=" + status + ", statusDate=" + statusDate
-                + ", longDescription=" + longDescription + ", startDate=" + startDate + ", endDate=" + endDate + "]";
+                + ", longDescription=" + longDescription + ", validity=" + validity + "]";
     }
 	/**
 	 * @return the tagList
@@ -232,18 +221,7 @@ public class ProductVersionDto extends BaseEntityDto {
 	public void setTagList(Set<TagDto> tagList) {
 		this.tagList = tagList;
 	}
-	/**
-	 * @return the modificationDate
-	 */
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-	/**
-	 * @param modificationDate the modificationDate to set
-	 */
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
+ 
 	/**
 	 * @return the groupedAttributes
 	 */
@@ -256,6 +234,19 @@ public class ProductVersionDto extends BaseEntityDto {
 	public void setGroupedAttributes(Set<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
 	}
+	/**
+	 * @return the validity
+	 */
+	public DatePeriod getValidity() {
+		return validity;
+	}
+	/**
+	 * @param validity the validity to set
+	 */
+	public void setValidity(DatePeriod validity) {
+		this.validity = validity;
+	}
      
+	
     
 }

@@ -97,7 +97,13 @@ public class Attribute extends EnableBusinessCFEntity{
     @NotNull
     protected boolean display;
 
+    public Attribute(){
 
+	}
+
+	public Attribute(Long id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the groupedAttributes

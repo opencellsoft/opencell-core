@@ -3,6 +3,7 @@ package org.meveo.model.article;
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.cpq.Attribute;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +23,7 @@ public class AttributeMapping extends BusinessEntity {
     private ArticleMappingLine articleMappingLine;
 
     @Column(name = "attribute")
-    private String attribute;
+    private Attribute attribute;
 
     @Column(name = "attribute_value")
     private String attributeValue;
@@ -30,7 +31,7 @@ public class AttributeMapping extends BusinessEntity {
     public AttributeMapping() {
     }
 
-    public AttributeMapping(String attribute, String attributeValue) {
+    public AttributeMapping(Attribute attribute, String attributeValue) {
         this.attribute = attribute;
         this.attributeValue = attributeValue;
     }
@@ -43,11 +44,11 @@ public class AttributeMapping extends BusinessEntity {
         this.articleMappingLine = articleMappingLine;
     }
 
-    public String getAttribute() {
+    public Attribute getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(String attribute) {
+    public void setAttribute(Attribute attribute) {
         this.attribute = attribute;
     }
 

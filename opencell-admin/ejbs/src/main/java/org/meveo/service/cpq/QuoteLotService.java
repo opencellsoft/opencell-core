@@ -43,7 +43,7 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 	
 	public QuoteLot findLastVersionByCode(String codeQuoteCustomerService) {
 		try {
-			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteCustomerService.findLastVersionByCode")
+			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteLot.findLastVersionByCode")
 											.setParameter("codeQuote", codeQuoteCustomerService)
 											.setMaxResults(1).getSingleResult();
 					
@@ -52,13 +52,13 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 		}
 	}
 	
-	public QuoteLot findByCodeAndQuoteVersion(String quoteCustomerServiceCode, int quoteVersion) {
+	public QuoteLot findByCodeAndQuoteVersion(String quoteCustomerServiceCode, Long quoteVersionId) {
 		try {
-			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteCustomerService.findByCodeAndVersion")
+			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteLot.findByCodeAndVersion")
 																	.setParameter("code", quoteCustomerServiceCode)
-																		.setParameter("quoteVersion", quoteVersion).getSingleResult();
+																		.setParameter("quoteVersionId", quoteVersionId).getSingleResult();
 		}catch(NoResultException e) {
-			LOGGER.warn("Unknow Quote Customer Service for key ("+quoteCustomerServiceCode+", "+quoteVersion+")");
+			LOGGER.warn("Unknow Quote Customer Service for key ("+quoteCustomerServiceCode+", "+quoteVersionId+")");
 			return null;
 		}
 		

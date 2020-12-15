@@ -9,7 +9,7 @@ import org.meveo.apiv2.models.Resource;
 @JsonDeserialize(as = ImmutableAttributeMapping.class)
 public interface AttributeMapping extends Resource {
 
-    String getAttribute();
+    Resource getAttribute();
 
     String getAttributeValue();
 }

@@ -33,6 +33,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteOfferDtoResponse;
+import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
@@ -51,7 +52,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response createQuote(boolean executeQuotation, QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			// getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
 	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
@@ -89,7 +90,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public Response updateQuote(boolean executeQuotation, QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
-			// getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(code, quote));
+			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(quote));
 	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
@@ -99,7 +100,6 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response updateQuoteItem(QuoteOfferDTO quoteOfferDTO, UriInfo info) {
-		// TODO Auto-generated method stub
 		GetQuoteOfferDtoResponse result=new GetQuoteOfferDtoResponse();
 		 try {
 			 result.setQuoteOfferDto(cpqQuoteApi.updateQuoteItem(quoteOfferDTO));
@@ -143,22 +143,38 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
-		return null;
+		GetQuoteVersionDtoResponse result = new GetQuoteVersionDtoResponse();
+		try {
+            result.setQuoteVersionDto(cpqQuoteApi.createQuoteVersion(quoteVersion));
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
 	}
 
 
 
 	@Override
 	public Response deleteQuoteVersion(String quoteCode, int quoteVersion, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.deleteQuoteVersion(quoteCode, quoteVersion);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 
 	@Override
 	public Response deleteQuoteItem(Long quoteItemId, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		ActionStatus status = new ActionStatus();
+		 try {
+			 cpqQuoteApi.deleteQuoteItem(quoteItemId);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, status);
+	        }
 	}
 
 
@@ -167,7 +183,5 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
    
 }

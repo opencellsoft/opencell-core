@@ -109,19 +109,6 @@ public class QuoteOffer extends AuditableEntity {
 		this.quoteVersion = quoteVersion;
 	}
 
-	/**
-	 * @return the quoteCustomerService
-	 */
-	public QuoteLot getQuoteCustomerService() {
-		return quoteLot;
-	}
-
-	/**
-	 * @param quoteCustomerService the quoteCustomerService to set
-	 */
-	public void setQuoteCustomerService(QuoteLot quoteCustomerService) {
-		this.quoteLot = quoteCustomerService;
-	}
 
 	/**
 	 * @return the quoteProduct

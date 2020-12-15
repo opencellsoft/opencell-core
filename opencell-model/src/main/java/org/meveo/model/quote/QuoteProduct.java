@@ -60,8 +60,7 @@ public class QuoteProduct extends AuditableEntity {
      * quote customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_customer_service_id", referencedColumnName = "id")
-	@NotNull
+	@JoinColumn(name = "quote_lot_id", referencedColumnName = "id")
     private QuoteLot quoteLot;
 
     /**
@@ -100,6 +99,7 @@ public class QuoteProduct extends AuditableEntity {
 		this.quantity = other.quantity;
 		this.billableAccount = other.billableAccount;
 		this.quoteOffre = other.quoteOffre;
+		this.quoteAttributes = other.quoteAttributes;
     }
 	/**
 	 * @return the quote
@@ -225,6 +225,8 @@ public class QuoteProduct extends AuditableEntity {
 	 * @return the quoteAttributes
 	 */
 	public List<QuoteAttribute> getQuoteAttributes() {
+		if(quoteAttributes == null)
+			quoteAttributes = new ArrayList<QuoteAttribute>();
 		return quoteAttributes;
 	}
 	/**

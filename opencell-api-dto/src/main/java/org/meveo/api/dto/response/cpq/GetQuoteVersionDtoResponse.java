@@ -41,6 +41,20 @@ public class GetQuoteVersionDtoResponse extends BaseResponse{
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
 
+	/**
+	 * @return the quoteVersionDto
+	 */
+	public QuoteVersionDto getQuoteVersionDto() {
+		return quoteVersionDto;
+	}
+
+	/**
+	 * @param quoteVersionDto the quoteVersionDto to set
+	 */
+	public void setQuoteVersionDto(QuoteVersionDto quoteVersionDto) {
+		this.quoteVersionDto = quoteVersionDto;
+	}
+
 	
 	
 	
