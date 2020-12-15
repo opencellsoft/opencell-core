@@ -55,6 +55,6 @@ public class ArticleMappingBean extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        ratedTransactionService.get
+        //ratedTransactionService.get
     }
 }
