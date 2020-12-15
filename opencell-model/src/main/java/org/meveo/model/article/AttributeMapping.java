@@ -22,7 +22,8 @@ public class AttributeMapping extends BusinessEntity {
     @JoinColumn(name = "article_mapping_line_id")
     private ArticleMappingLine articleMappingLine;
 
-    @Column(name = "attribute")
+    @ManyToOne
+    @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 
     @Column(name = "attribute_value")

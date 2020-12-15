@@ -3508,6 +3508,7 @@
             <column name="end_date" type="date" />
             <column name="default_duration" type="int4" />
             <column name="duration_unit" type="varchar(50)" />
+            <column name="discount_plan_type" type="varchar(50)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
