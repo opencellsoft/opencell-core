@@ -37,16 +37,16 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.sequence.Sequence;
 
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "billing_seq_invoice")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "bill_seq_invoice_seq"), })
-@NamedQueries({ @NamedQuery(name = "InvoiceSequence.currentInvoiceNb", query = "select max(currentInvoiceNb) from InvoiceSequence i where i.code=:invoiceSequenceCode") })
-public class InvoiceSequence extends BusinessEntity {
+@NamedQueries({ @NamedQuery(name = "InvoiceSequence.currentInvoiceNb", query = "select max(currentNumber) from InvoiceSequence i where i.code=:invoiceSequenceCode") })
+public class InvoiceSequence extends Sequence {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,12 +62,6 @@ public class InvoiceSequence extends BusinessEntity {
     @OneToMany(mappedBy = "invoiceSequence", fetch = FetchType.LAZY)
     private List<InvoiceTypeSellerSequence> invoiceTypeSellerSequences;
 
-    @Column(name = "sequence_size")
-    private Integer sequenceSize = 9;
-
-    @Column(name = "current_invoice_nb")
-    private Long currentInvoiceNb = 0L;
-
     /**
      * A previously invoiceNb held by this sequence, usually less by one, unless numbers were reserved by more than one
      */
@@ -78,14 +72,12 @@ public class InvoiceSequence extends BusinessEntity {
     }
 
     public InvoiceSequence(Integer sequenceSize, Long currentInvoiceNb) {
-        super();
-        this.sequenceSize = sequenceSize;
-        this.currentInvoiceNb = currentInvoiceNb;
+        super(sequenceSize, currentInvoiceNb);
     }
 
     public List<InvoiceType> getInvoiceTypes() {
         if (invoiceTypes == null) {
-            invoiceTypes = new ArrayList<InvoiceType>();
+            invoiceTypes = new ArrayList<>();
         }
         return invoiceTypes;
     }
@@ -102,22 +94,6 @@ public class InvoiceSequence extends BusinessEntity {
         this.invoiceTypeSellerSequences = invoiceTypeSellerSequences;
     }
 
-    public Integer getSequenceSize() {
-        return sequenceSize;
-    }
-
-    public void setSequenceSize(Integer sequenceSize) {
-        this.sequenceSize = sequenceSize;
-    }
-
-    public Long getCurrentInvoiceNb() {
-        return currentInvoiceNb;
-    }
-
-    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-        this.currentInvoiceNb = currentInvoiceNb;
-    }
-
     public Long getPreviousInvoiceNb() {
         return previousInvoiceNb;
     }
@@ -125,5 +101,4 @@ public class InvoiceSequence extends BusinessEntity {
     public void setPreviousInvoiceNb(Long previousInvoiceNb) {
         this.previousInvoiceNb = previousInvoiceNb;
     }
-
 }

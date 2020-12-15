@@ -59,7 +59,7 @@ public class InvoiceSequenceDto extends BusinessEntityDto {
     public InvoiceSequenceDto(InvoiceSequence invoiceSequence) {
         super(invoiceSequence);
         this.sequenceSize = invoiceSequence.getSequenceSize();
-        this.currentInvoiceNb = invoiceSequence.getCurrentInvoiceNb();
+        this.currentInvoiceNb = invoiceSequence.getCurrentNumber();
     }
 
     public Integer getSequenceSize() {

@@ -197,7 +197,8 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
 
         if (dto.getCustomInvoiceXmlScriptInstanceCode() != null) {
             if (!StringUtils.isBlank(dto.getCustomInvoiceXmlScriptInstanceCode())) {
-                ScriptInstance customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(dto.getCustomInvoiceXmlScriptInstanceCode());
+                ScriptInstance customInvoiceXmlScriptInstance =
+                        scriptInstanceService.findByCode(dto.getCustomInvoiceXmlScriptInstanceCode());
                 if (customInvoiceXmlScriptInstance == null) {
                     throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getCustomInvoiceXmlScriptInstanceCode());
                 }
@@ -207,7 +208,7 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             }
         }
 
-        List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();
+        List<InvoiceType> invoiceTypesToApplies = new ArrayList<>();
         if (dto.getAppliesTo() != null) {
             for (String invoiceTypeCode : dto.getAppliesTo()) {
                 InvoiceType tmpInvoiceType = null;
@@ -240,13 +241,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                 InvoiceSequence invoiceSequence = entity.getInvoiceSequence();
                 if (invoiceSequence != null) {
                     InvoiceSequence invoiceSequenceFromDto = dto.getSequenceDto().fromDto();
-                    if (dto.getSequenceDto() != null && invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
-                        if (invoiceSequenceFromDto.getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequence.getCode()).longValue()) {
+                    if (dto.getSequenceDto() != null && invoiceSequenceFromDto.getCurrentNumber() != null) {
+                        if (invoiceSequenceFromDto.getCurrentNumber().longValue()
+                                < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequence.getCode()).longValue()) {
                             throw new MeveoApiException("Not able to update, check the current number");
                         }
                     }
-                    if (invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
-                        invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
+                    if (invoiceSequenceFromDto.getCurrentNumber() != null) {
+                        invoiceSequence.setCurrentNumber(invoiceSequenceFromDto.getCurrentNumber());
                     }
                     if (invoiceSequenceFromDto.getSequenceSize() != null) {
                         invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
@@ -311,7 +313,8 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                     InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
                     invoiceSequenceInvoiceTypeSeller.setCode(entity.getCode() + "_" + seller.getCode());
                     invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
-                    entity.getSellerSequence().add(new InvoiceTypeSellerSequence(entity, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                    entity.getSellerSequence().add(new InvoiceTypeSellerSequence(entity, seller,
+                            invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
                 }
             }
         }

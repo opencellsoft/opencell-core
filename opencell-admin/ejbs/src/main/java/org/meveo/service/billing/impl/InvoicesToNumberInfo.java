@@ -103,8 +103,8 @@ public class InvoicesToNumberInfo {
      */
     public synchronized String nextInvoiceNumber() throws BusinessException {
         lastInvoiceNumber = Objects.requireNonNullElse(lastInvoiceNumber, 0).longValue() + 1;
-        if (lastInvoiceNumber > numberingSequence.getCurrentInvoiceNb()) {
-            throw new BusinessException("Can not assign an invoice number beyond the number " + numberingSequence.getCurrentInvoiceNb() + " that was reseved");
+        if (lastInvoiceNumber > numberingSequence.getCurrentNumber()) {
+            throw new BusinessException("Can not assign an invoice number beyond the number " + numberingSequence.getCurrentNumber() + " that was reseved");
         }
         return StringUtils.getLongAsNChar(lastInvoiceNumber, numberingSequence.getSequenceSize());
     }
