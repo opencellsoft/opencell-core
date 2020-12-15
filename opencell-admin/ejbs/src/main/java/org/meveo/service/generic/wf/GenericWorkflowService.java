@@ -128,51 +128,55 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      * @return
      * @throws BusinessException
      */
-    public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
-        log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
-        try {
+	public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+		log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
+		try {
 
-            WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
-            String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
-            log.trace("Actual status: {}", currentStatus);
+			WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+			String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
+			log.trace("Actual status: {}", currentStatus);
+			
+			log.trace(" genericWorkflow.getTransitions(): {}",  genericWorkflow.getTransitions());
 
-            int endIndex = genericWorkflow.getTransitions().size();
-            if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
-                int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
-                List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
-                List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
+			List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream()
+					.filter(transition -> (transition.getFromStatus() == null || currentStatus.equals(transition.getFromStatus()))).collect(Collectors.toList());
+			
+			log.trace("listByFromStatus: {}",  listByFromStatus);
+			
 
-                for (GWFTransition gWFTransition : listByFromStatus) {
+			List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
+			log.trace("executedTransition: {}",  executedTransition);
 
-                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
-                        log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
-                        WorkflowInstanceHistory wfHistory;
-                        if (genericWorkflow.isEnableHistory()) {
-                            wfHistory = processTransition(workflowInstance, gWFTransition);
-                            workflowInstanceHistoryService.create(wfHistory);
-                        }
+			for (GWFTransition gWFTransition : listByFromStatus) {
 
-                        if (gWFTransition.getActionScript() != null) {
-                            executeActionScript(iwfEntity, workflowInstance, genericWorkflow, gWFTransition);
-                        }
+				if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
+					log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
+					WorkflowInstanceHistory wfHistory;
+					if (genericWorkflow.isEnableHistory()) {
+						wfHistory = processTransition(workflowInstance, gWFTransition);
+						workflowInstanceHistoryService.create(wfHistory);
+					}
 
-                        WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
-                        workflowInstance.setCurrentStatus(toStatus);
+					if (gWFTransition.getActionScript() != null) {
+						executeActionScript(iwfEntity, workflowInstance, genericWorkflow, gWFTransition);
+					}
 
-                        log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
-                        workflowInstance = workflowInstanceService.update(workflowInstance);
-                        executedTransition.add(gWFTransition);
-                    }
-                }
-            }
+					WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
+					workflowInstance.setCurrentStatus(toStatus);
 
-        } catch (Exception e) {
-            log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
-            throw new BusinessException(e);
-        }
+					log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
+					workflowInstance = workflowInstanceService.update(workflowInstance);
+					executedTransition.add(gWFTransition);
+				}
+			}
 
-        return workflowInstance;
-    }
+		} catch (Exception e) {
+			log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
+			throw new BusinessException(e);
+		}
+
+		return workflowInstance;
+	}
 
     private WorkflowInstanceHistory processTransition(WorkflowInstance workflowInstance, GWFTransition gWFTransition) {
         WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();

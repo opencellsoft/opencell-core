@@ -128,11 +128,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
 
         if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {
-            int priority = 1;
-            for (GWFTransitionDto wfTransitionDto : genericWorkflowDto.getTransitions()) {
-                wfTransitionDto.setPriority(priority);
+           
+            for (GWFTransitionDto wfTransitionDto : genericWorkflowDto.getTransitions()) {              
                 gwfTransitionApi.create(genericWorkflow, wfTransitionDto);
-                priority++;
             }
         }
 
@@ -208,13 +206,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
         genericWorkflow.getTransitions().removeAll(gwfTransitionsToRemove);
 
-        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {
-            int priority = 1;
-            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {
-                gwfTransitionDto.setPriority(priority);
-                gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);
-                priority++;
-
+        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {           
+            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {                
+                gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);               
             }
         }
 
