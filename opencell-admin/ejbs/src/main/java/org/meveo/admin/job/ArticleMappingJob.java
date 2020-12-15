@@ -1,5 +1,8 @@
 package org.meveo.admin.job;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -7,11 +10,22 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
+@Stateless
 public class ArticleMappingJob extends Job {
-    @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+   
+	
+	
+	  /**
+     * Job bean
+     */
+    @Inject
+    private ArticleMappingBean articleMappingBean;
 
-    }
+	
+	   @Override
+	    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+		   articleMappingBean.execute(result,  jobInstance);
+	    }
 
     /**
      * Get job category
