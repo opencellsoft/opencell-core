@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 public class ArticleMappingJob extends Job {
@@ -12,8 +13,12 @@ public class ArticleMappingJob extends Job {
 
     }
 
+    /**
+     * Get job category
+     * @return {@link MeveoJobCategoryEnum#UTILS}
+     */
     @Override
     public JobCategoryEnum getJobCategory() {
-        return null;
+        return MeveoJobCategoryEnum.UTILS;
     }
 }
