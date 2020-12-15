@@ -2,6 +2,7 @@ package org.meveo.service.cpq;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,6 @@ import javax.persistence.Query;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -214,5 +214,21 @@ public class ProductVersionService extends
 	    	}
 
 	    	return productVersions;
-	    }
+	    } 
+	  
+	  @SuppressWarnings("unchecked")
+	    public List<ProductVersion> getVersionsByStatusAndProduct(VersionStatusEnum status, String productCode) { 
+	    	List<ProductVersion> productVersions=new ArrayList<ProductVersion>();
+	    	try {
+	    		productVersions = (List<ProductVersion>)getEntityManager().createNamedQuery("ProductVersion.getProductVerionsByStatusAndProduct").setParameter("status", status).setParameter("productCode", productCode).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("getProductsByTags error ", e.getMessage());
+	    	}
+
+	    	return productVersions;
+	    } 
+	  
+	  
+	  
 }

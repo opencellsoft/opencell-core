@@ -4251,6 +4251,8 @@ END $$;]]>
 	            </column>
 	        </createTable>
 	        
+	           
+	        
 	        
 		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
@@ -4273,10 +4275,10 @@ END $$;]]>
 		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 		        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_serviceTemplate_id" deferrable="false" initiallyDeferred="false"
-		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
-		       
-	        
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" /> 
+		            
 	    </changeSet>
+	   
 	    <changeSet id="540-75-20201203" author="TarikFA">
 	    
         	<createSequence sequenceName="cpq_quote_seq" />
@@ -4304,6 +4306,9 @@ END $$;]]>
 	            <column name="billing_account_id" type="bigint" />
 	            <column name="contract_id" type="bigint" />
 	            <column name="status_version" type="int4" />
+	            <column name="status" type="varchar(20)">
+	                <constraints nullable="false" />
+	            </column>
 	            <column name="status_date" type="datetime" />
 	            <column name="send_date" type="datetime" />
 	            <column name="prestation_date_begin" type="datetime" />
@@ -4385,7 +4390,43 @@ END $$;]]>
 	    	<addUniqueConstraint columnNames="cpq_attribute_id,cpq_quote_product_id" tableName="cpq_quote_attribute" constraintName="uniquekey_attribute_quote_product_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
 	    	<addUniqueConstraint columnNames="offer_template_id,quote_version_id" tableName="quote_offer" constraintName="uniquekey_offer_template_quote_version_id_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
 	    	<addUniqueConstraint columnNames="product_version_id,offer_quote_id" tableName="cpq_quote_product" constraintName="uniquekey_product_version_offer_quote_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
-	 </changeSet> 
+	 </changeSet>
+
+	<changeSet id="540-83-20201211" author="Mbarek-Ay">
+		<createTable
+			tableName="cpq_product_version_grouped_attributes">
+			<column name="product_version_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="grouped_attributes_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey
+			columnNames="product_version_id,grouped_attributes_id"
+			constraintName="cpq_product_version_grouped_attributes_pkey"
+			tableName="cpq_product_version_grouped_attributes" />
+		<addForeignKeyConstraint
+			baseColumnNames="grouped_attributes_id"
+			baseTableName="cpq_product_version_grouped_attributes"
+			constraintName="cpq_product_version_grouped__attribute_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cpq_grouped_attributes" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="product_version_id"
+			baseTableName="cpq_product_version_grouped_attributes"
+			constraintName="cpq_product_version_grouped_attributes_product_version_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cpq_product_version" />
+			
+	      <addColumn tableName="cpq_product_version">
+            <column name="valid_from" type="datetime"></column>
+            <column name="valid_to" type="datetime"></column>
+        </addColumn>
+	</changeSet>
     <!-- end MediaPost -->
     <changeSet id = "#FEAT-761-2020-10-19" author = "ZBariki">
         <createSequence sequenceName="billing_accounting_article_seq" startValue="1" />

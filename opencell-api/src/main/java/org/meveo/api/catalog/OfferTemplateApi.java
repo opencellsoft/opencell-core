@@ -46,6 +46,7 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
+import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
@@ -81,8 +82,11 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.tags.TagType;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -97,7 +101,9 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
+import org.meveo.service.cpq.TagTypeService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -155,6 +161,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private OfferComponentService offerComponentService;
 
+    @Inject
+    private TagTypeService tagTypeService;
+    
+    @Inject
+    private ProductVersionService productVersionService;
+    
+    
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -615,7 +628,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadProductAttributes, boolean loadTags,List<String> requestedTagTypes) {
+            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadProductAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
@@ -650,21 +663,46 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
         if(loadOfferProducts) {
-        	  List<OfferComponent> offerComponents = offerTemplate.getOfferComponents();
-              if (offerComponents != null && !offerComponents.isEmpty()) {
-                  List<OfferProductsDto> offerProducts = new ArrayList<>();
-                  OfferProductsDto offerProductsDto = null;
-                  Product product = null;
-                  for (OfferComponent offerComponent : offerComponents) {
-                      product = offerComponent.getProduct();
-                      offerProductsDto = new OfferProductsDto();
-                      if (product != null) {
-                          offerProductsDto.setProduct(new ProductDto(product));
-                      }
-                      offerProducts.add(offerProductsDto);
-                  }
-                  dto.setOfferProducts(offerProducts);
-              }
+        	List<OfferComponent> offerComponents = offerTemplate.getOfferComponents();
+        	if (offerComponents != null && !offerComponents.isEmpty()) {
+
+        		List<ProductVersion> productVersionList=null;
+        		List<OfferProductsDto> offerProducts = new ArrayList<>();
+        		OfferProductsDto offerProductsDto = null;
+        		ProductVersionDto productVersionDto=null;
+        		Product product = null; 
+
+        		for (OfferComponent offerComponent : offerComponents) {
+        			product = offerComponent.getProduct();
+        			offerProductsDto = new OfferProductsDto();
+        			if (product != null) {
+        				//check if product has a publish version with validity date
+        				// if validity date is null get all product version else get product version has new date in validity date 
+
+        				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
+        				if(productVersionList!=null && !productVersionList.isEmpty()) {  
+        					offerProductsDto.setProduct(new ProductDto(product));
+        					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
+        					for(ProductVersion productVersion : productVersionList) {  
+        						if(productVersion.getValidity()!=null &&  (productVersion.getValidity().isCorrespondsToPeriod(new Date()))) {
+        							setTags( loadTags,requestedTagTypes, productVersion) ; 
+        							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
+        							offerProductsDto.getProductVersions().add(productVersionDto);
+        							break;
+        						}else {
+        							setTags( loadTags,requestedTagTypes, productVersion) ;
+        							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
+        							offerProductsDto.getProductVersions().add(productVersionDto);
+        						}
+        					} 
+        				}
+        				offerProducts.add(offerProductsDto);
+        			} 
+
+        		}
+        		dto.setOfferProducts(offerProducts);
+
+        	}
         }
 
         if(loadAllowedDiscountPlan) {
@@ -678,15 +716,29 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
         
-        if(loadTags) {
-            /*********TODO **********/
-        	//if requestedTagTypes is null get all tags;
-        	// if requestedTagTypes is not empty get only tags corresponding to requested tag types
-        }
+        
+    
 
         return dto;
     }
-
+		private void setTags(boolean loadTags,List<String> requestedTagType,ProductVersion productVersion) {
+			if(loadTags && !requestedTagType.isEmpty()) {
+			List<Tag> requestedTags=new ArrayList<Tag>();
+			List<Tag> tagList=new ArrayList<Tag>();;
+			for(String tagTypeCode:requestedTagType) {
+				TagType tagType=tagTypeService.findByCode(tagTypeCode);
+				if (tagType == null) {
+		            throw new EntityDoesNotExistsException(TagType.class, tagTypeCode);
+		        }
+				requestedTags.addAll(tagType.getTags());
+			} 
+			tagList=productVersion.getTags().stream()
+					.filter(e -> requestedTags.contains(e))
+					.collect(Collectors.toList());
+			
+			productVersion.setTags(new HashSet<Tag>(tagList)); 
+			}
+		}
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
      * 

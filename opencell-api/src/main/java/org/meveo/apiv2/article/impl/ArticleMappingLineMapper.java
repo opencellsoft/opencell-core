@@ -1,8 +1,10 @@
 package org.meveo.apiv2.article.impl;
 
+import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableAttributeMapping;
 import org.meveo.apiv2.models.ImmutableResource;
+import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
@@ -12,6 +14,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.Attribute;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +47,9 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         if(resource.getAttributesMapping() != null){
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
-                    .map(attributeMapping -> new AttributeMapping(attributeMapping.getAttribute(), attributeMapping.getAttributeValue()))
+                    .map(attributeMapping -> {
+                        return new AttributeMapping(new Attribute(attributeMapping.getAttribute().getId()), attributeMapping.getAttributeValue());
+                    })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
         }
@@ -69,7 +74,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     private Iterable<? extends org.meveo.apiv2.article.AttributeMapping> getAttributesMappingResources(List<AttributeMapping> attributesMapping) {
         return attributesMapping != null ?
                 attributesMapping.stream()
-                        .map(am -> ImmutableAttributeMapping.builder().attribute(am.getAttribute()).attributeValue(am.getAttributeValue()).build())
+                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).build()).attributeValue(am.getAttributeValue()).build())
                         .collect(Collectors.toList())
                 : null;
     }

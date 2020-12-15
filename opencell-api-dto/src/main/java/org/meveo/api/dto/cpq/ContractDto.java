@@ -59,6 +59,7 @@ public class ContractDto extends BusinessEntityDto {
 		this.statusDate = c.getStatusDate();
 		if(c.getCustomer() != null)
 			this.customerCode = c.getCustomer().getCode();
+		this.description = c.getDescription();
 	}
 	
 	/**

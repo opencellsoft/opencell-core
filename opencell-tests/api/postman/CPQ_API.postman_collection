@@ -6,17 +6,17 @@
 	},
 	"item": [
 		{
-			"name": "Product",
+			"name": "Tag",
 			"item": [
 				{
-					"name": "Create Or Update Product Line",
+					"name": "Create Tag Type",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "d2f5a900-4a0c-4c57-a3a6-68be8afcbb25",
+								"id": "c01d90ac-88d0-48e2-9818-948e89699f04",
 								"exec": [
-									"pm.collectionVariables.set(\"productLineCode\",JSON.parse(pm.request.body).codeProductLine);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -27,7 +27,278 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"codeProductLine\": \"TEST_PR_LINE\",\r\n  \"label\": \"Product line label\",\r\n  \"codeSeller\": \"SELLER_FR\",\r\n  \"longDescription\": \"This is a test description for product line\"\r\n}",
+							"raw": "{\r\n  \"code\": \"TST_TAG_TYPE\",\r\n  \"description\": \"Tag type test description\",\r\n  \"sellerCode\": \"SELLER_FR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags/tagType",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags",
+								"tagType"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Tag Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags/tagType?codeTagType={{codeTagType}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags",
+								"tagType"
+							],
+							"query": [
+								{
+									"key": "codeTagType",
+									"value": "{{codeTagType}}"
+								}
+							]
+						},
+						"description": "Retrieving a tag type with code tag type parameter"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag Type",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TST_TAG_TYPE\",\r\n  \"description\": \"This is the updated Tag type description\",\r\n  \"sellerCode\": \"SELLER_US\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags/tagType",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags",
+								"tagType"
+							]
+						},
+						"description": "Updating an existing Tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "79c97844-c2d5-4514-ab58-c4db9f627ce7",
+								"exec": [
+									"pm.collectionVariables.set(\"codeTag\",JSON.parse(pm.request.body).code);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST_TAG\",\r\n  \"description\": \"This is Tag test description\",\r\n  \"name\":\"TAG_NAME\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"tagTypeCode\": \"TST_TAG_TYPE\",\r\n  \"billingAccountCode\": \"TEST_BA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags"
+							]
+						},
+						"description": "Creating a new tag"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d3748f7-4972-494d-a73b-476dfeaef886",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags?codeTag={{codeTag}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "codeTag",
+									"value": "{{codeTag}}"
+								}
+							]
+						},
+						"description": "Find a tag type by codeTag parameter"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TST_TAG\",\r\n  \"description\": \"This is an updated Tag description\",\r\n  \"name\":\"NEW_TAG_NAME\",\r\n  \"sellerCode\": \"SELLER_US\",\r\n  \"tagTypeCode\": \"TST_TAG_TYPE\",\r\n  \"billingAccountCode\": \"TEST_BA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags"
+							]
+						},
+						"description": "Updating an existing Tag"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags/{{codeTag}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags",
+								"{{codeTag}}"
+							]
+						},
+						"description": "Deleting an existing Tag with its code"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/tags/tagType/{{codeTagType}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"tags",
+								"tagType",
+								"{{codeTagType}}"
+							]
+						},
+						"description": "Deleting an existing Tag with its code"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "edc4efe8-30c8-4bc0-b686-bb9519c2ceb5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "68e83402-1669-4f3d-a87e-9d32cadc3c8d",
+						"type": "text/javascript",
+						"exec": [
+							"pm.collectionVariables.set(\"codeTagType\",JSON.parse(pm.request.body).code);"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create Or Update Product Line",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d2f5a900-4a0c-4c57-a3a6-68be8afcbb25",
+								"exec": [
+									"pm.collectionVariables.set(\"productCode\",JSON.parse(pm.request.body).code);\r",
+									"pm.collectionVariables.set(\"productLineCode\",JSON.parse(pm.request.body).code);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TEST_PR_LINE\",\r\n    \"description\": \"This is test description for product line\",\r\n    \"sellerCode\": \"SELLER_FR\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -51,6 +322,18 @@
 				},
 				{
 					"name": "Read  The Product Line",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5545c49b-a15a-4c09-b950-c6f18c7849f9",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -93,7 +376,7 @@
 							"script": {
 								"id": "c77896c7-de25-4bca-a723-1c0e81ad153f",
 								"exec": [
-									"pm.collectionVariables.set(\"productCode\",JSON.parse(pm.request.body).code);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -179,6 +462,27 @@
 					"response": []
 				},
 				{
+					"name": "Duplicate Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"duplicate",
+								"{{productCode}}"
+							]
+						},
+						"description": "duplicate a product version"
+					},
+					"response": []
+				},
+				{
 					"name": "Read Products with Given Criteria",
 					"request": {
 						"method": "POST",
@@ -248,52 +552,12 @@
 					"response": []
 				},
 				{
-					"name": "Update Product Version Status",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "eb6a3608-977b-4beb-a474-15017283e458",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
+					"name": "Duplicate Product Hierarchy",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productCode}}/{{productVersion}}?status=CLOSED",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"product",
-								"productVersion",
-								"{{productCode}}",
-								"{{productVersion}}"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "CLOSED"
-								}
-							]
-						},
-						"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
-					},
-					"response": []
-				},
-				{
-					"name": "Duplicate Product",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productCode}}",
+							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productCode}}?duplicateHierarchy=true&preserveCode=true",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -302,6 +566,16 @@
 								"product",
 								"duplicate",
 								"{{productCode}}"
+							],
+							"query": [
+								{
+									"key": "duplicateHierarchy",
+									"value": "true"
+								},
+								{
+									"key": "preserveCode",
+									"value": "true"
+								}
 							]
 						},
 						"description": "duplicate a product version"
@@ -309,16 +583,84 @@
 					"response": []
 				},
 				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/{{productCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"{{productCode}}"
+							]
+						},
+						"description": "Remove a product by its code"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product Line",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productLine/{{productLineCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productLine",
+								"{{productLineCode}}"
+							]
+						},
+						"description": "Remove a product by its code"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "10650b3c-2d5d-4707-95f1-e02232c7cfa9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3d017a43-36d6-41f6-ad52-bb8f225e7664",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Product Version",
+			"item": [
+				{
 					"name": "Create Or Update Product Version",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "38d9ca45-7c74-4782-9136-9c2bd51890f2",
+								"id": "753ab1d7-0de3-4512-8f6f-ae02fdfedf79",
 								"exec": [
 									"pm.collectionVariables.set(\"productCode\",JSON.parse(pm.request.body).productCode);\r",
-									"pm.collectionVariables.set(\"productVersion\",JSON.parse(pm.request.body).currentVersion);\r",
-									""
+									"pm.collectionVariables.set(\"productVersion\",JSON.parse(pm.request.body).currentVersion);"
 								],
 								"type": "text/javascript"
 							}
@@ -329,7 +671,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"productCode\": \"TEST_PR\",\r\n  \"shortDescription\": \"Product version test\",\r\n  \"currentVersion\": 1,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n  \"longDescription\": \"This is a long test description for product version\",\r\n  \"startDate\": \"2020-11-24\",\r\n  \"endDate\": \"2020-11-25\"\r\n}",
+							"raw": "{\r\n  \"productCode\": \"TEST_PR\",\r\n  \"shortDescription\": \"Product version test description\",\r\n  \"currentVersion\": 3,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n  \"longDescription\": \"This is a long test description for product version\",\r\n  \"startDate\": \"2020-11-24\",\r\n  \"endDate\": \"2020-11-25\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -374,13 +716,53 @@
 					"response": []
 				},
 				{
+					"name": "Update Product Version Status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dee518af-ad13-4d81-812b-3c4ec4b63257",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productCode}}/{{productVersion}}?status=CLOSED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productVersion",
+								"{{productCode}}",
+								"{{productVersion}}"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "CLOSED"
+								}
+							]
+						},
+						"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+					},
+					"response": []
+				},
+				{
 					"name": "Read Product Versions with Given Criteria",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"filters\": {}\r\n}",
+							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"DRAFT\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -468,290 +850,13 @@
 						"description": "remove a product version with product code and current version"
 					},
 					"response": []
-				},
-				{
-					"name": "Delete Product",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/catalog/product/{{productCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"product",
-								"{{productCode}}"
-							]
-						},
-						"description": "Remove a product by its code"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Product Line",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productLine/{{productLineCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"product",
-								"productLine",
-								"{{productLineCode}}"
-							]
-						},
-						"description": "Remove a product by its code"
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Tag",
-			"item": [
-				{
-					"name": "Create Tag Type",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "c01d90ac-88d0-48e2-9818-948e89699f04",
-								"exec": [
-									"pm.collectionVariables.set(\"codeTagType\",JSON.parse(pm.request.body).code);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TST_TAG_TYPE\",\r\n  \"description\": \"Tag type description\",\r\n  \"sellerCode\": \"SELLER_FR\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags/tagType",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags",
-								"tagType"
-							]
-						},
-						"description": "Creating a new tag type"
-					},
-					"response": []
-				},
-				{
-					"name": "Read Tag Type",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags/tagType?codeTagType={{codeTagType}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags",
-								"tagType"
-							],
-							"query": [
-								{
-									"key": "codeTagType",
-									"value": "{{codeTagType}}"
-								}
-							]
-						},
-						"description": "Retrieving a tag type with code tag type parameter"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Tag Type",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TST_TAG_TYPE\",\r\n  \"description\": \"Tag type updated description\",\r\n  \"sellerCode\": \"SELLER_FR\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags/tagType",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags",
-								"tagType"
-							]
-						},
-						"description": "Updating an existing Tag type"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Tag",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "79c97844-c2d5-4514-ab58-c4db9f627ce7",
-								"exec": [
-									"pm.collectionVariables.set(\"codeTag\",JSON.parse(pm.request.body).code);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TST_TAG\",\r\n  \"description\": \"This is a Tag description\",\r\n  \"name\":\"TAG_NAME\",\r\n  \"sellerCode\": \"{{sellerCode}}\",\r\n  \"tagTypeCode\": \"{{codeTagType}}\",\r\n  \"billingAccountCode\": \"{{billingAccount}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags"
-							]
-						},
-						"description": "Creating a new tag"
-					},
-					"response": []
-				},
-				{
-					"name": "Read Tag",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags?codeTag={{codeTag}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags"
-							],
-							"query": [
-								{
-									"key": "codeTag",
-									"value": "{{codeTag}}"
-								}
-							]
-						},
-						"description": "Find a tag type by codeTag parameter"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Tag",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TST_TAG\",\r\n  \"description\": \"This is an updated Tag description\",\r\n  \"name\":\"TAG_NAME\",\r\n  \"sellerCode\": \"{{sellerCode}}\",\r\n  \"tagTypeCode\": \"{{codeTagType}}\",\r\n  \"billingAccountCode\": \"{{billingAccount}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags"
-							]
-						},
-						"description": "Updating an existing Tag"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Tag",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags/{{codeTag}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags",
-								"{{codeTag}}"
-							]
-						},
-						"description": "Deleting an existing Tag with its code"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Tag Type",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/cpq/tags/tagType/{{codeTagType}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"cpq",
-								"tags",
-								"tagType",
-								"{{codeTagType}}"
-							]
-						},
-						"description": "Deleting an existing Tag with its code"
-					},
-					"response": []
 				}
 			],
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "edc4efe8-30c8-4bc0-b686-bb9519c2ceb5",
+						"id": "f04b6c28-df84-43bc-97cd-fd56ad9bcf99",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -761,12 +866,1011 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "68e83402-1669-4f3d-a87e-9d32cadc3c8d",
+						"id": "f9a11ccf-3dc2-4339-aa07-94f3a3555b17",
 						"type": "text/javascript",
 						"exec": [
 							""
 						]
 					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Offer Template",
+			"item": [
+				{
+					"name": "Create New Offer Template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "BusinessOfferModel, OfferTemplateCategory, ScriptInstance, Seller, Channel, OneShotChargeTemplate, CustomerCategory\r\n{\r\n  \"code\": \"string\",\r\n  \"description\": \"string\",\r\n  \"validFrom\": \"2020-12-07T14:37:06.819Z\",\r\n  \"validTo\": \"2020-12-07T14:37:06.820Z\",\r\n  \"name\": \"string\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​"
+							]
+						},
+						"description": "Create offer template"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Offer Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​"
+							]
+						},
+						"description": "Read Offer Templates by Code And valide date"
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Offer Template",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​"
+							]
+						},
+						"description": "Create offer template"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Offer Templates with Given Criteria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Offer Templates with Criteria And Validity Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read All Offer Templates by context",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"list"
+							]
+						},
+						"description": "List offers matching the customer and seller contexts"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Or Update Offer Template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​/createOrUpdate",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Disable An Offer Template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​/{{offerTemplateCode}}/disable",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"{{offerTemplateCode}}",
+								"disable"
+							]
+						},
+						"description": "Disable a Offer template with a given code"
+					},
+					"response": []
+				},
+				{
+					"name": "Enable An Offer Template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​/{{offerTemplateCode}}/enable",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"{{offerTemplateCode}}",
+								"enable"
+							]
+						},
+						"description": "Disable a Offer template with a given code"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete The Offer Template",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​/{{offerTemplateCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"{{offerTemplateCode}}"
+							]
+						},
+						"description": "Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted."
+					},
+					"response": []
+				},
+				{
+					"name": "Application version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog​/offerTemplate​/version",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​",
+								"version"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "83d0f99d-2501-45a5-826b-2bdd2f75f4be",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec12e451-52ad-4658-ac97-3e4401e17831",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "Create New Contract",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5e296955-77f1-4540-bbb5-41db44e810bf",
+								"exec": [
+									"pm.collectionVariables.set(\"contractCode\",JSON.parse(pm.request.body).code);\r",
+									"pm.collectionVariables.set(\"customerCode\",JSON.parse(pm.request.body).customerCode);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"billingAccountCode\": \"TEST_BA\",\r\n  \"customerAccountCode\":\"DEMO.CLASSIC\",\r\n  \"customerCode\":\"DEMO.CLASSIC\",\r\n  \"status\": \"ACTIVE\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract"
+							]
+						},
+						"description": "Creating a new contract"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Contract by Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/{{contractCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"{{contractCode}}"
+							]
+						},
+						"description": "Find a Contract type by contractCode"
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Contract",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the updated contract description\",\r\n  \"sellerCode\": \"SELLER_US\",\r\n  \"billingAccountCode\": \"TEST_BA\",\r\n  \"customerAccountCode\":\"DEMO.partner.CLASSIC\",\r\n  \"customerCode\":\"DEMO.partner.CLASSIC\",\r\n  \"status\": \"ACTIVE\",\r\n  \"contractDate\": \"2020-12-25\",\r\n  \"beginDate\": \"2021-01-25\",\r\n  \"endDate\": \"2021-05-25\",\r\n  \"renewal\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract"
+							]
+						},
+						"description": "Update an existing Contract"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Contract by Code and contractAccountLevel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract?contractAccountLevel={{contractAccountLevel}}&contractCode={{contractCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract"
+							],
+							"query": [
+								{
+									"key": "contractAccountLevel",
+									"value": "{{contractAccountLevel}}",
+									"description": "CUSTOMER, CUSTOMER_ACCOUNT or BILLING_ACCOUNT"
+								},
+								{
+									"key": "contractCode",
+									"value": "{{contractCode}}"
+								}
+							]
+						},
+						"description": "Find a Contract type by contractCode and contractAccountLevel parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Read All Contracts with Given filters",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"DRAFT\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"list"
+							]
+						},
+						"description": "Find a list of contract by filtrering and paging on its property"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contract line",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST_CONTRACT_LINE\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"TEST_OFF_TEMPLATE\",\r\n  \"productCode\": \"{{productCode}}\",\r\n  \"serviceTemplateCode\": \"SE_TEMPLATE_TEST\",\r\n  \"pricePlanCode\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/contractLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"contractLine"
+							]
+						},
+						"description": "Creating a new contract Line"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Contract line by Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/contractLine?contractItemCode={{itemCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"contractLine"
+							],
+							"query": [
+								{
+									"key": "contractItemCode",
+									"value": "{{itemCode}}"
+								}
+							]
+						},
+						"description": "Find a Contract item type by contractItemCode parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Contract line",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"string\",\r\n  \"description\": \"string\",\r\n  \"contractCode\": \"string\",\r\n  \"offerTemplateCode\": \"string\",\r\n  \"productCode\": \"string\",\r\n  \"pricePlanCode\": \"string\",\r\n  \"chargeTemplateCode\": \"string\",\r\n  \"serviceTemplateCode\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/contractLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"contractLine"
+							]
+						},
+						"description": "Update an existing Contract line"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete The Contract line",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/contractLine/{{contractCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"contractLine",
+								"{{contractCode}}"
+							]
+						},
+						"description": "Deleting an existing Contract line"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete The Contract",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/{{contractCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"{{contractCode}}"
+							]
+						},
+						"description": "Deleting an existing Contract with its code"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a331ae6f-7b58-4f56-8f09-4d356c03e8b7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "db9a5565-ab32-428c-95b6-d38f76f79818",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Quote",
+			"item": [
+				{
+					"name": "Create Quote Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2c3799a9-a826-4657-83b0-a955448069e6",
+								"exec": [
+									"pm.collectionVariables.set(\"quoteItemCode\",JSON.parse(pm.request.body).code);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quoteCode\": \"TEST_QUOTE_ITEM\",\r\n  \"quoteVersion\": 1,\r\n  \"quoteLotCode\": \"TEST_QUOTE_LOT\",\r\n  \"billableAccountCode\": \"TEST_BA\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"products\": [\r\n    {\r\n      \"quoteCode\": \"TEST_QUOTE_ITEM\",\r\n      \"productCode\": \"{{productCode}}\",\r\n      \"quoteVersion\": 0,\r\n      \"productVersion\": 0,\r\n      \"quantity\": 0,\r\n      \"quoteAttributes\": [\r\n        {\r\n          \"quoteAttributeCode\": \"\",\r\n          \"value\": \"\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"accountingArticlePrices\": [\r\n    {\r\n      \"id\": 0,\r\n      \"code\": \"string\",\r\n      \"description\": \"string\",\r\n      \"updatedCode\": \"string\",\r\n      \"disabled\": true,\r\n      \"accountingArticleCode\": \"string\",\r\n      \"accountingArticleLabel\": \"string\",\r\n      \"accountingArticlePrices\": [\r\n        {\r\n          \"id\": 0,\r\n          \"code\": \"string\",\r\n          \"description\": \"string\",\r\n          \"updatedCode\": \"string\",\r\n          \"disabled\": true,\r\n          \"priceType\": \"RECURRING\",\r\n          \"amountWithtax\": 0,\r\n          \"unitPriceWithoutTax\": 0,\r\n          \"amountWithoutTax\": 0,\r\n          \"amountWithoutTaxWithDiscount\": 0,\r\n          \"taxAmount\": 0,\r\n          \"taxRate\": 0,\r\n          \"priceOverCharged\": true,\r\n          \"currencyCode\": \"string\",\r\n          \"recurrenceDuration\": 0,\r\n          \"recurrencePeriodicity\": \"string\"\r\n        }\r\n      ],\r\n      \"discountPlanItemCode\": \"string\",\r\n      \"discountPlanItemType\": \"PERCENTAGE\",\r\n      \"discountValue\": \"string\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quote Item",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quoteCode\": \"TEST_QUOTE_ITEM\",\r\n  \"quoteVersion\": 1,\r\n  \"quoteLotCode\": \"string\",\r\n  \"offerCode\": \"string\",\r\n  \"billableAccountCode\": \"string\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"products\": [\r\n    {\r\n      \"quoteCode\": \"TEST_QUOTE_ITEM\",\r\n      \"productCode\": \"{{productCode}}\",\r\n      \"quoteVersion\": 0,\r\n      \"productVersion\": 0,\r\n      \"quantity\": 0,\r\n      \"quoteAttributes\": [\r\n        {\r\n          \"quoteAttributeCode\": \"string\",\r\n          \"value\": \"string\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"accountingArticlePrices\": [\r\n    {\r\n      \"id\": 0,\r\n      \"code\": \"string\",\r\n      \"description\": \"string\",\r\n      \"updatedCode\": \"string\",\r\n      \"disabled\": true,\r\n      \"accountingArticleCode\": \"string\",\r\n      \"accountingArticleLabel\": \"string\",\r\n      \"accountingArticlePrices\": [\r\n        {\r\n          \"id\": 0,\r\n          \"code\": \"string\",\r\n          \"description\": \"string\",\r\n          \"updatedCode\": \"string\",\r\n          \"disabled\": true,\r\n          \"priceType\": \"RECURRING\",\r\n          \"amountWithtax\": 0,\r\n          \"unitPriceWithoutTax\": 0,\r\n          \"amountWithoutTax\": 0,\r\n          \"amountWithoutTaxWithDiscount\": 0,\r\n          \"taxAmount\": 0,\r\n          \"taxRate\": 0,\r\n          \"priceOverCharged\": true,\r\n          \"currencyCode\": \"string\",\r\n          \"recurrenceDuration\": 0,\r\n          \"recurrencePeriodicity\": \"string\"\r\n        }\r\n      ],\r\n      \"discountPlanItemCode\": \"string\",\r\n      \"discountPlanItemType\": \"PERCENTAGE\",\r\n      \"discountValue\": \"string\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem/{{quoteItemCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem",
+								"{{quoteItemCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Quote",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c39485ab-883d-4a38-a108-c18d3f861f7b",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "02ae10f5-9aff-417c-b035-f9a6f064e13b",
+								"exec": [
+									"pm.collectionVariables.set(\"quoteCode\",JSON.parse(pm.request.body).quoteVersion.quoteCode);\r",
+									"pm.collectionVariables.set(\"quoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"longDescription\": \"This is a long test description of a quote version \",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  },\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"TEST_BA\",\r\n  \"billableAccountCode\": \"TEST_BA\",\r\n  \"contractCode\": \"TEST_CONTRACT\",\r\n  \"sellerCode\": \"SELLER_FR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{executeQuotation}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{executeQuotation}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read The Quote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Quote Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "05192f61-5bae-4f8b-bbba-04ca43ef9d43",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"shortDescription\": \"short quote test description\",\r\n  \"quoteCode\": \"TEST_QUOTE\",\r\n  \"currentVersion\": 2,\r\n  \"status\": \"PUBLISHED\",\r\n  \"statusDate\": \"2020-12-15\",\r\n  \"longDescription\": \"This a long test description of a new quote version\",\r\n  \"startDate\": \"2020-12-15\",\r\n  \"endDate\": \"2020-12-31\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteVersion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8f6a30f6-2b1c-4f84-8a44-747dba46b955",
+								"exec": [
+									"pm.collectionVariables.set(\"quoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TEST_QUOTE\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteVersion\": {\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"quoteCode\": \"TEST_QUOTE\",\r\n        \"currentVersion\": 2,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"longDescription\": \"This is an updated long test description of a quote version \",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    },\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"InProgress\",\r\n    \"applicantAccountCode\": \"TEST_BA\",\r\n    \"billableAccountCode\": \"TEST_BA\",\r\n    \"contractCode\": \"TEST_CONTRACT\",\r\n    \"sellerCode\": \"SELLER_US\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{executeQuotation}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{executeQuotation}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Quotes with Criteria",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"filters\": {\r\n    \"quoteVersion\": \"\"\r\n  },\r\n  \"sortOrder\": \"DESCENDANT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Quote Quotation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}quote/quoteQuotation?quoteCode={{quoteCode}}&quoteVersion=1",
+							"host": [
+								"{{opencell.url}}quote"
+							],
+							"path": [
+								"quoteQuotation"
+							],
+							"query": [
+								{
+									"key": "quoteCode",
+									"value": "{{quoteCode}}"
+								},
+								{
+									"key": "quoteVersion",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete The Quote",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete The Quote Version",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}/{{quoteVersion}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}",
+								"{{quoteVersion}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Quote Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{executeQuotation}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{executeQuotation}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1194dd61-1ec2-485d-ae8e-276062ac08a9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b8ad224-9736-4029-8545-30b58c138d68",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Catalog browsing",
+			"item": [
+				{
+					"name": "Create New Offer Template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "BusinessOfferModel, OfferTemplateCategory, ScriptInstance, Seller, Channel, OneShotChargeTemplate, CustomerCategory\r\n{\r\n  \"code\": \"string\",\r\n  \"description\": \"string\",\r\n  \"validFrom\": \"2020-12-07T14:37:06.819Z\",\r\n  \"validTo\": \"2020-12-07T14:37:06.820Z\",\r\n  \"name\": \"string\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}​/catalog​/offerTemplate​",
+							"host": [
+								"{{opencell.url}}​"
+							],
+							"path": [
+								"catalog​",
+								"offerTemplate​"
+							]
+						},
+						"description": "Create offer template"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Products that match the Quote Offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list"
+							]
+						},
+						"description": "Get products with their attributes that match the quote offer context"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attributes related to Given Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list/{{productCode}}/{{productVersion}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list",
+								"{{productCode}}",
+								"{{productVersion}}"
+							]
+						},
+						"description": "Get products with their attributes that match the quote offer context"
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -811,43 +1915,78 @@
 	],
 	"variable": [
 		{
-			"id": "517dc674-be9b-4259-a557-55cc2ae504ce",
+			"id": "1b7b39b9-fc1a-44c7-9219-2a02e2996cc0",
 			"key": "entityCode",
 			"value": "TEST"
 		},
 		{
-			"id": "4174e27b-c97b-4382-82a0-b2465d38a7d7",
+			"id": "44fb0cff-f1e5-43dc-a1f4-ba9c029f4598",
 			"key": "productLineCode",
 			"value": ""
 		},
 		{
-			"id": "2740809d-6fa7-40ce-9f2e-697a9e5b7f12",
+			"id": "f45049cc-d143-4b30-90ae-c6c63acce72c",
 			"key": "productCode",
 			"value": ""
 		},
 		{
-			"id": "ee6b7ecf-65e7-475a-a18a-847b948525b4",
+			"id": "aecbf920-3f4c-4314-bb60-a68dadac4f37",
 			"key": "productVersion",
 			"value": ""
 		},
 		{
-			"id": "eb237d99-1781-4512-83b3-990c5f09de33",
+			"id": "3765449d-58a6-4ce7-84df-40c9babfdbce",
 			"key": "codeTagType",
 			"value": ""
 		},
 		{
-			"id": "bf80a85e-f0fc-45b5-b31c-d108a2c9cadb",
+			"id": "814af9ad-9741-42f6-89b6-115f4955a1fb",
 			"key": "sellerCode",
 			"value": ""
 		},
 		{
-			"id": "54a3c7f0-34f3-4f65-b5e3-9f38c2d9a99f",
+			"id": "370d3a34-1fff-4993-8f6c-3359bb3c1019",
 			"key": "billingAccount",
 			"value": ""
 		},
 		{
-			"id": "4f461238-14f8-4ef7-b5bf-f277c32bcf52",
+			"id": "5e655863-69fa-4e97-8f6e-4ec553f1a943",
 			"key": "codeTag",
+			"value": ""
+		},
+		{
+			"id": "db0cc7d7-a546-4dd0-ac14-29d6946f31fa",
+			"key": "contractCode",
+			"value": ""
+		},
+		{
+			"id": "824bd87e-1f94-49b9-b1ac-7e33051b2847",
+			"key": "contractAccountLevel",
+			"value": ""
+		},
+		{
+			"id": "ba1309cc-1881-41b2-9298-6831500e670c",
+			"key": "customerCode",
+			"value": ""
+		},
+		{
+			"id": "12bc4392-7fa3-4862-b3bf-849a02d0f287",
+			"key": "quoteCode",
+			"value": ""
+		},
+		{
+			"id": "37bfc1ad-d8da-486b-8819-d0352df036ba",
+			"key": "executeQuotation",
+			"value": ""
+		},
+		{
+			"id": "e5d4ec3a-5ef5-44b3-9d6a-3a1a8bde0c50",
+			"key": "quoteVersion",
+			"value": ""
+		},
+		{
+			"id": "df58a62d-f691-4e83-9ed5-f2894707cb5b",
+			"key": "quoteItemCode",
 			"value": ""
 		}
 	],

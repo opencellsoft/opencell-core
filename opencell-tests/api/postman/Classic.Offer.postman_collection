@@ -25937,12 +25937,12 @@
 		{
 			"id": "c9476e32-9ddf-410c-8ebe-0243788043f1",
 			"key": "opencell.base",
-			"value": "https://baq.d2.opencell.work"
+			"value": "http://localhost:8080/opencell"
 		},
 		{
 			"id": "7c8127b8-bb23-4272-842b-ff206067fcfe",
 			"key": "opencell.url",
-			"value": "{{opencell.base}}/opencell/api/rest"
+			"value": "{{opencell.base}}/api/rest"
 		},
 		{
 			"id": "f6d71084-1c3d-4727-81ee-f5da6f4e3978",

@@ -289,7 +289,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name =  "offer_template_id", referencedColumnName = "id")
-	@NotNull
+	//@NotNull
 	protected OfferTemplate offerTemplate;
 	
 	
@@ -298,7 +298,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
-	@NotNull
+	//@NotNull
 	protected Product product;
 	
 	
@@ -364,7 +364,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "surcharge")
-    @NotNull
+    //@NotNull
     protected Boolean surcharge;
     
     
@@ -373,7 +373,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "price_matrix")
-    @NotNull
+    //@NotNull
     protected Boolean priceMatrix;
     
     
