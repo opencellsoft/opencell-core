@@ -20,6 +20,7 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -513,7 +514,6 @@ public class PaymentScheduleApi extends BaseApi {
         if (paymentScheduleInstance == null) {
             throw new EntityDoesNotExistsException(PaymentScheduleInstance.class, paymentScheduleInstanceDto.getId());
         }
-        paymentScheduleInstanceService.detach(paymentScheduleInstance);
         paymentScheduleInstance.setStatus(paymentScheduleInstanceDto.getStatus());
 
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getPaymentDayInMonth())) {
@@ -521,7 +521,12 @@ public class PaymentScheduleApi extends BaseApi {
         }
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getAmount())) {
             paymentScheduleInstance.setAmount(paymentScheduleInstanceDto.getAmount());
-            updatePaymentScheduleInstanceItem(paymentScheduleInstance);
+            for (PaymentScheduleInstanceItem item : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
+                if (!item.isPaid()) {
+                    item.setAmount(paymentScheduleInstance.getAmount());
+                    paymentScheduleInstanceItemService.update(item);
+                }
+            }
         }
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getCalendarCode())) {
             Calendar calendar = calendarService.findByCode(paymentScheduleInstanceDto.getCalendarCode());
@@ -541,26 +546,6 @@ public class PaymentScheduleApi extends BaseApi {
             throw e;
         }
         paymentScheduleInstanceService.update(paymentScheduleInstance);
-    }
-
-    private void updatePaymentScheduleInstanceItem(PaymentScheduleInstance paymentScheduleInstance) {
-        if (paymentScheduleInstance.getPaymentScheduleInstanceItems() == null) {
-            return;
-        }
-        paymentScheduleInstance = paymentScheduleInstanceService.refreshOrRetrieve(paymentScheduleInstance);
-        //List<PaymentScheduleInstanceItem> paymentScheduleInstanceItem = paymentScheduleInstanceItemService
-        //       .refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleInstanceItems());
-        List<PaymentScheduleInstanceItem> openPaymentScheduleInstanceItem = paymentScheduleInstance.getPaymentScheduleInstanceItems().stream().filter(item -> !item.isPaid())
-                .collect(Collectors.toList());
-        if (openPaymentScheduleInstanceItem == null || openPaymentScheduleInstanceItem.isEmpty()) {
-            log.debug("No items to process");
-            return;
-        }
-        for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : openPaymentScheduleInstanceItem) {
-            paymentScheduleInstanceItem.setAmount(paymentScheduleInstance.getAmount());
-        }
-
-        //paymentScheduleInstanceService.updatePaymentScheduleIntanceItems(paymentScheduleInstance, openPaymentScheduleInstanceItem);
     }
 
     /**
@@ -635,7 +620,7 @@ public class PaymentScheduleApi extends BaseApi {
      * Add balance to PaymentScheduleInstanceDto
      *
      * @param paymentScheduleInstance
-     * @param PaymentScheduleInstanceDto
+     * @param paymentScheduleInstanceDto
      * @return PaymentScheduleInstanceDto with balance
      */
     private PaymentScheduleInstanceDto addPaymentScheduleInstanceBalance(PaymentScheduleInstance paymentScheduleInstance, PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
@@ -684,6 +669,9 @@ public class PaymentScheduleApi extends BaseApi {
         for (PaymentScheduleInstanceItemDto dto : paymentScheduleInstanceItemDtos) {
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
             paymentScheduleInstanceItem.setAmount(dto.getAmount());
+            if (dto.getRequestPaymentDate().before(new Date())) {
+                throw new BusinessException("The Request Payment date is in past");
+            }
             paymentScheduleInstanceItem.setRequestPaymentDate(dto.getRequestPaymentDate());
             paymentScheduleInstanceItems.add(paymentScheduleInstanceItem);
         }
