@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.util.Strings;
+import org.elasticsearch.Version;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -257,8 +258,11 @@ public class CpqQuoteApi extends BaseApi {
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
-		
-		return populateToDto(quote);
+		final List<QuoteVersion> quoteVersion = quoteVersionService.findByQuoteId(quote.getId());
+		if(!quoteVersion.isEmpty())
+			return populateToDto(quote, quoteVersion.get(0));
+		else
+			return populateToDto(quote);
 	}
 	
 	public QuoteDTO updateQuote(QuoteDTO quoteDto) {
@@ -295,7 +299,7 @@ public class CpqQuoteApi extends BaseApi {
 
 		try {
 			cpqQuoteService.update(quote);
-			final QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
+			QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
 			if(quoteVersionDto != null) {
 				final QuoteVersion qv = quoteVersionService.findByQuoteAndVersion(quoteCode, quoteVersionDto.getCurrentVersion());
 				if(qv != null) {
@@ -312,6 +316,7 @@ public class CpqQuoteApi extends BaseApi {
 					if(!Strings.isEmpty(quoteVersionDto.getBillingPlanCode()))
 						qv.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
 					quoteVersionService.update(qv);
+					quoteVersionDto = new QuoteVersionDto(qv);
 				}
 			}
 		}catch(BusinessApiException e) {
@@ -361,14 +366,25 @@ public class CpqQuoteApi extends BaseApi {
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		if(quote.getStatus().equals(QuoteStatusEnum.CANCELLED) || 
+				quote.getStatus().equals(QuoteStatusEnum.REJECTED)) {
+			List<QuoteVersion> versions = quoteVersionService.findByQuoteId(quote.getId());
+			versions.forEach(qv -> {
+				quoteVersionService.remove(qv);
+			});
+			cpqQuoteService.remove(quote);
+		}else {
+			throw new MeveoApiException("Impossible to delete the Quote with status : " + quote.getStatus());
+		}
+		
+		
 		cpqQuoteService.remove(quote);
 	}
 	
 	private QuoteDTO populateToDto(CpqQuote c) {
 		final QuoteDTO dto = new QuoteDTO();
-		dto.setQuoteVersion(null); // TODO : doesnt exist on CpqQuote
 		dto.setValidity(c.getValidity());
-		dto.setStatus(null); // TODO : doesnt exist on CpqQuote
+		dto.setStatus(c.getStatus());
 		if(c.getApplicantAccount() != null)
 			dto.setApplicantAccountCode(c.getApplicantAccount().getCode());
 		if(c.getBillableAccount() != null)
@@ -382,6 +398,16 @@ public class CpqQuoteApi extends BaseApi {
 			dto.setSellerCode(c.getSeller().getCode());
 		dto.setSendDate(c.getSendDate());
 		dto.setExternalId(c.getCustomerRef()); // TODO : not sure if it is the correct field
+		dto.setDescription(c.getDescription());
+		dto.setCode(c.getCode());
+		return dto;
+	}
+	
+	private QuoteDTO populateToDto(CpqQuote c, QuoteVersion v) {
+		QuoteDTO dto = populateToDto(c);
+		if(v != null) {
+			dto.setQuoteVersion(new QuoteVersionDto(v));
+		}
 		return dto;
 	}
 	
