@@ -319,9 +319,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             }
         }
         if(entity instanceof BusinessEntity) {
-            String entityClass = entity.getClass().getSimpleName();
-            Optional.ofNullable(generateCode(entityClass))
-                    .ifPresent(code -> ((BusinessEntity) entity).setCode(code));
+            if(((BusinessEntity) entity).getCode() == null) {
+                String entityClass = entity.getClass().getSimpleName();
+                Optional.ofNullable(generateCode(entityClass))
+                        .ifPresent(code -> ((BusinessEntity) entity).setCode(code));
+            }
         }
         return entity;
     }
