@@ -4303,7 +4303,6 @@ END $$;]]>
 				<!-- Auditable End -->
             	
 	            <column name="seller_id" type="bigint" />
-	            <column name="billing_account_id" type="bigint" />
 	            <column name="contract_id" type="bigint" />
 	            <column name="status_version" type="int4" />
 	            <column name="status" type="varchar(20)">

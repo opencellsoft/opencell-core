@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.quote.QuoteVersion;
 /**
  * 
  * @author Mbarek-Ay
@@ -32,8 +33,6 @@ public class QuoteVersionDto extends BaseEntityDto {
     
     /** The statusDate. */
     private Date statusDate;
-    /** The longDescription */
-    private String longDescription ;
     /** The startDate */
     private Date startDate;
     /** The endDate */
@@ -46,6 +45,15 @@ public class QuoteVersionDto extends BaseEntityDto {
      * Instantiates a new product version dto.
      */
     public QuoteVersionDto() {
+    }
+    
+    public QuoteVersionDto(QuoteVersion q) {
+    	this.shortDescription = q.getShortDescription();
+    	this.quoteCode = q.getQuote().getCode();
+    	this.currentVersion = q.getQuoteVersion();
+    	this.status = q.getStatus();
+    	this.endDate = q.getEndDate();
+    	this.billingPlanCode = q.getBillingPlanCode();
     }
 
     /**
@@ -96,18 +104,6 @@ public class QuoteVersionDto extends BaseEntityDto {
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
-    }
-    /**
-     * @return the longDescription
-     */
-    public String getLongDescription() {
-        return longDescription;
-    }
-    /**
-     * @param longDescription the longDescription to set
-     */
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
     }
     /**
      * @return the startDate
