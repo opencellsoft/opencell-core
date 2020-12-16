@@ -41,6 +41,7 @@ import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
@@ -211,6 +212,17 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
             return errorResponse(e, result.getActionStatus());
         }
 
+	}
+
+	@Override
+	public Response updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {
+		   ActionStatus result = new ActionStatus();
+	        try {
+	            offerTemplateApi.updateStatus(offerTemplateCode, status);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
 	}
     
     

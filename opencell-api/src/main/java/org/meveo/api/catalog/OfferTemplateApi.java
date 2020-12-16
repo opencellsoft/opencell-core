@@ -866,4 +866,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
     	return new OfferTemplateDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
     }
+    
+    public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {
+    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode);
+    	if(offerTemplate == null)
+    		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+    	offerTemplate.setLifeCycleStatus(status);
+    	offerTemplateService.update(offerTemplate);
+    	
+    }
 }
