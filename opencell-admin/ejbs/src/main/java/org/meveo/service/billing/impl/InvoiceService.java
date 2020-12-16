@@ -1055,11 +1055,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
         if (billingCycle.getCollectionDateDelayEl() == null) {
-            invoice.setIntialCollectionDate(invoice.getDueDate());
+            invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
         if (billingRun != null && billingRun.getCollectionDate() != null) {
-            invoice.setIntialCollectionDate(billingRun.getCollectionDate());
+            invoice.setInitialCollectionDate(billingRun.getCollectionDate());
             return;
         }
         BillingAccount billingAccount = invoice.getBillingAccount();
@@ -1074,7 +1074,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         Date initailCollectionDate = DateUtils.addDaysToDate(invoice.getDueDate(), delay);
 
-        invoice.setIntialCollectionDate(initailCollectionDate);
+        invoice.setInitialCollectionDate(initailCollectionDate);
 
     }
 
