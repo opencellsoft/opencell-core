@@ -209,6 +209,11 @@ public class BillingAccountDto extends AccountDto {
      */
     @XmlElement
     private Boolean thresholdPerEntity;
+    
+    /**
+     * Contact code
+     */
+    private String primaryContact;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -284,6 +289,10 @@ public class BillingAccountDto extends AccountDto {
 
         if (e.getTaxCategory() != null) {
             taxCategoryCode = e.getTaxCategory().getCode();
+        }
+        
+        if(e.getPrimaryContact() != null) {
+            setPrimaryContact(e.getPrimaryContact().getCode());
         }
 
         // Start compatibility with pre-4.6 versions
@@ -862,4 +871,18 @@ public class BillingAccountDto extends AccountDto {
 		this.infoGdpr = infoGdpr;
 	}
 
+    /**
+     * @return the primaryContact
+     */
+    public String getPrimaryContact() {
+        return primaryContact;
+    }
+
+    /**
+     * @param primaryContact the primaryContact to set
+     */
+    public void setPrimaryContact(String primaryContact) {
+        this.primaryContact = primaryContact;
+    }
+	
 }
