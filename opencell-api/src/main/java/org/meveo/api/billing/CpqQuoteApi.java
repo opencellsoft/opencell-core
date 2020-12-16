@@ -366,9 +366,18 @@ public class CpqQuoteApi extends BaseApi {
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
-		List<QuoteVersion> versions = quoteVersionService.findByQuoteId(quote.getId());
-		if(!versions.isEmpty())
-				throw new MeveoApiException("Quote can not be deleted, cause it attached to quote version");
+		if(quote.getStatus().equals(QuoteStatusEnum.CANCELLED) || 
+				quote.getStatus().equals(QuoteStatusEnum.REJECTED)) {
+			List<QuoteVersion> versions = quoteVersionService.findByQuoteId(quote.getId());
+			versions.forEach(qv -> {
+				quoteVersionService.remove(qv);
+			});
+			cpqQuoteService.remove(quote);
+		}else {
+			throw new MeveoApiException("Impossible to delete the Quote with status : " + quote.getStatus());
+		}
+		
+		
 		cpqQuoteService.remove(quote);
 	}
 	
