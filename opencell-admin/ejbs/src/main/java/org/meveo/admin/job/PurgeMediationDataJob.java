@@ -81,7 +81,7 @@ public class PurgeMediationDataJob extends Job {
         numberOf.setFieldType(CustomFieldTypeEnum.LONG);
         numberOf.setDefaultValue("1");
         numberOf.setValueRequired(true);
-        numberOf.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:1");
+        numberOf.setGuiPosition("tab:Custom fields:0;fieldGroup:Transaction date before number of period:1;field:1");
         result.put("PurgeMediationDataJob_numberOf", numberOf);
 
         CustomFieldTemplate period = new CustomFieldTemplate();
@@ -98,7 +98,7 @@ public class PurgeMediationDataJob extends Job {
         period.setListValues(listValues);
         period.setDefaultValue(String.valueOf(Calendar.MONTH));
         period.setValueRequired(true);
-        period.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:2");
+        period.setGuiPosition("tab:Custom fields:0;fieldGroup:Transaction date before number of period:1;field:2");
         result.put("PurgeMediationDataJob_period", period);
 
         CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
