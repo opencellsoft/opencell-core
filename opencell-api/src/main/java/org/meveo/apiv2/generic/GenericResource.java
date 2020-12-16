@@ -82,13 +82,4 @@ public interface GenericResource {
     Response delete(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                     @Parameter(description = "The id here is the database primary key of the record to delete", required = true) @PathParam("id") Long id);
 
-    @Operation(summary = "Get versions information about OpenCell components",
-            tags = { "Generic" },
-            description ="return a list of OpenCell's components version information",
-            responses = {
-                    @ApiResponse(responseCode="200", description = "resource successfully updated but not content exposed except the hypermedia")
-            })
-    @GET
-    @Path("/version")
-    Response getVersions();
 }
