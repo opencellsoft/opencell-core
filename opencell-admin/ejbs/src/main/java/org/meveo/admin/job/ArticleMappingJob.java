@@ -7,6 +7,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
+import javax.ejb.Stateless;
+
+@Stateless
 public class ArticleMappingJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {

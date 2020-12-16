@@ -63,6 +63,7 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
@@ -942,6 +943,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         create(billingRun);
         commit();
         return billingRun;
+    }
+
+    public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
+        for(BillingRun billingRun : billingRuns){
+            List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
+        }
+        return null;
     }
 
     /**
