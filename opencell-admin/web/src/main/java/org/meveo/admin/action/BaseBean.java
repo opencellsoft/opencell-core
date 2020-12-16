@@ -19,14 +19,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.enterprise.context.Conversation;
@@ -327,7 +320,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
         if(entity instanceof BusinessEntity) {
             String entityClass = entity.getClass().getSimpleName();
-            ((BusinessEntity) entity).setCode(generateCode(entityClass));
+            Optional.ofNullable(generateCode(entityClass))
+                    .ifPresent(code -> ((BusinessEntity) entity).setCode(code));
         }
         return entity;
     }
