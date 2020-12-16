@@ -48,6 +48,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -481,5 +482,16 @@ public interface OfferTemplateRs extends IBaseRs {
 			}
 	)
     ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+    
+    @POST
+    @Path("/duplicate/{offerTemplateCode}")
+    Response duplicateOffer(@Parameter(description = "code of the offer that will be duplicate", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
+            @Parameter(description = "copy the hierarchy of the offer") @QueryParam("duplicateHierarchy") boolean duplicateHierarchy,
+            @Parameter(description = "preserve code of offer") @QueryParam("preserveCode") boolean preserveCode);
+    
+    @POST
+    @Path("/{offerTemplateCode}/update/status")
+    Response updateStatus(@Parameter(name = "offer template for updating status", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
+    					  @Parameter(name = "new status", required = true) @QueryParam("status") LifeCycleStatusEnum status);
 
 }
