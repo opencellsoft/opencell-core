@@ -10589,7 +10589,7 @@ $$ LANGUAGE plpgsql;
             <column name="quote_version" type="int4" >
             	<constraints nullable="false"/>
             </column>  
-            <column name="status" type="int4"  >
+            <column name="status" type="varchar(20)"  >
             	<constraints nullable="false"/>
             </column>  
             <column name="status_date" type="datetime" >
@@ -10623,7 +10623,7 @@ $$ LANGUAGE plpgsql;
             <column name="billing_account_id" type="bigint" /> 
             <column name="customer_account_id" type="bigint" />  
             <column name="customer_id" type="bigint" />  
-            <column name="status" type="int4" >
+            <column name="status" type="varchar(20)" >
                 <constraints nullable="false" />
             </column>
             <column name="status_date" type="datetime">
