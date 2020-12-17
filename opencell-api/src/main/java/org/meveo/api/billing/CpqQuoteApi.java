@@ -517,18 +517,17 @@ public class CpqQuoteApi extends BaseApi {
 		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
 		if(quoteVersion == null)
 			throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
-		QuoteLot quoteLot = quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId());
-		if(quoteLot == null)
-			throw new EntityDoesNotExistsException("can not found quote lot for : products["+index+"] = (" + quoteProductDTO.getQuoteLotCode() +","+ quoteProductDTO.getQuoteVersion() + ")");
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 		if(productVersion == null)
 			throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
 		QuoteProduct q = quoteProductService.findByProductVersionAndQuoteOffer(productVersion.getId(), quoteOffer.getId());
 		if(q == null)
 			throw new EntityDoesNotExistsException("products["+index+"] : doesn't exist");
+		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
+			q.setQuoteLot(quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId()));
+		}
 		
 		q.setBillableAccount(quoteOffer.getBillableAccount());
-		q.setQuoteLot(quoteLot);
 		q.setQuantity(new BigDecimal(quoteProductDTO.getQuantity()));
 		processQuoteProduct(quoteProductDTO, q);
 		return q;
