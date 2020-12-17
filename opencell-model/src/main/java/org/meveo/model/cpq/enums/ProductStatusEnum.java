@@ -15,25 +15,25 @@ public enum ProductStatusEnum {
 	 * status of draft. <br />
 	 * DRAFT = 0 
 	 */
-	DRAFT(0),
+	DRAFT("DRAFT"),
 	/**
 	 * status of ACTIVE. <br />
 	 * ACTIVE = 1 
 	 */
-	ACTIVE(1),
+	ACTIVE("ACTIVE"),
 	/**
 	 * status of CLOSED. <br />
 	 * CLOSED = 2 
 	 */
-	CLOSED(2);
+	CLOSED("CLOSED");
 	
-	private ProductStatusEnum(int value) {
+	private ProductStatusEnum(String value) {
 		this.value = value;
 	}
 	
-	private int value;
+	private String value;
 	
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 
@@ -42,7 +42,7 @@ public enum ProductStatusEnum {
 	 * @param value
 	 * @return current product status name  by its value
 	 */
-	public static Optional<ProductStatusEnum> getCurrentStatus(int value) {
-		return Stream.of(ProductStatusEnum.values()).filter(v -> v.value == value).findFirst();
+	public static Optional<ProductStatusEnum> getCurrentStatus(String value) {
+		return Stream.of(ProductStatusEnum.values()).filter(v -> v.value.equalsIgnoreCase(value)).findFirst();
 	}
 }

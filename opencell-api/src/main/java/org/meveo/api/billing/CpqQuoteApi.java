@@ -293,6 +293,7 @@ public class CpqQuoteApi extends BaseApi {
 		quote.setOpportunityRef(quoteDto.getOpportunityRef());
 		quote.setCustomerRef(quoteDto.getExternalId());
 		quote.setValidity(quoteDto.getValidity());
+		quote.setStatus(quoteDto.getStatus());
 		if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {
 			quote.setBillableAccount(billingAccountService.findByCode(quoteDto.getBillableAccountCode()));
 		}
