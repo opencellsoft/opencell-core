@@ -49,7 +49,8 @@ import org.meveo.model.cpq.tags.Tag;
 @NamedQueries({ 
 	@NamedQuery(name = "ProductVersion.findByProductAndVersion", query = "SELECT pv FROM ProductVersion pv left join pv.product where pv.product.code=:productCode and pv.currentVersion=:currentVersion"),
 	@NamedQuery(name = "ProductVersion.findByTags", query = "select p from ProductVersion p LEFT JOIN p.tags as tag WHERE p.status='PUBLISHED' and tag.code IN (:tagCodes)"),
-	 @NamedQuery(name = "ProductVersion.getProductVerionsByStatusAndProduct", query = "SELECT pv FROM ProductVersion pv  left join pv.product as p where pv.status=:status and p.code=:productCode")
+	@NamedQuery(name = "ProductVersion.getProductVerionsByStatusAndProduct", query = "SELECT pv FROM ProductVersion pv  left join pv.product as p where pv.status=:status and p.code=:productCode"),
+	@NamedQuery(name = "ProductVersion.findByRequestedTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:requestedTagType)") 
 })
 public class ProductVersion extends AuditableEntity{
 

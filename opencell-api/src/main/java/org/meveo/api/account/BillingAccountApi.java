@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -38,6 +39,7 @@ import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -85,6 +87,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -158,6 +161,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
     
+    @Inject
+    private TagService tagService;
+    
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -198,6 +204,8 @@ public class BillingAccountApi extends AccountEntityApi {
         BillingAccount billingAccount = new BillingAccount();
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
+       
+        processTags(postData,billingAccount);
 
         billingAccountService.createBillingAccount(billingAccount);
 
@@ -233,6 +241,16 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
+    private void processTags(BillingAccountDto postData, BillingAccount billingAccount) {
+        Set<TagDto> tags = postData.getTags();
+        if(tags != null && !tags.isEmpty()){
+        	billingAccount.setTags(tags
+                    .stream()
+                    .map(tagDto -> tagService.findByCode(tagDto.getCode()))
+                    .collect(Collectors.toList()));
+        }
+    }
+    
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
@@ -261,7 +279,8 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
-
+        processTags(postData,billingAccount);
+        
         billingAccount = billingAccountService.update(billingAccount);
 
         // terminate discounts

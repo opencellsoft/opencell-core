@@ -37,7 +37,8 @@ import org.meveo.model.crm.Customer;
         @Parameter(name = "sequence_name", value = "cpq_tag_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "Tag.findByTagType", query = "select t from Tag t where t.tagType.id=:id"),
-		@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code")
+		@NamedQuery(name = "Tag.findByCode", query = "select t from Tag t where t.code.id=:code"),
+		@NamedQuery(name = "Tag.findByRequestedTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:requestedTagType)") 
 })
 public class Tag extends BusinessEntity {
 
@@ -85,18 +86,7 @@ public class Tag extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "filter_el", columnDefinition = "TEXT") 
 	private String filterEl;
-	
-	/**
-	 * billing account associated to the entity
-	 */
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
-	
-	
-
-
+ 
 	public String getName() {
 		return name;
 	}
@@ -164,29 +154,7 @@ public class Tag extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-
-	 
-
-	/**
-	 * @return the billingAccount
-	 */
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
-
-	/**
-	 * @param billingAccount the billingAccount to set
-	 */
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
-	
-	
-	
-	
-
-
-
-	
+ 
+ 
 	
 }

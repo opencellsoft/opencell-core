@@ -3941,16 +3941,7 @@ END $$;]]>
         <addColumn tableName="cpq_quote_version">
             <column name="short_description" type="varchar(255)"/> 
         </addColumn>
-        </changeSet>
-       
-       
-        <changeSet id="#48-20201111" author="Mbarek-Ay">
-        <addColumn tableName="cpq_tag">
-            <column name="billing_account_id" type="bigint" /> 
-        </addColumn>  
-        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_tag" constraintName="fk_billing_account_tag" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" /> 
-       </changeSet>
+        </changeSet> 
        
         <changeSet author="Mbarek-Ay" id="#43-20201113">
 	    <createTable tableName="cpq_offer_template_tags">
@@ -3963,6 +3954,14 @@ END $$;]]>
 	    </createTable>
 	    <addUniqueConstraint columnNames="offer_template_id,tag_id" constraintName="offer_template_tag_pkey" tableName="cpq_offer_template_tags" />
 	    
+	       <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="offer_template_id"
+                                 constraintName="cpq_offer_template_tags_offer_template_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_offer_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+	    
 	    <createTable tableName="cpq_service_template_tags">
 	        <column name="service_template_id" type="bigint">
 	            <constraints nullable="false" />
@@ -3973,6 +3972,14 @@ END $$;]]>
 	    </createTable>
 	    <addUniqueConstraint columnNames="service_template_id,tag_id" constraintName="service_template_tag_pkey" tableName="cpq_service_template_tags" />
 	    
+	       <addForeignKeyConstraint baseTableName="cpq_service_template_tags" baseColumnNames="service_template_id"
+                                 constraintName="cpq_service_template_tags_offer_template_id_fk" referencedTableName="cat_service_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_service_template_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_service_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+	    
 	    <createTable tableName="cpq_product_version_tags">
 	        <column name="product_version_id" type="bigint">
 	            <constraints nullable="false" />
@@ -3982,6 +3989,14 @@ END $$;]]>
 	        </column>
 	    </createTable>
 	    <addUniqueConstraint columnNames="product_version_id,tag_id" constraintName="product_version_tag_pkey" tableName="cpq_product_version_tags" />
+	    
+	        <addForeignKeyConstraint baseTableName="cpq_product_version_tags" baseColumnNames="product_version_id"
+                                 constraintName="cpq_product_version_tags_offer_template_id_fk" referencedTableName="cpq_product_version"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_product_version_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_product_version_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
 	    
 	     <dropColumn tableName="cpq_tag">
             <column name="product_version_id"></column>
@@ -4659,4 +4674,29 @@ END $$;]]>
                                  referencedColumnNames="id"/>
 
     </changeSet>
+    
+    
+    
+      
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-">
+   <createTable tableName="cpq_billing_account_tags">
+       <column name="billing_account_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+       <column name="tag_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+   </createTable>
+   <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_billing_account_tags_pkey" tableName="cpq_offer_component_tags" />
+   <addForeignKeyConstraint baseTableName="cpq_billing_account_tags" baseColumnNames="billing_account_id"
+                                 constraintName="cpq_billing_account_tags_billing_account_id_fk" referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_billing_account_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_billing_account_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+  </changeSet>
+  
+  
+  
 </databaseChangeLog>

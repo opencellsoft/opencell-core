@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -367,7 +368,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
-        processOfferComponents(postData, offerTemplate);
+        processOfferProductDtos(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -464,18 +465,18 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
     
-    private void processOfferComponents(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferProductsDto> offerComponentDtos = postData.getOfferProducts();  
-            List<OfferComponent> newOfferComponents = new ArrayList<>();
+    private void processOfferProductDtos(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
+        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts();  
+            List<OfferComponent> newOfferProductDtos = new ArrayList<>();
             OfferComponent offerComponent = null;
-            boolean hasOfferComponentDtos = offerComponentDtos != null && !offerComponentDtos.isEmpty();
+            boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
             if(hasOfferComponentDtos) {
-            for (OfferProductsDto offerComponentDto : offerComponentDtos) {
-            	offerComponent = getOfferComponentFromDto(offerComponentDto);
+            for (OfferProductsDto offerProductDto : offerProductDtos) {
+            	offerComponent = getOfferComponentFromDto(offerProductDto);
             	offerComponent.setOfferTemplate(offerTemplate);
-            	newOfferComponents.add(offerComponent);
+            	newOfferProductDtos.add(offerComponent);
             }
-            offerTemplate.getOfferComponents().addAll(newOfferComponents);
+            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
             }
     }
     
@@ -667,6 +668,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         	if (offerComponents != null && !offerComponents.isEmpty()) {
 
         		List<ProductVersion> productVersionList=null;
+        		List<Tag> tags=null;
         		List<OfferProductsDto> offerProducts = new ArrayList<>();
         		OfferProductsDto offerProductsDto = null;
         		ProductVersionDto productVersionDto=null;
@@ -683,11 +685,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
         					for(ProductVersion productVersion : productVersionList) {  
         						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
-        							setTags( loadTags,requestedTagTypes, productVersion) ; 
+        							if(!requestedTagTypes.isEmpty()) {
+        							tags=tagService.findByRequestedTagType(requestedTagTypes);
+        							productVersion.setTags(new HashSet<Tag>(tags));
+        							}
         							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
-        							offerProductsDto.getProductVersions().add(productVersionDto);
+        							offerProductsDto.setProductVersion(productVersionDto);
         							break;
-        						}
+        							}
+        						
         					} 
         				}
         				offerProducts.add(offerProductsDto);
@@ -708,31 +714,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 }
                 dto.setAllowedDiscountPlans(discountPlanDtos);
             }
-        }
-        
-        
-    
-
+        } 
         return dto;
-    }
-		private void setTags(boolean loadTags,List<String> requestedTagType,ProductVersion productVersion) {
-			if(loadTags && !requestedTagType.isEmpty()) {
-			List<Tag> requestedTags=new ArrayList<Tag>();
-			List<Tag> tagList=new ArrayList<Tag>();;
-			for(String tagTypeCode:requestedTagType) {
-				TagType tagType=tagTypeService.findByCode(tagTypeCode);
-				if (tagType == null) {
-		            throw new EntityDoesNotExistsException(TagType.class, tagTypeCode);
-		        }
-				requestedTags.addAll(tagType.getTags());
-			} 
-			tagList=productVersion.getTags().stream()
-					.filter(e -> requestedTags.contains(e))
-					.collect(Collectors.toList());
-			
-			productVersion.setTags(new HashSet<Tag>(tagList)); 
-			}
-		}
+    } 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
      * 
@@ -760,27 +744,27 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			missingParameters.add("billingAccountCode");
 		}
     	GetListCpqOfferResponseDto result = new GetListCpqOfferResponseDto(); 
-    	List<String> tagCodes=new ArrayList<String>();
+    	List<String> baTagCodes=new ArrayList<String>();
     	
     	BillingAccount ba=billingAccountService.findByCode(billingAccountCode); 
 
     	if(ba!=null) {
-    		List<Tag> entityTags=tagService.getTagsByBA(ba);
-    		if(!entityTags.isEmpty()) {
-    			for(Tag tag:entityTags) {
-    				tagCodes.add(tag.getCode());
+    		List<Tag> baTags=ba.getTags();
+    		if(!baTags.isEmpty()) {
+    			for(Tag tag:baTags) {
+    				baTagCodes.add(tag.getCode());
     			}
     		}} 
     	List<String> sellerTags=customerContextDto.getSellerTags();
 		List<String> customerTags=customerContextDto.getCustomerTags();
-		HashSet<String> resultBaTags = new HashSet<String>();
-		resultBaTags.addAll(tagCodes);
-		resultBaTags.addAll(sellerTags);
-		resultBaTags.addAll(customerTags);
-    	log.info("OfferTemplateApi.list resultBaTag={}",resultBaTags); 
+		HashSet<String> resultTags = new HashSet<String>();
+		resultTags.addAll(baTagCodes);
+		resultTags.addAll(sellerTags);
+		resultTags.addAll(customerTags);
+    	log.info("OfferTemplateApi.list resultBaTag={}",resultTags); 
     	String tags=null;
-    	if (!resultBaTags.isEmpty()) {
-    		 tags=resultBaTags.stream().collect(Collectors.joining(","));
+    	if (!resultTags.isEmpty()) {
+    		 tags=resultTags.stream().collect(Collectors.joining(","));
     	} 
     		PagingAndFiltering pagingAndFiltering=customerContextDto.getPagingAndFiltering();
     		if(pagingAndFiltering==null) {

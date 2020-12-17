@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -68,9 +69,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
     
     /** The offer component. */
-    @XmlElementWrapper(name = "offerComponents")
+    @XmlElementWrapper(name = "offerProducts")
     @XmlElement(name = "offerComponent")
-    private List<OfferProductsDto> offerProducts;
+    private List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
