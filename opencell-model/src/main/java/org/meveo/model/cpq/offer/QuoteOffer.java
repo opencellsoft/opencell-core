@@ -77,8 +77,7 @@ public class QuoteOffer extends AuditableEntity {
 	/**
 	 * opportunityRef
 	 */
-	@Column(name = "position", length = 50)
-	@Size(max = 50)
+	@Column(name = "position")
 	private Integer position;
 
 	/**
