@@ -86,7 +86,7 @@ public class Contract extends BusinessEntity {
 	 * status of this contract
 	 */
 	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	@NotNull
 	private ProductStatusEnum status;
 	
