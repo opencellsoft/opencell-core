@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
+import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
@@ -49,7 +50,7 @@ public class GenericOpencellRestful extends Application {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = Stream.of(GenericResourceImpl.class, NotYetImplementedResource.class,
+        Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class, NotYetImplementedResource.class,
                 NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
                 MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
                 EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class,
