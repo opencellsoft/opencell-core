@@ -4143,7 +4143,10 @@ END $$;]]>
 					<constraints nullable="false"/>
 				</column>
 				<column name="quote_customer_service_id" type="bigint" />
-	            <column name="sequence" type="INT4" />
+	            <column name="sequence" type="INT4" /> 
+	             <column name="contract_code" type="varchar(50)" />
+	             <column name="position" type="int4" />
+	            
 	        </createTable>
 	        
 	        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="quote_offer" constraintName="fk_quote_offer_offer_template_id" deferrable="false" initiallyDeferred="false"
@@ -4696,6 +4699,26 @@ END $$;]]>
                                  constraintName="cpq_billing_account_tags_tag_id_fk" referencedTableName="cpq_tag"
                                  referencedColumnNames="id"/>
   </changeSet>
+  
+  
+   <changeSet author="Mbarek-Ay" id="current-mediapost-tbl-charge_attribute">
+   <createTable tableName="cpq_attribute_charge">
+       <column name="charge_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+       <column name="attribute_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+   </createTable>
+   <addUniqueConstraint columnNames="charge_id,attribute_id" constraintName="cpq_attribute_charge_pkey" tableName="cpq_attribute_charge" />
+   <addForeignKeyConstraint baseTableName="cpq_attribute_charge" baseColumnNames="charge_id"
+                                 constraintName="cpq_attribute_charge_charge_id_fk" referencedTableName="cat_charge_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_attribute_charge" baseColumnNames="attribute_id"
+                                 constraintName="cpq_attribute_charge_attribute_id_fk" referencedTableName="cpq_attribute"
+                                 referencedColumnNames="id"/>
+       </changeSet>
   
   
   
