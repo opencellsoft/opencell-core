@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.QuoteAttribute;
 
 /**
  * DTO to create or update a quote
@@ -49,6 +50,12 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	 */
 	public String getQuoteAttributeCode() {
 		return quoteAttributeCode;
+	}
+
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribue) {
+		super();
+		quoteAttributeCode=quoteAttribue.getAttribute().getCode();
+		value=quoteAttribue.getValue();
 	}
 
 	/**

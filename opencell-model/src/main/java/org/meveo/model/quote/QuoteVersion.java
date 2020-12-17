@@ -1,8 +1,10 @@
 package org.meveo.model.quote;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,6 +28,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
 @Entity
@@ -92,6 +97,10 @@ public class QuoteVersion extends BaseEntity{
     @Column(name = "short_description", length = 255)
     @Size(max = 255)
     private String shortDescription;
+    
+    @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteOffer> quoteOffers;
 	/**
 	 * @return the quoteVersion
 	 */
@@ -227,6 +236,20 @@ public class QuoteVersion extends BaseEntity{
 	 */
 	public void setShortDescription(String shortDescription) {
 		this.shortDescription = shortDescription;
+	}
+
+	/**
+	 * @return the quoteOffers
+	 */
+	public List<QuoteOffer> getQuoteOffers() {
+		return quoteOffers;
+	}
+
+	/**
+	 * @param quoteOffers the quoteOffers to set
+	 */
+	public void setQuoteOffers(List<QuoteOffer> quoteOffers) {
+		this.quoteOffers = quoteOffers;
 	}
 
 	

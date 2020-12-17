@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteProduct;
 
 /**
  * DTO to create or update a quoteProduct
@@ -55,11 +58,37 @@ public class QuoteProductDTO extends BaseEntityDto{
     private Integer productVersion;
 
     @NotNull
-    private Integer quantity;
+    private BigDecimal quantity;
     
     private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
 
     private String quoteLotCode;
+    
+    private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
+    
+    
+    
+
+	public QuoteProductDTO(QuoteProduct quoteProduct) {
+		super();
+		quoteCode=quoteProduct.getQuote()!=null?quoteProduct.getQuote().getCode():null;
+		productCode=quoteProduct.getProductVersion().getProduct().getCode();
+		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
+		quantity=quoteProduct.getQuantity();
+		quoteLotCode=quoteProduct.getQuoteLot()!=null?quoteProduct.getQuoteLot().getCode():null;
+		
+	}
+	
+	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
+		new QuoteProductDTO(quoteProduct);
+		if(loadAttributes) {
+			quoteAttributes=new ArrayList<QuoteAttributeDTO>();
+			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
+				quoteAttributes.add(new QuoteAttributeDTO(quoteAttribute));
+			}
+		}
+		
+	}
 
 	/**
 	 * @return the productCode
@@ -89,17 +118,21 @@ public class QuoteProductDTO extends BaseEntityDto{
 		this.productVersion = productVersion;
 	}
 
+
+
+
+
 	/**
 	 * @return the quantity
 	 */
-	public Integer getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
 	/**
 	 * @param quantity the quantity to set
 	 */
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 
@@ -157,6 +190,20 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteLotCode(String quoteLotCode) {
 		this.quoteLotCode = quoteLotCode;
+	}
+
+	/**
+	 * @return the accountingArticlePrices
+	 */
+	public List<AccountingArticlePricesDTO> getAccountingArticlePrices() {
+		return accountingArticlePrices;
+	}
+
+	/**
+	 * @param accountingArticlePrices the accountingArticlePrices to set
+	 */
+	public void setAccountingArticlePrices(List<AccountingArticlePricesDTO> accountingArticlePrices) {
+		this.accountingArticlePrices = accountingArticlePrices;
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -15,6 +16,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
@@ -65,7 +67,19 @@ public class QuoteOffer extends AuditableEntity {
     @OrderBy("id")
 	private List<QuoteProduct> quoteProduct;
 	
-	private int sequence;
+    /**
+	 * opportunityRef
+	 */
+	@Column(name = "contract_code", length = 50)
+	@Size(max = 50)
+	private String contractCode;
+	
+	/**
+	 * opportunityRef
+	 */
+	@Column(name = "position", length = 50)
+	@Size(max = 50)
+	private Integer position;
 
 	/**
 	 * @return the offerTemplate
@@ -126,19 +140,7 @@ public class QuoteOffer extends AuditableEntity {
 		this.quoteProduct = quoteProduct;
 	}
 
-	/**
-	 * @return the sequence
-	 */
-	public int getSequence() {
-		return sequence;
-	}
 
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
 
 	/**
 	 * @return the serialversionuid
@@ -161,12 +163,40 @@ public class QuoteOffer extends AuditableEntity {
 		this.quoteLot = quoteLot;
 	}
 
+	/**
+	 * @return the contractCode
+	 */
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	/**
+	 * @param contractCode the contractCode to set
+	 */
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+
+	/**
+	 * @return the position
+	 */
+	public Integer getPosition() {
+		return position;
+	}
+
+	/**
+	 * @param position the position to set
+	 */
+	public void setPosition(Integer position) {
+		this.position = position;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(billableAccount, offerTemplate, quoteLot, quoteProduct, quoteVersion, sequence);
+				+ Objects.hash(billableAccount, offerTemplate, quoteLot, quoteProduct, quoteVersion);
 		return result;
 	}
 
@@ -179,8 +209,7 @@ public class QuoteOffer extends AuditableEntity {
 		QuoteOffer other = (QuoteOffer) obj;
 		return Objects.equals(billableAccount, other.billableAccount)
 				&& Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(quoteLot, other.quoteLot)
-				&& Objects.equals(quoteProduct, other.quoteProduct) && Objects.equals(quoteVersion, other.quoteVersion)
-				&& sequence == other.sequence;
+				&& Objects.equals(quoteProduct, other.quoteProduct) && Objects.equals(quoteVersion, other.quoteVersion);
 	}
 	
 	
