@@ -15,29 +15,29 @@ public enum VersionStatusEnum {
 	 * status of draft. <br />
 	 * DRAFT = 0 
 	 */
-	DRAFT(0),
+	DRAFT("DRAFT"),
 	/**
 	 * status of publied. <br />
 	 * publied = 1 
 	 */
-	PUBLISHED(1),
+	PUBLISHED("PUBLISHED"),
 	/**
 	 * status of CLOSED. <br />
 	 * CLOSED = 2 
 	 */
-	CLOSED(2);
+	CLOSED("CLOSED");
 	
-	private VersionStatusEnum(int value) {
+	private VersionStatusEnum(String value) {
 		this.value = value;
 	}
 	
-	private int value;
+	private String value;
 	
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 	
-	public Optional<VersionStatusEnum> getCurrentStatus(int value) {
-		return Stream.of(VersionStatusEnum.values()).filter(v -> v.value == value).findFirst();
+	public Optional<VersionStatusEnum> getCurrentStatus(String value) {
+		return Stream.of(VersionStatusEnum.values()).filter(v -> v.value.equalsIgnoreCase(value)).findFirst();
 	}
 }
