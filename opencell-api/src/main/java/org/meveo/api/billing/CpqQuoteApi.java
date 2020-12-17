@@ -417,6 +417,7 @@ public class CpqQuoteApi extends BaseApi {
 			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
 		quoteOfferService.create(quoteOffer);
+		quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
 		newPopulateProduct(quoteOfferDto.getProducts(), quoteOffer);
 		return quoteOfferDto;
 	}
