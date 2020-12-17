@@ -18,9 +18,25 @@
 
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -32,17 +48,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.ContactInformation;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * The Class BillingAccountDto.
@@ -218,6 +223,11 @@ public class BillingAccountDto extends AccountDto {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
 	
+	  /** The tags. */ 
+    @XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    private Set<TagDto> tags = new HashSet<>();
+    
     /**
      * Instantiates a new billing account dto.
      */
@@ -297,6 +307,13 @@ public class BillingAccountDto extends AccountDto {
                 setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
             }
         }
+        
+        if(e.getTags() != null && !e.getTags().isEmpty()) {
+			tags = e.getTags().stream().map(t -> {
+				final TagDto dto = new TagDto(t);
+				return dto;
+			}).collect(Collectors.toSet());
+		}
 
         // End compatibility with pre-4.6 versions
     }
@@ -861,5 +878,22 @@ public class BillingAccountDto extends AccountDto {
 	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
 		this.infoGdpr = infoGdpr;
 	}
+
+	/**
+	 * @return the tags
+	 */
+	public Set<TagDto> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(Set<TagDto> tags) {
+		this.tags = tags;
+	}
+ 
+	
+	
 
 }

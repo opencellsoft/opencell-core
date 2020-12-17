@@ -36,6 +36,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -351,9 +353,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     
     /**
      * list of tag attached
-     */ 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Tag> tags = new HashSet<>();
+     */    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_billing_account_tags", joinColumns = @JoinColumn(name = "billing_account_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private List<Tag> tags = new ArrayList<Tag>();
     
     
     
@@ -780,16 +783,18 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 	/**
 	 * @return the tags
 	 */
-	public Set<Tag> getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
 	/**
 	 * @param tags the tags to set
 	 */
-	public void setTags(Set<Tag> tags) {
+	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
+ 
+    
 
 	
     
