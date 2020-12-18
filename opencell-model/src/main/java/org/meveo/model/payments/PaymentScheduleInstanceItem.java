@@ -23,6 +23,7 @@ package org.meveo.model.payments;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -212,5 +213,20 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
      */
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final PaymentScheduleInstanceItem other = (PaymentScheduleInstanceItem) o;
+        if (getId() == null) {
+            return false;
+        } else if (!getId().equals(other.getId())) {
+            return false;
+        }
+        return true;
     }
 }
