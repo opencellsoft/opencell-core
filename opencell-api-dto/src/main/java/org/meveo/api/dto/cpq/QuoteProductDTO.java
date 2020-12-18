@@ -68,7 +68,7 @@ public class QuoteProductDTO extends BaseEntityDto{
     
     
     public QuoteProductDTO() {
-    	
+    	super();
     }
     
 

@@ -53,7 +53,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	}
 	
 	public QuoteAttributeDTO() {
-		
+		super();
 	}
 
 	public QuoteAttributeDTO(QuoteAttribute quoteAttribue) {
