@@ -292,6 +292,7 @@ public class CpqQuoteApi extends BaseApi {
 		quote.setCustomerRef(quoteDto.getExternalId());
 		quote.setValidity(quoteDto.getValidity());
 		quote.setStatus(quoteDto.getStatus());
+		quote.setDescription(quoteDto.getDescription());
 		if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {
 			quote.setBillableAccount(billingAccountService.findByCode(quoteDto.getBillableAccountCode()));
 		}
@@ -316,6 +317,7 @@ public class CpqQuoteApi extends BaseApi {
 						qv.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
 					quoteVersionService.update(qv);
 					quoteVersionDto = new QuoteVersionDto(qv);
+					quoteDto.setQuoteVersion(quoteVersionDto);
 				}
 			}
 		}catch(BusinessApiException e) {
@@ -406,7 +408,7 @@ public class CpqQuoteApi extends BaseApi {
 	private GetQuoteDtoResponse populateToDto(CpqQuote quote, boolean loadQuoteOffers, boolean loadQuoteProduct,boolean loadQuoteAttributes) {
 		GetQuoteDtoResponse result=new GetQuoteDtoResponse();
 		result.setQuoteDto(populateQuoteToDto(quote));
-		final List<QuoteVersion> quoteVersions = quoteVersionService.findByQuoteId(quote.getId());
+		final List<QuoteVersion> quoteVersions = quoteVersionService.findByQuoteCode(quote.getCode());
 		QuoteVersionDto quoteVersionDto=null;
 		for(QuoteVersion  version:quoteVersions) {
 			quoteVersionDto=new QuoteVersionDto(version,true,true,true);
