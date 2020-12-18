@@ -10304,19 +10304,7 @@ $$ LANGUAGE plpgsql;
 			<column name="value" type="varchar(255)" /> 
 		</createTable>
 	</changeSet>
-	
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-17">
-    <createTable tableName="cpq_product_tags">
-        <column name="product_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-        <column name="tag_id" type="bigint">
-            <constraints nullable="false" />
-        </column>
-    </createTable>
-    <addUniqueConstraint columnNames="product_id,tag_id" constraintName="cpq_product_tags_pkey" tableName="cpq_product_tags" />
-   </changeSet>
-	
+ 
  
    
    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-19">
@@ -10329,6 +10317,14 @@ $$ LANGUAGE plpgsql;
         </column>
     </createTable>
     <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_offer_component_tags_pkey" tableName="cpq_offer_component_tags" />
+    
+         <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="offer_component_id"
+                                 constraintName="cpq_offer_component_tags_offer_component_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_offer_component_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
    </changeSet>
    
    
@@ -10589,7 +10585,7 @@ $$ LANGUAGE plpgsql;
             <column name="quote_version" type="int4" >
             	<constraints nullable="false"/>
             </column>  
-            <column name="status" type="int4"  >
+            <column name="status" type="varchar(20)"  >
             	<constraints nullable="false"/>
             </column>  
             <column name="status_date" type="datetime" >
@@ -10623,7 +10619,7 @@ $$ LANGUAGE plpgsql;
             <column name="billing_account_id" type="bigint" /> 
             <column name="customer_account_id" type="bigint" />  
             <column name="customer_id" type="bigint" />  
-            <column name="status" type="int4" >
+            <column name="status" type="varchar(20)" >
                 <constraints nullable="false" />
             </column>
             <column name="status_date" type="datetime">

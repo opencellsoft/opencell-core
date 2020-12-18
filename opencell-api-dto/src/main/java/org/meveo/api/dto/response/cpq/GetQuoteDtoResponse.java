@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.quote.Quote;
 
@@ -29,8 +30,7 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	 */
 	private QuoteDTO quoteDto;
 	
-	   
-    private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
+    private List<QuoteVersionDto> allQuoteVersions = new ArrayList<QuoteVersionDto>();
 	
     
     
@@ -59,20 +59,30 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	}
 
 	/**
-	 * @return the quoteItems
+	 * @return the allQuoteVersions
 	 */
-	public List<QuoteOfferDTO> getQuoteItems() {
-		return quoteItems;
+	public List<QuoteVersionDto> getAllQuoteVersions() {
+		return allQuoteVersions;
 	}
 
 	/**
-	 * @param quoteItems the quoteItems to set
+	 * @param allQuoteVersions the allQuoteVersions to set
 	 */
-	public void setQuoteItems(List<QuoteOfferDTO> quoteItems) {
-		this.quoteItems = quoteItems;
+	public void setAllQuoteVersions(List<QuoteVersionDto> allQuoteVersions) {
+		this.allQuoteVersions = allQuoteVersions;
 	}
+
+
 	
-	
+	/**
+	 * @param allQuoteVersions the allQuoteVersions to set
+	 */
+	public void addQuoteVersion(QuoteVersionDto quoteVersion) {
+		 if(allQuoteVersions==null) {
+			 allQuoteVersions=new ArrayList<QuoteVersionDto>();
+		 }
+		 allQuoteVersions.add(quoteVersion);
+	}
 
 	
 	

@@ -1,6 +1,9 @@
 package org.meveo.service.cpq;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -84,17 +87,20 @@ public class TagService extends BusinessService<Tag> {
 			return null;
 		}
 	}
+ 
 	
-	@SuppressWarnings("unchecked")
-	public List<Tag> findByTagType(String tagTypeCode) {
-		QueryBuilder qb = new QueryBuilder(Tag.class, "ta");
-		qb.addCriterionEntity("ta.tagType.code", tagTypeCode);
-		try {
-			return qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+	 @SuppressWarnings("unchecked")
+	    public List<Tag> findByRequestedTagType(List<String> requestedTagType) { 
+		 List<Tag> tags=new ArrayList<Tag>();
+	    	try {
+	    		tags = (List<Tag>)getEntityManager().createNamedQuery("Tag.findByRequestedTagType").setParameter("requestedTagType", requestedTagType).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("findByCriteria error ", e.getMessage());
+	    	}
+
+	    	return tags;
+	    }
 	
 	
 	

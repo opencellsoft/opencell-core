@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
 
@@ -52,7 +53,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 
 	private Long quoteOfferId;
 	
-    @NotNull
+    
     private String quoteCode;
 
     @NotNull
@@ -69,12 +70,31 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
     
-    private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
+  
     
     
 
    
 
+	public QuoteOfferDTO(QuoteOffer quoteOffer) {
+		super();
+		quoteOfferId=quoteOffer.getId();
+		quoteCode=quoteOffer.getQuoteVersion().getQuote().getCode();
+		quoteVersion=quoteOffer.getQuoteVersion().getVersion();
+		quoteLotCode=quoteOffer.getQuoteLot()!=null?quoteOffer.getQuoteLot().getCode():null;
+		offerCode=quoteOffer.getOfferTemplate().getCode();
+		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
+		contractCode=quoteOffer.getContractCode();
+	}
+	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes) {
+		new QuoteOfferDTO(quoteOffer);
+		if(loadQuoteProduct) {
+			    products=new ArrayList<QuoteProductDTO>();
+				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
+					products.add(new QuoteProductDTO(quoteProduct,loadQuoteAttributes));
+				}
+		}
+	}
 	/**
 	 * @return the quoteCode
 	 */
@@ -173,19 +193,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		this.quoteOfferId = quoteOfferId;
 	}
 
-	/**
-	 * @return the accountingArticlePrices
-	 */
-	public List<AccountingArticlePricesDTO> getAccountingArticlePrices() {
-		return accountingArticlePrices;
-	}
 
-	/**
-	 * @param accountingArticlePrices the accountingArticlePrices to set
-	 */
-	public void setAccountingArticlePrices(List<AccountingArticlePricesDTO> accountingArticlePrices) {
-		this.accountingArticlePrices = accountingArticlePrices;
-	}
 
 	/**
 	 * @return the contractCode

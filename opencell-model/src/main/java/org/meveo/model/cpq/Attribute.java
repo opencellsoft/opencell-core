@@ -14,6 +14,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -23,7 +25,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.tags.Tag;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -76,6 +80,14 @@ public class Attribute extends EnableBusinessCFEntity{
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
 	private Set<String> allowedValues=new HashSet<String>();
+	
+	
+	   /**
+     * list of tag attached
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
     
     
 
@@ -203,6 +215,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setAttributeType(AttributeTypeEnum attributeType) {
 		this.attributeType = attributeType;
+	}
+
+	/**
+	 * @return the chargeTemplates
+	 */
+	public Set<ChargeTemplate> getChargeTemplates() {
+		return chargeTemplates;
+	}
+
+	/**
+	 * @param chargeTemplates the chargeTemplates to set
+	 */
+	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
+		this.chargeTemplates = chargeTemplates;
 	}
     
     

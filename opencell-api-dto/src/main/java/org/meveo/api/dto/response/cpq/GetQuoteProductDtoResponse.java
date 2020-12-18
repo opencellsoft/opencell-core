@@ -9,6 +9,7 @@ import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.quote.Quote;
+import org.meveo.model.quote.QuoteProduct;
 
 
 
@@ -26,13 +27,6 @@ public class GetQuoteProductDtoResponse extends BaseResponse{
 	 */
 	private QuoteProductDTO quoteProductDTO;
 	
-	
-    
-    
-    public GetQuoteProductDtoResponse(Quote q) {
-		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-		quoteProductDTO = new QuoteProductDTO();
-	}
 	
 	public GetQuoteProductDtoResponse() {
 		super();

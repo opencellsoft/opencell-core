@@ -62,9 +62,9 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response getQuote(String code, UriInfo info) {
-		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
+		 GetQuoteDtoResponse getQuoteDtoResponse = null;
 		 try {
-			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.getQuote(code));
+			 getQuoteDtoResponse=cpqQuoteApi.getQuote(code);
 	            return Response.ok(getQuoteDtoResponse).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
