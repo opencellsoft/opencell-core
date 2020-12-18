@@ -62,7 +62,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response getQuote(String code, UriInfo info) {
-		 GetQuoteDtoResponse getQuoteDtoResponse = null;
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
 			 getQuoteDtoResponse=cpqQuoteApi.getQuote(code);
 	            return Response.ok(getQuoteDtoResponse).build();
