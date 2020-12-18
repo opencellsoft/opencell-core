@@ -237,13 +237,13 @@ public class CpqQuoteApi extends BaseApi {
 				handleMissingParameters();
 				Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 				if(attribute == null)
-					throw new EntityDoesNotExistsException(QuoteLot.class, quoteAttributeDTO.getQuoteAttributeCode());
+					throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
 				QuoteAttribute quoteAttribute = new QuoteAttribute();
 				quoteAttribute.setAttribute(attribute);
 				quoteAttribute.setValue(quoteAttributeDTO.getValue());
 				quoteProduct.getQuoteAttributes().add(quoteAttribute);
-				quoteAttributeService.create(quoteAttribute);
 				quoteAttribute.setQuoteProduct(quoteProduct);
+				quoteAttributeService.create(quoteAttribute);
 				}
 					
 			}

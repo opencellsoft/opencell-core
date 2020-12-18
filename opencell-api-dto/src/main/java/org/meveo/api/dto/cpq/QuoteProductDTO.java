@@ -67,6 +67,9 @@ public class QuoteProductDTO extends BaseEntityDto{
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
     
     
+    public QuoteProductDTO() {
+    	
+    }
     
 
 	public QuoteProductDTO(QuoteProduct quoteProduct) {
