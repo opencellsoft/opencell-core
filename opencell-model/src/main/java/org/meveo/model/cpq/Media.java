@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -32,7 +33,8 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
 @Entity
 @Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "media_name" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_media_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_media_seq")})
+@NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m join left m.product mp where mp.code=:productCode and m.mediaName=:mediaName")
 public class Media extends BaseEntity{
 
 	/**
