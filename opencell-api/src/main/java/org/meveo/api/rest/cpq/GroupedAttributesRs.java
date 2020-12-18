@@ -28,11 +28,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.response.cpq.GetGroupedAttributesResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -57,8 +57,20 @@ public interface GroupedAttributesRs extends IBaseRs {
      * @param groupedAttributeDto
      * @return Request processing status
      */
+  
     @POST
-    @Path("/")
+	@Path("/")
+    @Operation(summary = "This endpoint allows to create new groupedAttribute",
+    tags = { "GroupedAttribute" },
+    description ="Creating a new groupedAttribute",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the GroupedAttribute successfully added",
+            		content = @Content(schema = @Schema(implementation = GetGroupedAttributesResponse.class))),
+            @ApiResponse(responseCode = "412", description = "missing required paramter for GroupedAttributeDto required params are : code",
+            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+            @ApiResponse(responseCode = "400", description = "No GroupedAttribute is found for the parameter code", 
+    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
+    })
     ActionStatus create(GroupedAttributeDto groupedAttributeDto);
 
     /**
@@ -71,6 +83,7 @@ public interface GroupedAttributesRs extends IBaseRs {
     @Path("/")
     @Operation(summary = "updating a existing grouped attribute by its code",
     description ="check if the code is not null for updating a existing grouped attribute",
+    tags = { "GroupedAttribute" },
     responses = {
             @ApiResponse(responseCode="200", description = "the grouped attribute successfully updated"),
             @ApiResponse(responseCode = "404", description = "the grouped attribute with groupedAttributeDto in param does not exist or null"),
