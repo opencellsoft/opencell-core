@@ -97,12 +97,12 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 	     ProductLine productLine = productLineService.findByCode(dto.getCode());
 		if(productLine == null)
 			throw new MeveoApiException(dto.getCode());
-		
+		productLine.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
 		productLine.setLongDescription(dto.getLongDescription());
 		productLine.setDescription(dto.getDescription());
 		updateProductLineParent(productLine,dto.getParentLineCode());
 		
-		if(StringUtils.isBlank(dto.getSellerCode())) {
+		if(!StringUtils.isBlank(dto.getSellerCode())) {
 			productLine.setSeller(sellerService.findByCode(dto.getSellerCode()));
 		}
 		productLineService.update(productLine);

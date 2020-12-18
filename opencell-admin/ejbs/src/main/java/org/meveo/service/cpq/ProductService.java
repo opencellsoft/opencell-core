@@ -250,17 +250,12 @@ public class ProductService extends BusinessService<Product> {
 	 * 		<li>if product line attached to any product</li>
 	 *	</ul>
 	 */
-	public void removeProduct(String codeProduct) throws BusinessException {
-		LOGGER.info("deleting product  ({})", codeProduct);
-		
-		final Product product = this.findByCode(codeProduct);
-		if(product == null || product.getId() == null) {
-			LOGGER.warn("unknown product  with id: ({})", codeProduct);
-			throw new EntityDoesNotExistsException(String.format(PRODUCT_UNKWON, codeProduct));
-		}
-		
-		this.remove(product);
-		LOGGER.info("product  ({}) is deleted successfully", codeProduct);
+	public void removeProduct(String codeProduct) throws BusinessException { 
+		final Product product = this.findByCode(codeProduct); 
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class,codeProduct);
+		} 
+		this.remove(product); 
 	}
 
 
