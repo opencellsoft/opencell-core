@@ -117,14 +117,14 @@ public class ProductApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Product.class,productDto.getCode());
 			}   
 			product.setDescription(productDto.getLabel());
-			if(!StringUtils.isBlank(productDto.getProductLineCode() != null)) {
+			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
 				ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
 				if (productLine == null) {
 					throw new EntityDoesNotExistsException(ProductLine.class,productDto.getProductLineCode());
 				} 
 				product.setProductLine(productLine);
 			}
-			if(!StringUtils.isBlank(productDto.getBrandCode() != null)) {
+			if(!StringUtils.isBlank(productDto.getBrandCode())) {
 				CustomerBrand customerBrand=customerBrandService.findByCode(productDto.getBrandCode());
 				if (customerBrand == null) {
 					throw new EntityDoesNotExistsException(CustomerBrand.class,productDto.getBrandCode());
@@ -387,14 +387,14 @@ public class ProductApi extends BaseApi {
     	product.setCode(productDto.getCode());
     	product.setDescription(productDto.getLabel());
     	
-    	if(!StringUtils.isBlank(productDto.getProductLineCode() != null)) {
+    	if(!StringUtils.isBlank(productDto.getProductLineCode())) {
     		ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
     		if (productLine == null) {
     			throw new EntityDoesNotExistsException(ProductLine.class,productDto.getProductLineCode());
     		} 
     		product.setProductLine(productLine);
     	}
-    	if(!StringUtils.isBlank(productDto.getBrandCode() != null)) {
+    	if(!StringUtils.isBlank(productDto.getBrandCode())) {
     		CustomerBrand customerBrand=customerBrandService.findByCode(productDto.getBrandCode());
     		if (customerBrand == null) {
     			throw new EntityDoesNotExistsException(CustomerBrand.class,productDto.getBrandCode());
