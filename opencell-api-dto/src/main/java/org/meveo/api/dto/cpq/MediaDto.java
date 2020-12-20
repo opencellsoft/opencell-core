@@ -3,6 +3,7 @@ package org.meveo.api.dto.cpq;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
 /**
@@ -31,6 +32,19 @@ public class MediaDto extends BaseEntityDto{
 	@NotNull
 	private MediaTypeEnum mediaType;
 	private String mediaPath;
+	
+	public MediaDto() {
+		
+	}
+	
+	public MediaDto(Media media) {
+		this.productCode = media.getProduct().getCode();
+		this.serviceTemplateCode = media.getServiceTemplate().getCode();
+		this.mediaName = media.getMediaName();
+		this.label = media.getLabel();
+		this.main = media.getMain();
+		this.mediaPath = media.getMediaPath();
+	}
 	
 	/**
 	 * @return the productCode

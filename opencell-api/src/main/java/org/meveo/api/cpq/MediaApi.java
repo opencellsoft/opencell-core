@@ -20,6 +20,7 @@ public class MediaApi extends BaseApi {
 
 	
 	private static final String MEDIA_EXIST_ALREADY = "Media for product code : %s and name : %s, already exist";
+	private static final String MEDIA_DOESNT_EXIT = "No Media found for the key (%s, %s)";
 	/**
 	 * 
 	 */
@@ -63,7 +64,27 @@ public class MediaApi extends BaseApi {
 	}
 	
 	public MediaDto updateMedia(MediaDto mediaDto) {
-		
+		if(Strings.isEmpty(mediaDto.getProductCode()))
+			missingParameters.add("productCode");
+		if(Strings.isEmpty(mediaDto.getMediaName()))
+			missingParameters.add("mediaName");
+		Media m = mediaService.findByProductAndMediaName(mediaDto.getProductCode(), mediaDto.getMediaName());
+		if(m == null)
+			throw new EntityDoesNotExistsException(String.format(MEDIA_DOESNT_EXIT, mediaDto.getProductCode(), mediaDto.getMediaName()));
+		if(!Strings.isEmpty(mediaDto.getServiceTemplateCode())) {
+			final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(mediaDto.getServiceTemplateCode());
+			if(serviceTemplate == null)
+				throw new EntityDoesNotExistsException(ServiceTemplate.class, mediaDto.getServiceTemplateCode());
+			m.setServiceTemplate(serviceTemplate);
+		}
+		if(!Strings.isEmpty(mediaDto.getLabel()))
+			m.setLabel(mediaDto.getLabel());
+		if(mediaDto.getMediaType() != null)
+			m.setMediaType(mediaDto.getMediaType());
+		m.setMain(mediaDto.isMain());
+		m.setMediaPath(mediaDto.getMediaPath());
+		mediaService.update(m);
+		return mediaDto;
 	}
 	
 }
