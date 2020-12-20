@@ -32,15 +32,16 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
@@ -64,7 +65,7 @@ public class ProductApi extends BaseApi {
 	@Inject
 	private ProductLineService productLineService;
 	@Inject
-	private CustomerBrandService brandService;
+	private CustomerBrandService customerBrandService;
 	@Inject
 	private BillingAccountService billingAccountService; 
 	
@@ -76,9 +77,7 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private OfferTemplateService offerTemplateService;
-	
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
+	 
 	
 	@Inject
 	private AttributeService  attributeService;
@@ -111,20 +110,32 @@ public class ProductApi extends BaseApi {
 	 * @throws ProductException
 	 */
 	public void updateProduct(ProductDto productDto){
-		
+
 		try {
 			Product product = productService.findByCode(productDto.getCode());
+			if (product == null) {
+				throw new EntityDoesNotExistsException(Product.class,productDto.getCode());
+			}   
 			product.setDescription(productDto.getLabel());
-			if(productDto.getProductLineCode() != null) {
-				product.setProductLine(productLineService.findByCode(productDto.getProductLineCode()));
+			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
+				ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
+				if (productLine == null) {
+					throw new EntityDoesNotExistsException(ProductLine.class,productDto.getProductLineCode());
+				} 
+				product.setProductLine(productLine);
 			}
-			if(productDto.getBrandCode() != null) {
-				product.setBrand(brandService.findByCode(productDto.getBrandCode()));
+			if(!StringUtils.isBlank(productDto.getBrandCode())) {
+				CustomerBrand customerBrand=customerBrandService.findByCode(productDto.getBrandCode());
+				if (customerBrand == null) {
+					throw new EntityDoesNotExistsException(CustomerBrand.class,productDto.getBrandCode());
+				} 
+				product.setBrand(customerBrand);
 			}
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
 			product.setModelChlidren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
+			product.setPackageFlag(productDto.isPackageFlag());
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -163,7 +174,12 @@ public class ProductApi extends BaseApi {
 			missingParameters.add("code");
 		}
 		handleMissingParameters();
-		return new ProductDto(productService.findByCode(code));
+		Product product = productService.findByCode(code);
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class,code);
+		} 
+		
+		return new ProductDto(product);
 	}
 	
  
@@ -370,11 +386,20 @@ public class ProductApi extends BaseApi {
     	Product product=new Product();
     	product.setCode(productDto.getCode());
     	product.setDescription(productDto.getLabel());
-		if(productDto.getProductLineCode() != null) {
-			product.setProductLine(productLineService.findByCode(productDto.getProductLineCode()));
-		}
-		if(productDto.getBrandCode() != null) {
-			product.setBrand(brandService.findByCode(productDto.getBrandCode()));
+    	
+    	if(!StringUtils.isBlank(productDto.getProductLineCode())) {
+    		ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
+    		if (productLine == null) {
+    			throw new EntityDoesNotExistsException(ProductLine.class,productDto.getProductLineCode());
+    		} 
+    		product.setProductLine(productLine);
+    	}
+    	if(!StringUtils.isBlank(productDto.getBrandCode())) {
+    		CustomerBrand customerBrand=customerBrandService.findByCode(productDto.getBrandCode());
+    		if (customerBrand == null) {
+    			throw new EntityDoesNotExistsException(CustomerBrand.class,productDto.getBrandCode());
+    		} 
+			product.setBrand(customerBrand);
 		}
 		product.setReference(productDto.getReference());
 		product.setModel(productDto.getModel());
@@ -386,7 +411,7 @@ public class ProductApi extends BaseApi {
     }
     
 	public void removeProduct(String codeProduct) {
-		try {
+		try { 
 			productService.removeProduct(codeProduct);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);

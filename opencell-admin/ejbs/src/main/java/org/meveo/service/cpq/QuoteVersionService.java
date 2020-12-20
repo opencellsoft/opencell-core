@@ -7,8 +7,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteVersion;
@@ -84,6 +88,20 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 			return (int) this.getEntityManager().createNamedQuery("QuoteVersion.countCode")
 															.setParameter("code", idQuote).getSingleResult();
 	}
+	
+    @SuppressWarnings("unchecked")
+    public List<QuoteVersion>findByQuoteCode(String quoteCode) throws BusinessException {
+        try {
+            Query q = getEntityManager().createQuery("from QuoteVersion where quoteCode =:quoteCode and status<>:status");
+            q.setParameter("quoteCode", quoteCode);
+            q.setParameter("status", "CLOSED");
+            List<QuoteVersion> versions = q.getResultList();
+            log.info("findByQuoteCode: founds {} QuoteVersion with quoteCode={} and status<>{} ", versions.size(),quoteCode, "CLOSED" );
+            return versions;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 	
 	
 	/**
