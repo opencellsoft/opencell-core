@@ -128,7 +128,7 @@ public interface ContractRs extends IBaseRs {
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
 	Response findByCode(@Parameter(description = "retrieving a Contract with its code") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
-								@Parameter(description = "retrieving a Contract with its code") @QueryParam("contractCode") String ContractCode);
+								@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
 	@POST
 	@Path("/list")
 	@Operation(summary = "This endpoint allows to find list of contract with filters and paging",

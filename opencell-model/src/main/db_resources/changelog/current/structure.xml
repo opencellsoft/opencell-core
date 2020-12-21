@@ -4399,9 +4399,11 @@ END $$;]]>
      </changeSet> 
      
      <changeSet id="540-84-20201209" author="TarikFa">
-	    	<addUniqueConstraint columnNames="cpq_attribute_id,cpq_quote_product_id" tableName="cpq_quote_attribute" constraintName="uniquekey_attribute_quote_product_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
+<!-- 	    	<addUniqueConstraint columnNames="cpq_attribute_id,cpq_quote_product_id" tableName="cpq_quote_attribute" constraintName="uniquekey_attribute_quote_product_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
 <!-- 	    	<addUniqueConstraint columnNames="offer_template_id,quote_version_id" tableName="quote_offer" constraintName="uniquekey_offer_template_quote_version_id_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
-	    	<addUniqueConstraint columnNames="product_version_id,offer_quote_id" tableName="cpq_quote_product" constraintName="uniquekey_product_version_offer_quote_ids" deferrable="false" initiallyDeferred="false" disabled="false"/>
+<!-- 	    	<addUniqueConstraint columnNames="product_version_id,offer_quote_id" tableName="cpq_quote_product" constraintName="uniquekey_product_version_offer_quote_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
+	    	<addUniqueConstraint columnNames="cpq_quote_id,quote_version" tableName="cpq_quote_version" constraintName="uniquekey_pquote_id_cpq_quote_id,quote_version" deferrable="false" initiallyDeferred="false" disabled="false"/>
+
 	 </changeSet>
 
 	<changeSet id="540-83-20201211" author="Mbarek-Ay">

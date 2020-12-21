@@ -68,10 +68,10 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	}
 
 	@Override
-	public Response findByCode(ContractAccountLevel contractAccountLevel, String contractCode) {
+	public Response findByCode(ContractAccountLevel contractAccountLevel, String accountCode) {
 		GetListContractDtoResponse result = new GetListContractDtoResponse();
 		 try {
-		    	result.setContracts(contractApi.findContract(contractAccountLevel, contractCode));
+		    	result.setContracts(contractApi.findContractAccountLevel(contractAccountLevel, accountCode));
 		        return Response.ok(result).build();
 		    } catch (MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());

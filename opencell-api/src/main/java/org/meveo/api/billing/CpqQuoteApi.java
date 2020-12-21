@@ -176,7 +176,7 @@ public class CpqQuoteApi extends BaseApi {
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
 		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
-		quoteVersion.setVersion(quoteVersionDto.getCurrentVersion());
+		quoteVersion.setQuoteVersion(quoteVersionDto.getCurrentVersion());
 		try {
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {
@@ -191,20 +191,11 @@ public class CpqQuoteApi extends BaseApi {
 			int index = 1;
 			quoteOffer.getQuoteProduct().size();
 			for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
-				if(Strings.isEmpty(quoteProductDTO.getQuoteCode()))
-					missingParameters.add("products["+index+"].quoteCode");
-				if(quoteProductDTO.getQuoteVersion() <= 0 )
-					throw new MeveoApiException("Quote version for products["+index+"] must be greater than 0");
 				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
 					missingParameters.add("products["+index+"].productCode");
+				
 				handleMissingParameters();
 				
-				CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode());
-				if(cpqQuote == null)
-					throw new EntityDoesNotExistsException(CpqQuote.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode());
-				QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
-				if(quoteVersion == null)
-					throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
 				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 				if(productVersion == null)
 					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
@@ -212,10 +203,8 @@ public class CpqQuoteApi extends BaseApi {
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
 				if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
-					quoteProduct.setQuoteLot(quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId()));
+					quoteProduct.setQuoteLot(quoteLotService.findByCode(quoteProductDTO.getQuoteLotCode()));
 				}
-				quoteProduct.setQuote(cpqQuote);
-				quoteProduct.setQuoteVersion(quoteVersion);
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
 				quoteProduct.setBillableAccount(quoteOffer.getBillableAccount());
@@ -535,15 +524,29 @@ public class CpqQuoteApi extends BaseApi {
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 		if(productVersion == null)
 			throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
-		QuoteProduct q = quoteProductService.findByQuoteVersionAndQuoteOffer(quoteVersion.getId(), quoteOffer.getId());
-		if(q == null)
-			throw new EntityDoesNotExistsException("products["+index+"] : doesn't exist");
+		boolean isNew = false;
+		QuoteProduct q = null;
+		if(quoteProductDTO.getQuoteProductId() != null) {
+			q = quoteProductService.findById(quoteProductDTO.getQuoteProductId());
+			isNew = false;
+		}
+		if(q == null) {
+			q = new QuoteProduct();
+			isNew = true;
+		}
+			
 		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
 			q.setQuoteLot(quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId()));
 		}
 		
+		q.setProductVersion(productVersion);
+		q.setQuoteVersion(quoteVersion);
+		q.setQuote(cpqQuote);
 		q.setBillableAccount(quoteOffer.getBillableAccount());
 		q.setQuantity(quoteProductDTO.getQuantity());
+		q.setQuoteOffre(quoteOffer);
+		if(isNew)
+			quoteProductService.create(q);
 		processQuoteProduct(quoteProductDTO, q);
 		return q;
 	}
@@ -583,16 +586,25 @@ public class CpqQuoteApi extends BaseApi {
 		Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 		if(attribute == null)
 			throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-		QuoteAttribute quoteAttribute = quoteAttributeService.findByAttributeAndQuoteProduct(attribute.getId(), quoteProduct.getId());
-		if(quoteAttribute == null) {
-			quoteAttribute = new QuoteAttribute();
-			quoteAttributeService.create(quoteAttribute);
+		boolean isNew = false;
+		QuoteAttribute quoteAttribute = null;
+		if(quoteAttributeDTO.getQuoteAttributeId() != null) {
+			quoteAttribute = quoteAttributeService.findById(quoteAttributeDTO.getQuoteAttributeId());
+			
 		}
-		
+		if(quoteAttribute == null) {
+			isNew = true;
+			quoteAttribute = new QuoteAttribute();
+		}else{
+			if(quoteProduct.getId() != quoteAttribute.getQuoteProduct().getId())
+				throw new MeveoApiException("Quote Attribute is Already attached to : " + quoteAttribute.getQuoteProduct().getId());
+		}
 		quoteAttribute.setAttribute(attribute);
 		quoteAttribute.setValue(quoteAttributeDTO.getValue());
 		quoteProduct.getQuoteAttributes().add(quoteAttribute);
 		quoteAttribute.setQuoteProduct(quoteProduct);
+		if(isNew)
+			quoteAttributeService.create(quoteAttribute);
 		return quoteAttribute;
 	}
 	
