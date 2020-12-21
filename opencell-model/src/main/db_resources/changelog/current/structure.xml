@@ -3951,8 +3951,7 @@ END $$;]]>
 	        <column name="tag_id" type="bigint">
 	            <constraints nullable="false" />
 	        </column>
-	    </createTable>
-	    <addUniqueConstraint columnNames="offer_template_id,tag_id" constraintName="offer_template_tag_pkey" tableName="cpq_offer_template_tags" />
+	    </createTable> 
 	    
 	       <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="offer_template_id"
                                  constraintName="cpq_offer_template_tags_offer_template_id_fk" referencedTableName="cat_offer_template"
@@ -3988,7 +3987,6 @@ END $$;]]>
 	            <constraints nullable="false" />
 	        </column>
 	    </createTable>
-	    <addUniqueConstraint columnNames="product_version_id,tag_id" constraintName="product_version_tag_pkey" tableName="cpq_product_version_tags" />
 	    
 	        <addForeignKeyConstraint baseTableName="cpq_product_version_tags" baseColumnNames="product_version_id"
                                  constraintName="cpq_product_version_tags_offer_template_id_fk" referencedTableName="cpq_product_version"
@@ -4279,8 +4277,7 @@ END $$;]]>
 		        <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
 		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_allowed_values" constraintName="fk_cpq_attribute_allowed_values_attribute_type_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-		            
-		       <addPrimaryKey columnNames="product_version_id,attribute_id" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
+		     
 		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
