@@ -765,9 +765,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     	List<String> sellerTags=customerContextDto.getSellerTags();
 		List<String> customerTags=customerContextDto.getCustomerTags();
 		HashSet<String> resultTags = new HashSet<String>();
-		resultTags.addAll(baTagCodes);
-		resultTags.addAll(sellerTags);
-		resultTags.addAll(customerTags);
+		if(baTagCodes!=null) {
+			resultTags.addAll(baTagCodes);
+		}
+		if(customerTags!=null) {
+			resultTags.addAll(customerTags);
+		}
+		if(sellerTags!=null) {
+			resultTags.addAll(sellerTags);
+		}
+		
+		
     	log.info("OfferTemplateApi.list resultBaTag={}",resultTags); 
     	String tags=null;
     	if (!resultTags.isEmpty()) {
