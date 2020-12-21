@@ -20,6 +20,7 @@ package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -70,7 +71,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     
     /** The offer component. */
     @XmlElementWrapper(name = "offerProducts")
-    @XmlElement(name = "offerComponent")
+    @XmlElement(name = "offerProducts")
     private List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
 
     /** The offer product templates. */
@@ -133,7 +134,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
      * @param customFieldsDto Custom fields DTO
      * @param asLink Convert to DTO with minimal information only - code and validity dates
      */
-    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadTags) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
 
@@ -143,6 +144,14 @@ public class OfferTemplateDto extends ProductOfferingDto {
         if (!asLink) {
             setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
         }
+     	if(loadTags) { 
+    		if(offerTemplate.getTags() != null && !offerTemplate.getTags().isEmpty()) {
+    			tags = offerTemplate.getTags().stream().map(t -> {
+    				final TagDto dto = new TagDto(t);
+    				return dto;
+    			}).collect(Collectors.toList());
+    		} 
+    	} 
     }
 
     @Override

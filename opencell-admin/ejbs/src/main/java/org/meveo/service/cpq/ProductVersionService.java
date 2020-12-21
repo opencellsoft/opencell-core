@@ -18,6 +18,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 /**
@@ -228,7 +229,18 @@ public class ProductVersionService extends
 
 	    	return productVersions;
 	    } 
-	  
+	    @SuppressWarnings("unchecked")
+	    public List<Tag> getProductTagsByType(List<String> tagTypeCodes) { 
+	    	List<Tag> tags=new ArrayList<Tag>();
+	    	try {
+	    		tags = (List<Tag>)getEntityManager().createNamedQuery("ProductVersion.findTagsByTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    		log.error("getOfferTagsByType error ", e.getMessage());
+	    	}
+
+	    	return tags;
+	    }
 	  
 	  
 }

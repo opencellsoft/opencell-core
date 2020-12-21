@@ -30,7 +30,7 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_offer_component", uniqueConstraints = @UniqueConstraint(columnNames = {"offer_template_id", "product_id"}))
+@Table(name = "cpq_offer_component")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_offer_component_seq"), })
 @NamedQuery(name = "OfferComponent.findByOfferTEmplateAndProduct", query = "select o from OfferComponent o left join o.offerTemplate ot left join o.product op where ot.code=:offerCode  and op.code=:productCode")

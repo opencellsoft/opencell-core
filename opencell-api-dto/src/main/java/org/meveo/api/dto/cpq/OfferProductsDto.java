@@ -27,9 +27,6 @@ public class OfferProductsDto extends BaseEntityDto {
     private static final long serialVersionUID = -7824004884683019697L;  
     @NotNull
     private String offerTemplateCode;
-    
-    /** The product dto. */
-    private ProductVersionDto productVersion;
     private ProductDto product;
     
     /** Discount plans allowed for this product. */
@@ -97,21 +94,6 @@ public class OfferProductsDto extends BaseEntityDto {
 
 
 
-	/**
-	 * @return the productVersion
-	 */
-	public ProductVersionDto getProductVersion() {
-		return productVersion;
-	}
-
-
-
-	/**
-	 * @param productVersion the productVersion to set
-	 */
-	public void setProductVersion(ProductVersionDto productVersion) {
-		this.productVersion = productVersion;
-	}
 
 
 
