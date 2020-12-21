@@ -49,7 +49,7 @@ import org.slf4j.Logger;
  * 
  */
 @Stateless
-public class SepaRejectedTransactionsJobBean {
+public class SepaRejectedTransactionsJobBean extends BaseJobBean {
 
     /** The log. */
     @Inject
@@ -58,9 +58,6 @@ public class SepaRejectedTransactionsJobBean {
     /** The ddRequestLotService service. */
     @Inject
     private DDRequestLOTService ddRequestLotService;
-
-    /** The file name. */
-    String fileName;
 
     /** The output dir. */
     String outputDir;
@@ -77,12 +74,18 @@ public class SepaRejectedTransactionsJobBean {
     /** The reject file writer. */
     PrintWriter rejectFileWriter;
 
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+   @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance, File file, DDRequestBuilderInterface ddRequestBuilderInterface, String inputDir)
             throws BusinessException {
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "RejectSepaJob_nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "RejectSepaJob_waitingMillis", 0L);
+
         File currentFile = null;
+        String fileName = file.getName();
         try {
             outputDir = inputDir + File.separator + "output";
             rejectDir = inputDir + File.separator + "reject";
@@ -105,7 +108,6 @@ public class SepaRejectedTransactionsJobBean {
                 f.mkdirs();
                 log.debug("saveDir {} creation ok", archiveDir);
             }
-            fileName = file.getName();
             log.info(file.getName() + " in progress");
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
@@ -116,15 +118,13 @@ public class SepaRejectedTransactionsJobBean {
             } else {
                 ddRejectFileInfos = ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
             }
+            result.addNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
+            result.addReport(ddRejectFileInfos.formatErrorsReport());
 
-            ddRequestLotService.processRejectFile(ddRejectFileInfos);
+            ddRequestLotService.processRejectFile(ddRejectFileInfos, nbRuns, waitingMillis, result);
 
             FileUtils.moveFile(archiveDir, currentFile, fileName);
             log.info("Processing " + file.getName() + " done");
-            result.registerSucces();
-            result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
-            result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
-            result.addReport(ddRejectFileInfos.formatErrorsReport());
             
         } catch (Exception e) {
             result.registerError(e.getMessage());
