@@ -202,7 +202,14 @@ public class InvoiceApi extends BaseApi {
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
-
+        // Validate and populate customFields
+        try {
+            populateCustomFields(invoiceDTO.getCustomFields(), invoice, false);
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to invoice: {}", e.getMessage());
+            throw e;
+        }
+        
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());
         response.setAmountWithoutTax(invoice.getAmountWithoutTax());
