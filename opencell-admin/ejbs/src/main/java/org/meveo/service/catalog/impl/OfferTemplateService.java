@@ -49,6 +49,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -396,5 +397,17 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     	}
 
     	return offers;
+    }
+    @SuppressWarnings("unchecked")
+    public List<Tag> getOfferTagsByType(List<String> tagTypeCodes) { 
+    	List<Tag> tags=new ArrayList<Tag>();
+    	try {
+    		tags = (List<Tag>)getEntityManager().createNamedQuery("OfferTemplate.findTagsByTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("getOfferTagsByType error ", e.getMessage());
+    	}
+
+    	return tags;
     }
 }

@@ -1,5 +1,7 @@
 package org.meveo.service.cpq;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -18,13 +20,14 @@ public class OfferComponentService extends
 		PersistenceService<OfferComponent> {
 
 
-	public OfferComponent findByCode(String offerCode, String productCode) {
+	@SuppressWarnings("unchecked")
+	public List<OfferComponent> findByCode(String offerCode, String productCode) {
 		try {
-			return (OfferComponent) this.getEntityManager()
+			return (List<OfferComponent>) this.getEntityManager()
 										.createNamedQuery("OfferComponent.findByOfferTEmplateAndProduct")
 											.setParameter("offerCode", offerCode)
 											.setParameter("productCode", productCode)
-												.getSingleResult();
+												.getResultList();
 		}catch(NoResultException e) {
 			return null;
 		}

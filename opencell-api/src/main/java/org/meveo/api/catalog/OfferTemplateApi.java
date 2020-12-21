@@ -84,6 +84,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
@@ -631,7 +632,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
             boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadProductAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
-        OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
+    	 if (loadTags && !requestedTagTypes.isEmpty()) {
+         	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
+         	offerTemplate.setTags(tags);
+         }
+    	OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true);
+       
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
@@ -677,24 +683,25 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         		for (OfferComponent offerComponent : offerComponents) {
         			product = offerComponent.getProduct();
         			offerProductsDto = new OfferProductsDto();
-        			if (product != null) {
+        			if (product != null && ProductStatusEnum.ACTIVE.equals(product.getStatus())) {
 
         				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
-        					offerProductsDto.setProduct(new ProductDto(product));
+        					ProductDto productDTO=new ProductDto(product);
         					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
         					for(ProductVersion productVersion : productVersionList) {  
         						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
         							if(!requestedTagTypes.isEmpty()) {
-        							tags=tagService.findByRequestedTagType(requestedTagTypes);
-        							productVersion.setTags(new HashSet<Tag>(tags));
+        							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
+        					           productVersion.setTags(new HashSet<Tag>(tags));
         							}
         							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
-        							offerProductsDto.setProductVersion(productVersionDto);
+        							productDTO.setCurrentProductVersion(productVersionDto);
         							break;
         							}
         						
         					} 
+        					offerProductsDto.setProduct(productDTO);
         				}
         				offerProducts.add(offerProductsDto);
         			} 
@@ -845,7 +852,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
-    	return new OfferTemplateDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
+    	return new OfferTemplateDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
     }
     
     public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {

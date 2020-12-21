@@ -4169,8 +4169,6 @@ END $$;]]>
 	    </changeSet>
 	    
 	    <changeSet id="540-66-20201201" author="TarikFA">
-		        <addUniqueConstraint columnNames="offer_template_id,product_id" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cpq_offer_component"/>
-		        
 		        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_offer_component" constraintName="fk_cpq_offer_component_offer_template_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
 	    </changeSet>

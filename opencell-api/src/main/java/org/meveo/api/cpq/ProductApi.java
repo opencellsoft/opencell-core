@@ -99,6 +99,11 @@ public class ProductApi extends BaseApi {
 		try {
 			Product product=populateProduct(productDto);
 			productService.create(product);
+			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
+			if(currentProductVersion!=null) {
+				createProductVersion(productDto.getCurrentProductVersion());
+			}
+			
 			return product.getId();
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);

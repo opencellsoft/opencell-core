@@ -38,6 +38,7 @@ public class ProductDto extends BaseEntityDto{
     private boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    private ProductVersionDto currentProductVersion;
     
    
 
@@ -228,6 +229,20 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the currentProductVersion
+	 */
+	public ProductVersionDto getCurrentProductVersion() {
+		return currentProductVersion;
+	}
+
+	/**
+	 * @param currentProductVersion the currentProductVersion to set
+	 */
+	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
+		this.currentProductVersion = currentProductVersion;
 	}
 
 
