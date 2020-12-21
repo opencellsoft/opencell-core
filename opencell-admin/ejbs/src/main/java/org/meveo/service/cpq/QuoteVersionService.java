@@ -92,9 +92,9 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
     @SuppressWarnings("unchecked")
     public List<QuoteVersion>findByQuoteCode(String quoteCode) throws BusinessException {
         try {
-            Query q = getEntityManager().createQuery("from QuoteVersion where quoteCode =:quoteCode and status<>:status");
+            Query q = getEntityManager().createQuery("from QuoteVersion where quote.code =:quoteCode and status<>:status");
             q.setParameter("quoteCode", quoteCode);
-            q.setParameter("status", "CLOSED");
+            q.setParameter("status", VersionStatusEnum.CLOSED);
             List<QuoteVersion> versions = q.getResultList();
             log.info("findByQuoteCode: founds {} QuoteVersion with quoteCode={} and status<>{} ", versions.size(),quoteCode, "CLOSED" );
             return versions;
