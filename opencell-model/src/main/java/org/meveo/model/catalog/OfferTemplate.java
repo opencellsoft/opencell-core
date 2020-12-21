@@ -66,7 +66,7 @@ import org.meveo.model.cpq.tags.Tag;
         @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null"),
         @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate"),
         @NamedQuery(name = "OfferTemplate.findByTags", query = "select o from OfferTemplate o LEFT JOIN o.tags as tag WHERE tag.code IN (:tagCodes)"),
-        @NamedQuery(name = "ProductVersion.findByRequestedTagType", query = "select tag from OfferTemplate p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)")
+        @NamedQuery(name = "OfferTemplate.findTagsByTagType", query = "select tag from OfferTemplate p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)")
 })
 
 

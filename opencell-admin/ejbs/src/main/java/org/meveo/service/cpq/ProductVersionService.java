@@ -233,7 +233,7 @@ public class ProductVersionService extends
 	    public List<Tag> getProductTagsByType(List<String> tagTypeCodes) { 
 	    	List<Tag> tags=new ArrayList<Tag>();
 	    	try {
-	    		tags = (List<Tag>)getEntityManager().createNamedQuery("ProductVersion.findByRequestedTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
+	    		tags = (List<Tag>)getEntityManager().createNamedQuery("ProductVersion.findTagsByTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
 	    	} catch (Exception e) {
 	    		e.printStackTrace();
 	    		log.error("getOfferTagsByType error ", e.getMessage());
