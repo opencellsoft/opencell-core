@@ -10556,9 +10556,7 @@ $$ LANGUAGE plpgsql;
             </column>
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
-            <column name="quote_version_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>   
+            <column name="quote_version_id" type="bigint" />
             <column name="quote_lot_id" type="bigint" />  
             <column name="offer_component_id" type="bigint" >
                 <constraints nullable="false" />
@@ -10567,9 +10565,7 @@ $$ LANGUAGE plpgsql;
             	<constraints nullable="false"/>
             </column> 
             <column name="quantity" type="numeric(23, 12)" /> 
-            <column name="cpq_quote_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>  
+            <column name="cpq_quote_id" type="bigint" />
     	</createTable>
      </changeSet>
      
@@ -10662,9 +10658,7 @@ $$ LANGUAGE plpgsql;
             <column name="cpq_contract_id" type="bigint" /> 
             <column name="offer_template_id" type="bigint" /> 
             <column name="cpq_product_id" type="bigint" /> 
-            <column name="price_plan_id" type="bigint" >
-            	<constraints nullable="false"/>
-            </column> 
+            <column name="price_plan_id" type="bigint" /> 
             <column name="charge_template_id" type="bigint" /> 
             <column name="service_template_id" type="bigint" /> 
             <column name="rate" type="int4" /> 

@@ -63,7 +63,7 @@ public class ContractItem extends BusinessEntity {
 	 * price plan
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "price_plan_id", nullable = false)
+	@JoinColumn(name = "price_plan_id")
 	@NotNull
 	private PricePlanMatrix pricePlan;
 

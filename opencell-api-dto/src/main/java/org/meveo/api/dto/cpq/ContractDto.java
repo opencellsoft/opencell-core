@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -18,11 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @SuppressWarnings("serial")
 public class ContractDto extends BusinessEntityDto {
 
-    @NotNull
-	private String sellerCode;
-	private String billingAccountCode;
-	private String customerAccountCode;
-	private String customerCode;
+	private ContractAccountLevel contractAccountLevel;
+	private String accountCode;
 	private ProductStatusEnum status;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date statusDate;
@@ -44,72 +42,29 @@ public class ContractDto extends BusinessEntityDto {
 	
 	public ContractDto(Contract c) {
 		this.beginDate = c.getBeginDate();
-		if(c.getBillingAccount() != null)
-			this.billingAccountCode = c.getBillingAccount().getCode();
+		if(c.getBillingAccount() != null) {
+			this.contractAccountLevel = ContractAccountLevel.BILLING_ACCOUNT;
+			this.accountCode = c.getBillingAccount().getCode();
+		}else if(c.getCustomerAccount() != null) {
+			this.contractAccountLevel = ContractAccountLevel.CUSTOMER_ACCOUNT;
+			this.accountCode = c.getCustomerAccount().getCode();
+		}else if(c.getSeller() != null) {
+			this.contractAccountLevel = ContractAccountLevel.SELLER;
+			this.accountCode = c.getSeller().getCode();
+		}else if(c.getCustomer() != null) {
+			this.contractAccountLevel = ContractAccountLevel.CUSTOMER;
+			this.accountCode = c.getCustomer().getCode();
+		}
 		this.code = c.getCode();
 		this.contractDate = c.getContractDate();
 		this.contractDuration = c.getContractDuration();
-		if(c.getCustomerAccount() != null)
-			this.customerAccountCode = c.getCustomerAccount().getCode();
 		this.endDate = c.getEndDate();
 		this.renewal = c.isRenewal();
-		if(c.getSeller() != null)
-			this.sellerCode = c.getSeller().getCode();
 		this.status = c.getStatus();
 		this.statusDate = c.getStatusDate();
-		if(c.getCustomer() != null)
-			this.customerCode = c.getCustomer().getCode();
 		this.description = c.getDescription();
 	}
 	
-	/**
-	 * @return the sellerCode
-	 */
-	public String getSellerCode() {
-		return sellerCode;
-	}
-	/**
-	 * @param sellerCode the sellerCode to set
-	 */
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
-	}
-	/**
-	 * @return the billingAccountCode
-	 */
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-	/**
-	 * @param billingAccountCode the billingAccountCode to set
-	 */
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
-	/**
-	 * @return the customerAccountCode
-	 */
-	public String getCustomerAccountCode() {
-		return customerAccountCode;
-	}
-	/**
-	 * @param customerAccountCode the customerAccountCode to set
-	 */
-	public void setCustomerAccountCode(String customerAccountCode) {
-		this.customerAccountCode = customerAccountCode;
-	}
-	/**
-	 * @return the customerCode
-	 */
-	public String getCustomerCode() {
-		return customerCode;
-	}
-	/**
-	 * @param customerCode the customerCode to set
-	 */
-	public void setCustomerCode(String customerCode) {
-		this.customerCode = customerCode;
-	}
 	/**
 	 * @return the status
 	 */
@@ -193,6 +148,34 @@ public class ContractDto extends BusinessEntityDto {
 	 */
 	public void setContractDuration(int contractDuration) {
 		this.contractDuration = contractDuration;
+	}
+
+	/**
+	 * @return the contractAccountLevel
+	 */
+	public ContractAccountLevel getContractAccountLevel() {
+		return contractAccountLevel;
+	}
+
+	/**
+	 * @param contractAccountLevel the contractAccountLevel to set
+	 */
+	public void setContractAccountLevel(ContractAccountLevel contractAccountLevel) {
+		this.contractAccountLevel = contractAccountLevel;
+	}
+
+	/**
+	 * @return the accountCode
+	 */
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	/**
+	 * @param accountCode the accountCode to set
+	 */
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
 	}
 	
 }

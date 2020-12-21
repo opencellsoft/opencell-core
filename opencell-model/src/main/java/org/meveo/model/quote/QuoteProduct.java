@@ -30,7 +30,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_product", uniqueConstraints = @UniqueConstraint(columnNames = { "product_version_id", "offer_quote_id"}))
+@Table(name = "cpq_quote_product")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQueries({
@@ -44,16 +44,14 @@ public class QuoteProduct extends AuditableEntity {
      * quote
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
-	@NotNull
+	@JoinColumn(name = "cpq_quote_id", referencedColumnName = "id")
     private CpqQuote quote;
 
     /**
      * quote Version
      */
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_version_id", nullable = false, referencedColumnName = "id")
-	@NotNull
+	@JoinColumn(name = "quote_version_id", referencedColumnName = "id")
     private QuoteVersion quoteVersion;
 
     /**

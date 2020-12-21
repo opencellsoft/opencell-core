@@ -102,23 +102,7 @@ public class ContractApi extends BaseApi{
 		contract.setRenewal(dto.isRenewal());
 		contract.setContractDuration(dto.getContractDuration());
 		contract.setDescription(dto.getDescription());
-		//retrieve seller
-		final Seller seller = sellerService.findByCode(dto.getSellerCode());
-//		if(seller == null)
-//			throw new EntityDoesNotExistsException(Seller.class, dto.getSellerCode());
-		contract.setSeller(seller);
-		// get billing account if it exist
-		if(!Strings.isEmpty(dto.getBillingAccountCode())) {
-				contract.setBillingAccount(billingAccountService.findByCode(dto.getBillingAccountCode()));
-		}
-		// get customer account if it exist
-		if(!Strings.isEmpty(dto.getCustomerAccountCode())) {
-			contract.setCustomerAccount(customerAccountService.findByCode(dto.getCustomerAccountCode()));
-		}
-		// get customer if it exist
-		if(!Strings.isEmpty(dto.getCustomerCode())) {
-			contract.setCustomer(customerService.findByCode(dto.getCustomerCode()));
-		}
+		changeAccountLevel(dto, contract);
 		try {
 			contractService.create(contract);
 		}catch(BusinessException e) {
@@ -127,6 +111,36 @@ public class ContractApi extends BaseApi{
 		return contract.getId();
 	}
 	
+	private void changeAccountLevel(ContractDto dto, Contract contract) {
+		switch (dto.getContractAccountLevel()) {
+			case SELLER:
+					final Seller seller = sellerService.findByCode(dto.getAccountCode());
+					if(seller == null)
+						throw new EntityDoesNotExistsException(Seller.class, dto.getAccountCode());
+					contract.setSeller(seller);
+				break;
+			case CUSTOMER : 
+					final Customer customer = customerService.findByCode(dto.getAccountCode());
+					if(customer == null)
+						throw new EntityDoesNotExistsException(Customer.class, dto.getAccountCode());
+					contract.setCustomer(customer);
+				break;
+			case BILLING_ACCOUNT : 
+				final BillingAccount billingAccount = billingAccountService.findByCode(dto.getAccountCode());
+				if(billingAccount == null)
+					throw new EntityDoesNotExistsException(BillingAccount.class, dto.getAccountCode());
+				contract.setBillingAccount(billingAccount);
+				break;
+			case CUSTOMER_ACCOUNT : 
+				final CustomerAccount cusotmerAccount = customerAccountService.findByCode(dto.getAccountCode());
+				if(cusotmerAccount == null)
+					throw new EntityDoesNotExistsException(CustomerAccount.class, dto.getAccountCode());
+				contract.setCustomerAccount(cusotmerAccount);
+				break;
+			default:
+				break;
+		}
+	}
 	public void updateContract(ContractDto dto) {
 		// check mandatory param
 		checkParams(dto);
@@ -161,29 +175,13 @@ public class ContractApi extends BaseApi{
 		contract.setContractDuration(dto.getContractDuration());
 		contract.setDescription(dto.getDescription());
 		
-		if(contract.getSeller() != null && !contract.getSeller().getCode().equals(dto.getSellerCode())) {
-			final Seller seller = sellerService.findByCode(dto.getSellerCode());
-			if(seller == null)
-				throw new EntityDoesNotExistsException(Seller.class, dto.getSellerCode());
-			contract.setSeller(seller);
-		}
-		if(!Strings.isEmpty(dto.getBillingAccountCode())) {
-			contract.setBillingAccount(billingAccountService.findByCode(dto.getBillingAccountCode()));
-		}else {
-			contract.setBillingAccount(null);
-		}
-		// get customer account if it exist
-		if(!Strings.isEmpty(dto.getCustomerAccountCode())) {
-			contract.setCustomerAccount(customerAccountService.findByCode(dto.getCustomerAccountCode()));
-		}else {
-			contract.setCustomerAccount(null);
-		}
-		// get customer if it exist
-		if(!Strings.isEmpty(dto.getCustomerCode())) {
-			contract.setCustomer(customerService.findByCode(dto.getCustomerCode()));
-		}else {
-			contract.setCustomer(null);
-		}
+		contract.setBillingAccount(null);
+		contract.setSeller(null);
+		contract.setCustomer(null);
+		contract.setCustomerAccount(null);
+		changeAccountLevel(dto, contract);
+		
+		
 		try {
 			contractService.update(contract);
 		}catch(BusinessException e) {
@@ -206,7 +204,7 @@ public class ContractApi extends BaseApi{
 		return new ContractDto(contract);
 	}
 	
-	public List<ContractDto> findContract(ContractAccountLevel contractAccountLevel, String accountCode) {
+	public List<ContractDto> findContractAccountLevel(ContractAccountLevel contractAccountLevel, String accountCode) {
 		if(contractAccountLevel == null)
 			missingParameters.add("contractAccountLevel");
 		if(Strings.isEmpty(accountCode))
@@ -363,8 +361,10 @@ public class ContractApi extends BaseApi{
 	private void checkParams(ContractDto dto) {
 		if(Strings.isEmpty(dto.getCode()))
 			missingParameters.add("code");
-		if(Strings.isEmpty(dto.getSellerCode()))
-			missingParameters.add("sellerCode");
+		if(dto.getContractAccountLevel() == null)
+			missingParameters.add("contractAccountLevel");
+		if(Strings.isEmpty(dto.getAccountCode()))
+			missingParameters.add("accountCode");
 		if(dto.getContractDate() == null)
 			missingParameters.add("contractDate");
 		if(dto.getBeginDate() == null)
