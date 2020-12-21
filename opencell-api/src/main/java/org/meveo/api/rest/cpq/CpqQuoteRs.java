@@ -266,16 +266,16 @@ public interface CpqQuoteRs {
     public Response findQuoteItem(@Parameter(description = "", required = true) @PathParam("quoteOfferId") Long quoteOfferId); */
     
 
-    @GET
-    @Path("/quoteQuotation")
-    @Operation(summary = "Get quote quotation",
-    tags = { "Quotation" },
-    description ="",
-    responses = {
-            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
-    })
-	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
-			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion, UriInfo info);
+//    @GET
+//    @Path("/quoteQuotation")
+//    @Operation(summary = "Get quote quotation",
+//    tags = { "Quotation" },
+//    description ="",
+//    responses = {
+//            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
+//    })
+//	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
+//			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion, UriInfo info);
     
     
 }

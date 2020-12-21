@@ -97,34 +97,20 @@ public interface AttributeRs extends IBaseRs {
 	Response findByCode(@Parameter(description = "retrieving a attribute with its code") @QueryParam("code") String code);
 	
 	
-	@POST
-	@Path("/createOrUpdate")
-    @Operation(summary = "This endpoint allows to create or update a attribute",
-    tags = { "Attribute" },
-    description ="create a attribute if it doesn't exist or update an existing attribute",
-    responses = {
-            @ApiResponse(responseCode="200", description = "the attribute successfully created or updated",
-                    content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Unkonw grouped attribute to attach to attribute"),
-            @ApiResponse(responseCode = "400", description = "the attribute with code in param does not exist ")
-    })
-	Response createOrUpdate(@Parameter(description = "create new attribute or update an existing attribute", required = true) AttributeDTO postData);
-	
-	
     
-    @POST
-    @Path("/cpq/list/{productCode}/{productVersion}")
-    @Operation(summary = "Get attributes related to the given product that match the quote offer context",
-    tags = { "Catalog browsing" },
-    description ="Get attributes related to the given product that match the quote offer context",
-    responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
-            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
-            @ApiResponse(responseCode = "404", description = "selected service does not exist")
-    })
-    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
-	
+//    @POST
+//    @Path("/cpq/list/{productCode}/{productVersion}")
+//    @Operation(summary = "Get attributes related to the given product that match the quote offer context",
+//    tags = { "Catalog browsing" },
+//    description ="Get attributes related to the given product that match the quote offer context",
+//    responses = {
+//            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
+//            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+//            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+//            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+//            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+//    })
+//    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
+//	
 	 
 }
