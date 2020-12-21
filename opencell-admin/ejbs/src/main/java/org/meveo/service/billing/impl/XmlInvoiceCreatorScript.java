@@ -105,6 +105,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -152,6 +153,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     @Inject
     protected InvoiceService invoiceService;
+    
+    @Inject
+    protected SellerService sellerService;
 
     @Inject
     protected RatedTransactionService ratedTransactionService;
@@ -1641,12 +1645,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createSellerSection(Document doc, Invoice invoice) {
 
-        Seller seller = invoice.getSeller();
-        if (seller == null) {
+        if (invoice.getSeller() == null) {
             return null;
         }
+        Seller seller = sellerService.retrieveIfNotManaged(invoice.getSeller());
+        
         Element sellerTag = doc.createElement("seller");
-
         sellerTag.setAttribute("code", seller.getCode());
         sellerTag.setAttribute("description", getDefaultIfNull(seller.getDescription(), ""));
         sellerTag.setAttribute("vatNo", getDefaultIfNull(seller.getVatNo(), ""));
