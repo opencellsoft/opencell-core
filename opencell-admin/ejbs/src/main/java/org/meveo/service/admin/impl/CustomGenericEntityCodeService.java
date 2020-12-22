@@ -23,6 +23,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.CustomGenericEntityCode;
+import org.meveo.model.sequence.Sequence;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -79,7 +80,11 @@ public class CustomGenericEntityCodeService extends PersistenceService<CustomGen
 
         if (customGenericEntityCode != null) {
             Map<Object, Object> contextMap = new HashMap<>();
-            String sequenceNextValue = StringUtils.getLongAsNChar(customGenericEntityCode.getSequenceCurrentValue(), customGenericEntityCode.getSequenceSize());
+            Sequence sequence = customGenericEntityCode.getSequence();
+            if(sequence == null) {
+                throw new BusinessException("No sequence associated to customGenericEntityCode : " + customGenericEntityCode.getId());
+            }
+            String sequenceNextValue = StringUtils.getLongAsNChar(sequence.getCurrentNumber(), sequence.getSequenceSize());
             contextMap.put("entity", businessEntity);
             contextMap.put("sequenceNextValue", sequenceNextValue);
 

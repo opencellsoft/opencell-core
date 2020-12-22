@@ -28,19 +28,21 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
+import org.meveo.api.custom.GenericCodeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
+import org.meveo.api.dto.custom.GenericCodeDto;
+import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -66,6 +68,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
     @Inject
     private CustomerSequenceApi customerSequenceApi;
+
+    @Inject
+    private GenericCodeApi genericCodeApi;
 
     @Override
     public ActionStatus create(CustomerDto postData) {
@@ -347,11 +352,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
+    public ActionStatus createCustomerSequence(GenericCodeDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            customerSequenceApi.createCustomerSequence(postData);
+            genericCodeApi.create(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -360,11 +365,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
+    public ActionStatus updateCustomerSequence(GenericCodeDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            customerSequenceApi.updateCustomerSequence(postData);
+            genericCodeApi.update(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -373,11 +378,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
-        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+    public GenericCodeResponseDto getNextCustomerSequenceNumber(GenericCodeDto genericCodeDto) {
+        GenericCodeResponseDto result = new GenericCodeResponseDto();
 
         try {
-            result = customerSequenceApi.getNextNumber(code);
+            result.setGeneratedCode(genericCodeApi.getGenericCode(genericCodeDto));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

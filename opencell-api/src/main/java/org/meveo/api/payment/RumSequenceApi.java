@@ -39,6 +39,7 @@ import org.meveo.service.crm.impl.ProviderService;
  * @lastModifiedVersion 5.2
  */
 @Stateless
+@Deprecated
 public class RumSequenceApi extends BaseApi {
 
 	@Inject

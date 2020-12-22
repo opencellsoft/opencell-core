@@ -68,6 +68,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -86,6 +87,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderContactService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
@@ -157,6 +159,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    private ProviderContactService providerContactService;
     
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -485,6 +490,19 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
+        }
+        
+        if (postData.getPrimaryContact() != null) {
+            if (StringUtils.isBlank(postData.getPrimaryContact())) {
+                billingAccount.setPrimaryContact(null);
+            } else {
+                ProviderContact primaryContact = providerContactService.findByCode(postData.getPrimaryContact());
+                if (primaryContact == null) {
+                    throw new EntityDoesNotExistsException(ProviderContact.class, postData.getPrimaryContact());
+                } else {
+                    billingAccount.setPrimaryContact(primaryContact);
+                }
+            }
         }
 
         // Update payment method information in a customer account.

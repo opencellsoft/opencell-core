@@ -146,7 +146,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         BillingAccount billingAccount = userAccount.getBillingAccount();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
-        BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
+        BigDecimal amount = (paymentScheduleInstanceItem.getAmount() != null) ?
+                paymentScheduleInstanceItem.getAmount() :
+                paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
         Tax tax = taxService.getZeroTax(); // TODO AKK There should be no tax on payment.
         if (tax == null) {
             throw new BusinessException("Cant found tax for invoiceSubCat:" + invoiceSubCat.getCode());

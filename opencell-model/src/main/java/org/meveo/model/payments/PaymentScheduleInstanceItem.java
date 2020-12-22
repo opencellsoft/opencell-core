@@ -42,6 +42,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.Invoice;
 
 /**
@@ -79,6 +81,7 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
     @Column(name = "request_pay_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date requestPaymentDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -93,6 +96,13 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
     @Column(name = "is_last", nullable = false)
     @NotNull
     private boolean last;
+
+    /**
+     * The amount.
+     */
+    @Column(name = "amount")
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+    private BigDecimal amount;
 
     /**
      * @return the paymentScheduleInstance
@@ -186,4 +196,21 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
 
     }
 
+    /**
+     * Gets Amount.
+     *
+     * @return
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * Sets Amount
+     *
+     * @param amount
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

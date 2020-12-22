@@ -25,12 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.SearchResponse;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 /**
  * Represents search within custom table results
  *
@@ -68,52 +62,4 @@ public class CustomTableDataResponseDto extends SearchResponse {
     public String toString() {
         return "CustomTableDataResponseDto [customTableData=" + customTableData + " " + super.toString() + "]";
     }
-
-    public static void main(String[] args) {
-        String fieldsToRetrieve = "id,sum(vers),ident,nbr,nbr2";
-        CustomTableDataResponseDto nativePersistenceService = new CustomTableDataResponseDto();
-        Predicate<String> p = x -> nativePersistenceService.checkAggFunctions(x.toUpperCase());
-        String list = nativePersistenceService.retrieveFields(fieldsToRetrieve, p.negate());
-        System.out.println(list);
-        System.out.println("final");
-        String string = nativePersistenceService.retrieveAggFields(fieldsToRetrieve, p);
-        System.out.println(string);
-        /*List<String> otherList = nativePersistenceService.agg(fieldsToRetrieve, p.negate());
-        List<String> result = otherList.stream()
-                .filter(x -> !list.contains(x))
-                .collect(Collectors.toList());
-        System.out.println("fianl list");
-        list.forEach(x -> System.out.println(x));
-        System.out.println(" list");
-        otherList.forEach(x -> System.out.println(x));
-        /*System.out.println("agg list");
-        list.forEach(x -> System.out.println(x));
-        System.out.println("no agg list");
-        otherList.forEach(x -> System.out.println(x));*/
-    }
-
-    private String retrieveFields(String fields, Predicate<String> predicate) {
-        List<String> a = Arrays.stream(fields.split(",")).collect(Collectors.toList());
-        if(fields != null) {
-            return a.stream().filter(predicate).map(x -> " a." + x).collect(Collectors.joining(","));
-        }
-        return "";
-    }
-
-    private String retrieveAggFields(String fields, Predicate<String> predicate) {
-        List<String> a = Arrays.stream(fields.split(",")).collect(Collectors.toList());
-        return a.stream()
-                .filter(predicate)
-                .collect(Collectors.joining(","));
-    }
-
-    private boolean checkAggFunctions(String field) {
-        if (field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
-                || field.startsWith("MAX(") || field.startsWith("MIN(")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 }

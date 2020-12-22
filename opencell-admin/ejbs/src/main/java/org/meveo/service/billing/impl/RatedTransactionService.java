@@ -1595,11 +1595,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Deprecated
     public boolean isServiceMinRTsUsed() {
 
-    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
-		if(booleanValue!=null) {
-    		return booleanValue;
-    	}
-    	 
+        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        if(booleanValue!=null) {
+            return booleanValue;
+        }
+         
         try {
             getEntityManager().createNamedQuery("ServiceInstance.getMimimumRTUsed").setMaxResults(1).getSingleResult();
             return true;
@@ -1615,11 +1615,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
-    	
-    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
-		if(booleanValue!=null) {
-    		return booleanValue;
-    	}
+        
+        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        if(booleanValue!=null) {
+            return booleanValue;
+        }
 
         try {
             getEntityManager().createNamedQuery("Subscription.getMimimumRTUsed").setMaxResults(1).getSingleResult();
@@ -1636,11 +1636,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @Deprecated
     public boolean isBAMinRTsUsed() {
-    	
-    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
-		if(booleanValue!=null) {
-    		return booleanValue;
-    	}
+        
+        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        if(booleanValue!=null) {
+            return booleanValue;
+        }
 
         try {
             getEntityManager().createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
@@ -1657,12 +1657,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return An array of booleans indicating if minimum invoicing amount rule exists on service, subscription and billingAccount levels, in that particular order.
      */
     public boolean[] isMinRTsUsed() {
-    	
-    	Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
-		if(booleanValue!=null) {
-    		return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue};
-    	}
-    	
+        
+        Boolean booleanValue = ParamBean.getInstance().getBooleanValue("billing.minimumRating.global.enabled");
+        if(booleanValue!=null) {
+            return new boolean[] { booleanValue, booleanValue, booleanValue, booleanValue, booleanValue, booleanValue};
+        }
+        
         boolean baMin = false;
         boolean subMin = false;
         boolean servMin = false;
@@ -1888,6 +1888,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> getRatedTransactionBetweenTwoDatesByStatus(Date firstDate, Date lastDate, long lastId, int maxResult, List<RatedTransactionStatusEnum> formattedStatus) {
         return getEntityManager().createNamedQuery("RatedTransaction.listBetweenTwoDatesByStatus", RatedTransaction.class).setParameter("firstTransactionDate", firstDate).setParameter("lastTransactionDate", lastDate)
             .setParameter("lastId", lastId).setParameter("status", formattedStatus).setMaxResults(maxResult).getResultList();
+    }
+    
+    public long purge(Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
+        return getEntityManager().createNamedQuery("RatedTransaction.deleteByLastTransactionDateAndStatus")
+                .setParameter("status", targetStatusList)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .executeUpdate();
     }
 
     public long purge(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
