@@ -18,7 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,10 +25,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.util.Strings;
-import org.elasticsearch.Version;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -59,7 +56,6 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
@@ -515,12 +511,6 @@ public class CpqQuoteApi extends BaseApi {
 	}
 	
 	private QuoteProduct getQuoteProductFromDto(QuoteProductDTO quoteProductDTO, QuoteOffer quoteOffer, int index) {
-		CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode());
-		if(cpqQuote == null)
-			throw new EntityDoesNotExistsException(CpqQuote.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode());
-		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion());
-		if(quoteVersion == null)
-			throw new EntityDoesNotExistsException(QuoteVersion.class, "products["+index+"] = " + quoteProductDTO.getQuoteCode() +","+ quoteProductDTO.getQuoteVersion());
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 		if(productVersion == null)
 			throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
@@ -536,12 +526,16 @@ public class CpqQuoteApi extends BaseApi {
 		}
 			
 		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
-			q.setQuoteLot(quoteLotService.findByCodeAndQuoteVersion(quoteProductDTO.getQuoteLotCode(), quoteVersion.getId()));
+			q.setQuoteLot(quoteLotService.findByCode(quoteProductDTO.getQuoteLotCode()));
+		}
+		if(!Strings.isEmpty(quoteProductDTO.getQuoteCode())) {
+			q.setQuote(cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode()));
+		}
+		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
+			q.setQuoteVersion(quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion()));
 		}
 		
 		q.setProductVersion(productVersion);
-		q.setQuoteVersion(quoteVersion);
-		q.setQuote(cpqQuote);
 		q.setBillableAccount(quoteOffer.getBillableAccount());
 		q.setQuantity(quoteProductDTO.getQuantity());
 		q.setQuoteOffre(quoteOffer);
