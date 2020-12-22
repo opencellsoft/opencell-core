@@ -85,7 +85,6 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "matching_auto")
     private boolean matchingAuto = false;
     
-
     /** 
      * Used to decide if AccountOperations will be created or not , during AO_Job execution
      */
@@ -134,8 +133,25 @@ public class InvoiceType extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "mailing_type")
     private MailingTypeEnum mailingType;
+    
+    /**
+     * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_validation_script_id")
+    private ScriptInstance invoiceValidationScript;
 
-    public OCCTemplate getOccTemplate() {
+    public ScriptInstance getInvoiceValidationScript() {
+		return invoiceValidationScript;
+	}
+
+	public void setInvoiceValidationScript(ScriptInstance invoiceValidationScript) {
+		this.invoiceValidationScript = invoiceValidationScript;
+	}
+
+
+
+	public OCCTemplate getOccTemplate() {
         return occTemplate;
     }
 

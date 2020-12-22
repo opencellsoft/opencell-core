@@ -18,6 +18,11 @@
             column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
             eventBackingBean="#{billingCycleBean}" updateField=":formBillingCycle:tabView:scriptSelectId :formBillingCycle:tabView:scriptSelectId_text">
         </hftl:entityPopup>
+        <hftl:entityPopup id="billingRunValidationScriptPopup" header="#{messages['scriptInstance.popup.header']}"
+            updateField=":formBillingCycle:tabView:billingRunValidationScriptId :formBillingCycle:tabView:billingRunValidationScriptId_text" selection="#{billingCycleBean.entity.billingRunValidationScript}"
+            backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -43,6 +48,8 @@
 	                  	<p:outputLabel for="@next" value="#{messages['invoice.checkthreshold.per']}" cellpadding="5" />
 	                  	<p:selectBooleanButton  value="${billingCycleBean.entity.thresholdPerEntity}" onLabel="#{messages['invoice.checkthreshold.per.entity']}" offLabel="#{messages['invoice.checkthreshold.per.invoice']}"/>
 	                  </p:panelGrid>
+	                <hftl:formField id="billingRunValidationScriptId" label="#{messages['invoiceType.billingRunValidationScript']}" field="billingRunValidationScript" valueLabelField="code" required="false" popup="true" popupId="billingRunValidationScriptPopup" showResetButton="true" />
+	                  
                     <hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}" field="billingTemplateNameEL" textArea="true" rows="1" maxlength="2000"
                         componentWidth="30" newLine="true" />
                     <hftl:formField label="#{messages['billingCycle.lastTransactionDateDelayEL']}" field="lastTransactionDateDelayEL" textArea="true" rows="1" maxlength="2000"
