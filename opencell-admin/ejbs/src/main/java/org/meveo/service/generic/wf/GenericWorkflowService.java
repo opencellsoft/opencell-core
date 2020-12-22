@@ -19,6 +19,7 @@ package org.meveo.service.generic.wf;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
 import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
 import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
@@ -367,7 +368,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             }
             if(action.getType().equalsIgnoreCase(UPDATE_FIELD.name())) {
                 Object result = evaluateExpression(action.getValueEL(), context, Object.class);
-                updateEntity(entity, action.getFieldToUpdate(), result);
+                updateEntity(entity, action.getFieldToUpdate().split("\\.")[1], result);
             }
             if (action.getType().equalsIgnoreCase(NOTIFICATION.name())) {
                 Notification notification = action.getNotification();
@@ -393,7 +394,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
         if(action.getType().equalsIgnoreCase(UPDATE_FIELD.name())) {
             Object result = evaluateExpression(action.getValueEL(), context, Object.class);
-            updateEntity(entity, action.getFieldToUpdate(), result);
+            updateEntity(entity, action.getFieldToUpdate().split("\\.")[1], result);
         }
 
         if (action.getType().equalsIgnoreCase(NOTIFICATION.name())) {
@@ -412,21 +413,21 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     private void updateEntity(BusinessEntity entity, String fieldToUpdate, Object valueToSet) {
         try {
-            String methodName = "set" + org.apache.commons.lang3.StringUtils.capitalize(fieldToUpdate);
+            String methodName = "set" + capitalize(fieldToUpdate);
             Class<?> current = entity.getClass();
             PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entity.getClass());
             persistenceService.refreshOrRetrieve(entity);
-            boolean updated = false;
+            boolean update = false;
             do {
                 try {
                     current.getMethod(methodName, current.getDeclaredField(fieldToUpdate).getType())
                             .invoke(entity, valueToSet);
-                    updated = true;
+                    update = true;
                 } catch (NoSuchFieldException e) {
                     current = current.getSuperclass();
                 }
-            } while(current != BaseEntity.class && !updated);
-            if (!updated) {
+            } while(current != BaseEntity.class && !update);
+            if (!update) {
                 throw new BusinessException("Filed does not exists");
             }
             persistenceService.update(entity);
