@@ -254,17 +254,15 @@ public class ContractApi extends BaseApi{
     	final Contract contract = contractService.findByCode(contractItemDto.getContractCode());
     	if(contract == null)
     		throw new EntityDoesNotExistsException(Contract.class, contractItemDto.getContractCode());
-    	final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode());
-    	if(serviceTemplate == null)
-    		throw new EntityDoesNotExistsException(ServiceTemplate.class, contractItemDto.getServiceTemplateCode());
-    	final PricePlanMatrix planMatrix = pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode());
-    	if(planMatrix == null)
-    		throw new EntityDoesNotExistsException(PricePlanMatrix.class, contractItemDto.getPricePlanCode());
+    	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode())) {
+        	item.setServiceTemplate(serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode()));
+    	}
+    	if(!Strings.isEmpty(contractItemDto.getPricePlanCode())) {
+    		item.setPricePlan(pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode()));
+    	}
     	
     	item.setCode(contractItemDto.getCode());
     	item.setContract(contract);
-    	item.setServiceTemplate(serviceTemplate);
-		item.setPricePlan(planMatrix);
 		
     	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode()))
     		item.setOfferTemplate(offerTemplateService.findByCode(contractItemDto.getServiceTemplateCode()));
@@ -300,16 +298,10 @@ public class ContractApi extends BaseApi{
 	    	item.setContract(contract);
     	}
     	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode())) {
-	    	final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode());
-	    	if(serviceTemplate == null)
-	    		throw new EntityDoesNotExistsException(ServiceTemplate.class, contractItemDto.getServiceTemplateCode());
-	    	item.setServiceTemplate(serviceTemplate);
+	    	item.setServiceTemplate(serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode()));
     	}
     	if(!Strings.isEmpty(contractItemDto.getPricePlanCode())) {
-	    	final PricePlanMatrix planMatrix = pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode());
-	    	if(planMatrix == null)
-	    		throw new EntityDoesNotExistsException(PricePlanMatrix.class, contractItemDto.getPricePlanCode());
-			item.setPricePlan(planMatrix);
+			item.setPricePlan(pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode()));
     	}
 
 		
@@ -349,10 +341,6 @@ public class ContractApi extends BaseApi{
     		missingParameters.add("contractCode");
     	if(Strings.isEmpty(contractItemDto.getCode()))
 			missingParameters.add("code");
-    	if(Strings.isEmpty(contractItemDto.getServiceTemplateCode()))
-			missingParameters.add("serviceTemplateCode");
-    	if(Strings.isEmpty(contractItemDto.getPricePlanCode()))
-			missingParameters.add("pricePlanCode");
     		
     	handleMissingParameters();
 	}
