@@ -64,7 +64,7 @@ public class QuoteVersionDto extends BaseEntityDto {
     }
     
     public QuoteVersionDto(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,boolean loadQuoteAttributes) {
-    	new QuoteVersionDto(q);
+    	this(q);
     	if(loadQuoteOffers) {
     		for(QuoteOffer quoteOffer:q.getQuoteOffers() ) {
         		quoteItems.add(new QuoteOfferDTO(quoteOffer,loadQuoteProduct,loadQuoteAttributes));

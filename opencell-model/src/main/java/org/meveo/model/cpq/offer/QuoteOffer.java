@@ -14,7 +14,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,7 +27,7 @@ import org.meveo.model.quote.QuoteVersion;
 
 
 @Entity
-@Table(name="quote_offer", uniqueConstraints = @UniqueConstraint(columnNames = {"offer_template_id", "quote_version_id"}))
+@Table(name="quote_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")

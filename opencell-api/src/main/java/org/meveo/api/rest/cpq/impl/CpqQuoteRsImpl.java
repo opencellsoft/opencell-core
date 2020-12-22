@@ -183,10 +183,10 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	}
 
 
-	@Override
-	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
    
 }

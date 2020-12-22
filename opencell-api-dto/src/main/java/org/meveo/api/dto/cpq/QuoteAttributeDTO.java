@@ -40,6 +40,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 	
+	private Long quoteAttributeId;
     
     private String quoteAttributeCode;
     
@@ -81,6 +82,20 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/**
+	 * @return the quoteAttributeId
+	 */
+	public Long getQuoteAttributeId() {
+		return quoteAttributeId;
+	}
+
+	/**
+	 * @param quoteAttributeId the quoteAttributeId to set
+	 */
+	public void setQuoteAttributeId(Long quoteAttributeId) {
+		this.quoteAttributeId = quoteAttributeId;
 	}
     
 	

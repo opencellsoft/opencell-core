@@ -25,14 +25,14 @@ public class QuoteProductService extends PersistenceService<QuoteProduct> {
 		return quoteProduct;
 	}
 	
-	public QuoteProduct findByProductVersionAndQuoteOffer(Long productVersionId, Long quoteOfferId) {
+	public QuoteProduct findByQuoteVersionAndQuoteOffer(Long quoteVersionId, Long quoteOfferId) {
 		try {
 			return (QuoteProduct) this.getEntityManager().createNamedQuery("QuoteProduct.findByQuoteVersionAndQuoteOffer")
-														.setParameter("productVersionId", productVersionId)
+														.setParameter("quoteVersionId", quoteVersionId)
 														.setParameter("quoteOfferId", quoteOfferId)
 															.getSingleResult();
 		}catch(NoResultException e ) {
-			LOGGER.warn("cant find QuoteProduct with  quote version: {} and product version : {}", productVersionId, quoteOfferId);
+			LOGGER.warn("cant find QuoteProduct with  quote version: {} and product version : {}", quoteVersionId, quoteOfferId);
 			return null;
 		}
 	}
