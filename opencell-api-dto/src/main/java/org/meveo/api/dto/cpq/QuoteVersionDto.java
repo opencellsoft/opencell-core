@@ -1,4 +1,5 @@
 package org.meveo.api.dto.cpq;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,140 +13,157 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
+
 /**
  * 
  * @author Mbarek-Ay
  * @version 10.0
- */ 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteVersionDto extends BaseEntityDto {
-    
-     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -7824004884683019697L;  
-    /** The shortDescription. */
-    @XmlAttribute()
-    private String shortDescription;
-    /** The product code. */
-    @NotNull
-    @XmlElement(required = true)
-    private String quoteCode;
-    /** The currentVersion. */
-    private int currentVersion;
-   
-    /** The status. */
-    private VersionStatusEnum status;
-    
-    /** The statusDate. */
-    private Date statusDate;
-    /** The startDate */
-    private Date startDate;
-    /** The endDate */
-    private Date endDate;
-    /** billing code */
+
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = -7824004884683019697L;
+	/** The shortDescription. */
+	@XmlAttribute()
+	private String shortDescription;
+	/** The product code. */
+	@NotNull
+	@XmlElement(required = true)
+	private String quoteCode;
+	/** The currentVersion. */
+	private int currentVersion;
+
+	/** The status. */
+	private VersionStatusEnum status;
+
+	/** The statusDate. */
+	private Date statusDate;
+	/** The startDate */
+	private Date startDate;
+	/** The endDate */
+	private Date endDate;
+	/** billing code */
 	private String billingPlanCode;
-  
-	 private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
-    
-    /**
-     * Instantiates a new product version dto.
-     */
-    public QuoteVersionDto() {
-    }
-    
-    public QuoteVersionDto(QuoteVersion q) {
-    	this.shortDescription = q.getShortDescription();
-    	this.quoteCode = q.getQuote().getCode();
-    	this.currentVersion = q.getQuoteVersion();
-    	this.status = q.getStatus();
-    	this.endDate = q.getEndDate();
-    	this.billingPlanCode = q.getBillingPlanCode();
-    	this.startDate = q.getStartDate();
-    	
-    }
-    
-    public QuoteVersionDto(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,boolean loadQuoteAttributes) {
-    	this(q);
-    	if(loadQuoteOffers) {
-    		for(QuoteOffer quoteOffer:q.getQuoteOffers() ) {
-        		quoteItems.add(new QuoteOfferDTO(quoteOffer,loadQuoteProduct,loadQuoteAttributes));
-        	}
-    	}
-    	
-    }
 
-    /**
-     * @return the shortDescription
-     */
-    public String getShortDescription() {
-        return shortDescription;
-    }
-    /**
-     * @param shortDescription the shortDescription to set
-     */
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
+	private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
 
-    /**
-     * @return the currentVersion
-     */
-    public int getCurrentVersion() {
-        return currentVersion;
-    }
-    /**
-     * @param currentVersion the currentVersion to set
-     */
-    public void setCurrentVersion(int currentVersion) {
-        this.currentVersion = currentVersion;
-    }
-    /**
-     * @return the status
-     */
-    public VersionStatusEnum getStatus() {
-        return status;
-    }
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(VersionStatusEnum status) {
-        this.status = status;
-    }
-    /**
-     * @return the statusDate
-     */
-    public Date getStatusDate() {
-        return statusDate;
-    }
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
-    /**
-     * @return the startDate
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-    /**
-     * @return the endDate
-     */
-    public Date getEndDate() {
-        return endDate;
-    }
-    /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+	/**
+	 * List of quote prices
+	 */
+	private List<PriceDTO> prices;
+
+	/**
+	 * Instantiates a new product version dto.
+	 */
+	public QuoteVersionDto() {
+	}
+
+	public QuoteVersionDto(QuoteVersion q) {
+		this.shortDescription = q.getShortDescription();
+		this.quoteCode = q.getQuote().getCode();
+		this.currentVersion = q.getQuoteVersion();
+		this.status = q.getStatus();
+		this.endDate = q.getEndDate();
+		this.billingPlanCode = q.getBillingPlanCode();
+		this.startDate = q.getStartDate();
+
+	}
+
+	public QuoteVersionDto(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,
+			boolean loadQuoteAttributes) {
+		this(q);
+		if (loadQuoteOffers) {
+			for (QuoteOffer quoteOffer : q.getQuoteOffers()) {
+				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes));
+			}
+		}
+
+	}
+
+	/**
+	 * @return the shortDescription
+	 */
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	/**
+	 * @param shortDescription the shortDescription to set
+	 */
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
+	/**
+	 * @return the currentVersion
+	 */
+	public int getCurrentVersion() {
+		return currentVersion;
+	}
+
+	/**
+	 * @param currentVersion the currentVersion to set
+	 */
+	public void setCurrentVersion(int currentVersion) {
+		this.currentVersion = currentVersion;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public VersionStatusEnum getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(VersionStatusEnum status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the startDate
+	 */
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	/**
+	 * @param startDate the startDate to set
+	 */
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	/**
+	 * @return the endDate
+	 */
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
 	public String getQuoteCode() {
 		return quoteCode;
@@ -183,7 +201,20 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.quoteItems = quoteItems;
 	}
 
-    
-     
-    
+	/**
+	 * @return the prices
+	 */
+	public List<PriceDTO> getPrices() {
+		return prices;
+	}
+
+	/**
+	 * @param prices the prices to set
+	 */
+	public void setPrices(List<PriceDTO> prices) {
+		this.prices = prices;
+	}
+	
+	
+
 }

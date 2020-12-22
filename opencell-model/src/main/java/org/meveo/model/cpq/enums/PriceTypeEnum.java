@@ -2,7 +2,7 @@ package org.meveo.model.cpq.enums;
 
 public enum PriceTypeEnum {
 
-	 RECURRING("recurring"), ONE_TIME("one time"), USAGE("usage");
+	 RECURRING("recurring"), ONE_SHOT("oneShot"), USAGE("usage");
 	
 	private String value;
 	
