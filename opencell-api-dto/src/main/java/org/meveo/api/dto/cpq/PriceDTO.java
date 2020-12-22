@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 
 /**
@@ -33,9 +33,9 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
  * @author Rachid.AIT
  * @lastModifiedVersion 11.0.0
  */
-@XmlRootElement(name = "AccountingArticlePrices")
+@XmlRootElement(name = "PriceDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PriceDTO extends EnableBusinessDto {
+public class PriceDTO extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1054495149414405858L;
