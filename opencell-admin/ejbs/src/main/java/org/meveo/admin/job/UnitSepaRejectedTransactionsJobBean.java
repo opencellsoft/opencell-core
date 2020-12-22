@@ -43,7 +43,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * The Class UnitSepaDirectDebitJobBean.
+ * The Class UnitSepaRejectedTransactionsJobBean.
  *
  * @author mboukayoua
  */
@@ -64,13 +64,12 @@ public class UnitSepaRejectedTransactionsJobBean {
 	private DDRequestLOTService ddRequestLotService;
 
 	/**
-	 * Execute processing one ddRequestItem.
+	 * Reject payment for a DD request item with "RJCT" as reject reason.
 	 *
-	 * @param ddRequestItem the ddrequest item
-	 * @throws BusinessException                the business exception
-	 * @throws NoAllOperationUnmatchedException the no all operation unmatched
-	 *                                          exception
-	 * @throws UnbalanceAmountException         the unbalance amount exception
+	 * @param fileName Original SEPA reject file name
+	 * @param ddRequestItem list of dd request items to reject payments
+	 * @param result  Job execution result
+	 * @throws BusinessException BusinessException
 	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -82,6 +81,15 @@ public class UnitSepaRejectedTransactionsJobBean {
 		}
 	}
 
+	/**
+	 * Reject payment for a DD request item. a reject reason is specified as a Map entry value
+	 *
+	 * @param fileName Original SEPA reject file name
+	 * @param ddReqItemEntry A Map entry that contain item ID as key and reject reason code as value
+	 * @param result Job execution result
+	 * @return Future Set<Long> future with set of item's DD req lot ID
+	 * @throws BusinessException BusinessException
+	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Long rejectPaymentWithSpecificCause(JobExecutionResultImpl result, String fileName, Map.Entry<Long, String> ddReqItemEntry) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -97,6 +105,13 @@ public class UnitSepaRejectedTransactionsJobBean {
 		return ddRequestItem.getDdRequestLOT().getId();
 	}
 
+	/**
+	 * Update DD requests lots status and file name based on DD Reject File infos
+	 *
+	 * @param ddRequestLotIds IDs of DD requests lots to update
+	 * @param ddRejectFileInfos DD Reject File infos
+	 * @throws BusinessException Business Exception
+	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateDDRequestLotsStatus(Set<Long> ddRequestLotIds, DDRejectFileInfos ddRejectFileInfos)

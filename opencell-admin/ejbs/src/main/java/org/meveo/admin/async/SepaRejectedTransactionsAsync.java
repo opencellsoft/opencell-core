@@ -46,11 +46,12 @@ public class SepaRejectedTransactionsAsync {
 	private UnitSepaRejectedTransactionsJobBean unitSepaRejectedTransactionsJobBean;
 	
 	/**
-	 * Create payments for all items from the ddRequestLot. One Item at a time in a
+	 * Reject payments for list of DD request items with "RJCT" as reject reason. One Item at a time in a
 	 * separate transaction.
 	 *
-	 * @param ddRequestItems the dd request items
-	 * @param result         Job execution result
+	 * @param fileName Original SEPA reject file name
+	 * @param ddRequestItems list of dd request items to reject payments
+	 * @param result  Job execution result
 	 * @return Future String
 	 * @throws BusinessException BusinessException
 	 */
@@ -74,9 +75,20 @@ public class SepaRejectedTransactionsAsync {
 		return new AsyncResult<>("OK");
 	}
 
+	/**
+	 * Reject payments for List of DD request items. For each item, a reject reason is specified.
+	 * One Item at a time in a separate transaction.
+	 *
+	 * @param fileName Original SEPA reject file name
+	 * @param ddReqItemEntries list of Map entries that contain item ID as key and reject reason code as value
+	 * @param result Job execution result
+	 * @return Future Set<Long> future with set of item's DD req lot ID
+	 * @throws BusinessException BusinessException
+	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<Set<Long>> launchAndForgetPaymentsRejectionsWithSpecificCause(String fileName, List<Map.Entry<Long, String>> ddReqItemEntries, JobExecutionResultImpl result) throws BusinessException {
+	public Future<Set<Long>> launchAndForgetPaymentsRejectionsWithSpecificCause(String fileName, List<Map.Entry<Long, String>> ddReqItemEntries, JobExecutionResultImpl result)
+			throws BusinessException {
 		Set<Long> ddRequestLotIds = new HashSet<>();
 		for (Map.Entry<Long, String> ddReqItemEntry : ddReqItemEntries) {
 			if (result != null && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
