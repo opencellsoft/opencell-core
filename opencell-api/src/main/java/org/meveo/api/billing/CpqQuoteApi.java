@@ -304,7 +304,7 @@ public class CpqQuoteApi extends BaseApi {
 					quoteVersionDto = new QuoteVersionDto(qv);
 					quoteDto.setQuoteVersion(quoteVersionDto);
 				}else {
-					quoteDto.setQuoteVersion(null);
+					throw new EntityDoesNotExistsException("No quote version with number = " + quoteVersionDto.getCurrentVersion() + " for the quote code = " + quoteCode);
 				}
 			}
 		}catch(BusinessApiException e) {
