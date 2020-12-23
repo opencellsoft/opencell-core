@@ -18,6 +18,8 @@
 
 package org.meveo.model.quote;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -55,6 +57,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
@@ -204,6 +207,20 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 
     @Transient
     private boolean isVirtual = false;
+    
+	/**
+	 * discountPlan attached to this quote
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 	
     public String getExternalId() {
         return externalId;
