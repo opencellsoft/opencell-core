@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -19,7 +20,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
 /**
@@ -32,7 +32,8 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
 @Entity
 @Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "media_name" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_media_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_media_seq")})
+@NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m left join  m.product mp where mp.code=:productCode and m.mediaName=:mediaName")
 public class Media extends BaseEntity{
 
 	/**
@@ -45,7 +46,6 @@ public class Media extends BaseEntity{
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
-	@NotNull
 	private Product product;
 	
 
@@ -54,7 +54,6 @@ public class Media extends BaseEntity{
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "service_template_id", referencedColumnName = "id", nullable = false)
-	@NotNull
 	private ServiceTemplate serviceTemplate;
 	
 	/**
