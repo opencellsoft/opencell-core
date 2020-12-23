@@ -98,19 +98,21 @@ public interface AttributeRs extends IBaseRs {
 	
 	
     
-//    @POST
-//    @Path("/cpq/list/{productCode}/{productVersion}")
-//    @Operation(summary = "Get attributes related to the given product that match the quote offer context",
-//    tags = { "Catalog browsing" },
-//    description ="Get attributes related to the given product that match the quote offer context",
-//    responses = {
-//            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
-//            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
-//            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
-//            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
-//            @ApiResponse(responseCode = "404", description = "selected service does not exist")
-//    })
-//    public Response listPost(@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
-//	
+    @POST
+    @Path("/cpq/list/{productCode}/{productVersion}")
+    @Operation(summary = "Get attributes related to the given product that match the quote offer context",
+    tags = { "Catalog browsing" },
+    description ="Get attributes related to the given product that match the quote offer context",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
+            @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "productCode does not exist"),
+            @ApiResponse(responseCode = "404", description = "selected service does not exist")
+    })
+    public Response listPost(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode,
+    		@Parameter(description = "product version", required = true) @PathParam("productVersion") String productVersion,
+    		@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
+	
 	 
 }

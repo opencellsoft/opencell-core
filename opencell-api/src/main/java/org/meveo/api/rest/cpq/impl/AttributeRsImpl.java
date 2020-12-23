@@ -7,6 +7,7 @@ import org.meveo.api.cpq.AttributeApi;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.AttributeRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -72,11 +73,16 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
         }
 	}*/
 
-//	@Override
-//	public Response listPost(OfferContextDTO quoteContext) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public Response listPost(String productCode, String currentProductVersion,OfferContextDTO offerContextDto) {
+		GetProductDtoResponse result = new GetProductDtoResponse();
+		try {
+			result=attributeApi.listPost(productCode, currentProductVersion, offerContextDto);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
  
 
 
