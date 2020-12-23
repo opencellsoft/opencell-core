@@ -1774,7 +1774,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.test(\"Status code is 200\", function () {",
+					"pm.test(\"Status is SUCCESS\", function () {",
 					"    pm.response.to.have.status(200);",
 					"});"
 				]
