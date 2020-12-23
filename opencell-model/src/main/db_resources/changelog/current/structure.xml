@@ -3937,7 +3937,7 @@ END $$;]]>
     <changeSet id="#4427_20201216" author="ZBariki">
         <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
             VALUES (nextval('generic_sequence_seq'),
-            '12/16/2020', 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
+            NOW(), 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
         <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
             SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'subscription_sequence')
             WHERE entity_class = 'Subscription'</sql>
