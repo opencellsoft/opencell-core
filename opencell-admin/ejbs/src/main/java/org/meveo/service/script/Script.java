@@ -121,6 +121,16 @@ public abstract class Script implements Serializable, ScriptInterface {
      * The job execution result.
      */
     public static final String JOB_EXECUTION_RESULT = "JobExecutionResult";
+    
+    /**
+     * The invoice validation status.
+     */
+	public static final String INVOICE_VALIDATION_STATUS = "InvoiceValidation.STATUS";
+	
+	/**
+     * The invoice validation reject reason.
+     */
+	public static final String INVOICE_VALIDATION_REASON = "InvoiceValidation.REASON";
 
     /**
      * A logger

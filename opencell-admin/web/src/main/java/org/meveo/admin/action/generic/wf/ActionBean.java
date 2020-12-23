@@ -17,8 +17,9 @@
  */
 package org.meveo.admin.action.generic.wf;
 
-import static java.util.Arrays.stream;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 
@@ -28,6 +29,7 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.generic.wf.ActionTypesEnum;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.generic.wf.Action;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
@@ -44,7 +46,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Named
 @ViewScoped
@@ -207,14 +208,25 @@ public class ActionBean extends BaseBean<Action> {
 
     private List<String> fieldsName() {
         try {
-            Field[] genericWorkflownFields = Class.forName(genericWorkflow.getTargetEntityClass()).getDeclaredFields();
-            return Stream.of(genericWorkflownFields)
-                    .map(field -> field.getDeclaringClass().getSimpleName() + "." + field.getName())
+            Class<?> current = Class.forName(genericWorkflow.getTargetEntityClass());
+            List<Field> fields = getFields(current);
+            return fields.stream()
+                    .filter(field -> !isStatic(field.getModifiers()))
+                    .map(field -> current.getSimpleName() + "." + field.getName())
                     .collect(toList());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return EMPTY_LIST;
+    }
+
+    private List<Field> getFields(Class<?> current) {
+        List<Field> fields = new ArrayList<>();
+        do {
+            fields.addAll(asList(current.getDeclaredFields()));
+            current = current.getSuperclass();
+        } while(current != BaseEntity.class);
+        return fields;
     }
 
     public GWFTransition getTransition() {

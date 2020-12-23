@@ -3876,6 +3876,38 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="skip_validation_script" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="suspect_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="reject_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="next_billing_run_id" type="bigint"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_invoice">
+            <column name="reject_reason" type="varchar(255)"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_cycle">
+            <column name="billing_run_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="invoice_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
+              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+    </changeSet>
+    
     <changeSet id="#4427_20201202" author="ZBariki">
         <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createTable tableName="generic_sequence" >
@@ -3937,7 +3969,7 @@ END $$;]]>
     <changeSet id="#4427_20201216" author="ZBariki">
         <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
             VALUES (nextval('generic_sequence_seq'),
-            '12/16/2020', 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
+            NOW(), 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
         <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
             SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'subscription_sequence')
             WHERE entity_class = 'Subscription'</sql>
