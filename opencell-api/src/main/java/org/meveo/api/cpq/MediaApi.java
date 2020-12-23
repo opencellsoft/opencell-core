@@ -1,16 +1,33 @@
 package org.meveo.api.cpq;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.ContractDto;
+import org.meveo.api.dto.cpq.ContractListResponsDto;
 import org.meveo.api.dto.cpq.MediaDto;
+import org.meveo.api.dto.cpq.MediaListResponsDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
@@ -21,6 +38,7 @@ public class MediaApi extends BaseApi {
 	
 	private static final String MEDIA_EXIST_ALREADY = "Media for product code : %s and name : %s, already exist";
 	private static final String MEDIA_DOESNT_EXIT = "No Media found for the key (%s, %s)";
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
 	/**
 	 * 
 	 */
@@ -85,6 +103,57 @@ public class MediaApi extends BaseApi {
 		m.setMediaPath(mediaDto.getMediaPath());
 		mediaService.update(m);
 		return mediaDto;
+	}
+	
+	public MediaDto findByCode(String productCode, String mediaName) {
+		if(Strings.isEmpty(productCode))
+			missingParameters.add("productCode");
+
+		if(Strings.isEmpty(mediaName))
+			missingParameters.add("mediaName");
+		
+		handleMissingParameters();
+		final Media media = mediaService.findByProductAndMediaName(productCode, mediaName);
+		if(media == null)
+			throw new EntityDoesNotExistsException(String.format(MEDIA_DOESNT_EXIT, productCode, mediaName));
+		return new MediaDto(media);
+	}
+	
+	public void deleteMedia(String productCode, String mediaName) {
+		if(Strings.isEmpty(productCode))
+			missingParameters.add("productCode");
+
+		if(Strings.isEmpty(mediaName))
+			missingParameters.add("mediaName");
+		handleMissingParameters();
+		final Media media = mediaService.findByProductAndMediaName(productCode, mediaName);
+		if(media == null)
+			throw new EntityDoesNotExistsException(String.format(MEDIA_DOESNT_EXIT, productCode, mediaName));
+		mediaService.remove(media);
+	}
+	
+	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "media.medias", 
+    			itemPropertiesToFilter = { 
+    							@FilterProperty(property = "product", entityClass = Product.class),
+    							@FilterProperty(property = "serviceTemplate", entityClass = ServiceTemplate.class) }, totalRecords = "media.listSize")
+	public MediaListResponsDto listMedia(PagingAndFiltering pagingAndFiltering) {
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+	        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+	            sortBy = pagingAndFiltering.getSortBy();
+	        }
+	        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Media.class);
+	        
+	        Long totalCount = mediaService.count(paginationConfiguration);
+	        MediaListResponsDto result = new MediaListResponsDto();
+	        
+	        if(totalCount > 0) {
+	        	mediaService.list(paginationConfiguration).stream().forEach( m -> {
+	        		result.getMedia().getMedias().add(new MediaDto(m));
+	        	});
+		        result.getMedia().setListSize(totalCount.intValue());
+	        }
+	    	return result;
 	}
 	
 }
