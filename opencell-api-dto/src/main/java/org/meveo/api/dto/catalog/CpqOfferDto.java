@@ -30,17 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.OfferProductsDto;
-import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEnable;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.offer.OfferComponent;
-
-import com.sun.org.apache.xml.internal.security.Init;
 
 /**
  * The Class OfferTemplateDto.
