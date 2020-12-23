@@ -303,6 +303,8 @@ public class CpqQuoteApi extends BaseApi {
 					quoteVersionService.update(qv);
 					quoteVersionDto = new QuoteVersionDto(qv);
 					quoteDto.setQuoteVersion(quoteVersionDto);
+				}else {
+					quoteDto.setQuoteVersion(null);
 				}
 			}
 		}catch(BusinessApiException e) {
