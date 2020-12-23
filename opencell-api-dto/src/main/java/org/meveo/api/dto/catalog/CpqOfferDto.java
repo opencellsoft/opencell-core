@@ -40,6 +40,8 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.offer.OfferComponent;
 
+import com.sun.org.apache.xml.internal.security.Init;
+
 /**
  * The Class OfferTemplateDto.
  *
@@ -107,11 +109,15 @@ public class CpqOfferDto extends EnableBusinessDto {
 
     public CpqOfferDto(OfferTemplate entity) {
 		super(entity);
-		this.validFrom=entity.getValidity().getFrom();
+		init(entity);
+	}
+    
+     private void init(OfferTemplate entity) {
+    	this.validFrom=entity.getValidity().getFrom();
 		this.validTo=entity.getValidity().getTo();
 		this.name=entity.getName();
 		this.bomCode=entity.getBusinessOfferModel()!=null?entity.getBusinessOfferModel().getCode():null;
-	}
+    }
     
     
 

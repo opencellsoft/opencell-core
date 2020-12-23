@@ -78,24 +78,23 @@ public class ProductVersionDto extends BaseEntityDto {
  
     
     public ProductVersionDto(ProductVersion productVersion) {  
-        this.shortDescription = productVersion.getShortDescription();
-        this.productCode = productVersion.getProduct().getCode();
-        this.currentVersion = productVersion.getCurrentVersion();
-        this.status = productVersion.getStatus();
-        this.statusDate = productVersion.getStatusDate();
-        this.longDescription =productVersion.getLongDescription();
-        this.validity = productVersion.getValidity(); 
+       super();
+       init(productVersion);
  
+    }
+    public void init(ProductVersion productVersion) { 
+    	 this.shortDescription = productVersion.getShortDescription();
+         this.productCode = productVersion.getProduct().getCode();
+         this.currentVersion = productVersion.getCurrentVersion();
+         this.status = productVersion.getStatus();
+         this.statusDate = productVersion.getStatusDate();
+         this.longDescription =productVersion.getLongDescription();
+         this.validity = productVersion.getValidity(); 
     }
     public ProductVersionDto(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
     	
-        this.shortDescription = productVersion.getShortDescription();
-        this.productCode = productVersion.getProduct().getCode();
-        this.currentVersion = productVersion.getCurrentVersion();
-        this.status = productVersion.getStatus();
-        this.statusDate = productVersion.getStatusDate();
-        this.longDescription =productVersion.getLongDescription();
-        this.validity = productVersion.getValidity(); 
+    	   super();
+           init(productVersion);
         
     	if(loadAttributes) {
     		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {

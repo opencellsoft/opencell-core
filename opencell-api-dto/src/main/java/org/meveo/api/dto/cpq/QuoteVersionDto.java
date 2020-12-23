@@ -60,6 +60,11 @@ public class QuoteVersionDto extends BaseEntityDto {
 	}
 
 	public QuoteVersionDto(QuoteVersion q) {
+	 super();
+	 init(q);
+
+	}
+	private void init(QuoteVersion q) {
 		this.shortDescription = q.getShortDescription();
 		this.quoteCode = q.getQuote().getCode();
 		this.currentVersion = q.getQuoteVersion();
@@ -67,12 +72,12 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.endDate = q.getEndDate();
 		this.billingPlanCode = q.getBillingPlanCode();
 		this.startDate = q.getStartDate();
-
 	}
 
 	public QuoteVersionDto(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,
 			boolean loadQuoteAttributes) {
-		this(q);
+		 super();
+		 init(q);
 		if (loadQuoteOffers) {
 			for (QuoteOffer quoteOffer : q.getQuoteOffers()) {
 				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes));

@@ -76,16 +76,21 @@ public class QuoteProductDTO extends BaseEntityDto{
 
 	public QuoteProductDTO(QuoteProduct quoteProduct) {
 		super();
+		init(quoteProduct);
+		
+	}
+	
+	public void init(QuoteProduct quoteProduct) {
 		quoteCode=quoteProduct.getQuote()!=null?quoteProduct.getQuote().getCode():null;
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
 		quoteLotCode=quoteProduct.getQuoteLot()!=null?quoteProduct.getQuoteLot().getCode():null;
-		
 	}
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
-		new QuoteProductDTO(quoteProduct);
+		super();
+		init(quoteProduct);
 		if(loadAttributes) {
 			quoteAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
