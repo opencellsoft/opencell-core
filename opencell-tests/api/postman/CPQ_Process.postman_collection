@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "383812f3-b3a6-49dc-9a85-48ae8d156b99",
-		"name": "CPQ Scenarios",
+		"name": "CPQ Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -260,7 +260,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"productLineCode\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -309,7 +309,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"codeProductOne\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -405,7 +405,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"codeProductTwo\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -492,7 +492,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"groupedAttributeCode\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -531,7 +531,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"codeAttributeOne\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -569,7 +569,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.collectionVariables.set(\"codeAttributeTwo\",JSON.parse(pm.request.body).code);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -1153,9 +1153,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"contractCode\",JSON.parse(pm.request.body).code);\r",
-									"pm.collectionVariables.set(\"accountCode\",JSON.parse(pm.request.body).accountCode);\r",
-									"pm.collectionVariables.set(\"accountLevelCode\",JSON.parse(pm.request.body).contractAccountLevel);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1194,7 +1192,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"TEST_CONTRACT_LINE\",\r\n    \"description\": \"This is a contract line test desc\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"TEST_OFF_TEMPLATE\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"pricePlanCode\": \"PP_CLASSIC_CH_PRD_DEFAULT\",\r\n    \"serviceTemplateCode\": \"SE_CLASSIC_COMMISSION\"\r\n}",
+							"raw": "{\r\n    \"code\": \"TEST_CONTRACT_LINE\",\r\n    \"description\": \"This is a contract line test desc\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplate}}\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"pricePlanCode\": \"PP_CLASSIC_CH_PRD_DEFAULT\",\r\n    \"serviceTemplateCode\": \"SE_CLASSIC_COMMISSION\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1287,7 +1285,6 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"quoteCode\",JSON.parse(pm.request.body).code);\r",
 									"pm.globals.set(\"QuoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
 								],
 								"type": "text/javascript"
@@ -1299,7 +1296,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"TEST_CONTRACT\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"code\": \"TEST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"TEST_CONTRACT\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1326,7 +1323,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"quoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1337,7 +1334,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"Approved\",\r\n    \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"currentVersion\": 2,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"Approved\",\r\n    \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"currentVersion\": 1,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1480,7 +1477,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"offerCode\":\"{{offerOneCode}}\", \r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[\"{{tagTypeVipCode}}\"]\r\n    }\r\n\r\n}"
+							"raw": "{\r\n    \"offerCode\":\"{{offerTemplate}}\", \r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[\"{{tagTypeVipCode}}\"]\r\n    }\r\n\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/catalog/product/cpq/list",
@@ -1684,7 +1681,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"TEST_BA\",\r\n  \"billableAccountCode\": \"TEST_BA\",\r\n  \"contractCode\": \"TEST_CONTRACT\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"code\": \"{{quoteCode}}\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1787,119 +1784,107 @@
 	"variable": [
 		{
 			"key": "customerCategoryCode",
-			"value": ""
+			"value": "CLIENT"
 		},
 		{
 			"key": "customerBrandCode",
-			"value": ""
+			"value": "DEFAULT"
 		},
 		{
 			"key": "sellerCode",
-			"value": ""
+			"value": "SELLER_US"
 		},
 		{
 			"key": "codeTagOne",
-			"value": ""
+			"value": "TEST_TAG_1"
 		},
 		{
 			"key": "codeTagTwo",
-			"value": ""
+			"value": "TEST_TAG_2"
 		},
 		{
 			"key": "codeTagVip",
-			"value": ""
+			"value": "TEST_TAG_VIP"
 		},
 		{
 			"key": "productLineCode",
-			"value": ""
+			"value": "TEST_PRODUCT_LINE"
 		},
 		{
 			"key": "codeProductOne",
-			"value": ""
+			"value": "TEST_PRODUCT_1"
 		},
 		{
 			"key": "groupedAttributeCode",
-			"value": ""
+			"value": "TEST_GR_ATT"
 		},
 		{
 			"key": "codeAttributeOne",
-			"value": ""
+			"value": "TEST_ATT_1"
 		},
 		{
 			"key": "codeAttributeTwo",
-			"value": ""
+			"value": "TEST_ATT_2"
 		},
 		{
 			"key": "codeProductTwo",
-			"value": ""
+			"value": "TEST_PRODUCT_2"
 		},
 		{
 			"key": "contractCode",
-			"value": ""
+			"value": "TEST_CONTRACT"
 		},
 		{
 			"key": "customerCode",
 			"value": ""
 		},
 		{
-			"key": "accountCode",
-			"value": ""
-		},
-		{
 			"key": "accountLevelCode",
-			"value": ""
+			"value": "BILLING_ACCOUNT"
 		},
 		{
 			"key": "quoteCode",
-			"value": ""
+			"value": "TEST_QUOTE"
 		},
 		{
 			"key": "quoteVersion",
-			"value": ""
+			"value": 2
 		},
 		{
 			"key": "billingAccountCode",
-			"value": ""
-		},
-		{
-			"key": "offerOneCode",
-			"value": ""
+			"value": "TEST_BA"
 		},
 		{
 			"key": "quoteOfferOne",
-			"value": ""
+			"value": "TEST_QUOTE"
 		},
 		{
 			"key": "offerTemplate",
-			"value": ""
-		},
-		{
-			"key": "quoteItemCode",
-			"value": ""
+			"value": "TEST_OFF_TEMPLATE"
 		},
 		{
 			"key": "quoteOffer",
-			"value": ""
+			"value": 5
 		},
 		{
 			"key": "quoteOfferId",
-			"value": ""
+			"value": 8
 		},
 		{
 			"key": "billingCycleCode",
-			"value": ""
+			"value": "CYC_INV_MT_1"
 		},
 		{
 			"key": "customerAccountCode",
-			"value": ""
-		},
-		{
-			"key": "codeOfferTwo",
-			"value": ""
+			"value": "TEST_CA"
 		},
 		{
 			"key": "tagTypeVipCode",
-			"value": ""
+			"value": "TEST_TAG_TYPE_VIP"
+		},
+		{
+			"key": "accountCode",
+			"value": "TEST_BA"
 		}
 	]
 }
