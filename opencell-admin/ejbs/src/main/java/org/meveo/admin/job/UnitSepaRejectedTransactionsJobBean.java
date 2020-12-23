@@ -38,6 +38,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
@@ -126,4 +127,22 @@ public class UnitSepaRejectedTransactionsJobBean {
 		}
 	}
 
+	/**
+	 * Process the rejected file into DDRejectFileInfos object
+	 *
+	 * @param currentFile reject file
+	 * @param operationCategory operation Category
+	 * @param ddRequestBuilderInterface DD request builder
+	 * @return DDRejectFileInfos object
+	 */
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public DDRejectFileInfos processRejectedFile(File currentFile, OperationCategoryEnum operationCategory, DDRequestBuilderInterface ddRequestBuilderInterface) {
+		log.info("Process rejected file {} to DDRejectFileInfos object...", currentFile.getName());
+		if (operationCategory == OperationCategoryEnum.CREDIT) {
+			return ddRequestBuilderInterface.processSDDRejectedFile(currentFile);
+		} else {
+			return ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
+		}
+	}
 }

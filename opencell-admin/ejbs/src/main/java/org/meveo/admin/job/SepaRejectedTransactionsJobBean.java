@@ -59,6 +59,9 @@ public class SepaRejectedTransactionsJobBean extends BaseJobBean {
     @Inject
     private DDRequestLOTService ddRequestLotService;
 
+    @Inject
+    private UnitSepaRejectedTransactionsJobBean unitSepaRejectedTransactionsJobBean;
+
     /** The output dir. */
     String outputDir;
 
@@ -112,12 +115,10 @@ public class SepaRejectedTransactionsJobBean extends BaseJobBean {
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
             operationCategory = OperationCategoryEnum.valueOf(((String) jobInstance.getCfValue("RejectSepaJob_creditOrDebit")).toUpperCase());
-            DDRejectFileInfos ddRejectFileInfos = null;
-            if (operationCategory == OperationCategoryEnum.CREDIT) {
-                ddRejectFileInfos = ddRequestBuilderInterface.processSDDRejectedFile(currentFile);
-            } else {
-                ddRejectFileInfos = ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
-            }
+
+            DDRejectFileInfos ddRejectFileInfos = unitSepaRejectedTransactionsJobBean.processRejectedFile(currentFile,
+                    operationCategory, ddRequestBuilderInterface);
+
             result.addNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
             result.addReport(ddRejectFileInfos.formatErrorsReport());
 
