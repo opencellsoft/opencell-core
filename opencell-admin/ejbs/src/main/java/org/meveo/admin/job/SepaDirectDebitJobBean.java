@@ -196,16 +196,21 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
 							log.info("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								result.registerSucces();
+							
+							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
+								log.info("end createPaymentsOrRefundsForDDRequestLot");
+								if (isEmpty(ddRequestLOT.getRejectedCause())) {
+									result.registerSucces();
+								}
 							}
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
-						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
-						result.registerSucces();
+						if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
+							result.registerSucces();
+						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);

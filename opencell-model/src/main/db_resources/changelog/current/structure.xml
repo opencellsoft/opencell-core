@@ -3708,5 +3708,11 @@ END $$;]]>
             update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
         </sql>
     </changeSet>
+    
+    <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
+		<addColumn tableName="ar_ddrequest_lot_op">
+            <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
+        </addColumn>
+	</changeSet>
 
 </databaseChangeLog>

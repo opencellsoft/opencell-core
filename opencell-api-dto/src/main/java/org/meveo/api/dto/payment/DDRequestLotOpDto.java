@@ -78,9 +78,11 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     
     private PaymentOrRefundEnum paymentOrRefundEnum;
     
-
     /** The seller code. */
     private String sellerCode;
+    
+    /** Flag to activate generation of payment lines (by default true). */
+    private Boolean generatePaymentLines = Boolean.TRUE;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -105,6 +107,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
         this.paymentOrRefundEnum = ddrequestLotOp.getPaymentOrRefundEnum();
         this.sellerCode = ddrequestLotOp.getSeller() != null ? ddrequestLotOp.getSeller().getCode() : null;
+        this.generatePaymentLines = ddrequestLotOp.isGeneratePaymentLines();
     }
 
     /**
@@ -302,7 +305,19 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
     }
-    
-    
+
+	/**
+	 * @return the generatePaymentLines
+	 */
+	public Boolean isGeneratePaymentLines() {
+		return generatePaymentLines;
+	}
+
+	/**
+	 * @param generatePaymentLines the generatePaymentLines to set
+	 */
+	public void setGeneratePaymentLines(Boolean generatePaymentLines) {
+		this.generatePaymentLines = generatePaymentLines;
+	}
 
 }
