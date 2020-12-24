@@ -3061,9 +3061,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
         }
-        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
-        }
 
         if (log.isTraceEnabled()) {
             log.trace("subCategoryAggregates.total={}", subCategoryAggregates != null ? subCategoryAggregates.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
@@ -3114,6 +3111,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountWithoutTax(cAggregate.getAmountWithoutTax());
             invoice.addAmountWithTax(cAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : cAggregate.getAmountTax());
+        }
+        
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {

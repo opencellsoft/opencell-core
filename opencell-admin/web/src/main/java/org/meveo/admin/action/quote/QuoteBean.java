@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -498,7 +497,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
         }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, null);
+        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, null, null);
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -550,7 +549,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         boolean isMandatory = offerServiceTemplate.isMandatory();
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, null);
+                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, null, null);
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -611,7 +610,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
-                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), null);
+                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), null, null);
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
