@@ -22,6 +22,8 @@ import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.payments.impl.IngenicoGatewayPayment;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingenico.connect.gateway.sdk.java.ApiException;
 import com.ingenico.connect.gateway.sdk.java.Client;
 import com.ingenico.connect.gateway.sdk.java.CommunicatorConfiguration;
@@ -51,7 +53,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDire
 
 public class MyTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws BusinessException, JsonProcessingException {
 		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
 		CustomerAccount customerAccount=new CustomerAccount();
 		
@@ -69,7 +71,7 @@ public class MyTest {
 		
 		Name name=new Name();
 		name.setFirstName("rac");
-		name.setLastName("ISSUE-SEPA-REJ-CODE");
+		name.setLastName("AIT");
 		Title title=new Title();
 		title.setDescription("Mr");
 		name.setTitle(title);
@@ -78,10 +80,10 @@ public class MyTest {
 		customerAccount.setAddress(address);
 		customerAccount.setName(name);
 		customerAccount.setExternalRef1("cust1");
-		String rum="BPIAB0000000001951FD02";
-		//createMandate(customerAccount, "FR7630001007941234567890185",rum);
+		String rum="BPIAB0000000001951FD14";
+		createMandate(customerAccount, "FR7630001007941234567890185",rum);
 		checkMandat(rum, null);
-		//doPayment(null, rum, 2000L, customerAccount, null, null, null,null,CreditCardTypeEnum.AMERICAN_EXPRESS, "FR", null);
+		doPayment(null, rum, 2000L, customerAccount, null, null, null,null,null, "FR", null);
 	}
 	
     public static void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
@@ -173,13 +175,16 @@ System.out.println(mandatInfoDto.getState());
     } 
     
     private static PaymentResponseDto doPayment(String tokenId,String mandateidentification,Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
-            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException, JsonProcessingException {
 		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
     	try {
     		getClient();
             CreatePaymentRequest body = buildPaymentRequest( tokenId, mandateidentification,ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
             
+            ObjectMapper mapper = new ObjectMapper(); 
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+            System.out.println("Body :"+jsonString);
             CreatePaymentResponse response = client.merchant("bpifrance").payments().create(body);
             
             if (response != null) {

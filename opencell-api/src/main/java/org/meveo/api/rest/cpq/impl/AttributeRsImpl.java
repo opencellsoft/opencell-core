@@ -54,7 +54,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	public Response findByCode(String code) {
 		GetAttributeDtoResponse result = new GetAttributeDtoResponse();
 	    try {
-	    	result.setAttributeDto(attributeApi.findByCode(code));
+	    	result=attributeApi.findByCode(code);
 	        return Response.ok(result).build();
 	    } catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

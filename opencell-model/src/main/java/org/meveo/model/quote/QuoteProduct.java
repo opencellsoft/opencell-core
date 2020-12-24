@@ -1,5 +1,7 @@
 package org.meveo.model.quote;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +18,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -103,7 +105,20 @@ public class QuoteProduct extends AuditableEntity {
     @OrderBy("id")
 	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
     
+	/**
+	 * discountPlan attached to this quoteProduct
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
 
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+	
 	public void update(QuoteProduct other) {
     	this.quoteOffre = other.quoteOffre;
     	this.quote = other.quote;

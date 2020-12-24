@@ -18,7 +18,7 @@
 
 package org.meveo.model.catalog;
 
-public enum DisountPlanTypeEnum {
+public enum DiscountPlanTypeEnum {
 
     QUOTE(1, "disountPlanTypeEnum.quote"), OFFER(2, "disountPlanTypeEnum.offer"), PRODUCT(3, "disountPlanTypeEnum.product"), 
     INVOICE(4, "disountPlanTypeEnum.invoice"), INVOICE_LINE(5, "disountPlanTypeEnum.invoiceLine");
@@ -30,7 +30,7 @@ public enum DisountPlanTypeEnum {
      * @param label         the label
      * @param isAccumulator true if is it an accumulator counter type
      */
-    DisountPlanTypeEnum(Integer id, String label) {
+    DiscountPlanTypeEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
     }
@@ -45,9 +45,9 @@ public enum DisountPlanTypeEnum {
 
 
 
-    public static DisountPlanTypeEnum getValue(Integer id) {
+    public static DiscountPlanTypeEnum getValue(Integer id) {
         if (id != null) {
-            for (DisountPlanTypeEnum type : values()) {
+            for (DiscountPlanTypeEnum type : values()) {
                 if (id.equals(type.getId())) {
                     return type;
                 }

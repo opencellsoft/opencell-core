@@ -43,6 +43,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -168,6 +169,14 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     protected CustomFieldValues cfAccumulatedValues;
+    
+    @Column(name = "priorty")
+    private Long priorty;
+    
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accounting_article_id")
+    private AccountingArticle accountingArticle;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -360,5 +369,27 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     public ICustomFieldEntity[] getParentCFEntities() {
     	return new ICustomFieldEntity[] { discountPlan };
     }
+    
+	public Long getPriorty() {
+		return priorty;
+	}
+
+	public void setPriorty(Long priorty) {
+		this.priorty = priorty;
+	}
+
+	/**
+	 * @return the accountingArticle
+	 */
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+	/**
+	 * @param accountingArticle the accountingArticle to set
+	 */
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
+	}
 
 }
