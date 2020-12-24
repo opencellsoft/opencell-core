@@ -40,7 +40,28 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	private static final long serialVersionUID = 6228457362529323943L;
 
-    /**
+    public CpqQuote() {
+	}
+    
+	public CpqQuote(CpqQuote copy) {
+		super.code = copy.code;
+		super.description = copy.description;
+		this.seller = copy.seller;
+		this.applicantAccount = copy.applicantAccount;
+		this.contract = copy.contract;
+		this.sendDate = copy.sendDate;
+		this.quoteLotDateBegin = copy.quoteLotDateBegin;
+		this.quoteLotDuration = copy.quoteLotDuration;
+		this.opportunityRef = copy.opportunityRef;
+		this.customerRef = copy.customerRef;
+		this.customerName = copy.customerName;
+		this.contactName = copy.contactName;
+		this.registerNumber = copy.registerNumber;
+		this.salesPersonName = copy.salesPersonName;
+		this.billableAccount = copy.billableAccount;
+		this.validity = copy.validity;
+	}
+	/**
 	 * seller
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)

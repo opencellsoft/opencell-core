@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
@@ -262,7 +263,9 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="status can not be modified if is already Cancelled or rejected",
     responses = {
-            @ApiResponse(responseCode="200", description = "quote status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+            @ApiResponse(responseCode="200", description = "quote status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote  doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+            @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
     public Response updateQuoteStatus( @PathParam("quoteCode") String quoteCode,
     							@QueryParam("status") QuoteStatusEnum status
@@ -275,12 +278,24 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="status can not be modified if is already Closed or Published",
     responses = {
-            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+            @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
     public Response updateQuoteVersionStatus( @PathParam("quoteCode") String quoteCode,
     										@PathParam("currentVersion") int currentVersion,
     							@QueryParam("status") VersionStatusEnum status
     		);
+    @POST
+    @Path("/duplicate/{quoteCode}/{quoteversion}")
+    @Operation(summary = "this endpoint allow you to duplicate a quote from quote code",
+    tags = { "Quote management" },
+    description ="duplicate quote and their related entities",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteversion") int quoteversion);
     /*
     @GET
     @Path("/quoteItem/{quoteOfferId}")

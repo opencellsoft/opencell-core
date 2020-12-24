@@ -42,6 +42,7 @@ import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.QuoteStatusEnum;
+import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -186,6 +187,17 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        }
 	}
 
+	@Override
+	public Response duplicateQuote(String quoteCode, int quoteversion) {
+		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
+		 try {
+	            CpqQuote cpqQuote = cpqQuoteApi.duplicateQuote(quoteCode, quoteversion);
+				 getQuoteDtoResponse = cpqQuoteApi.getQuote(cpqQuote.getCode());
+		          return Response.ok(getQuoteDtoResponse).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
+	        }
+	}
 
 	@Override
 	public Response updateQuoteStatus(String quoteCode, QuoteStatusEnum status) {
