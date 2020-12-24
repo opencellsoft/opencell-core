@@ -3135,8 +3135,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             discountPlanItem);
                     if (discountAggregate != null) {
                         amountCumulativeForTax = addMapValues(amountCumulativeForTax, discountAggregate.getAmountsByTax());
+                        discountAggregates.add(discountAggregate);
                     }
-                    discountAggregates.add(discountAggregate);
                 }
 
                 for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
@@ -3144,8 +3144,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             discountPlanItem);
                     if (discountAggregate != null) {
                         amountCumulativeForTax = addMapValues(amountCumulativeForTax, discountAggregate.getAmountsByTax());
+                        discountAggregates.add(discountAggregate);
                     }
-                    discountAggregates.add(discountAggregate);
                 }
 
                 // Add tax aggregate or update its amounts
