@@ -215,7 +215,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
     	ActionStatus result = new ActionStatus();
 		 try {
 			 cpqQuoteApi.updateQuoteVersionStatus(quoteCode, currentVersion, status);
-	            return Response.ok(status).build();
+	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
 	        }
