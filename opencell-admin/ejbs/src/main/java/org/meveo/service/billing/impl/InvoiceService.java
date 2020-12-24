@@ -3304,9 +3304,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
         }
-        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
-        }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
@@ -3352,6 +3349,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountWithoutTax(scAggregate.getAmountWithoutTax());
             invoice.addAmountWithTax(scAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
+        }
+        
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
         // Construct discount and tax aggregates
