@@ -144,7 +144,7 @@ public class CustomerImportService extends ImportService {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CustomerAccount createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-                                                 org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException, ParseException {
+                                                 org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setCode(custAcc.getCode());
@@ -175,8 +175,12 @@ public class CustomerImportService extends ImportService {
                     DDpaymentMethod.setPreferred(true);
                     DDpaymentMethod.setAlias("SEPA");
                     DDpaymentMethod.setMandateIdentification(custAcc.getMandateIdentification());
-                    Date MandatDate = new SimpleDateFormat("yyyy-mm-dd").parse(custAcc.getMandateDate());
-                    DDpaymentMethod.setMandateDate(MandatDate);
+                    try {
+                        Date MandatDate = new SimpleDateFormat("yyyy-mm-dd").parse(custAcc.getMandateDate());
+                        DDpaymentMethod.setMandateDate(MandatDate);
+                    } catch(ParseException e) {
+                        log.error("Error when parsing mandateDate", e);
+                    }
                     BankCoordinates Bankcoordinates = new BankCoordinates(); // Bank coordinates
                     Bankcoordinates.setBankCode(custAcc.getBankCoordinates().getBankCode());
                     Bankcoordinates.setIban(custAcc.getBankCoordinates().getIBAN());
@@ -187,6 +191,7 @@ public class CustomerImportService extends ImportService {
                     DDpaymentMethod.setCustomerAccount(customerAccount);
                     DDpaymentMethod.setPreferred(true);
                     paymentMethods.add(DDpaymentMethod);
+                    
                     break;
                 default: // The default configuration is for the CHECK payment method
                     CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
