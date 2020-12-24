@@ -85,7 +85,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 	}
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
-		new QuoteProductDTO(quoteProduct);
+		this(quoteProduct);
 		if(loadAttributes) {
 			quoteAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {

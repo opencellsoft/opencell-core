@@ -40,7 +40,23 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 })
 public class QuoteProduct extends AuditableEntity {
 
-    /**
+    public QuoteProduct() {
+	}
+    
+    
+	public QuoteProduct(QuoteProduct copy) {
+		this.quote = copy.quote;
+		this.quoteVersion = copy.quoteVersion;
+		this.quoteLot = copy.quoteLot;
+		this.productVersion = copy.productVersion;
+		this.quantity = copy.quantity;
+		this.billableAccount = copy.billableAccount;
+		this.quoteOffre = copy.quoteOffre;
+		this.quoteAttributes = copy.quoteAttributes;
+	}
+
+
+	/**
      * quote
      */
     @ManyToOne(fetch = FetchType.LAZY)

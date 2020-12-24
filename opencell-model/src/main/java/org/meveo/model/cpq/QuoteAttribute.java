@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.quote.QuoteProduct;
@@ -29,6 +30,17 @@ import org.meveo.model.quote.QuoteProduct;
 public class QuoteAttribute extends AuditableEntity{
 
 	
+	public QuoteAttribute() {
+	}
+
+
+	public QuoteAttribute(QuoteAttribute copy) {
+		this.attribute = copy.attribute;
+		this.value = copy.value;
+		this.quoteProduct = copy.quoteProduct;
+	}
+
+
 	/**
 	 * 
 	 */

@@ -254,6 +254,10 @@ public interface CpqQuoteRs {
     //String offerCode, String cpqQuote, int quoteVersion
     public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemId") Long quoteItemId, @Context UriInfo info);
     
+    
+    @POST
+    @Path("/duplicate/{quoteCode}")
+    public Response duplicateQuote(@PathParam("quoteCode") String quoteCode,@QueryParam("quoteversion") int quoteversion);
     /*
     @GET
     @Path("/quoteItem/{quoteOfferId}")
