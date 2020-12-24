@@ -21,6 +21,8 @@ package org.meveo.api.rest.cpq.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -38,6 +40,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.quote.QuoteStatusEnum;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -182,6 +186,28 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        }
 	}
 
+
+	@Override
+	public Response updateQuoteStatus(String quoteCode, QuoteStatusEnum status) {
+		ActionStatus result = new ActionStatus();
+		 try {
+			 cpqQuoteApi.updateQuoteStatus(quoteCode, status);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+	}
+
+	@Override
+    public Response updateQuoteVersionStatus(String quoteCode, int currentVersion,  VersionStatusEnum status) {
+    	ActionStatus result = new ActionStatus();
+		 try {
+			 cpqQuoteApi.updateQuoteVersionStatus(quoteCode, currentVersion, status);
+	            return Response.ok(status).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+    }
 
 //	@Override
 //	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {

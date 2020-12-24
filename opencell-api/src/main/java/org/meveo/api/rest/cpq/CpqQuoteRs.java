@@ -45,6 +45,8 @@ import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.quote.QuoteStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -251,9 +253,34 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    //String offerCode, String cpqQuote, int quoteVersion
     public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemId") Long quoteItemId, @Context UriInfo info);
     
+    
+    @PUT
+    @Path("/{quoteCode}/update/status")
+    @Operation(summary = "this endpoint allow you to update a quote of status",
+    tags = { "Quote management" },
+    description ="status can not be modified if is already Cancelled or rejected",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response updateQuoteStatus( @PathParam("quoteCode") String quoteCode,
+    							@QueryParam("status") QuoteStatusEnum status
+    		);
+    
+
+    @PUT
+    @Path("/{quoteCode}/{currentVersion}/update/status")
+    @Operation(summary = "this endpoint allow you to update a quote version of status",
+    tags = { "Quote management" },
+    description ="status can not be modified if is already Closed or Published",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+    public Response updateQuoteVersionStatus( @PathParam("quoteCode") String quoteCode,
+    										@PathParam("currentVersion") int currentVersion,
+    							@QueryParam("status") VersionStatusEnum status
+    		);
     /*
     @GET
     @Path("/quoteItem/{quoteOfferId}")

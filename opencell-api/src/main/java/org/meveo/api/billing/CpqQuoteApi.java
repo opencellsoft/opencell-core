@@ -655,5 +655,36 @@ public class CpqQuoteApi extends BaseApi {
 		});
 			
 	}
+	
+	public void updateQuoteStatus(String quoteCode, QuoteStatusEnum status) {
+		CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteCode);
+		if(cpqQuote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		
+		if(cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED) || 
+				cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED)) {
+			throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus().getApiState());
+		}
+		cpqQuote.setStatus(status);
+		cpqQuote.setStatusDate(Calendar.getInstance().getTime());
+		try {
+			cpqQuoteService.update(cpqQuote);
+		}catch(BusinessApiException e) {
+			throw new MeveoApiException(e);
+		}
+	}
+	
+	public void updateQuoteVersionStatus(String quoteCode, int currentVersion, VersionStatusEnum status) {
+		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+		if(quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED) || 
+				quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED)) {
+			throw new MeveoApiException("you can not update the quote version with status = " + quoteVersion.getStatus());
+		}
+		quoteVersion.setStatus(status);
+		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
+		quoteVersionService.update(quoteVersion);
+	}
    
 }
