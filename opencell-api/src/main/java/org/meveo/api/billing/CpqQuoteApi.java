@@ -655,5 +655,16 @@ public class CpqQuoteApi extends BaseApi {
 		});
 			
 	}
+	
+	public CpqQuote duplicateQuote(String quoteCode, int version) {
+		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+		if(quote == null)
+			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
+		final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException("No quote version with number = "+ version + " for the quote code = " + quoteCode);
+		
+		return cpqQuoteService.duplicate(quote, quoteVersion, false, true);
+	}
    
 }

@@ -23,6 +23,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,18 +65,28 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteAttributeService;
+import org.meveo.service.cpq.QuoteProductService;
+import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.quote.QuoteOfferService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1159,5 +1170,77 @@ public class CatalogHierarchyBuilderService {
 
         }
 
+    }
+    
+    private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
+    	quoteVersion.getQuoteOffers().size();
+    	quoteVersion.getQuoteOffers().forEach(qo -> {
+    		qo.getQuoteProduct().size();
+    		qo.getQuoteProduct().forEach(qp -> {
+    			qp.getQuoteAttributes().size();
+    		});
+    	});
+    }
+    
+    @Inject private QuoteVersionService quoteVersionService;
+    @Inject private QuoteOfferService quoteOfferService;
+    @Inject private QuoteProductService quoteProductService;
+    @Inject private QuoteAttributeService quoteAttributeService;
+    
+    public void duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
+    	final QuoteVersion duplicate = new QuoteVersion();
+    	breakLazyLoadForQuoteVersion(quoteVersion);
+    	quoteVersionService.detach(quoteVersion);
+    	try {
+			BeanUtils.copyProperties(duplicate, quoteVersion);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+		}
+    	var quoteOffer = quoteVersion.getQuoteOffers();
+    	
+    	duplicate.setId(null);
+    	duplicate.setQuoteOffers(new ArrayList<QuoteOffer>());
+    	duplicate.setQuote(entity);
+    	duplicate.setStatus(VersionStatusEnum.DRAFT);
+    	duplicate.setStatusDate(Calendar.getInstance().getTime());
+    	duplicate.setQuoteVersion(1);
+    	
+    	quoteVersionService.create(duplicate);
+    	duplicateQuoteOffer(quoteOffer, duplicate);
+    }
+    
+    private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
+    	for (QuoteOffer quoteOffer : offers) {
+    		final var duplicate = new QuoteOffer(quoteOffer);
+    		quoteOfferService.detach(quoteOffer);
+    		var quoteProducts = quoteOffer.getQuoteProduct();
+    		duplicate.setQuoteVersion(entity);
+    		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
+    		quoteOfferService.create(duplicate);
+    		duplicateQuoteProduct(quoteProducts, duplicate);
+		}
+    }
+    
+    private void duplicateQuoteProduct(List<QuoteProduct> products, QuoteOffer offer) {
+    	for (QuoteProduct quoteProduct : products) {
+			final var duplicate = new QuoteProduct(quoteProduct);
+			quoteProductService.detach(quoteProduct);
+			var quoteAttributes = quoteProduct.getQuoteAttributes();
+			duplicate.setQuoteOffre(offer);
+			duplicate.setQuote(offer.getQuoteVersion().getQuote());
+			duplicate.setQuoteVersion(offer.getQuoteVersion());
+			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+			quoteProductService.create(duplicate);
+			
+			duplicateQuoteAttribute(quoteAttributes, duplicate);
+		}
+    }
+    
+    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct) {
+    	for (QuoteAttribute quoteAttribute : attributes) {
+			final var duplicate = new QuoteAttribute(quoteAttribute);
+			quoteAttributeService.detach(quoteAttribute);
+			duplicate.setQuoteProduct(quoteProduct);
+			quoteAttributeService.create(duplicate);
+		}
     }
 }
