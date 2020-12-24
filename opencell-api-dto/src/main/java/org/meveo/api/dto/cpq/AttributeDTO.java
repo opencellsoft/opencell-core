@@ -25,9 +25,13 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
@@ -42,24 +46,24 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 public class AttributeDTO extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -6794700715161690227L;
+    protected static final long serialVersionUID = -6794700715161690227L;
 
 
   
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private String groupedAttributeCode;
+    protected String groupedAttributeCode;
     
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private AttributeTypeEnum attributeType;
+    protected AttributeTypeEnum attributeType;
     
     /**
      * Corresponding to predefined allowed values
      */
-    private Set<String> allowedValues;
+    protected Set<String> allowedValues;
 	  /**
      * Display
      */
@@ -72,7 +76,7 @@ public class AttributeDTO extends EnableBusinessDto {
     /**
      * The lower number, the higher the priority is
      */
-    private Integer priority ;
+    protected Integer priority ;
     /**
      * Mandatory
      */
@@ -80,18 +84,20 @@ public class AttributeDTO extends EnableBusinessDto {
     protected boolean mandatory=Boolean.FALSE;
     
     
-    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+    protected List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
     
-   private boolean selectable=Boolean.TRUE;
+   protected boolean selectable=Boolean.TRUE;
     
-    private boolean ruled=Boolean.FALSE;
+    protected boolean ruled=Boolean.FALSE;
     
-    private Object value;
-
+    protected Object value;
     
-    /**
-     * Instantiates a new service template dto.
-     */
+    @XmlElementWrapper(name = "chargeTemplateCodes")
+    @XmlElement(name = "chargeTemplateCodes") 
+    private List<String> chargeTemplateCodes = new ArrayList<String>();
+ 
+    
+   
     public AttributeDTO() {
     }
 
@@ -293,6 +299,33 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.value = value;
 	}
 
+
+
+	/**
+	 * @return the chargeTemplateCodes
+	 */
+	public List<String> getChargeTemplateCodes() {
+		return chargeTemplateCodes;
+	}
+
+
+
+	/**
+	 * @param chargeTemplateCodes the chargeTemplateCodes to set
+	 */
+	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
+		this.chargeTemplateCodes = chargeTemplateCodes;
+	}
+
+
+ 
+
+
+
+	 
+
+	
+	
 
 
     
