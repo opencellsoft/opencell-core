@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -23,7 +24,7 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class job  to remove not open EDR, WO, RTx between two dates.
+ * The Class job to remove not open EDR, WO, RTx between two dates.
  * 
  * @author khalid HORRI
  * @lastModifiedVersion 7.3
@@ -58,7 +59,7 @@ public class PurgeMediationDataJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         CustomFieldTemplate firstTransactionDate = new CustomFieldTemplate();
         firstTransactionDate.setCode("PurgeMediationDataJob_firstTransactionDate");
@@ -66,19 +67,38 @@ public class PurgeMediationDataJob extends Job {
         firstTransactionDate.setActive(true);
         firstTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.firstTransactionDate"));
         firstTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
-        firstTransactionDate.setValueRequired(true);
+        firstTransactionDate.setDefaultValue(null);
+        firstTransactionDate.setValueRequired(false);
         firstTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:0");
         result.put("PurgeMediationDataJob_firstTransactionDate", firstTransactionDate);
 
-        CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
-        lastTransactionDate.setCode("PurgeMediationDataJob_lastTransactionDate");
-        lastTransactionDate.setAppliesTo(APPLIES_TO_NAME);
-        lastTransactionDate.setActive(true);
-        lastTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.lastTransactionDate"));
-        lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
-        lastTransactionDate.setValueRequired(false);
-        lastTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:1");
-        result.put("PurgeMediationDataJob_lastTransactionDate", lastTransactionDate);
+        CustomFieldTemplate numberOf = new CustomFieldTemplate();
+        numberOf.setCode("PurgeMediationDataJob_numberOf");
+        numberOf.setAppliesTo(APPLIES_TO_NAME);
+        numberOf.setActive(true);
+        numberOf.setDescription(resourceMessages.getString("exportEntityJob.numberOf"));
+        numberOf.setFieldType(CustomFieldTypeEnum.LONG);
+        numberOf.setDefaultValue("1");
+        numberOf.setValueRequired(true);
+        numberOf.setGuiPosition("tab:Custom fields:0;fieldGroup:Transaction date before number of period:1;field:1");
+        result.put("PurgeMediationDataJob_numberOf", numberOf);
+
+        CustomFieldTemplate period = new CustomFieldTemplate();
+        period.setCode("PurgeMediationDataJob_period");
+        period.setAppliesTo(APPLIES_TO_NAME);
+        period.setActive(true);
+        period.setDescription(resourceMessages.getString("exportEntityJob.period"));
+        period.setFieldType(CustomFieldTypeEnum.LIST);
+        period.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+        Map<String, String> listValues = new HashMap<>();
+        listValues.put(String.valueOf(Calendar.DAY_OF_MONTH), "Days");
+        listValues.put(String.valueOf(Calendar.MONTH), "Months");
+        listValues.put(String.valueOf(Calendar.YEAR), "Years");
+        period.setListValues(listValues);
+        period.setDefaultValue(String.valueOf(Calendar.MONTH));
+        period.setValueRequired(true);
+        period.setGuiPosition("tab:Custom fields:0;fieldGroup:Transaction date before number of period:1;field:2");
+        result.put("PurgeMediationDataJob_period", period);
 
         CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
         edrStatusCf.setCode(PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF);
