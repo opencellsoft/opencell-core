@@ -90,7 +90,6 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		contractCode=quoteOffer.getContractCode();
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes) {
-		super();
 		init(quoteOffer);
 		if(loadQuoteProduct) {
 			    products=new ArrayList<QuoteProductDTO>();
