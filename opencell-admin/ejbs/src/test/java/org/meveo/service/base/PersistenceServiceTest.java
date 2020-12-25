@@ -3,6 +3,7 @@ package org.meveo.service.base;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
 
 import java.time.LocalDate;
@@ -107,9 +108,33 @@ public class PersistenceServiceTest {
     @Test
     public void test_list() {
         filters.put("list listField1", 1);
-        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
+        QueryBuilder query = persistenceService.getQuery(new PaginationConfiguration(10, 40, filters, "text", List.of("fetchField.b"), "fetchField.b", "desc"));
+        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 ":listField1 in elements(a.listField1) " +
                 "Param name:listField1 value:1");
+        //"from org.meveo.model.billing.Invoice a left join a.fetchField1 f left Join f.b b where :listField1 in elements(a.listField1) Param name:listField1 value:1 "
+    }
+
+    @Test
+    public void test_list_2() {
+        filters.put("eq flield1.b ", List.of("value"));
+        QueryBuilder query = persistenceService.getQuery(new PaginationConfiguration(10, 40, filters, "text", null));
+
+        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a join fetch a.field1 f join fetch f.B b where b  in :a_flield1_b Param name:a_flield1_b value:[value]");
+        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
+                "type(a) in (:typeClass) Param name:typeClass value:[class org.meveo.model.billing.Invoice]");
+        //"from org.meveo.model.billing.Invoice a left join a.fetchField1 f left Join f.b b where :listField1 in elements(a.listField1) Param name:listField1 value:1 "
+    }
+
+
+
+    @Test
+    public void create_query_buidler() {
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        query.addValueIsEqualToField("a.b.c", "value", false, true);
+
+        assertThat(query.toString()).isEqualTo("from org.meveo.model.billing.Invoice I left join fetch I.billingAccount.id inner join I.a a_10 inner join a_10.b b_11 where (b_11.c IS NULL or (lower(b_11.c) = :a_b_c)) Param name:a_b_c value:value");
+
     }
 
     @Test

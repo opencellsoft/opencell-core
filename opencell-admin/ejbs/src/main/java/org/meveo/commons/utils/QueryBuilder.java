@@ -52,6 +52,7 @@ import java.util.stream.Stream;
  */
 public class QueryBuilder {
 
+    public static final String INNER_JOINS = "{innerJoins}";
     protected StringBuffer q;
 
     protected String alias;
@@ -64,16 +65,66 @@ public class QueryBuilder {
 
     private int nbCriteriaInOrClause;
 
+    private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+
+    private InnerJoin rootInnerJoin;
+
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
 
     private Class<?> clazz;
-    
+
     static final String FROM = "from ";
 
     public Class<?> getEntityClass() {
         return clazz;
+    }
+
+    public void checkForJoins(String field, String value) {
+
+    }
+
+    public String format(String rootAlias, Collection<JoinWrapper> joinWrappers){
+        return joinWrappers.stream()
+                .map(jw -> format(rootAlias, jw.getRootInnerJoin()))
+                .collect(Collectors.joining(" "));
+    }
+
+    public String format(String rootAlias, InnerJoin innerJoin) {
+
+        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+
+        return innerJoin.getNextInnerJoins().stream()
+                .map(next -> {
+                    if(!next.getNextInnerJoins().isEmpty())
+                        return format(innerJoin.getAlias(), next);
+                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                })
+                .collect(Collectors.joining(" ", sql, ""));
+    }
+
+    public JoinWrapper parse(String fieldsString) {
+        String[] fields = fieldsString.split("\\.");
+
+        if(fields.length <= 1){
+            throw new IllegalArgumentException("can not create inner joins with only one field or less: " + fields);
+        }
+
+        String joinAlias = "";
+        InnerJoin rootInnerJoin = null;
+
+        for(int i = fields.length - 2; i >= 0; i--){
+            InnerJoin innerJoin = new InnerJoin(fields[i]);
+            if(i == fields.length - 2){
+                joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
+            }else {
+                innerJoin.next(rootInnerJoin);
+            }
+            rootInnerJoin = innerJoin;
+        }
+
+        return new JoinWrapper(rootInnerJoin, joinAlias);
     }
 
     public enum QueryLikeStyleEnum {
@@ -181,7 +232,13 @@ public class QueryBuilder {
             }
         }
 
+        addInnerJoinTag(query);
+
         return query.toString();
+    }
+
+    private static void addInnerJoinTag(StringBuilder query) {
+        query.append(" " + INNER_JOINS + " ");
     }
 
     /**
@@ -197,6 +254,8 @@ public class QueryBuilder {
                 query.append(" left join fetch " + alias + "." + fetchField);
             }
         }
+
+        addInnerJoinTag(query);
 
         return query.toString();
     }
@@ -983,14 +1042,16 @@ public class QueryBuilder {
     /**
      * Add a criteria to check field value is/not equal to a value e.g. fieldValue=value
      * 
-     * @param field field
+     * @param concatenatedFields field
      * @param value value to compare to. In case of date, field value and value are compared ignoring the time.
      * @param isNot Should NOT be applied
      * @param isFieldValueOptional If true, consider that the field values can be null
      * @return instance of Query builder.
      */
     @SuppressWarnings({ "rawtypes" })
-    public QueryBuilder addValueIsEqualToField(String field, Object value, boolean isNot, boolean isFieldValueOptional) {
+    public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
+
+        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
 
         // Search by equals/not equals to a string value
         if (value instanceof String) {
@@ -998,34 +1059,46 @@ public class QueryBuilder {
             // if contains dot, that means join is needed
             String filterString = (String) value;
 
-            addCriterionWildcard(field, filterString, true, isNot, isFieldValueOptional);
+            addCriterionWildcard(concatenatedFields, filterString, true, isNot, isFieldValueOptional);
 
             // Search by equals to truncated date value
         } else if (value instanceof Date) {
-            addCriterionDateTruncatedToDay(field, (Date) value, isNot, isFieldValueOptional, null);
+            addCriterionDateTruncatedToDay(concatenatedFields, (Date) value, isNot, isFieldValueOptional, null);
 
             // Search by equals/not equals to a number value
         } else if (value instanceof Number) {
-            addCriterion(field, isNot ? " != " : " = ", value, true, isFieldValueOptional);
+            addCriterion(concatenatedFields, isNot ? " != " : " = ", value, true, isFieldValueOptional);
 
             // Search by equals/not equals to a boolean value
         } else if (value instanceof Boolean) {
             boolean bValue = (boolean) value;
-            addBooleanCriterion(field, isNot ? !bValue : bValue);
+            addBooleanCriterion(concatenatedFields, isNot ? !bValue : bValue);
 
             // Search by equals/not equals to an enum value
         } else if (value instanceof Enum) {
             if (value instanceof IdentifiableEnum) {
-                String enumIdKey = field + "Id";
+                String enumIdKey = concatenatedFields + "Id";
                 addCriterion(enumIdKey, isNot ? " != " : " = ", ((IdentifiableEnum) value).getId(), true, isFieldValueOptional);
             } else {
-                addCriterionEnum(field, (Enum) value, isNot ? " != " : " = ", isFieldValueOptional);
+                addCriterionEnum(concatenatedFields, (Enum) value, isNot ? " != " : " = ", isFieldValueOptional);
             }
 
         } else if (value instanceof List) {
-            addCriterionInList(field, (List) value, isNot ? " not in " : " in ", isFieldValueOptional);
+            addCriterionInList(concatenatedFields, (List) value, isNot ? " not in " : " in ", isFieldValueOptional);
         }
         return this;
+    }
+
+    private String createExplicitInnerJoins(String concatenatedFields) {
+        String[] fields = concatenatedFields.split("\\.");
+        if(innerJoins.get(concatenatedFields) != null){
+            concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
+        }else if(fields.length > 1){
+            JoinWrapper joinWrapper = parse(concatenatedFields);
+            innerJoins.put(concatenatedFields, joinWrapper);
+            concatenatedFields = joinWrapper.getJoinAlias();
+        }
+        return concatenatedFields;
     }
 
     /**
@@ -1308,7 +1381,7 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return q.toString();
+        return q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
     }
 
     public Map<String, Object> getParams() {
@@ -1321,7 +1394,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = q.toString();
+        String result = q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
