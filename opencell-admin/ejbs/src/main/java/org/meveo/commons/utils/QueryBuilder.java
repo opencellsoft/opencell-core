@@ -54,6 +54,7 @@ import org.primefaces.model.SortOrder;
  */
 public class QueryBuilder {
 
+    public static final String INNER_JOINS = "{innerJoins}";
     protected StringBuffer q;
 
     protected String alias;
@@ -66,11 +67,67 @@ public class QueryBuilder {
 
     private int nbCriteriaInOrClause;
 
+    private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+
+    private InnerJoin rootInnerJoin;
+
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
 
     private Class<?> clazz;
+
+    static final String FROM = "from ";
+
+    public Class<?> getEntityClass() {
+        return clazz;
+    }
+
+    public void checkForJoins(String field, String value) {
+
+    }
+
+    public String format(String rootAlias, Collection<JoinWrapper> joinWrappers){
+        return joinWrappers.stream()
+                .map(jw -> format(rootAlias, jw.getRootInnerJoin()))
+                .collect(Collectors.joining(" "));
+    }
+
+    public String format(String rootAlias, InnerJoin innerJoin) {
+
+        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+
+        return innerJoin.getNextInnerJoins().stream()
+                .map(next -> {
+                    if(!next.getNextInnerJoins().isEmpty())
+                        return format(innerJoin.getAlias(), next);
+                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                })
+                .collect(Collectors.joining(" ", sql, ""));
+    }
+
+    public JoinWrapper parse(String fieldsString) {
+        String[] fields = fieldsString.split("\\.");
+
+        if(fields.length <= 1){
+            throw new IllegalArgumentException("can not create inner joins with only one field or less: " + fields);
+        }
+
+        String joinAlias = "";
+        InnerJoin rootInnerJoin = null;
+
+        for(int i = fields.length - 2; i >= 0; i--){
+            InnerJoin innerJoin = new InnerJoin(fields[i]);
+            if(i == fields.length - 2){
+                joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
+            }else {
+                innerJoin.next(rootInnerJoin);
+            }
+            rootInnerJoin = innerJoin;
+        }
+
+        return new JoinWrapper(rootInnerJoin, joinAlias);
+    }
 
     public enum QueryLikeStyleEnum {
         /**
@@ -177,7 +234,13 @@ public class QueryBuilder {
             }
         }
 
+        addInnerJoinTag(query);
+
         return query.toString();
+    }
+
+    private static void addInnerJoinTag(StringBuilder query) {
+        query.append(" " + INNER_JOINS + " ");
     }
 
     /**
@@ -193,6 +256,8 @@ public class QueryBuilder {
                 query.append(" left join fetch " + alias + "." + fetchField);
             }
         }
+
+        addInnerJoinTag(query);
 
         return query.toString();
     }
@@ -229,6 +294,40 @@ public class QueryBuilder {
      */
     public QueryBuilder addSql(String sql) {
         return addSqlCriterion(sql, null, null);
+    }
+
+    public void addLikeCriteriasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        if (value instanceof String) {
+            String filterString = (String) value;
+            Stream.of(fields)
+                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+        }
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchSqlFilters(Object value) {
+        if (value.getClass().isArray()) {
+            String additionalSql = (String) ((Object[]) value)[0];
+            Object[] additionalParameters = Arrays.copyOfRange(((Object[]) value), 1, ((Object[]) value).length);
+            addSqlCriterionMultiple(additionalSql, additionalParameters);
+        } else {
+            addSql((String) value);
+        }
     }
 
     /**
@@ -818,6 +917,235 @@ public class QueryBuilder {
     }
 
     /**
+     * Add a criteria to check value is in between the values of two fields. e.g. field1Value&lt;=value&lt;field2Value or field1Value&lt;=value&lt;=field2Value
+     * 
+     * @param startField starting field
+     * @param endField ending field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @param optional If true, consider that either one of the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueInBetweenTwoFields(String startField, String endField, Object value, boolean inclusive, boolean optional) {
+        if (StringUtils.isBlank(value)) {
+            return this;
+        }
+
+        if (value instanceof Double) {
+            value = BigDecimal.valueOf((Double) value);
+
+        } else if (value instanceof Date) {
+            Calendar c = Calendar.getInstance();
+            c.setTime((Date) value);
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int date = c.get(Calendar.DATE);
+            c.set(year, month, date, 0, 0, 0);
+            value = c.getTime();
+        }
+
+        if (optional) {
+            String paramName = convertFieldToParam(startField);
+
+            String sql = "((" + startField + " IS NULL and " + endField + " IS NULL) or (" + startField + "<=:" + paramName + " and :" + paramName + (inclusive ? "<=" : "<") + endField + ") or (" + startField + "<=:"
+                    + paramName + " and " + endField + " IS NULL) or (" + startField + " IS NULL and :" + paramName + (inclusive ? "<=" : "<") + endField + "))";
+            addSqlCriterionMultiple(sql, paramName, value);
+
+        } else {
+            addCriterion(startField, "<=", value, false);
+            addCriterion(endField, inclusive ? " >= " : " > ", value, false);
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check value is greater than a field value. e.g. fieldValue&lt;=value
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param optional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
+
+        if (value instanceof Double) {
+            addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
+        } else if (value instanceof Number) {
+            addCriterion(field, " >= ", value, false, optional);
+        } else if (value instanceof Date) {
+            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional);
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check value is less than a field value. e.g. value&lt;fieldValue or value&lt;=fieldValue
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueIsLessThanField(String field, Object value, boolean inclusive, boolean isFieldValueOptional) {
+
+        if (value instanceof Double) {
+            addCriterion(field, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
+        } else if (value instanceof Number) {
+            addCriterion(field, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
+        } else if (value instanceof Date) {
+            addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
+        }
+        return this;
+    }
+
+    public void addListFilters(String tableNameAlias, String fieldName, Object value){
+        String paramName = convertFieldToParam(fieldName);
+        addSqlCriterion(":" + paramName + " in elements(" + tableNameAlias + '.' + fieldName + ")", paramName, value);
+    }
+
+    /**
+     * Add a criteria to check that values overlap the values of two fields.
+     * 
+     * @param startField starting field
+     * @param endField ending field
+     * @param fromValue range of values to compare to - from value. In case of date, value is truncated to the start of the date
+     * @param toValue range of values to compare to - to value. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueRangeOverlapTwoFieldRange(String startField, String endField, Object fromValue, Object toValue, boolean inclusive) {
+
+        String paramNameFrom = convertFieldToParam(startField);
+        String paramNameTo = convertFieldToParam(endField);
+
+        // older query before adding inclusive check
+        // String sql = "(( " + startField + " IS NULL and " + endField + " IS NULL) or ( " + startField + " IS NULL and " + endField + ">:" + paramNameFrom + ") or (" + endField +
+        // " IS NULL and " + startField + "<:"
+        // + paramNameTo + ") or (" + startField + " IS NOT NULL and " + endField + " IS NOT NULL and ((" + startField + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<" +
+        // endField + ") or (:" + paramNameFrom
+        // + "<=" + startField + " and " + startField + "<:" + paramNameTo + "))))";
+
+        String sql = "(( " + startField + " IS NULL and " + endField + " IS NULL) or  ( " + startField + " IS NULL and :" + paramNameFrom + (inclusive ? "<=" : "<") + endField + ") or (" + endField + " IS NULL and "
+                + startField + (inclusive ? "<=:" : "<:") + paramNameTo + ") or (" + startField + " IS NOT NULL and " + endField + " IS NOT NULL and ((" + startField + "<=:" + paramNameFrom + " and :" + paramNameFrom
+                + (inclusive ? "<=" : "<") + endField + ") or (:" + paramNameFrom + "<=" + startField + " and " + startField + (inclusive ? "<=:" : "<:") + paramNameTo + "))))";
+
+        addSqlCriterionMultiple(sql, paramNameFrom, fromValue, paramNameTo, toValue);
+
+        return this;
+    }
+
+    /**
+     * Add a criteria to check field value is/not in the list of values e.g. fieldValue inList(value)
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, field value and value are compared ignoring the time.
+     * @param isNot Should NOT be applied
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public QueryBuilder addFieldInAListOfValues(String field, Object value, boolean isNot, boolean isFieldValueOptional) {
+
+        String paramName = convertFieldToParam(field);
+
+        if (value instanceof String) {
+            addSql("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (" + value + ")");
+
+        } else if (value instanceof Collection) {
+
+            // Convert to lowercase and do case insensitive search for String based search
+            Object firstValue = ((Collection) value).iterator().next();
+            if (firstValue instanceof String) {
+                value = ((Collection<String>) value).stream().map(val -> val != null ? val.toLowerCase() : val).collect(Collectors.toList());
+                addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+
+                // Date must treat each value as a from/to value truncated to day start and end respectively
+            } else if (firstValue instanceof Date) {
+
+                if (!isNot) {
+                    startOrClause();
+                }
+
+                int i = 0;
+                for (Date val : (Collection<Date>) value) {
+                    addCriterionDateTruncatedToDay(field, val, isNot, isFieldValueOptional, "" + i++);
+                }
+
+                if (!isNot) {
+                    endOrClause();
+                }
+
+            } else {
+                addSqlCriterion(field + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check field value is/not equal to a value e.g. fieldValue=value
+     * 
+     * @param concatenatedFields field
+     * @param value value to compare to. In case of date, field value and value are compared ignoring the time.
+     * @param isNot Should NOT be applied
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
+
+        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+
+        // Search by equals/not equals to a string value
+        if (value instanceof String) {
+
+            // if contains dot, that means join is needed
+            String filterString = (String) value;
+
+            addCriterionWildcard(concatenatedFields, filterString, true, isNot, isFieldValueOptional);
+
+            // Search by equals to truncated date value
+        } else if (value instanceof Date) {
+            addCriterionDateTruncatedToDay(concatenatedFields, (Date) value, isNot, isFieldValueOptional, null);
+
+            // Search by equals/not equals to a number value
+        } else if (value instanceof Number) {
+            addCriterion(concatenatedFields, isNot ? " != " : " = ", value, true, isFieldValueOptional);
+
+            // Search by equals/not equals to a boolean value
+        } else if (value instanceof Boolean) {
+            boolean bValue = (boolean) value;
+            addBooleanCriterion(concatenatedFields, isNot ? !bValue : bValue);
+
+            // Search by equals/not equals to an enum value
+        } else if (value instanceof Enum) {
+            if (value instanceof IdentifiableEnum) {
+                String enumIdKey = concatenatedFields + "Id";
+                addCriterion(enumIdKey, isNot ? " != " : " = ", ((IdentifiableEnum) value).getId(), true, isFieldValueOptional);
+            } else {
+                addCriterionEnum(concatenatedFields, (Enum) value, isNot ? " != " : " = ", isFieldValueOptional);
+            }
+
+        } else if (value instanceof List) {
+            addCriterionInList(concatenatedFields, (List) value, isNot ? " not in " : " in ", isFieldValueOptional);
+        }
+        return this;
+    }
+
+    private String createExplicitInnerJoins(String concatenatedFields) {
+        String[] fields = concatenatedFields.split("\\.");
+        if(innerJoins.get(concatenatedFields) != null){
+            concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
+        }else if(fields.length > 1){
+            JoinWrapper joinWrapper = parse(concatenatedFields);
+            innerJoins.put(concatenatedFields, joinWrapper);
+            concatenatedFields = joinWrapper.getJoinAlias();
+        }
+        return concatenatedFields;
+    }
+
+    /**
      * @return instance QueryBuilder.
      */
     public QueryBuilder startOrClause() {
@@ -896,9 +1224,7 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-
-        String from = "from ";
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(from)));
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1090,7 +1416,7 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return q.toString();
+        return q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
     }
 
     public Map<String, Object> getParams() {
@@ -1103,7 +1429,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = q.toString();
+        String result = q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
