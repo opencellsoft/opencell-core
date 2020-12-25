@@ -145,7 +145,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 * Type of discount, default is percent.
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "discount_plan_item_type", length = 25)
+	@Column(name = "discount_plan_item_type", length = 50)
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
 	
 	 /**
