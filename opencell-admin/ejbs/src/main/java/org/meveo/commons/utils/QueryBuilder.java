@@ -1,43 +1,39 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.commons.utils;
 
-import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.jpa.EntityManagerProvider;
+import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.keycloak.CurrentUserProvider;
+import org.primefaces.model.SortOrder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.jpa.TypedParameterValue;
-import org.hibernate.type.CharacterType;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Query builder class for building JPA queries.
@@ -56,6 +52,7 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
  */
 public class QueryBuilder {
 
+    public static final String INNER_JOINS = "{innerJoins}";
     protected StringBuffer q;
 
     protected String alias;
@@ -68,14 +65,83 @@ public class QueryBuilder {
 
     private int nbCriteriaInOrClause;
 
+    private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+
+    private InnerJoin rootInnerJoin;
+
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
 
     private Class<?> clazz;
 
+    static final String FROM = "from ";
+
+    public Class<?> getEntityClass() {
+        return clazz;
+    }
+
+    public void checkForJoins(String field, String value) {
+
+    }
+
+    public String format(String rootAlias, Collection<JoinWrapper> joinWrappers){
+        return joinWrappers.stream()
+                .map(jw -> format(rootAlias, jw.getRootInnerJoin()))
+                .collect(Collectors.joining(" "));
+    }
+
+    public String format(String rootAlias, InnerJoin innerJoin) {
+
+        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+
+        return innerJoin.getNextInnerJoins().stream()
+                .map(next -> {
+                    if(!next.getNextInnerJoins().isEmpty())
+                        return format(innerJoin.getAlias(), next);
+                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                })
+                .collect(Collectors.joining(" ", sql, ""));
+    }
+
+    public JoinWrapper parse(String fieldsString) {
+        String[] fields = fieldsString.split("\\.");
+
+        if(fields.length <= 1){
+            throw new IllegalArgumentException("can not create inner joins with only one field or less: " + fields);
+        }
+
+        String joinAlias = "";
+        InnerJoin rootInnerJoin = null;
+
+        for(int i = fields.length - 2; i >= 0; i--){
+            InnerJoin innerJoin = new InnerJoin(fields[i]);
+            if(i == fields.length - 2){
+                joinAlias = innerJoin.getAlias()+ "." + fields[i + 1];
+            }else {
+                innerJoin.next(rootInnerJoin);
+            }
+            rootInnerJoin = innerJoin;
+        }
+
+        return new JoinWrapper(rootInnerJoin, joinAlias);
+    }
+
     public enum QueryLikeStyleEnum {
-        MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
+        /**
+         * Field match value as provided (value already contains wildcard characters
+         */
+        MATCH_EQUAL,
+
+        /**
+         * Add a wildcard to the end of the value to match field values that start with a value provided
+         */
+        MATCH_BEGINNING,
+
+        /**
+         * Add a wildcard to the start and end of the value to match field values that start or end with a value provided
+         */
+        MATCH_ANYWHERE
     }
 
     public QueryBuilder() {
@@ -166,7 +232,13 @@ public class QueryBuilder {
             }
         }
 
+        addInnerJoinTag(query);
+
         return query.toString();
+    }
+
+    private static void addInnerJoinTag(StringBuilder query) {
+        query.append(" " + INNER_JOINS + " ");
     }
 
     /**
@@ -182,6 +254,8 @@ public class QueryBuilder {
                 query.append(" left join fetch " + alias + "." + fetchField);
             }
         }
+
+        addInnerJoinTag(query);
 
         return query.toString();
     }
@@ -218,6 +292,40 @@ public class QueryBuilder {
      */
     public QueryBuilder addSql(String sql) {
         return addSqlCriterion(sql, null, null);
+    }
+
+    public void addLikeCriteriasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        if (value instanceof String) {
+            String filterString = (String) value;
+            Stream.of(fields)
+                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+        }
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
+        startOrClause();
+        Stream.of(fields)
+                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
+        endOrClause();
+    }
+
+    public void addSearchSqlFilters(Object value) {
+        if (value.getClass().isArray()) {
+            String additionalSql = (String) ((Object[]) value)[0];
+            Object[] additionalParameters = Arrays.copyOfRange(((Object[]) value), 1, ((Object[]) value).length);
+            addSqlCriterionMultiple(additionalSql, additionalParameters);
+        } else {
+            addSql((String) value);
+        }
     }
 
     /**
@@ -310,13 +418,29 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field name of field for entity
+     * Add a criteria to check field value equivalence to a value passed
+     * 
+     * @param field Name of field for entity
      * @param operator SQL operator
-     * @param value value for field
-     * @param caseInsensitive true/false.
+     * @param value Value to compare to
+     * @param caseInsensitive If true, both value and field value will be converted to a lower case for comparison
      * @return instance QueryBuilder
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
+        return addCriterion(field, operator, value, caseInsensitive, false);
+    }
+
+    /**
+     * Add a criteria to check field value equivalence to a value passed
+     * 
+     * @param field Name of field for entity
+     * @param operator SQL operator
+     * @param value Value to compare to
+     * @param caseInsensitive If true, both value and field value will be converted to a lower case for comparison
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @return instance QueryBuilder
+     */
+    public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive, boolean isFieldValueOptional) {
         if (StringUtils.isBlank(value)) {
             return this;
         }
@@ -336,7 +460,11 @@ public class QueryBuilder {
             nvalue = ((String) value).toLowerCase();
         }
 
-        return addSqlCriterion(sql.toString(), param, nvalue);
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", param, nvalue);
+        } else {
+            return addSqlCriterion(sql.toString(), param, nvalue);
+        }
     }
 
     /**
@@ -355,28 +483,37 @@ public class QueryBuilder {
     }
 
     /**
+     * Add a criteria to check field value is equal to the entity passed
+     * 
      * @param field field name
      * @param entity entity for given name.
      * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionEntity(String field, Object entity) {
-        return addCriterionEntity(field, entity, " = ");
+        return addCriterionEntity(field, entity, " = ", false);
     }
 
     /**
+     * Add a criteria to check field value is equal to the entity passed
+     * 
      * @param field name of field
      * @param entity entity of given field to add criterion
      * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder
      */
-    public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
+    public QueryBuilder addCriterionEntity(String field, Object entity, String condition, boolean isFieldValueOptional) {
         if (entity == null) {
             return this;
         }
 
         String param = convertFieldToParam(field);
 
-        return addSqlCriterion(field + condition + ":" + param, param, entity);
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + condition + ":" + param + "))", param, entity);
+        } else {
+            return addSqlCriterion(field + condition + ":" + param, param, entity);
+        }
     }
 
     /**
@@ -386,84 +523,134 @@ public class QueryBuilder {
      */
     @SuppressWarnings("rawtypes")
     public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
-        return addCriterionEnum(field, enumValue, "=");
+        return addCriterionEnum(field, enumValue, "=", false);
     }
 
     /**
-     * @param field field name
-     * @param enumValue value.
+     * Add a criteria to check field value is equal to the enum passed
+     * 
+     * @param field Field name
+     * @param enumValue Enum value to compare to
      * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder.
      */
     @SuppressWarnings("rawtypes")
-    public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition) {
+    public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition, boolean isFieldValueOptional) {
         if (enumValue == null) {
             return this;
         }
 
         String param = convertFieldToParam(field);
 
-        return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, enumValue);
+        } else {
+            return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+        }
     }
 
     /**
-     * Ajouter un critere like.
+     * Add a criteria to check field value is in a list passed
      * 
-     * @param field field name
-     * @param value value of field
-     * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
+     * @param field Field name
+     * @param listValue List value to compare to
+     * @param condition Comparison type
+     * @return instance of QueryBuilder.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder addCriterionInList(String field, List listValue, String condition) {
+        return addCriterionInList(field, listValue, condition);
+    }
+
+    /**
+     * Add a criteria to check field value is in a list passed
+     * 
+     * @param field Field name
+     * @param listValue List value to compare to
+     * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @return instance of QueryBuilder.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder addCriterionInList(String field, List listValue, String condition, boolean isFieldValueOptional) {
+        if (listValue == null) {
+            return this;
+        }
+
+        String param = convertFieldToParam(field);
+
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, listValue);
+        } else {
+            return addSqlCriterion(field + " " + condition + ":" + param, param, listValue);
+        }
+    }
+
+    /**
+     * Add a criteria to check field value is like a value passed
+     * 
+     * @param field Field name
+     * @param value Value to compare to
+     * @param matchingStyle : Matching style
      * @param caseInsensitive true/false.
      * @return instance QueryBuiler.
      */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive) {
-        return like(field, value, style, caseInsensitive, false);
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum matchingStyle, boolean caseInsensitive) {
+        return like(field, value, matchingStyle, caseInsensitive, false, false);
     }
 
     /**
-     * Ajouter un critere like.
+     * Add a criteria to check field value is like a value passed
      * 
-     * @param field field name
-     * @param value value
-     * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
+     * @param field Field name
+     * @param value Value to compare to
+     * @param matchingStyle : Matching style
      * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance QueryBuilder
      */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive, boolean addNot) {
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum matchingStyle, boolean caseInsensitive, boolean addNot, boolean isFieldValueOptional) {
         if (StringUtils.isBlank(value)) {
             return this;
         }
 
         String v = value;
 
-        if (style == QueryLikeStyleEnum.MATCH_BEGINNING || style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+        if (matchingStyle == QueryLikeStyleEnum.MATCH_BEGINNING || matchingStyle == QueryLikeStyleEnum.MATCH_ANYWHERE) {
             v = v + "%";
         }
-        if (style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+        if (matchingStyle == QueryLikeStyleEnum.MATCH_ANYWHERE) {
             v = "%" + v;
         }
 
-        return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive);
+        return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive, isFieldValueOptional);
     }
 
     /**
+     * Add a criteria to check field value is like a value passed
+     * 
      * @param field field name
      * @param value value.
      * @param caseInsensitive true/false
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
-        return addCriterionWildcard(field, value, caseInsensitive, false);
+        return addCriterionWildcard(field, value, caseInsensitive, false, false);
     }
 
     /**
+     * Add a criteria to check field value is like a value passed
+     * 
      * @param field name of field
      * @param value value of field
      * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return query instance.
      */
-    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
+    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot, boolean isFieldValueOptional) {
 
         if (StringUtils.isBlank(value)) {
             return this;
@@ -471,33 +658,50 @@ public class QueryBuilder {
         boolean wildcard = (value.indexOf("*") != -1);
 
         if (wildcard) {
-            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot);
+            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot, isFieldValueOptional);
         } else {
-            return addCriterion(field, addNot ? " != " : " = ", value, caseInsensitive);
+            return addCriterion(field, addNot ? " != " : " = ", value, caseInsensitive, isFieldValueOptional);
         }
     }
 
     /**
-     * add the date field searching support.
+     * Add a criteria to check field value is equal to the date passed considering the time
      * 
-     * @param field entity's field
-     * @param value value of date.
+     * @param field Name of entity's field
+     * @param value Date value to compare to
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDate(String field, Date value) {
         if (StringUtils.isBlank(value)) {
             return this;
         }
-        return addCriterion(field, "=", value, false);
+        return addCriterion(field, "=", value, false, false);
 
     }
 
     /**
-     * @param field name of entity's field
-     * @param value date value
+     * Add a criteria to check field value is equal to the date passed ignoring the time
+     * 
+     * @param field Name of entity's field
+     * @param value Date value to compare to
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value) {
+        return addCriterionDateTruncatedToDay(field, value, false, false, null);
+    }
+
+    /**
+     * Add a criteria to check field value is equal or not to the date passed ignoring the time
+     * 
+     * @param field Name of entity's field
+     * @param value Date value to compare to
+     * @param isNot Should NOT be applied
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @param parameterNamePrefix A prefix to apply to a parameter name. Used in case of inList function whenOR clause is used to join multiple date comparisons for the same field
+     * @return instance of QueryBuilder.
+     */
+    public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value, boolean isNot, boolean isFieldValueOptional, String parameterNamePrefix) {
+
         if (StringUtils.isBlank(value)) {
             return this;
         }
@@ -513,18 +717,39 @@ public class QueryBuilder {
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
-        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "");
-        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "");
-        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName,
-            end);
+        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "") + (parameterNamePrefix != null ? parameterNamePrefix : "");
+        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "") + (parameterNamePrefix != null ? parameterNamePrefix : "");
+
+        String sql = field + ">=:" + startDateParameterName + " and " + field + "<:" + endDateParameterName;
+
+        if (isFieldValueOptional) {
+            return addSqlCriterionMultiple((isNot ? " not(" : "") + "(" + field + " IS NULL or (" + sql + "))" + (isNot ? ")" : ""), startDateParameterName, start, endDateParameterName, end);
+        } else {
+            return addSqlCriterionMultiple((isNot ? " not(" : "(") + sql + ")", startDateParameterName, start, endDateParameterName, end);
+        }
+
     }
 
     /**
-     * @param field name of column
-     * @param valueFrom date value
+     * Add a criteria to check that field value is equal or after the date passed
+     * 
+     * @param field Name of entity's field
+     * @param valueFrom Date value to compare to
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
+        return addCriterionDateRangeFromTruncatedToDay(field, valueFrom, false);
+    }
+
+    /**
+     * Add a criteria to check that field value is equal or after the date passed
+     * 
+     * @param field Name of entity's field
+     * @param valueFrom Date value to compare to
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @return instance of QueryBuilder.
+     */
+    public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom, boolean isFieldValueOptional) {
         if (StringUtils.isBlank(valueFrom)) {
             return this;
         }
@@ -538,33 +763,30 @@ public class QueryBuilder {
         Date start = calFrom.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
-        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start);
+
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or " + field + ">=:" + startDateParameterName + ")", startDateParameterName, start);
+        } else {
+            return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start);
+        }
     }
 
     /**
-     * @param field name of field to add
-     * @param valueTo date value.
-     * @return instance of QueryBuilder
-     */
-    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
-        return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
-    }
-
-    /**
-     * Adds the criterion date range to truncated to day.
+     * Add a criteria to check that field value is before the date passed. Date value is truncated to a day.
      *
      * @param field the field
-     * @param valueTo the value to
-     * @param includeEndDate the include end date : if true then the entities having the valueTo date are included
+     * @param valueTo the value to. Will be truncated to day.
+     * @param inclusive If True, the field will be considered as inclusive - will apply &lt= instead of &lt; comparison.
+     * @param optional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return the query builder
      */
-    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo, boolean includeEndDate) {
+    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo, boolean inclusive, boolean optional) {
         if (StringUtils.isBlank(valueTo)) {
             return this;
         }
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
-        if (includeEndDate) {
+        if (inclusive) {
             calTo.add(Calendar.DATE, 1);
         }
         calTo.set(Calendar.HOUR_OF_DAY, 0);
@@ -575,38 +797,11 @@ public class QueryBuilder {
         Date end = calTo.getTime();
 
         String endDateParameterName = "end" + field.replace(".", "");
-        return addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName, end);
-    }
-
-    /**
-     * v5.0: Fix for date format problem
-     * 
-     * @param startField starting field
-     * @param endField ending field
-     * @param value date value
-     * @return instance of Query builder.
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */
-    public QueryBuilder addCriterionDateInRange(String startField, String endField, Date value) {
-        if (StringUtils.isBlank(value))
-            return this;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(value);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.set(year, month, date, 0, 0, 0);
-        Date start = cal.getTime();
-        cal.set(year, month, date, 23, 59, 59);
-        Date end = cal.getTime();
-
-        String startDateParameterName = "start" + startField.replace(".", "");
-        String endDateParameterName = "end" + endField.replace(".", "");
-
-        return addSqlCriterion("(" + startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
-            .addSqlCriterion("(" + endField + "<=:" + endDateParameterName + " OR " + endField + " IS NULL )", endDateParameterName, end);
+        if (optional) {
+            return addSqlCriterion("(" + field + " IS NULL or " + field + "<:" + endDateParameterName + ")", endDateParameterName, end);
+        } else {
+            return addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName, end);
+        }
     }
 
     /**
@@ -614,15 +809,18 @@ public class QueryBuilder {
      * @param ascending true/false
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
+
+        q.append(q.indexOf("ORDER BY") > 0 ? ", " : " ORDER BY ");
+
         if (clazz != null) {
             Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
             if (field != null && field.getType().isAssignableFrom(String.class)) {
-                q.append(" ORDER BY LOWER(CAST(" + orderColumn + " AS string))");
+                q.append(" LOWER(CAST(" + orderColumn + " AS string))");
             } else {
-                q.append(" ORDER BY " + orderColumn);
+                q.append(orderColumn);
             }
         } else {
-            q.append(" ORDER BY " + orderColumn);
+            q.append(orderColumn);
         }
 
         if (ascending) {
@@ -630,7 +828,6 @@ public class QueryBuilder {
         } else {
             q.append(" DESC ");
         }
-
     }
 
     /**
@@ -673,6 +870,235 @@ public class QueryBuilder {
         }
         return this;
 
+    }
+
+    /**
+     * Add a criteria to check value is in between the values of two fields. e.g. field1Value&lt;=value&lt;field2Value or field1Value&lt;=value&lt;=field2Value
+     * 
+     * @param startField starting field
+     * @param endField ending field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @param optional If true, consider that either one of the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueInBetweenTwoFields(String startField, String endField, Object value, boolean inclusive, boolean optional) {
+        if (StringUtils.isBlank(value)) {
+            return this;
+        }
+
+        if (value instanceof Double) {
+            value = BigDecimal.valueOf((Double) value);
+
+        } else if (value instanceof Date) {
+            Calendar c = Calendar.getInstance();
+            c.setTime((Date) value);
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int date = c.get(Calendar.DATE);
+            c.set(year, month, date, 0, 0, 0);
+            value = c.getTime();
+        }
+
+        if (optional) {
+            String paramName = convertFieldToParam(startField);
+
+            String sql = "((" + startField + " IS NULL and " + endField + " IS NULL) or (" + startField + "<=:" + paramName + " and :" + paramName + (inclusive ? "<=" : "<") + endField + ") or (" + startField + "<=:"
+                    + paramName + " and " + endField + " IS NULL) or (" + startField + " IS NULL and :" + paramName + (inclusive ? "<=" : "<") + endField + "))";
+            addSqlCriterionMultiple(sql, paramName, value);
+
+        } else {
+            addCriterion(startField, "<=", value, false);
+            addCriterion(endField, inclusive ? " >= " : " > ", value, false);
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check value is greater than a field value. e.g. fieldValue&lt;=value
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param optional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueIsGreaterThanField(String field, Object value, boolean optional) {
+
+        if (value instanceof Double) {
+            addCriterion(field, " >= ", BigDecimal.valueOf((Double) value), false, optional);
+        } else if (value instanceof Number) {
+            addCriterion(field, " >= ", value, false, optional);
+        } else if (value instanceof Date) {
+            addCriterionDateRangeFromTruncatedToDay(field, (Date) value, optional);
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check value is less than a field value. e.g. value&lt;fieldValue or value&lt;=fieldValue
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueIsLessThanField(String field, Object value, boolean inclusive, boolean isFieldValueOptional) {
+
+        if (value instanceof Double) {
+            addCriterion(field, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
+        } else if (value instanceof Number) {
+            addCriterion(field, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
+        } else if (value instanceof Date) {
+            addCriterionDateRangeToTruncatedToDay(field, (Date) value, inclusive, isFieldValueOptional);
+        }
+        return this;
+    }
+
+    public void addListFilters(String tableNameAlias, String fieldName, Object value){
+        String paramName = convertFieldToParam(fieldName);
+        addSqlCriterion(":" + paramName + " in elements(" + tableNameAlias + '.' + fieldName + ")", paramName, value);
+    }
+
+    /**
+     * Add a criteria to check that values overlap the values of two fields.
+     * 
+     * @param startField starting field
+     * @param endField ending field
+     * @param fromValue range of values to compare to - from value. In case of date, value is truncated to the start of the date
+     * @param toValue range of values to compare to - to value. In case of date, value is truncated to the start of the date
+     * @param inclusive If True, end range field will be considered as inclusive
+     * @return instance of Query builder.
+     */
+    public QueryBuilder addValueRangeOverlapTwoFieldRange(String startField, String endField, Object fromValue, Object toValue, boolean inclusive) {
+
+        String paramNameFrom = convertFieldToParam(startField);
+        String paramNameTo = convertFieldToParam(endField);
+
+        // older query before adding inclusive check
+        // String sql = "(( " + startField + " IS NULL and " + endField + " IS NULL) or ( " + startField + " IS NULL and " + endField + ">:" + paramNameFrom + ") or (" + endField +
+        // " IS NULL and " + startField + "<:"
+        // + paramNameTo + ") or (" + startField + " IS NOT NULL and " + endField + " IS NOT NULL and ((" + startField + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<" +
+        // endField + ") or (:" + paramNameFrom
+        // + "<=" + startField + " and " + startField + "<:" + paramNameTo + "))))";
+
+        String sql = "(( " + startField + " IS NULL and " + endField + " IS NULL) or  ( " + startField + " IS NULL and :" + paramNameFrom + (inclusive ? "<=" : "<") + endField + ") or (" + endField + " IS NULL and "
+                + startField + (inclusive ? "<=:" : "<:") + paramNameTo + ") or (" + startField + " IS NOT NULL and " + endField + " IS NOT NULL and ((" + startField + "<=:" + paramNameFrom + " and :" + paramNameFrom
+                + (inclusive ? "<=" : "<") + endField + ") or (:" + paramNameFrom + "<=" + startField + " and " + startField + (inclusive ? "<=:" : "<:") + paramNameTo + "))))";
+
+        addSqlCriterionMultiple(sql, paramNameFrom, fromValue, paramNameTo, toValue);
+
+        return this;
+    }
+
+    /**
+     * Add a criteria to check field value is/not in the list of values e.g. fieldValue inList(value)
+     * 
+     * @param field field
+     * @param value value to compare to. In case of date, field value and value are compared ignoring the time.
+     * @param isNot Should NOT be applied
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public QueryBuilder addFieldInAListOfValues(String field, Object value, boolean isNot, boolean isFieldValueOptional) {
+
+        String paramName = convertFieldToParam(field);
+
+        if (value instanceof String) {
+            addSql("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (" + value + ")");
+
+        } else if (value instanceof Collection) {
+
+            // Convert to lowercase and do case insensitive search for String based search
+            Object firstValue = ((Collection) value).iterator().next();
+            if (firstValue instanceof String) {
+                value = ((Collection<String>) value).stream().map(val -> val != null ? val.toLowerCase() : val).collect(Collectors.toList());
+                addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+
+                // Date must treat each value as a from/to value truncated to day start and end respectively
+            } else if (firstValue instanceof Date) {
+
+                if (!isNot) {
+                    startOrClause();
+                }
+
+                int i = 0;
+                for (Date val : (Collection<Date>) value) {
+                    addCriterionDateTruncatedToDay(field, val, isNot, isFieldValueOptional, "" + i++);
+                }
+
+                if (!isNot) {
+                    endOrClause();
+                }
+
+            } else {
+                addSqlCriterion(field + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Add a criteria to check field value is/not equal to a value e.g. fieldValue=value
+     * 
+     * @param concatenatedFields field
+     * @param value value to compare to. In case of date, field value and value are compared ignoring the time.
+     * @param isNot Should NOT be applied
+     * @param isFieldValueOptional If true, consider that the field values can be null
+     * @return instance of Query builder.
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
+
+        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+
+        // Search by equals/not equals to a string value
+        if (value instanceof String) {
+
+            // if contains dot, that means join is needed
+            String filterString = (String) value;
+
+            addCriterionWildcard(concatenatedFields, filterString, true, isNot, isFieldValueOptional);
+
+            // Search by equals to truncated date value
+        } else if (value instanceof Date) {
+            addCriterionDateTruncatedToDay(concatenatedFields, (Date) value, isNot, isFieldValueOptional, null);
+
+            // Search by equals/not equals to a number value
+        } else if (value instanceof Number) {
+            addCriterion(concatenatedFields, isNot ? " != " : " = ", value, true, isFieldValueOptional);
+
+            // Search by equals/not equals to a boolean value
+        } else if (value instanceof Boolean) {
+            boolean bValue = (boolean) value;
+            addBooleanCriterion(concatenatedFields, isNot ? !bValue : bValue);
+
+            // Search by equals/not equals to an enum value
+        } else if (value instanceof Enum) {
+            if (value instanceof IdentifiableEnum) {
+                String enumIdKey = concatenatedFields + "Id";
+                addCriterion(enumIdKey, isNot ? " != " : " = ", ((IdentifiableEnum) value).getId(), true, isFieldValueOptional);
+            } else {
+                addCriterionEnum(concatenatedFields, (Enum) value, isNot ? " != " : " = ", isFieldValueOptional);
+            }
+
+        } else if (value instanceof List) {
+            addCriterionInList(concatenatedFields, (List) value, isNot ? " not in " : " in ", isFieldValueOptional);
+        }
+        return this;
+    }
+
+    private String createExplicitInnerJoins(String concatenatedFields) {
+        String[] fields = concatenatedFields.split("\\.");
+        if(innerJoins.get(concatenatedFields) != null){
+            concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
+        }else if(fields.length > 1){
+            JoinWrapper joinWrapper = parse(concatenatedFields);
+            innerJoins.put(concatenatedFields, joinWrapper);
+            concatenatedFields = joinWrapper.getJoinAlias();
+        }
+        return concatenatedFields;
     }
 
     /**
@@ -732,16 +1158,16 @@ public class QueryBuilder {
         if (convertToMap) {
             result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         }
-		for (Map.Entry<String, Object> e : params.entrySet()) {
-			Object value = e.getValue();
-			if (value.getClass().isArray()) {
-				result.setParameterList(e.getKey(), (Object[]) value);
-			} else if (value instanceof Collection) {
-				result.setParameterList(e.getKey(), (Collection) value);
-			} else {
-				result.setParameter(e.getKey(), value);
-			}
-		}
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            Object value = e.getValue();
+            if (value.getClass().isArray()) {
+                result.setParameterList(e.getKey(), (Object[]) value);
+            } else if (value instanceof Collection) {
+                result.setParameterList(e.getKey(), (Collection) value);
+            } else {
+                result.setParameter(e.getKey(), value);
+            }
+        }
 
         return result;
     }
@@ -754,11 +1180,9 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(FROM)));
 
-        String from = "from ";
-        String s = "select " + (alias != null ? alias + "." : "") + "id " + q.toString().substring(q.indexOf(from));
-
-        TypedQuery<Long> result = em.createQuery(s, Long.class);
+        TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -766,7 +1190,20 @@ public class QueryBuilder {
         }
         return result;
     }
-
+    
+    public String addCurrentSchema(String query) {
+        CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
+        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        if (currentproviderCode != null) {
+            EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
+            String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+            if (!query.startsWith(FROM + schema)) {
+                return query.replace(FROM, FROM+schema);
+            }
+        }
+        return query;
+    }
+    
     /**
      * Convert to a query to count number of entities matched: "select .. from" is changed to "select count(*) from"
      * 
@@ -774,9 +1211,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-        String from = "from ";
-
-        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+        String countSql = "select count(*) " + q.toString().substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
@@ -797,6 +1232,7 @@ public class QueryBuilder {
         // log.trace("Count query is {}", countSql);
 
         Query result = em.createQuery(countSql);
+        
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
         }
@@ -811,10 +1247,8 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getNativeCountQuery(EntityManager em) {
-        String from = "from ";
 
-        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
-
+        String countSql = "select count(*) " + addCurrentSchema(q.toString().substring(q.indexOf(FROM)));
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.trace("Count query is {}", countSql);
 
@@ -882,7 +1316,10 @@ public class QueryBuilder {
         }
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
-            addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(), paginationConfiguration.isAscendingSorting());
+            Object[] orderings = paginationConfiguration.getOrderings();
+            for (int i = 0; i < orderings.length; i = i + 2) {
+                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
+            }
         }
     }
 
@@ -924,7 +1361,6 @@ public class QueryBuilder {
         if (paginationConfiguration == null) {
             return;
         }
-
         applyPagination(query, paginationConfiguration.getFirstRow(), paginationConfiguration.getNumberOfRows());
     }
 
@@ -945,7 +1381,7 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return q.toString();
+        return q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
     }
 
     public Map<String, Object> getParams() {
@@ -958,7 +1394,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = q.toString();
+        String result = q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
