@@ -35,8 +35,8 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return null;
         }
         
-        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR)) && value.isEncrypted()) {
-			return encrypt(((CustomFieldValues) value).asJson());
+        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
+			return encrypt(value.asJson());
 		}
         
         return ((CustomFieldValues) value).asJson();
