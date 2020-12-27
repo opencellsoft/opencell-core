@@ -81,14 +81,10 @@ public class QueryBuilder {
         return clazz;
     }
 
-    public void checkForJoins(String field, String value) {
-
-    }
-
-    public String format(String rootAlias, Collection<JoinWrapper> joinWrappers){
-        return joinWrappers.stream()
-                .map(jw -> format(rootAlias, jw.getRootInnerJoin()))
-                .collect(Collectors.joining(" "));
+    public String formatInnerJoins(){
+        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
+                .map(jw -> format(alias, jw.getRootInnerJoin()))
+                .collect(Collectors.joining(" ", " ", " "));
     }
 
     public String format(String rootAlias, InnerJoin innerJoin) {
@@ -238,7 +234,7 @@ public class QueryBuilder {
     }
 
     private static void addInnerJoinTag(StringBuilder query) {
-        query.append(" " + INNER_JOINS + " ");
+        query.append(INNER_JOINS);
     }
 
     /**
@@ -969,9 +965,10 @@ public class QueryBuilder {
         return this;
     }
 
-    public void addListFilters(String tableNameAlias, String fieldName, Object value){
+    public void addListFilters(String fieldName, Object value){
         String paramName = convertFieldToParam(fieldName);
-        addSqlCriterion(":" + paramName + " in elements(" + tableNameAlias + '.' + fieldName + ")", paramName, value);
+        fieldName = createExplicitInnerJoins(fieldName);
+        addSqlCriterion(":" + paramName + " in elements(" + fieldName + ")", paramName, value);
     }
 
     /**
@@ -1104,6 +1101,10 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+        String alias = this.alias + ".";
+        if(concatenatedFields.startsWith(alias)){
+            concatenatedFields = concatenatedFields.substring(alias.length());
+        }
         String[] fields = concatenatedFields.split("\\.");
         if(innerJoins.get(concatenatedFields) != null){
             concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
@@ -1395,7 +1396,7 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
+        return q.toString().replace(INNER_JOINS, formatInnerJoins());
     }
 
     public Map<String, Object> getParams() {
@@ -1408,7 +1409,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = q.toString().replace(INNER_JOINS, format(alias, innerJoins.values()));
+        String result = q.toString().replace(INNER_JOINS, formatInnerJoins());
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }

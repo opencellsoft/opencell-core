@@ -108,33 +108,25 @@ public class PersistenceServiceTest {
     @Test
     public void test_list() {
         filters.put("list listField1", 1);
-        QueryBuilder query = persistenceService.getQuery(new PaginationConfiguration(10, 40, filters, "text", List.of("fetchField.b"), "fetchField.b", "desc"));
-        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
-                ":listField1 in elements(a.listField1) " +
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
+                ":listField1 in elements(listField1) " +
                 "Param name:listField1 value:1");
-        //"from org.meveo.model.billing.Invoice a left join a.fetchField1 f left Join f.b b where :listField1 in elements(a.listField1) Param name:listField1 value:1 "
     }
 
     @Test
-    public void test_list_2() {
-        filters.put("eq flield1.b ", List.of("value"));
-        QueryBuilder query = persistenceService.getQuery(new PaginationConfiguration(10, 40, filters, "text", null));
-
-        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a join fetch a.field1 f join fetch f.B b where b  in :a_flield1_b Param name:a_flield1_b value:[value]");
-        assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
-                "type(a) in (:typeClass) Param name:typeClass value:[class org.meveo.model.billing.Invoice]");
-        //"from org.meveo.model.billing.Invoice a left join a.fetchField1 f left Join f.b b where :listField1 in elements(a.listField1) Param name:listField1 value:1 "
-    }
-
-
-
-    @Test
-    public void create_query_buidler() {
+    public void inner_join_for_is_equal_requests() {
         QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
         query.addValueIsEqualToField("a.b.c", "value", false, true);
+        assertThat(query.toString()).contains("inner join I.a a_", "inner join a_");
 
-        assertThat(query.toString()).isEqualTo("from org.meveo.model.billing.Invoice I left join fetch I.billingAccount.id inner join I.a a_10 inner join a_10.b b_11 where (b_11.c IS NULL or (lower(b_11.c) = :a_b_c)) Param name:a_b_c value:value");
+        System.out.println(query);
+    }
 
+    @Test
+    public void inner_join_for_is_list_requests() {
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        query.addListFilters("a.b.c", "Value");
+        assertThat(query.toString()).contains("inner join I.a a_", "inner join a_");
     }
 
     @Test
@@ -324,7 +316,7 @@ public class PersistenceServiceTest {
     @Test
     public void test_not_equal() {
         filters.put("ne notEqualField", 1);
-        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where a.notEqualField != :a_notEqualField Param name:a_notEqualField value:1");
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where notEqualField != :notEqualField Param name:notEqualField value:1");
     }
 
     @Test
@@ -332,9 +324,9 @@ public class PersistenceServiceTest {
         filters.put("neOptional notEqualField", 1);
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 "(" +
-                "a.notEqualField IS NULL " +
-                "or (a.notEqualField != :a_notEqualField)" +
-                ") Param name:a_notEqualField value:1");
+                "notEqualField IS NULL " +
+                "or (notEqualField != :notEqualField)" +
+                ") Param name:notEqualField value:1");
     }
 
     @Test
@@ -356,7 +348,7 @@ public class PersistenceServiceTest {
     @Test
     public void test() {
         filters.put("defaultEqualFilter", 1);
-        filters.put("eq equalFilter", 1);
+        filters.put("eq equalFilter", 2);
         filters.put("fromRange fromRangeFilter", 10);
         filters.put("toRange toRangeFilter", 10);
         filters.put("list listFilter", 10);
@@ -367,7 +359,7 @@ public class PersistenceServiceTest {
         filters.put(SEARCH_WILDCARD_OR_IGNORE_CAS + " wildcardOrIgnoreCaseFilter", "wildCardIngoreCase*");
 
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
-                "a.defaultEqualFilter = :a_defaultEqualFilter " +
+                "defaultEqualFilter = :defaultEqualFilter " +
                 "and (" +
                 "( a.overlapOptionalRangeFilter1 IS NULL and a.overlapOptionalRangeFilter2 IS NULL) " +
                 "or  ( a.overlapOptionalRangeFilter1 IS NULL and :a_overlapOptionalRangeFilter1<a.overlapOptionalRangeFilter2) " +
@@ -382,13 +374,13 @@ public class PersistenceServiceTest {
                 "and (lower(a.likeCriteriasFilter) = :a_likeCriteriasFilter) " +
                 "and (lower(a.wildcardOrIgnoreCaseFilter) like '%wildcardingorecase*%') " +
                 "and (a.wildcardOrFilter like '%wildCard*%') " +
-                "and :listFilter in elements(a.listFilter) " +
+                "and :listFilter in elements(listFilter) " +
                 "and a.toRangeFilter < :a_toRangeFilter " +
                 "and a.minmaxRangeFilter1<=:a_minmaxRangeFilter1 " +
                 "and a.minmaxRangeFilter2 > :a_minmaxRangeFilter2 " +
                 "and a.fromRangeFilter >= :a_fromRangeFilter " +
-                "and a.equalFilter = :a_equalFilter " +
-                "Param name:a_equalFilter value:1 Param name:a_defaultEqualFilter value:1 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
+                "and equalFilter = :equalFilter " +
+                "Param name:defaultEqualFilter value:1 Param name:equalFilter value:2 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
     }
 
     private String getQuery() {
