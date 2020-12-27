@@ -1133,7 +1133,7 @@ public class QueryBuilder {
     public Query getQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
 
-        Query result = em.createQuery(q.toString());
+        Query result = em.createQuery(toStringQuery());
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -1153,7 +1153,7 @@ public class QueryBuilder {
         applyOrdering(paginationSortAlias);
 
         Session session = em.unwrap(Session.class);
-        SQLQuery result = session.createSQLQuery(q.toString());
+        SQLQuery result = session.createSQLQuery(toStringQuery());
         applyPagination(result);
 
         if (convertToMap) {
@@ -1181,7 +1181,7 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(q.toString().substring(q.indexOf(FROM)));
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(toStringQuery().substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1212,7 +1212,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-        String countSql = "select count(*) " + q.toString().substring(q.indexOf(FROM));
+        String countSql = "select count(*) " + toStringQuery().substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
@@ -1226,7 +1226,7 @@ public class QueryBuilder {
         // }
         // String aliasName = matcher.group(1);
         //
-        // countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
+        // countSql = "select count(distinct " + aliasName + ") " + rt.substring(q.indexOf(from));
         // }
 
         // Logger log = LoggerFactory.getLogger(getClass());
@@ -1249,7 +1249,7 @@ public class QueryBuilder {
      */
     public Query getNativeCountQuery(EntityManager em) {
 
-        String countSql = "select count(*) " + addCurrentSchema(q.toString().substring(q.indexOf(FROM)));
+        String countSql = "select count(*) " + addCurrentSchema(toStringQuery().substring(q.indexOf(FROM)));
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.trace("Count query is {}", countSql);
 
@@ -1382,6 +1382,10 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
+        return toStringQuery();
+    }
+
+    private String toStringQuery() {
         return q.toString().replace(INNER_JOINS, formatInnerJoins());
     }
 
@@ -1395,7 +1399,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = q.toString().replace(INNER_JOINS, formatInnerJoins());
+        String result = toStringQuery();
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
