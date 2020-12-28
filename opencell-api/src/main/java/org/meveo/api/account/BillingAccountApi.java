@@ -39,7 +39,6 @@ import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -69,6 +68,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -242,14 +242,19 @@ public class BillingAccountApi extends AccountEntityApi {
     }
 
     private void processTags(BillingAccountDto postData, BillingAccount billingAccount) {
-        Set<TagDto> tags = postData.getTags();
-        if(tags != null && !tags.isEmpty()){
-        	billingAccount.setTags(tags
-                    .stream()
-                    .map(tagDto -> tagService.findByCode(tagDto.getCode()))
-                    .collect(Collectors.toList()));
-        }
-    }
+    	Set<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			List<Tag> tags=new ArrayList<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tags.add(tag);
+			}
+			billingAccount.setTags(tags);
+		}
+    } 
     
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);

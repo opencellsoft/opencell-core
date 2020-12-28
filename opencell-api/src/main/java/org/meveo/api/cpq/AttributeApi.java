@@ -17,6 +17,7 @@ import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -201,8 +202,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(productVersion==null) {
 			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
 		}
-		ProductVersionDto productVersionDto=new ProductVersionDto(productVersion,true,false);
-		productDto.setCurrentProductVersion(productVersionDto);
+       GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,false);
+		productDto.setCurrentProductVersion(getProductVersionResponse);
 		GetProductDtoResponse result = new GetProductDtoResponse();
 		result.setProductDto(productDto);    
 		return result;

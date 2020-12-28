@@ -20,6 +20,7 @@ package org.meveo.api.dto.catalog;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,15 +31,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.OfferProductsDto;
-import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.TagDto;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEnable;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * The Class OfferTemplateDto.
@@ -115,13 +112,13 @@ public class CpqOfferDto extends EnableBusinessDto {
     
     
 
-	public CpqOfferDto(OfferTemplateDto offerTemplatedto) {
+	public CpqOfferDto(GetOfferTemplateResponseDto offerTemplatedto) {
 		super();
 		this.bomCode = offerTemplatedto.getBomCode();
 		this.offerServiceTemplates = offerTemplatedto.getOfferServiceTemplates();
 		this.offerProducts = offerTemplatedto.getOfferProducts();
 		this.allowedDiscountPlans = offerTemplatedto.getAllowedDiscountPlans();
-		this.tags = offerTemplatedto.getTags();
+		this.tags = offerTemplatedto.getTags(); 
 		this.validFrom = offerTemplatedto.getValidFrom();
 		this.validTo = offerTemplatedto.getValidTo();
 		this.name = offerTemplatedto.getName();
