@@ -215,7 +215,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
-        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -244,7 +244,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -1142,6 +1142,10 @@ public class QueryBuilder {
         return result;
     }
 
+    public void setQ(StringBuffer q) {
+        this.q = q;
+    }
+
     /**
      * Get Hibernate native query object
      * 
@@ -1394,7 +1398,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder(Class<?> clazz, String alias) {
-        this("from " + clazz.getName() + " " + alias, alias);
+        this("select " + alias + " from " + clazz.getName() + " " + alias, alias);
         this.clazz = clazz;
     }
 
