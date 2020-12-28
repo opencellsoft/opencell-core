@@ -19,6 +19,7 @@
 package org.meveo.admin.job.importexport;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -463,7 +464,7 @@ public class ImportCustomersJobBean {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void createCustomerAccount(String fileName, Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
+            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException, ParseException {
         nbCustomerAccounts++;
         CustomerAccount customerAccountTmp = null;
         boolean ignoreCheck = custAcc.getIgnoreCheck() != null && custAcc.getIgnoreCheck().booleanValue();
