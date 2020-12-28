@@ -1,72 +1,33 @@
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.cpq.enums.RuleTypeEnum;
 
-@XmlRootElement(name = "CommercialRuleDTO")
-@XmlType(name = "CommercialRuleDTO")
+@XmlRootElement(name = "CommercialRuleLineDTO")
+@XmlType(name = "CommercialRuleLineDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CommercialRuleDTO extends BaseEntityDto{
+public class CommercialRuleLineDTO extends BaseEntityDto{
 
-    
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2921006853398452396L;
-	
-	private String code;
-	private String label;
-	private RuleTypeEnum ruleType;
+	private static final long serialVersionUID = -386310082819716271L;
 	private String offerCode;  
 	private String productCode;
 	private Integer productVersion;
 	private String attributeCode;
 	private String groupedAttributeCode;
 	private String attributeValue;
-	private List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
-	/**
-	 * @param label the label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	/**
-	 * @return the ruleType
-	 */
-	public RuleTypeEnum getRuleType() {
-		return ruleType;
-	}
-	/**
-	 * @param ruleType the ruleType to set
-	 */
-	public void setRuleType(RuleTypeEnum ruleType) {
-		this.ruleType = ruleType;
+	private String tagCode;
+	private int operator;
+	public CommercialRuleLineDTO() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @return the offerCode
@@ -141,18 +102,30 @@ public class CommercialRuleDTO extends BaseEntityDto{
 		this.attributeValue = attributeValue;
 	}
 	/**
-	 * @return the commercialRuleItems
+	 * @return the operator
 	 */
-	public List<CommercialRuleItemDTO> getCommercialRuleItems() {
-		return commercialRuleItems;
+	public int getOperator() {
+		return operator;
 	}
 	/**
-	 * @param commercialRuleItems the commercialRuleItems to set
+	 * @param operator the operator to set
 	 */
-	public void setCommercialRuleItems(List<CommercialRuleItemDTO> commercialRuleItems) {
-		this.commercialRuleItems = commercialRuleItems;
+	public void setOperator(int operator) {
+		this.operator = operator;
 	}
-
+	/**
+	 * @return the tagCode
+	 */
+	public String getTagCode() {
+		return tagCode;
+	}
+	/**
+	 * @param tagCode the tagCode to set
+	 */
+	public void setTagCode(String tagCode) {
+		this.tagCode = tagCode;
+	}
+	
 	
     
 }

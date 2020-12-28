@@ -1,7 +1,5 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,9 +11,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
@@ -27,10 +25,10 @@ import org.meveo.model.cpq.tags.Tag;
  *	@version 10.0
  */
 @Entity
-@Table(name = "cpq_trade_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
+@Table(name = "cpq_commercial_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_line_seq"), })
-public class TradeRuleLine extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq"), })
+public class CommercialRuleLine extends BaseEntity {
 
 	/**
 	 * 
@@ -43,7 +41,7 @@ public class TradeRuleLine extends BusinessEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trade_rule_item_id")
-	private TradeRuleItem tradeRuleItem;
+	private CommercialRuleItem commercialRuleItem;
 	
 	/**
 	 * 
@@ -70,17 +68,24 @@ public class TradeRuleLine extends BusinessEntity {
 
 	/**
 	 * attribute name
-	 */ 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "source_service_name", referencedColumnName = "id")
-	private ServiceTemplate sourceService;
+	 */
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
+	private Attribute targetAttribute;
 	
 	/**
 	 * tag source
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tag_id", referencedColumnName = "id")
+	@JoinColumn(name = "source_tag_id", referencedColumnName = "id")
 	private Tag sourceTag;
+	
+	/**
+	 * attribute value
+	 */
+	@Column(name = "target_service_value", length = 255)
+	@Size(max = 255)
+	private String sourceAttributeValue;
 	
 	/**
 	 * operator : 0 => product or attribute is selected
@@ -138,12 +143,33 @@ public class TradeRuleLine extends BusinessEntity {
 	}
 
 
-	public ServiceTemplate getSourceService() {
-		return sourceService;
+
+	/**
+	 * @return the targetAttribute
+	 */
+	public Attribute getTargetAttribute() {
+		return targetAttribute;
 	}
 
-	public void setSourceService(ServiceTemplate sourceService) {
-		this.sourceService = sourceService;
+	/**
+	 * @param targetAttribute the targetAttribute to set
+	 */
+	public void setTargetAttribute(Attribute targetAttribute) {
+		this.targetAttribute = targetAttribute;
+	}
+
+	/**
+	 * @return the sourceAttributeValue
+	 */
+	public String getSourceAttributeValue() {
+		return sourceAttributeValue;
+	}
+
+	/**
+	 * @param sourceAttributeValue the sourceAttributeValue to set
+	 */
+	public void setSourceAttributeValue(String sourceAttributeValue) {
+		this.sourceAttributeValue = sourceAttributeValue;
 	}
 
 	/**
@@ -187,40 +213,24 @@ public class TradeRuleLine extends BusinessEntity {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+	/**
+	 * @return the commercialRuleItem
+	 */
+	public CommercialRuleItem getCommercialRuleItem() {
+		return commercialRuleItem;
+	}
+
+	/**
+	 * @param commercialRuleItem the commercialRuleItem to set
+	 */
+	public void setCommercialRuleItem(CommercialRuleItem commercialRuleItem) {
+		this.commercialRuleItem = commercialRuleItem;
+	}
 	
 	
 
-	public TradeRuleItem getTradeRuleItem() {
-		return tradeRuleItem;
-	}
-
-	public void setTradeRuleItem(TradeRuleItem tradeRuleItem) {
-		this.tradeRuleItem = tradeRuleItem;
-	}
  
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(operator, sourceService, sourceOfferTemplate, sourceProduct,
-				sourceProductVersion, sourceTag, value);
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TradeRuleLine other = (TradeRuleLine) obj;
-		return operator == other.operator && Objects.equals(sourceService, other.sourceService)
-				&& Objects.equals(sourceOfferTemplate, other.sourceOfferTemplate)
-				&& Objects.equals(sourceProduct, other.sourceProduct)
-				&& Objects.equals(sourceProductVersion, other.sourceProductVersion)
-				&& Objects.equals(sourceTag, other.sourceTag) && Objects.equals(value, other.value);
-	}
 }
 

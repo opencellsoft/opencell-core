@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -44,6 +53,7 @@ import org.meveo.api.serialize.RestDateParam;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/oneShotChargeTemplate")
+@Tag(name = "OneShotChargeTemplate", description = "@%OneShotChargeTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -57,6 +67,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create one shot charge template.  ",
+			tags = { "ChargeTemplates" },
+			description=" Create one shot charge template.  ",
+			operationId="    POST_OneShotChargeTemplate_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(OneShotChargeTemplateDto postData);
 
     /**
@@ -67,6 +91,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update one shot charge template.  ",
+			tags = { "ChargeTemplates" },
+			description=" Update one shot charge template.  ",
+			operationId="    PUT_OneShotChargeTemplate_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(OneShotChargeTemplateDto postData);
 
     /**
@@ -77,6 +115,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search one shot charge templatewith a given code.  ",
+            tags = { "ChargeTemplates" },
+			description=" Search one shot charge templatewith a given code.  ",
+			operationId="    GET_OneShotChargeTemplate_search",
+			responses= {
+				@ApiResponse(description=" one shot charge template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOneShotChargeTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetOneShotChargeTemplateResponseDto find(@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
@@ -91,6 +143,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List one shot charge template with the following filters.  ",
+			tags = { "ChargeTemplates" },
+			description=" List one shot charge template with the following filters.  ",
+			operationId="    GET_OneShotChargeTemplate_list",
+			responses= {
+				@ApiResponse(description=" list of one shot charge template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= OneShotChargeTemplateWithPriceListDto.class
+											)
+								)
+				)}
+	)
     OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
             @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") @RestDateParam Date date);
 
@@ -102,6 +168,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{oneShotChargeTemplateCode}")
+	@Operation(
+			summary=" Remove one shot charge tesmplate with a given code.  ",
+			tags = { "ChargeTemplates" },
+			description=" Remove one shot charge tesmplate with a given code.  ",
+			operationId="    DELETE_OneShotChargeTemplate_{oneShotChargeTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
@@ -112,6 +192,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing.  ",
+		    tags = { "ChargeTemplates" },
+			description=" Create new or update an existing.  ",
+			operationId="    POST_OneShotChargeTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
 
     /**
@@ -122,6 +216,20 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a One shot charge template with a given code  ",
+		    tags = { "ChargeTemplates" },
+			description=" Enable a One shot charge template with a given code  ",
+			operationId="    POST_OneShotChargeTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -132,5 +240,19 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a One shot charge template with a given code  ",
+			tags = { "ChargeTemplates" },
+			description=" Disable a One shot charge template with a given code  ",
+			operationId="    POST_OneShotChargeTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

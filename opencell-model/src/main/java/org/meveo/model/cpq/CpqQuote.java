@@ -1,5 +1,7 @@
 package org.meveo.model.cpq;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.Date;
 
 import javax.persistence.AttributeOverride;
@@ -25,6 +27,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.quote.QuoteStatusEnum;
 
@@ -165,6 +168,13 @@ public class CpqQuote extends BusinessEntity {
     @Embedded
     @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
+    
+	/**
+	 * discountPlan attached to this quote
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
     
 	/**
 	 * @return the seller
@@ -358,4 +368,18 @@ public class CpqQuote extends BusinessEntity {
 	public void setStatus(QuoteStatusEnum status) {
 		this.status = status;
 	}
+	/**
+	 * @return the discountPlan
+	 */
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+	/**
+	 * @param discountPlan the discountPlan to set
+	 */
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+	
+	
 }

@@ -2,8 +2,8 @@ package org.meveo.service.cpq;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.cpq.trade.TradeRuleItem;
-import org.meveo.service.base.BusinessService;
+import org.meveo.model.cpq.trade.CommercialRuleItem;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Tarik FAKHOURI.
@@ -13,7 +13,6 @@ import org.meveo.service.base.BusinessService;
  */
 
 @Stateless
-public class TradeRuleItemService extends
-		BusinessService<TradeRuleItem> {
+public class TradeRuleItemService extends PersistenceService<CommercialRuleItem> {
 
 }

@@ -119,8 +119,8 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * DP type
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "discount_plan_type", length = 100)
-	private DiscountPlanItemTypeEnum discountPlanType;
+	@Column(name = "discount_plan_type", length = 50)
+	private DiscountPlanTypeEnum discountPlanType;
 
 	public enum DurationPeriodUnitEnum {
 		/**
@@ -240,6 +240,20 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
 		this.durationUnit = durationUnit;
+	}
+
+	/**
+	 * @return the discountPlanType
+	 */
+	public DiscountPlanTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	/**
+	 * @param discountPlanType the discountPlanType to set
+	 */
+	public void setDiscountPlanType(DiscountPlanTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
 	}
 
 }
