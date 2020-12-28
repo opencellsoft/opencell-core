@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,21 +15,21 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.CpqOfferDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
@@ -294,27 +293,27 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersion duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+    public GetProductVersionResponse duplicateProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
         ProductVersion productVersion;
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        return productVersionService.duplicate(productVersion, true);
+	        return new GetProductVersionResponse(productVersionService.duplicate(productVersion, true));
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
     }
     
-    public ProductVersionDto findProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
+    public GetProductVersionResponse findProductVersion(String productCode, int currentVersion)  throws MeveoApiException, BusinessException  { 
          
 		try {
 			ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        return new ProductVersionDto(productVersion);
+	        return new GetProductVersionResponse(productVersion);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -345,7 +344,7 @@ public class ProductApi extends BaseApi {
      * @throws ProductException
      * @throws ProductVersionException
      */
-    public ProductVersionDto UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException { 
+    public GetProductVersionResponse UpdateProductVersionStatus (String productCode, int currentVersion,VersionStatusEnum status)  throws MeveoApiException, BusinessException { 
         ProductVersion productVersion;
 		try {
 			productVersion = productVersionService.findByProductAndVersion(productCode,currentVersion);
@@ -353,7 +352,7 @@ public class ProductApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
-	        return new ProductVersionDto(productVersion);
+	        return new GetProductVersionResponse(productVersion);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -472,46 +471,56 @@ public class ProductApi extends BaseApi {
 			}  
 		} 
 		return result;
-	}
-	
-	
-	private void processTags(ProductVersionDto postData, ProductVersion product) {
-		Set<TagDto> tags = postData.getTagList();
-		if(tags != null && !tags.isEmpty()){
-			product.setTags(tags
-					.stream()
-					.map(tagDto -> tagService.findByCode(tagDto.getCode()))
-					.collect(Collectors.toSet()));
-		}
-	}
-
-	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
-		Set<AttributeDTO> attributes = postData.getAttributes();
-		if(attributes != null && !attributes.isEmpty()){
-			productVersion.setAttributes(attributes
-					.stream()
-					.map(attributeDto -> attributeService.findByCode(attributeDto.getCode()))
-					.collect(Collectors.toList()));
-		}
-	}
-	
-	
-	 public List<ProductVersionDto> findProductVersionByProduct(String productCode)  throws MeveoApiException, BusinessException  { 
-			try {
-				List<ProductVersionDto> productVersionsDto=new ArrayList<ProductVersionDto>();
-				List<ProductVersion> productVersions = productVersionService.findByProduct(productCode); 
-				ProductVersionDto productVersionDto=null;
-				if(!productVersions.isEmpty()) {
-				for(ProductVersion prodversion:productVersions) {
-					productVersionDto=new ProductVersionDto(prodversion);
-					productVersionsDto.add(productVersionDto);
+	} 
+	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			Set<Tag> tags=new HashSet<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
 				}
-				}
-		        return productVersionsDto;
-			} catch (BusinessException e) {
-				throw new MeveoApiException(e);
+				tags.add(tag);
 			}
-	    }
+			productVersion.setTags(tags);
+		}
+	} 
+	
+	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> attributeCodes = postData.getAttributeCodes(); 
+		if(attributeCodes != null && !attributeCodes.isEmpty()){
+			List<Attribute> attributes=new ArrayList<Attribute>();
+			for(String code:attributeCodes) {
+				Attribute attribute=attributeService.findByCode(code);
+				if(attribute == null) { 
+					throw new EntityDoesNotExistsException(Attribute.class,code);
+				}
+				attributes.add(attribute);
+			}
+			productVersion.setAttributes(attributes);
+		}
+	} 
+	
+	
+	public List<GetProductVersionResponse> findProductVersionByProduct(String productCode)  throws MeveoApiException, BusinessException  { 
+		try {
+			List<GetProductVersionResponse> GetProductVersionResponses=new ArrayList<GetProductVersionResponse>();
+			List<ProductVersion> productVersions = productVersionService.findByProduct(productCode); 
+
+			GetProductVersionResponse getProductVersionResponse=null;
+			if(!productVersions.isEmpty()) {
+
+				for(ProductVersion prodversion:productVersions) {
+					getProductVersionResponse=new GetProductVersionResponse(prodversion);
+					GetProductVersionResponses.add(getProductVersionResponse);
+				}
+			}
+			return GetProductVersionResponses;
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e);
+		}
+	}
 	 
 	 
 	 public GetListProductVersionsResponseDto listProductVersions (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
@@ -572,7 +581,7 @@ public class ProductApi extends BaseApi {
 			 throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode,"offerCode");
 		 }   
 		 log.info("OfferTemplateApi requestedTagTypes={}",requestedTagTypes);   
-		 OfferTemplateDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
+		 GetOfferTemplateResponseDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
 		 result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
 		 return result;
 	 }

@@ -248,7 +248,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
             currency = pricePlan.getTradingCurrency().getCurrencyCode();
         }
         if (pricePlan.getOfferTemplate() != null) {
-            offerTemplateVersion = new OfferTemplateDto(pricePlan.getOfferTemplate(), null, true,false);
+            offerTemplateVersion = new OfferTemplateDto(pricePlan.getOfferTemplate(), null, true);
             offerTemplate = pricePlan.getOfferTemplate().getCode();
         }
         minQuantity = pricePlan.getMinQuantity();
