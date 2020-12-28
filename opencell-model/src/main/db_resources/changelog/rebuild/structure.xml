@@ -10194,8 +10194,10 @@ $$ LANGUAGE plpgsql;
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="cpq_media_pkey" />
 			</column>
-			<column name="version" type="int4" />  
+			<column name="version" type="int4" /> 
+			<column name="offer_id" type="bigint" /> 
 			<column name="product_id" type="bigint" />
+			<column name="attribute_id" type="bigint" />
 			<column name="service_template_id" type="bigint" />
 			<column name="media_name" type="varchar(50)" />
 			<column name="label" type="varchar(255)" />
@@ -10510,7 +10512,14 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="cpq_tag_id" baseTableName="cpq_trade_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
      </changeSet>   
-    
+     <changeSet author="Rachid-Ay" id="rebuild-mediapost-fk-27">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo51" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+    </changeSet>
+    <changeSet author="Rachid-Ay" id="rebuild-mediapost-fk-28">
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo52" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
      
     <changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
     	<createTable tableName="cpq_quote_lot">
