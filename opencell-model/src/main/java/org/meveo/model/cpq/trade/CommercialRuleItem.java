@@ -27,7 +27,7 @@ import org.meveo.model.cpq.enums.OperatorEnum;
  *	@version 10.0
  */
 @Entity
-@Table(name = "cpq_commercial_rule_item", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "cpq_commercial_rule_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_trade_rule_item_seq"), })
 public class CommercialRuleItem extends BaseEntity {
