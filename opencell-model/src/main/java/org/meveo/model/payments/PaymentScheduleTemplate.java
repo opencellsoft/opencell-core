@@ -172,6 +172,13 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     private String paymentDayInMonthEl;
 
     /**
+     * Use the banking calender.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_banking_calender")
+    private Boolean useBankingCalendar = Boolean.TRUE;
+
+    /**
      * Gets the payment label.
      *
      * @return the paymentLabel
@@ -189,7 +196,6 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
         this.paymentLabel = paymentLabel;
     }
 
-   
     /**
      * Gets the payment day in month.
      *
@@ -199,7 +205,6 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
         return paymentDayInMonth;
     }
 
-   
     /**
      * Sets the payment day in month.
      *
@@ -459,5 +464,23 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
      */
     public void setPaymentDayInMonthEl(String paymentDayInMonthEl) {
         this.paymentDayInMonthEl = paymentDayInMonthEl;
+    }
+
+    /**
+     * Use Banking calendar.
+     *
+     * @return
+     */
+    public Boolean getUseBankingCalendar() {
+        return useBankingCalendar;
+    }
+
+    /**
+     * Set the use Banking calendar.
+     *
+     * @param useBankingCalendar
+     */
+    public void setUseBankingCalendar(Boolean useBankingCalendar) {
+        this.useBankingCalendar = useBankingCalendar;
     }
 }
