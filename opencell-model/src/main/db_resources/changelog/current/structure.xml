@@ -4748,5 +4748,5 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
          
     </changeSet>
-  
+    <include file="cpq_structure.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

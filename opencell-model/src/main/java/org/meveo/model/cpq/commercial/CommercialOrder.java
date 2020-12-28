@@ -1,0 +1,405 @@
+package org.meveo.model.cpq.commercial;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.order.Order;
+
+
+/** 
+ * @author Tarik F.
+ * @version 11.0
+ *
+ */
+@Entity
+@Table(name = "cpq_commercial_order")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
+public class CommercialOrder extends AuditableEntity {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seller_id", nullable = false)
+	@NotNull
+	private Seller seller;
+	
+	@Column(name = "order_number", nullable = false, length = 50)
+	@NotNull
+	@Size(max = 50)
+	private String orderNumber;
+	
+	@Column(name = "label", length = 255)
+	private String label;
+
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billing_account_id", nullable = false)
+	@NotNull
+	private BillingAccount billingAccount;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cpq_quote_id")
+	private CpqQuote quote;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "contract_id")
+	private Contract contract;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_type_id", nullable = false)
+	@NotNull
+	private OrderType orderType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoicing_plan_id")
+	private BillingPlan invoicingPlan;
+
+	
+	@Column(name ="status", nullable = false)
+	@NotNull
+	private String status;
+	
+	@Column(name = "status_date", nullable = false)
+	@NotNull
+	private Date statusDate;
+	
+
+	@Column(name = "order_progress", nullable = false)
+	@NotNull
+	private Integer orderProgress;
+
+	@Column(name = "progress_date", nullable = false)
+	@NotNull
+	private Date progressDate;
+	
+
+	@Column(name = "order_date", nullable = false)
+	@NotNull
+	private Date orderDate;
+	
+
+	@Column(name = "realisation_date")
+	private Date realisationDate;
+
+	@Column(name = "customer_service_begin")
+	private Date customerServiceBegin;
+	
+
+	@Column(name = "customer_service_duration")
+	private int customerServiceDuration;
+
+	@Column(name = "external_reference", length = 50)
+	@Size(max = 50)
+	private String externalReference;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_parent_id")
+	private Order orderParent;
+	
+	
+	@JoinTable(name = "cpq_commercial_order_billing_invoice", 
+				joinColumns = @JoinColumn(name = "commercial_order_id"),
+				inverseJoinColumns = @JoinColumn(name = "invoice_id"))
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Invoice> invoices = new ArrayList<Invoice>();
+
+
+	/**
+	 * @return the seller
+	 */
+	public Seller getSeller() {
+		return seller;
+	}
+
+
+	/**
+	 * @param seller the seller to set
+	 */
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+
+	/**
+	 * @return the orderNumber
+	 */
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+
+	/**
+	 * @param orderNumber the orderNumber to set
+	 */
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+
+	/**
+	 * @param label the label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+
+	/**
+	 * @return the billingAccount
+	 */
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+
+	/**
+	 * @param billingAccount the billingAccount to set
+	 */
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
+
+
+	/**
+	 * @return the quote
+	 */
+	public CpqQuote getQuote() {
+		return quote;
+	}
+
+
+	/**
+	 * @param quote the quote to set
+	 */
+	public void setQuote(CpqQuote quote) {
+		this.quote = quote;
+	}
+
+
+	/**
+	 * @return the contract
+	 */
+	public Contract getContract() {
+		return contract;
+	}
+
+
+	/**
+	 * @param contract the contract to set
+	 */
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+
+	/**
+	 * @return the orderProgress
+	 */
+	public Integer getOrderProgress() {
+		return orderProgress;
+	}
+
+
+	/**
+	 * @param orderProgress the orderProgress to set
+	 */
+	public void setOrderProgress(Integer orderProgress) {
+		this.orderProgress = orderProgress;
+	}
+
+
+	/**
+	 * @return the progressDate
+	 */
+	public Date getProgressDate() {
+		return progressDate;
+	}
+
+
+	/**
+	 * @param progressDate the progressDate to set
+	 */
+	public void setProgressDate(Date progressDate) {
+		this.progressDate = progressDate;
+	}
+
+
+	/**
+	 * @return the orderDate
+	 */
+	public Date getOrderDate() {
+		return orderDate;
+	}
+
+
+	/**
+	 * @param orderDate the orderDate to set
+	 */
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+
+
+	/**
+	 * @return the realisationDate
+	 */
+	public Date getRealisationDate() {
+		return realisationDate;
+	}
+
+
+	/**
+	 * @param realisationDate the realisationDate to set
+	 */
+	public void setRealisationDate(Date realisationDate) {
+		this.realisationDate = realisationDate;
+	}
+
+
+	/**
+	 * @return the customerServiceBegin
+	 */
+	public Date getCustomerServiceBegin() {
+		return customerServiceBegin;
+	}
+
+
+	/**
+	 * @param customerServiceBegin the customerServiceBegin to set
+	 */
+	public void setCustomerServiceBegin(Date customerServiceBegin) {
+		this.customerServiceBegin = customerServiceBegin;
+	}
+
+
+	/**
+	 * @return the customerServiceDuration
+	 */
+	public int getCustomerServiceDuration() {
+		return customerServiceDuration;
+	}
+
+
+	/**
+	 * @param customerServiceDuration the customerServiceDuration to set
+	 */
+	public void setCustomerServiceDuration(int customerServiceDuration) {
+		this.customerServiceDuration = customerServiceDuration;
+	}
+
+
+	/**
+	 * @return the externalReference
+	 */
+	public String getExternalReference() {
+		return externalReference;
+	}
+
+
+	/**
+	 * @param externalReference the externalReference to set
+	 */
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
+	}
+
+
+	/**
+	 * @return the orderParent
+	 */
+	public Order getOrderParent() {
+		return orderParent;
+	}
+
+
+	/**
+	 * @param orderParent the orderParent to set
+	 */
+	public void setOrderParent(Order orderParent) {
+		this.orderParent = orderParent;
+	}
+
+
+	/**
+	 * @return the invoices
+	 */
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+
+	/**
+	 * @param invoices the invoices to set
+	 */
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+	
+}
