@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
@@ -45,15 +46,30 @@ public class Media extends BaseEntity{
 	 * product code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "offer_id", referencedColumnName = "id", nullable = true)
+	private OfferTemplate offer;
+	
+	
+	/**
+	 * product code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = true)
 	private Product product;
+	
+	/**
+	 * product code
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "attribute_id", referencedColumnName = "id", nullable = true)
+	private Attribute attribute;
 	
 
 	/**
 	 * product code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_template_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "service_template_id", referencedColumnName = "id", nullable = true)
 	private ServiceTemplate serviceTemplate;
 	
 	/**
@@ -185,6 +201,43 @@ public class Media extends BaseEntity{
 
 	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
+	}
+	
+	
+
+	/**
+	 * @return the offer
+	 */
+	public OfferTemplate getOffer() {
+		return offer;
+	}
+
+	/**
+	 * @param offer the offer to set
+	 */
+	public void setOffer(OfferTemplate offer) {
+		this.offer = offer;
+	}
+
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		return attribute;
+	}
+
+	/**
+	 * @param attribute the attribute to set
+	 */
+	public void setAttribute(Attribute attribute) {
+		this.attribute = attribute;
+	}
+
+	/**
+	 * @param main the main to set
+	 */
+	public void setMain(boolean main) {
+		this.main = main;
 	}
 
 	@Override

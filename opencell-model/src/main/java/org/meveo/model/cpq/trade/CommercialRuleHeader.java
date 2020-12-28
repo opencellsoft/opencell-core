@@ -20,6 +20,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -32,10 +33,10 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_trade_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_trade_rule_header_seq"), })
-public class TradeRuleHeader extends BusinessEntity {
+public class CommercialRuleHeader extends BusinessEntity {
 
 	/**
 	 * 
@@ -61,7 +62,7 @@ public class TradeRuleHeader extends BusinessEntity {
 	 * product code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product targetProduct;
 
 	/**
@@ -78,8 +79,8 @@ public class TradeRuleHeader extends BusinessEntity {
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
-	private GroupedAttributes groupedService;
+	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
+	private GroupedAttributes groupedAttributes;
 	
 	
 	/**
@@ -92,9 +93,9 @@ public class TradeRuleHeader extends BusinessEntity {
 	/**
 	 * attribute name
 	 */
-	@Column(name = "target_attribute_name", length = 20)
-	@Size(max = 20)
-	private String targetAttributeName;
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
+	private Attribute targetAttribute;
 	
 	
 	/**
@@ -102,14 +103,14 @@ public class TradeRuleHeader extends BusinessEntity {
 	 */
 	@Column(name = "target_service_value", length = 255)
 	@Size(max = 255)
-	private String targetServiceValue;
+	private String targetAttributeValue;
 
 	/**
 	 * tag target
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_tag_id", referencedColumnName = "id")
-	private Tag tagTarget;
+	@JoinColumn(name = "tag_id", referencedColumnName = "id")
+	private Tag targetTag;
 
 	/**
 	 * rule El
@@ -174,55 +175,18 @@ public class TradeRuleHeader extends BusinessEntity {
 		this.targetProductVersion = targetProductVersion;
 	}
 
- 
 	/**
-	 * @return the targetServiceValue
+	 * @return the groupedAttributes
 	 */
-	public String getTargetServiceValue() {
-		return targetServiceValue;
+	public GroupedAttributes getGroupedAttributes() {
+		return groupedAttributes;
 	}
 
 	/**
-	 * @param targetServiceValue the targetServiceValue to set
+	 * @param groupedAttributes the groupedAttributes to set
 	 */
-	public void setTargetServiceValue(String targetServiceValue) {
-		this.targetServiceValue = targetServiceValue;
-	}
-
-	/**
-	 * @return the tagTarget
-	 */
-	public Tag getTagTarget() {
-		return tagTarget;
-	}
-
-	/**
-	 * @param tagTarget the tagTarget to set
-	 */
-	public void setTagTarget(Tag tagTarget) {
-		this.tagTarget = tagTarget;
-	}
-
-	/**
-	 * @return the ruleEl
-	 */
-	public String getRuleEl() {
-		return ruleEl;
-	}
-
-	
-	/**
-	 * @return the groupedService
-	 */
-	public GroupedAttributes getGroupedService() {
-		return groupedService;
-	}
-
-	/**
-	 * @param groupedService the groupedService to set
-	 */
-	public void setGroupedService(GroupedAttributes groupedService) {
-		this.groupedService = groupedService;
+	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
 	}
 
 	/**
@@ -240,54 +204,62 @@ public class TradeRuleHeader extends BusinessEntity {
 	}
 
 	/**
+	 * @return the targetAttribute
+	 */
+	public Attribute getTargetAttribute() {
+		return targetAttribute;
+	}
+
+	/**
+	 * @param targetAttribute the targetAttribute to set
+	 */
+	public void setTargetAttribute(Attribute targetAttribute) {
+		this.targetAttribute = targetAttribute;
+	}
+
+	/**
+	 * @return the targetAttributeValue
+	 */
+	public String getTargetAttributeValue() {
+		return targetAttributeValue;
+	}
+
+	/**
+	 * @param targetAttributeValue the targetAttributeValue to set
+	 */
+	public void setTargetAttributeValue(String targetAttributeValue) {
+		this.targetAttributeValue = targetAttributeValue;
+	}
+
+	/**
+	 * @return the targetTag
+	 */
+	public Tag getTargetTag() {
+		return targetTag;
+	}
+
+	/**
+	 * @param targetTag the targetTag to set
+	 */
+	public void setTargetTag(Tag targetTag) {
+		this.targetTag = targetTag;
+	}
+
+	/**
+	 * @return the ruleEl
+	 */
+	public String getRuleEl() {
+		return ruleEl;
+	}
+
+	/**
 	 * @param ruleEl the ruleEl to set
 	 */
 	public void setRuleEl(String ruleEl) {
 		this.ruleEl = ruleEl;
 	}
-	
-	
 
-	/**
-	 * @return the targetAttributeName
-	 */
-	public String getTargetAttributeName() {
-		return targetAttributeName;
-	}
-
-	/**
-	 * @param targetAttributeName the targetAttributeName to set
-	 */
-	public void setTargetAttributeName(String targetAttributeName) {
-		this.targetAttributeName = targetAttributeName;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(ruleEl, ruleType, tagTarget, targetServiceValue,
-				targetProduct, targetProductVersion);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TradeRuleHeader other = (TradeRuleHeader) obj;
-		return Objects.equals(ruleEl, other.ruleEl) && ruleType == other.ruleType
-				&& Objects.equals(tagTarget, other.tagTarget)
-				&& Objects.equals(targetServiceValue, other.targetServiceValue)
-				&& Objects.equals(targetProduct, other.targetProduct)
-				&& Objects.equals(targetProductVersion, other.targetProductVersion);
-	}
-	
-	
+ 
 	
 	
 	

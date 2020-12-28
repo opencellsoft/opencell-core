@@ -19,10 +19,14 @@ public class MediaDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@NotNull
+	
+	private String offerCode;
+	
 	private String productCode;
-	@NotNull
+	
 	private String serviceTemplateCode;
+	
+	private String attributeCode;
 	@NotNull
 	private String mediaName;
 	@NotNull
@@ -38,8 +42,9 @@ public class MediaDto extends BaseEntityDto{
 	}
 	
 	public MediaDto(Media media) {
-		this.productCode = media.getProduct().getCode();
-		this.serviceTemplateCode = media.getServiceTemplate().getCode();
+		this.productCode = media.getProduct()!=null? media.getProduct().getCode():null;
+		this.serviceTemplateCode = media.getServiceTemplate()!=null?media.getServiceTemplate().getCode():null;
+		this.offerCode=media.getOffer()!=null?media.getOffer().getCode():null;
 		this.mediaName = media.getMediaName();
 		this.label = media.getLabel();
 		this.main = media.getMain();
@@ -129,6 +134,34 @@ public class MediaDto extends BaseEntityDto{
 	 */
 	public void setMediaPath(String mediaPath) {
 		this.mediaPath = mediaPath;
+	}
+
+	/**
+	 * @return the offerCode
+	 */
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	/**
+	 * @param offerCode the offerCode to set
+	 */
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+
+	/**
+	 * @return the attributeCode
+	 */
+	public String getAttributeCode() {
+		return attributeCode;
+	}
+
+	/**
+	 * @param attributeCode the attributeCode to set
+	 */
+	public void setAttributeCode(String attributeCode) {
+		this.attributeCode = attributeCode;
 	}
 
 	

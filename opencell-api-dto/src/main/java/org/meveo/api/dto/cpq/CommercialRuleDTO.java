@@ -1,5 +1,8 @@
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,9 +25,13 @@ public class CommercialRuleDTO extends BaseEntityDto{
 	private String code;
 	private String label;
 	private RuleTypeEnum ruleType;
-	private EntityTypeEnum entityType;  
-	private String entityCode;
-	private String entityValue;
+	private String offerCode;  
+	private String productCode;
+	private Integer productVersion;
+	private String attributeCode;
+	private String groupedAttributeCode;
+	private String attributeValue;
+	private List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
 	/**
 	 * @return the code
 	 */
@@ -62,45 +69,90 @@ public class CommercialRuleDTO extends BaseEntityDto{
 		this.ruleType = ruleType;
 	}
 	/**
-	 * @return the entityType
+	 * @return the offerCode
 	 */
-	public EntityTypeEnum getEntityType() {
-		return entityType;
+	public String getOfferCode() {
+		return offerCode;
 	}
 	/**
-	 * @param entityType the entityType to set
+	 * @param offerCode the offerCode to set
 	 */
-	public void setEntityType(EntityTypeEnum entityType) {
-		this.entityType = entityType;
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
 	}
 	/**
-	 * @return the entityCode
+	 * @return the productCode
 	 */
-	public String getEntityCode() {
-		return entityCode;
+	public String getProductCode() {
+		return productCode;
 	}
 	/**
-	 * @param entityCode the entityCode to set
+	 * @param productCode the productCode to set
 	 */
-	public void setEntityCode(String entityCode) {
-		this.entityCode = entityCode;
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 	/**
-	 * @return the entityValue
+	 * @return the productVersion
 	 */
-	public String getEntityValue() {
-		return entityValue;
+	public Integer getProductVersion() {
+		return productVersion;
 	}
 	/**
-	 * @param entityValue the entityValue to set
+	 * @param productVersion the productVersion to set
 	 */
-	public void setEntityValue(String entityValue) {
-		this.entityValue = entityValue;
+	public void setProductVersion(Integer productVersion) {
+		this.productVersion = productVersion;
+	}
+	/**
+	 * @return the attributeCode
+	 */
+	public String getAttributeCode() {
+		return attributeCode;
+	}
+	/**
+	 * @param attributeCode the attributeCode to set
+	 */
+	public void setAttributeCode(String attributeCode) {
+		this.attributeCode = attributeCode;
+	}
+	/**
+	 * @return the groupedAttributeCode
+	 */
+	public String getGroupedAttributeCode() {
+		return groupedAttributeCode;
+	}
+	/**
+	 * @param groupedAttributeCode the groupedAttributeCode to set
+	 */
+	public void setGroupedAttributeCode(String groupedAttributeCode) {
+		this.groupedAttributeCode = groupedAttributeCode;
+	}
+	/**
+	 * @return the attributeValue
+	 */
+	public String getAttributeValue() {
+		return attributeValue;
+	}
+	/**
+	 * @param attributeValue the attributeValue to set
+	 */
+	public void setAttributeValue(String attributeValue) {
+		this.attributeValue = attributeValue;
+	}
+	/**
+	 * @return the commercialRuleItems
+	 */
+	public List<CommercialRuleItemDTO> getCommercialRuleItems() {
+		return commercialRuleItems;
+	}
+	/**
+	 * @param commercialRuleItems the commercialRuleItems to set
+	 */
+	public void setCommercialRuleItems(List<CommercialRuleItemDTO> commercialRuleItems) {
+		this.commercialRuleItems = commercialRuleItems;
 	}
 
-    
-    
-	
 	
     
 }
