@@ -90,35 +90,7 @@ public class ProductVersionDto extends BaseEntityDto {
          this.longDescription =productVersion.getLongDescription();
          this.validity = productVersion.getValidity(); 
     }
-    public ProductVersionDto(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
-    	
-    	   super();
-           init(productVersion);
-        
-    	if(loadAttributes) {
-    		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-    			attributes = productVersion.getAttributes().stream().map(d -> {
-    				final AttributeDTO attributeDto = new AttributeDTO(d);
-    				return attributeDto;
-    			}).collect(Collectors.toSet());
-    		}
-    		if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-    			groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
-    				final GroupedAttributeDto groupedAttributesDto = new GroupedAttributeDto(d);
-    				return groupedAttributesDto;
-    			}).collect(Collectors.toSet());
-    		}
-
-    	}
-    	if(loadTags) { 
-    		if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
-    			tagList = productVersion.getTags().stream().map(t -> {
-    				final TagDto dto = new TagDto(t);
-    				return dto;
-    			}).collect(Collectors.toSet());
-    		} 
-    	} 
-    }
+   
     
     
     

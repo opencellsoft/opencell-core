@@ -35,6 +35,8 @@ import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.billing.BillingAccount;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * The Class GetBillingAccountResponseDto.
  * 
@@ -42,6 +44,7 @@ import org.meveo.model.billing.BillingAccount;
  */
 @XmlRootElement(name = "GetBillingAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties({"tagCodes"})
 public class GetBillingAccountResponseDto extends BillingAccountDto {
 
     /** The Constant serialVersionUID. */

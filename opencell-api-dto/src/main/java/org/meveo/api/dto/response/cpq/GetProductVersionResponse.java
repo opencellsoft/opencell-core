@@ -62,39 +62,35 @@ public class GetProductVersionResponse extends ProductVersionDto{
 	
 	
 	 public GetProductVersionResponse(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
-	    	
-	        this.shortDescription = productVersion.getShortDescription();
-	        this.productCode = productVersion.getProduct().getCode();
-	        this.currentVersion = productVersion.getCurrentVersion();
-	        this.status = productVersion.getStatus();
-	        this.statusDate = productVersion.getStatusDate();
-	        this.longDescription =productVersion.getLongDescription();
-	        this.validity = productVersion.getValidity(); 
-	        
-	    	if(loadAttributes) {
-	    		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-	    			attributes = productVersion.getAttributes().stream().map(d -> {
-	    				final AttributeDTO attributeDto = new AttributeDTO(d);
-	    				return attributeDto;
-	    			}).collect(Collectors.toSet());
-	    		}
-	    		if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-	    			groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
-	    				final GroupedAttributeDto groupedAttributesDto = new GroupedAttributeDto(d);
-	    				return groupedAttributesDto;
-	    			}).collect(Collectors.toSet());
-	    		}
+ 
+		 super();
+		 init(productVersion);
 
-	    	}
-	    	if(loadTags) { 
-	    		if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
-	    			tagList = productVersion.getTags().stream().map(t -> {
-	    				final TagDto dto = new TagDto(t);
-	    				return dto;
-	    			}).collect(Collectors.toSet());
-	    		} 
-	    	} 
-	    }
+		 if(loadAttributes) {
+			 if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
+				 attributes = productVersion.getAttributes().stream().map(d -> {
+					 final AttributeDTO attributeDto = new AttributeDTO(d);
+					 return attributeDto;
+				 }).collect(Collectors.toSet());
+			 }
+			 if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
+				 groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
+					 final GroupedAttributeDto groupedAttributesDto = new GroupedAttributeDto(d);
+					 return groupedAttributesDto;
+				 }).collect(Collectors.toSet());
+			 }
+
+		 }
+		 if(loadTags) { 
+			 if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
+				 tagList = productVersion.getTags().stream().map(t -> {
+					 final TagDto dto = new TagDto(t);
+					 return dto;
+				 }).collect(Collectors.toSet());
+			 } 
+		 } 
+	 }
+  
 
 
 

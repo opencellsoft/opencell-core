@@ -19,7 +19,6 @@
 package org.meveo.api.dto.response.catalog;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +35,8 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.catalog.OfferTemplate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * The Class GetOfferTemplateResponseDto.
  *
@@ -44,6 +45,7 @@ import org.meveo.model.catalog.OfferTemplate;
  */
 @XmlRootElement(name = "GetOfferTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties({"tagCodes"})
 public class GetOfferTemplateResponseDto extends OfferTemplateDto {
 
     /** The Constant serialVersionUID. */
