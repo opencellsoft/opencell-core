@@ -1230,7 +1230,7 @@ public class QueryBuilder {
         // }
         // String aliasName = matcher.group(1);
         //
-        // countSql = "select count(distinct " + aliasName + ") " + rt.substring(q.indexOf(from));
+        // countSql = "select count(distinct " + aliasName + ") " + toStringQuery().substring(q.indexOf(from));
         // }
 
         // Logger log = LoggerFactory.getLogger(getClass());
