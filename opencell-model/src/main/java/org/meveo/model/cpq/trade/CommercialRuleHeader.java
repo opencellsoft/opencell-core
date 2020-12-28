@@ -35,7 +35,7 @@ import org.meveo.model.cpq.tags.Tag;
 @Entity
 @Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_header_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq"), })
 public class CommercialRuleHeader extends BusinessEntity {
 
 	/**
@@ -69,7 +69,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 * version of the product
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_version_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion targetProductVersion;
 
 	

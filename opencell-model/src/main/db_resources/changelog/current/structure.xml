@@ -4748,5 +4748,20 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
          
     </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-27">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo51" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+    </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-41">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_attribute_trade_rule_header" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+     </changeSet>
+     
+      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-39">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_attribute_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+     </changeSet> 
   
 </databaseChangeLog>
