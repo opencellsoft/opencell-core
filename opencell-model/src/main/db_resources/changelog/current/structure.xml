@@ -4727,11 +4727,7 @@ END $$;]]>
             
         <addColumn tableName="cat_discount_plan_item">
         	<column name="priorty" type="bigint"></column>
-        </addColumn>
-        
-         <addColumn tableName="cat_discount_plan">
-        	<column name="discount_plan_type" type="varchar(50)"></column>
-        </addColumn>
+        </addColumn> 
         
         <addColumn tableName="quote_offer">
         	<column name="discount_plan_id" type="bigint"></column>
@@ -4742,7 +4738,7 @@ END $$;]]>
         <addColumn tableName="cpq_quote">
         	<column name="discount_plan_id" type="bigint"></column>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="ord_quote" constraintName="fk__ord_quote__cat_discount_plan" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote" constraintName="fk__ord_quote__cat_discount_plan" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
         
         <addColumn tableName="cpq_quote_product">
