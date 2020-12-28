@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<changeSet id="#540-100-20201225" author="TarikFA">
+	
+        <createSequence sequenceName="cpq_commercial_order_seq" />
+        <createSequence sequenceName="cpq_invoicing_plan_seq" />
+        <createSequence sequenceName="cpq_order_type_seq" />
+        <createSequence sequenceName="cpq_order_item_seq" />
+        <createSequence sequenceName="cpq_order_product_seq" />
+        <createSequence sequenceName="cpq_order_service_commercial_seq" />
+        <createSequence sequenceName="cpq_order_offer_seq" />
+        <createSequence sequenceName="order_article_line_seq" />
+        
+		<createTable tableName="cpq_commercial_order">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_commercial_order" />
+	            </column>
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="version" type="int" />
+				<!-- Auditable End -->
+				
+	            <column name="seller_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_number" type="varchar(50)" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="label" type="varchar(255)" />
+	            <column name="billing_account_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="cpq_quote_id" type="bigint" />
+	            <column name="contract_id" type="bigint" />
+	            <column name="status" type="varchar(50)" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="status_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_progress" type="int" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="progress_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="realisation_date" type="datetime" />
+	            <column name="customer_service_begin" type="datetime" />
+	            <column name="customer_service_duration" type="int" />
+	            <column name="external_reference" type="varchar(50)" />
+	            <column name="order_parent_id" type="bigint" />
+	            <column name="order_type_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="invoicing_plan_id" type="bigint" />
+	        </createTable>
+	        
+	        <createTable tableName="cpq_commercial_order_billing_invoice">
+	        	<column name="commercial_order_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        	<column name="invoice_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        </createTable>
+	        
+	        <addPrimaryKey columnNames="commercial_order_id,invoice_id" tableName="cpq_commercial_order_billing_invoice"/>
+	        
+        	<addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_invoice_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+	        
+	        
+		<createTable tableName="cpq_invoicing_plan">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoicing_plan" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+		</createTable>
+		<createTable tableName="cpq_order_type">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_type" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+		</createTable>
+		
+		
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_seller_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+            
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_billing_account_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+            
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+            
+        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_contract_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+            
+        <addForeignKeyConstraint baseColumnNames="order_type_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_order_type_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_type" />
+            
+        <addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_invoicing_plan_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />
+            
+        <addForeignKeyConstraint baseColumnNames="order_parent_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_order_parent_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+            
+            
+		<createTable tableName="cpq_order_item">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_item" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+				
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_service_commercial_id" type="bigint" />
+	            <column name="order_product_id" type="bigint" />
+	            <column name="offer_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="product_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="service_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="access_point" type="varchar(20)" />
+	            <column name="service_type" type="int" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="value" type="text" />
+	            
+		</createTable>
+		
+		<createTable tableName="cpq_order_product">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_product" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	          
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_service_commercial_id" type="bigint" />
+	            <column name="order_offer_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="product_id" type="bigint" />
+	            <column name="quantity" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+		</createTable>
+		
+		<createTable tableName="cpq_order_service_commercial">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_service_commercial" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+	            <column name="order_id" type="bigint">
+	                <constraints nullable="false" />
+	            </column>
+				<column name="name" type="varchar(50)" />
+		</createTable>
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_service_commercial_order_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_service_commercial_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+		
+        <addForeignKeyConstraint baseColumnNames="order_product_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_product_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_offer_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_product_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_service_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+            
+            
+		<createTable tableName="cpq_order_offer">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_offer" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="offer_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+		</createTable>
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+         <!-- foreign key for Order Product  Start -->
+         
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+		<addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_service_commercial_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+		
+		<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_offer_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+		
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        
+        <!-- foreign key for Order Product  End -->
+        
+        <!--  Creation table order_article_Line (OrderArticleLine) -->
+        <createTable tableName="order_article_line">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_order_article_line" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+				<column name="order_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="order_customer_service_id" type="bigint" />
+				<column name="accounting_article_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="quantity" type="numeric(23, 12)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="quantity_service" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="os_unit_price_without_tax" type="numeric(23, 12)" />
+				<column name="os_price_without_tax" type="numeric(23, 12)" />
+				<column name="os_tax_code" type="numeric(23, 12)" />
+				<column name="os_tax_rate" type="int" />
+				<column name="os_price_with_tax" type="numeric(23, 12)" />
+				<column name="rc_unit_price_without_tax" type="numeric(23, 12)" />
+				<column name="rc_price_without_tax" type="numeric(23, 12)" />
+				<column name="rc_tax_code" type="numeric(23, 12)" />
+				<column name="rc_tax_rate" type="int" />
+				<column name="rc_price_with_tax" type="numeric(23, 12)" />
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_order_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        
+		<addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_order_customer_service_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+        
+		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+        
+
+	</changeSet>
+</databaseChangeLog>

@@ -4763,5 +4763,7 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_attribute_rule_line" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
      </changeSet> 
+     
+    <include file="cpq_structure.xml" relativeToChangelogFile="true" />
   
 </databaseChangeLog>
