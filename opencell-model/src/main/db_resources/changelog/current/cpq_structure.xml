@@ -4,13 +4,16 @@
 	<changeSet id="#540-100-20201225" author="TarikFA">
 	
         <createSequence sequenceName="cpq_commercial_order_seq" />
-        <createSequence sequenceName="cpq_invoicing_plan_seq" />
         <createSequence sequenceName="cpq_order_type_seq" />
         <createSequence sequenceName="cpq_order_item_seq" />
         <createSequence sequenceName="cpq_order_product_seq" />
         <createSequence sequenceName="cpq_order_service_commercial_seq" />
         <createSequence sequenceName="cpq_order_offer_seq" />
         <createSequence sequenceName="order_article_line_seq" />
+        <createSequence sequenceName="cpq_order_invoice_seq" />
+        <createSequence sequenceName="cpq_invoice_line_seq" />
+        <createSequence sequenceName="cpq_invoicing_plan_seq" />
+        <createSequence sequenceName="cpq_invoicing_plan_item_seq" />
         
 		<createTable tableName="cpq_commercial_order">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -368,6 +371,221 @@
 		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false" 
 								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
         
-
+		  <createTable tableName="cpq_order_invoice">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_invoice" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+				<column name="seller_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="billing_account_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_type_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_ref" type="varchar(20)" />
+				<column name="status" type="varchar(20)" />
+				<column name="status_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="due_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="begin_date" type="datetime" />
+				<column name="end_date" type="datetime" />
+				<column name="amount_without_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="amount_with_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="amount_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="payment_method" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="pdf_link" type="varchar(255)" />
+				<column name="commercial_order_id" type="bigint" />
+		</createTable>
+		
+	    <createTable tableName="cpq_order_invoice_access_point_list">
+            <column name="order_invoice_id" type="bigint" />
+            <column name="access_point_list" type="varchar(100)" />
+        </createTable>
+        
+	    <createTable tableName="cpq_order_invoice_order_ref_list">
+            <column name="order_invoice_id" type="bigint" />
+            <column name="order_ref_list" type="varchar(100)" />
+        </createTable>
+        
+		<addPrimaryKey columnNames="order_invoice_id,access_point_list" constraintName="cpq_order_invoice_access_point_list_pkey" tableName="cpq_order_invoice_access_point_list" />
+		   
+		<addPrimaryKey columnNames="order_invoice_id,order_ref_list" constraintName="cpq_order_invoice_order_ref_list_pkey" tableName="cpq_order_invoice_order_ref_list" />
+        
+        
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_seller_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_billing_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+        
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_invoice_type_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+        
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        
+        <createTable tableName="cpq_invoice_line">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+	            <column name="invoice_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="prestation" type="varchar(255)" />
+	            <column name="accounting_article_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="offer_service_template_id" type="bigint" />
+	            <column name="product_id" type="bigint" />
+	            <column name="service_template_id" type="bigint" />
+				<column name="begin_date" type="datetime" />
+				<column name="end_date" type="datetime" />
+				<column name="quantity" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="unit_price" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="discount_rate" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_without_tax" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="tax_rate" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_with_tax" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_tax" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="discount_plan_id" type="bigint"  />
+				<column name="tax_id" type="bigint"  />
+				<column name="order_ref" type="varchar(20)"  />
+				<column name="access_point" type="varchar(20)"  />
+				<column name="commercial_order_id" type="bigint"  />
+		</createTable>
+		
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
+		
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_accounting_article_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_offer_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_serv_templates" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+		
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_discount_plan_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+		
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_tax_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+		
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_commercial_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+		  <createTable tableName="cpq_invoicing_plan_item">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoicing_plan_item" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+	            <column name="billing_plan_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="advancement" type="varchar(20)" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="rate_to_bill" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column>
+	            
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
+
+
+
+
+
+
+
+
+
+
+
+
+
