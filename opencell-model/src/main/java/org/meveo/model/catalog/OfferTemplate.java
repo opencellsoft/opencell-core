@@ -184,7 +184,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-				name = "cpq_offer_template_attributes",
+				name = "cpq_offer_attributes",
 				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
