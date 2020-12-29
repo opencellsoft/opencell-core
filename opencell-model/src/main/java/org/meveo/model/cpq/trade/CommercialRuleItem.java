@@ -7,16 +7,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.enums.OperatorEnum;
 
@@ -30,7 +27,7 @@ import org.meveo.model.cpq.enums.OperatorEnum;
 @Table(name = "cpq_commercial_rule_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_rule_item_seq"), })
-public class CommercialRuleItem extends BaseEntity {
+public class CommercialRuleItem extends BusinessEntity {
 
 	/**
 	 * 
@@ -41,9 +38,10 @@ public class CommercialRuleItem extends BaseEntity {
 	 * Trade rule header
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trade_rule_header_id")
+	@JoinColumn(name = "commercial_rule_header_id")
 	private CommercialRuleHeader commercialRuleHeader;
 
+	
 	
 	/**
 	 * rule operator

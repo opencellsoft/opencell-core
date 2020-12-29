@@ -4788,6 +4788,11 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
      </changeSet> 
      
+       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk_grouped_attributes_commercial_rule_line">
+        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_grouped_attributes_commercial_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+     </changeSet>
+     
     <include file="cpq_structure.xml" relativeToChangelogFile="true" />
   
 </databaseChangeLog>
