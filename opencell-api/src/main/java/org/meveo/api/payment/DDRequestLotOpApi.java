@@ -155,6 +155,8 @@ public class DDRequestLotOpApi extends BaseApi {
             ddRequestLotOp.setStatus(dto.getStatus());
         }
         ddRequestLotOp.setGeneratePaymentLines(dto.isGeneratePaymentLines());
+        ddRequestLotOp.setMatchPaymentLines(dto.isMatchPaymentLines());
+
         ddRequestLotOp.setErrorCause(dto.getErrorCause());
         ddrequestLotOpService.create(ddRequestLotOp);
     }
