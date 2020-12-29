@@ -1783,6 +1783,26 @@
 	],
 	"variable": [
 		{
+			"key": "opencell.base",
+			"value": "https://mediapost.d2.opencell.work/opencell"
+		},
+		{
+			"key": "opencell.url",
+			"value": "{{opencell.base}}/api/rest"
+		},
+		{
+			"key": "opencell.username",
+			"value": "opencell.admin"
+		},
+		{
+			"key": "opencell.password",
+			"value": "opencell.admin"
+		},
+		{
+			"key": "auth",
+			"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+		},
+		{
 			"key": "customerCategoryCode",
 			"value": "CLIENT"
 		},
