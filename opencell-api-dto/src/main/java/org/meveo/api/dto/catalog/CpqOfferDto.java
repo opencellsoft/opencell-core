@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -70,6 +71,11 @@ public class CpqOfferDto extends EnableBusinessDto {
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
+    
+    /** The tags. */
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    private List<AttributeDTO> attributes;
     
     
     /** The valid from. */
@@ -290,6 +296,20 @@ public class CpqOfferDto extends EnableBusinessDto {
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
 
   
