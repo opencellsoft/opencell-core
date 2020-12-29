@@ -61,6 +61,7 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.payment.PaymentMethodApi;
@@ -1947,7 +1948,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
-        BillingAccountDto dto = new BillingAccountDto(ba);
+        GetBillingAccountResponseDto dto = new GetBillingAccountResponseDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
 
         if (!dto.isLoaded() && ba.getUsersAccounts() != null) {

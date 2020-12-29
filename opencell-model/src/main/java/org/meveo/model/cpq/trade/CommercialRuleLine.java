@@ -27,7 +27,7 @@ import org.meveo.model.cpq.tags.Tag;
 @Entity
 @Table(name = "cpq_commercial_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_line_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq"), })
 public class CommercialRuleLine extends BaseEntity {
 
 	/**
