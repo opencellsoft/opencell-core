@@ -44,6 +44,7 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
@@ -82,6 +83,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -100,6 +102,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -143,6 +146,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private DiscountPlanService discountPlanService;
+
+	@Inject
+	private AttributeService attributeService; 
     
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
@@ -369,6 +375,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
+        processAttributes(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -407,6 +414,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
                     .stream()
                     .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
+                    .collect(Collectors.toList()));
+        }
+    }
+    
+    private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+        List<AttributeDTO> attributes = postData.getAttributes();
+        if(attributes != null && !attributes.isEmpty()){
+            offerTemplate.setAttributes(attributes
+                    .stream()
+                    .map(attributeDTO -> attributeService.findByCode(attributeDTO.getCode()))
                     .collect(Collectors.toList()));
         }
     }
@@ -633,7 +650,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public GetOfferTemplateResponseDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadProductAttributes, boolean loadTags,List<String> requestedTagTypes) {
+            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
     	 if (loadTags && !requestedTagTypes.isEmpty()) {
          	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
@@ -698,7 +715,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
         					           productVersion.setTags(new HashSet<Tag>(tags));
         							}
-        							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadProductAttributes, loadTags);
+        							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadAttributes, loadTags);
         							productDTO.setCurrentProductVersion(getProductVersionResponse);
         							break;
         							}
@@ -723,6 +740,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     discountPlanDtos.add(new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan)));
                 }
                 dto.setAllowedDiscountPlans(discountPlanDtos);
+            }
+        } 
+        if(loadAttributes) {
+            List<Attribute> attributes = offerTemplate.getAttributes();
+            if (attributes != null && !attributes.isEmpty()) {
+                List<AttributeDTO> attributesDto = new ArrayList<>();
+                for (Attribute discountPlan : attributes) {
+                    attributesDto.add(new AttributeDTO(discountPlan));
+                }
+                dto.setAttributes(attributesDto);
             }
         } 
         return dto;

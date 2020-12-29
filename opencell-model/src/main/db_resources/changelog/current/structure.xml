@@ -4665,13 +4665,37 @@ END $$;]]>
         <addUniqueConstraint columnNames="offer_template_id,discount_id" constraintName="unique_cpq_offer_template_discount_ids" tableName="cpq_offer_discount_plan" />
 
         <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="discount_id"
-                                 constraintName="cpq_offer_discount_plan_discount_id_fk" referencedTableName="cat_offer_template"
+                                 constraintName="cpq_offer_discount_plan_discount_id_fk" referencedTableName="cat_discount_plan"
                                  referencedColumnNames="id"/>
 
 
         <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="offer_template_id"
-                                 constraintName="cpq_offer_discount_plan_offer_template_id_fk" referencedTableName="cat_discount_plan"
+                                 constraintName="cpq_offer_discount_plan_offer_template_id_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
+                               
+
+    </changeSet>
+      <changeSet id="current-mediapost-tbl-offer_attributes" author="RachidAY">
+        <createTable tableName="cpq_offer_attributes">
+            <column name="offer_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="offer_template_id,attribute_id" constraintName="cpq_offer_template_attribute_pkey" tableName="cpq_offer_attributes" />
+        <addUniqueConstraint columnNames="offer_template_id,attribute_id" constraintName="unique_cpq_offer_template_attribute_ids" tableName="cpq_offer_attributes" />
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_attributes" baseColumnNames="attribute_id"
+                                 constraintName="cpq_offer_attribute_attribute_id_fk" referencedTableName="cpq_attribute"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_attributes" baseColumnNames="offer_template_id"
+                                 constraintName="cpq_offer_attribute_offer_template_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>                       
 
     </changeSet>
     

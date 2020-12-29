@@ -135,6 +135,7 @@ public class CpqOfferDto extends EnableBusinessDto {
 		this.attachments = offerTemplatedto.getAttachments();
 		this.lifeCycleStatus = offerTemplatedto.getLifeCycleStatus();
 		this.customFields = offerTemplatedto.getCustomFields();
+		this.attributes=offerTemplatedto.getAttributes();
 	}
 
 

@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
@@ -76,6 +77,13 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
     protected List<DiscountPlanDto> allowedDiscountPlans;
+    
+    
+    /** The offer product templates. */
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    protected List<AttributeDTO> attributes;
+    
 
     /** The renewal rule. */
     protected SubscriptionRenewalDto renewalRule;
@@ -404,6 +412,24 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	public void setOfferProducts(List<OfferProductsDto> offerProducts) {
 		this.offerProducts = offerProducts;
 	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
+	}
+
+
+	
+
 
 
 
