@@ -10243,13 +10243,10 @@ $$ LANGUAGE plpgsql;
             <column name="rule_type" type="varchar(50)" />  
             <column name="offer_template_id" type="bigint" /> 
             <column name="product_id" type="bigint" />  
-            <column name="product_version_id" type="bigint" /> 
-            <column name="grouped_service_id" type="bigint" /> 
-            <column name="service_template_id" type="bigint" />
+            <column name="product_version_id" type="bigint" />
              <column name="grouped_attributes_id" type="bigint" /> 
-             <column name="attribute_id" type="bigint" /> 
-            <column name="target_attribute_name" type="varchar(20)" />  
-            <column name="target_service_value" type="varchar(255)" />
+             <column name="attribute_id" type="bigint" />  
+            <column name="target_attribute_value" type="varchar(255)" />
             <column name="tag_id" type="bigint" />  
             <column name="rule_el" type="varchar(2000)" />  
 		</createTable>
@@ -10272,7 +10269,7 @@ $$ LANGUAGE plpgsql;
 			<column name="description" type="varchar(255)" />
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
-			<column name="trade_rule_header_id" type="bigint" />
+			<column name="commercial_rule_header_id" type="bigint" />
 			<column name="operator" type="varchar(255)" />
 			<column name="rule_item_el" type="varchar(2000)" />
 		</createTable>
@@ -10298,14 +10295,14 @@ $$ LANGUAGE plpgsql;
 			<column name="updater" type="varchar(100)" />
 			
 			<column name="offer_template_id" type="bigint" />
-			<column name="trade_rule_item_id" type="bigint" />
+			<column name="commercial_rule_item_id" type="bigint" />
 			<column name="product_id" type="bigint" />
 			<column name="product_version_id" type="bigint" />
 			<column name="attribute_id" type="bigint" />
-			<column name="source_tag_id" type="bigint" />
+			<column name="tag_id" type="bigint" />
+			<column name="grouped_attributes_id" type="bigint" />
 			<column name="operator" type="int" />
-			<column name="target_service_value" type="varchar(255)" /> 
-			<column name="value" type="varchar(255)" /> 
+			<column name="source_attribute_value" type="varchar(255)" />  
 		</createTable>
 	</changeSet>
  
@@ -10480,6 +10477,8 @@ $$ LANGUAGE plpgsql;
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
      </changeSet> 
      
+    
+     
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-20">
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_ii50ihu1qzsqikh2bo" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
@@ -10491,7 +10490,7 @@ $$ LANGUAGE plpgsql;
      </changeSet>
      
       <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-22">
-        <addForeignKeyConstraint baseColumnNames="trade_rule_item_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_rule_item_rule_line" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="commercial_rule_item_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_rule_item_rule_line" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_item" />
      </changeSet> 
      
@@ -10519,6 +10518,11 @@ $$ LANGUAGE plpgsql;
         <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo52" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk_commercial_rule_header_rule_item">
+        <addForeignKeyConstraint baseColumnNames="commercial_rule_header_id" baseTableName="cpq_commercial_rule_item" constraintName="fk_commercial_rule_header_rule_item" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_header" />
+     </changeSet> 
      
     <changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
     	<createTable tableName="cpq_quote_lot">
@@ -10851,22 +10855,10 @@ $$ LANGUAGE plpgsql;
         <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-36">
         <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_tag_filter" constraintName="fk-tag-tag_filter" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
-      </changeSet>
-      
-        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-37">
-        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_service_template_trade_rule_header" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
-     </changeSet> 
-     
-     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-38">
-        <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_grouped_service_trade_rule_header" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" />
-     </changeSet> 
-      
-      
-     
+      </changeSet>  
+       
        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-40">
-        <addForeignKeyConstraint baseColumnNames="source_tag_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
      </changeSet>  
      

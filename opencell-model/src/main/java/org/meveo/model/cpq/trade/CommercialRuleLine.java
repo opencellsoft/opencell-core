@@ -12,8 +12,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
@@ -28,7 +30,7 @@ import org.meveo.model.cpq.tags.Tag;
 @Table(name = "cpq_commercial_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq"), })
-public class CommercialRuleLine extends BaseEntity {
+public class CommercialRuleLine extends BusinessEntity {
 
 	/**
 	 * 
@@ -40,7 +42,7 @@ public class CommercialRuleLine extends BaseEntity {
 	 * Trade rule header
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trade_rule_item_id")
+	@JoinColumn(name = "commercial_rule_item_id")
 	private CommercialRuleItem commercialRuleItem;
 	
 	/**
@@ -73,17 +75,25 @@ public class CommercialRuleLine extends BaseEntity {
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
 	private Attribute targetAttribute;
 	
+	 /** 
+     * grouped service
+     */
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
+	private GroupedAttributes targetGroupedAttributes;
+	
 	/**
 	 * tag source
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "source_tag_id", referencedColumnName = "id")
-	private Tag sourceTag;
+	@JoinColumn(name = "tag_id", referencedColumnName = "id")
+	private Tag targetTag;
 	
 	/**
 	 * attribute value
 	 */
-	@Column(name = "target_service_value", length = 255)
+	@Column(name = "source_attribute_value", length = 255)
 	@Size(max = 255)
 	private String sourceAttributeValue;
 	
@@ -92,14 +102,7 @@ public class CommercialRuleLine extends BaseEntity {
 	 */
 	@Column(name = "operator")
 	private int operator;
-	
-	/**
-	 * attribute value 
-	 */
-	@Column(name = "value", length = 255)
-	@Size(max = 255)
-	private String value;
-
+	 
 	/**
 	 * @return the sourceOfferTemplate
 	 */
@@ -172,18 +175,34 @@ public class CommercialRuleLine extends BaseEntity {
 		this.sourceAttributeValue = sourceAttributeValue;
 	}
 
+ 
+
 	/**
-	 * @return the sourceTag
+	 * @return the targetGroupedAttributes
 	 */
-	public Tag getSourceTag() {
-		return sourceTag;
+	public GroupedAttributes getTargetGroupedAttributes() {
+		return targetGroupedAttributes;
 	}
 
 	/**
-	 * @param sourceTag the sourceTag to set
+	 * @param targetGroupedAttributes the targetGroupedAttributes to set
 	 */
-	public void setSourceTag(Tag sourceTag) {
-		this.sourceTag = sourceTag;
+	public void setTargetGroupedAttributes(GroupedAttributes targetGroupedAttributes) {
+		this.targetGroupedAttributes = targetGroupedAttributes;
+	}
+
+	/**
+	 * @return the targetTag
+	 */
+	public Tag getTargetTag() {
+		return targetTag;
+	}
+
+	/**
+	 * @param targetTag the targetTag to set
+	 */
+	public void setTargetTag(Tag targetTag) {
+		this.targetTag = targetTag;
 	}
 
 	/**
@@ -199,20 +218,7 @@ public class CommercialRuleLine extends BaseEntity {
 	public void setOperator(int operator) {
 		this.operator = operator;
 	}
-
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return value;
-	}
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
+ 
 
 	/**
 	 * @return the commercialRuleItem
