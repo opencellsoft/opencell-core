@@ -4794,5 +4794,57 @@ END $$;]]>
      </changeSet>
      
     <include file="cpq_structure.xml" relativeToChangelogFile="true" />
+
+    <changeSet id="20201230_pricematrix" author="NabilOuachi">
+        <createSequence sequenceName="cpq_price_plan_matrix_column_sq" startValue="1" />
+        <createTable tableName="cpq_price_plan_matrix_column">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_column_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="ppm_id" type="bigint" />
+            <column name="position" type ="int4"/>
+            <column name="type" type="varchar(255)"/>
+
+            <column name="is_value" type="${type.boolean}"/>
+
+            <column name="product_id" type="bigint" />
+            <column name="attribute_id" type="bigint" />
+        </createTable>
+
+        <createSequence sequenceName="cpq_price_plan_matrix_value_sq" startValue="1" />
+        <createTable tableName="cpq_price_plan_matrix_value">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_value_pkey" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="ppm_column_id" type="bigint" />
+
+            <column name="long_value" type ="int8"/>
+            <column name="double_value" type ="float8"/>
+            <column name="string_value" type="varchar(255)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+        <addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
+    </changeSet>
   
 </databaseChangeLog>
