@@ -1,14 +1,11 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,7 +16,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
@@ -76,22 +72,14 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 /** 
      * grouped service
      */
-
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
-	private GroupedAttributes groupedAttributes;
+	private GroupedAttributes targetGroupedAttributes;
 	
-	
+
 	/**
-     * service template
-     */ 
-	@ManyToOne(fetch = FetchType.LAZY) 
-	@JoinColumn(name = "service_template_id", referencedColumnName = "id") 
-	private ServiceTemplate serviceTemplate;
-	
-	/**
-	 * attribute name
+	 * attribute id
 	 */
 	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
@@ -101,7 +89,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * attribute value
 	 */
-	@Column(name = "target_service_value", length = 255)
+	@Column(name = "target_attribute_value", length = 255)
 	@Size(max = 255)
 	private String targetAttributeValue;
 
@@ -175,32 +163,19 @@ public class CommercialRuleHeader extends BusinessEntity {
 		this.targetProductVersion = targetProductVersion;
 	}
 
+	 
 	/**
-	 * @return the groupedAttributes
+	 * @return the targetGroupedAttributes
 	 */
-	public GroupedAttributes getGroupedAttributes() {
-		return groupedAttributes;
+	public GroupedAttributes getTargetGroupedAttributes() {
+		return targetGroupedAttributes;
 	}
 
 	/**
-	 * @param groupedAttributes the groupedAttributes to set
+	 * @param targetGroupedAttributes the targetGroupedAttributes to set
 	 */
-	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
-	}
-
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
+	public void setTargetGroupedAttributes(GroupedAttributes targetGroupedAttributes) {
+		this.targetGroupedAttributes = targetGroupedAttributes;
 	}
 
 	/**

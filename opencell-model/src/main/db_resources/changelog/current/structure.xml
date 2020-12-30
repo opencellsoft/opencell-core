@@ -3687,7 +3687,6 @@ END $$;]]>
     </changeSet>
     
     <!-- for MediaPost -->
-    
      
     <include file="cpq_structure.xml" relativeToChangelogFile="true" />
   

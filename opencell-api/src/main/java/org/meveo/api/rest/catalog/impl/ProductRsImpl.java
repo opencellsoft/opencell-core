@@ -156,7 +156,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response updateProductVersionStatus(String productCode, int currentVersion,VersionStatusEnum status) {
 		GetProductVersionResponse result = new GetProductVersionResponse();
 		try {
-			result.setProductVersionDto(productApi.UpdateProductVersionStatus(productCode, currentVersion, status));
+			result=productApi.UpdateProductVersionStatus(productCode, currentVersion, status);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -167,7 +167,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response duplicateProductVersion(String productCode,int currentVersion) { 
 		GetProductVersionResponse result = new GetProductVersionResponse();
 		try {
-			result = new GetProductVersionResponse(productApi.duplicateProductVersion(productCode, currentVersion));
+			result =productApi.duplicateProductVersion(productCode, currentVersion);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -208,7 +208,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response findProductVersion(String productCode, int productVersion) {
 		GetProductVersionResponse result = new GetProductVersionResponse();
 		try { 
-			result.setProductVersionDto(productApi.findProductVersion(productCode, productVersion));
+			result=productApi.findProductVersion(productCode, productVersion);
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

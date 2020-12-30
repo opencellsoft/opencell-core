@@ -2,7 +2,6 @@ package org.meveo.api.dto.cpq;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,41 +25,41 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 public class ProductVersionDto extends BaseEntityDto {
     
      /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -7824004884683019697L;  
+    protected static final long serialVersionUID = -7824004884683019697L;  
     /** The shortDescription. */
     @XmlAttribute()
     @NotNull
-    private String shortDescription;
+    protected String shortDescription;
     /** The product code. */
     @NotNull
     @XmlElement(required = true)
-    private String productCode;
+    protected String productCode;
     
     @NotNull
     /** The currentVersion. */
-    private int currentVersion;
+    protected int currentVersion;
     /** The status. */
-    private VersionStatusEnum status;
+    protected VersionStatusEnum status;
     /** The statusDate. */
-    private Date statusDate;
+    protected Date statusDate;
     /** The longDescription */
-    private String longDescription ;
+    protected String longDescription ;
     /**The validity Date*/
-    private DatePeriod validity = new DatePeriod();
+    protected DatePeriod validity = new DatePeriod();
  
-    /** The services template. */
-    @XmlElementWrapper(name = "attributes")
-    @XmlElement(name = "attributes")
-    private Set<AttributeDTO> attributes=new HashSet<>();;
+    /** The attributeCodes. */
+    @XmlElementWrapper(name = "attributeCodes")
+    @XmlElement(name = "attributeCodes")
+    protected Set<String> attributeCodes=new HashSet<String>();;
     
-    @XmlElementWrapper(name = "groupedAttributes")
-    @XmlElement(name = "groupedAttributes")
-    private Set<GroupedAttributeDto> groupedAttributes = new HashSet<>();
+    @XmlElementWrapper(name = "groupedAttributeCodes")
+    @XmlElement(name = "groupedAttributeCodes")
+    protected Set<String> groupedAttributeCodes = new HashSet<String>();
     
     /** The services template. */
-    @XmlElementWrapper(name = "tags")
-    @XmlElement(name = "tags")
-    private Set<TagDto> tagList = new HashSet<>();
+    @XmlElementWrapper(name = "tagCodes")
+    @XmlElement(name = "tagCodes")
+    protected Set<String> tagCodes = new HashSet<String>();
     
 
     
@@ -91,35 +90,7 @@ public class ProductVersionDto extends BaseEntityDto {
          this.longDescription =productVersion.getLongDescription();
          this.validity = productVersion.getValidity(); 
     }
-    public ProductVersionDto(ProductVersion productVersion,boolean loadAttributes,boolean loadTags) {
-    	
-    	   super();
-           init(productVersion);
-        
-    	if(loadAttributes) {
-    		if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-    			attributes = productVersion.getAttributes().stream().map(d -> {
-    				final AttributeDTO attributeDto = new AttributeDTO(d);
-    				return attributeDto;
-    			}).collect(Collectors.toSet());
-    		}
-    		if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-    			groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
-    				final GroupedAttributeDto groupedAttributesDto = new GroupedAttributeDto(d);
-    				return groupedAttributesDto;
-    			}).collect(Collectors.toSet());
-    		}
-
-    	}
-    	if(loadTags) { 
-    		if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
-    			tagList = productVersion.getTags().stream().map(t -> {
-    				final TagDto dto = new TagDto(t);
-    				return dto;
-    			}).collect(Collectors.toSet());
-    		} 
-    	} 
-    }
+   
     
     
     
@@ -195,21 +166,47 @@ public class ProductVersionDto extends BaseEntityDto {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
+    
+    
    
  
-    
-    
-    /**
-	 * @return the services
+ 
+	/**
+	 * @return the attributeCodes
 	 */
-	public Set<AttributeDTO> getAttributes() {
-		return attributes;
+	public Set<String> getAttributeCodes() {
+		return attributeCodes;
 	}
 	/**
-	 * @param attributes the services to set
+	 * @param attributeCodes the attributeCodes to set
 	 */
-	public void setAttributes(Set<AttributeDTO> attributes) {
-		this.attributes = attributes;
+	public void setAttributeCodes(Set<String> attributeCodes) {
+		this.attributeCodes = attributeCodes;
+	}
+	 
+	/**
+	 * @return the groupedAttributeCodes
+	 */
+	public Set<String> getGroupedAttributeCodes() {
+		return groupedAttributeCodes;
+	}
+	/**
+	 * @param groupedAttributeCodes the groupedAttributeCodes to set
+	 */
+	public void setGroupedAttributeCodes(Set<String> groupedAttributeCodes) {
+		this.groupedAttributeCodes = groupedAttributeCodes;
+	}
+	/**
+	 * @return the tagCodes
+	 */
+	public Set<String> getTagCodes() {
+		return tagCodes;
+	}
+	/**
+	 * @param tagCodes the tagCodes to set
+	 */
+	public void setTagCodes(Set<String> tagCodes) {
+		this.tagCodes = tagCodes;
 	}
 	@Override
     public String toString() {
@@ -217,31 +214,7 @@ public class ProductVersionDto extends BaseEntityDto {
                 + ", currentVersion=" + currentVersion + ", status=" + status + ", statusDate=" + statusDate
                 + ", longDescription=" + longDescription + ", validity=" + validity + "]";
     }
-	/**
-	 * @return the tagList
-	 */
-	public Set<TagDto> getTagList() {
-		return tagList;
-	}
-	/**
-	 * @param tagList the tagList to set
-	 */
-	public void setTagList(Set<TagDto> tagList) {
-		this.tagList = tagList;
-	}
- 
-	/**
-	 * @return the groupedAttributes
-	 */
-	public Set<GroupedAttributeDto> getGroupedAttributes() {
-		return groupedAttributes;
-	}
-	/**
-	 * @param groupedAttributes the groupedAttributes to set
-	 */
-	public void setGroupedAttributes(Set<GroupedAttributeDto> groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
-	}
+	 
 	/**
 	 * @return the validity
 	 */
