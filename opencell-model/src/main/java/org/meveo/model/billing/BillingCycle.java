@@ -209,13 +209,6 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "collection_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String collectionDateDelayEl;
-
-    /**
-     * To decide whether or not dates should be recomputed at invoice validation.
-     */
-    @Column(name = "compute_dates_validation")
-    @Type(type = "numeric_boolean")
-    private Boolean computeDatesAtValidation = false;
     
     /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
@@ -490,14 +483,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setCollectionDateDelayEl(String collectionDateDelayEl) {
         this.collectionDateDelayEl = collectionDateDelayEl;
-    }
-
-    public Boolean getComputeDatesAtValidation() {
-        return computeDatesAtValidation;
-    }
-
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
-        this.computeDatesAtValidation = computeDatesAtValidation;
     }
     
 	public ScriptInstance getBillingRunValidationScript() {
