@@ -315,12 +315,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Column(name = "collection_date")
     private Date collectionDate;
-
-    /**
-     * To decide whether or not dates should be recomputed at invoice validation.
-     */
-    @Column(name = "compute_dates_validation")
-    private Boolean computeDatesAtValidation;
     
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
@@ -733,20 +727,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
-    }
-
-    /**
-     * @return
-     */
-    public Boolean getComputeDatesAtValidation() {
-        return computeDatesAtValidation;
-    }
-
-    /**
-     * @param computeDatesAtValidation
-     */
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
-        this.computeDatesAtValidation = computeDatesAtValidation;
     }
     
     @Enumerated(value = EnumType.STRING)
