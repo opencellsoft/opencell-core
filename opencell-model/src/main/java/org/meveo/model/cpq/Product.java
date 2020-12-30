@@ -30,11 +30,14 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.crm.CustomerBrand;
@@ -159,6 +162,10 @@ public class Product extends BusinessEntity {
      */  
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
     private List<OfferComponent> offerComponents = new ArrayList<>();
+
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
 
 
 
