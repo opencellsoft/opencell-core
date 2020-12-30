@@ -31,7 +31,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "price_plan_version" }))
+@Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p where p.code=:code")

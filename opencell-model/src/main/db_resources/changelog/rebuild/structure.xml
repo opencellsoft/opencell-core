@@ -10719,6 +10719,7 @@ $$ LANGUAGE plpgsql;
             <column name="valid_from" type="date" />
             <column name="valid_to" type="date" />
             <column name="price_without_tax" type="numeric(23, 12)" />
+            <column name="is_matrix" type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
     </changeSet>
     
