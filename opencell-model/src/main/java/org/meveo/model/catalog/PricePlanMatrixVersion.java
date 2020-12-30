@@ -59,8 +59,8 @@ public class PricePlanMatrixVersion extends BusinessEntity {
     @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity;
 
-    @Column(name = "IS_MATRIX")
-    @NotNull
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_matrix")
     private Boolean isMatrix;
 
     @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)

@@ -10702,6 +10702,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" />
             </column>
             <column name="description" type="varchar(255)" />  
+            <column name="label" type="varchar(255)" />
             <column name="version" type="int4" />
             <column name="creator" type="varchar(100)" />
             <column name="created" type="datetime">
@@ -10716,10 +10717,10 @@ $$ LANGUAGE plpgsql;
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="valid_from" type="date" />
-            <column name="valid_to" type="date" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
             <column name="price_without_tax" type="numeric(23, 12)" />
-            <column name="is_matrix" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="is_matrix" type="${type.boolean}"/>
         </createTable>
     </changeSet>
     
