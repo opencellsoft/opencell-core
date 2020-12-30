@@ -2654,6 +2654,66 @@
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
     </changeSet>
+
+    <changeSet id="20201230-ticket5870" author="NabilOUACHI">
+        <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
+
+        <createTable tableName="cat_product_wallet_template_1">
+            <column name="product_templt_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="wallet_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_templt_id, wallet_template_id" constraintName="cat_product_wallet_template_1_pkey" tableName="cat_product_wallet_template_1" />
+
+        <createTable tableName="cat_product_counter_template">
+            <column name="product_templt_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_templt_id, counter_template_id" constraintName="cat_product_counter_template_pkey" tableName="cat_product_counter_template" />
+
+        <createTable tableName="cpq_product_charge_template_mapping">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_column_pkey" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="product_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="counter_template_id" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_counter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+
+        <addForeignKeyConstraint baseColumnNames="product_templt_id" baseTableName="cat_product_wallet_template_1" constraintName="fk_cat_product_wallet_template_product_charge_template_mapping" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_charge_template_mapping" />
+
+        <addForeignKeyConstraint baseColumnNames="wallet_template_id" baseTableName="cat_product_wallet_template_1" constraintName="fk_cat_product_wallet_template_product_wallet_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_wallet_template" />
+
+        <addForeignKeyConstraint baseColumnNames="product_templt_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_product_charge_template_mapping" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_charge_template_mapping" />
+
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_cat_counter_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+    </changeSet>
 </databaseChangeLog>
 
 
