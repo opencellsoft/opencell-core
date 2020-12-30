@@ -84,7 +84,7 @@ public class AttributeDTO extends EnableBusinessDto {
     protected boolean mandatory=Boolean.FALSE;
     
     
-    protected List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
    protected boolean selectable=Boolean.TRUE;
     
@@ -228,21 +228,20 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
-
 	/**
-	 * @return the commercialRules
+	 * @return the commercialRuleCodes
 	 */
-	public List<CommercialRuleDTO> getCommercialRules() {
-		return commercialRules;
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
 	}
 
 
 
 	/**
-	 * @param commercialRules the commercialRules to set
+	 * @param commercialRuleCodes the commercialRuleCodes to set
 	 */
-	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
-		this.commercialRules = commercialRules;
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
 

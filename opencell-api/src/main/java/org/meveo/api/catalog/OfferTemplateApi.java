@@ -44,14 +44,15 @@ import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
@@ -82,13 +83,13 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
-import org.meveo.model.cpq.tags.TagType;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -101,6 +102,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -144,6 +146,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private DiscountPlanService discountPlanService;
+
+	@Inject
+	private AttributeService attributeService; 
     
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
@@ -370,6 +375,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processAllowedDiscountPlans(postData, offerTemplate);
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
+        processAttributes(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -412,16 +418,30 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
     
-    private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {
-        List<TagDto> tags = postData.getTags();
-        if(tags != null && !tags.isEmpty()){
-            offerTemplate.setTags(tags
+    private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+        List<AttributeDTO> attributes = postData.getAttributes();
+        if(attributes != null && !attributes.isEmpty()){
+            offerTemplate.setAttributes(attributes
                     .stream()
-                    .map(tagDto -> tagService.findByCode(tagDto.getCode()))
+                    .map(attributeDTO -> attributeService.findByCode(attributeDTO.getCode()))
                     .collect(Collectors.toList()));
         }
     }
-     
+ 
+    private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+		Set<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			List<Tag> tags=new ArrayList<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tags.add(tag);
+			}
+			offerTemplate.setTags(tags);
+		}
+	}
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
@@ -629,14 +649,14 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true, true, true, true, true, true,false,false,null);
     }
 
-    public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadProductAttributes, boolean loadTags,List<String> requestedTagTypes) {
+    public GetOfferTemplateResponseDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
     	 if (loadTags && !requestedTagTypes.isEmpty()) {
          	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
          	offerTemplate.setTags(tags);
          }
-    	OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true);
+    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true);
        
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
@@ -677,7 +697,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         		List<Tag> tags=null;
         		List<OfferProductsDto> offerProducts = new ArrayList<>();
         		OfferProductsDto offerProductsDto = null;
-        		ProductVersionDto productVersionDto=null;
+        		GetProductVersionResponse getProductVersionResponse=null;
         		Product product = null; 
 
         		for (OfferComponent offerComponent : offerComponents) {
@@ -695,8 +715,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
         					           productVersion.setTags(new HashSet<Tag>(tags));
         							}
-        							productVersionDto =new ProductVersionDto(productVersion,loadProductAttributes, loadTags);
-        							productDTO.setCurrentProductVersion(productVersionDto);
+        							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadAttributes, loadTags);
+        							productDTO.setCurrentProductVersion(getProductVersionResponse);
         							break;
         							}
         						
@@ -720,6 +740,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     discountPlanDtos.add(new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan)));
                 }
                 dto.setAllowedDiscountPlans(discountPlanDtos);
+            }
+        } 
+        if(loadAttributes) {
+            List<Attribute> attributes = offerTemplate.getAttributes();
+            if (attributes != null && !attributes.isEmpty()) {
+                List<AttributeDTO> attributesDto = new ArrayList<>();
+                for (Attribute discountPlan : attributes) {
+                    attributesDto.add(new AttributeDTO(discountPlan));
+                }
+                dto.setAttributes(attributesDto);
             }
         } 
         return dto;
@@ -794,7 +824,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     		List<OfferTemplate> offers = offerTemplateService.list(paginationConfig);
     		for (OfferTemplate offerTemplate : offers) {
     			boolean loadTags=customerContextDto.getRequestedTagTypes()!=null && !customerContextDto.getRequestedTagTypes().isEmpty();
-    			OfferTemplateDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
+    			GetOfferTemplateResponseDto offertemplateDTO=fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,true,false, false,false,true,false,loadTags,customerContextDto.getRequestedTagTypes());
     			result.addOffer(new CpqOfferDto(offertemplateDTO));
     		}
     	}
@@ -860,7 +890,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
-    	return new OfferTemplateDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
+    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
     }
     
     public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {

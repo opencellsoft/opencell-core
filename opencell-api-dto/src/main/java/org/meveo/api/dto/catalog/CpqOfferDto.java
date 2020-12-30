@@ -20,6 +20,7 @@ package org.meveo.api.dto.catalog;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,8 +31,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.TagDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -70,6 +73,11 @@ public class CpqOfferDto extends EnableBusinessDto {
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
+    
+    /** The tags. */
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    private List<AttributeDTO> attributes;
     
     
     /** The valid from. */
@@ -114,19 +122,20 @@ public class CpqOfferDto extends EnableBusinessDto {
     
     
 
-	public CpqOfferDto(OfferTemplateDto offerTemplatedto) {
+	public CpqOfferDto(GetOfferTemplateResponseDto offerTemplatedto) {
 		super();
 		this.bomCode = offerTemplatedto.getBomCode();
 		this.offerServiceTemplates = offerTemplatedto.getOfferServiceTemplates();
 		this.offerProducts = offerTemplatedto.getOfferProducts();
 		this.allowedDiscountPlans = offerTemplatedto.getAllowedDiscountPlans();
-		this.tags = offerTemplatedto.getTags();
+		this.tags = offerTemplatedto.getTags(); 
 		this.validFrom = offerTemplatedto.getValidFrom();
 		this.validTo = offerTemplatedto.getValidTo();
 		this.name = offerTemplatedto.getName();
 		this.attachments = offerTemplatedto.getAttachments();
 		this.lifeCycleStatus = offerTemplatedto.getLifeCycleStatus();
 		this.customFields = offerTemplatedto.getCustomFields();
+		this.attributes=offerTemplatedto.getAttributes();
 	}
 
 
@@ -290,6 +299,20 @@ public class CpqOfferDto extends EnableBusinessDto {
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
 
   

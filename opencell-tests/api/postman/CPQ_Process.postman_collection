@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "383812f3-b3a6-49dc-9a85-48ae8d156b99",
+		"_postman_id": "e7dfe677-cd1b-4bf4-879f-00fe6392931b",
 		"name": "CPQ Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -618,7 +618,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"shortDescription\": \"Product version one test description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-12-25\"\r\n    },\r\n    \"tags\": [\r\n        {\r\n            \"code\": \"{{codeTagOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeTagVip}}\"\r\n        }\r\n    ],\r\n    \"attributes\": [\r\n        {\r\n            \"code\": \"{{codeAttributeOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeAttributeTwo}}\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"shortDescription\": \"Product version one test description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-12-25\"\r\n    },\r\n    \"tagCodes\": [\"{{codeTagOne}}\",\"{{codeTagVip}}\"],\r\n    \"attributeCodes\": [\"{{codeAttributeOne}}\",\"{{codeAttributeTwo}}\"]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -658,7 +658,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 2,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-11-25\"\r\n    },\r\n    \"tags\": [\r\n        {\r\n            \"code\": \"{{codeTagTwo}}\"\r\n        }\r\n    ],\r\n    \"attributes\": [\r\n        {\r\n            \"code\": \"{{codeAttributeOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeAttributeTwo}}\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 2,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-11-25\"\r\n    }, \r\n    \"tagCodes\": [\"{{codeTagTwo}}\"],\r\n    \"attributeCodes\": [\"{{codeAttributeOne}}\" , \"{{codeAttributeTwo}}\" ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -698,7 +698,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"productCode\": \"{{codeProductOne}}\",\r\n  \"shortDescription\": \"Product version test description\",\r\n  \"currentVersion\": 3,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n  \"longDescription\": \"This is a long test description for product version\",\r\n \"validity\":{\r\n   \"from\": \"2020-09-08\",\r\n   \"to\": \"2021-05-15\"\r\n    },\r\n     \"tags\":[\r\n        {\"code\":\"{{codeTagTwo}}\"},\r\n        {\"code\":\"{{codeTagVip}}\"}\r\n    ],\r\n    \"attributes\": [\r\n        {\r\n            \"code\": \"{{codeAttributeOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeAttributeTwo}}\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n  \"productCode\": \"{{codeProductOne}}\",\r\n  \"shortDescription\": \"Product version test description\",\r\n  \"currentVersion\": 3,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n  \"longDescription\": \"This is a long test description for product version\",\r\n \"validity\":{\r\n   \"from\": \"2020-09-08\",\r\n   \"to\": \"2021-05-15\"\r\n    },\r\n     \"tagCodes\":[\"{{codeTagTwo}}\",\"{{codeTagVip}}\" ],\r\n    \"attributeCodes\": [  \"{{codeAttributeOne}}\",\"{{codeAttributeTwo}}\" ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -738,7 +738,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{codeProductTwo}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-09-08\",\r\n        \"to\": \"2021-05-15\"\r\n    },\r\n    \"tags\": [\r\n        {\r\n            \"code\": \"{{codeTagOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeTagTwo}}\"\r\n        }\r\n    ],\r\n    \"attributes\": [\r\n        {\r\n            \"code\": \"{{codeAttributeOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeAttributeTwo}}\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{codeProductTwo}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-09-08\",\r\n        \"to\": \"2021-05-15\"\r\n    },\r\n    \"tagCodes\": [  \"{{codeTagOne}}\",\"{{codeTagTwo}}\"],\r\n    \"attributeCodes\": [ \"{{codeAttributeOne}}\" , \"{{codeAttributeTwo}}\" ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -914,7 +914,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{offerTemplate}}\",\r\n    \"description\": \"This is offer one test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{codeProductOne}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tags\": [\r\n        {\r\n            \"code\": \"{{codeTagOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeTagTwo}}\"\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{offerTemplate}}\",\r\n    \"description\": \"This is offer one test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{codeProductOne}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [ \"{{codeTagOne}}\" , \"{{codeTagTwo}}\" ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -981,7 +981,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{offerTemplate}}\",\r\n    \"description\": \"This is offer two test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{codeProductTwo}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tags\": [\r\n        {\r\n            \"code\": \"{{codeTagOne}}\"\r\n        },\r\n        {\r\n            \"code\": \"{{codeTagVip}}\"\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{offerTemplate}}\",\r\n    \"description\": \"This is offer two test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{codeProductTwo}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [ \"{{codeTagOne}}\" , \"{{codeTagVip}}\" ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",

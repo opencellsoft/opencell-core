@@ -1,5 +1,7 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.CommercialRuleDTO;
 import org.meveo.model.cpq.Attribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,6 +35,11 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	@XmlElementWrapper(name = "chargeTemplates")
     @XmlElement(name = "chargeTemplates")
     private Set<ChargeTemplateDto> chargeTemplates;
+	
+	
+	@XmlElementWrapper(name = "commercialRules")
+    @XmlElement(name = "commercialRules")
+    private Set<CommercialRuleDTO> commercialRules;
 
 	
 	
@@ -101,6 +109,20 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	 */
 	public void setChargeTemplates(Set<ChargeTemplateDto> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public Set<CommercialRuleDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(Set<CommercialRuleDTO> commercialRules) {
+		this.commercialRules = commercialRules;
 	}
 
 
