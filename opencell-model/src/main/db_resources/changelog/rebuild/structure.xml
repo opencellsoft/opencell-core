@@ -10705,22 +10705,16 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="updater" type="varchar(100)" /> 
-            <column name="price_plan_version" type="int4">
-                <constraints nullable="false" />
-            </column>
+            <column name="updater" type="varchar(100)" />
+            <column name="ppm_id" type="bigint" />
             <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="status_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="start_date" type="date" />
-            <column name="end_date" type="date" />
-            <column name="price_list_flag" type="${type.boolean}" defaultValueNumeric="0"  >
-                <constraints nullable="false" />
-            </column>
-            <column name="dim_number" type="int4" />
+            <column name="valid_from" type="date" />
+            <column name="valid_to" type="date" />
             <column name="price_without_tax" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
@@ -10872,11 +10866,16 @@ $$ LANGUAGE plpgsql;
        <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-40">
         <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_trade_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
-     </changeSet> 
-     
-     
-     
-    
+     </changeSet>
+
+    <changeSet author="NabilOuachi" id="rebuild-mediapost-fk-41">
+        <addForeignKeyConstraint baseColumnNames="ppm_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+    </changeSet>
+
+
+
+
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />

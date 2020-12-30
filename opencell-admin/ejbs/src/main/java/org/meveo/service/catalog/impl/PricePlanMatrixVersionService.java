@@ -18,17 +18,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         
         if(entity == null)
             throw new BusinessException(PRICE_PLAN_MATRIX_VERSION_MISSIN);        
-        if(this.findByCode(entity.getCode(), entity.getPricePlanVersion()) != null)
-            throw new BusinessException(String.format(PRICE_PLAN_MATRIX_VERSION_ALREADY_EXIST, entity.getCode(), entity.getPricePlanVersion()));
+        if(this.findByCode(entity.getCode()) != null)
+            throw new BusinessException(String.format(PRICE_PLAN_MATRIX_VERSION_ALREADY_EXIST, entity.getCode()));
         super.create(entity);
     }
     
-    public PricePlanMatrixVersion findByCode(String code, int priceVersion) {
+    public PricePlanMatrixVersion findByCode(String code) {
         try {
             return (PricePlanMatrixVersion) this.getEntityManager()
                                                     .createNamedQuery("PricePlanMatrixVersion.findByCode")
                                                         .setParameter("code", code)
-                                                            .setParameter("priceVersion", priceVersion)
                                                                 .getSingleResult();
         }catch(NoResultException e) {
             return null;
