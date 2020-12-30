@@ -42,6 +42,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
@@ -402,6 +403,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commercial_order_id")
+    private CommercialOrder order;
+    
+    @Column(name = "prestation")
+    private String prestation;
 
     /**
      * This method is called implicitly by hibernate, used to enable

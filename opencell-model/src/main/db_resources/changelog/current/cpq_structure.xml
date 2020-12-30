@@ -423,7 +423,7 @@
 				<column name="amount_tax" type="numeric(23, 12)" >
 					<constraints nullable="false"/>
 				</column>
-				<column name="payment_method" type="numeric(23, 12)" >
+				<column name="payment_method_id" type="bigint" >
 					<constraints nullable="false"/>
 				</column>
 				<column name="pdf_link" type="varchar(255)" />
@@ -441,9 +441,15 @@
         </createTable>
         
 		<addPrimaryKey columnNames="order_invoice_id,access_point_list" constraintName="cpq_order_invoice_access_point_list_pkey" tableName="cpq_order_invoice_access_point_list" />
+		
+        <addForeignKeyConstraint baseColumnNames="order_invoice_id" baseTableName="cpq_order_invoice_access_point_list" constraintName="fk_cpq_order_invoice_access_point_list_order_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
+		
 		   
 		<addPrimaryKey columnNames="order_invoice_id,order_ref_list" constraintName="cpq_order_invoice_order_ref_list_pkey" tableName="cpq_order_invoice_order_ref_list" />
         
+        <addForeignKeyConstraint baseColumnNames="order_invoice_id" baseTableName="cpq_order_invoice_order_ref_list" constraintName="fk_cpq_order_invoice_order_ref_list_order_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
         
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_seller_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
@@ -456,6 +462,9 @@
         
         <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_payment_method_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
         
         <createTable tableName="cpq_invoice_line">
 		
@@ -572,8 +581,64 @@
 	            <column name="rate_to_bill" type="numeric(23, 12)" >
 	                <constraints nullable="false" />
 	            </column>
-	            
 		</createTable>
+		
+		
+        <addForeignKeyConstraint baseColumnNames="billing_plan_id" baseTableName="cpq_invoicing_plan_item" constraintName="fk_cpq_invoicing_plan_item_billing_plan_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />
+	            
+		<addColumn tableName="billing_subscription">
+			<column name="commercial_order_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+		
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+	            
+		
+		<addColumn tableName="billing_wallet_operation">
+			<column name="order_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+		
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+		
+		<addColumn tableName="billing_rated_transaction">
+			<column name="order_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+		
+		
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	            
 	</changeSet>
 </databaseChangeLog>
 

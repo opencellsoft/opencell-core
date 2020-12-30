@@ -30,6 +30,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.payments.PaymentMethod;
 
 
 /** 
@@ -106,9 +107,11 @@ public class OrderInvoice extends BusinessEntity {
 	@NotNull
     private BigDecimal amountTax;
 
-	@Column(name = "payment_method", nullable = false)
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_method_id", nullable = false)
 	@NotNull
-    private BigDecimal paymentMethod;
+    private PaymentMethod paymentMethod;
 
 	@Column(name = "pdf_link", length = 255)
     private String pdfLink;
@@ -316,14 +319,14 @@ public class OrderInvoice extends BusinessEntity {
 	/**
 	 * @return the paymentMethod
 	 */
-	public BigDecimal getPaymentMethod() {
+	public PaymentMethod getPaymentMethod() {
 		return paymentMethod;
 	}
 
 	/**
 	 * @param paymentMethod the paymentMethod to set
 	 */
-	public void setPaymentMethod(BigDecimal paymentMethod) {
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
 
