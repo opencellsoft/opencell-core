@@ -401,5 +401,37 @@ public class CommercialOrder extends AuditableEntity {
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
 	}
+
+
+	/**
+	 * @return the orderType
+	 */
+	public OrderType getOrderType() {
+		return orderType;
+	}
+
+
+	/**
+	 * @param orderType the orderType to set
+	 */
+	public void setOrderType(OrderType orderType) {
+		this.orderType = orderType;
+	}
+
+
+	/**
+	 * @return the invoicingPlan
+	 */
+	public BillingPlan getInvoicingPlan() {
+		return invoicingPlan;
+	}
+
+
+	/**
+	 * @param invoicingPlan the invoicingPlan to set
+	 */
+	public void setInvoicingPlan(BillingPlan invoicingPlan) {
+		this.invoicingPlan = invoicingPlan;
+	}
 	
 }
