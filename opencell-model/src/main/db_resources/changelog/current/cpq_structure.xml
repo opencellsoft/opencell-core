@@ -2686,7 +2686,7 @@
 
         <createTable tableName="cpq_product_charge_template_mapping">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_column_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_charge_template_mapping_pkey" />
             </column>
             <column name="version" type="int4" />
 
