@@ -2617,7 +2617,7 @@
             <column name="position" type ="int4"/>
             <column name="type" type="varchar(255)"/>
 
-            <column name="elValue" type="varchar(255)"/>
+            <column name="el_value" type="varchar(255)"/>
 
             <column name="product_id" type="bigint" />
 			<column name="offer_id" type="bigint" />

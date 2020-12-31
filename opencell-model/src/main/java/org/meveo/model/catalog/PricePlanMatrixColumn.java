@@ -39,7 +39,6 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @NotNull
     private ColumnTypeEnum type;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "el_value")
     @NotNull
     private String elValue;
