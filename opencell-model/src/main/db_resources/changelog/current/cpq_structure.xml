@@ -420,11 +420,11 @@
 			</column>
 			<column name="version" type="int4" />
 
-			<column name="ppm_column_id" type="bigint" />
+			<column name="ppm_version_id" type="bigint" />
 
-			<column name="long_value" type ="int8"/>
+			<column name="description" type="varchar(255)"/>
+			<column name="price_without_tax" type="numeric(23, 12)" />
 			<column name="double_value" type ="float8"/>
-			<column name="string_value" type="varchar(255)"/>
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_product" deferrable="false" initiallyDeferred="false"
@@ -435,5 +435,8 @@
 
 		<addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
+
+		<addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
 	</changeSet>
 </databaseChangeLog>
