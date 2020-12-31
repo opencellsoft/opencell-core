@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -22,6 +23,10 @@ public class PricePlanMatrixValue extends BaseEntity {
     @JoinColumn(name = "ppm_column_id")
     private PricePlanMatrixColumn pricePlanMatrixColumn;
 
+    @OneToOne
+    @JoinColumn(name= "ppml_id")
+    private PricePlanMatrixLine pricePlanMatrixLine;
+
     @Column(name = "long_value")
     private Long longValue;
 
@@ -30,6 +35,21 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     @Column (name = "string_value")
     private String stringValue;
+
+    @Column (name = "date_value")
+    private Date dateValue;
+
+    @Column (name = "from_date_value")
+    private Date fromDateValue;
+
+    @Column (name = "to_date_value")
+    private Date toDateValue;
+
+    @Column (name = "from_double_value")
+    private Double fromDoubleValue;
+
+    @Column (name = "to_double_value")
+    private Double toDoubleValue;
 
     public PricePlanMatrixColumn getPricePlanMatrixColumn() {
         return pricePlanMatrixColumn;

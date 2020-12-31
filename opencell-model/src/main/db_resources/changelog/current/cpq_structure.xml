@@ -2608,9 +2608,10 @@
             <column name="position" type ="int4"/>
             <column name="type" type="varchar(255)"/>
 
-            <column name="is_value" type="${type.boolean}"/>
+            <column name="elValue" type="varchar(255)"/>
 
             <column name="product_id" type="bigint" />
+			<column name="offer_id" type="bigint" />
             <column name="attribute_id" type="bigint" />
         </createTable>
 
@@ -2623,9 +2624,19 @@
 
             <column name="ppm_column_id" type="bigint" />
 
+			<column name="ppml_id" type="bigint" />
+
             <column name="long_value" type ="int8"/>
             <column name="double_value" type ="float8"/>
             <column name="string_value" type="varchar(255)"/>
+
+			<column name="date_value" type="datetime"/>
+			<column name="from_date_value" type="datetime"/>
+			<column name="to_date_value" type="datetime"/>
+
+			<column name="from_double_value" type ="float8"/>
+			<column name="to_double_value" type ="float8"/>
+
         </createTable>
 
         <createSequence sequenceName="cpq_price_plan_matrix_line_sq" startValue="1" />
@@ -2648,8 +2659,14 @@
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
+		<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_offer_template" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+
         <addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
+
+		<addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
 
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
