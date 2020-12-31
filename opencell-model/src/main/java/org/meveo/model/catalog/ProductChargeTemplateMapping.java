@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -27,8 +28,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Product;
 
@@ -41,6 +46,10 @@ import org.meveo.model.cpq.Product;
  */
 
 
+@Entity
+@Table(name = "cpq_product_charge_template_mapping", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cpq_product_charge_template_mapping_seq"), })
 public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends BaseEntity {
 
     private static final long serialVersionUID = -1872859127097329926L;
@@ -55,7 +64,7 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
     /**
      * Charge template
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChargeTemplate.class)
     @JoinColumn(name = "charge_template_id")
     protected T chargeTemplate;
 
@@ -70,7 +79,7 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
      * Prepaid wallet templates to charge on.
      */
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @JoinTable(name = "cat_product_wallet_template_1", joinColumns = @JoinColumn(name = "product_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "INDX")
     private List<WalletTemplate> walletTemplates;
 

@@ -39,10 +39,14 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @NotNull
     private ColumnTypeEnum type;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "is_value")
+    @Column(name = "el_value")
     @NotNull
-    private Boolean isValue;
+    private String elValue;
+
+    @OneToOne
+    @JoinColumn(name = "offer_id")
+    @NotNull
+    private OfferTemplate offerTemplate;
 
     @OneToOne
     @JoinColumn(name = "product_id")
@@ -78,14 +82,6 @@ public class PricePlanMatrixColumn extends BusinessEntity {
         this.type = type;
     }
 
-    public Boolean getValue() {
-        return isValue;
-    }
-
-    public void setValue(Boolean value) {
-        isValue = value;
-    }
-
     public Product getProduct() {
         return product;
     }
@@ -100,5 +96,21 @@ public class PricePlanMatrixColumn extends BusinessEntity {
 
     public void setAttribute(Attribute attribute) {
         this.attribute = attribute;
+    }
+
+    public String getElValue() {
+        return elValue;
+    }
+
+    public void setElValue(String elValue) {
+        this.elValue = elValue;
+    }
+
+    public OfferTemplate getOfferTemplate() {
+        return offerTemplate;
+    }
+
+    public void setOfferTemplate(OfferTemplate offerTemplate) {
+        this.offerTemplate = offerTemplate;
     }
 }
