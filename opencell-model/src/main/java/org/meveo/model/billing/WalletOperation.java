@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -62,6 +63,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.commercial.InfoOrder;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
@@ -529,6 +531,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "reject_reason", columnDefinition = "text")
     @Size(max = 255)
     private String rejectReason;
+    
+    @Embedded
+    private InfoOrder infoOrder;
 
     /**
      * Constructor
@@ -1417,4 +1422,18 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         return String.format("id=%s, op date=%s, period=%s-%s, quantity=%s, unitAmount=%s, amount=%s", id, DateUtils.formatAsDate(operationDate), DateUtils.formatAsDate(startDate), DateUtils.formatAsDate(endDate),
             quantity, unitAmountWithoutTax, amountWithoutTax);
     }
+
+	/**
+	 * @return the infoOrder
+	 */
+	public InfoOrder getInfoOrder() {
+		return infoOrder;
+	}
+
+	/**
+	 * @param infoOrder the infoOrder to set
+	 */
+	public void setInfoOrder(InfoOrder infoOrder) {
+		this.infoOrder = infoOrder;
+	}
 }
