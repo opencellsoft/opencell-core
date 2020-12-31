@@ -394,12 +394,11 @@ public class Product extends BusinessEntity {
 		this.offerComponents = offerComponents;
 	}
 
+	public List<ProductChargeTemplateMapping> getProductCharges() {
+		return productCharges;
+	}
 
-	
-	
-	
-
-
-
-
+	public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
+		this.productCharges = productCharges;
+	}
 }
