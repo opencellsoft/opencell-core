@@ -6,9 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -30,7 +33,9 @@ public class GetProductDtoResponse extends BaseResponse{
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
     private Set<ProductVersionDto> productVersions = new HashSet<>();
-    
+    @XmlElementWrapper(name = "chargeTemplates")
+    @XmlElement(name = "chargeTemplates")
+    private Set<ChargeTemplateDto> chargeTemplates;
     
     public GetProductDtoResponse(Product p) {
     	super();
@@ -97,4 +102,19 @@ public class GetProductDtoResponse extends BaseResponse{
 	public void setDiscountList(Set<DiscountPlanDto> discountList) {
 		this.discountList = discountList;
 	}
+
+	/**
+	 * @return the chargeTemplates
+	 */
+	public Set<ChargeTemplateDto> getChargeTemplates() {
+		return chargeTemplates;
+	}
+
+	/**
+	 * @param chargeTemplates the chargeTemplates to set
+	 */
+	public void setChargeTemplates(Set<ChargeTemplateDto> chargeTemplates) {
+		this.chargeTemplates = chargeTemplates;
+	}
+	
 }

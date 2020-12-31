@@ -1,5 +1,6 @@
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -7,6 +8,8 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -39,6 +42,10 @@ public class ProductDto extends BaseEntityDto{
     /** The custom fields. */
     private CustomFieldsDto customFields;
     private ProductVersionDto currentProductVersion;
+    
+    @XmlElementWrapper(name = "chargeTemplateCodes")
+    @XmlElement(name = "chargeTemplateCodes") 
+    private List<String> chargeTemplateCodes = new ArrayList<String>();
     
    
 
@@ -243,6 +250,20 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
 		this.currentProductVersion = currentProductVersion;
+	}
+
+	/**
+	 * @return the chargeTemplateCodes
+	 */
+	public List<String> getChargeTemplateCodes() {
+		return chargeTemplateCodes;
+	}
+
+	/**
+	 * @param chargeTemplateCodes the chargeTemplateCodes to set
+	 */
+	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
+		this.chargeTemplateCodes = chargeTemplateCodes;
 	}
 
 

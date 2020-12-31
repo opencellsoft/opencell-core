@@ -37,7 +37,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response createProduct(ProductDto productDto) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	productApi.addNewProduct(productDto);
+        	productApi.create(productDto);
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
