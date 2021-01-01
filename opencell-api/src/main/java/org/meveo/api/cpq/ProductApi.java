@@ -176,7 +176,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 * @throws ProductException
 	 */
-	public ProductDto findByCode(String code){
+	public Product findByCode(String code){
 		if(Strings.isEmpty(code)) {
 			missingParameters.add("code");
 		}
@@ -186,7 +186,7 @@ public class ProductApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Product.class,code);
 		} 
 		
-		return new ProductDto(product);
+		return product;
 	}
 	
  

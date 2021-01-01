@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({ "chargeTemplateCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
 public class GetAttributeDtoResponse extends AttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")

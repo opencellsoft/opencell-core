@@ -83,9 +83,6 @@ public class AttributeDTO extends EnableBusinessDto {
     @NotNull
     protected boolean mandatory=Boolean.FALSE;
     
-    
-    protected List<String> commercialRuleCodes=new ArrayList<String>();
-    
    protected boolean selectable=Boolean.TRUE;
     
     protected boolean ruled=Boolean.FALSE;
@@ -96,8 +93,10 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElement(name = "chargeTemplateCodes") 
     private List<String> chargeTemplateCodes = new ArrayList<String>();
  
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
-   
     public AttributeDTO() {
     }
 

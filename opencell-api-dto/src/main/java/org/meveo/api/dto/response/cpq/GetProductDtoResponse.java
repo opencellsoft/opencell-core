@@ -10,13 +10,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.CommercialRuleDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.Product;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
@@ -26,10 +30,9 @@ import org.meveo.model.cpq.Product;
  */
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetProductDtoResponse")
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetProductDtoResponse extends BaseResponse{
-
-	private ProductDto productDto;
+public class GetProductDtoResponse extends ProductDto{
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
     private Set<ProductVersionDto> productVersions = new HashSet<>();
@@ -37,10 +40,18 @@ public class GetProductDtoResponse extends BaseResponse{
     @XmlElement(name = "chargeTemplates")
     private Set<ChargeTemplateDto> chargeTemplates;
     
+	@XmlElementWrapper(name = "commercialRules")
+    @XmlElement(name = "commercialRules")
+    private Set<CommercialRuleDTO> commercialRules;
+	
+    /**
+     * The status response of the web service response.
+     */
+    private ActionStatus actionStatus = new ActionStatus();
+    
     public GetProductDtoResponse(Product p) {
-    	super();
+    	super(p);
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-		productDto=new ProductDto(p);
     	if(p.getDiscountList() != null && !p.getDiscountList().isEmpty()) {
     		discountList = p.getDiscountList().stream().map(d -> {
     			final DiscountPlanDto discount = new DiscountPlanDto(d, null);
@@ -62,19 +73,7 @@ public class GetProductDtoResponse extends BaseResponse{
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
 
-	/**
-	 * @return the productDto
-	 */
-	public ProductDto getProductDto() {
-		return productDto;
-	}
 
-	/**
-	 * @param productDto the productDto to set
-	 */
-	public void setProductDto(ProductDto productDto) {
-		this.productDto = productDto;
-	}
 	/**
 	 * @return the productVersions
 	 */
@@ -116,5 +115,35 @@ public class GetProductDtoResponse extends BaseResponse{
 	public void setChargeTemplates(Set<ChargeTemplateDto> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public Set<CommercialRuleDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(Set<CommercialRuleDTO> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+	/**
+	 * @return the actionStatus
+	 */
+	public ActionStatus getActionStatus() {
+		return actionStatus;
+	}
+
+	/**
+	 * @param actionStatus the actionStatus to set
+	 */
+	public void setActionStatus(ActionStatus actionStatus) {
+		this.actionStatus = actionStatus;
+	}
+	
+	
 	
 }

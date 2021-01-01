@@ -185,15 +185,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(product==null) {
 			throw new EntityDoesNotExistsException(Product.class,productCode);
 		}
-		ProductDto productDto=new ProductDto(product);
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,Integer.parseInt(currentProductVersion));
 		if(productVersion==null) {
 			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
 		}
        GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,false);
-		productDto.setCurrentProductVersion(getProductVersionResponse);
-		GetProductDtoResponse result = new GetProductDtoResponse();
-		result.setProductDto(productDto);    
+		
+		GetProductDtoResponse result = new GetProductDtoResponse(product);   
+		result.setCurrentProductVersion(getProductVersionResponse);
 		return result;
 	}
 

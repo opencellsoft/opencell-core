@@ -28,24 +28,29 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
     @NotNull
-	private String code;
-	private String label;
-	private ProductStatusEnum status;
-	private Date statusDate;
-	private String productLineCode;
-	private String brandCode;
-	private String reference;
-	private String model;
-	private Set<String> modelChildren;
-	private boolean discountFlag=Boolean.FALSE;
-    private boolean packageFlag=Boolean.FALSE;
+    protected String code;
+    protected String label;
+	protected ProductStatusEnum status;
+	protected Date statusDate;
+	protected String productLineCode;
+	protected String brandCode;
+	protected String reference;
+	protected String model;
+	protected Set<String> modelChildren;
+	protected boolean discountFlag=Boolean.FALSE;
+	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
-    private CustomFieldsDto customFields;
-    private ProductVersionDto currentProductVersion;
+    protected CustomFieldsDto customFields;
+    protected ProductVersionDto currentProductVersion;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
-    private List<String> chargeTemplateCodes = new ArrayList<String>();
+    protected List<String> chargeTemplateCodes = new ArrayList<String>();
+    
+    
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
    
 
