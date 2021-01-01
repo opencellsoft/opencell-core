@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.CommercialRuleDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
@@ -53,7 +53,7 @@ public interface CommercialRuleRs extends IBaseRs {
     })
 	
 	Response create(	@Parameter( name = "commercialRuleDto",
-									description = "CommercialRule dto for a new insertion")CommercialRuleDTO commercialRuleDTO);
+									description = "CommercialRule dto for a new insertion")CommercialRuleHeaderDTO commercialRuleDTO);
 	
 	@PUT
 	@Path("/")
@@ -66,7 +66,7 @@ public interface CommercialRuleRs extends IBaseRs {
             @ApiResponse(responseCode = "412", description = "missing required paramter for CommercialRuleDTO.The required params are : code",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
     })
-	Response update(@Parameter(description = "commercialRule dto for updating an existing commercialRule", required = true) CommercialRuleDTO commercialRuleDTO);
+	Response update(@Parameter(description = "commercialRule dto for updating an existing commercialRule", required = true) CommercialRuleHeaderDTO commercialRuleDTO);
 	
 	@DELETE
 	@Path("/{code}")

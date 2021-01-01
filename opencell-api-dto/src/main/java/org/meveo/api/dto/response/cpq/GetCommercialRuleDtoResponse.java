@@ -7,7 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.cpq.CommercialRuleDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 
 
@@ -18,7 +19,7 @@ import org.meveo.api.dto.cpq.CommercialRuleDTO;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetCommercialRuleDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetCommercialRuleDtoResponse extends CommercialRuleDTO{
+public class GetCommercialRuleDtoResponse extends CommercialRuleHeaderDTO{
 
     /**
      * The status response of the web service response.
@@ -45,6 +46,11 @@ public class GetCommercialRuleDtoResponse extends CommercialRuleDTO{
         actionStatus = new ActionStatus(status, errorCode, message);
     }
 
+    
+    public GetCommercialRuleDtoResponse(CommercialRuleHeader commercialRuleHeader) {
+		super(commercialRuleHeader);
+	}
+    
 	/**
 	 * @return the actionStatus
 	 */

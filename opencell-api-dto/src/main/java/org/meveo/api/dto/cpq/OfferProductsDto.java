@@ -34,7 +34,7 @@ public class OfferProductsDto extends BaseEntityDto {
     @XmlElement(name = "allowedDiscountPlans")
     private List<DiscountPlanDto> allowedDiscountPlans;
     
-    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+    private List<CommercialRuleHeaderDTO> commercialRules=new ArrayList<CommercialRuleHeaderDTO>();
 
     private boolean selectable=Boolean.TRUE;
     
@@ -81,14 +81,14 @@ public class OfferProductsDto extends BaseEntityDto {
 	/**
 	 * @return the commercialRules
 	 */
-	public List<CommercialRuleDTO> getCommercialRules() {
+	public List<CommercialRuleHeaderDTO> getCommercialRules() {
 		return commercialRules;
 	}
 
 	/**
 	 * @param commercialRules the commercialRules to set
 	 */
-	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+	public void setCommercialRules(List<CommercialRuleHeaderDTO> commercialRules) {
 		this.commercialRules = commercialRules;
 	}
 

@@ -14,10 +14,9 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.cpq.CommercialRuleDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.Product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,7 +41,7 @@ public class GetProductDtoResponse extends ProductDto{
     
 	@XmlElementWrapper(name = "commercialRules")
     @XmlElement(name = "commercialRules")
-    private Set<CommercialRuleDTO> commercialRules;
+    private Set<CommercialRuleHeaderDTO> commercialHeaderRules;
 	
     /**
      * The status response of the web service response.
@@ -116,18 +115,22 @@ public class GetProductDtoResponse extends ProductDto{
 		this.chargeTemplates = chargeTemplates;
 	}
 
+	
+	
+ 
+
 	/**
-	 * @return the commercialRules
+	 * @return the commercialHeaderRules
 	 */
-	public Set<CommercialRuleDTO> getCommercialRules() {
-		return commercialRules;
+	public Set<CommercialRuleHeaderDTO> getCommercialHeaderRules() {
+		return commercialHeaderRules;
 	}
 
 	/**
-	 * @param commercialRules the commercialRules to set
+	 * @param commercialHeaderRules the commercialHeaderRules to set
 	 */
-	public void setCommercialRules(Set<CommercialRuleDTO> commercialRules) {
-		this.commercialRules = commercialRules;
+	public void setCommercialHeaderRules(Set<CommercialRuleHeaderDTO> commercialHeaderRules) {
+		this.commercialHeaderRules = commercialHeaderRules;
 	}
 
 	/**

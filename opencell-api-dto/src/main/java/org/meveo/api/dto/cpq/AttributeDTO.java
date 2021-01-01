@@ -28,10 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 

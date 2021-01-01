@@ -7,12 +7,13 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Tarik FAKHOURI.
+ * @author Mbarek-Ay.
  * @version 10.0
  * 
- * Trade Rule Line type service implementation.
+ * Commercial Rule Line type service implementation.
  */
 
 @Stateless
-public class TradeRuleLineService extends PersistenceService<CommercialRuleLine> {
+public class CommercialRuleLineService extends PersistenceService<CommercialRuleLine> {
 
 }
