@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -25,6 +27,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderStatusEnum;
 
 
 /** 
@@ -49,8 +52,7 @@ public class CommercialOrder extends AuditableEntity {
 	@NotNull
 	private Seller seller;
 	
-	@Column(name = "order_number", nullable = false, length = 50)
-	@NotNull
+	@Column(name = "order_number", length = 50)
 	@Size(max = 50)
 	private String orderNumber;
 	
@@ -81,9 +83,10 @@ public class CommercialOrder extends AuditableEntity {
 	private BillingPlan invoicingPlan;
 
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name ="status", nullable = false)
 	@NotNull
-	private String status;
+	private OrderStatusEnum status;
 	
 	@Column(name = "status_date", nullable = false)
 	@NotNull
@@ -230,7 +233,7 @@ public class CommercialOrder extends AuditableEntity {
 	/**
 	 * @return the status
 	 */
-	public String getStatus() {
+	public OrderStatusEnum getStatus() {
 		return status;
 	}
 
@@ -238,7 +241,7 @@ public class CommercialOrder extends AuditableEntity {
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(OrderStatusEnum status) {
 		this.status = status;
 	}
 

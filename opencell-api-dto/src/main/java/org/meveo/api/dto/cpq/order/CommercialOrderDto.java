@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.order.OrderStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -25,7 +26,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String orderTypeCode;
 	private String invoicingPlanCode;
 	//@NotNull
-	private String status;
+	private OrderStatusEnum status;
 //	@NotNull
 //	private Date statusDate;
 	@NotNull
@@ -42,9 +43,12 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private Date customerServiceBegin;
 	private int customerServiceDuration;
 	private String externalReference;
-	private Long orderParentId;
+	private String orderParentCode;
 	
 	
+	public CommercialOrderDto() {
+	}
+
 	public CommercialOrderDto(CommercialOrder order) {
 		this.sellerCode = order.getSeller().getCode();
 		this.orderNumber = order.getOrderNumber();
@@ -65,7 +69,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.customerServiceBegin = order.getCustomerServiceBegin();
 		this.customerServiceDuration = order.getCustomerServiceDuration();
 		this.externalReference = order.getExternalReference();
-		this.orderParentId = order.getOrderParent().getId();
+		if(order.getOrderParent() != null)
+			this.orderParentCode = order.getOrderParent().getCode();
 	}
 	
 	/**
@@ -167,13 +172,13 @@ public class CommercialOrderDto extends BaseEntityDto {
 	/**
 	 * @return the status
 	 */
-	public String getStatus() {
+	public OrderStatusEnum getStatus() {
 		return status;
 	}
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(OrderStatusEnum status) {
 		this.status = status;
 	}
 	/**
@@ -260,17 +265,19 @@ public class CommercialOrderDto extends BaseEntityDto {
 	public void setExternalReference(String externalReference) {
 		this.externalReference = externalReference;
 	}
+
 	/**
-	 * @return the orderParentId
+	 * @return the orderParentCode
 	 */
-	public Long getOrderParentId() {
-		return orderParentId;
+	public String getOrderParentCode() {
+		return orderParentCode;
 	}
+
 	/**
-	 * @param orderParentId the orderParentId to set
+	 * @param orderParentCode the orderParentCode to set
 	 */
-	public void setOrderParentId(Long orderParentId) {
-		this.orderParentId = orderParentId;
+	public void setOrderParentCode(String orderParentCode) {
+		this.orderParentCode = orderParentCode;
 	}
 	
 	

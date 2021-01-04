@@ -1986,9 +1986,7 @@
 	            <column name="seller_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-	            <column name="order_number" type="varchar(50)" >
-	            	<constraints nullable="false"/>
-	            </column>
+	            <column name="order_number" type="varchar(50)" />
 	            <column name="label" type="varchar(255)" />
 	            <column name="billing_account_id" type="bigint" >
 	            	<constraints nullable="false"/>
