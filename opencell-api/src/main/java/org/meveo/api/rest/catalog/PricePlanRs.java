@@ -18,6 +18,21 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,12 +43,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
-import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
-import org.meveo.api.rest.IBaseRs;
+import javax.ws.rs.core.Response;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.PricePlanMatrix}.
@@ -125,5 +135,77 @@ public interface PricePlanRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
+
+
+    @POST
+    @Path("/pricePlanVersion")
+    @Operation(summary = "This endpoint allows to create or update a price plan version",
+            tags = { "PricePlan" },
+            description ="create a price plan version if it doesn't exist or update an existing price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan version successfully created or updated",
+                            content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Unkonw product to attach to product version"),
+                    @ApiResponse(responseCode = "400", description = "the product verion with product code and current version in param does not exist ")
+            })
+    Response createOrUpdateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto);
+
+    /**
+     *
+     * @param pricePlanMatrixCode
+     * @param pricePlanMatrixVersion
+     * @return
+     */
+    @DELETE
+    @Path("/pricePlanMatrixVersion/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
+    @Operation(summary = "This endpoint allows to remove a price plan version",
+            tags = { "PricePlanMatrixVersion"},
+            description ="remove a price plan version with price plan code and current version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan version successfully deleted",
+                            content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+                    @ApiResponse(responseCode = "404", description = "Unknown price plan version")
+                    ,
+                    @ApiResponse(responseCode = "400", description = "the price plan version with price plan code and current version in param does not exist or the price plan matrix version is attached to a price plan matrix")
+            })
+    Response removeMatrixPricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,@Parameter @PathParam("pricePlanMatrixVersion")  int pricePlanMatrixVersion);
+
+    /**
+     *
+     * @param pricePlanMatrixCode
+     * @param status
+     * @param pricePlanMatrixVersion
+     * @return
+     */
+    @POST
+    @Path("/pricePlanMatrixVersion/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
+    @Operation(summary = "This endpoint allows to update the price plan version status",
+            tags = { "PricePlanMatrixVersion" },
+            description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan version successfully updated",  content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Unknown price plan version"),
+                    @ApiResponse(responseCode = "400", description = "the status of the price plan matrix is already closed")
+            })
+    Response updatePricePlanMatrixVersionStatus(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode, @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @Parameter @QueryParam("status") VersionStatusEnum status);
+
+    /**
+     *
+     * @param productCode
+     * @param productVersion
+     * @return
+     */
+    @POST
+    @Path("/pricePlanMatrixVersion/duplicate/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
+    @Operation(summary = "This endpoint allows to duplicate a price plan matrix version",
+            tags = { "PricePlanMatrixVersion" },
+            description ="duplicate a product version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the product version successfully duplicated"),
+                    @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
+            })
+    Response duplicatePricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+                                     @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+
 
 }

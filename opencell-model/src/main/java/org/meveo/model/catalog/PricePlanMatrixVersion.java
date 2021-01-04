@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -16,12 +17,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -34,7 +35,10 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
-@NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p where p.code=:code")
+@NamedQueries({
+        @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p where p.code=:code"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanCode")
+})
 public class PricePlanMatrixVersion extends BusinessEntity {
     
     @Enumerated(EnumType.STRING)
@@ -46,6 +50,10 @@ public class PricePlanMatrixVersion extends BusinessEntity {
     @JoinColumn(name = "ppm_id")
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
+
+    @Column(name = "current_version", nullable = false)
+    @Min(1)
+    private int currentVersion;
 
     @Column(name = "label")
     private String label;
@@ -65,7 +73,7 @@ public class PricePlanMatrixVersion extends BusinessEntity {
 
     @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    private BigDecimal pricetWithoutTax;
+    private BigDecimal priceWithoutTax;
     /**
      * @return the status
      */
@@ -94,14 +102,14 @@ public class PricePlanMatrixVersion extends BusinessEntity {
     /**
      * @return the pricetWithoutTax
      */
-    public BigDecimal getPricetWithoutTax() {
-        return pricetWithoutTax;
+    public BigDecimal getPriceWithoutTax() {
+        return priceWithoutTax;
     }
     /**
-     * @param pricetWithoutTax the pricetWithoutTax to set
+     * @param priceWithoutTax the pricetWithoutTax to set
      */
-    public void setPricetWithoutTax(BigDecimal pricetWithoutTax) {
-        this.pricetWithoutTax = pricetWithoutTax;
+    public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
+        this.priceWithoutTax = priceWithoutTax;
     }
 
     public PricePlanMatrix getPricePlanMatrix() {
@@ -118,6 +126,14 @@ public class PricePlanMatrixVersion extends BusinessEntity {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public int getCurrentVersion() {
+        return currentVersion;
+    }
+
+    public void setCurrentVersion(int currentVersion) {
+        this.currentVersion = currentVersion;
     }
 
     public DatePeriod getValidity() {

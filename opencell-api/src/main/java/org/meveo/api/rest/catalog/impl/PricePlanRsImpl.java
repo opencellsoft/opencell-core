@@ -21,16 +21,23 @@ package org.meveo.api.rest.catalog.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.catalog.PricePlanMatrixApi;
+import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -41,6 +48,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
     @Inject
     private PricePlanMatrixApi pricePlanApi;
+    @Inject
+    private PricePlanMatrixVersionApi pricePlanMatrixVersionApi;
 
     @Override
     public ActionStatus create(PricePlanMatrixDto postData) {
@@ -144,5 +153,49 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
 
         return result;
+    }
+
+    @Override
+    public Response createOrUpdateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            pricePlanMatrixVersionApi.createOrUpdate(pricePlanMatrixVersionDto);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response removeMatrixPricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.removePricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        }
+    }
+
+    @Override
+    public Response updatePricePlanMatrixVersionStatus(String pricePlanMatrixCode, int pricePlanMatrixVersion, VersionStatusEnum status) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            result=pricePlanMatrixVersionApi.updateProductVersionStatus(pricePlanMatrixCode, pricePlanMatrixVersion, status);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response duplicatePricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            result =pricePlanMatrixVersionApi.duplicateProductVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
     }
 }
