@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -304,14 +305,33 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "skip_validation_script")
+    private boolean skipValidationScript = false;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
      */
     @Column(name = "collection_date")
     private Date collectionDate;
+    
+    /**
+     * The next BillingRun where rejected/suspect invoices may be moved.
+     */
+    @OneToOne
+    @JoinColumn(name = "next_billing_run_id")
+    private BillingRun nextBillingRun;
 
-    public Date getProcessDate() {
+    public BillingRun getNextBillingRun() {
+		return nextBillingRun;
+	}
+
+	public void setNextBillingRun(BillingRun nextBillingRun) {
+		this.nextBillingRun = nextBillingRun;
+	}
+
+	public Date getProcessDate() {
         return processDate;
     }
 
@@ -708,4 +728,36 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
     }
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "reject_auto_action")
+    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "suspect_auto_action")
+    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    
+    public BillingRunAutomaticActionEnum getRejectAutoAction() {
+		return rejectAutoAction;
+	}
+
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum autoRejectAction) {
+		this.rejectAutoAction = autoRejectAction;
+	}
+
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
+
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum autoSuspectAction) {
+		this.suspectAutoAction = autoSuspectAction;
+	}
+
+	public boolean isSkipValidationScript() {
+		return skipValidationScript;
+	}
+
+	public void setSkipValidationScript(boolean skipValidationScript) {
+		this.skipValidationScript = skipValidationScript;
+	}
 }

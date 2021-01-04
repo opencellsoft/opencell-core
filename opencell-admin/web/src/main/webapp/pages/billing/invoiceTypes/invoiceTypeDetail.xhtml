@@ -27,6 +27,11 @@
             backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
+        <hftl:entityPopup id="invoiceValidationScriptPopup" header="#{messages['scriptInstance.popup.header']}"
+            updateField=":formInvoiceType:invoiceValidationScriptId" selection="#{invoiceTypeBean.entity.invoiceValidationScript}"
+            backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
         <hftl:entityPopup id="searchEmailTemplatePopup" header="#{messages['emailTemplate']}"
                           updateField=":formInvoiceType:emailTemplateId :formInvoiceType:emailTemplateId_text"
                           selection="#{invoiceTypeBean.entity.emailTemplate}"
@@ -54,6 +59,9 @@
             <hftl:formField label="#{messages['invoiceType.billingTemplateName']}" field="billingTemplateName" required="false" />
             <hftl:formField label="#{messages['invoiceType.billingTemplateNameEL']}" field="billingTemplateNameEL" />
             <hftl:formField id="customInvoiceXmlScriptId" label="#{messages['invoiceType.customInvoiceXmlScript']}" field="customInvoiceXmlScriptInstance" valueLabelField="code" required="false" popup="true" popupId="invoiceTypeScriptPopup" showResetButton="true" />
+            
+            <hftl:formField id="invoiceValidationScriptId" label="#{messages['invoiceType.invoiceValidationScript']}" field="invoiceValidationScript" valueLabelField="code" required="false" popup="true" popupId="invoiceValidationScriptPopup" showResetButton="true" />
+            
             <hftl:formField label="#{messages['invoiceType.invoiceAccountable']}" field="invoiceAccountable" />
             <hftl:formField label="#{messages['invoiceType.prefix']}" field="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['invoiceType.invoiceSequence']}" id="invoiceSequenceSelectedId" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"

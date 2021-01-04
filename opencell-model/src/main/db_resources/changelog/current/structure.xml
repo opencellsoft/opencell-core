@@ -3712,8 +3712,10 @@ END $$;]]>
     <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
 		<addColumn tableName="ar_ddrequest_lot_op">
             <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="match_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
 	</changeSet>
+	
     <changeSet id="5697_20201208" author="khalidHORRI">
         <addColumn tableName="ar_payment_schedule_inst_item">
             <column name="amount" type="numeric(23, 12)"/>
@@ -3721,8 +3723,39 @@ END $$;]]>
         <addColumn tableName="ar_payment_schedule_tmpl">
             <column name="use_banking_calender" type="${type.boolean}" defaultValueNumeric="1"/>
         </addColumn>
-
     </changeSet>
 
-
+    
+	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="skip_validation_script" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="suspect_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="reject_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="next_billing_run_id" type="bigint"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_invoice">
+            <column name="reject_reason" type="varchar(255)"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_cycle">
+            <column name="billing_run_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="invoice_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
+              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+    </changeSet>
+    
 </databaseChangeLog>

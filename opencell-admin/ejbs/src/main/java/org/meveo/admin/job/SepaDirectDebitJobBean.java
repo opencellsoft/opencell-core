@@ -19,7 +19,6 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -180,6 +179,10 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 					break;
 				}
+				boolean isToMatching = true;
+				if(ddrequestLotOp.isMatchPaymentLines() == Boolean.FALSE) {
+					isToMatching = false;
+				}
 				try {
 					DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
 					if (dateRangeScript != null) { // computing custom due date range :
@@ -198,7 +201,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							result.addReport(ddRequestLOT.getRejectedCause());
 							
 							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, nbRuns, waitingMillis, result);
 								log.info("end createPaymentsOrRefundsForDDRequestLot");
 								if (isEmpty(ddRequestLOT.getRejectedCause())) {
 									result.registerSucces();
@@ -208,7 +211,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
 						if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
+							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), isToMatching, nbRuns, waitingMillis, result);
 							result.registerSucces();
 						}
 					}
