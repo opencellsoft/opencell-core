@@ -30,7 +30,7 @@ import org.meveo.model.payments.PaymentScheduleTemplate;
 
 /**
  * The Class PaymentScheduleTemplateDto.
- * 
+ *
  * @author anasseh
  */
 @XmlRootElement(name = "PaymentScheduleTemplateDto")
@@ -51,7 +51,6 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
 
     /** The payment label. */
     private String paymentLabel;
-
 
     /** The payment day in month. */
     private Integer paymentDayInMonth;
@@ -115,6 +114,11 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     private String scriptInstanceCode;
 
     /**
+     * Use banking calendar.
+     */
+    private Boolean useBankingCalendar;
+
+    /**
      * Instantiates a new payment schedule template dto.
      */
     public PaymentScheduleTemplateDto() {
@@ -128,10 +132,10 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      * @param customFields the custom fields
      */
     public PaymentScheduleTemplateDto(PaymentScheduleTemplate paymentScheduleTemplate, CustomFieldsDto customFields) {
-        this.advancePaymentInvoiceSubCategoryCode = paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory() == null ? null
-                : paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory().getCode();
-        this.advancePaymentInvoiceTypeCode = paymentScheduleTemplate.getAdvancePaymentInvoiceType() == null ? null
-                : paymentScheduleTemplate.getAdvancePaymentInvoiceType().getCode();
+        this.advancePaymentInvoiceSubCategoryCode =
+                paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory() == null ? null : paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory().getCode();
+        this.advancePaymentInvoiceTypeCode =
+                paymentScheduleTemplate.getAdvancePaymentInvoiceType() == null ? null : paymentScheduleTemplate.getAdvancePaymentInvoiceType().getCode();
         this.calendarCode = paymentScheduleTemplate.getCalendar() == null ? null : paymentScheduleTemplate.getCalendar().getCode();
         this.code = paymentScheduleTemplate.getCode();
         this.description = paymentScheduleTemplate.getDescription();
@@ -149,6 +153,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.taxClassCode = paymentScheduleTemplate.getTaxClass() == null ? null : paymentScheduleTemplate.getTaxClass().getCode();
         this.paymentDayInMonthEl = paymentScheduleTemplate.getPaymentDayInMonthEl();
         this.scriptInstanceCode = (paymentScheduleTemplate.getScriptInstance() != null) ? paymentScheduleTemplate.getScriptInstance().getCode() : null;
+        this.useBankingCalendar = paymentScheduleTemplate.getUseBankingCalendar();
     }
 
     /**
@@ -455,5 +460,23 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      */
     public void setScriptInstanceCode(String scriptInstanceCode) {
         this.scriptInstanceCode = scriptInstanceCode;
+    }
+
+    /**
+     * Use the banking calendar.
+     *
+     * @return
+     */
+    public Boolean getUseBankingCalendar() {
+        return useBankingCalendar;
+    }
+
+    /**
+     * Sets the use of the banking calendar.
+     *
+     * @param useBankingCalendar
+     */
+    public void setUseBankingCalendar(Boolean useBankingCalendar) {
+        this.useBankingCalendar = useBankingCalendar;
     }
 }

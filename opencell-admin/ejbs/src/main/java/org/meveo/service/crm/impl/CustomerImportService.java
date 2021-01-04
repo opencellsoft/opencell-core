@@ -12,7 +12,7 @@
  * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
  * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * For more information on the GNU   Affero General Public License, please consult
+ * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
@@ -41,11 +41,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.*;
-
-
-
-
-
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -163,7 +158,6 @@ public class CustomerImportService extends ImportService {
         String paymentMethod = custAcc.getPaymentMethod();
         List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
         if (paymentMethod == null) {
-
             if (paymentMethods == null) {
                 paymentMethods = new ArrayList<PaymentMethod>();
                 customerAccount.setPaymentMethods(paymentMethods);
@@ -197,6 +191,7 @@ public class CustomerImportService extends ImportService {
                     DDpaymentMethod.setCustomerAccount(customerAccount);
                     DDpaymentMethod.setPreferred(true);
                     paymentMethods.add(DDpaymentMethod);
+                    
                     break;
                 default: // The default configuration is for the CHECK payment method
                     CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();

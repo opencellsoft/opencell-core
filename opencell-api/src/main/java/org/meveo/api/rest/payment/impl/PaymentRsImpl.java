@@ -45,6 +45,8 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceItemDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceItemsDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
@@ -64,6 +66,8 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
+
+import java.util.List;
 
 /**
  * The implementation for PaymentRs.
@@ -853,7 +857,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
-    
+
     @Override
     public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(String customerAccountCode, Integer offset, Integer limit) {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
@@ -884,6 +888,25 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         try {
             paymentMethodApi.approveSepaDDMandate(customerAccountCode,tokenId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Update Payment schedule instance item, the update is only about amount and requestPaymentDate.
+     *
+     * @param paymentScheduleInstanceItemDtos
+     * @return
+     */
+    @Override
+    public ActionStatus replacePaymentScheduleInstanceItem(Long paymentScheduleInstanceId, PaymentScheduleInstanceItemsDto paymentScheduleInstanceItemDtos) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentScheduleApi.replacePaymentScheduleInstanceItems(paymentScheduleInstanceId, paymentScheduleInstanceItemDtos.getPaymentScheduleInstanceItems());
         } catch (Exception e) {
             processException(e, result);
         }

@@ -25,13 +25,6 @@
 
 package org.meveo.model.jaxb.customer;
 
-
-
-
-
-
-
-
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccounts;
@@ -137,9 +130,6 @@ public class CustomerAccount {
     protected CustomFields customFields;
     @XmlElement(required = false)
     protected BillingAccounts billingAccounts;
-
-
-
 
 
     public CustomerAccount(){}
@@ -484,12 +474,7 @@ public class CustomerAccount {
 
     public void setTradingCurrencyCode(String value) {
         this.tradingCurrencyCode = value;
-
-
     }
-
-
-
 
 
     /**
