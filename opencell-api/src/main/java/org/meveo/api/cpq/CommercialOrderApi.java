@@ -1,6 +1,9 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,12 +11,17 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.BillingPlan;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
@@ -80,9 +88,9 @@ public class CommercialOrderApi extends BaseApi {
 			final BillingPlan billingPlan = billingPlanService.findByCode(orderDto.getInvoicingPlanCode());
 			if(billingPlan == null)
 				throw new EntityDoesNotExistsException(BillingPlan.class, orderDto.getInvoicingPlanCode());
-			order.setBillingAccount(billingAccount);
+			order.setInvoicingPlan(billingPlan);
 		}
-		order.setStatus(OrderStatusEnum.IN_CREATION);
+		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		order.setStatusDate(Calendar.getInstance().getTime());
 		order.setOrderProgress(orderDto.getOrderProgress());
 		order.setProgressDate(orderDto.getProgressDate());
@@ -101,6 +109,144 @@ public class CommercialOrderApi extends BaseApi {
 		return new CommercialOrderDto(order);
 	}
 	
+	public CommercialOrderDto update(CommercialOrderDto orderDto) {
+		if(orderDto.getId() == null)
+			missingParameters.add("id");
+		handleMissingParameters();
+		final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
+		if(!order.getStatus().equals(OrderStatusEnum.IN_CREATION)) {
+			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
+		}
+		
+		if(!Strings.isEmpty(orderDto.getSellerCode())) {
+			final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
+			if(seller == null)
+				throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+			order.setSeller(seller);
+		}
+		if(!Strings.isEmpty(orderDto.getBillingAccountCode())) {
+			final BillingAccount billingAccount = billingAccountService.findByCode(orderDto.getBillingAccountCode());
+			if(billingAccount == null)
+				throw new EntityDoesNotExistsException(BillingAccount.class, orderDto.getBillingAccountCode());
+			order.setBillingAccount(billingAccount);
+		}
+		
+		if(!Strings.isEmpty(orderDto.getOrderTypeCode())) {
+			final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
+			if(orderType == null)
+				throw new EntityDoesNotExistsException(OrderType.class, orderDto.getOrderTypeCode());
+			order.setOrderType(orderType);
+		}
+		order.setLabel(orderDto.getLabel());
+		if(!Strings.isEmpty(orderDto.getQuoteCode())) {
+			final CpqQuote quote = cpqQuoteService.findByCode(orderDto.getQuoteCode());
+			if(quote == null)
+				throw new EntityDoesNotExistsException(CpqQuote.class, orderDto.getQuoteCode());
+			order.setQuote(quote);
+		}
+		if(!Strings.isEmpty(orderDto.getContractCode())) {
+			final Contract contract = contractService.findByCode(orderDto.getContractCode());
+			if(contract == null)
+				throw new EntityDoesNotExistsException(Contract.class, orderDto.getContractCode());
+			order.setContract(contract);
+				
+		}
+		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
+			final BillingPlan billingPlan = billingPlanService.findByCode(orderDto.getInvoicingPlanCode());
+			if(billingPlan == null)
+				throw new EntityDoesNotExistsException(BillingPlan.class, orderDto.getInvoicingPlanCode());
+			order.setInvoicingPlan(billingPlan);
+		}
+		if(orderDto.getOrderProgress() != null)
+			order.setOrderProgress(orderDto.getOrderProgress());
+		if(orderDto.getProgressDate() != null)
+			order.setProgressDate(orderDto.getProgressDate());
+		if(orderDto.getOrderDate() != null)
+			order.setOrderDate(orderDto.getOrderDate());
+		if(orderDto.getRealisationDate() != null)
+			order.setRealisationDate(orderDto.getRealisationDate());
+		if(orderDto.getCustomerServiceBegin() != null)
+			order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
+		
+		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
+		if(!Strings.isEmpty(orderDto.getExternalReference()))
+			order.setExternalReference(orderDto.getExternalReference());
+		if(!Strings.isEmpty(orderDto.getOrderParentCode())) {
+			final Order orderParent = orderService.findByCode(orderDto.getOrderParentCode());
+			if(orderParent == null)
+				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
+			order.setOrderParent(orderParent);
+		}
+		commercialOrderService.update(order);
+		return new CommercialOrderDto(order);
+	}
+	
+	public void delete(Long orderId) {
+		if(orderId == null)
+			missingParameters.add("orderId");
+		handleMissingParameters();
+		
+		final CommercialOrder order = commercialOrderService.findById(orderId);
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
+		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString()))
+			commercialOrderService.remove(order);
+		throw new MeveoApiException("Can not be deleted, only status In_Creation or Canceled can be delete, current status : " + order.getStatus() );
+	}
+	
+	public void updateStatus(Long commercialOrderId, String statusTarget) {
+		if(Strings.isEmpty(statusTarget)) {
+			missingParameters.add("status");
+		}
+		handleMissingParameters();
+		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
+			throw new MeveoApiException("can not change order status, because the current status is Canceled");
+		}else if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.DRAFT.toString())) {
+			throw new MeveoApiException("Order's status is not DRAFT. updating status is forbidden");
+		}
+		List<String> status = allStatus();
+
+		if(!status.contains(statusTarget.toLowerCase())) {
+			throw new MeveoApiException("Status is invalid, here is the list of available status : " + status);
+		}
+		order.setStatus(statusTarget);
+		order.setStatusDate(Calendar.getInstance().getTime());
+		
+		commercialOrderService.update(order);
+	}
+	
+	public CommercialOrderDto duplicate(Long commercialOrderId) {
+		if(commercialOrderId == null) {
+			missingParameters.add("commercialOrderId");
+		}
+		handleMissingParameters();
+		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		return new CommercialOrderDto(commercialOrderService.duplicate(order));
+	}
+	
+	
+	private List<String> allStatus(){
+		
+		final List<String> allStatus = new ArrayList<String>();
+		for(CommercialOrderEnum status:CommercialOrderEnum.values()) {
+			allStatus.add(status.toString().toLowerCase());
+		}
+		String statusProperties = ParamBean.getInstance().getProperty("commercialOrder.status", "");
+		
+		if(!Strings.isEmpty(statusProperties)) {
+			for (String currentStatus : statusProperties.split(",")) {
+				allStatus.add(currentStatus.toLowerCase());
+			}
+		}
+		return allStatus;
+	}
 	
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getSellerCode()))

@@ -7,8 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -27,7 +25,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
-import org.meveo.model.order.OrderStatusEnum;
 
 
 /** 
@@ -41,6 +38,28 @@ import org.meveo.model.order.OrderStatusEnum;
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
 public class CommercialOrder extends AuditableEntity {
 
+
+	public CommercialOrder() {
+	}
+
+	public CommercialOrder(CommercialOrder copy) {
+		this.seller = copy.seller;
+		this.orderNumber = copy.orderNumber;
+		this.label = copy.label;
+		this.billingAccount = copy.billingAccount;
+		this.quote = copy.quote;
+		this.contract = copy.contract;
+		this.orderType = copy.orderType;
+		this.invoicingPlan = copy.invoicingPlan;
+		this.orderProgress = copy.orderProgress;
+		this.progressDate = copy.progressDate;
+		this.orderDate = copy.orderDate;
+		this.realisationDate = copy.realisationDate;
+		this.customerServiceBegin = copy.customerServiceBegin;
+		this.customerServiceDuration = copy.customerServiceDuration;
+		this.externalReference = copy.externalReference;
+		this.orderParent = copy.orderParent;
+	}
 
 	/**
 	 * 
@@ -83,10 +102,9 @@ public class CommercialOrder extends AuditableEntity {
 	private BillingPlan invoicingPlan;
 
 	
-	@Enumerated(EnumType.STRING)
 	@Column(name ="status", nullable = false)
 	@NotNull
-	private OrderStatusEnum status;
+	private String status;
 	
 	@Column(name = "status_date", nullable = false)
 	@NotNull
@@ -233,7 +251,7 @@ public class CommercialOrder extends AuditableEntity {
 	/**
 	 * @return the status
 	 */
-	public OrderStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
@@ -241,7 +259,7 @@ public class CommercialOrder extends AuditableEntity {
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(OrderStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

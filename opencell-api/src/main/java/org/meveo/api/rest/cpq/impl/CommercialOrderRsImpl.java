@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -19,6 +20,50 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
 		try {
 			result.setCommercialOrderDto(commercialOrderApi.create(orderDto));
+			return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response update(CommercialOrderDto orderDto) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.update(orderDto));
+			return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response delete(Long orderId) {
+		ActionStatus status = new ActionStatus();
+		try {
+			commercialOrderApi.delete(orderId);;
+			return Response.ok().build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, status);
+		}
+	}
+
+	@Override
+	public Response updateStatus(Long orderId, String statusTarget) {
+		ActionStatus status = new ActionStatus();
+		try {
+			commercialOrderApi.updateStatus(orderId, statusTarget);
+			return Response.ok(status).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, status);
+		}
+	}
+
+	@Override
+	public Response duplicate(Long orderId) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.duplicate(orderId));
 			return Response.ok(result).build();
 		}catch(MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @SuppressWarnings("serial")
 public class CommercialOrderDto extends BaseEntityDto {
 
+	private Long id;
 	@NotNull
 	private String sellerCode;
 	private String orderNumber;
@@ -26,7 +27,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String orderTypeCode;
 	private String invoicingPlanCode;
 	//@NotNull
-	private OrderStatusEnum status;
+	private String status;
 //	@NotNull
 //	private Date statusDate;
 	@NotNull
@@ -172,13 +173,13 @@ public class CommercialOrderDto extends BaseEntityDto {
 	/**
 	 * @return the status
 	 */
-	public OrderStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(OrderStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	/**
@@ -278,6 +279,20 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setOrderParentCode(String orderParentCode) {
 		this.orderParentCode = orderParentCode;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	
