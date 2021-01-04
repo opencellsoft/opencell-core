@@ -7,10 +7,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,10 +24,10 @@ import org.meveo.model.cpq.enums.OperatorEnum;
  *	@version 10.0
  */
 @Entity
-@Table(name = "cpq_trade_rule_item", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "cpq_commercial_rule_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_item_seq"), })
-public class TradeRuleItem extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_item_seq"), })
+public class CommercialRuleItem extends BusinessEntity {
 
 	/**
 	 * 
@@ -40,9 +38,10 @@ public class TradeRuleItem extends BusinessEntity {
 	 * Trade rule header
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trade_rule_header_id")
-	private TradeRuleHeader tradeRuleHeader;
+	@JoinColumn(name = "commercial_rule_header_id")
+	private CommercialRuleHeader commercialRuleHeader;
 
+	
 	
 	/**
 	 * rule operator
@@ -87,41 +86,21 @@ public class TradeRuleItem extends BusinessEntity {
 		this.ruleItemEl = ruleItemEl;
 	}
 
-	public TradeRuleHeader getTradeRuleHeader() {
-		return tradeRuleHeader;
+	/**
+	 * @return the commercialRuleHeader
+	 */
+	public CommercialRuleHeader getCommercialRuleHeader() {
+		return commercialRuleHeader;
 	}
 
-	public void setTradeRuleHeader(TradeRuleHeader tradeRuleHeader) {
-		this.tradeRuleHeader = tradeRuleHeader;
+	/**
+	 * @param commercialRuleHeader the commercialRuleHeader to set
+	 */
+	public void setCommercialRuleHeader(CommercialRuleHeader commercialRuleHeader) {
+		this.commercialRuleHeader = commercialRuleHeader;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
-		result = prime * result + ((tradeRuleHeader == null) ? 0 : tradeRuleHeader.hashCode());
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TradeRuleItem other = (TradeRuleItem) obj;
-		if (operator != other.operator)
-			return false;
-		if (tradeRuleHeader == null) {
-			if (other.tradeRuleHeader != null)
-				return false;
-		} else if (!tradeRuleHeader.equals(other.tradeRuleHeader))
-			return false;
-		return true;
-	}
 
 
 	

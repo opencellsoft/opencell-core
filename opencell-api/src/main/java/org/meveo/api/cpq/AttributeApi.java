@@ -1,6 +1,8 @@
 package org.meveo.api.cpq;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,22 +10,24 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductService;
@@ -43,7 +47,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	private GroupedAttributeService groupedAttributeService;
 
 	@Inject
-	private OfferTemplateService  offerTemplateService;
+	private ChargeTemplateService<ChargeTemplate>   chargeTemplateService;
 	
 	@Inject
 	private ProductVersionService  productVersionService;
@@ -82,9 +86,13 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
+		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+
 		attributeService.create(attribute);
 		return attribute;
 	}
+	
+
 
 	@Override
 	public Attribute update(AttributeDTO postData) throws MeveoApiException, BusinessException {
@@ -115,22 +123,30 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
+		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+
 		attributeService.update(attribute);
 		return attribute;
 	}
 
-	public AttributeDTO findByCode(String code) throws MeveoApiException {
-
+	public GetAttributeDtoResponse findByCode(String code) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
-		AttributeDTO result = new AttributeDTO();
+		
 		Attribute attribute = attributeService.findByCode(code);
 		if (attribute == null) {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
+		} 
+		ChargeTemplateDto chargeTemplateDto=null;
+		Set<ChargeTemplateDto> chargeTemplateDtos=new HashSet<ChargeTemplateDto>();
+		for(ChargeTemplate charge : attribute.getChargeTemplates()) {
+			chargeTemplateDto=new ChargeTemplateDto(charge,entityToDtoConverter.getCustomFieldsDTO(charge));
+			chargeTemplateDtos.add(chargeTemplateDto);
 		}
-		result = new AttributeDTO(attribute);
+		
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos); 
 		return result;
 	}
 
@@ -169,15 +185,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(product==null) {
 			throw new EntityDoesNotExistsException(Product.class,productCode);
 		}
-		ProductDto productDto=new ProductDto(product);
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,Integer.parseInt(currentProductVersion));
 		if(productVersion==null) {
 			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
 		}
-		ProductVersionDto productVersionDto=new ProductVersionDto(productVersion,true,false);
-		productDto.setCurrentProductVersion(productVersionDto);
-		GetProductDtoResponse result = new GetProductDtoResponse();
-		result.setProductDto(productDto);    
+       GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,false);
+		
+		GetProductDtoResponse result = new GetProductDtoResponse(product);   
+		result.setCurrentProductVersion(getProductVersionResponse);
 		return result;
 	}
 

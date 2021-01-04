@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,7 +35,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -62,57 +60,57 @@ import org.meveo.model.shared.ContactInformation;
 public class BillingAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 8701417481481359155L;
+    protected static final long serialVersionUID = 8701417481481359155L;
 
     /** The customer account. */
     @XmlElement(required = true)
-    private String customerAccount;
+    protected String customerAccount;
 
     /** The billing cycle. */
     @XmlElement(required = true)
-    private String billingCycle;
+    protected String billingCycle;
 
     /** The country. */
     @XmlElement(required = true)
-    private String country;
+    protected String country;
 
     /** The language. */
     @XmlElement(required = true)
-    private String language;
+    protected String language;
 
     /** The next invoice date. */
     @XmlElement
-    private Date nextInvoiceDate;
+    protected Date nextInvoiceDate;
 
     /** The subscription date. */
     @XmlElement
-    private Date subscriptionDate;
+    protected Date subscriptionDate;
 
     /** The termination date. */
     @XmlElement
-    private Date terminationDate;
+    protected Date terminationDate;
 
     /** The electronic billing. */
-    private Boolean electronicBilling;
+    protected Boolean electronicBilling;
 
     /** The status. */
-    private AccountStatusEnum status;
+    protected AccountStatusEnum status;
 
     /** The status date. */
     @XmlElement
-    private Date statusDate;
+    protected Date statusDate;
 
     /** The termination reason. */
-    private String terminationReason;
+    protected String terminationReason;
 
     /** The email. */
-    private String email;
+    protected String email;
 
     /** The invoices. */
-    private List<InvoiceDto> invoices = new ArrayList<>();
+    protected List<InvoiceDto> invoices = new ArrayList<>();
 
     /** The invoicing threshold. */
-    private BigDecimal invoicingThreshold;
+    protected BigDecimal invoicingThreshold;
 
     /** The phone. */
     protected String phone;
@@ -120,100 +118,100 @@ public class BillingAccountDto extends AccountDto {
     /**
      * Expression to determine minimum amount value - for Spark
      */
-    private String minimumAmountElSpark;
+    protected String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
-    private String minimumLabelElSpark;
+    protected String minimumLabelElSpark;
     
     /**
      * Minimum Invoice SubCategory
      */
-    private String minimumInvoiceSubCategory;
+    protected String minimumInvoiceSubCategory;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
      */
     @Deprecated
-    private PaymentMethodEnum paymentMethodType;
+    protected PaymentMethodEnum paymentMethodType;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
      */
     @Deprecated
-    private BankCoordinatesDto bankCoordinates;
+    protected BankCoordinatesDto bankCoordinates;
 
     /**
      * Field was deprecated in 4.6 version. Use custom fields instead.
      */
     @Deprecated
-    private String paymentTerms;
+    protected String paymentTerms;
 
     /**
      * Use for GET / LIST only.
      */
-    private UserAccountsDto userAccounts = new UserAccountsDto();
+    protected UserAccountsDto userAccounts = new UserAccountsDto();
     
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
 	@XmlElementWrapper(name = "discountPlansForInstantiation")
 	@XmlElement(name = "discountPlanForInstantiation")
-    private List<DiscountPlanDto> discountPlansForInstantiation;
+    protected List<DiscountPlanDto> discountPlansForInstantiation;
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
 	@XmlElement(name = "discountPlanForTermination")
-    private List<String> discountPlansForTermination;
+    protected List<String> discountPlansForTermination;
     
     /**
      * Use to return the active discount plans for this entity.
      */
 	@XmlElementWrapper(name = "discountPlanInstances")
 	@XmlElement(name = "discountPlanInstance")
-    private List<DiscountPlanInstanceDto> discountPlanInstances;
+    protected List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
      * Mailing type
      */
-	private String mailingType;
+	protected String mailingType;
 
     /**
      * Email Template code
      */
-	private String emailTemplate;
+	protected String emailTemplate;
 
     /**
      * a list of emails separated by comma
      */
-	private String ccedEmails;
+	protected String ccedEmails;
 
     /**
      * Account tax category code - overrides the value from a customer category
      **/
-    private String taxCategoryCode;
+    protected String taxCategoryCode;
 
     /**
      * The option on how to check the threshold.
      */
-    private ThresholdOptionsEnum checkThreshold;
+    protected ThresholdOptionsEnum checkThreshold;
     
     /**
      * list of GDPR related to billing account
      */
-    private List<GDPRInfoDto> infoGdpr;
+    protected List<GDPRInfoDto> infoGdpr;
 
     /**
      * Use to return the paymentMethod.
      */
     @XmlElement(name = "paymentMethod")
-    private PaymentMethodDto paymentMethod;
+    protected PaymentMethodDto paymentMethod;
     
     /**
      * 
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
-    private Boolean thresholdPerEntity;
+    protected Boolean thresholdPerEntity;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -222,11 +220,12 @@ public class BillingAccountDto extends AccountDto {
 	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-	
-	  /** The tags. */ 
-    @XmlElementWrapper(name = "tags")
-    @XmlElement(name = "tags")
-    private Set<TagDto> tags = new HashSet<>();
+ 
+    /** The tags. */ 
+    @XmlElementWrapper(name = "tagCodes")
+    @XmlElement(name = "tagCodes")
+    protected Set<String> tagCodes = new HashSet<String>();
+
     
     /**
      * Instantiates a new billing account dto.
@@ -307,14 +306,7 @@ public class BillingAccountDto extends AccountDto {
                 setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
             }
         }
-        
-        if(e.getTags() != null && !e.getTags().isEmpty()) {
-			tags = e.getTags().stream().map(t -> {
-				final TagDto dto = new TagDto(t);
-				return dto;
-			}).collect(Collectors.toSet());
-		}
-
+         
         // End compatibility with pre-4.6 versions
     }
     
@@ -880,18 +872,19 @@ public class BillingAccountDto extends AccountDto {
 	}
 
 	/**
-	 * @return the tags
+	 * @return the tagCodes
 	 */
-	public Set<TagDto> getTags() {
-		return tags;
+	public Set<String> getTagCodes() {
+		return tagCodes;
 	}
 
 	/**
-	 * @param tags the tags to set
+	 * @param tagCodes the tagCodes to set
 	 */
-	public void setTags(Set<TagDto> tags) {
-		this.tags = tags;
+	public void setTagCodes(Set<String> tagCodes) {
+		this.tagCodes = tagCodes;
 	}
+
  
 	
 	

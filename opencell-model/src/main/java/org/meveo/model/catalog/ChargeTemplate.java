@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -38,6 +39,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -83,6 +85,10 @@ import org.meveo.model.tax.TaxClass;
 public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -6619927605555822610L;
+
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
     
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION

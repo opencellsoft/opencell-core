@@ -14,13 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.DiscountPlan;
@@ -36,6 +36,21 @@ import org.meveo.model.quote.QuoteVersion;
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")
 public class QuoteOffer extends AuditableEntity {
+
+
+	public QuoteOffer() {
+	}
+
+
+	public QuoteOffer(QuoteOffer copy) {
+		this.offerTemplate = copy.offerTemplate;
+		this.billableAccount = copy.billableAccount;
+		this.quoteVersion = copy.quoteVersion;
+		this.quoteLot = copy.quoteLot;
+		this.quoteProduct = copy.quoteProduct;
+		this.contractCode = copy.contractCode;
+		this.position = copy.position;
+	}
 
 
 	/**
@@ -86,7 +101,7 @@ public class QuoteOffer extends AuditableEntity {
 	/**
 	 * discountPlan attached to this quoteOffer
 	 */
-	@ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
 

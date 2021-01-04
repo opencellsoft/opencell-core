@@ -1,14 +1,11 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,7 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -32,10 +29,10 @@ import org.meveo.model.cpq.tags.Tag;
  * @version 10.0
  */
 @Entity
-@Table(name = "cpq_trade_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_header_seq"), })
-public class TradeRuleHeader extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq"), })
+public class CommercialRuleHeader extends BusinessEntity {
 
 	/**
 	 * 
@@ -61,55 +58,47 @@ public class TradeRuleHeader extends BusinessEntity {
 	 * product code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_id", referencedColumnName = "id")
 	private Product targetProduct;
 
 	/**
 	 * version of the product
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_version_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion targetProductVersion;
 
 	
 	 /** 
      * grouped service
      */
-
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "grouped_service_id", referencedColumnName = "id")
-	private GroupedAttributes groupedService;
+	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
+	private GroupedAttributes targetGroupedAttributes;
 	
-	
+
 	/**
-     * service template
-     */ 
-	@ManyToOne(fetch = FetchType.LAZY) 
-	@JoinColumn(name = "service_template_id", referencedColumnName = "id") 
-	private ServiceTemplate serviceTemplate;
-	
-	/**
-	 * attribute name
+	 * attribute id
 	 */
-	@Column(name = "target_attribute_name", length = 20)
-	@Size(max = 20)
-	private String targetAttributeName;
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
+	private Attribute targetAttribute;
 	
 	
 	/**
 	 * attribute value
 	 */
-	@Column(name = "target_service_value", length = 255)
+	@Column(name = "target_attribute_value", length = 255)
 	@Size(max = 255)
-	private String targetServiceValue;
+	private String targetAttributeValue;
 
 	/**
 	 * tag target
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_tag_id", referencedColumnName = "id")
-	private Tag tagTarget;
+	@JoinColumn(name = "tag_id", referencedColumnName = "id")
+	private Tag targetTag;
 
 	/**
 	 * rule El
@@ -174,33 +163,61 @@ public class TradeRuleHeader extends BusinessEntity {
 		this.targetProductVersion = targetProductVersion;
 	}
 
- 
+	 
 	/**
-	 * @return the targetServiceValue
+	 * @return the targetGroupedAttributes
 	 */
-	public String getTargetServiceValue() {
-		return targetServiceValue;
+	public GroupedAttributes getTargetGroupedAttributes() {
+		return targetGroupedAttributes;
 	}
 
 	/**
-	 * @param targetServiceValue the targetServiceValue to set
+	 * @param targetGroupedAttributes the targetGroupedAttributes to set
 	 */
-	public void setTargetServiceValue(String targetServiceValue) {
-		this.targetServiceValue = targetServiceValue;
+	public void setTargetGroupedAttributes(GroupedAttributes targetGroupedAttributes) {
+		this.targetGroupedAttributes = targetGroupedAttributes;
 	}
 
 	/**
-	 * @return the tagTarget
+	 * @return the targetAttribute
 	 */
-	public Tag getTagTarget() {
-		return tagTarget;
+	public Attribute getTargetAttribute() {
+		return targetAttribute;
 	}
 
 	/**
-	 * @param tagTarget the tagTarget to set
+	 * @param targetAttribute the targetAttribute to set
 	 */
-	public void setTagTarget(Tag tagTarget) {
-		this.tagTarget = tagTarget;
+	public void setTargetAttribute(Attribute targetAttribute) {
+		this.targetAttribute = targetAttribute;
+	}
+
+	/**
+	 * @return the targetAttributeValue
+	 */
+	public String getTargetAttributeValue() {
+		return targetAttributeValue;
+	}
+
+	/**
+	 * @param targetAttributeValue the targetAttributeValue to set
+	 */
+	public void setTargetAttributeValue(String targetAttributeValue) {
+		this.targetAttributeValue = targetAttributeValue;
+	}
+
+	/**
+	 * @return the targetTag
+	 */
+	public Tag getTargetTag() {
+		return targetTag;
+	}
+
+	/**
+	 * @param targetTag the targetTag to set
+	 */
+	public void setTargetTag(Tag targetTag) {
+		this.targetTag = targetTag;
 	}
 
 	/**
@@ -210,84 +227,14 @@ public class TradeRuleHeader extends BusinessEntity {
 		return ruleEl;
 	}
 
-	
-	/**
-	 * @return the groupedService
-	 */
-	public GroupedAttributes getGroupedService() {
-		return groupedService;
-	}
-
-	/**
-	 * @param groupedService the groupedService to set
-	 */
-	public void setGroupedService(GroupedAttributes groupedService) {
-		this.groupedService = groupedService;
-	}
-
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-
 	/**
 	 * @param ruleEl the ruleEl to set
 	 */
 	public void setRuleEl(String ruleEl) {
 		this.ruleEl = ruleEl;
 	}
-	
-	
 
-	/**
-	 * @return the targetAttributeName
-	 */
-	public String getTargetAttributeName() {
-		return targetAttributeName;
-	}
-
-	/**
-	 * @param targetAttributeName the targetAttributeName to set
-	 */
-	public void setTargetAttributeName(String targetAttributeName) {
-		this.targetAttributeName = targetAttributeName;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(ruleEl, ruleType, tagTarget, targetServiceValue,
-				targetProduct, targetProductVersion);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TradeRuleHeader other = (TradeRuleHeader) obj;
-		return Objects.equals(ruleEl, other.ruleEl) && ruleType == other.ruleType
-				&& Objects.equals(tagTarget, other.tagTarget)
-				&& Objects.equals(targetServiceValue, other.targetServiceValue)
-				&& Objects.equals(targetProduct, other.targetProduct)
-				&& Objects.equals(targetProductVersion, other.targetProductVersion);
-	}
-	
-	
+ 
 	
 	
 	

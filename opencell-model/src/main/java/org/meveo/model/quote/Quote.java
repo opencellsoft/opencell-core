@@ -207,20 +207,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 
     @Transient
     private boolean isVirtual = false;
-    
-	/**
-	 * discountPlan attached to this quote
-	 */
-    @ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
-	private DiscountPlan discountPlan;
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
 	
     public String getExternalId() {
         return externalId;

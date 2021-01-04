@@ -25,7 +25,12 @@ import static javax.persistence.FetchType.LAZY;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
 public class AccountingArticle extends BusinessEntity {
 
-    @OneToOne(fetch = LAZY)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@OneToOne(fetch = LAZY)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 

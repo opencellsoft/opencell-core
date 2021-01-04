@@ -19,8 +19,9 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,12 +31,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * The Class OfferTemplateDto.
@@ -49,76 +48,83 @@ import org.meveo.model.cpq.offer.OfferComponent;
 public class OfferTemplateDto extends ProductOfferingDto {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 9156372453581362595L;
+    protected static final long serialVersionUID = 9156372453581362595L;
 
     /** The bom code. */
-    private String bomCode;
+    protected String bomCode;
 
     /** The offer template category code. */
     @Deprecated
-    private String offerTemplateCategoryCode;
+    protected String offerTemplateCategoryCode;
 
     /** The offer service templates. */
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
-    private List<OfferServiceTemplateDto> offerServiceTemplates;
+    protected List<OfferServiceTemplateDto> offerServiceTemplates;
 
     /** The offer product templates. */
     @Deprecated
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
-    private List<OfferProductTemplateDto> offerProductTemplates;
+    protected List<OfferProductTemplateDto> offerProductTemplates;
     
     /** The offer component. */
     @XmlElementWrapper(name = "offerProducts")
     @XmlElement(name = "offerProducts")
-    private List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
+    protected List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
-    private List<DiscountPlanDto> allowedDiscountPlans;
+    protected List<DiscountPlanDto> allowedDiscountPlans;
+    
+    
+    /** The offer product templates. */
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    protected List<AttributeDTO> attributes;
+    
 
     /** The renewal rule. */
-    private SubscriptionRenewalDto renewalRule;
+    protected SubscriptionRenewalDto renewalRule;
 
     /**
      * Expression to determine minimum amount value
      */
-    private String minimumAmountEl;
+    protected String minimumAmountEl;
 
     /**
      * Expression to determine minimum amount value - for Spark
      */
-    private String minimumAmountElSpark;
+    protected String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
-    private String minimumLabelEl;
+    protected String minimumLabelEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
-    private String minimumLabelElSpark;
+    protected String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum invoice subcategory
      */
-    private String minimumInvoiceSubCategory;
+    protected String minimumInvoiceSubCategory;
 
 
-    private Boolean autoEndOfEngagement;
+    protected Boolean autoEndOfEngagement;
 
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private String minimumChargeTemplate;
+    protected String minimumChargeTemplate;
     
-    /** The tags. */
-    @XmlElementWrapper(name = "tags")
-    @XmlElement(name = "tags")
-    private List<TagDto> tags;
+    /** The tags. */ 
+    @XmlElementWrapper(name = "tagCodes")
+    @XmlElement(name = "tagCodes")
+    protected Set<String> tagCodes = new HashSet<String>();
 
     /**
      * Instantiates a new offer template dto.
@@ -134,7 +140,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
      * @param customFieldsDto Custom fields DTO
      * @param asLink Convert to DTO with minimal information only - code and validity dates
      */
-    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadTags) {
+    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
 
@@ -144,14 +150,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
         if (!asLink) {
             setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
         }
-     	if(loadTags) { 
-    		if(offerTemplate.getTags() != null && !offerTemplate.getTags().isEmpty()) {
-    			tags = offerTemplate.getTags().stream().map(t -> {
-    				final TagDto dto = new TagDto(t);
-    				return dto;
-    			}).collect(Collectors.toList());
-    		} 
-    	} 
     }
 
     @Override
@@ -386,18 +384,19 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
 
+ 
 	/**
-	 * @return the tags
+	 * @return the tagCodes
 	 */
-	public List<TagDto> getTags() {
-		return tags;
+	public Set<String> getTagCodes() {
+		return tagCodes;
 	}
 
 	/**
-	 * @param tags the tags to set
+	 * @param tagCodes the tagCodes to set
 	 */
-	public void setTags(List<TagDto> tags) {
-		this.tags = tags;
+	public void setTagCodes(Set<String> tagCodes) {
+		this.tagCodes = tagCodes;
 	}
 
 	/**
@@ -413,6 +412,24 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	public void setOfferProducts(List<OfferProductsDto> offerProducts) {
 		this.offerProducts = offerProducts;
 	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
+	}
+
+
+	
+
 
 
 

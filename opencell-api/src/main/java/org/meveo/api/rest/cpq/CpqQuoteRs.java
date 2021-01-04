@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
@@ -45,6 +46,8 @@ import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.quote.QuoteStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -251,9 +254,48 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-    //String offerCode, String cpqQuote, int quoteVersion
     public Response deleteQuoteItem(@Parameter(description = "Product quote item code", required = false) @PathParam("quoteItemId") Long quoteItemId, @Context UriInfo info);
     
+    
+    @PUT
+    @Path("/{quoteCode}/update/status")
+    @Operation(summary = "this endpoint allow you to update a quote of status",
+    tags = { "Quote management" },
+    description ="status can not be modified if is already Cancelled or rejected",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote  doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+            @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
+    })
+    public Response updateQuoteStatus( @PathParam("quoteCode") String quoteCode,
+    							@QueryParam("status") QuoteStatusEnum status
+    		);
+    
+
+    @PUT
+    @Path("/{quoteCode}/{currentVersion}/update/status")
+    @Operation(summary = "this endpoint allow you to update a quote version of status",
+    tags = { "Quote management" },
+    description ="status can not be modified if is already Closed or Published",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+            @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
+    })
+    public Response updateQuoteVersionStatus( @PathParam("quoteCode") String quoteCode,
+    										@PathParam("currentVersion") int currentVersion,
+    							@QueryParam("status") VersionStatusEnum status
+    		);
+    @POST
+    @Path("/duplicate/{quoteCode}/{quoteversion}")
+    @Operation(summary = "this endpoint allow you to duplicate a quote from quote code",
+    tags = { "Quote management" },
+    description ="duplicate quote and their related entities",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteversion") int quoteversion);
     /*
     @GET
     @Path("/quoteItem/{quoteOfferId}")

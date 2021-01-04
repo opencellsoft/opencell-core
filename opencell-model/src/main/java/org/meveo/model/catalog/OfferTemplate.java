@@ -48,6 +48,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -178,7 +179,16 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 			)
 	private Set<DiscountPlan> discountList = new HashSet<>();
     
-	 
+	/**
+	 * list of attributes attached to this offer
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_offer_attributes",
+				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+			)
+    private List<Attribute> attributes = new ArrayList<Attribute>();
      
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -515,6 +525,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	public void setDiscountList(Set<DiscountPlan> discountList) {
 		this.discountList = discountList;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 
 	

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -7,6 +8,8 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -25,20 +28,29 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
     @NotNull
-	private String code;
-	private String label;
-	private ProductStatusEnum status;
-	private Date statusDate;
-	private String productLineCode;
-	private String brandCode;
-	private String reference;
-	private String model;
-	private Set<String> modelChildren;
-	private boolean discountFlag=Boolean.FALSE;
-    private boolean packageFlag=Boolean.FALSE;
+    protected String code;
+    protected String label;
+	protected ProductStatusEnum status;
+	protected Date statusDate;
+	protected String productLineCode;
+	protected String brandCode;
+	protected String reference;
+	protected String model;
+	protected Set<String> modelChildren;
+	protected boolean discountFlag=Boolean.FALSE;
+	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
-    private CustomFieldsDto customFields;
-    private ProductVersionDto currentProductVersion;
+    protected CustomFieldsDto customFields;
+    protected ProductVersionDto currentProductVersion;
+    
+    @XmlElementWrapper(name = "chargeTemplateCodes")
+    @XmlElement(name = "chargeTemplateCodes") 
+    protected List<String> chargeTemplateCodes = new ArrayList<String>();
+    
+    
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
    
 
@@ -243,6 +255,20 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
 		this.currentProductVersion = currentProductVersion;
+	}
+
+	/**
+	 * @return the chargeTemplateCodes
+	 */
+	public List<String> getChargeTemplateCodes() {
+		return chargeTemplateCodes;
+	}
+
+	/**
+	 * @param chargeTemplateCodes the chargeTemplateCodes to set
+	 */
+	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
+		this.chargeTemplateCodes = chargeTemplateCodes;
 	}
 
 
