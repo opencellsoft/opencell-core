@@ -48,7 +48,7 @@ public class GetPricePlanVersionResponseDto extends BaseResponse {
         pricePlanVersion.setMatrix(pricePlanMatrixVersion.getMatrix());
         pricePlanVersion.setPricePlanMatrixCode(pricePlanMatrixVersion.getPricePlanMatrix().getCode());
         pricePlanVersion.setPriceWithoutTax(pricePlanMatrixVersion.getPriceWithoutTax());
-        pricePlanVersion.setVersion(pricePlanMatrixVersion.getVersion());
+        pricePlanVersion.setVersion(pricePlanMatrixVersion.getCurrentVersion());
         pricePlanVersion.setStatusEnum(pricePlanMatrixVersion.getStatus());
         pricePlanVersion.setStatusDate(pricePlanMatrixVersion.getStatusDate());
         pricePlanVersion.setValidity(pricePlanMatrixVersion.getValidity());

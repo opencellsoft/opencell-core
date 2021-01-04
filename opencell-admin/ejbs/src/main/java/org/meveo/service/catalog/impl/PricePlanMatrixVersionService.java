@@ -23,26 +23,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private static final String PRICE_PLAN_MATRIX_VERSION_MISSIN = "Price plan matrix is missing";
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version (%d) is %s, it can not be updated nor removed";
 
-    @Override
-    public void create(PricePlanMatrixVersion entity) throws BusinessException {
-        
-        if(entity == null)
-            throw new BusinessException(PRICE_PLAN_MATRIX_VERSION_MISSIN);        
-        if(this.findByCode(entity.getCode()) != null)
-            throw new BusinessException(String.format(PRICE_PLAN_MATRIX_VERSION_ALREADY_EXIST, entity.getCode()));
-        super.create(entity);
-    }
-    
-    public PricePlanMatrixVersion findByCode(String code) {
-        try {
-            return (PricePlanMatrixVersion) this.getEntityManager()
-                                                    .createNamedQuery("PricePlanMatrixVersion.findByCode")
-                                                        .setParameter("code", code)
-                                                                .getSingleResult();
-        }catch(NoResultException e) {
-            return null;
-        }
-    }
+
 
     public PricePlanMatrixVersion findByPricePlanAndVersion(int currentVersion, String pricePlanMatrixCode) {
         try {
@@ -93,11 +74,14 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         try {
             BeanUtils.copyProperties(duplicate, pricePlanMatrixVersion);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BusinessException("Failed to clone offer template", e);
+            throw new BusinessException("Failed to clone price plan matrix version", e);
         }
+        Integer lastVersion = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
+                .setParameter("pricePlanMatrixCode", pricePlanMatrixVersion.getPricePlanMatrix().getCode())
+                .getSingleResult();
         duplicate.setId(null);
         duplicate.setVersion(0);
-        duplicate.setCurrentVersion(1);
+        duplicate.setCurrentVersion(lastVersion + 1);
         duplicate.setStatus(VersionStatusEnum.DRAFT);
         duplicate.setStatusDate(new Date());
         try {

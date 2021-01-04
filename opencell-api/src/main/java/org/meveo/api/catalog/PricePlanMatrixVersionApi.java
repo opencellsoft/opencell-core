@@ -7,8 +7,10 @@ import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 import javax.ejb.Stateless;
@@ -21,15 +23,17 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     @Override
     public PricePlanMatrixVersion create(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
-        return updateOrCreate(pricePlanMatrixVersionDto);
+        return createOrUpdate(pricePlanMatrixVersionDto);
     }
 
     @Override
     public PricePlanMatrixVersion update(PricePlanMatrixVersionDto dtoData) throws MeveoApiException, BusinessException {
-        return updateOrCreate(dtoData);
+        return createOrUpdate(dtoData);
     }
 
     public void removePricePlanMatrixVersion(String pricePlanMatrixCode, int currentVersion){
@@ -51,7 +55,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
     }
 
-    private PricePlanMatrixVersion updateOrCreate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+    @Override
+    public PricePlanMatrixVersion createOrUpdate(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix();
         int currentVersion = pricePlanMatrixVersionDto.getVersion();
         String pricePlanMatrixCode = pricePlanMatrixVersionDto.getPricePlanMatrixCode();
@@ -81,13 +86,18 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {
-        pricePlanMatrixVersion.setVersion(pricePlanMatrixVersion.getVersion());
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanMatrixVersionDto.getPricePlanMatrixCode());
+        if(pricePlanMatrix == null)
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
+        pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
+        pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionDto.getVersion());
         pricePlanMatrixVersion.setValidity(pricePlanMatrixVersionDto.getValidity());
         if(status != null)
             pricePlanMatrixVersion.setStatus(status);
         if(statusTime != null)
             pricePlanMatrixVersion.setStatusDate(statusTime);
         pricePlanMatrixVersion.setPriceWithoutTax(pricePlanMatrixVersionDto.getPriceWithoutTax());
+        pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         return pricePlanMatrixVersion;
     }
 

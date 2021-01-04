@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -32,14 +33,14 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_price_plan_version", uniqueConstraints = @UniqueConstraint(columnNames = { "ppm_id", "current_version" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p where p.code=:code"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanCode")
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode"),
+        @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode")
 })
-public class PricePlanMatrixVersion extends BusinessEntity {
+public class PricePlanMatrixVersion extends AuditableEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

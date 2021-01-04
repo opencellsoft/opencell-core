@@ -37,6 +37,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
@@ -159,8 +160,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response createOrUpdateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
         GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
         try {
-            pricePlanMatrixVersionApi.createOrUpdate(pricePlanMatrixVersionDto);
-            return Response.ok(result).build();
+            PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionApi.createOrUpdate(pricePlanMatrixVersionDto);
+            return Response.ok(new GetPricePlanVersionResponseDto(pricePlanMatrixVersion)).build();
         } catch (MeveoApiException e) {
             return errorResponse(e, result.getActionStatus());
         }
