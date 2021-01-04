@@ -98,6 +98,13 @@ public class WalletInstance extends BusinessEntity {
     private BigDecimal lowBalanceLevel;
 
     /**
+     * Date of creation
+     */
+    @Column(name = "created", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date Created;
+
+    /**
      * Balance level at which further consumption should be rejected
      */
     @Column(name = "reject_level", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -157,6 +164,18 @@ public class WalletInstance extends BusinessEntity {
      */
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    /**
+     */
+    public Date getCreated() { return Created;
+    }
+
+    /**
+     * @param Created Associated to WalletInstance
+     */
+    public void setCreated(Date Created) {
+        this.Created = Created;
     }
 
     public List<RatedTransaction> getRatedTransactions() {
