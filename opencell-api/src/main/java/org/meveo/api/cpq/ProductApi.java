@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,7 +29,9 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
@@ -40,6 +43,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductLineService;
@@ -83,6 +87,9 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private OfferTemplateApi  offerTemplateApi;
+
+	@Inject
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -140,8 +147,7 @@ public class ProductApi extends BaseApi {
 			product.setModelChlidren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
-			/***@TODO : update product chargeTemplates
-			 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
+			product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
 			
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -412,13 +418,26 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChlidren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+		product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
 		/***@TODO : update product chargeTemplates
 		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
 		
 		
 		return product;
     }
-    
+
+	private List<ProductChargeTemplateMapping> createProductChargeTemplateMappings(Product product, List<String> chargeTemplateCodes) {
+		Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
+    	return chargeTemplates.stream()
+					.map(ch -> {
+						ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
+						chargeTemplateProductChargeTemplateMapping.setProduct(product);
+						chargeTemplateProductChargeTemplateMapping.setChargeTemplate(ch);
+						return chargeTemplateProductChargeTemplateMapping;
+
+					}).collect(Collectors.toList());
+	}
+
 	public void removeProduct(String codeProduct) {
 		try { 
 			productService.removeProduct(codeProduct);
