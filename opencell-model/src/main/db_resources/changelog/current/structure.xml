@@ -3197,5 +3197,10 @@ END $$;]]>
             <column name="type" type="VARCHAR(25)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>create table ${db.schema.adapted}rating_edr_rejected partition of ${db.schema.adapted}rating_edr for values in('REJECTED')</sql>
+    </changeSet>
+    
 
 </databaseChangeLog>
