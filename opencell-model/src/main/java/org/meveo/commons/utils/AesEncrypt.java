@@ -18,12 +18,9 @@
 
 package org.meveo.commons.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -60,38 +57,13 @@ public class AesEncrypt {
 	}
 
 	/**
-	 * 
-	 * @return String encryption/decryption key from opencell-admin.properties
-	 * @throws Exception
-	 */
-	public String getFileKey() throws Exception {
-		String aesKey;
-		String _propertyFile = System.getProperty("jboss.server.config.dir") + File.separator
-				+ "opencell-admin.properties";
-		if (_propertyFile.startsWith("file:")) {
-			_propertyFile = _propertyFile.substring(5);
-		}
-		Properties pr = new Properties();
-		pr.load(new FileInputStream(_propertyFile));
-		aesKey = getProperty("opencell.aes.key", pr);
-		
-
-		return aesKey;
-	}
-
-	/**
-	 * Get property value.
-	 * 
-	 * @param key Property key
-	 * @return Value of property
-	 */
-	public String getProperty(String key, Properties properties) {
-		String result = null;
-		if (properties.containsKey(key)) {
-			result = properties.getProperty(key);
-		}
-		return result;
-	}
+     * 
+     * @return String encryption/decryption key from opencell-admin.properties
+     * @throws Exception
+     */
+    public String getFileKey() throws Exception {
+        return ParamBean.getInstance().getProperty("opencell.aes.key", null);
+    }
 
 	/**
 	 * 
