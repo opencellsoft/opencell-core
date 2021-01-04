@@ -309,7 +309,7 @@ public class ProductApi extends BaseApi {
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        return new GetProductVersionResponse(productVersionService.duplicate(productVersion, true));
+	        return new GetProductVersionResponse(productVersionService.duplicate(productVersion, true),true,true);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -322,7 +322,7 @@ public class ProductApi extends BaseApi {
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
-	        return new GetProductVersionResponse(productVersion);
+	        return new GetProductVersionResponse(productVersion,true,true);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -361,7 +361,7 @@ public class ProductApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
-	        return new GetProductVersionResponse(productVersion);
+	        return new GetProductVersionResponse(productVersion,true,true);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -536,7 +536,7 @@ public class ProductApi extends BaseApi {
 			if(!productVersions.isEmpty()) {
 
 				for(ProductVersion prodversion:productVersions) {
-					getProductVersionResponse=new GetProductVersionResponse(prodversion);
+					getProductVersionResponse=new GetProductVersionResponse(prodversion,true,true);
 					GetProductVersionResponses.add(getProductVersionResponse);
 				}
 			}
