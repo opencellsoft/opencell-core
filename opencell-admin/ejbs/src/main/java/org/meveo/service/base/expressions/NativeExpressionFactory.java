@@ -54,7 +54,7 @@ public class NativeExpressionFactory {
                 queryBuilder.addValueIsLessThanField(extractFieldWithAlias(exp.getFieldName()), value, true, true);
                 break;
             case "list":
-                queryBuilder.addListFilters(tableNameAlias, exp.getFieldName(), value);
+                queryBuilder.addListFilters(exp.getFieldName(), value);
                 break;
             case "inList":
                 addListFilter(value, exp.getFieldName(), false);
