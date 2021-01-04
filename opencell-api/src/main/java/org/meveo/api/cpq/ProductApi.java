@@ -90,7 +90,7 @@ public class ProductApi extends BaseApi {
 	 * @return ProductDto
 	 * @throws ProductException
 	 */
-	public Long addNewProduct(ProductDto productDto){
+	public Long create(ProductDto productDto){
 		if(Strings.isEmpty(productDto.getCode())) {
 			missingParameters.add("code");
 		}
@@ -140,6 +140,9 @@ public class ProductApi extends BaseApi {
 			product.setModelChlidren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
+			/***@TODO : update product chargeTemplates
+			 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
+			
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -173,7 +176,7 @@ public class ProductApi extends BaseApi {
 	 * @return
 	 * @throws ProductException
 	 */
-	public ProductDto findByCode(String code){
+	public Product findByCode(String code){
 		if(Strings.isEmpty(code)) {
 			missingParameters.add("code");
 		}
@@ -183,7 +186,7 @@ public class ProductApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Product.class,code);
 		} 
 		
-		return new ProductDto(product);
+		return product;
 	}
 	
  
@@ -409,6 +412,8 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChlidren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
+		/***@TODO : update product chargeTemplates
+		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
 		
 		
 		return product;

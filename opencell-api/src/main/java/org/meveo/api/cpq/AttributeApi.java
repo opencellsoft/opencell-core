@@ -86,26 +86,13 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
-		attribute.setChargeTemplates(extractChargeTemplates(postData.getChargeTemplateCodes()));
+		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 
 		attributeService.create(attribute);
 		return attribute;
 	}
 	
-	private Set<ChargeTemplate> extractChargeTemplates(List<String> chargeTemplateCodes) throws EntityDoesNotExistsException {
-        Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
-        if (chargeTemplateCodes == null) {
-            return chargeTemplates;
-        }
-        for (String chargeCode : chargeTemplateCodes) {
-            ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(chargeCode);
-            if (chargeTemplate == null) {
-                throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeCode);
-            }
-            chargeTemplates.add(chargeTemplate);
-        }
-        return chargeTemplates;
-    }
+
 
 	@Override
 	public Attribute update(AttributeDTO postData) throws MeveoApiException, BusinessException {
@@ -136,7 +123,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAttributeType(postData.getAttributeType());
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
-		attribute.setChargeTemplates(extractChargeTemplates(postData.getChargeTemplateCodes()));
+		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+
 		attributeService.update(attribute);
 		return attribute;
 	}
@@ -197,15 +185,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(product==null) {
 			throw new EntityDoesNotExistsException(Product.class,productCode);
 		}
-		ProductDto productDto=new ProductDto(product);
 		ProductVersion productVersion = productVersionService.findByProductAndVersion(productCode,Integer.parseInt(currentProductVersion));
 		if(productVersion==null) {
 			throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentProductVersion,"currentVersion");
 		}
        GetProductVersionResponse getProductVersionResponse=new GetProductVersionResponse(productVersion,true,false);
-		productDto.setCurrentProductVersion(getProductVersionResponse);
-		GetProductDtoResponse result = new GetProductDtoResponse();
-		result.setProductDto(productDto);    
+		
+		GetProductDtoResponse result = new GetProductDtoResponse(product);   
+		result.setCurrentProductVersion(getProductVersionResponse);
 		return result;
 	}
 

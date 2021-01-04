@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.cpq.CommercialRuleDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.response.SearchResponse;
 
 /**
@@ -49,7 +49,7 @@ public class GetListCommercialRulesResponseDto extends SearchResponse {
     /** products list. */
     @XmlElementWrapper(name = "commercialRules")
     @XmlElement(name = "commercialRules")
-    private List<CommercialRuleDTO> commercialRules  = new ArrayList<>();;
+    private List<CommercialRuleHeaderDTO> commercialRules  = new ArrayList<>();;
 
     /**
      * Instantiates a new gets the list offer template response dto.
@@ -61,14 +61,14 @@ public class GetListCommercialRulesResponseDto extends SearchResponse {
 	/**
 	 * @return the commercialRules
 	 */
-	public List<CommercialRuleDTO> getCommercialRules() {
+	public List<CommercialRuleHeaderDTO> getCommercialRules() {
 		return commercialRules;
 	}
 
 	/**
 	 * @param commercialRules the commercialRules to set
 	 */
-	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+	public void setCommercialRules(List<CommercialRuleHeaderDTO> commercialRules) {
 		this.commercialRules = commercialRules;
 	}
 

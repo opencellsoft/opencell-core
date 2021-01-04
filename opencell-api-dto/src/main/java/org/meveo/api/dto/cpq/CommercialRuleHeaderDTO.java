@@ -8,13 +8,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
-@XmlRootElement(name = "CommercialRuleDTO")
-@XmlType(name = "CommercialRuleDTO")
+@XmlRootElement(name = "CommercialRuleHeaderDTO")
+@XmlType(name = "CommercialRuleHeaderDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CommercialRuleDTO extends BaseEntityDto{
+public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 
     
 	/**
@@ -22,39 +23,39 @@ public class CommercialRuleDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 2921006853398452396L;
 	
-	private String code;
-	private String label;
+	
 	private RuleTypeEnum ruleType;
+	private String ruleEl;
 	private String offerCode;  
 	private String productCode;
 	private Integer productVersion;
 	private String attributeCode;
+	private String tagCode;
 	private String groupedAttributeCode;
-	private String attributeValue;
+	private String targetAttributeValue; 
 	private List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
+	 
+	
+	
+	
+	
+	
+	
+	
+	public CommercialRuleHeaderDTO() {
+		super();
 	}
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
-	/**
-	 * @param label the label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
+	public CommercialRuleHeaderDTO(CommercialRuleHeader commercialRuleHeader) {
+		super();
+		this.ruleType = commercialRuleHeader.getRuleType();
+		this.ruleEl = commercialRuleHeader.getRuleEl();
+		this.offerCode = commercialRuleHeader.getTargetOfferTemplate()!=null?commercialRuleHeader.getTargetOfferTemplate().getCode():null;
+		this.productCode = commercialRuleHeader.getTargetProduct()!=null?commercialRuleHeader.getTargetProduct().getCode():null;
+		this.productVersion = commercialRuleHeader.getTargetProductVersion()!=null?commercialRuleHeader.getTargetProductVersion().getCurrentVersion():null;
+		this.attributeCode = commercialRuleHeader.getTargetAttribute()!=null?commercialRuleHeader.getTargetAttribute().getCode():null;
+		this.tagCode = commercialRuleHeader.getTargetTag()!=null?commercialRuleHeader.getTargetTag().getCode():null;
+		this.groupedAttributeCode = commercialRuleHeader.getTargetGroupedAttributes()!=null?commercialRuleHeader.getTargetGroupedAttributes().getCode():null;
+		this.targetAttributeValue = commercialRuleHeader.getTargetAttributeValue(); 
 	}
 	/**
 	 * @return the ruleType
@@ -128,17 +129,31 @@ public class CommercialRuleDTO extends BaseEntityDto{
 	public void setGroupedAttributeCode(String groupedAttributeCode) {
 		this.groupedAttributeCode = groupedAttributeCode;
 	}
+
+	
 	/**
-	 * @return the attributeValue
+	 * @return the tagCode
 	 */
-	public String getAttributeValue() {
-		return attributeValue;
+	public String getTagCode() {
+		return tagCode;
 	}
 	/**
-	 * @param attributeValue the attributeValue to set
+	 * @param tagCode the tagCode to set
 	 */
-	public void setAttributeValue(String attributeValue) {
-		this.attributeValue = attributeValue;
+	public void setTagCode(String tagCode) {
+		this.tagCode = tagCode;
+	}
+	/**
+	 * @return the targetAttributeValue
+	 */
+	public String getTargetAttributeValue() {
+		return targetAttributeValue;
+	}
+	/**
+	 * @param targetAttributeValue the targetAttributeValue to set
+	 */
+	public void setTargetAttributeValue(String targetAttributeValue) {
+		this.targetAttributeValue = targetAttributeValue;
 	}
 	/**
 	 * @return the commercialRuleItems
@@ -152,6 +167,20 @@ public class CommercialRuleDTO extends BaseEntityDto{
 	public void setCommercialRuleItems(List<CommercialRuleItemDTO> commercialRuleItems) {
 		this.commercialRuleItems = commercialRuleItems;
 	}
+	/**
+	 * @return the ruleEl
+	 */
+	public String getRuleEl() {
+		return ruleEl;
+	}
+	/**
+	 * @param ruleEl the ruleEl to set
+	 */
+	public void setRuleEl(String ruleEl) {
+		this.ruleEl = ruleEl;
+	}
+	
+	
 
 	
     

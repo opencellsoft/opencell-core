@@ -6,14 +6,20 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
-import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.cpq.Product;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
@@ -23,19 +29,28 @@ import org.meveo.model.cpq.Product;
  */
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetProductDtoResponse")
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetProductDtoResponse extends BaseResponse{
-
-	private ProductDto productDto;
+public class GetProductDtoResponse extends ProductDto{
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
     private Set<ProductVersionDto> productVersions = new HashSet<>();
+    @XmlElementWrapper(name = "chargeTemplates")
+    @XmlElement(name = "chargeTemplates")
+    private Set<ChargeTemplateDto> chargeTemplates;
     
+	@XmlElementWrapper(name = "commercialRules")
+    @XmlElement(name = "commercialRules")
+    private Set<CommercialRuleHeaderDTO> commercialHeaderRules;
+	
+    /**
+     * The status response of the web service response.
+     */
+    private ActionStatus actionStatus = new ActionStatus();
     
     public GetProductDtoResponse(Product p) {
-    	super();
+    	super(p);
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-		productDto=new ProductDto(p);
     	if(p.getDiscountList() != null && !p.getDiscountList().isEmpty()) {
     		discountList = p.getDiscountList().stream().map(d -> {
     			final DiscountPlanDto discount = new DiscountPlanDto(d, null);
@@ -57,19 +72,7 @@ public class GetProductDtoResponse extends BaseResponse{
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
 
-	/**
-	 * @return the productDto
-	 */
-	public ProductDto getProductDto() {
-		return productDto;
-	}
 
-	/**
-	 * @param productDto the productDto to set
-	 */
-	public void setProductDto(ProductDto productDto) {
-		this.productDto = productDto;
-	}
 	/**
 	 * @return the productVersions
 	 */
@@ -97,4 +100,53 @@ public class GetProductDtoResponse extends BaseResponse{
 	public void setDiscountList(Set<DiscountPlanDto> discountList) {
 		this.discountList = discountList;
 	}
+
+	/**
+	 * @return the chargeTemplates
+	 */
+	public Set<ChargeTemplateDto> getChargeTemplates() {
+		return chargeTemplates;
+	}
+
+	/**
+	 * @param chargeTemplates the chargeTemplates to set
+	 */
+	public void setChargeTemplates(Set<ChargeTemplateDto> chargeTemplates) {
+		this.chargeTemplates = chargeTemplates;
+	}
+
+	
+	
+ 
+
+	/**
+	 * @return the commercialHeaderRules
+	 */
+	public Set<CommercialRuleHeaderDTO> getCommercialHeaderRules() {
+		return commercialHeaderRules;
+	}
+
+	/**
+	 * @param commercialHeaderRules the commercialHeaderRules to set
+	 */
+	public void setCommercialHeaderRules(Set<CommercialRuleHeaderDTO> commercialHeaderRules) {
+		this.commercialHeaderRules = commercialHeaderRules;
+	}
+
+	/**
+	 * @return the actionStatus
+	 */
+	public ActionStatus getActionStatus() {
+		return actionStatus;
+	}
+
+	/**
+	 * @param actionStatus the actionStatus to set
+	 */
+	public void setActionStatus(ActionStatus actionStatus) {
+		this.actionStatus = actionStatus;
+	}
+	
+	
+	
 }

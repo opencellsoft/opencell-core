@@ -21,7 +21,7 @@ public class GroupedAttributeDto {
 	private boolean display;
 	private boolean mandatory;
 	
-    private List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
+    private List<CommercialRuleHeaderDTO> commercialRules=new ArrayList<CommercialRuleHeaderDTO>();
 	
 	public GroupedAttributeDto() {
 		
@@ -152,14 +152,14 @@ public class GroupedAttributeDto {
 	/**
 	 * @return the commercialRules
 	 */
-	public List<CommercialRuleDTO> getCommercialRules() {
+	public List<CommercialRuleHeaderDTO> getCommercialRules() {
 		return commercialRules;
 	}
 
 	/**
 	 * @param commercialRules the commercialRules to set
 	 */
-	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
+	public void setCommercialRules(List<CommercialRuleHeaderDTO> commercialRules) {
 		this.commercialRules = commercialRules;
 	}
 	

@@ -7,13 +7,14 @@ import org.meveo.service.base.BusinessService;
 
 /**
  * @author Tarik FAKHOURI.
+ * @author Mbarek-Ay.
  * @version 10.0
  * 
- * Trade Rule Header type service implementation.
+ * Commercial Rule Header type service implementation.
  */
 
 @Stateless
-public class TradeRuleHeaderService extends
+public class CommercialRuleHeaderService extends
 			BusinessService<CommercialRuleHeader> {
 
 }

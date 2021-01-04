@@ -28,10 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
@@ -83,9 +81,6 @@ public class AttributeDTO extends EnableBusinessDto {
     @NotNull
     protected boolean mandatory=Boolean.FALSE;
     
-    
-    protected List<String> commercialRuleCodes=new ArrayList<String>();
-    
    protected boolean selectable=Boolean.TRUE;
     
     protected boolean ruled=Boolean.FALSE;
@@ -96,8 +91,10 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElement(name = "chargeTemplateCodes") 
     private List<String> chargeTemplateCodes = new ArrayList<String>();
  
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
-   
     public AttributeDTO() {
     }
 
