@@ -1992,4 +1992,7 @@
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
     
+    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>create table ${db.schema.adapted}rating_edr_rejected partition of ${db.schema.adapted}rating_edr for values in('REJECTED')</sql>
+    </changeSet>
 </databaseChangeLog>
