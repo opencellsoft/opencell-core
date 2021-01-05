@@ -70,4 +70,15 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 		}
 	}
 
+	@Override
+	public Response validate(Long orderId) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.validate(orderId));
+			return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
 }

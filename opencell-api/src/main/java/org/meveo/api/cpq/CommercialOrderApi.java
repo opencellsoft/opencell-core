@@ -231,6 +231,19 @@ public class CommercialOrderApi extends BaseApi {
 		return new CommercialOrderDto(commercialOrderService.duplicate(order));
 	}
 	
+	public CommercialOrderDto validate(Long commercialOrderId) {
+		if(commercialOrderId == null) {
+			missingParameters.add("commercialOrderId");
+		}
+		handleMissingParameters();
+		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
+			throw new MeveoApiException("the status of order must be COMPLETED.");
+		return new CommercialOrderDto(commercialOrderService.validateOrder(order));
+	}
+	
 	
 	private List<String> allStatus(){
 		
@@ -247,6 +260,7 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		return allStatus;
 	}
+	
 	
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getSellerCode()))
