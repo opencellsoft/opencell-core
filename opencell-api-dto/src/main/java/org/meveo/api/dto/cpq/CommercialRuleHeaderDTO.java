@@ -47,6 +47,8 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	}
 	public CommercialRuleHeaderDTO(CommercialRuleHeader commercialRuleHeader) {
 		super();
+		this.code=commercialRuleHeader.getCode();
+		this.description=commercialRuleHeader.getDescription();
 		this.ruleType = commercialRuleHeader.getRuleType();
 		this.ruleEl = commercialRuleHeader.getRuleEl();
 		this.offerCode = commercialRuleHeader.getTargetOfferTemplate()!=null?commercialRuleHeader.getTargetOfferTemplate().getCode():null;

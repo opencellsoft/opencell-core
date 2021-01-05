@@ -7,6 +7,8 @@ import org.meveo.api.cpq.CommercialRuleApi;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialRuleRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -58,17 +60,24 @@ public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 	public Response findByCode(String code) {
 		GetCommercialRuleDtoResponse result = new GetCommercialRuleDtoResponse();
 		try {
-			commercialRuleApi.findByCode(code);
+			result=commercialRuleApi.findByCode(code);
 			return Response.ok(result).build();
 		} catch(MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());
 		}
-	}
-
+	} 
+	
 	@Override
 	public Response list(PagingAndFiltering pagingAndFiltering) {
-		// TODO Auto-generated method stub
-		return null;
+		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
+
+		try {  
+			result = commercialRuleApi.list(pagingAndFiltering);
+			return Response.ok(result).build(); 
+
+		} catch (MeveoApiException e) { 
+			return errorResponse(e, result.getActionStatus());
+		} 
 	}
 
 	@Override
@@ -84,7 +93,7 @@ public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 	}
 
 	@Override
-	public Response findAttributeRules(String tagCode) {
+	public Response findTagRules(String tagCode) {
 		// TODO Auto-generated method stub
 		return null;
 	}

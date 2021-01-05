@@ -85,7 +85,7 @@ public class AttributeDTO extends EnableBusinessDto {
     
     protected boolean ruled=Boolean.FALSE;
     
-    protected Object value;
+    protected String value;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
@@ -282,7 +282,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @return the value
 	 */
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 
@@ -291,7 +291,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(Object value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 

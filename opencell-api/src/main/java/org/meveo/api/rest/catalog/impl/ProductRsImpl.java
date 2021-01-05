@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
@@ -69,10 +70,10 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Override
 	public Response findProductByCode(String codeProduct) {
-		GetProductDtoResponse result = new GetProductDtoResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+		GetProductDtoResponse result=null;
         try {
-        	result= new GetProductDtoResponse(productApi.findByCode(codeProduct));
+        	Product product=productApi.findByCode(codeProduct);
+        	result= new GetProductDtoResponse(product);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
         	return errorResponse(e, result.getActionStatus());

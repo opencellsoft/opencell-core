@@ -78,7 +78,7 @@ public class CommercialOrder extends AuditableEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoicing_plan_id")
-	private BillingPlan invoicingPlan;
+	private InvoicingPlan invoicingPlan;
 
 	
 	@Column(name ="status", nullable = false)
