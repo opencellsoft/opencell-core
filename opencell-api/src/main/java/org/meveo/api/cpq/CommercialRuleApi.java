@@ -1,22 +1,21 @@
 package org.meveo.api.cpq;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
-import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.dto.cpq.ProductDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -31,6 +30,7 @@ import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
+import org.primefaces.model.SortOrder;
 
 
 /**
@@ -61,6 +61,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 	
 	@Inject
 	private ProductVersionService productVersionService;
+	
+	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
 	 
 	 
@@ -131,12 +133,10 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
-		
 		CommercialRuleHeader commercialRuleHeader = commercialRuleHeaderService.findByCode(code);
 		if (commercialRuleHeader == null) {
 			throw new EntityDoesNotExistsException(CommercialRuleHeader.class, code);
 		}  
-		
 		GetCommercialRuleDtoResponse result = new GetCommercialRuleDtoResponse(commercialRuleHeader); 
 		return result;
 	}
@@ -196,6 +196,28 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		}
 	}
 	
+	
+	public GetListCommercialRulesResponseDto list (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+		if (pagingAndFiltering == null) {
+			pagingAndFiltering = new PagingAndFiltering();
+		}
+		String sortBy = DEFAULT_SORT_ORDER_ID;
+		if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+			sortBy = pagingAndFiltering.getSortBy();
+		}
+		PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, CommercialRuleHeader.class);
+		Long totalCount = commercialRuleHeaderService.count(paginationConfiguration);
+		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
+		result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		if(totalCount > 0) {
+			commercialRuleHeaderService.list(paginationConfiguration).stream().forEach(p -> {
+				result.getCommercialRules().add(new CommercialRuleHeaderDTO(p));
+			});
+		}
+		return result;
+	}
 	
  
 		
