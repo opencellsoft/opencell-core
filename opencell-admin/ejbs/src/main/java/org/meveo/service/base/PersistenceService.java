@@ -109,36 +109,36 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * Entity list search parameter name - parameter's value contains entity class
      */
-    public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
+    public static final String SEARCH_ATTR_TYPE_CLASS = "type_class";
     /**
      * Entity list search parameter value - parameter's value is null
      */
-    public static String SEARCH_IS_NULL = "IS_NULL";
+    public static final String SEARCH_IS_NULL = "IS_NULL";
     /**
      * Entity list search parameter value - parameter's value is not null
      */
-    public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
+    public static final String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
     /**
      * Entity list search parameter criteria - wildcard Or
      */
-    public static String SEARCH_WILDCARD_OR = "wildcardOr";
+    public static final String SEARCH_WILDCARD_OR = "wildcardOr";
     /**
      * Entity list search parameter name - parameter's value contains sql statement
      */
-    public static String SEARCH_SQL = "SQL";
+    public static final String SEARCH_SQL = "SQL";
     /**
      * Entity list search parameter criteria - just like wildcardOr but Ignoring case
      */
-    public static String SEARCH_WILDCARD_OR_IGNORE_CAS = "wildcardOrIgnoreCase";
+    public static final String SEARCH_WILDCARD_OR_IGNORE_CAS = "wildcardOrIgnoreCase";
     /**
      * Entity list search parameter name - parameter's value contains filter name
      */
-    public static String SEARCH_FILTER = "$FILTER";
+    public static final String SEARCH_FILTER = "$FILTER";
 
     /**
      * Entity list search parameter name - parameter's value contains filter parameters
      */
-    public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+    public static final String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";

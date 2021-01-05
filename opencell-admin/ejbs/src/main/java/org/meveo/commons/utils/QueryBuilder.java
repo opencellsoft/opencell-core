@@ -17,6 +17,24 @@
  */
 package org.meveo.commons.utils;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -24,16 +42,6 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.primefaces.model.SortOrder;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Query builder class for building JPA queries.
@@ -488,6 +496,18 @@ public class QueryBuilder {
     public QueryBuilder addCriterionEntity(String field, Object entity) {
         return addCriterionEntity(field, entity, " = ", false);
     }
+    
+    /**
+     * Add a criteria to check field value is equal to the entity passed
+     * 
+     * @param field name of field
+     * @param entity entity of given field to add criterion
+     * @param condition Comparison type
+     * @return instance of QueryBuilder
+     */
+    public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
+        return addCriterionEntity(field, entity, condition, false);
+    }
 
     /**
      * Add a criteria to check field value is equal to the entity passed
@@ -520,6 +540,19 @@ public class QueryBuilder {
     @SuppressWarnings("rawtypes")
     public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
         return addCriterionEnum(field, enumValue, "=", false);
+    }
+    
+    /**
+     * Add a criteria to check field value is equal to the enum passed
+     * 
+     * @param field Field name
+     * @param enumValue Enum value to compare to
+     * @param condition Comparison type
+     * @return instance of QueryBuilder.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition) {
+        return addCriterionEnum(field, enumValue, condition, false);
     }
 
     /**
@@ -634,6 +667,19 @@ public class QueryBuilder {
      */
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
         return addCriterionWildcard(field, value, caseInsensitive, false, false);
+    }
+    
+    /**
+     * Add a criteria to check field value is like a value passed
+     * 
+     * @param field name of field
+     * @param value value of field
+     * @param caseInsensitive true/false
+     * @param addNot Should NOT be added to comparison
+     * @return query instance.
+     */
+    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
+        return addCriterionWildcard( field,  value,  caseInsensitive,  addNot, false);
     }
 
     /**
@@ -765,6 +811,27 @@ public class QueryBuilder {
         } else {
             return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start);
         }
+    }
+    
+    /**
+     * @param field name of field to add
+     * @param valueTo date value.
+     * @return instance of QueryBuilder
+     */
+    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
+        return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
+    }
+    
+    /**
+     * Add a criteria to check that field value is before the date passed. Date value is truncated to a day.
+     *
+     * @param field the field
+     * @param valueTo the value to. Will be truncated to day.
+     * @param inclusive If True, the field will be considered as inclusive - will apply &lt= instead of &lt; comparison.
+     * @return the query builder
+     */
+    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo, boolean inclusive) {
+        return addCriterionDateRangeToTruncatedToDay(field, valueTo, inclusive, false);
     }
 
     /**
@@ -1321,10 +1388,7 @@ public class QueryBuilder {
         }
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
-            Object[] orderings = paginationConfiguration.getOrderings();
-            for (int i = 0; i < orderings.length; i = i + 2) {
-                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
-            }
+            addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(), paginationConfiguration.isAscendingSorting());
         }
     }
 
