@@ -22,6 +22,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
@@ -151,6 +152,10 @@ public class CommercialOrder extends AuditableEntity {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoice_type_id", nullable = false)
+	@NotNull
+	private InvoiceType orderInvoiceType;
 
 	/**
 	 * @return the seller
@@ -443,16 +448,31 @@ public class CommercialOrder extends AuditableEntity {
 	/**
 	 * @return the invoicingPlan
 	 */
-	public BillingPlan getInvoicingPlan() {
+	public InvoicingPlan getInvoicingPlan() {
 		return invoicingPlan;
 	}
 
 
+
+	/**
+	 * @return the orderInvoiceType
+	 */
+	public InvoiceType getOrderInvoiceType() {
+		return orderInvoiceType;
+	}
+
+	/**
+	 * @param orderInvoiceType the orderInvoiceType to set
+	 */
+	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
+		this.orderInvoiceType = orderInvoiceType;
+	}
+
 	/**
 	 * @param invoicingPlan the invoicingPlan to set
 	 */
-	public void setInvoicingPlan(BillingPlan invoicingPlan) {
+	public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
 		this.invoicingPlan = invoicingPlan;
 	}
-	
+
 }

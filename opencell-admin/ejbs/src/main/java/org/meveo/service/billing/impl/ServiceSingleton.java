@@ -376,7 +376,7 @@ public class ServiceSingleton {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CommercialOrder assignCommercialOrderNumber(CommercialOrder order) {
 
-        InvoiceType invoiceType = invoiceTypeService.findByCode(INVOICE_ORDER_TYPE);
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(order.getOrderInvoiceType());
         if(invoiceType == null)
         	throw new BusinessException("Please create a new Invoice Type with Code : " + INVOICE_ORDER_TYPE);
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);

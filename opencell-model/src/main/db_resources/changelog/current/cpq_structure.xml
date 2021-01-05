@@ -2014,6 +2014,9 @@
 	            	<constraints nullable="false"/>
 	            </column>
 	            <column name="invoicing_plan_id" type="bigint" />
+	            <column name="invoice_type_id" type="bigint">
+	            	<constraints nullable="false"/>
+	            </column>
 	        </createTable>
 	        
 	        <createTable tableName="cpq_commercial_order_billing_invoice">
@@ -2031,6 +2034,8 @@
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
         	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_invoice_id" deferrable="false" initiallyDeferred="false"
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+        	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_invoice_type_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
 	        
 	        
 		<createTable tableName="cpq_invoicing_plan">

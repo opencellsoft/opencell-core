@@ -1,7 +1,6 @@
 package org.meveo.api.cpq;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
-import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -19,19 +17,20 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.commercial.BillingPlan;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
-import org.meveo.service.cpq.order.BillingPlanService;
 import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.order.OrderService;
 
@@ -51,8 +50,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject private OrderTypeService orderTypeService;
 	@Inject private CpqQuoteService cpqQuoteService;
 	@Inject private ContractService contractService;
-	@Inject private BillingPlanService billingPlanService;
+	@Inject private InvoicingPlanService invoicingPlanService;
 	@Inject private OrderService orderService;
+    @Inject private InvoiceTypeService invoiceTypeService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -85,9 +85,9 @@ public class CommercialOrderApi extends BaseApi {
 				
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
-			final BillingPlan billingPlan = billingPlanService.findByCode(orderDto.getInvoicingPlanCode());
+			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
 			if(billingPlan == null)
-				throw new EntityDoesNotExistsException(BillingPlan.class, orderDto.getInvoicingPlanCode());
+				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
 			order.setInvoicingPlan(billingPlan);
 		}
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
@@ -105,6 +105,7 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
+		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		commercialOrderService.create(order);
 		return new CommercialOrderDto(order);
 	}
@@ -116,7 +117,7 @@ public class CommercialOrderApi extends BaseApi {
 		final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
-		if(!order.getStatus().equals(OrderStatusEnum.IN_CREATION)) {
+		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString())) {
 			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
 		
@@ -154,9 +155,9 @@ public class CommercialOrderApi extends BaseApi {
 				
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
-			final BillingPlan billingPlan = billingPlanService.findByCode(orderDto.getInvoicingPlanCode());
+			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
 			if(billingPlan == null)
-				throw new EntityDoesNotExistsException(BillingPlan.class, orderDto.getInvoicingPlanCode());
+				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
 			order.setInvoicingPlan(billingPlan);
 		}
 		if(orderDto.getOrderProgress() != null)
@@ -206,8 +207,15 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
 			throw new MeveoApiException("can not change order status, because the current status is Canceled");
-		}else if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.DRAFT.toString())) {
-			throw new MeveoApiException("Order's status is not DRAFT. updating status is forbidden");
+		}
+		
+		if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString())) {
+			if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString()))
+				throw new MeveoApiException("The Order is not yet finalize");
+		}else if (statusTarget.equalsIgnoreCase(CommercialOrderEnum.VALIDATED.toString())) {
+			if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
+				throw new MeveoApiException("The Order is not yet complete");
+			
 		}
 		List<String> status = allStatus();
 
