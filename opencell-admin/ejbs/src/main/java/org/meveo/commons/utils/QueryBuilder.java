@@ -1274,11 +1274,7 @@ public class QueryBuilder {
         // }
         // String aliasName = matcher.group(1);
         //
-<<<<<<< HEAD
         // countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
-=======
-        // countSql = "select count(distinct " + aliasName + ") " + toStringQuery().substring(q.indexOf(from));
->>>>>>> ffd8f62d35... RE #5860 fix unit tests
         // }
 
         // Logger log = LoggerFactory.getLogger(getClass());

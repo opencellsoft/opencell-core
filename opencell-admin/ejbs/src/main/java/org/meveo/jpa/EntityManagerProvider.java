@@ -98,7 +98,9 @@ public class EntityManagerProvider {
         // Create an application managed persistence context for provider
         final EntityManager em = createEntityManager(providerCode);
         EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            em.joinTransaction();
+        	if(em.getTransaction() != null && em.getTransaction().isActive()) {
+        		em.joinTransaction();
+        	}
             return method.invoke(em, args);
         });
         return new EntityManagerWrapper(emProxy, true);
@@ -219,7 +221,7 @@ public class EntityManagerProvider {
      * @param providerCode Provider code
      * @return Schema name corresponding to a provider code
      */
-    private String convertToSchemaName(String providerCode) {
+    public String convertToSchemaName(String providerCode) {
         return providerCode.replace(' ', '_').toLowerCase();
     }
 }
