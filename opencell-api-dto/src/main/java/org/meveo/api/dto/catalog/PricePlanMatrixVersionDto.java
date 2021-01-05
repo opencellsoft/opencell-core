@@ -13,7 +13,12 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixVersionDto extends BaseEntityDto {
 
-    @NotNull
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1105680934764861643L;
+
+	@NotNull
     private String pricePlanMatrixCode;
 
     private VersionStatusEnum statusEnum;

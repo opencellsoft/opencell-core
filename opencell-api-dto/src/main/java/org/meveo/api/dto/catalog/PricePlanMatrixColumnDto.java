@@ -11,7 +11,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixColumnDto extends BaseEntityDto {
 
-    @NotNull
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6095766234485840716L;
+
+	@NotNull
     private String code;
 
     @NotNull
