@@ -18,19 +18,32 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.PricePlanMatrixApi;
+import org.meveo.api.catalog.PricePlanMatrixColumnApi;
+import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.ordering.common.LinkGenerator;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Edward P. Legaspi
@@ -41,6 +54,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
     @Inject
     private PricePlanMatrixApi pricePlanApi;
+    @Inject
+    private PricePlanMatrixVersionApi pricePlanMatrixVersionApi;
+    @Inject
+    private PricePlanMatrixColumnApi pricePlanMatrixColumnApi;
 
     @Override
     public ActionStatus create(PricePlanMatrixDto postData) {
@@ -144,5 +161,97 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
 
         return result;
+    }
+
+    @Override
+    public Response createOrUpdateMatrixPricePlanVersion(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
+        try {
+            PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionApi.createOrUpdate(pricePlanMatrixVersionDto);
+            return Response.ok(new GetPricePlanVersionResponseDto(pricePlanMatrixVersion)).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, new GetPricePlanVersionResponseDto().getActionStatus());
+        }
+    }
+
+    @Override
+    public Response removeMatrixPricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.removePricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        }
+    }
+
+    @Override
+    public Response updatePricePlanMatrixVersionStatus(String pricePlanMatrixCode, int pricePlanMatrixVersion, VersionStatusEnum status) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            result=pricePlanMatrixVersionApi.updateProductVersionStatus(pricePlanMatrixCode, pricePlanMatrixVersion, status);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response duplicatePricePlanVersion(String pricePlanMatrixCode, int pricePlanMatrixVersion) {
+        GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+            result =pricePlanMatrixVersionApi.duplicateProductVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response create(PricePlanMatrixColumnDto postData) {
+        GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
+        try {
+            PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(postData);
+            response.setPricePlanMatrixColumnDto(new PricePlanMatrixColumnDto(pricePlanMatrixColumn));
+            return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRs.class, pricePlanMatrixColumn.getId()).build())
+                    .entity(response)
+                    .build();
+        } catch(MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response update(PricePlanMatrixColumnDto postData) {
+        GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
+        try {
+            PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnApi.update(postData);
+            response.setPricePlanMatrixColumnDto(new PricePlanMatrixColumnDto(pricePlanMatrixColumn));
+            return Response.ok(response).build();
+        } catch(MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response findPricePlanMatrixColumn(String pricePlanMatrixColumnCode) {
+        GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
+        try {
+            PricePlanMatrixColumnDto pricePlanMatrixColumnDto = pricePlanMatrixColumnApi.find(pricePlanMatrixColumnCode);
+            response.setPricePlanMatrixColumnDto(pricePlanMatrixColumnDto);
+            return Response.ok(response).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response removePricePlanMatrixColumnCode(String pricePlanMatrixColumnCode) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixColumnApi.remove(pricePlanMatrixColumnCode);
+            return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        }
     }
 }
