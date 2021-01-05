@@ -219,7 +219,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return Request processing status
      */
     @POST
-    @Path("/PricePlanMatrixColumn")
+    @Path("/pricePlanMatrixColumn")
     Response create(PricePlanMatrixColumnDto postData);
 
     /**
@@ -229,7 +229,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return Request processing status
      */
     @PUT
-    @Path("/PricePlanMatrixColumn")
+    @Path("/pricePlanMatrixColumn")
     Response update(PricePlanMatrixColumnDto postData);
 
     /**
@@ -239,7 +239,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlanColumn
      */
     @GET
-    @Path("/PricePlanMatrixColumn")
+    @Path("/pricePlanMatrixColumn")
     Response findPricePlanMatrixColumn(@QueryParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
     /**
@@ -249,7 +249,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return Request processing status
      */
     @DELETE
-    @Path("/{pricePlanMatrixColumnCode}")
+    @Path("/pricePlanMatrixColumn/{pricePlanMatrixColumnCode}")
     Response removePricePlanMatrixColumnCode(@PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 

@@ -212,7 +212,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         try {
             PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(postData);
             response.setPricePlanMatrixColumnDto(new PricePlanMatrixColumnDto(pricePlanMatrixColumn));
-            return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRsImpl.class, pricePlanMatrixColumn.getId()).build())
+            return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRs.class, pricePlanMatrixColumn.getId()).build())
                     .entity(response)
                     .build();
         } catch(MeveoApiException e) {

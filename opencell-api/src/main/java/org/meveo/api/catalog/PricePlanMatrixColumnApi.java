@@ -105,6 +105,7 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
         pricePlanMatrixColumn.setAttribute(loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class));
         pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));
+        pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());
         pricePlanMatrixColumn.setType(dtoData.getType());
