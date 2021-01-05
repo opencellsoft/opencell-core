@@ -313,4 +313,11 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
 
         return null;
     }
+
+    protected  <T extends BusinessEntity> T loadEntityByCode(BusinessService<T> service, String code, Class<T> typeParameterClass){
+        T baseEntity = service.findByCode(code);
+        if(baseEntity == null)
+            throw new EntityDoesNotExistsException(typeParameterClass, code);
+        return baseEntity;
+    }
 }
