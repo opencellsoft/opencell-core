@@ -38,6 +38,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
@@ -48,6 +49,7 @@ import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -102,6 +104,9 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private CommercialOrderService commercialOrderService;
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
@@ -365,6 +370,53 @@ public class ServiceSingleton {
         return assignInvoiceNumber(invoice, true);
     }
 
+    private final String INVOICE_ORDER_TYPE = "commercialOrder";
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public CommercialOrder assignCommercialOrderNumber(CommercialOrder order) {
+
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(order.getOrderInvoiceType());
+        if(invoiceType == null)
+        	throw new BusinessException("Please create a new Invoice Type with Code : " + INVOICE_ORDER_TYPE);
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+        Customer cust = order.getBillingAccount().getCustomerAccount().getCustomer();
+
+        Seller seller = order.getSeller();
+        
+        if (seller == null && cust.getSeller() != null) {
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, order.getOrderDate(), invoiceType);
+        }
+        seller = sellerService.refreshOrRetrieve(seller);
+
+        InvoiceSequence sequence = incrementInvoiceNumberSequence(order.getOrderDate(), invoiceType, seller, cfName, 1);
+        int sequenceSize = sequence.getSequenceSize();
+
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+        } else if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = InvoiceService.evaluatePrefixElExpression(prefix, order);
+
+        } else {
+            prefix = "";
+        }
+
+        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
+        order.setOrderNumber(prefix + invoiceNumber);
+    	return order;
+    }
     /**
      * Assign invoice number to an invoice
      *

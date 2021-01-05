@@ -108,6 +108,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     public InvoiceType getDefaultQuote() throws BusinessException {
         return getDefaultType(getQuoteCode());
     }
+
+    
     
     /**
      * Gets the default draft.
@@ -129,6 +131,16 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         return getDefaultType(getPrepaidCode());
     }
 
+    /**
+     * Gets the default commercial order.
+     *
+     * @return the default commercial order
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType getDefaultCommercialOrder() throws BusinessException {
+        return getDefaultType(getCommercialOrderCode());
+    }
+    
     /**
      * Gets the commercial code.
      *
@@ -165,6 +177,14 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         return paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT");
     }
 
+    /**
+     * Gets the quote code.
+     *
+     * @return the quote code
+     */
+    public String getCommercialOrderCode() {
+        return paramBeanFactory.getInstance().getProperty("invoiceType.commercialOrder.code", "COMMERCIAL_ORDER");
+    }
     /**
      * Gets the prepaid code.
      *
