@@ -24,14 +24,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.PATCH;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import javax.ws.rs.Consumes;
@@ -192,8 +195,8 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      *
-     * @param productCode
-     * @param productVersion
+     * @param pricePlanMatrixCode
+     * @param pricePlanMatrixVersion
      * @return
      */
     @POST
@@ -207,6 +210,47 @@ public interface PricePlanRs extends IBaseRs {
             })
     Response duplicatePricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
                                      @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+
+
+    /**
+     * Create a new price plan matrix column
+     *
+     * @param postData The price plan matrix column's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/PricePlanMatrixColumn")
+    Response create(PricePlanMatrixColumnDto postData);
+
+    /**
+     * Update an existing price plan matrix column
+     *
+     * @param postData The price plan matrix column's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/PricePlanMatrixColumn")
+    Response update(PricePlanMatrixColumnDto postData);
+
+    /**
+     * Find a price plan matrix column with a given code
+     *
+     * @param pricePlanMatrixColumnCode The price plan's code
+     * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlanColumn
+     */
+    @GET
+    @Path("/PricePlanMatrixColumn")
+    Response findPricePlanMatrixColumn(@QueryParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
+
+    /**
+     * Remove an existing price plan matrix column with a given code
+     *
+     * @param pricePlanMatrixColumnCode The price plan column's code
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/{pricePlanMatrixColumnCode}")
+    Response removePricePlanMatrixColumnCode(@PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 
 }
