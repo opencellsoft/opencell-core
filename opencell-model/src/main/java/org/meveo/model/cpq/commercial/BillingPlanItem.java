@@ -35,7 +35,7 @@ public class BillingPlanItem extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billing_plan_id", nullable = false)
 	@NotNull
-	private BillingPlan billingPlan;
+	private InvoicingPlan billingPlan;
 	
 	@Column(name = "advancement", length = 20, nullable = false)
 	@NotNull
