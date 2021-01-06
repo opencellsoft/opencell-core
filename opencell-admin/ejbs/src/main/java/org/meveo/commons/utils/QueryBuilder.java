@@ -18,6 +18,8 @@
 package org.meveo.commons.utils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -34,7 +38,10 @@ import javax.persistence.TypedQuery;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.jpa.EntityManagerProvider;
+import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -676,6 +683,17 @@ public class QueryBuilder {
         return addCriterion(field, "=", value, false, false);
 
     }
+    
+    /**
+     * Add a criteria to check field value is equal to the date passed ignoring the time
+     * 
+     * @param field Name of entity's field
+     * @param value Date value to compare to
+     * @return instance of QueryBuilder.
+     */
+    public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value, boolean isFieldValueOptional) {
+        return addCriterionDateTruncatedToDay(field, value, false, isFieldValueOptional, null);
+    }
 
     /**
      * Add a criteria to check field value is equal to the date passed ignoring the time
@@ -685,7 +703,7 @@ public class QueryBuilder {
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value) {
-        return addCriterionDateTruncatedToDay(field, value, false);
+        return addCriterionDateTruncatedToDay(field, value, false, false, null);
     }
 
     /**
@@ -696,7 +714,7 @@ public class QueryBuilder {
      * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder.
      */
-    public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value, boolean isFieldValueOptional) {
+    public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value, boolean isNot, boolean isFieldValueOptional, String parameterNamePrefix) {
 
         if (StringUtils.isBlank(value)) {
             return this;
@@ -713,15 +731,15 @@ public class QueryBuilder {
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
-        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "");
-        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "");
+        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "") + (parameterNamePrefix != null ? parameterNamePrefix : "");
+        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "") + (parameterNamePrefix != null ? parameterNamePrefix : "");
 
         String sql = field + ">=:" + startDateParameterName + " and " + field + "<:" + endDateParameterName;
 
         if (isFieldValueOptional) {
-            return addSqlCriterionMultiple("(" + field + " IS NULL or (" + sql + "))", startDateParameterName, start, endDateParameterName, end);
+            return addSqlCriterionMultiple((isNot ? " not(" : "") + "(" + field + " IS NULL or (" + sql + "))" + (isNot ? ")" : ""), startDateParameterName, start, endDateParameterName, end);
         } else {
-            return addSqlCriterionMultiple(sql, startDateParameterName, start, endDateParameterName, end);
+            return addSqlCriterionMultiple((isNot ? " not(" : "(") + sql + ")", startDateParameterName, start, endDateParameterName, end);
         }
 
     }
@@ -731,7 +749,6 @@ public class QueryBuilder {
      * 
      * @param field Name of entity's field
      * @param valueFrom Date value to compare to
-     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
