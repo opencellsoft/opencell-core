@@ -92,6 +92,11 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     log.error("Database operation was unsuccessful because of constraint violation: "+message);
                     messageKey = "error.database.constraint.violation";
                     break;
+                    
+                } else if (cause instanceof EncyptionException) {
+                    message = cause.getMessage();
+                    log.error("Error while de/encrypting: " + cause.getMessage(), cause);
+                    break;
                 }
                 cause = cause.getCause();
             }
