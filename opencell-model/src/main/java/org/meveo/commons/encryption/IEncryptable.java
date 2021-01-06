@@ -76,7 +76,7 @@ public interface IEncryptable {
 			
 		} catch (Exception e) {
 			log.error("Error while encrypting: " + e.getLocalizedMessage(), e);
-			return ON_ERROR_RETURN;
+			throw new EncyptionException(e);
 		}
 		return strToEncrypt;
 	}
