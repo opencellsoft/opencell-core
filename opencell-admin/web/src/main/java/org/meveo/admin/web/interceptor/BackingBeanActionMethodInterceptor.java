@@ -80,6 +80,11 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     log.error("Delete was unsuccessful because entity is already in use.");
                     messageKey = "error.delete.entityUsed";
                     break;
+                    
+                } else if (cause instanceof EncyptionException) {
+                    message = cause.getMessage();
+                    log.error("Error while de/encrypting: " + cause.getMessage(), cause);
+                    break;
                 }
                 cause = cause.getCause();
             }
