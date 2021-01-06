@@ -21,6 +21,10 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	private BigDecimal pricetWithoutTax;
 
+	private String PricePlanMatrixCode;
+
+	private int pricePlanMatrixVersion;
+
 	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
 
 	/**
@@ -65,4 +69,19 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.pricePlanMatrixValues = pricePlanMatrixValues;
 	}
 
+	public String getPricePlanMatrixCode() {
+		return PricePlanMatrixCode;
+	}
+
+	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
+		PricePlanMatrixCode = pricePlanMatrixCode;
+	}
+
+	public int getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
 }

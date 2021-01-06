@@ -20,23 +20,26 @@ package org.meveo.api.rest.catalog.impl;
 
 import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.PricePlanMatrixColumnApi;
+import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanMatrixLineResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
-import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
@@ -58,6 +61,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     private PricePlanMatrixVersionApi pricePlanMatrixVersionApi;
     @Inject
     private PricePlanMatrixColumnApi pricePlanMatrixColumnApi;
+    @Inject
+    private PricePlanMatrixLineApi pricePlanMatrixLineApi;
 
     @Override
     public ActionStatus create(PricePlanMatrixDto postData) {
@@ -254,4 +259,27 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, result);
         }
     }
+
+    @Override
+    public Response addPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
+        GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
+        try {
+            PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixLineApi.addPricePlanMatrixLine(pricePlanMatrixLineDto);
+            pricePlanMatrixLineDto.setPpmLineId(pricePlanMatrixLine.getId());
+            response.setPricePlanMatrixLineDto(pricePlanMatrixLineDto);
+            return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRs.class, pricePlanMatrixLine.getId()).build())
+                    .entity(response)
+                    .build();
+        }catch(MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
+        pricePlanMatrixLineApi.updatePricePlanMatrixLine(pricePlanMatrixLineDto);
+        return null;
+    }
+
+
 }

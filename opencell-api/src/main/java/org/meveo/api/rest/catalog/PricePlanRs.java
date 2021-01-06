@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
@@ -151,7 +152,7 @@ public interface PricePlanRs extends IBaseRs {
     @POST
     @Path("/pricePlanMatrixVersion")
     @Operation(summary = "This endpoint allows to create or update a price plan version",
-            tags = { "PricePlan" },
+            tags = { "PricePlanMatrixVersion" },
             description ="create a price plan version if it doesn't exist or update an existing price plan version",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully created or updated",
@@ -290,4 +291,37 @@ public interface PricePlanRs extends IBaseRs {
     Response removePricePlanMatrixColumnCode(@PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 
+    /**
+     * Create a new price plan matrix column
+     *
+     * @param pricePlanMatrixLineDto The price plan matrix line's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addPricePlanMatrixLine")
+    @Operation(summary = "This endpoint allows to add a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="add a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan line successfully added"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response addPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
+
+    /**
+     * Create a new price plan matrix column
+     *
+     * @param pricePlanMatrixLineDto The price plan matrix line's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/updatePricePlanMatrixLine")
+    @Operation(summary = "This endpoint allows to update a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="update a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully updated"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
 }

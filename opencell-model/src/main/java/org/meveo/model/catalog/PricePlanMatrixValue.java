@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -21,10 +22,12 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "ppm_column_id")
+    @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;
 
     @OneToOne
     @JoinColumn(name= "ppml_id")
+    @NotNull
     private PricePlanMatrixLine pricePlanMatrixLine;
 
     @Column(name = "long_value")
@@ -81,5 +84,53 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     public void setStringValue(String stringValue) {
         this.stringValue = stringValue;
+    }
+
+    public PricePlanMatrixLine getPricePlanMatrixLine() {
+        return pricePlanMatrixLine;
+    }
+
+    public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
+        this.pricePlanMatrixLine = pricePlanMatrixLine;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
+
+    public Date getFromDateValue() {
+        return fromDateValue;
+    }
+
+    public void setFromDateValue(Date fromDateValue) {
+        this.fromDateValue = fromDateValue;
+    }
+
+    public Date getToDateValue() {
+        return toDateValue;
+    }
+
+    public void setToDateValue(Date toDateValue) {
+        this.toDateValue = toDateValue;
+    }
+
+    public Double getFromDoubleValue() {
+        return fromDoubleValue;
+    }
+
+    public void setFromDoubleValue(Double fromDoubleValue) {
+        this.fromDoubleValue = fromDoubleValue;
+    }
+
+    public Double getToDoubleValue() {
+        return toDoubleValue;
+    }
+
+    public void setToDoubleValue(Double toDoubleValue) {
+        this.toDoubleValue = toDoubleValue;
     }
 }

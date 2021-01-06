@@ -5,7 +5,6 @@ import javax.persistence.NoResultException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -25,7 +24,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 
 
-    public PricePlanMatrixVersion findByPricePlanAndVersion(int currentVersion, String pricePlanMatrixCode) {
+    public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
         try {
             return (PricePlanMatrixVersion) this.getEntityManager()
                     .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersion")
