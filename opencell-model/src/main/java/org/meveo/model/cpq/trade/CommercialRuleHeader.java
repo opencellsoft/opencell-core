@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -31,7 +33,12 @@ import org.meveo.model.cpq.tags.Tag;
 @Entity
 @Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq"), })
+ @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
+@NamedQueries({ 
+	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProductVersion.product.code=:productCode and c.targetProductVersion.currentVersion=:currentVersion ")
+})
 public class CommercialRuleHeader extends BusinessEntity {
 
 	/**
