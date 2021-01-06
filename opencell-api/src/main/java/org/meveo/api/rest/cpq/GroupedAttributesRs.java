@@ -28,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
@@ -71,7 +72,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "400", description = "No GroupedAttribute is found for the parameter code", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus create(GroupedAttributeDto groupedAttributeDto);
+    Response create(GroupedAttributeDto groupedAttributeDto);
 
     /**
      * Update an existing Grouped Attribute
@@ -126,7 +127,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
             		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus find(@QueryParam("groupedAttributeCode") String groupedAttributeCode);
+    Response find(@QueryParam("groupedAttributeCode") String groupedAttributeCode);
 
 
 }
