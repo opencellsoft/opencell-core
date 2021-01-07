@@ -130,8 +130,8 @@ public interface CommercialRuleRs extends IBaseRs {
  responses = {
          @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
  })
- public Response findAttributeRules ( @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode,
-		 @Parameter(description = "attribute code", required = false) @QueryParam("attributeCode") String attributeCode);
+ public Response findAttributeRules (@Parameter(description = "attribute code", required = false) @QueryParam("attributeCode") String attributeCode,
+		 @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode);
  
  
  @GET
