@@ -1729,4 +1729,11 @@ public abstract class BaseApi {
     public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
+
+    protected  <T extends BusinessEntity> T loadEntityByCode(BusinessService<T> service, String code, Class<T> typeParameterClass){
+        T baseEntity = service.findByCode(code);
+        if(baseEntity == null)
+            throw new EntityDoesNotExistsException(typeParameterClass, code);
+        return baseEntity;
+    }
 }

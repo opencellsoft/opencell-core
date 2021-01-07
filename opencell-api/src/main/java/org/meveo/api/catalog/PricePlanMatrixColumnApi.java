@@ -5,16 +5,19 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
 
@@ -28,7 +31,7 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
     @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
     @Inject
     private ProductService productService;
     @Inject
@@ -75,6 +78,9 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         if (StringUtils.isBlank(dtoData.getPricePlanMatrixCode())) {
             missingParameters.add("pricePlanMatrixCode");
         }
+        if (StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())) {
+            missingParameters.add("pricePlanMatrixVersion");
+        }
         if (StringUtils.isBlank(dtoData.getElValue())) {
             missingParameters.add("elValue");
         }
@@ -101,7 +107,12 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     }
 
     private void populatePricePlanMatrixColumn(PricePlanMatrixColumnDto dtoData, PricePlanMatrixColumn pricePlanMatrixColumn) {
-        pricePlanMatrixColumn.setPricePlanMatrix(loadEntityByCode(pricePlanMatrixService, dtoData.getPricePlanMatrixCode(), PricePlanMatrix.class));
+
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+        if(pricePlanMatrixVersion == null){
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", ""+dtoData.getPricePlanMatrixVersion(), "pricePlanMatrixVersion");
+        }
+        pricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
         pricePlanMatrixColumn.setAttribute(loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class));
         pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));

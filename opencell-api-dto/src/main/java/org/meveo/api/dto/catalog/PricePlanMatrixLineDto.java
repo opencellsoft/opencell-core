@@ -3,11 +3,13 @@ package org.meveo.api.dto.catalog;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixLineDto extends BaseEntityDto {
@@ -21,7 +23,25 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	private BigDecimal pricetWithoutTax;
 
+	private String pricePlanMatrixCode;
+
+	private int pricePlanMatrixVersion;
+
 	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
+
+	public PricePlanMatrixLineDto() {
+	}
+
+	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
+		this.ppmLineId = pricePlanMatrixLine.getId();
+		this.pricetWithoutTax = pricePlanMatrixLine.getPricetWithoutTax();
+		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
+		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
+		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
+				.stream()
+				.map(value -> new PricePlanMatrixValueDto(value))
+				.collect(Collectors.toList());
+	}
 
 	/**
 	 * @return the ppmLineId
@@ -65,4 +85,19 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.pricePlanMatrixValues = pricePlanMatrixValues;
 	}
 
+	public String getPricePlanMatrixCode() {
+		return pricePlanMatrixCode;
+	}
+
+	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
+		pricePlanMatrixCode = pricePlanMatrixCode;
+	}
+
+	public int getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
 }

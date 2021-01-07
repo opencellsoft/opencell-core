@@ -2,10 +2,12 @@ package org.meveo.api.dto.catalog;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixValueDto extends BaseEntityDto {
@@ -15,6 +17,9 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = 6095766234485840716L;
 
+	private Long ppmValueId;
+
+	@NotNull
     private String ppmColumnCode ;
 
     private Long longValue;
@@ -31,6 +36,22 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
     private Double fromDoubleValue;
 
     private Double toDoubleValue;
+
+	public PricePlanMatrixValueDto() {
+	}
+
+	public PricePlanMatrixValueDto(PricePlanMatrixValue value) {
+		ppmValueId = value.getId();
+		ppmColumnCode = value.getPricePlanMatrixColumn().getCode();
+		longValue = value.getLongValue();
+		doubleValue = value.getDoubleValue();
+		stringValue = value.getStringValue();
+		dateValue = value.getDateValue();
+		fromDateValue = value.getFromDateValue();
+		toDateValue = value.getToDateValue();
+		fromDoubleValue = value.getToDoubleValue();
+		toDateValue = value.getToDateValue();
+	}
 
 	/**
 	 * @return the ppmColumnCode
@@ -157,6 +178,12 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 	public void setToDoubleValue(Double toDoubleValue) {
 		this.toDoubleValue = toDoubleValue;
 	}
-    
-    
+
+	public Long getPpmValueId() {
+		return ppmValueId;
+	}
+
+	public void setPpmValueId(Long ppmValueId) {
+		this.ppmValueId = ppmValueId;
+	}
 }
