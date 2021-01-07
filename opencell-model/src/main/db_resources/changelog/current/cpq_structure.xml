@@ -2613,7 +2613,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
 
-            <column name="ppm_id" type="bigint" />
+            <column name="ppm_version_id" type="bigint" />
             <column name="position" type ="int4"/>
             <column name="type" type="varchar(255)"/>
 
@@ -2667,13 +2667,15 @@
 	
 	            <column name="description" type="varchar(255)"/>
 	            <column name="price_without_tax" type="numeric(23, 12)" />
-	            <column name="double_value" type ="float8"/>
         </createTable>
+
+		<addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_ppm_version" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
 
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_product" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
 
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
 		<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_offer_template" deferrable="false" initiallyDeferred="false"
@@ -2682,7 +2684,7 @@
         <addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
 
-		<addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
+		<addForeignKeyConstraint baseColumnNames="ppml_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
 
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"

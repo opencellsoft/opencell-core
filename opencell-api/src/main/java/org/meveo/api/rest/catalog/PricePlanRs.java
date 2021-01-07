@@ -314,7 +314,7 @@ public interface PricePlanRs extends IBaseRs {
      * @param pricePlanMatrixLineDto The price plan matrix line's data
      * @return Request processing status
      */
-    @POST
+    @PUT
     @Path("/updatePricePlanMatrixLine")
     @Operation(summary = "This endpoint allows to update a price plan matrix line",
             tags = { "PricePlanMatrixLine" },
