@@ -24,7 +24,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.finance.AccountingEntry;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.MatchingAmount;
@@ -34,7 +34,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 
 /**
- * Standard backing bean for {@link AccountingWriting}
+ * Standard backing bean for {@link AccountingEntry}
  *
  * @author mboukayoua
  */
@@ -47,14 +47,14 @@ public class AccountingWritingListBean extends AccountingWritingBean {
 	/**
 	 * selected Accounting writing id
 	 */
-	private AccountingWriting selectedAccountingWriting;
+	private AccountingEntry selectedAccountingEntry;
 
     /**
-     * get selectedAccountingWriting
+     * get selectedAccountingEntry
      * @return selected Accounting Writing
      */
-    public AccountingWriting getSelectedAccountingWriting() {
-        return selectedAccountingWriting;
+    public AccountingEntry getSelectedAccountingEntry() {
+        return selectedAccountingEntry;
     }
 
     /**
@@ -62,7 +62,7 @@ public class AccountingWritingListBean extends AccountingWritingBean {
 	 * @param accountingWritingId selected Accounting writing id
 	 */
 	public void selectAccountingWriting(Long accountingWritingId) {
-		this.selectedAccountingWriting = getPersistenceService().findById(accountingWritingId);
+		this.selectedAccountingEntry = getPersistenceService().findById(accountingWritingId);
 	}
 	
 	/**
@@ -70,8 +70,8 @@ public class AccountingWritingListBean extends AccountingWritingBean {
 	 * @return list of {@code AccountOperation}
 	 */
 	public List<AccountOperation> getAccountOperations(){
-	    if (selectedAccountingWriting != null) {
-            return selectedAccountingWriting.getAccountOperations();
+	    if (selectedAccountingEntry != null) {
+            return selectedAccountingEntry.getAccountOperations();
         } else {
 	        return null;
         }
