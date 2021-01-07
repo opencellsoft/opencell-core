@@ -49,6 +49,14 @@
 			<column name="package_flag" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
 		</createTable>
 	</changeSet>
 
@@ -1640,8 +1648,16 @@
             </column>
             <column name="article_family_id" type="bigint"/>
             <column name="accounting_code_id" type="bigint" />
-            <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}"></column>
+            
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
         </createTable>
 
         <createSequence sequenceName="billing_article_family_seq" startValue="1" />
