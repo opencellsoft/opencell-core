@@ -17,6 +17,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.encryption.EncyptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
