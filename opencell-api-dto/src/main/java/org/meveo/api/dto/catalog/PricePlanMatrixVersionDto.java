@@ -2,6 +2,7 @@ package org.meveo.api.dto.catalog;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,20 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @NotNull
     private Boolean isMatrix;
     private BigDecimal priceWithoutTax;
+
+    public PricePlanMatrixVersionDto() {
+    }
+
+    public PricePlanMatrixVersionDto(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        setLabel(pricePlanMatrixVersion.getLabel());
+        setMatrix(pricePlanMatrixVersion.getMatrix());
+        setPricePlanMatrixCode(pricePlanMatrixVersion.getPricePlanMatrix().getCode());
+        setPriceWithoutTax(pricePlanMatrixVersion.getPriceWithoutTax());
+        setVersion(pricePlanMatrixVersion.getCurrentVersion());
+        setStatusEnum(pricePlanMatrixVersion.getStatus());
+        setStatusDate(pricePlanMatrixVersion.getStatusDate());
+        setValidity(pricePlanMatrixVersion.getValidity());
+    }
 
     public String getPricePlanMatrixCode() {
         return pricePlanMatrixCode;

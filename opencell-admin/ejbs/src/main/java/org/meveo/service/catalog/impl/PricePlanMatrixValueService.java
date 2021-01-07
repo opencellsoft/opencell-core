@@ -12,13 +12,4 @@ import java.util.List;
 @Stateless
 public class PricePlanMatrixValueService extends PersistenceService<PricePlanMatrixValue> {
 
-    public List<PricePlanMatrixValue> findByPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
-        try {
-            return getEntityManager().createNamedQuery("PricePlanMatrixValue.findByPricePlanMatrixLine", PricePlanMatrixValue.class)
-                    .setParameter("pricePlanMatrixLine", pricePlanMatrixLine)
-                    .getResultList();
-        } catch(NoResultException exp){
-            return new ArrayList<>();
-        }
-    }
 }

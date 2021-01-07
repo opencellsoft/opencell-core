@@ -82,6 +82,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             populatePricePlanMatrixVersion(pricePlanMatrixVersion, pricePlanMatrixVersionDto, pricePlanMatrixVersionDto.getStatusEnum(), pricePlanMatrixVersionDto.getStatusDate());
             pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
         }
+        pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
 
         return pricePlanMatrixVersion;
     }
@@ -100,6 +101,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         pricePlanMatrixVersion.setPriceWithoutTax(pricePlanMatrixVersionDto.getPriceWithoutTax());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
+        pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
     }
 
@@ -107,7 +109,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         try {
             PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
             if(pricePlanMatrixVersion==null) {
-                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class,pricePlanMatrixCode,"pricePlanMatrixCode",""+currentVersion,"currentVersdion");
+                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class,pricePlanMatrixCode,"pricePlanMatrixCode",""+currentVersion,"currentVersion");
             }
             pricePlanMatrixVersionService.updateProductVersionStatus(pricePlanMatrixVersion, status);
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersion);
