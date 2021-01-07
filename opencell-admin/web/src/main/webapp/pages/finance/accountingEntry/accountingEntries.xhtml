@@ -7,7 +7,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{accountingWritingBean.preRenderView}" />
+				listener="#{accountingWritingListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -33,7 +33,7 @@
             <!--  <hftl:searchField label="#{messages['AccountingEntry.status']}" field="status" /> -->
 		</hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{AccountingEntryListBean}" sortBy="auditable.created">
+		<hftl:dataList backingBean="#{accountingEntryListBean}" sortBy="auditable.created">
 			<hftl:column label="#{messages['accountingEntry.writingDate']}" field="auditable.created" isDate="true" />
 			<hftl:column label="#{messages['accountingEntry.extraParam2']}" field="extraParam2" />
 			<hftl:column label="#{messages['accountingEntry.eventType']}" field="eventType" />
