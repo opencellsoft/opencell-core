@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -47,7 +48,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private VersionStatusEnum status;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ppm_id")
     @NotNull
     private PricePlanMatrix pricePlanMatrix;

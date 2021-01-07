@@ -27,6 +27,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -36,6 +37,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
@@ -45,6 +48,8 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -60,6 +65,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     // private ParamBean param = ParamBean.getInstance();
 
     // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
+
+    @Inject
+    protected EntityToDtoConverter entityToDtoConverter;
 
     public void createPP(PricePlanMatrix pp) throws BusinessException {
 
@@ -686,5 +694,14 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pricePlan.clearUuid();
         pricePlan.setCode(code);
         createPP(pricePlan);
+    }
+
+    public PricePlanMatrixDto findPricePlanMatrix(String pricePlanCode) {
+        PricePlanMatrix pricePlanMatrix = findByCode(pricePlanCode);
+        if (pricePlanMatrix == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
+        }
+
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 }
