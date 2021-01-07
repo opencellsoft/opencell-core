@@ -1,15 +1,14 @@
 package org.meveo.model.cpq.trade;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -19,7 +18,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
@@ -35,7 +33,12 @@ import org.meveo.model.cpq.tags.Tag;
 @Entity
 @Table(name = "cpq_commercial_rule_header", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_trade_rule_header_seq"), })
+ @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
+@NamedQueries({ 
+	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProductVersion.product.code=:productCode and c.targetProductVersion.currentVersion=:currentVersion ")
+})
 public class CommercialRuleHeader extends BusinessEntity {
 
 	/**
@@ -69,29 +72,21 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 * version of the product
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_product_version_id", referencedColumnName = "id")
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
 	private  ProductVersion targetProductVersion;
 
 	
 	 /** 
      * grouped service
      */
-
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
-	private GroupedAttributes groupedAttributes;
+	private GroupedAttributes targetGroupedAttributes;
 	
-	
+
 	/**
-     * service template
-     */ 
-	@ManyToOne(fetch = FetchType.LAZY) 
-	@JoinColumn(name = "service_template_id", referencedColumnName = "id") 
-	private ServiceTemplate serviceTemplate;
-	
-	/**
-	 * attribute name
+	 * attribute id
 	 */
 	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
@@ -101,7 +96,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * attribute value
 	 */
-	@Column(name = "target_service_value", length = 255)
+	@Column(name = "target_attribute_value", length = 255)
 	@Size(max = 255)
 	private String targetAttributeValue;
 
@@ -175,32 +170,19 @@ public class CommercialRuleHeader extends BusinessEntity {
 		this.targetProductVersion = targetProductVersion;
 	}
 
+	 
 	/**
-	 * @return the groupedAttributes
+	 * @return the targetGroupedAttributes
 	 */
-	public GroupedAttributes getGroupedAttributes() {
-		return groupedAttributes;
+	public GroupedAttributes getTargetGroupedAttributes() {
+		return targetGroupedAttributes;
 	}
 
 	/**
-	 * @param groupedAttributes the groupedAttributes to set
+	 * @param targetGroupedAttributes the targetGroupedAttributes to set
 	 */
-	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
-	}
-
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
+	public void setTargetGroupedAttributes(GroupedAttributes targetGroupedAttributes) {
+		this.targetGroupedAttributes = targetGroupedAttributes;
 	}
 
 	/**

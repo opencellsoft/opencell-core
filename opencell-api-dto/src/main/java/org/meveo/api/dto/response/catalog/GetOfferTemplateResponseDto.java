@@ -18,27 +18,45 @@
 
 package org.meveo.api.dto.response.catalog;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.cpq.TagDto;
+import org.meveo.model.catalog.OfferTemplate;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * The Class GetOfferTemplateResponseDto.
  *
  * @author Edward P. Legaspi
+ * @author Mbarek-Ay
  */
 @XmlRootElement(name = "GetOfferTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetOfferTemplateResponseDto extends BaseResponse {
+@JsonIgnoreProperties({"tagCodes"})
+public class GetOfferTemplateResponseDto extends OfferTemplateDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8776189890084137788L;
 
     /** The offer template. */
     private OfferTemplateDto offerTemplate;
+    
+	@XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    private List<TagDto> tags;
 
     /**
      * Gets the offer template.
@@ -57,8 +75,79 @@ public class GetOfferTemplateResponseDto extends BaseResponse {
     public void setOfferTemplate(OfferTemplateDto offerTemplate) {
         this.offerTemplate = offerTemplate;
     }
+    
+    public GetOfferTemplateResponseDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadTags) {
+    	super(offerTemplate, customFieldsDto, asLink);
+    	if(loadTags) { 
+    		if(offerTemplate.getTags() != null && !offerTemplate.getTags().isEmpty()) { 
+    			tags = offerTemplate.getTags().stream().map(t -> {
+    				final TagDto dto = new TagDto(t);
+    				return dto;
+    			}).collect(Collectors.toList());
+    		}  
+    		
+    		
+    	} 
+    }
 
-    @Override
+ 
+
+	public GetOfferTemplateResponseDto() { 
+	}
+
+	
+	 /**
+     * The status response of the web service response.
+     */
+    private ActionStatus actionStatus = new ActionStatus();
+
+    /**
+ 
+
+    /**
+     * Instantiates a new base response.
+     *
+     * @param status the status
+     * @param errorCode the error code
+     * @param message the message
+     */
+    public GetOfferTemplateResponseDto(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
+        actionStatus = new ActionStatus(status, errorCode, message);
+    }
+ 
+    
+
+	/**
+	 * @return the actionStatus
+	 */
+	public ActionStatus getActionStatus() {
+		return actionStatus;
+	}
+
+	/**
+	 * @param actionStatus the actionStatus to set
+	 */
+	public void setActionStatus(ActionStatus actionStatus) {
+		this.actionStatus = actionStatus;
+	}
+ 
+	
+
+	/**
+	 * @return the tags
+	 */
+	public List<TagDto> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<TagDto> tags) {
+		this.tags = tags;
+	}
+
+	@Override
     public String toString() {
         return "GetOfferTemplateResponse [offerTemplate=" + offerTemplate + ", toString()=" + super.toString() + "]";
     }

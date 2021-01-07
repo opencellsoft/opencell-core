@@ -28,10 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
@@ -83,21 +81,20 @@ public class AttributeDTO extends EnableBusinessDto {
     @NotNull
     protected boolean mandatory=Boolean.FALSE;
     
-    
-    protected List<CommercialRuleDTO> commercialRules=new ArrayList<CommercialRuleDTO>();
-    
    protected boolean selectable=Boolean.TRUE;
     
     protected boolean ruled=Boolean.FALSE;
     
-    protected Object value;
+    protected String value;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
     private List<String> chargeTemplateCodes = new ArrayList<String>();
  
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
-   
     public AttributeDTO() {
     }
 
@@ -228,21 +225,20 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
-
 	/**
-	 * @return the commercialRules
+	 * @return the commercialRuleCodes
 	 */
-	public List<CommercialRuleDTO> getCommercialRules() {
-		return commercialRules;
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
 	}
 
 
 
 	/**
-	 * @param commercialRules the commercialRules to set
+	 * @param commercialRuleCodes the commercialRuleCodes to set
 	 */
-	public void setCommercialRules(List<CommercialRuleDTO> commercialRules) {
-		this.commercialRules = commercialRules;
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
 
@@ -286,7 +282,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @return the value
 	 */
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 
@@ -295,7 +291,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(Object value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 

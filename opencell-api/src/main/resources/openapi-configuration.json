@@ -2,6 +2,7 @@
   "scannerClass": "io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner",
   "resourceClasses":
   ["org.meveo.api.rest.catalog.ProductRs",
+    "org.meveo.api.rest.catalog.PricePlanRs",
   "org.meveo.api.rest.cpq.CpqQuoteRs",
   "org.meveo.api.rest.catalog.OfferTemplateRs",
   "org.meveo.api.rest.cpq.ContractRs",

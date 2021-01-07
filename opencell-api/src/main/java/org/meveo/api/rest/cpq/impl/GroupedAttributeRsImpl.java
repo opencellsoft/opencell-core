@@ -1,11 +1,14 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.GroupedAttributesApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.response.cpq.GetGroupedAttributesResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.GroupedAttributesRs;
 import org.meveo.api.rest.impl.BaseRs;
 
@@ -15,14 +18,14 @@ public class GroupedAttributeRsImpl  extends BaseRs implements GroupedAttributes
 	private GroupedAttributesApi groupedServiceApi;
 	
 	@Override
-	public ActionStatus create(GroupedAttributeDto groupedAttributeDto) { 
-		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	public Response create(GroupedAttributeDto groupedAttributeDto) { 
+		  GetGroupedAttributesResponse result = new GetGroupedAttributesResponse();
 	        try {
-	        	groupedServiceApi.createGroupedAttribute(groupedAttributeDto);
+	        	result.setGroupedAttributeDto(groupedServiceApi.createGroupedAttribute(groupedAttributeDto));
+	        	return Response.ok(result).build();
 	        } catch (Exception e) {
-	            processException(e, result);
+	        	return errorResponse(new MeveoApiException(e), result.getActionStatus());
 	        }
-	        return result;
 	}
 
 	@Override
@@ -48,14 +51,15 @@ public class GroupedAttributeRsImpl  extends BaseRs implements GroupedAttributes
 	}
 
 	@Override
-	public ActionStatus find(String groupedServiceCode) {
-		  ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	public Response find(String groupedServiceCode) {
+		  GetGroupedAttributesResponse result = new GetGroupedAttributesResponse();
 	        try {
-	        	groupedServiceApi.findGroupedAttributeByCode(groupedServiceCode);
+	        	result.setGroupedAttributeDto(groupedServiceApi.findGroupedAttributeByCode(groupedServiceCode));
+	        	return Response.ok(result).build();
 	        } catch (Exception e) {
-	            processException(e, result);
+	        	return errorResponse(new MeveoApiException(e), result.getActionStatus());
 	        }
-	        return result;
+	        
 	}
 
 

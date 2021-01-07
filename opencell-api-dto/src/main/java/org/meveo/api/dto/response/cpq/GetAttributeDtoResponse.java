@@ -13,6 +13,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.model.cpq.Attribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,12 +27,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({ "chargeTemplateCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
 public class GetAttributeDtoResponse extends AttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")
     @XmlElement(name = "chargeTemplates")
     private Set<ChargeTemplateDto> chargeTemplates;
+	
+	
+	@XmlElementWrapper(name = "commercialRules")
+    @XmlElement(name = "commercialRules")
+    private Set<CommercialRuleHeaderDTO> commercialRules;
 
 	
 	
@@ -102,6 +108,22 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	public void setChargeTemplates(Set<ChargeTemplateDto> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public Set<CommercialRuleHeaderDTO> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(Set<CommercialRuleHeaderDTO> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+
 
 
     

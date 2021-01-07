@@ -1,0 +1,2773 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<!--  For Media post -->
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-seq">
+		<createSequence sequenceName="cpq_product_seq" />
+		<createSequence sequenceName="cpq_product_line_seq" />
+		<createSequence sequenceName="cpq_product_version_seq" />
+		<createSequence sequenceName="cpq_tag_seq" />
+		<createSequence sequenceName="cpq_tag_filter_seq" />
+		<createSequence sequenceName="cpq_tag_type_seq" />
+		<createSequence sequenceName="cpq_media_seq" />
+		<createSequence sequenceName="cpq_offer_component_seq" />
+		<createSequence sequenceName="cpq_commercial_rule_header_seq" />
+		<createSequence sequenceName="cpq_commercial_rule_item_seq" />
+		<createSequence sequenceName="cpq_commercial_rule_line_seq" />
+		<createSequence sequenceName="cpq_grouped_service_seq" />
+		<createSequence sequenceName="cpq_product_mapping_seq" />
+		<createSequence sequenceName="cpq_accounting_article_seq" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
+		<createTable tableName="cpq_product">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="status" type="varchar(255)" />
+			<column name="status_date" type="datetime" />
+			<column name="product_line_id" type="bigint" />
+			<column name="customer_brand_id" type="bigint" />
+			<column name="reference" type="varchar(50)"/>
+			<column name="model" type="varchar(20)"/>
+			<column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="package_flag" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-04">
+		<createTable tableName="cpq_product_line">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_line_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="long_description" type="text" />
+
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="seller_id" type="bigint" />
+			<column name="parent_line" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-05">
+		<createTable tableName="cpq_product_version">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="version" type="int4" />
+			<column name="status" type="varchar(255)" />
+			<column name="status_date" type="datetime" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="short_description" type="varchar(255)" />
+			<column name="long_description" type="text" />
+			<column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+			<column name="product_id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="current_version" type="int4" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-06">
+		<createTable tableName="cpq_tag">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="seller_id" type="bigint" />
+			<column name="name" type="varchar(255)" />
+			<column name="tag_type_id" type="bigint" />
+			<column name="parent_tag_id" type="bigint" />
+			<column name="filter_el" type="varchar(2000)"/>
+		</createTable>
+	</changeSet>
+
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-07">
+		<createTable tableName="cpq_tag_filter">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_filter_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="tag_id" type="bigint" />
+			<column name="operator" type="varchar(255)" />
+			<column name="entity" type="varchar(255)" />
+			<column name="field" type="varchar(255)" />
+			<column name="comparaison" type="varchar(255)" />
+			<column name="value" type="varchar(255)" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-08">
+		<createTable tableName="cpq_tag_type">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_type_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="seller_id" type="bigint" />
+		</createTable>
+	</changeSet>
+
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-10">
+		<createTable tableName="cpq_media">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+							 primaryKeyName="cpq_media_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="offer_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="attribute_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="media_name" type="varchar(50)" />
+			<column name="label" type="varchar(255)" />
+			<column name="main" type="${type.boolean}" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="media_type" type="varchar(50)" />
+			<column name="media_path" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-13">
+		<createTable tableName="cpq_offer_component">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+							 primaryKeyName="cpq_offer_component_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="offer_template_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-14">
+		<createTable tableName="cpq_commercial_rule_header">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+							 primaryKeyName="cpq_commercial_rule_header_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="rule_type" type="varchar(50)" />
+			<column name="offer_template_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="grouped_service_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="grouped_attributes_id" type="bigint" />
+			<column name="attribute_id" type="bigint" />
+			<column name="target_attribute_value" type="varchar(255)" />
+			<column name="tag_id" type="bigint" />
+			<column name="rule_el" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	   <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-15">
+		<createTable tableName="cpq_commercial_rule_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_commercial_rule_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="commercial_rule_header_id" type="bigint" />
+			<column name="operator" type="varchar(255)" />
+			<column name="rule_item_el" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+
+	  <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-16">
+		<createTable tableName="cpq_commercial_rule_line">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_commercial_rule_line_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="offer_template_id" type="bigint" />
+			<column name="grouped_attributes_id" type="bigint" />
+			<column name="commercial_rule_item_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="attribute_id" type="bigint" />
+			<column name="tag_id" type="bigint" />
+			<column name="operator" type="int" />
+			<column name="source_attribute_value" type="varchar(255)" />
+			<column name="value" type="varchar(255)" />
+		</createTable>
+	</changeSet>
+
+
+
+   <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-19">
+    <createTable tableName="cpq_offer_component_tags">
+        <column name="offer_component_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+        <column name="tag_id" type="bigint">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_offer_component_tags_pkey" tableName="cpq_offer_component_tags" />
+
+         <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="offer_component_id"
+                                 constraintName="cpq_offer_component_tags_offer_component_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_offer_component_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+   </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-20">
+		<createTable tableName="cpq_grouped_service">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_grouped_service_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="product_version_id" type="bigint" />
+			<column name="mandatory" type="${type.boolean}" >
+				<constraints nullable="false" />
+			</column>
+			<column name="display" type="${type.boolean}" >
+				<constraints nullable="false" />
+			</column>
+	        <column name="sequence" type="INT4" />
+		</createTable>
+	</changeSet>
+
+	 <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-29">
+		<createTable tableName="cpq_product_mapping">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="cpq_product_mapping_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="service1Value" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="product_id" type="bigint" />
+			<column name="attribute_1" type="bigint" />
+			<column name="attribute_1_value" type="varchar(100)" />
+			<column name="attribute_2" type="bigint" />
+			<column name="attribute_2_value" type="varchar(100)" />
+			<column name="attribute_3" type="bigint" />
+			<column name="attribute_3_value" type="varchar(100)" />
+			<column name="accounting_article_id" type="bigint" />
+			<column name="charge_template_id" type="bigint" />
+
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-30">
+		<createTable tableName="cpq_accounting_article">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"
+							 primaryKeyName="cpq_accounting_article_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-01">
+		<addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cpq_product" constraintName="fk_1y8p1q0o8tw5u0vcodfukdbez" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+	</changeSet>
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-02">
+		<addForeignKeyConstraint baseColumnNames="customer_brand_id" baseTableName="cpq_product" constraintName="fk_5iap1p3o8tw5u0vcodazokdub" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_brand" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-03">
+		<addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_product_line" constraintName="fk_1ykj5q0o8tw5u0vcodpoqljca" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-04">
+		<addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag_type" constraintName="fk_9axk5q0o8nddo2vcodpoqlopq" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-05">
+		<addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag" constraintName="fk_oop625q0o8tw5u0vcodospq5c" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-06">
+		<addForeignKeyConstraint baseColumnNames="parent_line" baseTableName="cpq_product_line" constraintName="fk_bnrqyk9sqqcnt5m298cpbfrqo3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+								 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-07">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_version" constraintName="fk_pomyp8vq0o8t5u0vcodpoaopq" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-08">
+		<addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag_type" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-09">
+		<addForeignKeyConstraint baseColumnNames="parent_tag_id" baseTableName="cpq_tag" constraintName="fk_pomjqq6n5u0vcodkopm" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-10">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovooi1" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-11">
+		<addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-17">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_offer_component" constraintName="fk_sspl5q1jj6jdakklqp" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-19">
+		<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_iw510u1o6ndaphf4" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-20">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_ii50ihu1qzsqikh2bo" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-21">
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_nh50ihuoo32sqijo5v" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-22">
+		<addForeignKeyConstraint baseColumnNames="commercial_rule_item_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_rule_item_rule_line" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_item" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-23">
+		<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_nhi85o6nnipl087" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk_commercial_rule_header_rule_item">
+        <addForeignKeyConstraint baseColumnNames="commercial_rule_header_id" baseTableName="cpq_commercial_rule_item" constraintName="fk_commercial_rule_header_rule_item" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_header" />
+     </changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-24">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_ggi871iihn0ii77" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-25">
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_omk25ihukik058ijj20" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-26">
+		<addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+	</changeSet>
+
+	<changeSet author="Rachid-Ay" id="rebuild-mediapost-fk-28">
+		<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo52" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+
+	<changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
+		<createTable tableName="cpq_quote_lot">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_lot_pkey" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="quote_version" type="int4" >
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)" />
+			<column name="duration" type="int4" />
+			<column name="execution_date" type="datetime" />
+			<column name="cpq_quote_version_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+
+
+
+	<changeSet id="21112020-540-23-entity-quoteProduct" author="TarikFAKHOURI">
+		<createTable tableName="cpq_quote_product">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_product_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+			<column name="quote_version_id" type="bigint" />
+			<column name="quote_lot_id" type="bigint" />
+			<column name="offer_component_id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="product_version_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="quantity" type="numeric(23, 12)" />
+			<column name="cpq_quote_id" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="21112020-540-23-entity-quoteVersion" author="TarikFAKHOURI">
+		<createTable tableName="cpq_quote_version">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_version_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="cpq_quote_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="quote_version" type="int4" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="status" type="varchar(20)"  >
+				<constraints nullable="false"/>
+			</column>
+			<column name="status_date" type="datetime" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+			<column name="billing_plan_code" type="varchar(20)" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="22112020-540-23-entity-contract" author="TarikFAKHOURI">
+		<createTable tableName="cpq_contract">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_contract_pkey" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="seller_id" type="bigint" />
+			<column name="billing_account_id" type="bigint" />
+			<column name="customer_account_id" type="bigint" />
+			<column name="customer_id" type="bigint" />
+			<column name="status" type="varchar(20)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="status_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="contract_date" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column name="begin_date" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column name="end_date" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column name="renewal" type="${type.boolean}">
+				<constraints nullable="false" />
+			</column>
+			<column name="contract_duration" type="int4" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="22112020-540-23-entity-contract-item" author="TarikFAKHOURI">
+		<createTable tableName="cpq_contract_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_contract_item_pkey" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+
+			<column name="cpq_contract_id" type="bigint" />
+			<column name="offer_template_id" type="bigint" />
+			<column name="cpq_product_id" type="bigint" />
+			<column name="price_plan_id" type="bigint" />
+			<column name="charge_template_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="rate" type="int4" />
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="540-30_20201023_PricePlanMatrixItem" author="TarikF">
+		<createTable tableName="cpq_price_plan_matrix_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="dim1_value" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="dim2_value" type="varchar(50)" />
+			<column name="dim3_value" type="varchar(50)" />
+			<column name="price_without_tax" type="numeric(23, 12)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="540-31_20201023_PricePlanVersion" author="TarikF">
+		<createTable tableName="cpq_price_plan_version">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_version_pkey" />
+			</column>
+			<column name="label" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<column name="current_version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+			<column name="ppm_id" type="bigint" />
+			<column name="status" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="status_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="valid_from" type="datetime" />
+			<column name="valid_to" type="datetime" />
+			<column name="price_without_tax" type="numeric(23, 12)" />
+			<column name="is_matrix" type="${type.boolean}"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="540-15_20201019_servicetype" author="TarikF">
+		<createTable tableName="cpq_service_type">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+			<column name="service_type" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+
+
+	<changeSet id="current-str-fk-32" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_quote_product" constraintName="fk_quote_lot_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-33" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="offer_component_id" baseTableName="cpq_quote_product" constraintName="fk_offer_component_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_offer_component" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-34" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_quote_product" constraintName="fk_product_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-43" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_seller_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-44" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_billing_account_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-45" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_customer_account_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+	</changeSet>
+
+	<changeSet id="current-str-fk-46" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_customer_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
+	</changeSet>
+
+
+	<changeSet id="current-str-fk-47" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="cpq_contract_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_cpq_contract_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+	</changeSet>
+	<changeSet id="current-str-fk-48" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_offer_template_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+	<changeSet id="current-str-fk-49" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="cpq_product_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_cpq_product_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+	<changeSet id="current-str-fk-50" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="price_plan_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_price_plan_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+	</changeSet>
+	<changeSet id="current-str-fk-51" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_charge_template_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+	</changeSet>
+	<changeSet id="current-str-fk-52" author="TarikFAKHOURI">
+		<addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_service_template_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-28">
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-29">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_mapping" constraintName="fk-product-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-30">
+		<addForeignKeyConstraint baseColumnNames="attribute_1" baseTableName="cpq_product_mapping" constraintName="fk1-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-31">
+		<addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk2-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-32">
+		<addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-33">
+		<addForeignKeyConstraint baseColumnNames="attribute_3" baseTableName="cpq_product_mapping" constraintName="fk4-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-34">
+		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_product_mapping" constraintName="fk-accounting_article-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-35">
+		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_mapping" constraintName="fk-charge_template-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+	</changeSet>
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-36">
+		<addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_tag_filter" constraintName="fk-tag-tag_filter" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+	</changeSet>
+
+
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-40">
+		<addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+	</changeSet>
+
+	<changeSet author="NabilOuachi" id="rebuild-mediapost-fk-41">
+		<addForeignKeyConstraint baseColumnNames="ppm_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+	</changeSet>
+
+     <changeSet id="#5595_20201023" author="Mbarek-Ay">
+			<addColumn tableName="cat_service_template">
+				<column name="offer_template_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="product_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="grouped_service_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="service_type_id" type="bigint" />
+			</addColumn>
+			<addColumn tableName="cat_service_template">
+				<column name="mandatory" type="${type.boolean}" />
+			</addColumn>
+
+			<addColumn tableName="cat_service_template">
+				<column name="priority" type="int4" defaultValueNumeric="0" />
+			</addColumn>
+
+			<addColumn tableName="cat_service_template">
+				<column name="param" type="text" />
+			</addColumn>
+
+			<addColumn tableName="cat_service_template">
+				<column name="material" type="${type.boolean}" />
+			</addColumn>
+
+			<addColumn tableName="cat_service_template">
+				<column name="accounting_article_id" type="bigint" />
+			</addColumn>
+
+		   <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_service_template" constraintName="fk-product-service_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+		   <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_service_template" constraintName="fk-product-offer_template" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+
+		   <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cat_service_template" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" />
+
+
+		    <addForeignKeyConstraint baseColumnNames="service_type_id" baseTableName="cat_service_template" constraintName="fk-product-service_type" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_service_type" />
+
+		    <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_service_template" constraintName="fk-product-accounting_article" deferrable="false" initiallyDeferred="false"
+		       onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
+
+
+		   </changeSet>
+
+		   <changeSet id="#5595_#32_20201023" author="Mbarek-Ay">
+        <addColumn tableName="cat_charge_template">
+            <column name="offer_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="product_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="service_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="price_plan_matrix_id" type="bigint" />
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="recurrence_duration_enum" type="varchar(20)"/>
+        </addColumn>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="duration_service" type="bigint" />
+        </addColumn>
+
+
+        <addColumn tableName="cat_charge_template">
+            <column name="recurrence_calendar" type="bigint" />
+        </addColumn>
+
+
+        <addColumn tableName="cat_charge_template">
+            <column name="calendar_service" type="bigint" />
+        </addColumn>
+
+
+        <addColumn tableName="cat_charge_template">
+            <column name="usage_service_template_id" type="bigint" />
+        </addColumn>
+
+
+          <addColumn tableName="cat_charge_template">
+            <column name="surcharge" type="${type.boolean}"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="price_matrix" type="${type.boolean}"/>
+        </addColumn>
+
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param1" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param1_service_id" type="bigint"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param2" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param2_service_id" type="bigint"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param3" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param3_service_id" type="bigint"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param4" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="param4_service_id" type="bigint"/>
+        </addColumn>
+
+
+          <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix" type="varchar(50)"/>
+        </addColumn>
+
+          <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="dim1_matrix_service" type="bigint" />
+        </addColumn>
+
+
+         <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="dim2_matrix_service" type="bigint" />
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix" type="varchar(50)"/>
+        </addColumn>
+
+         <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="dim3_matrix_service" type="bigint" />
+        </addColumn>
+
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_charge_template" constraintName="fk-product-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_charge_template" constraintName="fk-offer_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cat_charge_template" constraintName="fk1-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+
+         <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_charge_template" constraintName="fk-price_plan-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+
+         <addForeignKeyConstraint baseColumnNames="duration_service" baseTableName="cat_charge_template" constraintName="fk2-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+
+         <addForeignKeyConstraint baseColumnNames="recurrence_calendar" baseTableName="cat_charge_template" constraintName="fk-cat_calendar-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+
+
+           <addForeignKeyConstraint baseColumnNames="calendar_service" baseTableName="cat_charge_template" constraintName="fk3-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+         <addForeignKeyConstraint baseColumnNames="usage_service_template_id" baseTableName="cat_charge_template" constraintName="fk4-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+
+           <addForeignKeyConstraint baseColumnNames="param1_service_id" baseTableName="cat_charge_template" constraintName="fk5-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+
+           <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk6-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+
+           <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk7-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+           <addForeignKeyConstraint baseColumnNames="param3_service_id" baseTableName="cat_charge_template" constraintName="fk8-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+           <addForeignKeyConstraint baseColumnNames="param4_service_id" baseTableName="cat_charge_template" constraintName="fk9-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+           <addForeignKeyConstraint baseColumnNames="dim1_matrix_service" baseTableName="cat_charge_template" constraintName="fk10-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+          <addForeignKeyConstraint baseColumnNames="dim2_matrix_service" baseTableName="cat_charge_template" constraintName="fk11-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+            <addForeignKeyConstraint baseColumnNames="dim3_matrix_service" baseTableName="cat_charge_template" constraintName="fk12-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+       </changeSet>
+
+        <changeSet id="#5595_18_20201102" author="Mbarek-Ay">
+        <addColumn tableName="cat_offer_template">
+            <column name="product_status" type="varchar(50)"/>
+        </addColumn>
+        </changeSet>
+
+      <changeSet id="#5595-36-20201103" author="Mbarek-Ay">
+        <addColumn tableName="cpq_tag">
+            <column name="product_version_id" type="bigint" />
+        </addColumn>
+         <addColumn tableName="cpq_tag">
+            <column name="service_template_id" type="bigint" />
+        </addColumn>
+         <addColumn tableName="cpq_tag">
+            <column name="offer_template_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_tag" constraintName="fk_product_version_tag" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+           <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_tag" constraintName="fk_service_template_tag" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+            <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_tag" constraintName="fk_offer_template_version_tag" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+       </changeSet>
+
+          <changeSet id="#5595_49_20201118" author="Mbarek-Ay">
+        <addColumn tableName="cpq_quote_version">
+            <column name="short_description" type="varchar(255)"/>
+        </addColumn>
+        </changeSet>
+
+        <changeSet author="Mbarek-Ay" id="#43-20201113">
+	    <createTable tableName="cpq_offer_template_tags">
+	        <column name="offer_template_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+
+	       <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="offer_template_id"
+                                 constraintName="cpq_offer_template_tags_offer_template_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_template_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_offer_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+	    <createTable tableName="cpq_service_template_tags">
+	        <column name="service_template_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+	    <addUniqueConstraint columnNames="service_template_id,tag_id" constraintName="service_template_tag_pkey" tableName="cpq_service_template_tags" />
+
+	       <addForeignKeyConstraint baseTableName="cpq_service_template_tags" baseColumnNames="service_template_id"
+                                 constraintName="cpq_service_template_tags_offer_template_id_fk" referencedTableName="cat_service_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_service_template_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_service_template_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+	    <createTable tableName="cpq_product_version_tags">
+	        <column name="product_version_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="tag_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+
+	        <addForeignKeyConstraint baseTableName="cpq_product_version_tags" baseColumnNames="product_version_id"
+                                 constraintName="cpq_product_version_tags_offer_template_id_fk" referencedTableName="cpq_product_version"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_product_version_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_product_version_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+
+	     <dropColumn tableName="cpq_tag">
+            <column name="product_version_id"></column>
+            <column name="service_template_id"></column>
+            <column name="offer_template_id"></column>
+        </dropColumn>
+
+	   </changeSet>
+	   <changeSet id="#5596-20201113" author="Rachid.AIT">
+		          <createTable tableName="cpq_product_discount_plan">
+			        <column name="product_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			        <column name="discount_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			    </createTable>
+			       <createTable tableName="cpq_product_version_services">
+			        <column name="product_version_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			        <column name="service_template_id" type="bigint">
+			            <constraints nullable="false" />
+			        </column>
+			    </createTable>
+
+			    <createTable tableName="cpq_product_model_children">
+		            <column name="product_id" type="bigint" />
+		            <column name="model_chlidren" type="varchar(100)" />
+		        </createTable>
+		        <addPrimaryKey columnNames="product_id,model_chlidren" constraintName="cpq_product_model_children_pkey" tableName="cpq_product_model_children" />
+
+			      <addUniqueConstraint columnNames="product_id,discount_id" constraintName="cpq_product_discount_plan_pkey" tableName="cpq_product_discount_plan" />
+			      <addUniqueConstraint columnNames="product_version_id,service_template_id" constraintName="cpq_product_services_pkey" tableName="cpq_product_version_services" />
+
+	        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_services" constraintName="fk_cpq_product_version_services_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+
+	        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_product_version_services" constraintName="fk_cpq_product_version_services_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+       </changeSet>
+
+      <changeSet id="#5569_54052_20201117" author="TarikFAKHOURI">
+
+
+			<addColumn tableName="cpq_quote_product">
+	            <column name="billable_account_id" type="bigint" />
+	        </addColumn>
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_product" constraintName="fk_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+
+
+        	<createSequence sequenceName="cpq_quote_article_line_seq" />
+
+	    	<createTable tableName="cpq_quote_article_line">
+	    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_article_line_pkey" />
+	            </column>
+	            <column name="code" type="varchar(255)">
+	                <constraints nullable="false" unique="true" />
+	            </column>
+	            <column name="description" type="varchar(255)" />
+	            <column name="version" type="int4" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="quote_customer_service_id" type="bigint">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="billable_account_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="accounting_article_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>
+            	<column name="quantity" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column>
+            	<column name="service_quantity" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="os_unit_price_without_tax" type="numeric(23, 12)" />
+	            <column name="os_price_without_tax" type="numeric(23, 12)" />
+	            <column name="os_tax_code" type="numeric(23, 12)" />
+	            <column name="os_tax_rate" type="INT4" />
+	            <column name="os_price_with_tax" type="numeric(23, 12)" />
+	            <column name="rc_unit_price_without_tax" type="numeric(23, 12)" />
+	            <column name="rc_price_without_tax" type="numeric(23, 12)" />
+	            <column name="rc_tax_code" type="numeric(23, 12)" />
+	            <column name="rc_tax_rate" type="INT4" />
+	            <column name="rc_price_with_tax" type="numeric(23, 12)" />
+	    	</createTable>
+
+	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+
+	        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_accounting_article_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
+
+			<addColumn tableName="cat_service_template">
+	            <column name="sequence" type="INT4" />
+	            <column name="display" type="${type.boolean}" />
+	        </addColumn>
+
+
+     	</changeSet>
+
+
+	    <changeSet author="Mbarek-Ay" id="#51-20201123">
+            <dropColumn tableName="cpq_quote_product">
+            <column name="offer_component_id"/>
+           </dropColumn>
+
+	    </changeSet>
+
+	    <changeSet id="#65-20201127" author="TarikFAKHOURI">
+
+        	<createSequence sequenceName="quote_offer_seq" />
+
+	        <createTable tableName="quote_offer">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_quote_offer_seq" />
+	            </column>
+	            <column name="version" type="int4" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+
+				<column name="offer_template_id" type="bigint">
+					<constraints nullable="false"/>
+				</column>
+				<column name="billable_account_id" type="bigint" />
+				<column name="quote_version_id" type="bigint">
+					<constraints nullable="false"/>
+				</column>
+				<column name="quote_customer_service_id" type="bigint" />
+	            <column name="sequence" type="INT4" />
+	             <column name="contract_code" type="varchar(50)" />
+	             <column name="position" type="int4" />
+
+	        </createTable>
+
+	        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="quote_offer" constraintName="fk_quote_offer_offer_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="quote_offer" constraintName="fk_quote_offer_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="quote_offer" constraintName="fk_quote_offer_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+
+	        <addColumn tableName="cpq_quote_product">
+	            <column name="offer_quote_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </addColumn>
+
+	        <addForeignKeyConstraint baseColumnNames="offer_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_offer_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+	    </changeSet>
+
+	    <changeSet id="540-66-20201201" author="TarikFA">
+		        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_offer_component" constraintName="fk_cpq_offer_component_offer_template_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	    </changeSet>
+
+	    <changeSet id="540-69-20201202" author="TarikFA">
+
+        <createSequence sequenceName="cpq_attribute_seq" />
+        <createSequence sequenceName="cpq_grouped_attributes_seq" />
+
+	        <createTable tableName="cpq_attribute">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_attribute" />
+	            </column>
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+	            <column name="version" type="int4" />
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="disabled" type="${type.boolean}">
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="uuid" type="varchar(60)">
+	            	<constraints nullable="false" unique="true"/>
+	            </column>
+            	<column name="cf_values" type="${type.json}" />
+            	<column name="cf_values_accum" type="${type.json}" />
+
+	            <column name="grouped_attributes_id" type="bigint" />
+	            <column name="mandatory" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="priority" type="int4" />
+	            <column name="sequence" type="int4" />
+	            <column name="display" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="attribute_type" type="varchar(100)" />
+	        </createTable>
+
+	        <createTable tableName="cpq_grouped_attributes">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_grouped_attributes" />
+	            </column>
+	            <!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	            <column name="product_version_id" type="bigint" />
+	            <column name="mandatory" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="priority" type="int4" />
+	            <column name="display" type="${type.boolean}" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="sequence" type="int4" />
+	        </createTable>
+
+		    <createTable tableName="cpq_attribute_allowed_values">
+	            <column name="attribute_id" type="bigint" />
+	            <column name="allowed_values" type="varchar(100)" />
+	        </createTable>
+
+		    <createTable tableName="cpq_product_version_attributes">
+	            <column name="product_version_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+
+		    <createTable tableName="cpq_service_template_attributes">
+	            <column name="service_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+
+
+
+
+		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+
+		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_attributes" constraintName="fk_cpq_grouped_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+
+		        <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_allowed_values" constraintName="fk_cpq_attribute_allowed_values_attribute_type_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes" constraintName="cpq_product_version_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+
+
+		       <addPrimaryKey columnNames="service_template_id,attribute_id" constraintName="cpq_service_template_attributes_pkey" tableName="cpq_service_template_attributes" />
+		        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+		        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_service_template_attributes" constraintName="cpq_service_template_attributes_serviceTemplate_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+	    </changeSet>
+
+	    <changeSet id="540-75-20201203" author="TarikFA">
+
+        	<createSequence sequenceName="cpq_quote_seq" />
+
+	    	<createTable tableName="cpq_quote">
+	    	  <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_quote" />
+	            </column>
+	            <!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+            	<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+
+	            <column name="seller_id" type="bigint" />
+	            <column name="contract_id" type="bigint" />
+	            <column name="status_version" type="int4" />
+	            <column name="status" type="varchar(20)">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="status_date" type="datetime" />
+	            <column name="send_date" type="datetime" />
+	            <column name="prestation_date_begin" type="datetime" />
+	            <column name="prestation_duration" type="int4" />
+	            <column name="opportunity_ref" type="varchar(50)" />
+	            <column name="customer_ref" type="varchar(50)" />
+	            <column name="customer_name" type="varchar(52)" />
+	            <column name="contact_name" type="varchar(52)" />
+	            <column name="register_number" type="varchar(50)" />
+	            <column name="sales_person_name" type="varchar(52)" />
+	            <column name="billable_account_id" type="bigint" />
+	            <column name="applicant_account_id" type="bigint" />
+	            <column name="valid_from" type="datetime" />
+	            <column name="valid_to" type="datetime" />
+	            <column name="quote_number" type="varchar(50)" />
+	            <column name="invoice_type_id" type="bigint" />
+	    	</createTable>
+
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+
+	            <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_seller_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+
+	        <addForeignKeyConstraint baseColumnNames="applicant_account_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_applicant_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+
+	        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_contract_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+
+	        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_product" constraintName="fk_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_lot" constraintName="fk_cpq_quote_lot_cpq_quote_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+
+	    </changeSet>
+
+      <changeSet id="current-str-fk-35" author="TarikFAKHOURI">
+
+
+        	<createSequence sequenceName="cpq_quote_attribute_seq" />
+
+	    	<createTable tableName="cpq_quote_attribute">
+	    	  <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_quote_attribute" />
+	            </column>
+            	<column name="version" type="int4" />
+            	<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+
+	            <column name="cpq_attribute_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="cpq_quote_product_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+            	<column name="value" type="varchar(255)" />
+	    	</createTable>
+
+	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+	        <addForeignKeyConstraint baseColumnNames="cpq_quote_product_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+     </changeSet>
+
+     <changeSet id="540-84-20201209" author="TarikFa">
+<!-- 	    	<addUniqueConstraint columnNames="cpq_attribute_id,cpq_quote_product_id" tableName="cpq_quote_attribute" constraintName="uniquekey_attribute_quote_product_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
+<!-- 	    	<addUniqueConstraint columnNames="offer_template_id,quote_version_id" tableName="quote_offer" constraintName="uniquekey_offer_template_quote_version_id_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
+<!-- 	    	<addUniqueConstraint columnNames="product_version_id,offer_quote_id" tableName="cpq_quote_product" constraintName="uniquekey_product_version_offer_quote_ids" deferrable="false" initiallyDeferred="false" disabled="false"/> -->
+	    	<addUniqueConstraint columnNames="cpq_quote_id,quote_version" tableName="cpq_quote_version" constraintName="uniquekey_pquote_id_cpq_quote_id,quote_version" deferrable="false" initiallyDeferred="false" disabled="false"/>
+
+	 </changeSet>
+
+	<changeSet id="540-83-20201211" author="Mbarek-Ay">
+		<createTable
+			tableName="cpq_product_version_grouped_attributes">
+			<column name="product_version_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="grouped_attributes_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey
+			columnNames="product_version_id,grouped_attributes_id"
+			constraintName="cpq_product_version_grouped_attributes_pkey"
+			tableName="cpq_product_version_grouped_attributes" />
+		<addForeignKeyConstraint
+			baseColumnNames="grouped_attributes_id"
+			baseTableName="cpq_product_version_grouped_attributes"
+			constraintName="cpq_product_version_grouped__attribute_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cpq_grouped_attributes" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="product_version_id"
+			baseTableName="cpq_product_version_grouped_attributes"
+			constraintName="cpq_product_version_grouped_attributes_product_version_id"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cpq_product_version" />
+
+	      <addColumn tableName="cpq_product_version">
+            <column name="valid_from" type="datetime"></column>
+            <column name="valid_to" type="datetime"></column>
+        </addColumn>
+	</changeSet>
+    <!-- end MediaPost -->
+    <changeSet id = "#FEAT-761-2020-10-19" author = "ZBariki">
+        <createSequence sequenceName="billing_accounting_article_seq" startValue="1" />
+        <createTable tableName="billing_accounting_article" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name ="analytic_code_1" type="varchar(255)"></column>
+            <column name ="analytic_code_2" type="varchar(255)"></column>
+            <column name ="analytic_code_3" type="varchar(255)"></column>
+            <column name="tax_class_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invoice_sub_category_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="article_family_id" type="bigint"/>
+            <column name="accounting_code_id" type="bigint" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="description_i18n" type="${type.json}"></column>
+        </createTable>
+
+        <createSequence sequenceName="billing_article_family_seq" startValue="1" />
+        <createTable tableName="billing_article_family" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_family_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="uuid" type="varchar(60)" />
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="accounting_code_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="article_family_ref_id" type="bigint" />
+            <column name="cf_values" type="${type.json}"/>
+            <column name="cf_values_accum" type="${type.json}"/>
+            <column name="description_i18n" type="${type.json}"></column>
+        </createTable>
+
+        <createSequence sequenceName="billing_article_mapping_seq" startValue="1" />
+        <createTable tableName="billing_article_mapping" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_mapping_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mapping_script_id" type="bigint" />
+        </createTable>
+
+        <createSequence sequenceName="billing_article_mapping_line_seq" startValue="1" />
+        <createTable tableName="billing_article_mapping_line">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_article_mapping_line_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+            <column name="created" type="datetime"/>
+            <column name="creator" type="varchar(50)"/>
+            <column name="updater" type="varchar(50)"/>
+            <column name="updated" type="datetime"/>
+            <column name="article_mapping_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="article_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="offer_template_id" type="bigint"></column>
+            <column name="charge_template_id" type="bigint"></column>
+            <column name="product_template_id" type="bigint"></column>
+
+            <column name="parameter_1" type="varchar(255)"/>
+            <column name="parameter_2" type="varchar(255)"/>
+            <column name="parameter_3" type="varchar(255)"/>
+            <column name="mapping_key_el" type="varchar(255)"/>
+        </createTable>
+
+        <createSequence sequenceName="billing_attribute_mapping_seq" startValue="1" />
+        <createTable tableName="billing_attribute_mapping">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_attribute_mapping_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+            <column name="created" type="datetime"/>
+            <column name="creator" type="varchar(50)"/>
+            <column name="updater" type="varchar(50)"/>
+            <column name="updated" type="datetime"/>
+
+            <column name="article_mapping_line_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="attribute" type="varchar(30)"/>
+            <column name="attribute_value" type="varchar(255)"/>
+        </createTable>
+
+
+        <addColumn tableName="billing_rated_transaction">
+            <column name="article_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_tax_class" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_tax_class" />
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_invoice_sub_category" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+        <addForeignKeyConstraint baseColumnNames="article_family_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_article_family" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_article_family" />
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_accounting_article"
+                                 constraintName="fk_billing_accounting_article_accounting_code" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_article_family"
+                                 constraintName="fk_billing_article_family_accounting_code" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+        <addForeignKeyConstraint baseColumnNames="article_family_ref_id" baseTableName="billing_article_family"
+                                 constraintName="fk_billing_article_family_article_family_ref" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_article_family" />
+
+        <addForeignKeyConstraint baseColumnNames="mapping_script_id" baseTableName="billing_article_mapping"
+                                 constraintName="fk_billing_article_mapping_mapping_script" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+        <addForeignKeyConstraint baseColumnNames="article_mapping_id" baseTableName="billing_article_mapping_line"
+                                 constraintName="fk_billing_article_mapping_line_article_mapping" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_article_mapping" />
+
+        <addForeignKeyConstraint baseColumnNames="article_id" baseTableName="billing_article_mapping_line"
+                                 constraintName="fk_billing_article_mapping_line_article" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="billing_article_mapping_line"
+                                 constraintName="fk_billing_article_mapping_line_charge_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cat_charge_template" />
+
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="billing_article_mapping_line"
+                                 constraintName="fk_billing_article_mapping_line_service_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+        <addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="billing_article_mapping_line"
+                                 constraintName="fk_billing_article_mapping_line_product_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="article_id"
+                                 constraintName="rated_transaction_article_fk" referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="article_mapping_line_id"
+                                 constraintName="attribute_mapping_article_mapping_line_fk" referencedTableName="billing_article_mapping_line"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_attribute_mapping" baseColumnNames="attribute_id"
+                                 constraintName="attribute_mapping_attribute_fk" referencedTableName="cpq_attribute"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="missing-table-association" author="TarikFA">
+        <createTable tableName="cpq_offer_discount_plan">
+            <column name="offer_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="offer_template_id,discount_id" constraintName="cpq_offer_template_discount_pkey" tableName="cpq_offer_discount_plan" />
+        <addUniqueConstraint columnNames="offer_template_id,discount_id" constraintName="unique_cpq_offer_template_discount_ids" tableName="cpq_offer_discount_plan" />
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="discount_id"
+                                 constraintName="cpq_offer_discount_plan_discount_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="offer_template_id"
+                                 constraintName="cpq_offer_discount_plan_offer_template_id_fk" referencedTableName="cat_discount_plan"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+
+
+
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-">
+   <createTable tableName="cpq_billing_account_tags">
+       <column name="billing_account_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+       <column name="tag_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+   </createTable>
+   <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_billing_account_tags_pkey" tableName="cpq_offer_component_tags" />
+   <addForeignKeyConstraint baseTableName="cpq_billing_account_tags" baseColumnNames="billing_account_id"
+                                 constraintName="cpq_billing_account_tags_billing_account_id_fk" referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_billing_account_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_billing_account_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+  </changeSet>
+
+
+   <changeSet author="Mbarek-Ay" id="current-mediapost-tbl-charge_attribute">
+   <createTable tableName="cpq_attribute_charge">
+       <column name="charge_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+       <column name="attribute_id" type="bigint">
+           <constraints nullable="false" />
+       </column>
+   </createTable>
+   <addUniqueConstraint columnNames="charge_id,attribute_id" constraintName="cpq_attribute_charge_pkey" tableName="cpq_attribute_charge" />
+   <addForeignKeyConstraint baseTableName="cpq_attribute_charge" baseColumnNames="charge_id"
+                                 constraintName="cpq_attribute_charge_charge_id_fk" referencedTableName="cat_charge_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_attribute_charge" baseColumnNames="attribute_id"
+                                 constraintName="cpq_attribute_charge_attribute_id_fk" referencedTableName="cpq_attribute"
+                                 referencedColumnNames="id"/>
+       </changeSet>
+
+
+      <changeSet id="#REF_INV_20201223" author="MohammedELAZZOUZI">
+    	<addColumn tableName="cat_discount_plan_item">
+        	<column name="accounting_article_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_discount_plan_item" constraintName="fk__cat_discount_plan_item__accounting_article" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addColumn tableName="cat_discount_plan_item">
+        	<column name="priorty" type="bigint"></column>
+        </addColumn>
+
+        <addColumn tableName="quote_offer">
+        	<column name="discount_plan_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="quote_offer" constraintName="fk__quote_offer__cat_discount_plan" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+        <addColumn tableName="cpq_quote">
+        	<column name="discount_plan_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote" constraintName="fk__ord_quote__cat_discount_plan" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+        <addColumn tableName="cpq_quote_product">
+        	<column name="discount_plan_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_quote_product" constraintName="fk__cpq_quote_product__cat_discount_plan" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+    </changeSet>
+
+      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-27">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo51" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+    </changeSet>
+
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-41">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_attribute_trade_rule_header" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+     </changeSet>
+
+      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-39">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_attribute_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+     </changeSet>
+
+
+     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk_grouped_attributes_commercial_rule_line">
+        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_grouped_attributes_commercial_rule_line" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+     </changeSet>
+     
+     <changeSet id="540-103-add-swagger-docs-to-All-ChargeTemplates" author="TarikFA.">
+     		<createTable tableName="cpq_offer_attributes">
+     			<column name="offer_template_id" type="bigint" />
+     			<column name="attribute_id" type="bigint" />
+     		</createTable>
+     		
+     		<addPrimaryKey columnNames="offer_template_id,attribute_id," tableName="cpq_offer_attributes"/>
+     		
+	        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_offer_attributes" constraintName="fk_cpq_offer_attributes_offer_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	            
+	        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_offer_attributes" constraintName="fk_cpq_offer_attributes_attribute_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+     </changeSet>
+
+
+	<changeSet id="#540-100-20201225" author="TarikFA">
+	
+        <createSequence sequenceName="cpq_commercial_order_seq" />
+        <createSequence sequenceName="cpq_order_type_seq" />
+        <createSequence sequenceName="cpq_order_item_seq" />
+        <createSequence sequenceName="cpq_order_product_seq" />
+        <createSequence sequenceName="cpq_order_service_commercial_seq" />
+        <createSequence sequenceName="cpq_order_offer_seq" />
+        <createSequence sequenceName="order_article_line_seq" />
+        <createSequence sequenceName="cpq_order_invoice_seq" />
+        <createSequence sequenceName="cpq_invoice_line_seq" />
+        <createSequence sequenceName="cpq_invoicing_plan_seq" />
+        <createSequence sequenceName="cpq_invoicing_plan_item_seq" />
+
+		<createTable tableName="cpq_commercial_order">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_commercial_order" />
+	            </column>
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+	            <column name="version" type="int" />
+				<!-- Auditable End -->
+				
+	            <column name="seller_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_number" type="varchar(50)" />
+	            <column name="label" type="varchar(255)" />
+	            <column name="billing_account_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="cpq_quote_id" type="bigint" />
+	            <column name="contract_id" type="bigint" />
+	            <column name="status" type="varchar(50)" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="status_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_progress" type="int" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="progress_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_date" type="datetime" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="realisation_date" type="datetime" />
+	            <column name="customer_service_begin" type="datetime" />
+	            <column name="customer_service_duration" type="int" />
+	            <column name="external_reference" type="varchar(50)" />
+	            <column name="order_parent_id" type="bigint" />
+	            <column name="order_type_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="invoicing_plan_id" type="bigint" />
+	            <column name="invoice_type_id" type="bigint">
+	            	<constraints nullable="false"/>
+	            </column>
+	        </createTable>
+	        
+	        <createTable tableName="cpq_commercial_order_billing_invoice">
+	        	<column name="commercial_order_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        	<column name="invoice_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        </createTable>
+	        
+	        <addPrimaryKey columnNames="commercial_order_id,invoice_id" tableName="cpq_commercial_order_billing_invoice"/>
+	        
+        	<addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_invoice_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+        	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_invoice_type_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+	        
+	        
+		<createTable tableName="cpq_invoicing_plan">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoicing_plan" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+		</createTable>
+		<createTable tableName="cpq_order_type">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_type" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+		</createTable>
+		
+		
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_seller_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+            
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_billing_account_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+            
+        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_cpq_quote_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+            
+        <addForeignKeyConstraint baseColumnNames="contract_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_contract_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+            
+        <addForeignKeyConstraint baseColumnNames="order_type_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_order_type_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_type" />
+            
+        <addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_invoicing_plan_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />
+            
+        <addForeignKeyConstraint baseColumnNames="order_parent_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_order_parent_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+            
+            
+		<createTable tableName="cpq_order_item">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_item" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+				
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_service_commercial_id" type="bigint" />
+	            <column name="order_product_id" type="bigint" />
+	            <column name="offer_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="product_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="service_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="access_point" type="varchar(20)" />
+	            <column name="service_type" type="int" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="value" type="text" />
+	            
+		</createTable>
+		
+		<createTable tableName="cpq_order_product">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_product" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	          
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="order_service_commercial_id" type="bigint" />
+	            <column name="order_offer_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="product_id" type="bigint" />
+	            <column name="quantity" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+		</createTable>
+		
+		<createTable tableName="cpq_order_service_commercial">
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_service_commercial" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+	            <column name="order_id" type="bigint">
+	                <constraints nullable="false" />
+	            </column>
+				<column name="name" type="varchar(50)" />
+		</createTable>
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_service_commercial_order_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_service_commercial_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+		
+        <addForeignKeyConstraint baseColumnNames="order_product_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_product_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_offer_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_product_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_service_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+            
+            
+		<createTable tableName="cpq_order_offer">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_offer" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	            <column name="order_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="offer_template_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+		</createTable>
+		
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_template_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+         <!-- foreign key for Order Product  Start -->
+         
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+		
+		<addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_service_commercial_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+		
+		<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_offer_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+		
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        
+        <!-- foreign key for Order Product  End -->
+        
+        <!--  Creation table order_article_Line (OrderArticleLine) -->
+        <createTable tableName="order_article_line">
+		
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_order_article_line" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+				
+				<column name="order_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="order_customer_service_id" type="bigint" />
+				<column name="accounting_article_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="quantity" type="numeric(23, 12)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="quantity_service" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="os_unit_price_without_tax" type="numeric(23, 12)" />
+				<column name="os_price_without_tax" type="numeric(23, 12)" />
+				<column name="os_tax_code" type="numeric(23, 12)" />
+				<column name="os_tax_rate" type="int" />
+				<column name="os_price_with_tax" type="numeric(23, 12)" />
+				<column name="rc_unit_price_without_tax" type="numeric(23, 12)" />
+				<column name="rc_price_without_tax" type="numeric(23, 12)" />
+				<column name="rc_tax_code" type="numeric(23, 12)" />
+				<column name="rc_tax_rate" type="int" />
+				<column name="rc_price_with_tax" type="numeric(23, 12)" />
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_order_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        
+		<addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_order_customer_service_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+        
+		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false" 
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+        
+		  <createTable tableName="cpq_order_invoice">
+
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_invoice" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+
+				<column name="seller_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="billing_account_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_type_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_ref" type="varchar(20)" />
+				<column name="status" type="varchar(20)" />
+				<column name="status_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="invoice_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="due_date" type="datetime" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="begin_date" type="datetime" />
+				<column name="end_date" type="datetime" />
+				<column name="amount_without_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="amount_with_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="amount_tax" type="numeric(23, 12)" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="payment_method_id" type="bigint" >
+					<constraints nullable="false"/>
+				</column>
+				<column name="pdf_link" type="varchar(255)" />
+				<column name="commercial_order_id" type="bigint" />
+		</createTable>
+
+	    <createTable tableName="cpq_order_invoice_access_point_list">
+            <column name="order_invoice_id" type="bigint" />
+            <column name="access_point_list" type="varchar(100)" />
+        </createTable>
+
+	    <createTable tableName="cpq_order_invoice_order_ref_list">
+            <column name="order_invoice_id" type="bigint" />
+            <column name="order_ref_list" type="varchar(100)" />
+        </createTable>
+
+		<addPrimaryKey columnNames="order_invoice_id,access_point_list" constraintName="cpq_order_invoice_access_point_list_pkey" tableName="cpq_order_invoice_access_point_list" />
+
+        <addForeignKeyConstraint baseColumnNames="order_invoice_id" baseTableName="cpq_order_invoice_access_point_list" constraintName="fk_cpq_order_invoice_access_point_list_order_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
+
+
+		<addPrimaryKey columnNames="order_invoice_id,order_ref_list" constraintName="cpq_order_invoice_order_ref_list_pkey" tableName="cpq_order_invoice_order_ref_list" />
+
+        <addForeignKeyConstraint baseColumnNames="order_invoice_id" baseTableName="cpq_order_invoice_order_ref_list" constraintName="fk_cpq_order_invoice_order_ref_list_order_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_seller_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_billing_account_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+
+        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_invoice_type_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="cpq_order_invoice" constraintName="fk_cpq_order_invoice_payment_method_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+        <createTable tableName="cpq_invoice_line">
+
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+
+	            <column name="invoice_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="prestation" type="varchar(255)" />
+	            <column name="accounting_article_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="offer_service_template_id" type="bigint" />
+	            <column name="product_id" type="bigint" />
+	            <column name="service_template_id" type="bigint" />
+				<column name="begin_date" type="datetime" />
+				<column name="end_date" type="datetime" />
+				<column name="quantity" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="unit_price" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="discount_rate" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_without_tax" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="tax_rate" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_with_tax" type="numeric(23, 12)" >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="amount_tax" type="numeric(23, 12)"  >
+	            	<constraints nullable="false"/>
+	            </column>
+				<column name="discount_plan_id" type="bigint"  />
+				<column name="tax_id" type="bigint"  />
+				<column name="order_ref" type="varchar(20)"  />
+				<column name="access_point" type="varchar(20)"  />
+				<column name="commercial_order_id" type="bigint"  />
+		</createTable>
+
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_invoice" />
+
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_accounting_article_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+        <addForeignKeyConstraint baseColumnNames="offer_service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_offer_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_serv_templates" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_discount_plan_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_tax_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_commercial_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
+		  <createTable tableName="cpq_invoicing_plan_item">
+
+	            <column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoicing_plan_item" />
+	            </column>
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
+            	<column name="version" type="int4" />
+				<!-- BusinessEntity End -->
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+
+	            <column name="billing_plan_id" type="bigint" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="advancement" type="varchar(20)" >
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="rate_to_bill" type="numeric(23, 12)" >
+	                <constraints nullable="false" />
+	            </column>
+		</createTable>
+
+
+        <addForeignKeyConstraint baseColumnNames="billing_plan_id" baseTableName="cpq_invoicing_plan_item" constraintName="fk_cpq_invoicing_plan_item_billing_plan_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />
+
+		<addColumn tableName="billing_subscription">
+			<column name="commercial_order_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
+
+		<addColumn tableName="billing_wallet_operation">
+			<column name="order_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+
+
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+		<addColumn tableName="billing_rated_transaction">
+			<column name="order_id" type="bigint" />
+			<column name="product_id" type="bigint" />
+			<column name="product_version_id" type="bigint" />
+			<column name="service_template_id" type="bigint" />
+			<column name="prestation" type="varchar(255)" />
+		</addColumn>
+
+
+
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_order_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_product_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_product_version_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_service_template_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+	</changeSet>
+
+    <changeSet id="20201230_pricematrix" author="NabilOuachi">
+        <createSequence sequenceName="cpq_price_plan_matrix_column_sq" startValue="1" />
+        <createTable tableName="cpq_price_plan_matrix_column">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_column_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="ppm_version_id" type="bigint" />
+            <column name="position" type ="int4"/>
+            <column name="type" type="varchar(255)"/>
+
+            <column name="el_value" type="varchar(255)"/>
+
+            <column name="product_id" type="bigint" />
+			<column name="offer_id" type="bigint" />
+            <column name="attribute_id" type="bigint" />
+        </createTable>
+
+        <createSequence sequenceName="cpq_price_plan_matrix_value_sq" startValue="1" />
+        <createTable tableName="cpq_price_plan_matrix_value">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_value_pkey" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="ppm_column_id" type="bigint" />
+
+			<column name="ppml_id" type="bigint" />
+
+            <column name="long_value" type ="int8"/>
+            <column name="double_value" type ="float8"/>
+            <column name="string_value" type="varchar(255)"/>
+
+			<column name="date_value" type="datetime"/>
+			<column name="from_date_value" type="datetime"/>
+			<column name="to_date_value" type="datetime"/>
+
+			<column name="from_double_value" type ="float8"/>
+			<column name="to_double_value" type ="float8"/>
+
+        </createTable>
+
+        <createSequence sequenceName="cpq_price_plan_matrix_line_sq" startValue="1" />
+        <createTable tableName="cpq_price_plan_matrix_line">
+             	<column name="id" type="bigint" autoIncrement="${id.auto}">
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_price_plan_matrix_line" />
+	            </column>
+				<!-- Auditable Start -->
+	            <column name="created" type="datetime">
+	                <constraints nullable="false" />
+	            </column>
+	            <column name="updated" type="datetime" />
+	            <column name="creator" type="varchar(100)" />
+	            <column name="updater" type="varchar(100)" />
+				<!-- Auditable End -->
+	            <column name="version" type="int4" />
+	
+	            <column name="ppm_version_id" type="bigint" />
+	
+	            <column name="description" type="varchar(255)"/>
+	            <column name="price_without_tax" type="numeric(23, 12)" />
+        </createTable>
+
+		<addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_ppm_version" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+		<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_offer_template" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+
+        <addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
+
+		<addForeignKeyConstraint baseColumnNames="ppml_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
+
+        <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
+    </changeSet>
+
+    <changeSet id="20201230-ticket5870" author="NabilOUACHI">
+        <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
+
+        <createTable tableName="cat_product_wallet_template_1">
+            <column name="product_templt_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="wallet_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_templt_id, wallet_template_id" constraintName="cat_product_wallet_template_1_pkey" tableName="cat_product_wallet_template_1" />
+
+        <createTable tableName="cat_product_counter_template">
+            <column name="product_templt_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_templt_id, counter_template_id" constraintName="cat_product_counter_template_pkey" tableName="cat_product_counter_template" />
+
+        <createTable tableName="cpq_product_charge_template_mapping">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_charge_template_mapping_pkey" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="product_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="counter_template_id" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cpq_product_charge_template_mapping" constraintName="fk_product_charge_template_mapping_counter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+
+        <addForeignKeyConstraint baseColumnNames="product_templt_id" baseTableName="cat_product_wallet_template_1" constraintName="fk_cat_product_wallet_template_product_charge_template_mapping" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_charge_template_mapping" />
+
+        <addForeignKeyConstraint baseColumnNames="wallet_template_id" baseTableName="cat_product_wallet_template_1" constraintName="fk_cat_product_wallet_template_product_wallet_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_wallet_template" />
+
+        <addForeignKeyConstraint baseColumnNames="product_templt_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_product_charge_template_mapping" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_charge_template_mapping" />
+
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_cat_counter_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+    </changeSet>
+    
+    <changeSet id="540-112-20210107" author="TarikF">
+	        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_invoice_type_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+    </changeSet>
+</databaseChangeLog>
+
+
+
+
+
+
+
+
+
+
+
+
+

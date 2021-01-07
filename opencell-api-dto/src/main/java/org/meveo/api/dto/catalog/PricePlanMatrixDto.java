@@ -21,6 +21,7 @@ package org.meveo.api.dto.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -179,6 +180,8 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     @Size(max = 2000)
     private String ratingWithoutTaxELSpark;
 
+    private List<PricePlanMatrixVersionDto> versions;
+
     /**
      * Expression for getting the InvoiceSubCategory.
      */
@@ -248,7 +251,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
             currency = pricePlan.getTradingCurrency().getCurrencyCode();
         }
         if (pricePlan.getOfferTemplate() != null) {
-            offerTemplateVersion = new OfferTemplateDto(pricePlan.getOfferTemplate(), null, true,false);
+            offerTemplateVersion = new OfferTemplateDto(pricePlan.getOfferTemplate(), null, true);
             offerTemplate = pricePlan.getOfferTemplate().getCode();
         }
         minQuantity = pricePlan.getMinQuantity();
@@ -292,6 +295,9 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         parameter1El = pricePlan.getParameter1El();
         parameter2El = pricePlan.getParameter2El();
         parameter3El = pricePlan.getParameter3El();
+        versions = pricePlan.getVersions().stream()
+                .map(version -> new PricePlanMatrixVersionDto(version))
+                .collect(Collectors.toList());
     }
 
     /**

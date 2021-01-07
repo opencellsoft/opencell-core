@@ -13,9 +13,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.CommercialRuleDTO;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
@@ -53,7 +54,7 @@ public interface CommercialRuleRs extends IBaseRs {
     })
 	
 	Response create(	@Parameter( name = "commercialRuleDto",
-									description = "CommercialRule dto for a new insertion")CommercialRuleDTO commercialRuleDTO);
+									description = "CommercialRule dto for a new insertion")CommercialRuleHeaderDTO commercialRuleDTO);
 	
 	@PUT
 	@Path("/")
@@ -66,7 +67,7 @@ public interface CommercialRuleRs extends IBaseRs {
             @ApiResponse(responseCode = "412", description = "missing required paramter for CommercialRuleDTO.The required params are : code",
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
     })
-	Response update(@Parameter(description = "commercialRule dto for updating an existing commercialRule", required = true) CommercialRuleDTO commercialRuleDTO);
+	Response update(@Parameter(description = "commercialRule dto for updating an existing commercialRule", required = true) CommercialRuleHeaderDTO commercialRuleDTO);
 	
 	@DELETE
 	@Path("/{code}")
@@ -104,7 +105,7 @@ public interface CommercialRuleRs extends IBaseRs {
     tags = { "CommercialRules" },
     description ="Get commercial rules matching the given criteria",
     responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
     })
     public Response list (PagingAndFiltering pagingAndFiltering);
     
@@ -115,7 +116,7 @@ public interface CommercialRuleRs extends IBaseRs {
  tags = { "CommercialRules" },
  description ="Get product commercial rules",
  responses = {
-         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
  })
  public Response findProductRules (@Parameter(description = "offer code", required = false) @QueryParam("offerCode") String offerCode,
 		 @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode,
@@ -127,10 +128,10 @@ public interface CommercialRuleRs extends IBaseRs {
  tags = { "CommercialRules" },
  description ="Get attribute commercial rules",
  responses = {
-         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
  })
- public Response findAttributeRules ( @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode,
-		 @Parameter(description = "attribute code", required = false) @QueryParam("attributeCode") Integer attributeCode);
+ public Response findAttributeRules (@Parameter(description = "attribute code", required = false) @QueryParam("attributeCode") String attributeCode,
+		 @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode);
  
  
  @GET
@@ -139,9 +140,9 @@ public interface CommercialRuleRs extends IBaseRs {
  tags = { "CommercialRules" },
  description ="Get tag commercial rules",
  responses = {
-         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
  })
- public Response findAttributeRules ( @Parameter(description = "tag code", required = true) @QueryParam("tagCode") String tagCode);
+ public Response findTagRules ( @Parameter(description = "tag code", required = true) @QueryParam("tagCode") String tagCode);
 	
 	 
 }

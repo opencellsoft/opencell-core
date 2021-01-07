@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -56,6 +57,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.commercial.InfoOrder;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -521,6 +523,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
     private AccountingArticle accountingArticle;
+    
+    @Embedded
+    private InfoOrder infoOrder;
 
     public RatedTransaction() {
         super();
@@ -1338,4 +1343,18 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
             uuid = UUID.randomUUID().toString();
         }
     }
+
+	/**
+	 * @return the infoOrder
+	 */
+	public InfoOrder getInfoOrder() {
+		return infoOrder;
+	}
+
+	/**
+	 * @param infoOrder the infoOrder to set
+	 */
+	public void setInfoOrder(InfoOrder infoOrder) {
+		this.infoOrder = infoOrder;
+	}
 }

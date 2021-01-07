@@ -49,6 +49,12 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		return quoteVersion;
 	}
 	
+	@Override
+	public void create(QuoteVersion quoteVersion) throws BusinessException {
+		quoteVersion.setQuoteVersion(this.getLastVersionByCode(quoteVersion.getQuote().getCode()) + 1 );
+		super.create(quoteVersion);
+	}
+	
 	private int getLastVersionByCode(String codeVersion) {
 		var quoteVersions = this.findLastVersionByCode(codeVersion);
 		return quoteVersions.isEmpty() ? 0 : quoteVersions.get(0).getQuoteVersion();
