@@ -77,6 +77,8 @@ public class GroupedAttributesApi extends BaseApi{
 		}catch(MeveoApiException e) {
 			if(e instanceof EntityDoesNotExistsException == false)
 				throw new 	MeveoApiException(e);
+			else
+				throw e;
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());

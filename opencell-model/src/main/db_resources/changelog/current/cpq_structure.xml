@@ -1501,6 +1501,8 @@
 	            <column name="applicant_account_id" type="bigint" />
 	            <column name="valid_from" type="datetime" />
 	            <column name="valid_to" type="datetime" />
+	            <column name="quote_number" type="varchar(50)" />
+	            <column name="invoice_type_id" type="bigint" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"
@@ -2747,6 +2749,11 @@
 
         <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_cat_counter_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+    </changeSet>
+    
+    <changeSet id="540-112-20210107" author="TarikF">
+	        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_invoice_type_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
     </changeSet>
 </databaseChangeLog>
 

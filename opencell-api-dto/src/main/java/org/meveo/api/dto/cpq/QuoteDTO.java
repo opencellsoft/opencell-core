@@ -70,6 +70,7 @@ public class QuoteDTO extends BusinessEntityDto{
 	private String sellerCode;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date sendDate;
+	private String quoteNumber;
 
 
     private String externalId;
@@ -279,6 +280,22 @@ public class QuoteDTO extends BusinessEntityDto{
 	 */
 	public void setSendDate(Date sendDate) {
 		this.sendDate = sendDate;
+	}
+
+
+	/**
+	 * @return the quoteNumber
+	 */
+	public String getQuoteNumber() {
+		return quoteNumber;
+	}
+
+
+	/**
+	 * @param quoteNumber the quoteNumber to set
+	 */
+	public void setQuoteNumber(String quoteNumber) {
+		this.quoteNumber = quoteNumber;
 	}
 
 

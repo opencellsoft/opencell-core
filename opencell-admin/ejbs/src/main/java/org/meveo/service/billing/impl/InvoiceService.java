@@ -1473,6 +1473,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (prefix.indexOf("commercial") >= 0 || prefix.indexOf("commercialOrder") >= 0 ) {
             userMap.put("commercialOrder", entity);
         }
+        if(prefix.indexOf("quote") >= 0) {
+        	 userMap.put("quote", entity);
+        }
 
         String result = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
 
