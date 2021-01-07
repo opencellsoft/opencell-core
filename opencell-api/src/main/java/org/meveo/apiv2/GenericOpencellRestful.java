@@ -14,6 +14,8 @@ import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.IEntity;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +34,7 @@ public class GenericOpencellRestful extends Application {
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
+    public static Map<String,List<String>> ENTITIES_MAP = new HashMap();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -44,6 +47,7 @@ public class GenericOpencellRestful extends Application {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
         GENERIC_API_REQUEST_LOGGING_CONFIG = paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_LOGGING_CONFIG_KEY, "false");
         loadVersionInformation();
+        loadEntitiesList();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -88,5 +92,16 @@ public class GenericOpencellRestful extends Application {
             log.warn("There was a problem loading version information");
             e.printStackTrace();
         }
+    }
+
+    private void loadEntitiesList() {
+        // Get all classes that implement the interface IEntity
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
+        List<String> listEntities = new ArrayList<>();
+        for ( Class aClass : classes ) {
+            listEntities.add( aClass.getSimpleName() );
+        }
+        ENTITIES_MAP.put( "entities", listEntities );
     }
 }
