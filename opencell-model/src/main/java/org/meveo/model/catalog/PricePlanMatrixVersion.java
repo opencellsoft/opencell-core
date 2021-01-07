@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -25,7 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 /**
@@ -39,7 +39,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode"),
-        @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode")
+        @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:code order by p.currentVersion desc ")
 })
 public class PricePlanMatrixVersion extends AuditableEntity {
     

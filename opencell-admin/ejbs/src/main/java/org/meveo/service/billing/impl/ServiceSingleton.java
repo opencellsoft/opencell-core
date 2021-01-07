@@ -29,6 +29,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -38,6 +39,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
@@ -369,8 +371,50 @@ public class ServiceSingleton {
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, true);
     }
+    
+    
+    public CpqQuote assignCpqQuoteNumber(CpqQuote cpqQuote) {
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(cpqQuote.getOrderInvoiceType());
+        if(invoiceType == null)
+        	throw new EntityDoesNotExistsException(InvoiceType.class, cpqQuote.getOrderInvoiceType().getCode());
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+        Customer cust = cpqQuote.getApplicantAccount().getCustomerAccount().getCustomer();
 
-    private final String INVOICE_ORDER_TYPE = "commercialOrder";
+        Seller seller = cpqQuote.getSeller();
+        
+        if (seller == null && cust.getSeller() != null) {
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, cpqQuote.getSendDate(), invoiceType);
+        }
+        seller = sellerService.refreshOrRetrieve(seller);
+        InvoiceSequence sequence = incrementInvoiceNumberSequence(cpqQuote.getSendDate(), invoiceType, seller, cfName, 1);
+        int sequenceSize = sequence.getSequenceSize();
+
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+        } else if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = InvoiceService.evaluatePrefixElExpression(prefix, cpqQuote);
+
+        } else {
+            prefix = "";
+        }
+
+        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
+        cpqQuote.setQuoteNumber(prefix + invoiceNumber);
+    	return cpqQuote;
+    }
+
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -378,7 +422,7 @@ public class ServiceSingleton {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(order.getOrderInvoiceType());
         if(invoiceType == null)
-        	throw new BusinessException("Please create a new Invoice Type with Code : " + INVOICE_ORDER_TYPE);
+        	throw new EntityDoesNotExistsException(InvoiceType.class, order.getOrderInvoiceType().getCode());
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
         Customer cust = order.getBillingAccount().getCustomerAccount().getCustomer();
 
