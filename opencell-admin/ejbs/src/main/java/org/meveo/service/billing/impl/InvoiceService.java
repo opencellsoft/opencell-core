@@ -1454,21 +1454,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Evaluate prefix el expression.
      *
      * @param prefix prefix of EL expression
-     * @param invoice invoice
+     * @param entity invoice
      * @return evaluated value
      * @throws BusinessException business exception
      */
-    public static String evaluatePrefixElExpression(String prefix, Invoice invoice) throws BusinessException {
+    public static <T> String evaluatePrefixElExpression(String prefix, T entity) throws BusinessException {
 
         if (StringUtils.isBlank(prefix)) {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         if (prefix.indexOf("entity") >= 0) {
-            userMap.put("entity", invoice);
+            userMap.put("entity", entity);
         }
         if (prefix.indexOf("invoice") >= 0) {
-            userMap.put("invoice", invoice);
+            userMap.put("invoice", entity);
+        }
+        if (prefix.indexOf("commercial") >= 0 || prefix.indexOf("commercialOrder") >= 0 ) {
+            userMap.put("commercialOrder", entity);
+        }
+        if(prefix.indexOf("quote") >= 0) {
+        	 userMap.put("quote", entity);
         }
 
         String result = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);

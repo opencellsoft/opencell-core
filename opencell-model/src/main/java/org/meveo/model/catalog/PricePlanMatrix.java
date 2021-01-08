@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
@@ -30,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -89,6 +91,9 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
+
+    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<PricePlanMatrixVersion> versions;
 
     /**
      * Filtering criteria - subscription date range - start date
@@ -910,6 +915,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
      */
     public String getParameter3El() {
         return parameter3El;
+    }
+
+    public List<PricePlanMatrixVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<PricePlanMatrixVersion> versions) {
+        this.versions = versions;
     }
 
     /**

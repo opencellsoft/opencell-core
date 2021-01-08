@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Tarik F.
+ * @author Mbarek-Ay
  *
  */
 @SuppressWarnings("serial")
@@ -50,6 +51,17 @@ public class GetProductDtoResponse extends ProductDto{
     
     public GetProductDtoResponse(Product p) {
     	super(p);
+    	processProductVersionAndDiscount(p);
+    }
+    
+    public GetProductDtoResponse(Product p,Set<ChargeTemplateDto> chargeTemplates) {
+    	super(p);
+    	processProductVersionAndDiscount(p);
+    	this.chargeTemplates=chargeTemplates;
+    }
+    
+    public void processProductVersionAndDiscount(Product p) {
+    	
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
     	if(p.getDiscountList() != null && !p.getDiscountList().isEmpty()) {
     		discountList = p.getDiscountList().stream().map(d -> {
@@ -64,8 +76,8 @@ public class GetProductDtoResponse extends ProductDto{
     			return service;
     		}).collect(Collectors.toSet());
     	}
-    	
     }
+ 
 	
 	public GetProductDtoResponse() {
 		super();

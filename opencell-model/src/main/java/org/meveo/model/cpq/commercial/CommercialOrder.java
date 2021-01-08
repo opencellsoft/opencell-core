@@ -22,6 +22,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
@@ -39,6 +40,28 @@ import org.meveo.model.order.Order;
 public class CommercialOrder extends AuditableEntity {
 
 
+	public CommercialOrder() {
+	}
+
+	public CommercialOrder(CommercialOrder copy) {
+		this.seller = copy.seller;
+		this.orderNumber = copy.orderNumber;
+		this.label = copy.label;
+		this.billingAccount = copy.billingAccount;
+		this.quote = copy.quote;
+		this.contract = copy.contract;
+		this.orderType = copy.orderType;
+		this.invoicingPlan = copy.invoicingPlan;
+		this.orderProgress = copy.orderProgress;
+		this.progressDate = copy.progressDate;
+		this.orderDate = copy.orderDate;
+		this.realisationDate = copy.realisationDate;
+		this.customerServiceBegin = copy.customerServiceBegin;
+		this.customerServiceDuration = copy.customerServiceDuration;
+		this.externalReference = copy.externalReference;
+		this.orderParent = copy.orderParent;
+	}
+
 	/**
 	 * 
 	 */
@@ -49,8 +72,7 @@ public class CommercialOrder extends AuditableEntity {
 	@NotNull
 	private Seller seller;
 	
-	@Column(name = "order_number", nullable = false, length = 50)
-	@NotNull
+	@Column(name = "order_number", length = 50)
 	@Size(max = 50)
 	private String orderNumber;
 	
@@ -130,6 +152,10 @@ public class CommercialOrder extends AuditableEntity {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoice_type_id", nullable = false)
+	@NotNull
+	private InvoiceType orderInvoiceType;
 
 	/**
 	 * @return the seller
@@ -401,5 +427,52 @@ public class CommercialOrder extends AuditableEntity {
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
 	}
-	
+
+
+	/**
+	 * @return the orderType
+	 */
+	public OrderType getOrderType() {
+		return orderType;
+	}
+
+
+	/**
+	 * @param orderType the orderType to set
+	 */
+	public void setOrderType(OrderType orderType) {
+		this.orderType = orderType;
+	}
+
+
+	/**
+	 * @return the invoicingPlan
+	 */
+	public InvoicingPlan getInvoicingPlan() {
+		return invoicingPlan;
+	}
+
+
+
+	/**
+	 * @return the orderInvoiceType
+	 */
+	public InvoiceType getOrderInvoiceType() {
+		return orderInvoiceType;
+	}
+
+	/**
+	 * @param orderInvoiceType the orderInvoiceType to set
+	 */
+	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
+		this.orderInvoiceType = orderInvoiceType;
+	}
+
+	/**
+	 * @param invoicingPlan the invoicingPlan to set
+	 */
+	public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
+		this.invoicingPlan = invoicingPlan;
+	}
+
 }

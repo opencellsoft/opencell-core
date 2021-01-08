@@ -49,6 +49,14 @@
 			<column name="package_flag" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
 			</column>
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
 		</createTable>
 	</changeSet>
 
@@ -1501,6 +1509,8 @@
 	            <column name="applicant_account_id" type="bigint" />
 	            <column name="valid_from" type="datetime" />
 	            <column name="valid_to" type="datetime" />
+	            <column name="quote_number" type="varchar(50)" />
+	            <column name="invoice_type_id" type="bigint" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"
@@ -1638,8 +1648,16 @@
             </column>
             <column name="article_family_id" type="bigint"/>
             <column name="accounting_code_id" type="bigint" />
-            <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}"></column>
+            
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
         </createTable>
 
         <createSequence sequenceName="billing_article_family_seq" startValue="1" />
@@ -1983,9 +2001,7 @@
 	            <column name="seller_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-	            <column name="order_number" type="varchar(50)" >
-	            	<constraints nullable="false"/>
-	            </column>
+	            <column name="order_number" type="varchar(50)" />
 	            <column name="label" type="varchar(255)" />
 	            <column name="billing_account_id" type="bigint" >
 	            	<constraints nullable="false"/>
@@ -2016,6 +2032,9 @@
 	            	<constraints nullable="false"/>
 	            </column>
 	            <column name="invoicing_plan_id" type="bigint" />
+	            <column name="invoice_type_id" type="bigint">
+	            	<constraints nullable="false"/>
+	            </column>
 	        </createTable>
 	        
 	        <createTable tableName="cpq_commercial_order_billing_invoice">
@@ -2033,6 +2052,8 @@
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
         	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_commercial_order_billing_invoice" constraintName="fk_cpq_commercial_order_billing_invoice_invoice_id" deferrable="false" initiallyDeferred="false"
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+        	<addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_invoice_type_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
 	        
 	        
 		<createTable tableName="cpq_invoicing_plan">
@@ -2610,7 +2631,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
 
-            <column name="ppm_id" type="bigint" />
+            <column name="ppm_version_id" type="bigint" />
             <column name="position" type ="int4"/>
             <column name="type" type="varchar(255)"/>
 
@@ -2664,13 +2685,15 @@
 	
 	            <column name="description" type="varchar(255)"/>
 	            <column name="price_without_tax" type="numeric(23, 12)" />
-	            <column name="double_value" type ="float8"/>
         </createTable>
+
+		<addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_ppm_version" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
 
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_product" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
 
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_attribute" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
 		<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_price_plan_matrix_column" constraintName="fk_price_plan_matrix_column_offer_template" deferrable="false" initiallyDeferred="false"
@@ -2679,7 +2702,7 @@
         <addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_column" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_column" />
 
-		<addForeignKeyConstraint baseColumnNames="ppm_column_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
+		<addForeignKeyConstraint baseColumnNames="ppml_id" baseTableName="cpq_price_plan_matrix_value" constraintName="fk_price_plan_matrix_value_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
 
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
@@ -2744,6 +2767,11 @@
 
         <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_product_counter_template" constraintName="fk_cat_product_counter_template_cat_counter_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+    </changeSet>
+    
+    <changeSet id="540-112-20210107" author="TarikF">
+	        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_invoice_type_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
     </changeSet>
 </databaseChangeLog>
 

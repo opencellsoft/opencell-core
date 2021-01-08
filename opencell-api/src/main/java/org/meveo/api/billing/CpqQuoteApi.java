@@ -61,6 +61,8 @@ import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
@@ -103,6 +105,10 @@ public class CpqQuoteApi extends BaseApi {
 	private QuoteProductService quoteProductService;
 	@Inject
 	private ProductVersionService productVersionService;
+	@Inject 
+	private ServiceSingleton serviceSingleton;
+    @Inject 
+    private InvoiceTypeService invoiceTypeService;
 	
 	public QuoteDTO createQuote(QuoteDTO quote) {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -140,7 +146,8 @@ public class CpqQuoteApi extends BaseApi {
 		if(!Strings.isEmpty(quote.getBillableAccountCode())) {
 			cpqQuote.setBillableAccount(billingAccountService.findByCode(quote.getBillableAccountCode()));
 		}
-		
+
+		cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
 		try {
 			cpqQuoteService.create(cpqQuote);
 			quoteVersionService.create(populateNewQuoteVersion(quote.getQuoteVersion(), cpqQuote));
@@ -178,7 +185,7 @@ public class CpqQuoteApi extends BaseApi {
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
 		}
-		return quoteVersionDto;
+		return new QuoteVersionDto(quoteVersion);
 	}
 	
 	
@@ -390,6 +397,7 @@ public class CpqQuoteApi extends BaseApi {
 		dto.setExternalId(quote.getCustomerRef()); // TODO : not sure if it is the correct field
 		dto.setDescription(quote.getDescription());
 		dto.setCode(quote.getCode());
+		dto.setQuoteNumber(quote.getQuoteNumber());
 		return dto;
 	}
 	private GetQuoteDtoResponse populateToDto(CpqQuote quote, boolean loadQuoteOffers, boolean loadQuoteProduct,boolean loadQuoteAttributes) {
@@ -678,6 +686,9 @@ public class CpqQuoteApi extends BaseApi {
 		}
 		cpqQuote.setStatus(status);
 		cpqQuote.setStatusDate(Calendar.getInstance().getTime());
+		if(QuoteStatusEnum.APPROVED.equals(status)) {
+			cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
+		}
 		try {
 			cpqQuoteService.update(cpqQuote);
 		}catch(BusinessApiException e) {

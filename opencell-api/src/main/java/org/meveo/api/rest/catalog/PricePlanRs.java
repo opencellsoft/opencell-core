@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
@@ -51,7 +52,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.PricePlanMatrix}.
- * 
+ *
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/pricePlan")
@@ -62,17 +63,24 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      * Create a new price plan matrix
-     * 
+     *
      * @param postData The price plan matrix's data
      * @return Request processing status
      */
     @POST
     @Path("/")
+    @Operation(summary = "This endpoint allows to delete a price plan matrix",
+            tags = { "PricePlanMatrix" },
+            description ="create a price plan matrix",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan column successfully created"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
     ActionStatus create(PricePlanMatrixDto postData);
 
     /**
      * Update an existing price plan matrix
-     * 
+     *
      * @param postData The price plan matrix's data
      * @return Request processing status
      */
@@ -82,27 +90,27 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      * Find a price plan matrix with a given code
-     * 
+     *
      * @param pricePlanCode The price plan's code
      * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlan
      */
     @GET
-    @Path("/")    
+    @Path("/")
     GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
      * Remove an existing price plan matrix with a given code
-     * 
+     *
      * @param pricePlanCode The price plan's code
      * @return Request processing status
      */
     @DELETE
-    @Path("/{pricePlanCode}")    
+    @Path("/{pricePlanCode}")
     ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
     /**
      * List price plan matrix.
-     * 
+     *
      * @param eventCode The charge's code linked to price plan.
      * @return Return pricePlanMatrixes
      */
@@ -112,7 +120,7 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      * Create new or update an existing price plan matrix
-     * 
+     *
      * @param postData The price plan matrix's data
      * @return Request processing status
      */
@@ -122,7 +130,7 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      * Enable a Price plan with a given code
-     * 
+     *
      * @param code Price plan code
      * @return Request processing status
      */
@@ -132,7 +140,7 @@ public interface PricePlanRs extends IBaseRs {
 
     /**
      * Disable a Price plan with a given code
-     * 
+     *
      * @param code Price plan code
      * @return Request processing status
      */
@@ -144,7 +152,7 @@ public interface PricePlanRs extends IBaseRs {
     @POST
     @Path("/pricePlanMatrixVersion")
     @Operation(summary = "This endpoint allows to create or update a price plan version",
-            tags = { "PricePlan" },
+            tags = { "PricePlanMatrixVersion" },
             description ="create a price plan version if it doesn't exist or update an existing price plan version",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully created or updated",
@@ -205,11 +213,11 @@ public interface PricePlanRs extends IBaseRs {
             tags = { "PricePlanMatrixVersion" },
             description ="duplicate a product version",
             responses = {
-                    @ApiResponse(responseCode="200", description = "the product version successfully duplicated"),
-                    @ApiResponse(responseCode = "404", description = "the product verion with product code and current version in param does not exist ")
+                    @ApiResponse(responseCode="200", description = "the price plan version successfully duplicated"),
+                    @ApiResponse(responseCode = "404", description = "the price plan version with price plan code and current version in param does not exist ")
             })
     Response duplicatePricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
-                                     @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+                                       @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
 
 
     /**
@@ -220,6 +228,15 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/pricePlanMatrixColumn")
+    @Operation(summary = "This endpoint allows to create a price plan matrix column",
+            tags = { "PricePlanMatrixColumn" },
+            description ="create a price plan matrix column",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan column successfully created"),
+                    @ApiResponse(responseCode = "412", description = "the price plan column with code is missing"),
+                    @ApiResponse(responseCode = "302", description = "the price plan column already existe with the given code"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
     Response create(PricePlanMatrixColumnDto postData);
 
     /**
@@ -230,6 +247,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PUT
     @Path("/pricePlanMatrixColumn")
+    @Operation(summary = "This endpoint allows to update a price plan matrix column",
+            tags = { "PricePlanMatrixColumn" },
+            description ="update a price plan matrix column",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan column successfully updated"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
     Response update(PricePlanMatrixColumnDto postData);
 
     /**
@@ -240,6 +264,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/pricePlanMatrixColumn")
+    @Operation(summary = "This endpoint allows to get a price plan matrix column",
+            tags = { "PricePlanMatrixColumn" },
+            description ="get a price plan matrix column",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan column successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
     Response findPricePlanMatrixColumn(@QueryParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
     /**
@@ -250,7 +281,47 @@ public interface PricePlanRs extends IBaseRs {
      */
     @DELETE
     @Path("/pricePlanMatrixColumn/{pricePlanMatrixColumnCode}")
+    @Operation(summary = "This endpoint allows to delete a price plan matrix column",
+            tags = { "PricePlanMatrixColumn" },
+            description ="delete a price plan matrix column",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan column successfully deleted"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
     Response removePricePlanMatrixColumnCode(@PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 
+    /**
+     * Create a new price plan matrix column
+     *
+     * @param pricePlanMatrixLineDto The price plan matrix line's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/addPricePlanMatrixLine")
+    @Operation(summary = "This endpoint allows to add a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="add a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan line successfully added"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response addPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
+
+    /**
+     * Create a new price plan matrix column
+     *
+     * @param pricePlanMatrixLineDto The price plan matrix line's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/updatePricePlanMatrixLine")
+    @Operation(summary = "This endpoint allows to update a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="update a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully updated"),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
 }

@@ -32,8 +32,10 @@ public class GroupedAttributeDto {
 			this.code = groupedService.getCode();
 			this.description = groupedService.getDescription();
 			this.display = groupedService.getDisplay();
+			
 			if(groupedService.getProductVersion() != null && groupedService.getProductVersion().getProduct() != null) {
 				this.productCode = groupedService.getProductVersion().getProduct().getCode();
+				this.productVersion = groupedService.getProductVersion().getCurrentVersion();
 			}
 		}
 	}

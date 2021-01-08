@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.elasticsearch.common.Strings;
@@ -19,6 +20,7 @@ import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 
+@Stateless
 public class GroupedAttributesApi extends BaseApi{
 
 	@Inject
@@ -62,7 +64,7 @@ public class GroupedAttributesApi extends BaseApi{
 	/**
 	 * @param groupedAttributeDto
 	 */
-	public Long createGroupedAttribute(GroupedAttributeDto groupedAttributeDto) {
+	public GroupedAttributeDto createGroupedAttribute(GroupedAttributeDto groupedAttributeDto) {
 		checkParams(groupedAttributeDto);
 		final GroupedAttributes groupedAttribute = new GroupedAttributes();
 		if(groupedAttributeService.findByCode(groupedAttributeDto.getCode()) != null)
@@ -75,6 +77,8 @@ public class GroupedAttributesApi extends BaseApi{
 		}catch(MeveoApiException e) {
 			if(e instanceof EntityDoesNotExistsException == false)
 				throw new 	MeveoApiException(e);
+			else
+				throw e;
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
@@ -82,7 +86,7 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttributeDto.getAttributes() != null && !groupedAttributeDto.getAttributes().isEmpty()) {
 			addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), true);
 		}
-		return groupedAttribute.getId();
+		return new GroupedAttributeDto(groupedAttribute);
 	}
 	
 	/**
@@ -95,14 +99,17 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, groupedAttributeDto.getCode());
 		}
-		groupedAttribute.setDescription(groupedAttributeDto.getDescription());
 		try {
 			if(!Strings.isEmpty(groupedAttributeDto.getProductCode()))
 				groupedAttribute.setProductVersion(productVersionService.findByProductAndVersion(groupedAttributeDto.getProductCode(), groupedAttributeDto.getProductVersion()));
 		}catch(MeveoApiException e) {
 			if(e instanceof EntityDoesNotExistsException == false)
 				throw new 	MeveoApiException(e);
+			else
+				throw e;
 		}
+		if(!Strings.isEmpty(groupedAttributeDto.getDescription()))
+			groupedAttribute.setDescription(groupedAttributeDto.getDescription());
 		if(groupedAttributeDto.getAttributes() != null && !groupedAttributeDto.getAttributes().isEmpty()) {
 			addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), false);
 		}

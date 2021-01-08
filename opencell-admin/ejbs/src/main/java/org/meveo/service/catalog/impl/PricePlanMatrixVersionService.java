@@ -5,13 +5,13 @@ import javax.persistence.NoResultException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Tarik FA.
@@ -19,13 +19,23 @@ import java.util.Date;
  */
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
-    private static final String PRICE_PLAN_MATRIX_VERSION_ALREADY_EXIST = "Price plan matrix for code %s and version %d, already exist";
-    private static final String PRICE_PLAN_MATRIX_VERSION_MISSIN = "Price plan matrix is missing";
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version (%d) is %s, it can not be updated nor removed";
 
+    @Override
+	public void create(PricePlanMatrixVersion entity) throws BusinessException {
+    	var pricePlanMatrixVersion = this.findLastVersionByCode(entity.getPricePlanMatrix().getCode());
+    	entity.setCurrentVersion(pricePlanMatrixVersion.size() == 0 ? 1 : pricePlanMatrixVersion.get(0).getCurrentVersion() + 1);
+		super.create(entity);
+    }
+
+	@SuppressWarnings("unchecked")
+	public List<PricePlanMatrixVersion> findLastVersionByCode(String code) {
+			return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByCode")
+																			.setParameter("code", code).getResultList();
+	}
 
 
-    public PricePlanMatrixVersion findByPricePlanAndVersion(int currentVersion, String pricePlanMatrixCode) {
+    public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
         try {
             return (PricePlanMatrixVersion) this.getEntityManager()
                     .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersion")

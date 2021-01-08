@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -23,7 +24,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "billing_accounting_article")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
-public class AccountingArticle extends BusinessEntity {
+public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
 	 * 
@@ -57,10 +58,6 @@ public class AccountingArticle extends BusinessEntity {
 
     @Column(name = "analytic_code_3")
     private String analyticCode3;
-
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
 
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
@@ -110,14 +107,6 @@ public class AccountingArticle extends BusinessEntity {
 
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
-    }
-
-    public CustomFieldValues getCfValues() {
-        return cfValues;
-    }
-
-    public void setCfValues(CustomFieldValues cfValues) {
-        this.cfValues = cfValues;
     }
 
     public ArticleMappingLine getArticleMappingLine() {

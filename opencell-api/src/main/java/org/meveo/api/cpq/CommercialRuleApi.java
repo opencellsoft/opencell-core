@@ -1,17 +1,19 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
-import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
-import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -197,7 +199,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 	}
 	
 	
-	public GetListCommercialRulesResponseDto list (PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+	public GetListCommercialRulesResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 		if (pagingAndFiltering == null) {
 			pagingAndFiltering = new PagingAndFiltering();
 		}
@@ -216,6 +218,58 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				result.getCommercialRules().add(new CommercialRuleHeaderDTO(p));
 			});
 		}
+		return result;
+	}
+	
+	
+	
+	public GetListCommercialRulesResponseDto findTagRules(String tagCode) {
+		 
+		if(Strings.isEmpty(tagCode)) {
+			missingParameters.add("tagCode");
+		}
+		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getTagRules(tagCode); 
+		GetListCommercialRulesResponseDto result =getCommmercialRules(commercialRules);
+		return result;
+	}
+	
+	public GetListCommercialRulesResponseDto findAttributeRules(String attributeCode,String productCode) { 
+		if(StringUtils.isBlank(attributeCode)) {
+			missingParameters.add("attributeCode");
+		}
+		if(StringUtils.isBlank(productCode)) {
+			missingParameters.add("productCode");
+		}
+		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getAttributeRules(attributeCode,productCode);
+		GetListCommercialRulesResponseDto result=getCommmercialRules(commercialRules);
+		return result;
+	}
+	
+	public GetListCommercialRulesResponseDto findProductRules(String offerCode,String productCode,int currentVersion) { 
+		if(StringUtils.isBlank(offerCode)) {
+			missingParameters.add("offerCode");
+		}
+		if(StringUtils.isBlank(productCode)) {
+			missingParameters.add("productCode");
+		}
+		if(StringUtils.isBlank(currentVersion)) {
+			missingParameters.add("currentVersion");
+		}
+		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode,productCode,currentVersion);
+		GetListCommercialRulesResponseDto result=getCommmercialRules(commercialRules);
+		return result;
+	}
+	 
+	public GetListCommercialRulesResponseDto getCommmercialRules(List<CommercialRuleHeader> commercialRules) {
+		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
+		if(!commercialRules.isEmpty()) {
+			List<CommercialRuleHeaderDTO> commercialRuleDtoList=new ArrayList<CommercialRuleHeaderDTO>();
+			for(CommercialRuleHeader rule:commercialRules) {
+				CommercialRuleHeaderDTO commercialRuleDto=new CommercialRuleHeaderDTO(rule);
+				commercialRuleDtoList.add(commercialRuleDto);
+			}
+			result.setCommercialRules(commercialRuleDtoList);
+		} 
 		return result;
 	}
 	

@@ -27,6 +27,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -175,6 +176,15 @@ public class CpqQuote extends BusinessEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    @Column(name = "quote_number", length = 50)
+    private String quoteNumber;
+    
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoice_type_id", nullable = false)
+	@NotNull
+	private InvoiceType orderInvoiceType;
     
 	/**
 	 * @return the seller
@@ -379,6 +389,34 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
+	}
+
+	/**
+	 * @return the quoteNumber
+	 */
+	public String getQuoteNumber() {
+		return quoteNumber;
+	}
+
+	/**
+	 * @param quoteNumber the quoteNumber to set
+	 */
+	public void setQuoteNumber(String quoteNumber) {
+		this.quoteNumber = quoteNumber;
+	}
+
+	/**
+	 * @return the orderInvoiceType
+	 */
+	public InvoiceType getOrderInvoiceType() {
+		return orderInvoiceType;
+	}
+
+	/**
+	 * @param orderInvoiceType the orderInvoiceType to set
+	 */
+	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
+		this.orderInvoiceType = orderInvoiceType;
 	}
 	
 	

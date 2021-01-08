@@ -26,9 +26,9 @@ import javax.validation.constraints.NotNull;
 public class PricePlanMatrixColumn extends BusinessEntity {
 
     @OneToOne
-    @JoinColumn(name = "ppm_id")
+    @JoinColumn(name = "ppm_version_id")
     @NotNull
-    private PricePlanMatrix pricePlanMatrix;
+    private PricePlanMatrixVersion pricePlanMatrixVersion;
 
     @Column(name = "position")
     @NotNull
@@ -58,12 +58,12 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @NotNull
     private Attribute attribute;
 
-    public PricePlanMatrix getPricePlanMatrix() {
-        return pricePlanMatrix;
+    public PricePlanMatrixVersion getPricePlanMatrixVersion() {
+        return pricePlanMatrixVersion;
     }
 
-    public void setPricePlanMatrix(PricePlanMatrix pricePlanMatrix) {
-        this.pricePlanMatrix = pricePlanMatrix;
+    public void setPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+        this.pricePlanMatrixVersion = pricePlanMatrixVersion;
     }
 
     public Integer getPosition() {

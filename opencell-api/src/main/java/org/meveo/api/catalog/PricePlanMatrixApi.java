@@ -497,12 +497,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             handleMissingParameters();
         }
 
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode);
-        if (pricePlanMatrix == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
-        }
-
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        return  pricePlanMatrixService.findPricePlanMatrix(pricePlanCode);
     }
 
     public List<PricePlanMatrixDto> list(String eventCode) throws MeveoApiException {

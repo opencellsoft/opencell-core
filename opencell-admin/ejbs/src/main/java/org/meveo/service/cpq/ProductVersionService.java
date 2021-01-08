@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -19,6 +20,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 /**
@@ -40,6 +42,19 @@ public class ProductVersionService extends
     private final static String PRODUCT_VERSION_MISSING = "Version of the product %s is missing";
     private final static String PRODUCT_VERSION_ERROR_DUPLICATE = "Can not duplicate the version of product from version product (%d)";
     private static final String CAN_NOT_UPDATE_VERSION_PRODUCT_STAUTS = "Can not change the status of the product of version for (%d)";
+    
+    @Override
+	public void create(ProductVersion productVersion) throws BusinessException {
+    	var productVersions = this.findLastVersionByCode(productVersion.getProduct().getCode());
+		productVersion.setCurrentVersion(productVersions.size() == 0 ? 1 : productVersions.get(0).getCurrentVersion() + 1);
+		super.create(productVersion);
+	}
+    
+	@SuppressWarnings("unchecked")
+	public List<ProductVersion> findLastVersionByCode(String code) {
+			return this.getEntityManager().createNamedQuery("ProductVersion.findByCode")
+																			.setParameter("code", code).getResultList();
+	}
     /**
      * update product with status DRAFT only
      * @param productVersion
