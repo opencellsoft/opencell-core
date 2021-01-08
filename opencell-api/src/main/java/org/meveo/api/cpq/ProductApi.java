@@ -15,6 +15,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.catalog.OfferTemplateApi;
+import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
@@ -24,6 +25,7 @@ import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -55,6 +57,7 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Tarik FAKHOURI
+ * @author Mbarek-Ay
  * @version 10.0
  */
 @Stateless
@@ -181,19 +184,26 @@ public class ProductApi extends BaseApi {
 	 * @param code
 	 * @return
 	 * @throws ProductException
-	 */
-	public Product findByCode(String code){
-		if(Strings.isEmpty(code)) {
+	 */ 
+	
+	public GetProductDtoResponse findByCode(String code) throws MeveoApiException {
+		if (StringUtils.isBlank(code)) {
 			missingParameters.add("code");
-		}
-		handleMissingParameters();
+			handleMissingParameters();
+		} 
 		Product product = productService.findByCode(code);
 		if (product == null) {
 			throw new EntityDoesNotExistsException(Product.class,code);
-		} 
-		
-		return product;
-	}
+		}  
+		ChargeTemplateDto chargeTemplateDto=null;
+		Set<ChargeTemplateDto> chargeTemplateDtos=new HashSet<ChargeTemplateDto>();
+		for(ProductChargeTemplateMapping prodcutCharge : product.getProductCharges()) {
+			chargeTemplateDto=new ChargeTemplateDto(prodcutCharge.getChargeTemplate(),entityToDtoConverter.getCustomFieldsDTO(prodcutCharge.getChargeTemplate()));
+			chargeTemplateDtos.add(chargeTemplateDto); 	
+		}
+			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos); 
+			return result;
+		}
 	
  
  
