@@ -56,7 +56,7 @@
 				</f:facet>
 				<p:commandButton id="accountOperationListBtn" icon="ui-icon-document" 
 							oncomplete="PF('accountOperationListDialog').show()" update="accountOperationListDialog"
-							action="#{AccountingEntryListBean.selectAccountingEntry(entity.id)}">
+							action="#{accountingEntryListBean.selectAccountingEntry(entity.id)}">
 					<f:actionListener></f:actionListener>
                 </p:commandButton>
 			</p:column>
@@ -65,11 +65,11 @@
 		
 		<p:dialog id="accountOperationListDialog" header="#{messages['accountingEntry.accountOperationList']}" modal="true"
 					 closeOnEscape="true" widgetVar="accountOperationListDialog" width="85%" closable="true" appendTo="@(body)">
-			<c:if test="#{not empty AccountingEntryListBean.selectedAccountingEntry}">
+			<c:if test="#{not empty accountingEntryListBean.selectedAccountingEntry}">
 				<hftl:dataList exportToXml="false" exportXlsxButton="false" resultsId="resultsAO"
 					id="accountOperationList" rowsPerPage="50"
 					label="#{messages['accountOperation.title']}"
-					dataModel="#{AccountingEntryListBean.getAccountOperations()}">
+					dataModel="#{accountingEntryListBean.getAccountOperations()}">
 
 					<p:column width="5%">
 						<f:facet name="header">
@@ -101,7 +101,7 @@
 							<f:param name="customerAccountId" value="#{entity.customerAccount.id}" />
 							<f:param name="edit" value="false" />
 							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                      		<f:param name="backView" value="AccountingEntries" />
+                      		<f:param name="backView" value="accountingEntries" />
 						</h:link>
 					</p:column>
 
@@ -109,12 +109,12 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['invoice.invoiceNumber']}" />
 						</f:facet>
-						<p:repeat value="#{AccountingEntryListBean.getInvoices(entity)}" var="invoice">
+						<p:repeat value="#{accountingEntryListBean.getInvoices(entity)}" var="invoice">
 							<h:link value="#{invoice.invoiceNumber}" outcome="invoiceDetail">
 								<f:param name="objectId" value="#{invoice.id}" />
 								<f:param name="edit" value="false" />
 								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                       			<f:param name="backView" value="AccountingEntries" />
+                       			<f:param name="backView" value="accountingEntries" />
 							</h:link>
 						</p:repeat>
 					</p:column>
@@ -145,12 +145,12 @@
 						<!-- <p:tooltip for="aoEditlink"
 				                   value="#{messages['commons.edit']}" showEffect="slide"
 				                   hideEffect="slide"/> -->
-				        <p:link id="aoEditlink" outcome="#{AccountingEntryListBean.displayOperation(entity)}"
+				        <p:link id="aoEditlink" outcome="#{accountingEntryListBean.displayOperation(entity)}"
 				                  icon="ui-icon-document" value="#{messages['accountingEntry.ao.detail']}">
 				            <f:param name="objectId" value="#{entity.id}"/>
 				            <f:param name="edit" value="false"/>
 				            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
-				            <f:param name="backView" value="AccountingEntries" />
+				            <f:param name="backView" value="accountingEntries" />
 				        </p:link>
 			        </p:column>
 				</hftl:dataList>
