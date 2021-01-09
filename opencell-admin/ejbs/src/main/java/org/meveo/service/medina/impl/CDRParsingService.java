@@ -254,7 +254,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccess_id());
         if (accesses == null || accesses.size() == 0) {
             rejectededCdrEventProducer.fire(cdr);
-            throw new InvalidAccessException(cdr);
+            throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.ACCESS_NOT_FOUND);
         }
         return accesses;
     }
