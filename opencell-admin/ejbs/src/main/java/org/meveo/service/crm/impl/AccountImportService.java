@@ -393,12 +393,7 @@ public class AccountImportService extends ImportService {
         userAccount.setStatus(AccountStatusEnum.ACTIVE);
         userAccount.setStatusDate(new Date());
 
-        // create wallet
-        WalletInstance wallet = new WalletInstance();
-        wallet.setCode(WalletTemplate.PRINCIPAL);
-        wallet.setUserAccount(userAccount);
 
-        userAccount.setWallet(wallet);
         userAccount.setBillingAccount(billingAccount);
 
         if (uAccount.getCustomFields() != null) {
@@ -406,6 +401,14 @@ public class AccountImportService extends ImportService {
         }
 
         userAccountService.create(userAccount);
+
+        // create wallet
+        WalletInstance wallet = new WalletInstance();
+        wallet.setCode(WalletTemplate.PRINCIPAL);
+        wallet.setCreated(new Date());
+        wallet.setUserAccount(userAccount);
+        userAccount.setWallet(wallet);
+        walletService.create(wallet);
 
         Subscriptions subscriptions = uAccount.getSubscriptions();
 
