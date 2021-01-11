@@ -29,7 +29,10 @@ public class NativeExpressionFactory {
     }
 
     public void addFilters(String key, Object value) {
-        checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
+    	if(key.endsWith(".id"))
+            checkOnCondition(key, Long.parseLong(value.toString()), new ExpressionParser(key.split(" ")));
+    	else
+    		checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
     }
 
     protected void checkOnCondition(String key, Object value, ExpressionParser exp) {
