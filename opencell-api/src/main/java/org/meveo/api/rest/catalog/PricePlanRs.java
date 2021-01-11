@@ -326,7 +326,7 @@ public interface PricePlanRs extends IBaseRs {
     Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
 
     @DELETE
-    @Path("/addPricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Path("/pricePlanMatrixLine/{pricePlanMatrixLineId}")
     @Operation(summary = "This endpoint allows to delete a price plan matrix line",
             tags = { "PricePlanMatrixLine" },
             description ="delete a price plan matrix line",
@@ -337,7 +337,7 @@ public interface PricePlanRs extends IBaseRs {
     ActionStatus removePricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
 
     @GET
-    @Path("/addPricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Path("/pricePlanMatrixLine/{pricePlanMatrixLineId}")
     @Operation(summary = "This endpoint allows to get a price plan matrix line",
             tags = { "PricePlanMatrixLine" },
             description ="get a price plan matrix line",
