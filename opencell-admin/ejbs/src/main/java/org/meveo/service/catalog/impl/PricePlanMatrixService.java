@@ -724,7 +724,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public List<PricePlanMatrixLineDto> findFor(PricePlanMatrixVersion pricePlanMatrixVersion, ProductVersion productVersion, Long quotedProductId) {
+    public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ProductVersion productVersion, Long quotedProductId) {
 
         List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(productVersion.getProduct());
 

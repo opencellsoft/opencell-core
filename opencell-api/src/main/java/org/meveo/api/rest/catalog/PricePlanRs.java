@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.LoadPricesRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -346,4 +347,15 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "Internal error")
             })
     Response getPricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+
+    @GET
+    @Path("/loadPrices")
+    @Operation(summary = "This endpoint allows to load prices",
+            tags = { "pricePlan" },
+            description ="load prices",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the prices are successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response loadPrices(LoadPricesRequest loadPricesRequest);
 }

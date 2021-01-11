@@ -10,6 +10,7 @@ import org.meveo.model.cpq.QuoteAttribute;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
@@ -18,7 +19,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -39,8 +40,8 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal pricetWithoutTax;
 
-    @OneToMany(mappedBy = "pricePlanMatrixLine", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixValue> pricePlanMatrixValues;
+    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
@@ -66,33 +67,16 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.pricetWithoutTax = pricetWithoutTax;
     }
 
-    public List<PricePlanMatrixValue> getPricePlanMatrixValues() {
+    public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
         return pricePlanMatrixValues;
     }
 
-    public void setPricePlanMatrixValues(List<PricePlanMatrixValue> pricePlanMatrixValues) {
+    public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
         this.pricePlanMatrixValues = pricePlanMatrixValues;
     }
 
     public boolean match(List<QuoteAttribute> quoteAttributes) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(quoteAttributes));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        PricePlanMatrixLine that = (PricePlanMatrixLine) o;
-        return Objects.equals(pricePlanMatrixVersion, that.pricePlanMatrixVersion) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(pricetWithoutTax, that.pricetWithoutTax) &&
-                Objects.equals(pricePlanMatrixValues, that.pricePlanMatrixValues);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), pricePlanMatrixVersion, description, pricetWithoutTax, pricePlanMatrixValues);
     }
 }

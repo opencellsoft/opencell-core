@@ -6,18 +6,25 @@ import org.meveo.api.dto.response.BaseResponse;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlRootElement(name = "GetPricePlanMatrixLineResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetPricePlanMatrixLineResponseDto extends BaseResponse {
 
-    private PricePlanMatrixLineDto pricePlanMatrixLineDto;
+    private List<PricePlanMatrixLineDto> pricePlanMatrixLinesDto;
 
-    public PricePlanMatrixLineDto getPricePlanMatrixLineDto() {
-        return pricePlanMatrixLineDto;
-    }
+
 
     public void setPricePlanMatrixLineDto(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
-        this.pricePlanMatrixLineDto = pricePlanMatrixLineDto;
+        this.pricePlanMatrixLinesDto = List.of(pricePlanMatrixLineDto);
+    }
+
+    public List<PricePlanMatrixLineDto> getPricePlanMatrixLinesDto() {
+        return pricePlanMatrixLinesDto;
+    }
+
+    public void setPricePlanMatrixLinesDto(List<PricePlanMatrixLineDto> pricePlanMatrixLinesDto) {
+        this.pricePlanMatrixLinesDto = pricePlanMatrixLinesDto;
     }
 }

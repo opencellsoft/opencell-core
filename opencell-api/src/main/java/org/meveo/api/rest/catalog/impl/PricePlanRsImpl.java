@@ -24,6 +24,7 @@ import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.LoadPricesRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -311,6 +312,19 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
             PricePlanMatrixLineDto pricePlanMatrixLineDto = pricePlanMatrixLineApi.load(ppmLineId);
             response.setPricePlanMatrixLineDto(pricePlanMatrixLineDto);
+            return Response.ok(response).build();
+        }catch(MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response loadPrices(LoadPricesRequest loadPricesRequest) {
+        GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
+        try {
+
+            List<PricePlanMatrixLineDto> pricePlanMatrixLineDto = pricePlanApi.loadPrices(loadPricesRequest);
+            response.setPricePlanMatrixLinesDto(pricePlanMatrixLineDto);
             return Response.ok(response).build();
         }catch(MeveoApiException e) {
             return errorResponse(e, response.getActionStatus());

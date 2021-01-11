@@ -15,6 +15,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.math.BigDecimal.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -137,28 +138,28 @@ public class PricePlanMatrixLineServiceTest {
             monthlyPrice1Line.setId(1L);
             monthlyPrice1Line.setDescription("Price1");
             monthlyPrice1Line.setPricetWithoutTax(valueOf(24));
-            monthlyPrice1Line.setPricePlanMatrixValues(List.of(monthlyBcValue, twelveSubscriptionDurationValue));
+            monthlyPrice1Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twelveSubscriptionDurationValue));
             monthlyPrice1Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             PricePlanMatrixLine monthlyPrice2Line = new PricePlanMatrixLine();
             monthlyPrice2Line.setId(2L);
             monthlyPrice2Line.setPricetWithoutTax(valueOf(15));
             monthlyPrice2Line.setDescription("Price2");
-            monthlyPrice2Line.setPricePlanMatrixValues(List.of(monthlyBcValue, twentyFourSubscriptionDurationValue));
+            monthlyPrice2Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twentyFourSubscriptionDurationValue));
             monthlyPrice2Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             PricePlanMatrixLine annuallyPrice3Line = new PricePlanMatrixLine();
             annuallyPrice3Line.setId(3L);
             annuallyPrice3Line.setDescription("Price3");
             annuallyPrice3Line.setPricetWithoutTax(valueOf(18));
-            annuallyPrice3Line.setPricePlanMatrixValues(List.of(annuallyBcValue, twelveSubscriptionDurationValue));
+            annuallyPrice3Line.setPricePlanMatrixValues(Set.of(annuallyBcValue, twelveSubscriptionDurationValue));
             annuallyPrice3Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             PricePlanMatrixLine annuallyPrice4Line = new PricePlanMatrixLine();
             annuallyPrice4Line.setId(4L);
             annuallyPrice4Line.setPricetWithoutTax(valueOf(13));
             annuallyPrice4Line.setDescription("Price4");
-            annuallyPrice4Line.setPricePlanMatrixValues(List.of(annuallyBcValue, twentyFourSubscriptionDurationValue));
+            annuallyPrice4Line.setPricePlanMatrixValues(Set.of(annuallyBcValue, twentyFourSubscriptionDurationValue));
             annuallyPrice4Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 
             return List.of(monthlyPrice1Line, monthlyPrice2Line, annuallyPrice3Line, annuallyPrice4Line);

@@ -1,9 +1,10 @@
 package org.meveo.service.catalog.impl;
 
-import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
@@ -16,7 +17,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import java.util.BitSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -60,13 +63,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
         PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixLineDto);
 
-        PricePlanMatrixLine pricePlanMatrixLine = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+        PricePlanMatrixLine pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
 
         if(pricePlanMatrixLine == null){
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPricePlanMatrixCode(), "pricePlanMatrixVersion.pricePlanMatrixCode", "" + pricePlanMatrixLineDto.getPricePlanMatrixVersion(), "pricePlanMatrixVersion.currentVersion");
         }
         pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
-        List<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
+        Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
         pricePlanMatrixLine.getPricePlanMatrixValues().clear();
         pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
@@ -82,7 +85,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return pricePlanMatrixVersion;
     }
 
-    private List<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
+    private Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
         return dtoData.getPricePlanMatrixValues()
                 .stream()
                 .map(value -> {
@@ -108,13 +111,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     pricePlanMatrixValue.setToDateValue(value.getToDateValue());
                     pricePlanMatrixValue.setPricePlanMatrixLine(pricePlanMatrixLine);
                     return pricePlanMatrixValue;
-                }).collect(Collectors.toList());
-    }
-
-    public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, List<QuoteAttribute> quoteAttributes) {
-        return findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
-                .filter(line -> line.match(quoteAttributes))
-                .collect(Collectors.toList());
+                }).collect(Collectors.toSet());
     }
 
     public PricePlanMatrixLineDto load(Long ppmLineId) {
@@ -123,5 +120,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
         }
         return new PricePlanMatrixLineDto(ppmLine);
+    }
+
+    public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, List<QuoteAttribute> quoteAttributes) {
+        return findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
+                .filter(line -> line.match(quoteAttributes))
+                .collect(Collectors.toList());
     }
 }

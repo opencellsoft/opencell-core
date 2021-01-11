@@ -26,7 +26,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.catalog.LoadPricesRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -40,6 +42,8 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -50,6 +54,8 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -80,10 +86,16 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Inject
     private CalendarService calendarService;
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private ProductVersionService productVersionService;
 
     @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
@@ -517,5 +529,35 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return pricePlanDtos;
+    }
+
+    public List<PricePlanMatrixLineDto> loadPrices(LoadPricesRequest loadPricesRequest){
+
+        if (StringUtils.isBlank(loadPricesRequest.getPpmCode())) {
+            missingParameters.add("ppmCode");
+        }
+        if (StringUtils.isBlank(loadPricesRequest.getPpmVersion())) {
+            missingParameters.add("ppmVersion");
+        }
+        if (StringUtils.isBlank(loadPricesRequest.getProductCode())) {
+            missingParameters.add("productCode");
+        }
+        if (StringUtils.isBlank(loadPricesRequest.getProductVersion())) {
+            missingParameters.add("productVersion");
+        }
+        if (StringUtils.isBlank(loadPricesRequest.getQuoteProductId())) {
+            missingParameters.add("quoteProductId");
+        }
+        handleMissingParameters();
+
+        PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
+        if(ppm == null)
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, "ppmCode", loadPricesRequest.getPpmCode(), "version", loadPricesRequest.getPpmVersion().toString());
+
+        ProductVersion productVersion = productVersionService.findByProductAndVersion(loadPricesRequest.getProductCode(), loadPricesRequest.getProductVersion());
+        if(productVersion == null)
+            throw new EntityDoesNotExistsException(ProductVersion.class, "productCode", loadPricesRequest.getProductCode(), "version", loadPricesRequest.getProductVersion().toString());
+
+        return pricePlanMatrixService.loadPrices(ppm, productVersion, loadPricesRequest.getQuoteProductId());
     }
 }
