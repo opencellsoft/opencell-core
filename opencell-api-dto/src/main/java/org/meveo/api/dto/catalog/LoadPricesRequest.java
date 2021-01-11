@@ -11,10 +11,6 @@ public class LoadPricesRequest {
     @NotNull
     private Integer ppmVersion;
     @NotNull
-    private String productCode;
-    @NotNull
-    private Integer productVersion;
-    @NotNull
     private Long quoteProductId;
 
     public String getPpmCode() {
@@ -27,26 +23,6 @@ public class LoadPricesRequest {
 
     public Integer getPpmVersion() {
         return ppmVersion;
-    }
-
-    public void setPpmVersion(Integer ppmVersion) {
-        this.ppmVersion = ppmVersion;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
-
-    public Integer getProductVersion() {
-        return productVersion;
-    }
-
-    public void setProductVersion(Integer productVersion) {
-        this.productVersion = productVersion;
     }
 
     public Long getQuoteProductId() {
