@@ -11,6 +11,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
@@ -20,20 +21,22 @@ public class PricePlanMatrixLineApi extends BaseApi {
 
     public PricePlanMatrixLineDto addPricePlanMatrixLine(PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
-        checkMissingParameters(dtoData);
+        checCommunMissingParameters(dtoData);
 
         return pricePlanMatrixLineService.createPricePlanMatrixLine(dtoData);
     }
 
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
 
-        checkMissingParameters(pricePlanMatrixLineDto);
+        if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))
+            missingParameters.add("ppmLineId");
+        checCommunMissingParameters(pricePlanMatrixLineDto);
 
 
         return pricePlanMatrixLineService.updatePricePlanMatrixLine(pricePlanMatrixLineDto);
     }
 
-    private void checkMissingParameters(PricePlanMatrixLineDto dtoData) {
+    private void checCommunMissingParameters(PricePlanMatrixLineDto dtoData) {
         if(StringUtils.isBlank(dtoData.getPricePlanMatrixCode())){
             missingParameters.add("pricePlanMatrixCode");
         }

@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -38,6 +39,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -48,9 +50,20 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.cpq.QuoteAttributeService;
+import org.meveo.service.cpq.QuoteProductService;
 
 /**
  * @author Wassim Drira
@@ -61,6 +74,15 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
+
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+
+    @Inject
+    private QuoteAttributeService quoteAttributeService;
+
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -703,5 +725,20 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+    }
+
+    public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) {
+
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(quoteProduct.getProductVersion().getProduct());
+
+        List<QuoteAttribute> quoteAttributes = pricePlanMatrixColumns.stream()
+                .map(column -> quoteAttributeService.findByAttributeAndQuoteProduct(column.getAttribute().getId(), quoteProduct.getId()))
+                .collect(Collectors.toList());
+
+        return pricePlanMatrixLineService.loadMatchedLines(pricePlanMatrixVersion, quoteAttributes)
+                .stream()
+                .map(PricePlanMatrixLineDto::new)
+                .collect(Collectors.toList());
+
     }
 }

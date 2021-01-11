@@ -47,6 +47,6 @@ public enum AttributeTypeEnum {
 	TOTAL,
 	
 	COMPTAGE
-	
-	
+
+
 }
