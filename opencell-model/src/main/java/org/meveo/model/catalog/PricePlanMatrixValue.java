@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.QuoteAttribute;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -137,5 +139,11 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     public void setToDoubleValue(Double toDoubleValue) {
         this.toDoubleValue = toDoubleValue;
+    }
+
+    public boolean match(List<QuoteAttribute> quoteAttributes) {
+        return quoteAttributes.stream()
+                .anyMatch( quoteAttribute -> quoteAttribute.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
+                        && quoteAttribute.getValue().equals(pricePlanMatrixColumn.getType().getValue(this)));
     }
 }

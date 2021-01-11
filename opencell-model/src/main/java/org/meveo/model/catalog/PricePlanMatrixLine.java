@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -74,6 +75,24 @@ public class PricePlanMatrixLine extends AuditableEntity {
     }
 
     public boolean match(List<QuoteAttribute> quoteAttributes) {
-        return false;
+        return pricePlanMatrixValues.stream()
+                .allMatch(v -> v.match(quoteAttributes));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PricePlanMatrixLine that = (PricePlanMatrixLine) o;
+        return Objects.equals(pricePlanMatrixVersion, that.pricePlanMatrixVersion) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(pricetWithoutTax, that.pricetWithoutTax) &&
+                Objects.equals(pricePlanMatrixValues, that.pricePlanMatrixValues);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), pricePlanMatrixVersion, description, pricetWithoutTax, pricePlanMatrixValues);
     }
 }

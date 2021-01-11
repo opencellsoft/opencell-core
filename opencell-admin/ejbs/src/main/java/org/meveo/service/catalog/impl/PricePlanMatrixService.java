@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -52,6 +53,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -75,6 +77,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     @Inject
     private QuoteAttributeService quoteAttributeService;
+
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -719,23 +724,18 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public List<PricePlanMatrixDto> findFor(ProductVersion productVersion, Long quotedProductId) {
+    public List<PricePlanMatrixLineDto> findFor(PricePlanMatrixVersion pricePlanMatrixVersion, ProductVersion productVersion, Long quotedProductId) {
 
         List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(productVersion.getProduct());
 
-        // [{Monthly,  }, {12, 24}
         List<QuoteAttribute> quoteAttributes = pricePlanMatrixColumns.stream()
                 .map(column -> quoteAttributeService.findByAttributeAndQuoteProduct(column.getAttribute().getId(), quotedProductId))
                 .collect(Collectors.toList());
 
-
-
-        return null;
-    }
-
-    public List<PricePlanMatrixLine> selectPpmLine(List<PricePlanMatrixLine> ppmLines, List<QuoteAttribute> quoteAttributes) {
-        return ppmLines.stream()
-                .filter(line -> line.match(quoteAttributes))
+        return pricePlanMatrixLineService.loadMatchedLines(pricePlanMatrixVersion, quoteAttributes)
+                .stream()
+                .map(PricePlanMatrixLineDto::new)
                 .collect(Collectors.toList());
+
     }
 }
