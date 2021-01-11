@@ -591,15 +591,36 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Used to retrieve related fields of an entity
      */
     @SuppressWarnings({ "unchecked" })
-    public Map<String, Map<String,String>> mapRelatedFields() {
-        Map<String, Map<String,String>> mapAttributeAndType = new HashMap<>();
+    public Map<String, Object> mapRelatedFields() {
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder( "from CustomFieldTemplate" );
+        Query query = getEntityManager().createQuery(queryString.toString());
+        List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
+        Map<String, Object> mapAttributeAndType = new HashMap<>();
         Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory()
                 .getMetamodel().managedType( getEntityClass() ).getAttributes();
         for ( Attribute<? super E, ?> att : setAttributes ) {
-            Map<String,String> mapStringAndType = new HashMap();
-            mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
-            mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
-            mapAttributeAndType.put( att.getName(), mapStringAndType );
+            if ( att.getJavaType() != CustomFieldValues.class ) {
+                Map<String,String> mapStringAndType = new HashMap();
+                mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
+                mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
+                mapAttributeAndType.put( att.getName(), mapStringAndType);
+            }
+            else {
+                if ( !resultsCFTmpl.isEmpty() ) {
+                    Map<String, Map<String, String>> mapCFValues = new HashMap();
+                    for ( CustomFieldTemplate aCFTmpl : resultsCFTmpl ) {
+                        if ( aCFTmpl.getAppliesTo().equals( productClass.getSimpleName() ) ) {
+                            Map<String,String> mapStringAndType = new HashMap();
+                            mapStringAndType.put( "fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString() );
+                            mapStringAndType.put( "shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName() );
+                            mapCFValues.put( aCFTmpl.getCode(), mapStringAndType );
+                        }
+                    }
+                    if ( ! mapCFValues.isEmpty() )
+                        mapAttributeAndType.put( att.getName(), mapCFValues );
+                }
+            }
         }
         return mapAttributeAndType;
     }

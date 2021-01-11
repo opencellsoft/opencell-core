@@ -8,14 +8,13 @@ import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
+import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.IEntity;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
@@ -95,12 +94,9 @@ public class GenericOpencellRestful extends Application {
     }
 
     private void loadEntitiesList() {
-        // Get all classes that implement the interface IEntity
-        Reflections reflections = new Reflections("org.meveo.model");
-        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
         List<String> listEntities = new ArrayList<>();
-        for ( Class aClass : classes ) {
-            listEntities.add( aClass.getSimpleName() );
+        for ( Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet() ) {
+            listEntities.add( entry.getValue().getSimpleName() );
         }
         ENTITIES_MAP.put( "entities", listEntities );
     }
