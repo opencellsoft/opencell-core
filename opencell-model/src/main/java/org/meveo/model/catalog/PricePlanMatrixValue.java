@@ -25,7 +25,7 @@ import java.util.Date;
 @NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
 public class PricePlanMatrixValue extends BaseEntity {
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;
