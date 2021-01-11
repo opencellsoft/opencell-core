@@ -60,7 +60,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
         PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixLineDto);
 
-        PricePlanMatrixLine pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
+        PricePlanMatrixLine pricePlanMatrixLine = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
 
         if(pricePlanMatrixLine == null){
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPricePlanMatrixCode(), "pricePlanMatrixVersion.pricePlanMatrixCode", "" + pricePlanMatrixLineDto.getPricePlanMatrixVersion(), "pricePlanMatrixVersion.currentVersion");
@@ -115,5 +115,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
                 .filter(line -> line.match(quoteAttributes))
                 .collect(Collectors.toList());
+    }
+
+    public PricePlanMatrixLineDto load(Long ppmLineId) {
+        PricePlanMatrixLine ppmLine = findById(ppmLineId);
+        if(ppmLine == null){
+            throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
+        }
+        return new PricePlanMatrixLineDto(ppmLine);
     }
 }
