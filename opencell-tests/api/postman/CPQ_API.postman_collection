@@ -6,6 +6,294 @@
 	},
 	"item": [
 		{
+			"name": "Recurring Template",
+			"item": [
+				{
+					"name": "CreateOrUpdate RecurringChargeTemplate 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"REC1\",\r\n    \"description\": \"recurring charge 1\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"recurringChargeTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrUpdate RecurringChargeTemplate 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"REC2\",\r\n    \"description\": \"recurring charge 2\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"recurringChargeTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Grouped Attribute",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"productCode\":\t\"TEST_PR_1\",\r\n\"productVersion\":\"3\",\r\n\"code\":\t\"groupedAttribute1\",\r\n\"description\":\"grouped attribute\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/groupedAttributes",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"groupedAttributes"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Attribute 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"attribute1\",\r\n  \"description\": \"standard attribute\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"groupedAttribute1\", \r\n  \"allowedValues\": [\r\n    \"val1\",\"val2\"\r\n  ],\r\n  \"chargeTemplateCodes\": [\"REC1\",\"REC2\"  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/attribute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Attribute 1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/attribute?code=attribute1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "attribute1"
+								}
+							]
+						},
+						"description": "Retrieving a product with its code"
+					},
+					"response": []
+				},
+				{
+					"name": "update attribute 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"attribute1\",\r\n  \"description\": \"updated standard attribute\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"groupedAttribute1\", \r\n  \"allowedValues\": [\r\n    \"val1\",\"val88\"\r\n  ],\r\n  \"chargeTemplateCodes\": [\r\n    \"REC2\"  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/attribute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Read Attribute 1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/attribute?code=attribute1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "attribute1"
+								}
+							]
+						},
+						"description": "Retrieving a product with its code"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Tag",
 			"item": [
 				{
@@ -487,7 +775,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"productCode1\",JSON.parse(pm.request.body).code);"
+									"pm.collectionVariables.set(\"productOneCode\",JSON.parse(pm.request.body).code);"
 								],
 								"type": "text/javascript"
 							}
@@ -535,7 +823,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"productCode2\",JSON.parse(pm.request.body).code);"
+									"pm.collectionVariables.set(\"productTwoCode\",JSON.parse(pm.request.body).code);"
 								],
 								"type": "text/javascript"
 							}
@@ -573,7 +861,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product?productCode={{productCode1}}",
+							"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -584,7 +872,7 @@
 							"query": [
 								{
 									"key": "productCode",
-									"value": "{{productCode1}}"
+									"value": "{{productOneCode}}"
 								}
 							]
 						},
@@ -598,7 +886,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product?productCode={{productCode2}}",
+							"raw": "{{opencell.url}}/catalog/product?productCode={{productTwoCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -609,7 +897,7 @@
 							"query": [
 								{
 									"key": "productCode",
-									"value": "{{productCode2}}"
+									"value": "{{productTwoCode}}"
 								}
 							]
 						},
@@ -636,7 +924,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productCode\": \"{{productCode1}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n     \"statusDate\": \"2020-12-15\",\r\n    \"currentVersion\": 1\r\n}",
+							"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"statusDate\": \"2020-12-15\",\r\n    \"currentVersion\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -664,7 +952,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productCode1}}/{{productVersion}}",
+							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productVersion}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -672,7 +960,7 @@
 								"catalog",
 								"product",
 								"productVersion",
-								"{{productCode1}}",
+								"{{productOneCode}}",
 								"{{productVersion}}"
 							]
 						},
@@ -687,7 +975,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{productCode1}}\",\r\n    \"label\": \"This is the updated product onelabel\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"statusDate\": \"2020-12-01\",\r\n    \"discountFlag\": false,\r\n    \"packageFlag\": false\r\n}",
+							"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the updated product onelabel\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"statusDate\": \"2020-12-01\",\r\n    \"discountFlag\": false,\r\n    \"packageFlag\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,7 +1013,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productCode1}}/{{productVersion}}?status=PUBLISHED",
+							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productVersion}}?status=PUBLISHED",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -733,7 +1021,7 @@
 								"catalog",
 								"product",
 								"productVersion",
-								"{{productCode1}}",
+								"{{productOneCode}}",
 								"{{productVersion}}"
 							],
 							"query": [
@@ -753,7 +1041,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product?productCode={{productCode1}}",
+							"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -764,7 +1052,7 @@
 							"query": [
 								{
 									"key": "productCode",
-									"value": "{{productCode1}}"
+									"value": "{{productOneCode}}"
 								}
 							]
 						},
@@ -778,7 +1066,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productCode1}}",
+							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productOneCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -786,7 +1074,7 @@
 								"catalog",
 								"product",
 								"duplicate",
-								"{{productCode1}}"
+								"{{productOneCode}}"
 							]
 						},
 						"description": "duplicate a product version"
@@ -799,7 +1087,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productVersion/duplicate/{{productCode1}}/{{productVersion}}",
+							"raw": "{{opencell.url}}/catalog/product/productVersion/duplicate/{{productOneCode}}/{{productVersion}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -808,7 +1096,7 @@
 								"product",
 								"productVersion",
 								"duplicate",
-								"{{productCode1}}",
+								"{{productOneCode}}",
 								"{{productVersion}}"
 							]
 						},
@@ -822,7 +1110,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productCode1}}",
+							"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -830,7 +1118,7 @@
 								"catalog",
 								"product",
 								"productVersion",
-								"{{productCode1}}"
+								"{{productOneCode}}"
 							]
 						},
 						"description": "Find all related product versions to a product"
@@ -854,14 +1142,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/{{productCode1}}/update/status?status=ACTIVE",
+							"raw": "{{opencell.url}}/catalog/product/{{productOneCode}}/update/status?status=ACTIVE",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"product",
-								"{{productCode1}}",
+								"{{productOneCode}}",
 								"update",
 								"status"
 							],
@@ -882,7 +1170,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product?productCode={{productCode1}}",
+							"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -893,7 +1181,7 @@
 							"query": [
 								{
 									"key": "productCode",
-									"value": "{{productCode1}}"
+									"value": "{{productOneCode}}"
 								}
 							]
 						},
@@ -936,7 +1224,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productCode}}?duplicateHierarchy=true&preserveCode=true",
+							"raw": "{{opencell.url}}/catalog/product/duplicate/{{productTwoCode}}?duplicateHierarchy=true&preserveCode=true",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -944,7 +1232,7 @@
 								"catalog",
 								"product",
 								"duplicate",
-								"{{productCode}}"
+								"{{productTwoCode}}"
 							],
 							"query": [
 								{
@@ -1005,7 +1293,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"billingAccountCode\": \"{{billingAccount}}\",\r\n  \"customerAccountCode\":\"DEMO.CLASSIC\",\r\n  \"customerCode\":\"DEMO.CLASSIC\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n",
+							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"TEST_BA\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1053,7 +1341,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the updated contract description\",\r\n  \"sellerCode\": \"SELLER_US\",\r\n  \"billingAccountCode\": \"{{billingAccount}}\",\r\n  \"customerAccountCode\":\"DEMO.partner.CLASSIC\",\r\n  \"customerCode\":\"DEMO.partner.CLASSIC\",\r\n  \"status\": \"ACTIVE\",\r\n  \"contractDate\": \"2020-12-25\",\r\n  \"beginDate\": \"2021-01-25\",\r\n  \"endDate\": \"2021-05-25\",\r\n  \"renewal\": true\r\n}",
+							"raw": "{\r\n    \"code\": \"TEST_CONTRACT\",\r\n    \"description\": \"This is the updated contract description\",\r\n    \"contractAccountLevel\": \"CUSTOMER_ACCOUNT\",\r\n    \"accountCode\": \"TEST_CA\",\r\n    \"status\": \"ACTIVE\",\r\n    \"contractDate\": \"2020-12-25\",\r\n    \"beginDate\": \"2021-01-25\",\r\n    \"endDate\": \"2021-05-25\",\r\n    \"renewal\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1499,7 +1787,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"applicantAccountCode\": \"{{billingAccount}}\",\r\n  \"billableAccountCode\": \"{{billingAccount}}\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"code\": \"TST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1538,6 +1826,23 @@
 					"response": []
 				},
 				{
+					"name": "Duplicate The Quote",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update The Quote",
 					"event": [
 						{
@@ -1555,7 +1860,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"TEST_QUOTE\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"Cancelled\",\r\n    \"applicantAccountCode\": \"DEMO.CLASSIC\",\r\n    \"billableAccountCode\": \"DEMO.CLASSIC\",\r\n    \"contractCode\": \"TEST_CONTRACT_1\",\r\n    \"sellerCode\": \"SELLER_US\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"TEST_QUOTE\",\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"currentVersion\": 2,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"TEST_QUOTE\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"Cancelled\",\r\n    \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"SELLER_US\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"TEST_QUOTE\",\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"currentVersion\": 2,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-23\",\r\n        \"startDate\": \"2020-12-23\",\r\n        \"endDate\": \"2021-12-31\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1582,8 +1887,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"quoteOffer\", pm.response.json().quoteOfferDto.quoteOfferId);\r",
-									"console.log(\"quote code \", pm.collectionVariables.get(\"quoteOffer\"));"
+									"pm.collectionVariables.set(\"quoteOffer\", pm.response.json().quoteOfferDto.quoteOfferId);"
 								],
 								"type": "text/javascript"
 							}
@@ -1642,7 +1946,7 @@
 					"response": []
 				},
 				{
-					"name": "Create a Quote Version",
+					"name": "Create a Quote Version K.O",
 					"event": [
 						{
 							"listen": "test",
@@ -1756,6 +2060,958 @@
 			]
 		},
 		{
+			"name": "Price Plan Matrix",
+			"item": [
+				{
+					"name": "pricePlanMatrix",
+					"item": [
+						{
+							"name": "Create Recurring Charge Template",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"chargeTemplate\",JSON.parse(pm.request.body).code);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"CH_REC_TEMPLATE\",\r\n    \"description\": \"This is recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Or Update Price Plan Matrix",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"pricePlanCode\",JSON.parse(pm.request.body).code);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_MATRIX_CODE\",\n    \"description\": \"This is a price plan description\",\n    \"eventCode\": \"{{chargeTemplate}}\",\n    \"amountWithoutTax\": 100\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read pricePlanMatrix",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_MATRIX_CODE\",\n    \"eventCode\": \"CH_REC_TST\",\n    \"amountWithoutTax\": 100\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan?pricePlanCode={{pricePlanCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan"
+									],
+									"query": [
+										{
+											"key": "pricePlanCode",
+											"value": "{{pricePlanCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update pricePlanMatrix",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_MATRIX_CODE\",\n    \"eventCode\": \"{{chargeTemplate}}\",\n    \"description\": \"This is an updated price plan description\",\n    \"amountWithoutTax\": 100\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "disable Price Plan Matrix",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/{{pricePlanCode}}/disable",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"{{pricePlanCode}}",
+										"disable"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "enable Price Plan Matrix",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/{{pricePlanCode}}/enable",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"{{pricePlanCode}}",
+										"enable"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read pricePlanMatrix list",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/list?eventCode={{chargeTemplate}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"list"
+									],
+									"query": [
+										{
+											"key": "eventCode",
+											"value": "{{chargeTemplate}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete pricePlanMatrix",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/{{pricePlanCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"{{pricePlanCode}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "pricePlanMatrixVersion",
+					"item": [
+						{
+							"name": "Create Price Plan Matrix Version",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"version\": 1,\n    \"label\": \"default price plan matrix version\",\n    \"validity\": {\n        \"from\" : \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    },\n    \"isMatrix\" : true,\n    \"priceWithoutTax\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixVersion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update Price Plan Matrix Version Status",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{pricePlanCode}}/1?status=PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixVersion",
+										"{{pricePlanCode}}",
+										"1"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PUBLISHED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Duplicate Price Plan Matrix Version",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/duplicate/{{pricePlanCode}}/1",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixVersion",
+										"duplicate",
+										"{{pricePlanCode}}",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Price Plan Matrix Version",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"pricePlanMatrixCode\": \"PRICE_MATRIX_CODE\",\n    \"version\": 2,\n    \"label\": \"default price plan matrix version\",\n    \"isMatrix\" : true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{pricePlanCode}}/2",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixVersion",
+										"{{pricePlanCode}}",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "pricePlanMatrixColumn",
+					"item": [
+						{
+							"name": "Create Offer Template",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\":\"OF_CLASSIC_COMMISSION\",\n    \"name\":\"Classic Offer Template\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Price Paln Matrix Column",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"pricePlanColumn\",JSON.parse(pm.request.body).code);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_PLAN_COLUMN\",\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"productCode\": \"{{productCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplate}}\",\n    \"attributeCode\": \"{{attributeCode}}\",\n    \"position\": 3,\n    \"type\": \"Long\",\n    \"elValue\": \"elValue\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Price Plan Matrix Column",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn?pricePlanMatrixColumnCode={{pricePlanColumn}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn"
+									],
+									"query": [
+										{
+											"key": "pricePlanMatrixColumnCode",
+											"value": "{{pricePlanColumn}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Price Plan Matrix Column",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_PLAN_COLUMN\",\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"productCode\": \"{{productCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplate}}\",\n    \"attributeCode\": \"{{attributeCode}}\",\n    \"position\": 1,\n    \"type\": \"Range\",\n    \"elValue\": \"el Value\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Price Paln Matrix Column",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn/{{pricePlanColumn}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn",
+										"{{pricePlanColumn}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "pricePlanMatrixLine",
+					"item": [
+						{
+							"name": "Create Price Paln Matrix Column 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"pricePlanColumnOne\",JSON.parse(pm.request.body).code);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_PLAN_COLUMN_1\",\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"productCode\": \"{{productCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplate}}\",\n    \"attributeCode\": \"{{attributeCode}}\",\n    \"position\": 3,\n    \"type\": \"Long\",\n    \"elValue\": \"elValue\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Price Paln Matrix Column 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"pricePlanColumnTwo\",JSON.parse(pm.request.body).code);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PRICE_PLAN_COLUMN_2\",\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"productCode\": \"{{productCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplate}}\",\n    \"attributeCode\": \"{{attributeCode}}\",\n    \"position\": 3,\n    \"type\": \"Long\",\n    \"elValue\": \"elValue\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"pricePlanMatrixColumn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Price Plan Matrix Line",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricetWithoutTax\": 100,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{pricePlanColumnOne}}\",\n            \"longValue\": 25,\n            \"doubleValue\": 12.5,\n            \"stringValue\": \"Value of a string\",\n            \"dateValue\": \"2020-01-01\",\n            \"fromDateValue\": \"2020-01-01\",\n            \"toDateValue\": \"2020-01-01\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        },\n        {\n            \"ppmColumnCode\": \"{{pricePlanColumnTwo}}\",\n            \"longValue\": 30,\n            \"doubleValue\": 12.5,\n            \"stringValue\": \"Value of a second string\",\n            \"dateValue\": \"2020-01-01\",\n            \"fromDateValue\": \"2020-01-01\",\n            \"toDateValue\": \"2020-01-01\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"addPricePlanMatrixLine"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Price Plan Matrix Line",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"pricePlanMatrixCode\": \"{{pricePlanCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricetWithoutTax\": 100,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{pricePlanColumnOne}}\",\n            \"longValue\": 25,\n            \"doubleValue\": 12.5,\n            \"stringValue\": \"This is a string value of column one\",\n            \"dateValue\": \"2020-12-31\",\n            \"fromDateValue\": \"2021-01-01\",\n            \"toDateValue\": \"2021-12-31\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        },\n        {\n            \"ppmColumnCode\": \"{{pricePlanColumnTwo}}\",\n            \"longValue\": 30,\n            \"doubleValue\": 12.5,\n            \"stringValue\": \"This is a string value of column two\",\n            \"dateValue\": \"2020-12-31\",\n            \"fromDateValue\": \"2021-01-01\",\n            \"toDateValue\": \"2021-12-31\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/updatePricePlanMatrixLine",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"updatePricePlanMatrixLine"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Clean Up",
 			"item": [
 				{
@@ -1783,11 +3039,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quoteItem/{{quoteOffer}}",
+							"raw": "{{opencell.url}}/quote/quoteItem/{{quoteOffer}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
+								"quote",
 								"quoteItem",
 								"{{quoteOffer}}"
 							]
@@ -2029,7 +3286,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.test(\"Status code is OK\", function () {",
+					"pm.test(\"Status is SUCCESS\", function () {",
 					"    pm.response.to.have.status(200);",
 					"});"
 				]
@@ -2102,7 +3359,7 @@
 			"value": ""
 		},
 		{
-			"key": "billingAccount",
+			"key": "billingAccountCode",
 			"value": ""
 		},
 		{
@@ -2119,6 +3376,42 @@
 		},
 		{
 			"key": "attributeCode1",
+			"value": ""
+		},
+		{
+			"key": "quoteOfferId",
+			"value": ""
+		},
+		{
+			"key": "productOneCode",
+			"value": ""
+		},
+		{
+			"key": "productTwoCode",
+			"value": ""
+		},
+		{
+			"key": "mediaName",
+			"value": ""
+		},
+		{
+			"key": "chargeTemplate",
+			"value": ""
+		},
+		{
+			"key": "pricePlanCode",
+			"value": ""
+		},
+		{
+			"key": "pricePlanColumn",
+			"value": ""
+		},
+		{
+			"key": "pricePlanColumnTwo",
+			"value": ""
+		},
+		{
+			"key": "pricePlanColumnOne",
 			"value": ""
 		}
 	]
