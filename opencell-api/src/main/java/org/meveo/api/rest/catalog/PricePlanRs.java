@@ -324,4 +324,26 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
     Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
+
+    @DELETE
+    @Path("/addPricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Operation(summary = "This endpoint allows to delete a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="delete a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully deleted"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    ActionStatus removePricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+
+    @GET
+    @Path("/addPricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Operation(summary = "This endpoint allows to get a price plan matrix line",
+            tags = { "PricePlanMatrixLine" },
+            description ="get a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response getPricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
 }

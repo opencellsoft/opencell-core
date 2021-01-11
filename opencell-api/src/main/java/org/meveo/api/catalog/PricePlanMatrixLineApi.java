@@ -6,19 +6,11 @@ import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
-import org.meveo.model.catalog.PricePlanMatrixValue;
-import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
-import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
@@ -59,4 +51,21 @@ public class PricePlanMatrixLineApi extends BaseApi {
         handleMissingParametersAndValidate(dtoData);
     }
 
+    public void remove(Long ppmLineId) {
+        if(StringUtils.isBlank(ppmLineId))
+            missingParameters.add("pricePlanMatrixLineId");
+        handleMissingParameters();
+        PricePlanMatrixLine ppmLine = pricePlanMatrixLineService.findById(ppmLineId);
+        if(ppmLine == null){
+            throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
+        }
+        pricePlanMatrixLineService.remove(ppmLine);
+    }
+
+    public PricePlanMatrixLineDto load(Long ppmLineId){
+        if(StringUtils.isBlank(ppmLineId))
+            missingParameters.add("pricePlanMatrixLineId");
+        handleMissingParameters();
+        return pricePlanMatrixLineService.load(ppmLineId);
+    }
 }
