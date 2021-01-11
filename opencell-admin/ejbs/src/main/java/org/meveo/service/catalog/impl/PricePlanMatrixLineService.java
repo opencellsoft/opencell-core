@@ -110,4 +110,12 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     return pricePlanMatrixValue;
                 }).collect(Collectors.toList());
     }
+
+    public PricePlanMatrixLineDto load(Long ppmLineId) {
+        PricePlanMatrixLine ppmLine = findById(ppmLineId);
+        if(ppmLine == null){
+            throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
+        }
+        return new PricePlanMatrixLineDto(ppmLine);
+    }
 }

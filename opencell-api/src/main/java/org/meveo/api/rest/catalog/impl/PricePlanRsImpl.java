@@ -290,5 +290,32 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
     }
 
+    @Override
+    public ActionStatus removePricePlanMatrixLine(Long ppmLineId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            pricePlanMatrixLineApi.remove(ppmLineId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+
+    }
+
+    @Override
+    public Response getPricePlanMatrixLine(Long ppmLineId) {
+        GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
+        try {
+
+            PricePlanMatrixLineDto pricePlanMatrixLineDto = pricePlanMatrixLineApi.load(ppmLineId);
+            response.setPricePlanMatrixLineDto(pricePlanMatrixLineDto);
+            return Response.ok(response).build();
+        }catch(MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
 
 }
