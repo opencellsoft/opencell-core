@@ -58,7 +58,7 @@ public class ScriptingJob extends Job {
 
             scriptingJobBean.init(result, scriptCode, context);
             String txType = (String) this.getParamOrCFValue(jobInstance, "ScriptingJob_TransactionType", "REQUIRES_NEW");
-            if (StringUtils.isBlank(txType) || TransactionAttributeType.REQUIRES_NEW.name().equals(txType)) {
+            if (StringUtils.isBlank(txType) || "REQUIRES_NEW".equals(txType)) {
                 scriptingJobBean.execute(result, scriptCode, context);
             } else {
                 scriptingJobBean.executeWithoutTx(result, scriptCode, context);
@@ -113,7 +113,7 @@ public class ScriptingJob extends Job {
         listValues.put("REQUIRES_NEW", "REQUIRES_NEW");
         listValues.put("NEVER", "NEVER");
         transactionTypeCF.setListValues(listValues);
-        transactionTypeCF.setDefaultValue(null);
+        transactionTypeCF.setDefaultValue("REQUIRES_NEW");
         transactionTypeCF.setValueRequired(false);
         result.put("ScriptingJob_TransactionType", transactionTypeCF);
 
