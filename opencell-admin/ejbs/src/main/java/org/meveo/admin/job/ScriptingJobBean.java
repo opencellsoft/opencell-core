@@ -99,6 +99,23 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void executeWithoutTx(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
+			throws BusinessException {
+		Callable<String> task = () -> scriptingAsync.runScriptWithoutTx(result, scriptCode, context);
+		Future<String> futureResult = executor.submit(task);
+		while (!futureResult.isDone()) {
+			try {
+				Thread.sleep((long) 2000);
+				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+					futureResult.cancel(true);
+				}
+			} catch (InterruptedException e) {
+				log.error("Failed to complete script execution : ", e);
+			}
+		}
+	}
+
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void complete(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
@@ -116,7 +133,6 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	long convert(Object s) {
 		long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
-		return result;
-	}
-
+        return result;
+    }
 }
