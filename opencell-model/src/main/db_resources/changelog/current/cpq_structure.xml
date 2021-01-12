@@ -261,16 +261,6 @@
 					primaryKeyName="cpq_commercial_rule_item_pkey" />
 			</column>
 			<column name="version" type="int4" />
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="datetime" />
-			<column name="code" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(255)" />
-			<column name="creator" type="varchar(100)" />
-			<column name="updater" type="varchar(100)" />
 			<column name="commercial_rule_header_id" type="bigint" />
 			<column name="operator" type="varchar(255)" />
 			<column name="rule_item_el" type="varchar(2000)" />
@@ -284,18 +274,7 @@
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="cpq_commercial_rule_line_pkey" />
 			</column>
-			<column name="version" type="int4" />
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="datetime" />
-			<column name="code" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(255)" />
-			<column name="creator" type="varchar(100)" />
-			<column name="updater" type="varchar(100)" />
-
+			<column name="version" type="int4" />  
 			<column name="offer_template_id" type="bigint" />
 			<column name="grouped_attributes_id" type="bigint" />
 			<column name="commercial_rule_item_id" type="bigint" />

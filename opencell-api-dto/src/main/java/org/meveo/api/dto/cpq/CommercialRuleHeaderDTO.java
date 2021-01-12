@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -58,6 +59,13 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 		this.tagCode = commercialRuleHeader.getTargetTag()!=null?commercialRuleHeader.getTargetTag().getCode():null;
 		this.groupedAttributeCode = commercialRuleHeader.getTargetGroupedAttributes()!=null?commercialRuleHeader.getTargetGroupedAttributes().getCode():null;
 		this.targetAttributeValue = commercialRuleHeader.getTargetAttributeValue(); 
+		if(commercialRuleHeader.getCommercialRuleItems()!= null && !commercialRuleHeader.getCommercialRuleItems().isEmpty()) {
+    		commercialRuleItems = commercialRuleHeader.getCommercialRuleItems().stream().map(d -> {
+    			final CommercialRuleItemDTO ruleItem = new CommercialRuleItemDTO(d);
+    			return ruleItem;
+    		}).collect(Collectors.toList());
+    	}
+		
 	}
 	/**
 	 * @return the ruleType

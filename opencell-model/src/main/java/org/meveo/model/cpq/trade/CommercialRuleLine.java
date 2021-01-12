@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -30,7 +29,7 @@ import org.meveo.model.cpq.tags.Tag;
 @Table(name = "cpq_commercial_rule_line", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_rule_line_seq"), })
-public class CommercialRuleLine extends BusinessEntity {
+public class CommercialRuleLine extends BaseEntity {
 
 	/**
 	 * 
@@ -42,7 +41,7 @@ public class CommercialRuleLine extends BusinessEntity {
 	 * Trade rule header
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "commercial_rule_item_id")
+	@JoinColumn(name = "commercial_rule_item_id", referencedColumnName = "id")
 	private CommercialRuleItem commercialRuleItem;
 	
 	/**

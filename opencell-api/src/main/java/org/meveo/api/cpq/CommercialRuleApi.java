@@ -11,6 +11,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.api.dto.cpq.CommercialRuleItemDTO;
+import org.meveo.api.dto.cpq.CommercialRuleLineDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialRuleDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
@@ -25,6 +27,8 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleItem;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
@@ -196,7 +200,90 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 			}
 			commercialRuleHeader.setTargetGroupedAttributes(groupedAttributes);
 		}
+		populateCommercialRuleItems(dto,commercialRuleHeader);
 	}
+	 
+	
+	
+	private void populateCommercialRuleItems(CommercialRuleHeaderDTO dto,CommercialRuleHeader commercialRuleHeader) {
+		CommercialRuleItem commercialRuleItem=null;
+		CommercialRuleLine commercialRuleLine=null;
+		if(dto.getCommercialRuleItems()!=null && !dto.getCommercialRuleItems().isEmpty()) {
+			for(CommercialRuleItemDTO commercialRuleItemDto :dto.getCommercialRuleItems() ) {
+				commercialRuleItem = new CommercialRuleItem();
+				if(!StringUtils.isBlank(commercialRuleItemDto.getOperator())) {
+					commercialRuleItem.setOperator(commercialRuleItemDto.getOperator());
+				}
+				if(!StringUtils.isBlank(commercialRuleItemDto.getRuleItemEl())) {
+					commercialRuleItem.setRuleItemEl(commercialRuleItemDto.getRuleItemEl());
+				}
+				commercialRuleItem.setCommercialRuleHeader(commercialRuleHeader);
+				if(commercialRuleItemDto.getCommercialRuleLines()!=null && !commercialRuleItemDto.getCommercialRuleLines().isEmpty()) {
+					for(CommercialRuleLineDTO commercialRuleLineDto :commercialRuleItemDto.getCommercialRuleLines()) {
+						commercialRuleLine=new CommercialRuleLine();
+						populateCommercialRuleLine(commercialRuleLineDto,commercialRuleLine);
+						commercialRuleLine.setCommercialRuleItem(commercialRuleItem);
+						commercialRuleItem.getCommercialRuleLines().add(commercialRuleLine);
+					} 	 
+				}
+				
+				commercialRuleHeader.getCommercialRuleItems().add(commercialRuleItem);
+			}	
+		}
+	}
+	 
+	private void populateCommercialRuleLine(CommercialRuleLineDTO dto,CommercialRuleLine commercialRuleLine) {
+
+		commercialRuleLine.setOperator(dto.getOperator());
+		commercialRuleLine.setSourceAttributeValue(dto.getAttributeValue());
+
+		if(!StringUtils.isBlank(dto.getOfferCode())) {
+			OfferTemplate offerTemplate =offerTemplateService.findByCode(dto.getOfferCode());
+			if(offerTemplate==null) {
+				throw new EntityDoesNotExistsException(OfferTemplate.class, dto.getOfferCode());
+			}
+			commercialRuleLine.setSourceOfferTemplate(offerTemplate);
+		}
+		if(!StringUtils.isBlank(dto.getProductCode())) {
+			Product product =productService.findByCode(dto.getProductCode());
+			if(product==null) {
+				throw new EntityDoesNotExistsException(Product.class, dto.getProductCode());
+			}
+			commercialRuleLine.setSourceProduct(product);
+		}
+		if(!StringUtils.isBlank(dto.getProductVersion()) && !StringUtils.isBlank(dto.getProductCode())) {
+			ProductVersion productVersion =productVersionService.findByProductAndVersion(dto.getProductCode(), dto.getProductVersion());
+			if(productVersion==null) {
+				throw new EntityDoesNotExistsException(ProductVersion.class, dto.getProductCode()+" and version "+dto.getProductVersion());
+			}
+			commercialRuleLine.setSourceProductVersion(productVersion);
+		}
+
+		if(!StringUtils.isBlank(dto.getAttributeCode())) {
+			Attribute attribute =attributeService.findByCode(dto.getAttributeCode());
+			if(attribute==null) {
+				throw new EntityDoesNotExistsException(Attribute.class, dto.getAttributeCode());
+			}
+			commercialRuleLine.setTargetAttribute(attribute);
+		}
+		if(!StringUtils.isBlank(dto.getTagCode())) {
+			Tag tag =tagService.findByCode(dto.getTagCode());
+			if(tag==null) {
+				throw new EntityDoesNotExistsException(Tag.class, dto.getTagCode());
+			}
+			commercialRuleLine.setTargetTag(tag);
+		}
+
+		if(!StringUtils.isBlank(dto.getGroupedAttributeCode())) {
+			GroupedAttributes groupedAttributes =groupedAttributeService.findByCode(dto.getGroupedAttributeCode());
+			if(groupedAttributes==null) {
+				throw new EntityDoesNotExistsException(GroupedAttributes.class, dto.getGroupedAttributeCode());
+			}
+			
+			commercialRuleLine.setTargetGroupedAttributes(groupedAttributes);
+		}
+	}
+	
 	
 	
 	public GetListCommercialRulesResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
@@ -220,7 +307,6 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		}
 		return result;
 	}
-	
 	
 	
 	public GetListCommercialRulesResponseDto findTagRules(String tagCode) {
