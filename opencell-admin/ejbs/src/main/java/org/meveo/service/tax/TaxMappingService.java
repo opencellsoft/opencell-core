@@ -343,15 +343,14 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
-
             if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
                 return taxMapping;
             }
         }
 
         log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory != null ? taxCategory.getCode() : null,
-            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry.getCode(), sellersCountry.getId(),
-            buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry != null ? sellersCountry.getCode() : null,
+            sellersCountry != null ? sellersCountry.getId() : null, buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
         throw new IncorrectChargeTemplateException(
             "No Tax mapping matched for tax category=" + taxCategory.getCode() + "/" + taxCategory.getId() + ", tax class=" + taxClass.getCode() + "/" + taxClass.getId() + ", seller's country=" + sellersCountry.getCode()

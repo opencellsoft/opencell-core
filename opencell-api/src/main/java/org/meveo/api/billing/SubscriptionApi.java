@@ -654,6 +654,10 @@ public class SubscriptionApi extends BaseApi {
                 if (!StringUtils.isBlank(serviceToActivateDto.getMinimumLabelEl())) {
                     serviceInstance.setMinimumLabelEl(serviceToActivateDto.getMinimumLabelEl());
                 }
+                if (serviceToActivateDto.getServiceRenewal() != null) {
+                    SubscriptionRenewal serviceRenewal = subscriptionRenewalFromDto(serviceInstance.getServiceRenewal(), serviceToActivateDto.getServiceRenewal(), serviceInstance.isRenewed());
+                    serviceInstance.setServiceRenewal(serviceRenewal);
+                }
                 if (!StringUtils.isBlank(serviceToActivateDto.getMinimumInvoiceSubCategory())) {
                     InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(serviceToActivateDto.getMinimumInvoiceSubCategory());
                     if (minimumInvoiceSubCategory == null) {
@@ -712,6 +716,10 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setPaymentDayInMonthPS(serviceToActivateDto.getPaymentDayInMonthPS());
                 serviceInstance.setAmountPS(serviceToActivateDto.getAmountPS());
                 serviceInstance.setCalendarPS(calendarPS);
+                if (serviceToActivateDto.getServiceRenewal() != null) {
+                    SubscriptionRenewal serviceRenewal = subscriptionRenewalFromDto(serviceInstance.getServiceRenewal(), serviceToActivateDto.getServiceRenewal(), false);
+                    serviceInstance.setServiceRenewal(serviceRenewal);
+                }
 
                 setMinimumAmountElServiceInstance(serviceToActivateDto, serviceInstance, serviceTemplate);
 

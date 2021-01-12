@@ -18,6 +18,8 @@
 
 package org.meveo.service.crm.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,15 +36,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CheckPaymentMethod;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -81,7 +79,7 @@ public class CustomerImportService extends ImportService {
 
     @Inject
     private TitleService titleService;
-    
+
     @Inject
     private CountryService countryService;
 
@@ -146,7 +144,7 @@ public class CustomerImportService extends ImportService {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CustomerAccount createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
+                                                 org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setCode(custAcc.getCode());
@@ -158,8 +156,8 @@ public class CustomerImportService extends ImportService {
         customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 
         String paymentMethod = custAcc.getPaymentMethod();
+        List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
         if (paymentMethod == null) {
-            List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
             if (paymentMethods == null) {
                 paymentMethods = new ArrayList<PaymentMethod>();
                 customerAccount.setPaymentMethods(paymentMethods);
@@ -169,6 +167,39 @@ public class CustomerImportService extends ImportService {
             checkPaymentMethod.setCustomerAccount(customerAccount);
             checkPaymentMethod.setPreferred(true);
             paymentMethods.add(checkPaymentMethod);
+        }else { // Added by Mohamed Ali Hammal for the Xml importing job
+            switch (paymentMethod) {
+                case ("DIRECTDEBIT"): // Direct debit configuration
+                    DDPaymentMethod DDpaymentMethod = new DDPaymentMethod();
+                    DDpaymentMethod.setPaymentType(PaymentMethodEnum.DIRECTDEBIT);
+                    DDpaymentMethod.setPreferred(true);
+                    DDpaymentMethod.setAlias("SEPA");
+                    DDpaymentMethod.setMandateIdentification(custAcc.getMandateIdentification());
+                    try {
+                        Date MandatDate = new SimpleDateFormat("yyyy-mm-dd").parse(custAcc.getMandateDate());
+                        DDpaymentMethod.setMandateDate(MandatDate);
+                    } catch(ParseException e) {
+                        log.error("Error when parsing mandateDate", e);
+                    }
+                    BankCoordinates Bankcoordinates = new BankCoordinates(); // Bank coordinates
+                    Bankcoordinates.setBankCode(custAcc.getBankCoordinates().getBankCode());
+                    Bankcoordinates.setIban(custAcc.getBankCoordinates().getIBAN());
+                    Bankcoordinates.setBankName(custAcc.getBankCoordinates().getBankName());
+                    Bankcoordinates.setBic(custAcc.getBankCoordinates().getBIC());
+                    Bankcoordinates.setAccountNumber(custAcc.getBankCoordinates().getAccountNumber());
+                    DDpaymentMethod.setBankCoordinates(Bankcoordinates); // Add the bank coordinates too the payment method
+                    DDpaymentMethod.setCustomerAccount(customerAccount);
+                    DDpaymentMethod.setPreferred(true);
+                    paymentMethods.add(DDpaymentMethod);
+                    
+                    break;
+                default: // The default configuration is for the CHECK payment method
+                    CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
+                    checkPaymentMethod.setPaymentType(PaymentMethodEnum.CHECK);
+                    checkPaymentMethod.setCustomerAccount(customerAccount);
+                    checkPaymentMethod.setPreferred(true);
+                    paymentMethods.add(checkPaymentMethod);
+            }
         }
 
         Address address = new Address();
@@ -278,7 +309,7 @@ public class CustomerImportService extends ImportService {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateCustomerAccount(CustomerAccount customerAccount, Customer customer, Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
+                                      org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         customerAccount.setDescription(custAcc.getDescription());
         customerAccount.setDateDunningLevel(new Date());

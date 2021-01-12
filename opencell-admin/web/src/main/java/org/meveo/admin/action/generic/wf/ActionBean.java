@@ -17,17 +17,19 @@
  */
 package org.meveo.admin.action.generic.wf;
 
-import static java.util.Arrays.stream;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.generic.wf.ActionTypesEnum;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.generic.wf.Action;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
@@ -44,12 +46,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Named
 @ViewScoped
 @ViewBean
-public class ActionBean extends CustomFieldBean<Action>  {
+public class ActionBean extends BaseBean<Action> {
 
     private static final long serialVersionUID = 1L;
 
@@ -86,7 +87,9 @@ public class ActionBean extends CustomFieldBean<Action>  {
         String wfCode = extractPathParam("wfCode");
         this.genericWorkflow = genericWorkflowService.findByCode(wfCode);
         this.transition = gWFTransitionService.findWFTransitionByUUID(uuid);
-        this.fields = fieldsName();
+        if (uuid != null && wfCode != null) {
+            this.fields = fieldsName();
+        }
         return entity;
     }
 
@@ -96,8 +99,20 @@ public class ActionBean extends CustomFieldBean<Action>  {
         return request.getParameter(parameter);
     }
 
+    @Override
+    public String back() {
+        return "genericWorkflows";
+    }
+
     @ActionMethod
-    public void saveAction() throws BusinessException, IOException {
+    public void saveAction() throws IOException {
+        addAction();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("actions.xhtml?wfCode="
+                + genericWorkflow.getCode() + "&transition=" + transition.getUuid());
+    }
+
+    private void addAction() {
         String uuid = UUID.randomUUID().toString();
         entity.setUuid(uuid);
         entity.setTransition(transition);
@@ -106,9 +121,19 @@ public class ActionBean extends CustomFieldBean<Action>  {
         transition = gWFTransitionService.refreshOrRetrieve(transition);
         transition.setActions(actions);
         gWFTransitionService.update(transition);
-        FacesContext.getCurrentInstance().getExternalContext()
-                .redirect("/opencell/pages/admin/workflow/actions.xhtml?wfCode="
-                        + genericWorkflow.getCode() + "&transition=" + transition.getUuid());
+    }
+
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        try {
+            addAction();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/opencell/pages/admin/workflow/genericWorkflows.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @ActionMethod
@@ -116,6 +141,9 @@ public class ActionBean extends CustomFieldBean<Action>  {
         try {
             actionsService.remove(action.getId());
             messages.info(new BundleKey("messages", "delete.successful"));
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("actions.xhtml?wfCode="
+                            + genericWorkflow.getCode() + "&transition=" + transition.getUuid());
         } catch (Exception e) {
             log.info("Failed to delete!", e);
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
@@ -124,46 +152,18 @@ public class ActionBean extends CustomFieldBean<Action>  {
 
     @ActionMethod
     public void moveUpAction(Action selectedAction) throws BusinessException {
-        int index = transition.getActions().indexOf(selectedAction);
-        if (index > 0) {
-            Action upAction = transition.getActions().get(index);
-            int priorityUp = upAction.getPriority();
-            Action downAction = transition.getActions().get(index - 1);
-            Action needUpdate = actionsService.refreshOrRetrieve(upAction);
-            needUpdate.setPriority(downAction.getPriority());
+        Action needUpdate = actionsService.refreshOrRetrieve(selectedAction);
+        if (needUpdate.getPriority() > 0) {
+            needUpdate.setPriority(needUpdate.getPriority() - 1);
             actionsService.update(needUpdate);
-            needUpdate = actionsService.refreshOrRetrieve(downAction);
-            needUpdate.setPriority(priorityUp);
-            actionsService.update(needUpdate);
-            transition.getActions().get(index).setPriority(downAction.getPriority());
-            transition.getActions().get(index - 1).setPriority(priorityUp);
-            Collections.swap(transition.getActions(), index, index - 1);
-            messages.info(new BundleKey("messages", "update.successful"));
         }
     }
 
     @ActionMethod
     public void moveDownAction(Action selectedAction) throws BusinessException {
-        int index = transition.getActions().indexOf(selectedAction);
-        if (index < transition.getActions().size() - 1) {
-            Action upAction = transition.getActions().get(index);
-            int priorityUp = upAction.getPriority();
-            Action downAction = transition.getActions().get(index + 1);
-            Action needUpdate = actionsService.findById(upAction.getId(), true);
-            needUpdate.setPriority(downAction.getPriority());
-            actionsService.update(needUpdate);
-            needUpdate = actionsService.findById(downAction.getId(), true);
-            needUpdate.setPriority(priorityUp);
-            actionsService.update(needUpdate);
-            transition.getActions().get(index).setPriority(downAction.getPriority());
-            transition.getActions().get(index + 1).setPriority(priorityUp);
-            Collections.swap(transition.getActions(), index, index + 1);
-            messages.info(new BundleKey("messages", "update.successful"));
-        }
-    }
-
-    public void cancelAction() {
-        this.entity = new Action();
+        Action needUpdate = actionsService.refreshOrRetrieve(selectedAction);
+        needUpdate.setPriority(needUpdate.getPriority() + 1);
+        actionsService.update(needUpdate);
     }
 
     public Map<String, String> getTypes() {
@@ -208,14 +208,25 @@ public class ActionBean extends CustomFieldBean<Action>  {
 
     private List<String> fieldsName() {
         try {
-            Field[] genericWorkflownFields = Class.forName(genericWorkflow.getTargetEntityClass()).getDeclaredFields();
-            return Stream.of(genericWorkflownFields)
-                    .map(field -> field.getDeclaringClass().getSimpleName() + "." + field.getName())
+            Class<?> current = Class.forName(genericWorkflow.getTargetEntityClass());
+            List<Field> fields = getFields(current);
+            return fields.stream()
+                    .filter(field -> !isStatic(field.getModifiers()))
+                    .map(field -> current.getSimpleName() + "." + field.getName())
                     .collect(toList());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return EMPTY_LIST;
+    }
+
+    private List<Field> getFields(Class<?> current) {
+        List<Field> fields = new ArrayList<>();
+        do {
+            fields.addAll(asList(current.getDeclaredFields()));
+            current = current.getSuperclass();
+        } while(current != BaseEntity.class);
+        return fields;
     }
 
     public GWFTransition getTransition() {

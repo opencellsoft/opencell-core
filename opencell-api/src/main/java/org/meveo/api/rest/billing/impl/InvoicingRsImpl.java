@@ -26,6 +26,7 @@ import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
@@ -144,5 +145,83 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("cancelBillingRun Response={}", result);
         return result;
     }
+
+	@Override
+	public ActionStatus rebuildInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("rebuildInvoice request={}", billingRunId);
+        try {
+            invoicingApi.rebuildInvoice(billingRunId, invoiceValidationDto.getInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("rebuildInvoice Response={}", result);
+        return result;
+	}
+
+	@Override
+	public ActionStatus rejectInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("rejectInvoice request={}", billingRunId);
+        try {
+            invoicingApi.rejectInvoice(billingRunId, invoiceValidationDto.getInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("rejectInvoice Response={}", result);
+        return result;
+	}
+
+	@Override
+	public ActionStatus validateInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("validateInvoice request={}", billingRunId);
+        try {
+            invoicingApi.validateInvoice(billingRunId, invoiceValidationDto.getInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("validateInvoice Response={}", result);
+        return result;
+	}
+
+	@Override
+	public ActionStatus moveInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("moveInvoice request={}", billingRunId);
+        try {
+            invoicingApi.moveInvoice(billingRunId, invoiceValidationDto.getInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("moveInvoice Response={}", result);
+        return result;
+	}
+
+	@Override
+	public ActionStatus cancelInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("cancelInvoice request={}", billingRunId);
+        try {
+            invoicingApi.cancelInvoice(billingRunId, invoiceValidationDto.getInvoices(), invoiceValidationDto.getDeleteCanceledInvoices());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("cancelInvoice Response={}", result);
+        return result;
+	}
+
+	@Override
+	public ActionStatus canceledInvoices(Long billingRunId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("canceledInvoices request={}", billingRunId);
+        try {
+            invoicingApi.canceledInvoices(billingRunId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        log.debug("canceledInvoices Response={}", result);
+        return result;
+	}
 
 }

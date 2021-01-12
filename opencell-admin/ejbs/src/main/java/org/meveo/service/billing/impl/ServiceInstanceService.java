@@ -303,8 +303,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 
-        SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
-        serviceInstance.setServiceRenewal(serviceRenewal);
+        if(serviceInstance.getServiceRenewal() == null) {
+            SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
+            serviceInstance.setServiceRenewal(serviceRenewal);
+        }
         // serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
         // serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
         serviceInstance.setMinimumAmountElSpark(serviceTemplate.getMinimumAmountElSpark());

@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -141,7 +142,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now where r.id IN :rsIds "),
+        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now, r.invoice=null where r.id IN :rtIds "),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
 
         @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.updated = :now , r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id in :ids"),
@@ -150,16 +151,20 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r where r.status!='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where r.status<>'OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.deleteByLastTransactionDateAndStatus", query = "delete FROM RatedTransaction r where r.status in (:status) AND r.usageDate<=:lastTransactionDate "),
         @NamedQuery(name = "RatedTransaction.deleteBetweenTwoDatesByStatus", query = "delete FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.amountWithoutTax<>0 and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.invoiceAgregateF=:invoiceAgregateF and r.status='BILLED' order by r.usageDate"),
+        @NamedQuery(name = "RatedTransaction.listAllByInvoice", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice order by r.usageDate"),
 
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                 + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now , r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
-        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.type='MINIMUM' and r.invoice.id IN (:invoicesIds)") })
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.type='MINIMUM' and r.invoice.id IN (:invoicesIds)"),
+        @NamedQuery(name = "RatedTransaction.invalidateRTByInvoice", query = "UPDATE RatedTransaction r set r.invoice=null, r.status='OPEN' WHERE r.invoice=:invoice")
+        })
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -413,7 +418,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Subcategory invoice aggregate that Rated transaction was invoiced under
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "aggregate_id_f")
     private SubCategoryInvoiceAgregate invoiceAgregateF;
 
@@ -966,10 +971,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             return true;
         }
-        if (isTransient() || other.isTransient()) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     public String getRatingUnitDescription() {

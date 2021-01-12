@@ -53,12 +53,11 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
             return null;
         }
 
-        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR)) && value.isEncrypted()) {
-            return encrypt(((CustomFieldValues) value).asJson());
+        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
+            return encrypt(value.asJson());
         }
 
-        return ((CustomFieldValues) value).asJson();
-
+        return value.asJson();
     }
 
     @Override
@@ -70,8 +69,11 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 
         if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
             string = decrypt(string);
+            if(IEncryptable.ON_ERROR_RETURN.equalsIgnoreCase(string)) {
+                return null;
+            }
         }
-
+        
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
 

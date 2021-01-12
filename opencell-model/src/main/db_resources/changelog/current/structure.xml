@@ -3850,6 +3850,7 @@ END $$;]]>
             update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
         </sql>
     </changeSet>
+
     <changeSet id="5687_20203011" author="khalidHORRI">
         <addColumn tableName="billing_cycle">
             <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -3858,6 +3859,16 @@ END $$;]]>
             <column name="compute_dates_validation" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
+    <changeSet id="5697_20201208" author="khalidHORRI">
+        <addColumn tableName="ar_payment_schedule_inst_item">
+            <column name="amount" type="numeric(23, 12)"/>
+        </addColumn>
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="use_banking_calender" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+
+    </changeSet>
+
 
     <changeSet id="#5632_20201207_RT_TYPE" author="NabilOUACHI">
         <addColumn tableName="billing_rated_transaction">
@@ -3865,4 +3876,188 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="skip_validation_script" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="suspect_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="reject_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="next_billing_run_id" type="bigint"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_invoice">
+            <column name="reject_reason" type="varchar(255)"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_cycle">
+            <column name="billing_run_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="invoice_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
+              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+    </changeSet>
+    
+    <changeSet id="#4427_20201202" author="ZBariki">
+        <createSequence sequenceName="generic_sequence_seq" startValue="1" />
+        <createTable tableName="generic_sequence" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="generic_sequence_pk"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="sequence_type" type="varchar(255)" />
+            <column name="sequence_size" type="int" />
+            <column name="current_number" type="bigint" />
+            <column name="sequence_pattern" type="varchar(255)" />
+        </createTable>
+        <addColumn tableName="billing_seq_invoice">
+            <column name="sequence_type" type="varchar(255)"/>
+            <column name="sequence_pattern" type="varchar(255)"/>
+        </addColumn>
+        <renameColumn tableName="billing_seq_invoice" newColumnName="current_number" oldColumnName="current_invoice_nb"
+                      columnDataType="bigint"/>
+        <addColumn tableName="adm_custom_generic_entity_code">
+            <column name="format_el" type="varchar(2000)"/>
+            <column name="sequence_id" type="bigint"/>
+        </addColumn>
+        <dropColumn columnName="sequence_size" tableName="adm_custom_generic_entity_code" />
+        <dropColumn columnName="sequence_current_value" tableName="adm_custom_generic_entity_code" />
+        <addForeignKeyConstraint baseColumnNames="sequence_id" baseTableName="adm_custom_generic_entity_code"
+                                 constraintName="fk_dm_custom_generic_entity_code_sequence_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="generic_sequence" />
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1, 'order_quote_sequence', 'Order and Quote', 'UUID') </sql>
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type, sequence_size, current_number)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1, 'seller_sequence', 'Seller sequence', 'SEQUENCE', 9, 0)</sql>
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type, sequence_size, current_number)
+            VALUES (nextval('generic_sequence_seq'),
+            '12/09/2020', 1,'customer_sequence', 'Customer sequence', 'SEQUENCE', 5, 0) </sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Quote', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'order_quote_sequence'))</sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Order', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'order_quote_sequence'))</sql>
+        <sql>INSERT INTO ${db.schema.adapted}adm_custom_generic_entity_code( id, entity_class, version, created, sequence_id)
+            VALUES (nextval('adm_custom_generic_entity_code_seq'), 'Seller', 1, '12/09/2020',
+            (select id from ${db.schema.adapted}generic_sequence where code = 'seller_sequence'))</sql>
+        <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
+            SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'customer_sequence')
+            WHERE entity_class = 'Customer'</sql>
+    </changeSet>
+    <changeSet id="#4427_20201216" author="ZBariki">
+        <sql>INSERT INTO ${db.schema.adapted}generic_sequence(id, created, version, code, description, sequence_type)
+            VALUES (nextval('generic_sequence_seq'),
+            NOW(), 1, 'subscription_sequence', 'subscription', 'SEQUENCE') </sql>
+        <sql>UPDATE ${db.schema.adapted}adm_custom_generic_entity_code
+            SET sequence_id = (select id from ${db.schema.adapted}generic_sequence where code = 'subscription_sequence')
+            WHERE entity_class = 'Subscription'</sql>
+    </changeSet>
+    
+     <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>create table ${db.schema.adapted}rating_edr_rejected partition of ${db.schema.adapted}rating_edr for values in('REJECTED')</sql>
+    </changeSet>
+    
+    <changeSet id="#5627_20210107" author="AndriusKarpavicius">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
+    </changeSet>
+    
+    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other_tmp AS
+			SELECT
+			*
+			FROM
+				${db.schema.adapted}rating_edr_other
+		</sql>
+		
+		<dropTable tableName="rating_edr_other"/>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other (
+			  id bigint NOT NULL DEFAULT nextval('rating_edr_seq'),
+			  version integer,
+			  created timestamp without time zone,
+			  event_date timestamp without time zone,
+			  last_updated timestamp without time zone,
+			  origin_batch character varying(255),
+			  origin_record character varying(255),
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  parameter_4 character varying(255),
+			  quantity numeric(23,12),
+			  reject_reason text,
+			  status character varying(255) NOT NULL,
+			  subscription_id bigint NOT NULL,
+			  parameter_5 character varying(255),
+			  parameter_6 character varying(255),
+			  parameter_7 character varying(255),
+			  parameter_8 character varying(255),
+			  parameter_9 character varying(255),
+			  date_parameter_1 timestamp without time zone,
+			  date_parameter_2 timestamp without time zone,
+			  date_parameter_3 timestamp without time zone,
+			  date_parameter_4 timestamp without time zone,
+			  date_parameter_5 timestamp without time zone,
+			  decimal_parameter_1 numeric(23,12),
+			  decimal_parameter_2 numeric(23,12),
+			  decimal_parameter_3 numeric(23,12),
+			  decimal_parameter_4 numeric(23,12),
+			  decimal_parameter_5 numeric(23,12),
+			  access_code character varying(255),
+			  header_edr_id bigint,
+			  extra_parameter text
+			) partition by list (status)
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_rejected PARTITION OF ${db.schema.adapted}rating_edr_other
+				FOR VALUES IN ('REJECTED')
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_duplicated PARTITION OF ${db.schema.adapted}rating_edr_other
+				FOR VALUES IN ('DUPLICATED')
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other_default PARTITION OF ${db.schema.adapted}rating_edr_other DEFAULT
+		</sql>
+		
+		<sql>
+			ALTER TABLE ${db.schema.adapted}rating_edr ATTACH PARTITION ${db.schema.adapted}rating_edr_other DEFAULT
+		</sql>
+		
+		<sql>insert into ${db.schema.adapted}rating_edr
+		     (select *
+				from ${db.schema.adapted}rating_edr_other_tmp
+			  )
+		</sql>
+		
+		<dropTable tableName="rating_edr_other_tmp"/>
+    </changeSet>
+    
 </databaseChangeLog>
