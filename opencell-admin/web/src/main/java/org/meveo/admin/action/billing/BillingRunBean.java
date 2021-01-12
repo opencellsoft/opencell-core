@@ -222,6 +222,10 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         }
         return null;
     }
+    
+    public Boolean canBeValidated() {
+    	 return !billingRunService.isBillingRunContainingRejectedInvoices(entity.getId());
+    }
 
     public String cancel() {
         try {

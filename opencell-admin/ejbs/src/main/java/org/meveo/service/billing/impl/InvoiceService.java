@@ -1088,11 +1088,61 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
+            applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
-        applyAutomaticInvoiceCheck(invoiceList, automaticInvoiceCheck);
         return invoiceList;
 
+    }
+
+	private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
+
+        if (billingCycle.getCollectionDateDelayEl() == null) {
+            invoice.setInitialCollectionDate(invoice.getDueDate());
+            return;
+        }
+        if (billingRun != null && billingRun.getCollectionDate() != null) {
+            invoice.setInitialCollectionDate(billingRun.getCollectionDate());
+            return;
+        }
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        Order order = invoice.getOrder();
+
+        // Determine invoice due date delay either from Order, Customer account or Billing cycle
+        Integer delay = 0;
+        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        if (delay == null) {
+            throw new BusinessException("collection date delay is null");
+        }
+
+        Date initailCollectionDate = DateUtils.addDaysToDate(invoice.getDueDate(), delay);
+
+        invoice.setInitialCollectionDate(initailCollectionDate);
+
+    }
+
+    private Integer evaluateCollectionDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) {
+        Integer result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put("invoice", invoice);
+        }
+        if (expression.indexOf("order") >= 0) {
+            userMap.put("order", order);
+        }
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+        try {
+            result = (Integer) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to Integer but " + res);
+        }
+        return result;
     }
 
     /**
@@ -1101,29 +1151,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	private void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
 		if (automaticInvoiceCheck) {
 			for (Invoice invoice : invoiceList) {
-				if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
-					ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
-					if (scriptInstance != null) {
-						ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
-						if (script != null) {
-							Map<String, Object> methodContext = new HashMap<String, Object>();
-							methodContext.put(Script.CONTEXT_ENTITY, invoice);
-							methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-							methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-							methodContext.put("billingRun", invoice.getBillingRun());
-							script.execute(methodContext);
-							Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-							if(status!=null && status instanceof InvoiceValidationStatusEnum) {
-								if(InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum)status)){
-									invoice.setStatus(InvoiceStatusEnum.REJECTED);
-									invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
+				applyAutomaticInvoiceCheck(invoice, automaticInvoiceCheck);
+			}
+		}
+	}
+	
+    /**
+	 * @param invoice
+	 * @param automaticInvoiceCheck
+	 */
+	private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
+		if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
+			ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+			if (scriptInstance != null) {
+				ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
+				if (script != null) {
+					Map<String, Object> methodContext = new HashMap<String, Object>();
+					methodContext.put(Script.CONTEXT_ENTITY, invoice);
+					methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+					methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+					methodContext.put("billingRun", invoice.getBillingRun());
+					script.execute(methodContext);
+					Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+					if(status!=null && status instanceof InvoiceValidationStatusEnum) {
+						if(InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum)status)){
+							invoice.setStatus(InvoiceStatusEnum.REJECTED);
+							invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
 
-								} else if(InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum)status)){
-									invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-									invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
-								} 
-							}
-						}
+						} else if(InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum)status)){
+							invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+							invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
+						} 
 					}
 				}
 			}
@@ -2341,21 +2399,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param id
 	 * @param invoices
 	 */
-	private void moveInvoices(List<Invoice> invoices, Long billingRunId) {
+	public void moveInvoices(List<Invoice> invoices, Long billingRunId) {
 		moveInvoices(billingRunId, invoices.stream().map(x->x.getId()).collect(Collectors.toList()));
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
-		BillingRun br = getBrById(billingRunId);
+		BillingRun br = null;
 		List<Invoice> invoices = new ArrayList<Invoice>();
+		if(billingRunId!=null) {
+			br = getBrById(billingRunId);
+		}
 		if(CollectionUtils.isEmpty(invoiceIds)) {
-			return findInvoicesByStatusAndBR(billingRunId, statusList);
+			return br != null ? findInvoicesByStatusAndBR(billingRunId, statusList) : new ArrayList<Invoice>();
 		}
 		for (Long invoiceId : invoiceIds) {
 			Invoice invoice = invoiceService.findById(invoiceId);
 			if (invoice == null) {
 				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " does not exist ");
-			} else if (invoice.getBillingRun() != br) {
+			} else if (br!= null && invoice.getBillingRun() != br) {
 				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " is not associated to Billing Run with ID " + billingRunId);
 			} else if (!statusList.contains(invoice.getStatus())) {
 				throw new ActionForbiddenException("Action forbidden for invoice with ID " + invoiceId + ": invoice status is " + invoice.getStatus());
@@ -4298,5 +4359,5 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
 		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
 	}
-	
+
 }

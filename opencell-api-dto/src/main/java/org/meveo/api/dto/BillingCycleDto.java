@@ -183,6 +183,33 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private Boolean thresholdPerEntity;
+    
+    @XmlElement
+    private String billingRunValidationScriptCode;
+
+    public String getLastTransactionDateDelayEL() {
+		return lastTransactionDateDelayEL;
+	}
+
+	public void setLastTransactionDateDelayEL(String lastTransactionDateDelayEL) {
+		this.lastTransactionDateDelayEL = lastTransactionDateDelayEL;
+	}
+
+	public String getBillingRunValidationScriptCode() {
+		return billingRunValidationScriptCode;
+	}
+
+	public void setBillingRunValidationScriptCode(String billingRunValidationScriptCode) {
+		this.billingRunValidationScriptCode = billingRunValidationScriptCode;
+	}
+
+	public Boolean getThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+		this.dueDateDelayELSpark = dueDateDelayELSpark;
+	}
 
     private List<LanguageDescriptionDto> languageDescriptions;
 
@@ -241,6 +268,9 @@ public class BillingCycleDto extends BusinessEntityDto {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
             languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(billingCycleEntity.getDescriptionI18n());
+            collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
+            billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
         }
     }
 

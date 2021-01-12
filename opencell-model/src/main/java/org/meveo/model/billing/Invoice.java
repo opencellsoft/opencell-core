@@ -483,7 +483,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-        this.status=InvoiceStatusEnum.CREATED;
+        if(this.status ==null || this.status==InvoiceStatusEnum.DRAFT) {
+        	this.status=InvoiceStatusEnum.CREATED;
+        }
     }
 
     public Date getProductDate() {

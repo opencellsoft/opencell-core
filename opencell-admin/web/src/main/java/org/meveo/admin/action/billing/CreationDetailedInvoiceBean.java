@@ -71,6 +71,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -134,6 +135,9 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
     
     @Inject 
     private AccountingCodeService accountingCodeService;
+    
+    @Inject
+    SellerService sellerService;
     
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
@@ -328,7 +332,7 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
         if (seller == null) {
             seller = ua.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
-        
+        seller=sellerService.refreshOrRetrieve(seller);
         TaxInfo taxInfo = taxMappingService.determineTax(selectedTaxClass, seller, entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
 
         // AKK check what happens with tax
@@ -732,7 +736,7 @@ public class CreationDetailedInvoiceBean extends CustomFieldBean<Invoice> {
 
                     TaxInfo taxInfo = null;
                     if (rt.getTaxClass() != null) {
-                        taxInfo = taxMappingService.determineTax(rt.getTaxClass(), rt.getSeller(), entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
+                        taxInfo = taxMappingService.determineTax(rt.getTaxClass(), sellerService.refreshOrRetrieve(rt.getSeller()), entity.getBillingAccount(), ua, entity.getInvoiceDate(), true, false);
                     }
 
                     RatedTransaction newRT = new RatedTransaction(rt.getUsageDate(), rt.getUnitAmountWithoutTax(), rt.getUnitAmountWithTax(), rt.getUnitAmountTax(), rt.getQuantity(), rt.getAmountWithoutTax(),

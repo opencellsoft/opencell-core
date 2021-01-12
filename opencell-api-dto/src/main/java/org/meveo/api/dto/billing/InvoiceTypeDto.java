@@ -34,6 +34,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The Class InvoiceTypeDto.
@@ -69,6 +70,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The sequence dto. */
     private SequenceDto sequenceDto;
+    
+    /** The script to be used on invoice auto validation. */
+    private String invoiceValidationScriptCode;
 
     /** The seller sequences. */
     @XmlElementWrapper
@@ -434,4 +438,18 @@ public class InvoiceTypeDto extends BusinessEntityDto {
                 + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences="
                 + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + ", invoiceAccountable=" + invoiceAccountable + "]";
     }
+
+	/**
+	 * @return the invoiceValidationScript
+	 */
+	public String getInvoiceValidationScriptCode() {
+		return invoiceValidationScriptCode;
+	}
+
+	/**
+	 * @param invoiceValidationScript the invoiceValidationScript to set
+	 */
+	public void setInvoiceValidationScriptCode(String invoiceValidationScriptCode) {
+		this.invoiceValidationScriptCode = invoiceValidationScriptCode;
+	}
 }
