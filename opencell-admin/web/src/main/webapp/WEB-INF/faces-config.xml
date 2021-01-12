@@ -2171,8 +2171,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 	</navigation-case>
 
 	<navigation-case>
-		<from-outcome>accountingWritings</from-outcome>
-		<to-view-id>/pages/finance/accountingWriting/accountingWritings.xhtml
+		<from-outcome>accountingEntries</from-outcome>
+		<to-view-id>/pages/finance/accountingEntry/accountingEntries.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>

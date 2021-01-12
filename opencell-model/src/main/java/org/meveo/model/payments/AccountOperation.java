@@ -64,7 +64,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.finance.AccountingEntry;
 
 /**
  * Account operation
@@ -152,7 +152,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * List of associated accounting writing
      */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
-    private List<AccountingWriting> accountingWritings = new ArrayList<>();
+    private List<AccountingEntry> accountingEntries = new ArrayList<>();
 
     /**
      * Deprecated in 5.2. Use accountingCode instead
@@ -624,12 +624,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.accountingCode = accountingCode;
     }
 
-    public List<AccountingWriting> getAccountingWritings() {
-		return accountingWritings;
+    public List<AccountingEntry> getAccountingEntries() {
+		return accountingEntries;
 	}
 
-	public void setAccountingWritings(List<AccountingWriting> accountingWritings) {
-		this.accountingWritings = accountingWritings;
+	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
+		this.accountingEntries = accountingEntries;
 	}
 
     /**
