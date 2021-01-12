@@ -3720,4 +3720,8 @@ END $$;]]>
               referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
     
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
+    </changeSet>
 </databaseChangeLog>
