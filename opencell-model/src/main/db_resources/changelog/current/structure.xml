@@ -1993,6 +1993,78 @@
     </changeSet>
     
     <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
-    	<sql>create table ${db.schema.adapted}rating_edr_rejected partition of ${db.schema.adapted}rating_edr for values in('REJECTED')</sql>
+    	<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other_tmp AS
+			SELECT
+			*
+			FROM
+				${db.schema.adapted}rating_edr_other
+		</sql>
+		
+		<dropTable tableName="rating_edr_other"/>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other (
+			  id bigint NOT NULL DEFAULT nextval('rating_edr_seq'),
+			  version integer,
+			  created timestamp without time zone,
+			  event_date timestamp without time zone,
+			  last_updated timestamp without time zone,
+			  origin_batch character varying(255),
+			  origin_record character varying(255),
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  parameter_4 character varying(255),
+			  quantity numeric(23,12),
+			  reject_reason text,
+			  status character varying(255) NOT NULL,
+			  subscription_id bigint NOT NULL,
+			  parameter_5 character varying(255),
+			  parameter_6 character varying(255),
+			  parameter_7 character varying(255),
+			  parameter_8 character varying(255),
+			  parameter_9 character varying(255),
+			  date_parameter_1 timestamp without time zone,
+			  date_parameter_2 timestamp without time zone,
+			  date_parameter_3 timestamp without time zone,
+			  date_parameter_4 timestamp without time zone,
+			  date_parameter_5 timestamp without time zone,
+			  decimal_parameter_1 numeric(23,12),
+			  decimal_parameter_2 numeric(23,12),
+			  decimal_parameter_3 numeric(23,12),
+			  decimal_parameter_4 numeric(23,12),
+			  decimal_parameter_5 numeric(23,12),
+			  access_code character varying(255),
+			  header_edr_id bigint,
+			  extra_parameter text
+			) partition by list (status)
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_rejected PARTITION OF ${db.schema.adapted}rating_edr_other
+				FOR VALUES IN ('REJECTED')
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_duplicated PARTITION OF ${db.schema.adapted}rating_edr_other
+				FOR VALUES IN ('DUPLICATED')
+		</sql>
+		
+		<sql>
+			CREATE TABLE ${db.schema.adapted}rating_edr_other_default PARTITION OF ${db.schema.adapted}rating_edr_other DEFAULT
+		</sql>
+		
+		<sql>
+			ALTER TABLE ${db.schema.adapted}rating_edr ATTACH PARTITION ${db.schema.adapted}rating_edr_other DEFAULT
+		</sql>
+		
+		<sql>insert into ${db.schema.adapted}rating_edr
+		     (select *
+				from ${db.schema.adapted}rating_edr_other_tmp
+			  )
+		</sql>
+		
+		<dropTable tableName="rating_edr_other_tmp"/>
     </changeSet>
 </databaseChangeLog>
