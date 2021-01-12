@@ -1,11 +1,14 @@
 package org.meveo.api.dto.cpq;
 
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 @XmlRootElement(name = "CommercialRuleLineDTO")
 @XmlType(name = "CommercialRuleLineDTO")
@@ -29,6 +32,23 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public CommercialRuleLineDTO(CommercialRuleLine commercialRuleLine) {
+		super();   
+		this.operator = commercialRuleLine.getOperator();
+		this.offerCode = commercialRuleLine.getSourceOfferTemplate()!=null?commercialRuleLine.getSourceOfferTemplate().getCode():null;
+		this.productCode = commercialRuleLine.getSourceProduct()!=null?commercialRuleLine.getSourceProduct().getCode():null;
+		this.productVersion = commercialRuleLine.getSourceProductVersion()!=null?commercialRuleLine.getSourceProductVersion().getCurrentVersion():null;
+		this.attributeCode = commercialRuleLine.getTargetAttribute()!=null?commercialRuleLine.getTargetAttribute().getCode():null;
+		this.tagCode = commercialRuleLine.getTargetTag()!=null?commercialRuleLine.getTargetTag().getCode():null;
+		this.groupedAttributeCode = commercialRuleLine.getTargetGroupedAttributes()!=null?commercialRuleLine.getTargetGroupedAttributes().getCode():null;
+		this.attributeValue = commercialRuleLine.getSourceAttributeValue();
+		
+	}
+	
+	
+	
 	/**
 	 * @return the offerCode
 	 */

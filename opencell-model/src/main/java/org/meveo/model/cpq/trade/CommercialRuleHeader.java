@@ -1,5 +1,9 @@
 package org.meveo.model.cpq.trade;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -113,6 +119,11 @@ public class CommercialRuleHeader extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "rule_el", columnDefinition = "TEXT")
 	private String ruleEl;
+	
+	
+	@OneToMany(mappedBy = "commercialRuleHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleItem> commercialRuleItems = new ArrayList<>();
 
 	/**
 	 * @return the ruleType
@@ -240,6 +251,22 @@ public class CommercialRuleHeader extends BusinessEntity {
 	public void setRuleEl(String ruleEl) {
 		this.ruleEl = ruleEl;
 	}
+
+	/**
+	 * @return the commercialRuleItems
+	 */
+	public List<CommercialRuleItem> getCommercialRuleItems() {
+		return commercialRuleItems;
+	}
+
+	/**
+	 * @param commercialRuleItems the commercialRuleItems to set
+	 */
+	public void setCommercialRuleItems(List<CommercialRuleItem> commercialRuleItems) {
+		this.commercialRuleItems = commercialRuleItems;
+	}
+	
+	
 
  
 	
