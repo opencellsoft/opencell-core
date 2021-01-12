@@ -1101,6 +1101,13 @@ public class DateUtils {
         private int priority;
         private Object value;
 
+        /**
+         * Constructor of calendar split holder
+         * 
+         * @param calendar Calendar
+         * @param priority Priority assigned to the calendar
+         * @param value Value to apply
+         */
         public CalendarSplit(org.meveo.model.catalog.Calendar calendar, int priority, Object value) {
             this.calendar = calendar;
             this.priority = priority;
