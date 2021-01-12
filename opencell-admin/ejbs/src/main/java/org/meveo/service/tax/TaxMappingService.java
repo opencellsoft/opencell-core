@@ -44,7 +44,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -68,9 +67,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
     @Inject
     private TaxScriptService taxScriptService;
-    
-    @Inject
-    private SellerService sellerService;
 
     @Override
     public void create(TaxMapping entity) throws BusinessException {
@@ -353,8 +349,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
 
         log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory != null ? taxCategory.getCode() : null,
-            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry != null ? sellersCountry.getCode() : null, sellersCountry != null ? sellersCountry.getId() : null,
-            buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+            taxCategory != null ? taxCategory.getId() : null, taxClass != null ? taxClass.getCode() : null, taxClass != null ? taxClass.getId() : null, sellersCountry != null ? sellersCountry.getCode() : null,
+            sellersCountry != null ? sellersCountry.getId() : null, buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
         throw new IncorrectChargeTemplateException(
             "No Tax mapping matched for tax category=" + taxCategory.getCode() + "/" + taxCategory.getId() + ", tax class=" + taxClass.getCode() + "/" + taxClass.getId() + ", seller's country=" + sellersCountry.getCode()
