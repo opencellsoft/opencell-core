@@ -951,8 +951,21 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
     
+    public void moveInvoices(BillingRun billingRun) {
+        try {
+            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+            	invoiceService.moveInvoices(getSelectedEntities(), billingRun.getId());
+                messages.info(new BundleKey("messages", "info.invoicing.move"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+        } catch (Exception e) {
+            log.error("Failed to move invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
 
-    public boolean areSelectedInvoicesInvalidated() {
+	public boolean areSelectedInvoicesInvalidated() {
         return !CollectionUtils.isEmpty(getSelectedEntities()) && getSelectedEntities().stream().filter(i->(InvoiceStatusEnum.REJECTED.equals(i.getStatus())||InvoiceStatusEnum.SUSPECT.equals(i.getStatus()))).count()==0;
     }
 }
