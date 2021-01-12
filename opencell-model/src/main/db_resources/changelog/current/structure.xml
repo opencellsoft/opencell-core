@@ -3975,7 +3975,12 @@ END $$;]]>
             WHERE entity_class = 'Subscription'</sql>
     </changeSet>
     
-     <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
+    </changeSet>
+    
+    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
     	<sql>create table ${db.schema.adapted}rating_edr_rejected partition of ${db.schema.adapted}rating_edr for values in('REJECTED')</sql>
     </changeSet>
     
