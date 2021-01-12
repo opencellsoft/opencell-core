@@ -85,5 +85,8 @@ public interface AccountingArticleResource {
             @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy, Map<String, Object> filter,
             @Context Request request);
     
+    @GET
+    @Path("/product/{productCode}")
+    Response getAccountingArticles(@PathParam("productCode") String productCode, Map<String, Object> attribues, @Context Request request);
     
 }

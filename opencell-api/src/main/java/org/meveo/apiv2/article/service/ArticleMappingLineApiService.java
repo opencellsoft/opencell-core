@@ -9,6 +9,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Product;
 import org.meveo.service.billing.impl.article.AccountingArticleService1;
 import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.billing.impl.article.ArticleMappingService;
@@ -16,6 +17,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.ProductService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -34,11 +36,11 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     @Inject
     private OfferTemplateService offerTemplateService;
     @Inject
-    private ProductTemplateService productTemplateService;
-    @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
     @Inject
     private AttributeService attributeService;
+    @Inject
+    private ProductService productService;
 
     @Override
     public List<ArticleMappingLine> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -69,11 +71,11 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
                 throw new BadRequestException("No offer template found with id: " + articleMappingLine.getOfferTemplate().getId());
             articleMappingLine.setOfferTemplate(offerTemplate);
         }
-        if(articleMappingLine.getProductTemplate() != null){
-            ProductTemplate productTemplate = productTemplateService.findById(articleMappingLine.getProductTemplate().getId());
-            if(productTemplate == null)
-                throw new BadRequestException("No product template found with id: " + articleMappingLine.getProductTemplate().getId());
-            articleMappingLine.setProductTemplate(productTemplate);
+        if(articleMappingLine.getProduct() != null){
+            Product product = productService.findById(articleMappingLine.getProduct().getId());
+            if(product == null)
+                throw new BadRequestException("No product template found with id: " + articleMappingLine.getProduct().getId());
+            articleMappingLine.setProduct(product);
         }
         if(articleMappingLine.getChargeTemplate() != null){
             ChargeTemplate chargeTemplate = chargeTemplateService.findById(articleMappingLine.getChargeTemplate().getId());
