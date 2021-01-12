@@ -22,7 +22,7 @@ public class CommercialRuleItemDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 2921006853398452396L;
 	
-	private OperatorEnum operator = OperatorEnum.ET;
+	private OperatorEnum operator = OperatorEnum.AND;
 	
 	private List<CommercialRuleLineDTO> commercialRuleLines=new ArrayList<CommercialRuleLineDTO>();
 	
