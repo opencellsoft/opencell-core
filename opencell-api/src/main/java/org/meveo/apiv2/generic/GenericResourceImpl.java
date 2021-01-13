@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
 @Stateless
 public class GenericResourceImpl implements GenericResource {
     @Inject
@@ -53,6 +55,17 @@ public class GenericResourceImpl implements GenericResource {
         return loadService.findByClassNameAndId(entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
                 .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+    }
+
+    @Override
+    public Response getFullListEntities() {
+        return Response.ok().entity(GenericOpencellRestful.ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @Override
+    public Response getRelatedFieldsAndTypesOfEntity( String entityName ) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        return Response.ok().entity(getPersistenceService(entityClass).mapRelatedFields()).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
     
     @Override
