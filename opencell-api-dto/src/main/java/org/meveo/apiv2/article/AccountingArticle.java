@@ -6,6 +6,8 @@ import org.meveo.apiv2.generic.LanguageDescription;
 import org.meveo.apiv2.models.Resource;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Value.Immutable
@@ -13,12 +15,16 @@ import java.util.List;
 @JsonDeserialize(as = ImmutableAccountingArticle.class)
 public interface AccountingArticle extends Resource {
 
+	@NotNull
     String getCode();
 
+	@NotNull
     String getDescription();
 
+	@NotNull
     Resource getTaxClass();
 
+	@NotNull
     Resource getInvoiceSubCategory();
 
     @Nullable
