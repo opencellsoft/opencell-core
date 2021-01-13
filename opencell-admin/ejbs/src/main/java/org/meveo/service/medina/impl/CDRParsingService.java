@@ -153,9 +153,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
                     && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
                 foundMatchingAccess = true;
                 EDR edr = cdrToEdr(cdr, accessPoint, null);
-                if(edr.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+                if(cdr.getTimestamp().getTime() > edr.getSubscription().getTerminationDate().getTime()) {
                     throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_TERMINATED);
-                }else if(edr.getSubscription().getStatus() != SubscriptionStatusEnum.ACTIVE) {
+                } else if(cdr.getTimestamp().getTime() < edr.getSubscription().getSubscriptionDate().getTime()) {
                     throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_NOT_ACTIVATED);
                 }
                 edrs.add(edr);
