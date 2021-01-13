@@ -1564,7 +1564,9 @@
 	            <column name="cpq_quote_product_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-            	<column name="value" type="varchar(255)" />
+            	<column name="string_value" type="varchar(255)" />
+            	<column name="double_value" type="float8" />
+            	<column name="date_value" type="datetime" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"

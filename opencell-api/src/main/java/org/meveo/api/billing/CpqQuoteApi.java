@@ -232,7 +232,9 @@ public class CpqQuoteApi extends BaseApi {
 					throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
 				QuoteAttribute quoteAttribute = new QuoteAttribute();
 				quoteAttribute.setAttribute(attribute);
-				quoteAttribute.setValue(quoteAttributeDTO.getValue());
+				quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+				quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+				quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
 				quoteProduct.getQuoteAttributes().add(quoteAttribute);
 				quoteAttribute.setQuoteProduct(quoteProduct);
 				quoteAttributeService.create(quoteAttribute);
@@ -604,7 +606,9 @@ public class CpqQuoteApi extends BaseApi {
 				throw new MeveoApiException("Quote Attribute is Already attached to : " + quoteAttribute.getQuoteProduct().getId());
 		}
 		quoteAttribute.setAttribute(attribute);
-		quoteAttribute.setValue(quoteAttributeDTO.getValue());
+		quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+		quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+		quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
 		quoteProduct.getQuoteAttributes().add(quoteAttribute);
 		quoteAttribute.setQuoteProduct(quoteProduct);
 		if(isNew)

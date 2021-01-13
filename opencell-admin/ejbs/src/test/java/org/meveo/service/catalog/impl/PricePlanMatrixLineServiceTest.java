@@ -57,7 +57,7 @@ public class PricePlanMatrixLineServiceTest {
     private QuoteAttribute createQuoteAttribute(Attribute attribute, String value) {
         QuoteAttribute quotedBcAttribute = new QuoteAttribute();
         quotedBcAttribute.setAttribute(attribute);
-        quotedBcAttribute.setValue(value);
+        quotedBcAttribute.setStringValue(value);
         return quotedBcAttribute;
     }
 
@@ -122,7 +122,7 @@ public class PricePlanMatrixLineServiceTest {
             annuallyBcValue.setPricePlanMatrixColumn(billingCycleColumn);
             annuallyBcValue.setStringValue("Annually");
 
-            billingCycleColumn.setPricePlanMatrixValues(List.of(monthlyBcValue, annuallyBcValue));
+            billingCycleColumn.setPricePlanMatrixValues(Set.of(monthlyBcValue, annuallyBcValue));
 
             PricePlanMatrixValue twelveSubscriptionDurationValue = new PricePlanMatrixValue();
             twelveSubscriptionDurationValue.setPricePlanMatrixColumn(subscriptionDurationColumn);
@@ -132,7 +132,7 @@ public class PricePlanMatrixLineServiceTest {
             twentyFourSubscriptionDurationValue.setPricePlanMatrixColumn(subscriptionDurationColumn);
             twentyFourSubscriptionDurationValue.setLongValue(24L);
 
-            subscriptionDurationColumn.setPricePlanMatrixValues(List.of(twelveSubscriptionDurationValue, twentyFourSubscriptionDurationValue));
+            subscriptionDurationColumn.setPricePlanMatrixValues(Set.of(twelveSubscriptionDurationValue, twentyFourSubscriptionDurationValue));
 
             PricePlanMatrixLine monthlyPrice1Line = new PricePlanMatrixLine();
             monthlyPrice1Line.setId(1L);

@@ -9,6 +9,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,6 +23,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -67,8 +69,8 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @NotNull
     private Attribute attribute;
 
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY)
-    List<PricePlanMatrixValue> pricePlanMatrixValues;
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
@@ -126,11 +128,11 @@ public class PricePlanMatrixColumn extends BusinessEntity {
         this.offerTemplate = offerTemplate;
     }
 
-    public List<PricePlanMatrixValue> getPricePlanMatrixValues() {
+    public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
         return pricePlanMatrixValues;
     }
 
-    public void setPricePlanMatrixValues(List<PricePlanMatrixValue> pricePlanMatrixValues) {
+    public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
         this.pricePlanMatrixValues = pricePlanMatrixValues;
     }
 }
