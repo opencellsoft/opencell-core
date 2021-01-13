@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -43,7 +44,9 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         PricePlanMatrixColumn ppmColumn = findByCode(code);
         if(ppmColumn == null)
             return;
-        pricePlanMatrixValueService.remove(ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet()));
+        Set<Long> valuesId = ppmColumn.getPricePlanMatrixValues().stream().map(BaseEntity::getId).collect(Collectors.toSet());
+        if(!valuesId.isEmpty())
+            pricePlanMatrixValueService.remove(valuesId);
         remove(ppmColumn);
     }
 }
