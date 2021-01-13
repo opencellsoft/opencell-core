@@ -2,6 +2,7 @@ package org.meveo.api.rest.cpq;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
@@ -124,7 +126,7 @@ public interface CommercialOrderRs {
     public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering);
 	
 
-	@POST
+	@GET
     @Path("/{orderNumber}")
     @Operation(summary = "Get commercial orders matching the given order number",
     tags = { "Order management" },

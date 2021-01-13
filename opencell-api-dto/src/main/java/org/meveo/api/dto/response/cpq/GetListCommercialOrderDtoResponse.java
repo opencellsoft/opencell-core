@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +31,8 @@ public class GetListCommercialOrderDtoResponse extends SearchResponse{
 	 * @return the commercialOrderDto
 	 */
 	public List<CommercialOrderDto> getCommercialOrderDtos() {
+		if(commercialOrderDtos == null)
+			commercialOrderDtos = new ArrayList<CommercialOrderDto>();
 		return commercialOrderDtos;
 	}
 
