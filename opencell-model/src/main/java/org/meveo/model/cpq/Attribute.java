@@ -3,9 +3,12 @@
  */
 package org.meveo.model.cpq;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -108,6 +113,11 @@ public class Attribute extends EnableBusinessCFEntity{
     @Column(name = "display")
     @NotNull
     protected boolean display;
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Media> medias = new ArrayList<>();
+    
 
     public Attribute(){
 
@@ -230,6 +240,22 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+	
+	
     
     
 

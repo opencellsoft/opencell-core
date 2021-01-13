@@ -17,6 +17,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -100,7 +101,7 @@ public class CommercialRuleLine extends BaseEntity {
 	 * operator : 0 => product or attribute is selected
 	 */
 	@Column(name = "operator")
-	private int operator;
+	private RuleOperatorEnum operator;
 	 
 	/**
 	 * @return the sourceOfferTemplate
@@ -203,21 +204,21 @@ public class CommercialRuleLine extends BaseEntity {
 	public void setTargetTag(Tag targetTag) {
 		this.targetTag = targetTag;
 	}
+  
 
 	/**
 	 * @return the operator
 	 */
-	public int getOperator() {
+	public RuleOperatorEnum getOperator() {
 		return operator;
 	}
 
 	/**
 	 * @param operator the operator to set
 	 */
-	public void setOperator(int operator) {
+	public void setOperator(RuleOperatorEnum operator) {
 		this.operator = operator;
 	}
- 
 
 	/**
 	 * @return the commercialRuleItem
