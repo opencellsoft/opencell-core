@@ -256,7 +256,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws BusinessException General business exception
      */
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, boolean checkExoneration, boolean ignoreNoTax) throws BusinessException {
-
         try {
             TaxInfo taxInfo = new TaxInfo();
             taxInfo.taxClass = taxClass;
@@ -339,7 +338,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return A best matched Tax mapping
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
-    	seller = sellerService.refreshOrRetrieve(seller);
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 

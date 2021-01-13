@@ -104,6 +104,9 @@ public class InvoicingApi extends BaseApi {
         billingRun.setStatus(BillingRunStatusEnum.NEW);
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
+        billingRun.setSkipValidationScript(dto.getSkipValidationScript());
+        billingRun.setRejectAutoAction(dto.getRejectAutoAction());
+        billingRun.setSuspectAutoAction(dto.getSuspectAutoAction());
         if (dto.getInvoiceDate() == null) {
             if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
                 billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
