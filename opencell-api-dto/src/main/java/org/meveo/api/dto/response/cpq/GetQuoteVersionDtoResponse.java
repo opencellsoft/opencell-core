@@ -47,9 +47,12 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes));
 			}
 		}
-
+		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
-	
+	public GetQuoteVersionDtoResponse(QuoteVersion q) {
+		super(q);
+		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	}
 	public GetQuoteVersionDtoResponse() {
 		super();
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);

@@ -171,7 +171,7 @@ public class CpqQuoteApi extends BaseApi {
 		return quoteVersion;
 	}
 	
-	public QuoteVersionDto createQuoteVersion(QuoteVersionDto quoteVersionDto) {
+	public GetQuoteVersionDtoResponse createQuoteVersion(QuoteVersionDto quoteVersionDto) {
 		if(Strings.isEmpty(quoteVersionDto.getQuoteCode()))
 			missingParameters.add("quoteCode");
 		if(quoteVersionDto.getCurrentVersion() <= 0)
@@ -186,7 +186,7 @@ public class CpqQuoteApi extends BaseApi {
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
 		}
-		return new QuoteVersionDto(quoteVersion);
+		return new GetQuoteVersionDtoResponse(quoteVersion);
 	}
 	
 	
