@@ -162,6 +162,14 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             }
             entity.setScriptInstance(scriptInstance);
         }
+        
+        if (!StringUtils.isBlank(dto.getBillingRunValidationScriptCode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(dto.getBillingRunValidationScriptCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getBillingRunValidationScriptCode());
+            }
+            entity.setBillingRunValidationScript(scriptInstance);
+        }
 
         entity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
 

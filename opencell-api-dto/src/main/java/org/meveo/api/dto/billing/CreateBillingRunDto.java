@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 
 /**
@@ -103,7 +104,37 @@ public class CreateBillingRunDto extends BaseEntityDto {
      */
     private Boolean computeDatesAtValidation;
 
-    /**
+    private Boolean skipValidationScript = false;
+    
+    private BillingRunAutomaticActionEnum rejectAutoAction;
+    
+    private BillingRunAutomaticActionEnum suspectAutoAction; 
+
+    public Boolean getSkipValidationScript() {
+		return skipValidationScript;
+	}
+
+	public void setSkipValidationScript(Boolean skipValidationScript) {
+		this.skipValidationScript = skipValidationScript;
+	}
+
+	public BillingRunAutomaticActionEnum getRejectAutoAction() {
+		return rejectAutoAction;
+	}
+
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum rejectAutoAction) {
+		this.rejectAutoAction = rejectAutoAction;
+	}
+
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
+
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum suspectAutoAction) {
+		this.suspectAutoAction = suspectAutoAction;
+	}
+
+	/**
      * Instantiates a new creates the billing run dto.
      */
     public CreateBillingRunDto() {

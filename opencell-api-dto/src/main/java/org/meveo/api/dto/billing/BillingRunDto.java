@@ -30,6 +30,7 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 
@@ -179,6 +180,37 @@ public class BillingRunDto extends AuditableEntityDto {
     public BillingRunDto() {
 
     }
+
+    
+    private Boolean skipValidationScript = false;
+    
+    private BillingRunAutomaticActionEnum rejectAutoAction;
+    
+    private BillingRunAutomaticActionEnum suspectAutoAction; 
+
+    public Boolean getSkipValidationScript() {
+		return skipValidationScript;
+	}
+
+	public void setSkipValidationScript(Boolean skipValidationScript) {
+		this.skipValidationScript = skipValidationScript;
+	}
+
+	public BillingRunAutomaticActionEnum getRejectAutoAction() {
+		return rejectAutoAction;
+	}
+
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum rejectAutoAction) {
+		this.rejectAutoAction = rejectAutoAction;
+	}
+
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
+
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum suspectAutoAction) {
+		this.suspectAutoAction = suspectAutoAction;
+	}
 
     /**
      * Gets the process date.
@@ -717,6 +749,9 @@ public class BillingRunDto extends AuditableEntityDto {
         setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
         setCollectionDate(billingRunEntity.getCollectionDate());
         setComputeDatesAtValidation(billingRunEntity.getComputeDatesAtValidation() == null ? null : billingRunEntity.getComputeDatesAtValidation());
+        setSkipValidationScript(billingRunEntity.isSkipValidationScript());
+        setRejectAutoAction(billingRunEntity.getRejectAutoAction());
+        setSuspectAutoAction(billingRunEntity.getSuspectAutoAction());
     }
 
     @Override
