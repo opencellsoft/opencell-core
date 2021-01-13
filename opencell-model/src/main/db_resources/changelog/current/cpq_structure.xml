@@ -282,7 +282,7 @@
 			<column name="product_version_id" type="bigint" />
 			<column name="attribute_id" type="bigint" />
 			<column name="tag_id" type="bigint" />
-			<column name="operator" type="int" />
+			<column name="operator" type="varchar(255)" />
 			<column name="source_attribute_value" type="varchar(255)" />
 			<column name="value" type="varchar(255)" />
 		</createTable>

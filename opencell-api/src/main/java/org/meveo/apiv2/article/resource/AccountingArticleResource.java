@@ -87,6 +87,13 @@ public interface AccountingArticleResource {
     
     @GET
     @Path("/product/{productCode}")
+    @Operation(summary = "This endpoint allows to find accounting article resource with product and list of attributes",
+    tags = { "AccountingArticle" },
+    description ="find  an existing accounting article",
+    responses = {
+            @ApiResponse(responseCode="200", description = "return accounting article"),
+            @ApiResponse(responseCode = "400", description = "bad request when article information contains an error")
+    })
     Response getAccountingArticles(@PathParam("productCode") String productCode, Map<String, Object> attribues, @Context Request request);
     
 }

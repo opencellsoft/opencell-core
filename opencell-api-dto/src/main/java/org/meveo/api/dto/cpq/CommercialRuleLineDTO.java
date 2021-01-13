@@ -1,13 +1,12 @@
 package org.meveo.api.dto.cpq;
 
-import java.util.stream.Collectors;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 @XmlRootElement(name = "CommercialRuleLineDTO")
@@ -27,7 +26,7 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	private String groupedAttributeCode;
 	private String attributeValue;
 	private String tagCode;
-	private int operator;
+	private RuleOperatorEnum operator;
 	public CommercialRuleLineDTO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -40,9 +39,9 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 		this.offerCode = commercialRuleLine.getSourceOfferTemplate()!=null?commercialRuleLine.getSourceOfferTemplate().getCode():null;
 		this.productCode = commercialRuleLine.getSourceProduct()!=null?commercialRuleLine.getSourceProduct().getCode():null;
 		this.productVersion = commercialRuleLine.getSourceProductVersion()!=null?commercialRuleLine.getSourceProductVersion().getCurrentVersion():null;
-		this.attributeCode = commercialRuleLine.getTargetAttribute()!=null?commercialRuleLine.getTargetAttribute().getCode():null;
-		this.tagCode = commercialRuleLine.getTargetTag()!=null?commercialRuleLine.getTargetTag().getCode():null;
-		this.groupedAttributeCode = commercialRuleLine.getTargetGroupedAttributes()!=null?commercialRuleLine.getTargetGroupedAttributes().getCode():null;
+		this.attributeCode = commercialRuleLine.getSourceAttribute()!=null?commercialRuleLine.getSourceAttribute().getCode():null;
+		this.tagCode = commercialRuleLine.getSourceTag()!=null?commercialRuleLine.getSourceTag().getCode():null;
+		this.groupedAttributeCode = commercialRuleLine.getSourceGroupedAttributes()!=null?commercialRuleLine.getSourceGroupedAttributes().getCode():null;
 		this.attributeValue = commercialRuleLine.getSourceAttributeValue();
 		
 	}
@@ -121,18 +120,23 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	public void setAttributeValue(String attributeValue) {
 		this.attributeValue = attributeValue;
 	}
+ 
 	/**
 	 * @return the operator
 	 */
-	public int getOperator() {
+	public RuleOperatorEnum getOperator() {
 		return operator;
 	}
+
+
 	/**
 	 * @param operator the operator to set
 	 */
-	public void setOperator(int operator) {
+	public void setOperator(RuleOperatorEnum operator) {
 		this.operator = operator;
 	}
+
+
 	/**
 	 * @return the tagCode
 	 */

@@ -6,17 +6,26 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
@@ -33,6 +42,7 @@ import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.order.OrderService;
+import org.primefaces.model.SortOrder;
 
 
 /**
@@ -268,7 +278,39 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		return allStatus;
 	}
-	
+
+	private static final String DEFAULT_SORT_ORDER_ID = "id";
+	public GetListCommercialOrderDtoResponse listCommercialOrder(PagingAndFiltering pagingAndFiltering) {
+		 if (pagingAndFiltering == null) {
+			 pagingAndFiltering = new PagingAndFiltering();
+		 }
+		 String sortBy = DEFAULT_SORT_ORDER_ID;
+		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+			 sortBy = pagingAndFiltering.getSortBy();
+		 }
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, CommercialOrder.class);
+		 Long totalCount = commercialOrderService.count(paginationConfiguration);
+		 GetListCommercialOrderDtoResponse result = new GetListCommercialOrderDtoResponse();
+		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+		 if(totalCount > 0) {
+			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
+				 result.getCommercialOrderDtos().add(new CommercialOrderDto(co));
+			 });
+		 }
+		return result;
+	}
+
+	public CommercialOrderDto findByOrderNumber(String orderNumber) {
+		if(Strings.isEmpty(orderNumber))
+			missingParameters.add("orderNumber");
+		handleMissingParameters();
+		
+		CommercialOrder commercialOrder =  commercialOrderService.findByOrderNumer(orderNumber);
+		if(commercialOrder == null)
+			throw new EntityDoesNotExistsException("No Commercial order found for order number = " + orderNumber);
+		return new CommercialOrderDto(commercialOrder);
+	}
 	
 	private void checkParam(CommercialOrderDto order) {
 		if(Strings.isEmpty(order.getSellerCode()))

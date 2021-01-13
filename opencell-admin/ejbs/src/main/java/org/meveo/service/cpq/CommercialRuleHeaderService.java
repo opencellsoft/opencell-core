@@ -140,22 +140,22 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								.orElse(null);
 
 						if ((isPreRequisite && productContext == null)
-								|| (!isPreRequisite && productContext != null && line.getTargetAttribute()==null)) {
+								|| (!isPreRequisite && productContext != null && line.getSourceAttribute()==null)) {
 							if (continueProcess) {
 								continue;
 							} else {
 								return false;
 							}
 						}
-						if (line.getTargetAttribute() != null) {
+						if (line.getSourceAttribute() != null) {
 							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
 								String attributeCode = entry.getKey();
 								Object attributeValue = entry.getValue();
 								String convertedValue = String.valueOf(attributeValue);
 								;
-								if (attributeCode.equals(line.getTargetAttribute().getCode())) {
-									switch (line.getTargetAttribute().getAttributeType()) {
+								if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+									switch (line.getSourceAttribute().getAttributeType()) {
 									case LIST_MULTIPLE_TEXT:
 									case LIST_MULTIPLE_NUMERIC:
 										List<String> values = Arrays.asList(convertedValue.split(";"));

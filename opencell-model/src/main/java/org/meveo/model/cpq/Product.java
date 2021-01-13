@@ -171,7 +171,12 @@ public class Product extends EnableBusinessCFEntity {
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
 
-
+	
+	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("id")
+	private List<Media> medias = new ArrayList<>();
+		
+		
 
 	/**
 	 * @return the status
@@ -381,8 +386,6 @@ public class Product extends EnableBusinessCFEntity {
 	}
 
 
-
-
 	/**
 	 * @return the offerComponents
 	 */
@@ -405,4 +408,22 @@ public class Product extends EnableBusinessCFEntity {
 	public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
 		this.productCharges = productCharges;
 	}
+
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+	
+	
 }

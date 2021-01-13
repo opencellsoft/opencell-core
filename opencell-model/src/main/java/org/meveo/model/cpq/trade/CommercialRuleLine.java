@@ -2,11 +2,14 @@ package org.meveo.model.cpq.trade;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +20,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -72,7 +76,7 @@ public class CommercialRuleLine extends BaseEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "attribute_id", referencedColumnName = "id") 
-	private Attribute targetAttribute;
+	private Attribute sourceAttribute;
 	
 	 /** 
      * grouped service
@@ -80,14 +84,14 @@ public class CommercialRuleLine extends BaseEntity {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
-	private GroupedAttributes targetGroupedAttributes;
+	private GroupedAttributes sourceGroupedAttributes;
 	
 	/**
 	 * tag source
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id", referencedColumnName = "id")
-	private Tag targetTag;
+	private Tag sourceTag;
 	
 	/**
 	 * attribute value
@@ -96,11 +100,14 @@ public class CommercialRuleLine extends BaseEntity {
 	@Size(max = 255)
 	private String sourceAttributeValue;
 	
+ 
 	/**
-	 * operator : 0 => product or attribute is selected
+	 * rule operator
 	 */
-	@Column(name = "operator")
-	private int operator;
+	@Column(name = "operator", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private RuleOperatorEnum operator;
 	 
 	/**
 	 * @return the sourceOfferTemplate
@@ -143,21 +150,48 @@ public class CommercialRuleLine extends BaseEntity {
 	public void setSourceProductVersion(ProductVersion sourceProductVersion) {
 		this.sourceProductVersion = sourceProductVersion;
 	}
-
-
+	 
 
 	/**
-	 * @return the targetAttribute
+	 * @return the sourceAttribute
 	 */
-	public Attribute getTargetAttribute() {
-		return targetAttribute;
+	public Attribute getSourceAttribute() {
+		return sourceAttribute;
 	}
 
 	/**
-	 * @param targetAttribute the targetAttribute to set
+	 * @param sourceAttribute the sourceAttribute to set
 	 */
-	public void setTargetAttribute(Attribute targetAttribute) {
-		this.targetAttribute = targetAttribute;
+	public void setSourceAttribute(Attribute sourceAttribute) {
+		this.sourceAttribute = sourceAttribute;
+	}
+
+	/**
+	 * @return the sourceGroupedAttributes
+	 */
+	public GroupedAttributes getSourceGroupedAttributes() {
+		return sourceGroupedAttributes;
+	}
+
+	/**
+	 * @param sourceGroupedAttributes the sourceGroupedAttributes to set
+	 */
+	public void setSourceGroupedAttributes(GroupedAttributes sourceGroupedAttributes) {
+		this.sourceGroupedAttributes = sourceGroupedAttributes;
+	}
+
+	/**
+	 * @return the sourceTag
+	 */
+	public Tag getSourceTag() {
+		return sourceTag;
+	}
+
+	/**
+	 * @param sourceTag the sourceTag to set
+	 */
+	public void setSourceTag(Tag sourceTag) {
+		this.sourceTag = sourceTag;
 	}
 
 	/**
@@ -175,49 +209,19 @@ public class CommercialRuleLine extends BaseEntity {
 	}
 
  
-
-	/**
-	 * @return the targetGroupedAttributes
-	 */
-	public GroupedAttributes getTargetGroupedAttributes() {
-		return targetGroupedAttributes;
-	}
-
-	/**
-	 * @param targetGroupedAttributes the targetGroupedAttributes to set
-	 */
-	public void setTargetGroupedAttributes(GroupedAttributes targetGroupedAttributes) {
-		this.targetGroupedAttributes = targetGroupedAttributes;
-	}
-
-	/**
-	 * @return the targetTag
-	 */
-	public Tag getTargetTag() {
-		return targetTag;
-	}
-
-	/**
-	 * @param targetTag the targetTag to set
-	 */
-	public void setTargetTag(Tag targetTag) {
-		this.targetTag = targetTag;
-	}
-
 	/**
 	 * @return the operator
 	 */
-	public int getOperator() {
+	public RuleOperatorEnum getOperator() {
 		return operator;
 	}
 
 	/**
 	 * @param operator the operator to set
 	 */
-	public void setOperator(int operator) {
+	public void setOperator(RuleOperatorEnum operator) {
 		this.operator = operator;
 	}
- 
 
 	/**
 	 * @return the commercialRuleItem
