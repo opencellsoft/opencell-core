@@ -1708,7 +1708,7 @@
             </column>
             <column name="offer_template_id" type="bigint"></column>
             <column name="charge_template_id" type="bigint"></column>
-            <column name="product_template_id" type="bigint"></column>
+            <column name="product_id" type="bigint"></column>
 
             <column name="parameter_1" type="varchar(255)"/>
             <column name="parameter_2" type="varchar(255)"/>
@@ -1796,10 +1796,10 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="cat_service_template" />
 
-        <addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="billing_article_mapping_line"
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_article_mapping_line"
                                  constraintName="fk_billing_article_mapping_line_product_template" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="cat_service_template" />
+                                 referencedColumnNames="id" referencedTableName="cpq_product" />
 
         <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="article_id"
                                  constraintName="rated_transaction_article_fk" referencedTableName="billing_accounting_article"
