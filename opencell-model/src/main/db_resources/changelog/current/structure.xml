@@ -3803,7 +3803,8 @@ END $$;]]>
 			  decimal_parameter_5 numeric(23,12),
 			  access_code character varying(255),
 			  header_edr_id bigint,
-			  extra_parameter text
+			  extra_parameter text,
+			  times_tried int4
 			) partition by list (status)
 		</sql>
 		
