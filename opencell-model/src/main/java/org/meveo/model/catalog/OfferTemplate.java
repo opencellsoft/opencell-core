@@ -192,7 +192,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     private List<Attribute> attributes = new ArrayList<Attribute>();
 	
 	
-    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
 	
