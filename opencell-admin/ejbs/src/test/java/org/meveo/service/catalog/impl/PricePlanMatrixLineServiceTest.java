@@ -34,11 +34,17 @@ public class PricePlanMatrixLineServiceTest {
         Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
         Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
 
-        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attrb1, "Monthly");
-        QuoteAttribute twelveQuotedAttribute = createQuoteAttribute(attrb2, "12");
+        QuoteAttribute quotedBcAttribute1 = new QuoteAttribute();
+        quotedBcAttribute1.setAttribute(attrb1);
+        quotedBcAttribute1.setStringValue("Monthly");
+        QuoteAttribute monthlyQuotedAttribute = quotedBcAttribute1;
+        QuoteAttribute quotedBcAttribute = new QuoteAttribute();
+        quotedBcAttribute.setAttribute(attrb2);
+        quotedBcAttribute.setDoubleValue(12.0);
+        QuoteAttribute twelveQuotedAttribute = quotedBcAttribute;
 
 
-        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, List.of(monthlyQuotedAttribute, twelveQuotedAttribute));
+        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, twelveQuotedAttribute));
 
         assertThat(ppmLines.size()).isEqualTo(1);
         assertThat(ppmLines.get(0).getDescription()).isEqualTo("Price1");
@@ -52,13 +58,6 @@ public class PricePlanMatrixLineServiceTest {
         pricePlanMatrixVersion.setVersion(1);
         pricePlanMatrixVersion.setStatus(VersionStatusEnum.PUBLISHED);
         return pricePlanMatrixVersion;
-    }
-
-    private QuoteAttribute createQuoteAttribute(Attribute attribute, String value) {
-        QuoteAttribute quotedBcAttribute = new QuoteAttribute();
-        quotedBcAttribute.setAttribute(attribute);
-        quotedBcAttribute.setStringValue(value);
-        return quotedBcAttribute;
     }
 
     private Attribute createAttribute(String billing_cycle, AttributeTypeEnum listText) {

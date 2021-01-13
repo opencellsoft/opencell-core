@@ -149,8 +149,4 @@ public class QuoteAttribute extends AuditableEntity{
 		this.version = other.version;
 		
 	}
-
-	public String getValue() {
-		return attribute.getAttributeType().getValue(this);
-	}
 }
