@@ -3975,6 +3975,11 @@ END $$;]]>
             WHERE entity_class = 'Subscription'</sql>
     </changeSet>
     
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
+    </changeSet>
+
     <changeSet id="#5627_20210107" author="AndriusKarpavicius">
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>

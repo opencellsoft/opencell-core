@@ -125,8 +125,8 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/{billingRunId}/rebuildInvoice")
-    ActionStatus rebuildInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
+    @Path("/rebuildInvoice")
+    ActionStatus rebuildInvoice(InvoiceValidationDto InvoiceValidationDto);
     
     /**
      * Reject one or several invoices (change status to REJECTED).
@@ -134,7 +134,7 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/{billingRunId}/rejectInvoice")
+    @Path("/billingRun/{billingRunId}/rejectInvoice")
     ActionStatus rejectInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
     /**
@@ -143,7 +143,7 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/{billingRunId}/validateInvoice")
+    @Path("/billingRun/{billingRunId}/validateInvoice")
     ActionStatus validateInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
     /**
@@ -151,7 +151,7 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/{billingRunId}/moveInvoice")
+    @Path("/billingRun/{billingRunId}/moveInvoice")
     ActionStatus moveInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
     /**
@@ -159,7 +159,7 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @PUT
-    @Path("/{billingRunId}/cancelInvoice")
+    @Path("/billingRun/{billingRunId}/cancelInvoice")
     ActionStatus cancelInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
     
     /**
@@ -167,7 +167,7 @@ public interface InvoicingRs extends IBaseRs {
      *   
      */
     @DELETE
-    @Path("/{billingRunId}/canceledInvoices")
+    @Path("/billingRun/{billingRunId}/canceledInvoices")
     ActionStatus canceledInvoices(@PathParam("billingRunId") Long billingRunId);
 
 
