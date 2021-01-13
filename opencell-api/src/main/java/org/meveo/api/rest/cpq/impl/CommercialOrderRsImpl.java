@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.cpq.CommercialOrderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
@@ -79,6 +80,18 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 		}catch(MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());
 		}
+	}
+
+	@Override
+	public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response findByOrderNumber(String orderNumber) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
