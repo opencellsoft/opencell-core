@@ -815,10 +815,6 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
 	</changeSet>
 
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-34">
-		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_product_mapping" constraintName="fk-accounting_article-product_mapping" deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
-	</changeSet>
 
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-35">
 		<addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_mapping" constraintName="fk-charge_template-product_mapping" deferrable="false" initiallyDeferred="false"
@@ -1251,9 +1247,6 @@
 	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
 
-	        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_accounting_article_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
-
 			<addColumn tableName="cat_service_template">
 	            <column name="sequence" type="INT4" />
 	            <column name="display" type="${type.boolean}" />
@@ -1543,7 +1536,9 @@
 	            <column name="cpq_quote_product_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-            	<column name="value" type="varchar(255)" />
+            	<column name="string_value" type="varchar(255)" />
+            	<column name="double_value" type="float8" />
+            	<column name="date_value" type="datetime" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
@@ -1708,7 +1703,7 @@
             </column>
             <column name="offer_template_id" type="bigint"></column>
             <column name="charge_template_id" type="bigint"></column>
-            <column name="product_template_id" type="bigint"></column>
+            <column name="product_id" type="bigint"></column>
 
             <column name="parameter_1" type="varchar(255)"/>
             <column name="parameter_2" type="varchar(255)"/>
@@ -1796,10 +1791,10 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="cat_service_template" />
 
-        <addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="billing_article_mapping_line"
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="billing_article_mapping_line"
                                  constraintName="fk_billing_article_mapping_line_product_template" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="cat_service_template" />
+                                 referencedColumnNames="id" referencedTableName="cpq_product" />
 
         <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="article_id"
                                  constraintName="rated_transaction_article_fk" referencedTableName="billing_accounting_article"
@@ -2752,6 +2747,16 @@
 	        <addForeignKeyConstraint baseColumnNames="invoice_type_id" baseTableName="cpq_quote" constraintName="fk_cpq_quote_invoice_type_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
     </changeSet>
+    <changeSet id="20210113" author="TarikF">
+    
+      <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_accounting_article_id" deferrable="false" initiallyDeferred="false"
+          onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+          
+         
+		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_product_mapping" constraintName="fk-accounting_article-product_mapping" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+	            
+	</changeSet>
 </databaseChangeLog>
 
 

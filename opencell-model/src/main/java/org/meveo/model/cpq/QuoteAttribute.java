@@ -1,5 +1,6 @@
 package org.meveo.model.cpq;
 
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -10,16 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.quote.QuoteProduct;
 
 @Entity
@@ -36,7 +31,7 @@ public class QuoteAttribute extends AuditableEntity{
 
 	public QuoteAttribute(QuoteAttribute copy) {
 		this.attribute = copy.attribute;
-		this.value = copy.value;
+		this.stringValue = copy.stringValue;
 		this.quoteProduct = copy.quoteProduct;
 	}
 
@@ -52,8 +47,14 @@ public class QuoteAttribute extends AuditableEntity{
 	private Attribute attribute;
 	
 	
-	@Column(name = "value")
-	private String value;
+	@Column(name = "string_value")
+	private String stringValue;
+
+	@Column(name = "date_value")
+	private Date dateValue;
+
+	@Column(name = "double_value")
+	private Double doubleValue;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
@@ -74,17 +75,18 @@ public class QuoteAttribute extends AuditableEntity{
 	}
 
 	/**
-	 * @return the value
+	 * @return the stringValue
 	 */
-	public String getValue() {
-		return value;
+	// Double, String, Date
+	public String getStringValue() {
+		return stringValue;
 	}
 
 	/**
-	 * @param value the value to set
+	 * @param stringValue the stringValue to set
 	 */
-	public void setValue(String value) {
-		this.value = value;
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
 	}
 
 	/**
@@ -105,8 +107,24 @@ public class QuoteAttribute extends AuditableEntity{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(attribute, quoteProduct, value);
+		result = prime * result + Objects.hash(attribute, quoteProduct, stringValue);
 		return result;
+	}
+
+	public Date getDateValue() {
+		return dateValue;
+	}
+
+	public void setDateValue(Date dateValue) {
+		this.dateValue = dateValue;
+	}
+
+	public Double getDoubleValue() {
+		return doubleValue;
+	}
+
+	public void setDoubleValue(Double doubleValue) {
+		this.doubleValue = doubleValue;
 	}
 
 	@Override
@@ -117,11 +135,13 @@ public class QuoteAttribute extends AuditableEntity{
 			return false;
 		QuoteAttribute other = (QuoteAttribute) obj;
 		return Objects.equals(attribute, other.attribute) && Objects.equals(quoteProduct, other.quoteProduct)
-				&& Objects.equals(value, other.value);
+				&& Objects.equals(stringValue, other.stringValue) && Objects.equals(dateValue, other.dateValue) && Objects.equals(doubleValue, other.doubleValue);
 	}
 
 	public void update(QuoteAttribute other) {
-		this.value = other.value;
+		this.stringValue = other.stringValue;
+		this.doubleValue = other.doubleValue;
+		this.dateValue = other.dateValue;
 		this.attribute = other.attribute;
 		this.auditable = other.auditable;
 		this.quoteProduct = other.quoteProduct;
@@ -129,5 +149,4 @@ public class QuoteAttribute extends AuditableEntity{
 		this.version = other.version;
 		
 	}
-
 }

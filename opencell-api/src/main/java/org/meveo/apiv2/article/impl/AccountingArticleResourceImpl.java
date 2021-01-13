@@ -107,4 +107,11 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
         return Response.ok().cacheControl(cc).tag(etag).entity(articles).build();
 	}
 
+	@Override
+	public Response getAccountingArticles(String productCode, Map<String, Object> attribues, Request request) {
+		return accountingArticleApiService.getAccountingArticles(productCode, attribues)
+											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
+											.orElseThrow(NotFoundException::new);
+	}
+
 }

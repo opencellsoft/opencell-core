@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -729,11 +730,12 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) {
 
+        // add check on offerTemplate
         List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(quoteProduct.getProductVersion().getProduct());
 
-        List<QuoteAttribute> quoteAttributes = pricePlanMatrixColumns.stream()
+        Set<QuoteAttribute> quoteAttributes = pricePlanMatrixColumns.stream()
                 .map(column -> quoteAttributeService.findByAttributeAndQuoteProduct(column.getAttribute().getId(), quoteProduct.getId()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         return pricePlanMatrixLineService.loadMatchedLines(pricePlanMatrixVersion, quoteAttributes)
                 .stream()

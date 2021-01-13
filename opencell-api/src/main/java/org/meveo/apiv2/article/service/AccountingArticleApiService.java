@@ -10,20 +10,20 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.article.AccountingArticleService1;
 import org.meveo.service.billing.impl.article.ArticleFamilyService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.tax.TaxClassService;
 
-public class AccountingArticleApiService implements ApiService<AccountingArticle> {
+public class AccountingArticleApiService implements AccountingArticleServiceBase{
 
     private List<String> fetchFields;
     @Inject
@@ -36,6 +36,8 @@ public class AccountingArticleApiService implements ApiService<AccountingArticle
     private ArticleFamilyService articleFamilyService;
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private ProductService productService;
 
     @PostConstruct
     public void initService(){
@@ -127,11 +129,6 @@ public class AccountingArticleApiService implements ApiService<AccountingArticle
     }
 
     @Override
-    public Optional<AccountingArticle> patch(Long id, AccountingArticle baseEntity) {
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<AccountingArticle> delete(Long id) {
        Optional<AccountingArticle> accountingArticle = findById(id);
        if(accountingArticle.isPresent()) {
@@ -165,9 +162,13 @@ public class AccountingArticleApiService implements ApiService<AccountingArticle
     	return Optional.ofNullable(accountingArticle);
     }
 
+
 	@Override
-	public List<AccountingArticle> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<AccountingArticle> getAccountingArticles(String productCode, Map<String, Object> attributes) {
+		Product product = productService.findByCode(productCode);
+		if(product == null)
+            throw new BadRequestException("No Product found with code: " + productCode);
+		Optional<AccountingArticle> article = accountingArticleService1.getAccountingArticle(product, attributes);
+		return article;
 	}
 }

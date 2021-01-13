@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ChargeTemplate;
 
 /** 
@@ -94,7 +95,7 @@ public class ProductMapping extends BusinessEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id",referencedColumnName = "id")
-    private CpqAccountingArticle cpqAccountingArticle;
+    private AccountingArticle accountingArticle;
 	
 	
     /**
@@ -228,22 +229,6 @@ public class ProductMapping extends BusinessEntity {
 
 
 	/**
-	 * @return the accountingArticle
-	 */
-	public CpqAccountingArticle getCpqAccountingArticle() {
-		return cpqAccountingArticle;
-	}
-
-
-	/**
-	 * @param cpqAccountingArticle the accountingArticle to set
-	 */
-	public void setCpqAccountingArticle(CpqAccountingArticle cpqAccountingArticle) {
-		this.cpqAccountingArticle = cpqAccountingArticle;
-	}
-
-
-	/**
 	 * @return the attribute2Value
 	 */
 	public String getAttribute2Value() {
@@ -256,6 +241,22 @@ public class ProductMapping extends BusinessEntity {
 	 */
 	public void setAttribute1Value(String attribute1Value) {
 		this.attribute1Value = attribute1Value;
+	}
+
+
+	/**
+	 * @return the accountingArticle
+	 */
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+
+	/**
+	 * @param accountingArticle the accountingArticle to set
+	 */
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
 	}
 
 

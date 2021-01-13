@@ -15,6 +15,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Product;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,9 +65,9 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             articleMappingLine.setChargeTemplate(chargeTemplate);
         }
         if(resource.getProduct() != null){
-            ProductTemplate product = new ProductTemplate();
+            Product product = new Product();
             product.setId(product.getId());
-            articleMappingLine.setProductTemplate(product);
+            articleMappingLine.setProduct(product);
         }
         return articleMappingLine;
     }

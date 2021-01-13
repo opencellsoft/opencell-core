@@ -256,7 +256,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response removePricePlanMatrixColumnCode(String pricePlanMatrixColumnCode) {
         ActionStatus result = new ActionStatus();
         try {
-            pricePlanMatrixColumnApi.remove(pricePlanMatrixColumnCode);
+            pricePlanMatrixColumnApi.removePricePlanColumn(pricePlanMatrixColumnCode);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
             return errorResponse(e, result);

@@ -63,7 +63,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
-    private AccountingArticle() {
+    public AccountingArticle() {
     }
 
     public AccountingArticle(Long id) {

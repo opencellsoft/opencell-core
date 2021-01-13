@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -141,9 +143,31 @@ public class PricePlanMatrixValue extends BaseEntity {
         this.toDoubleValue = toDoubleValue;
     }
 
-    public boolean match(List<QuoteAttribute> quoteAttributes) {
+    public boolean match(Set<QuoteAttribute> quoteAttributes) {
         return quoteAttributes.stream()
                 .anyMatch( quoteAttribute -> quoteAttribute.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
-                        && quoteAttribute.getValue().equals(pricePlanMatrixColumn.getType().getValue(this)));
+                        && pricePlanMatrixColumn.getType().valueMatch(this, quoteAttribute));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PricePlanMatrixValue that = (PricePlanMatrixValue) o;
+        return Objects.equals(pricePlanMatrixColumn, that.pricePlanMatrixColumn) &&
+                Objects.equals(pricePlanMatrixLine, that.pricePlanMatrixLine) &&
+                Objects.equals(longValue, that.longValue) &&
+                Objects.equals(doubleValue, that.doubleValue) &&
+                Objects.equals(stringValue, that.stringValue) &&
+                Objects.equals(dateValue, that.dateValue) &&
+                Objects.equals(fromDateValue, that.fromDateValue) &&
+                Objects.equals(toDateValue, that.toDateValue) &&
+                Objects.equals(fromDoubleValue, that.fromDoubleValue) &&
+                Objects.equals(toDoubleValue, that.toDoubleValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), pricePlanMatrixColumn, pricePlanMatrixLine, longValue, doubleValue, stringValue, dateValue, fromDateValue, toDateValue, fromDoubleValue, toDoubleValue);
     }
 }

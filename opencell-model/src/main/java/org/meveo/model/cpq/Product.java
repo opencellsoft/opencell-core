@@ -60,6 +60,9 @@ import org.meveo.model.crm.CustomerBrand;
 })
 public class Product extends EnableBusinessCFEntity {
 
+	public Product() {
+	}
+
 	/**
 	 * 
 	 */

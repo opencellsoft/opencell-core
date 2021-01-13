@@ -69,6 +69,10 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
+    public void removePricePlanColumn(String code){
+        pricePlanMatrixColumnService.removePricePlanColumn(code);
+    }
+
     @Override
     protected BiFunction<PricePlanMatrixColumn, CustomFieldsDto, PricePlanMatrixColumnDto> getEntityToDtoFunction() {
         return (a, b) -> new PricePlanMatrixColumnDto(a);
