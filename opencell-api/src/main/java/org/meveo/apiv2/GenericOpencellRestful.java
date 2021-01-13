@@ -9,6 +9,7 @@ import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
 import org.meveo.apiv2.generic.VersionImpl;
+import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
@@ -33,6 +34,7 @@ public class GenericOpencellRestful extends Application {
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
+    public static Map<String,List<String>> ENTITIES_MAP = new HashMap();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -45,6 +47,7 @@ public class GenericOpencellRestful extends Application {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
         GENERIC_API_REQUEST_LOGGING_CONFIG = paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_LOGGING_CONFIG_KEY, "false");
         loadVersionInformation();
+        loadEntitiesList();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -89,5 +92,13 @@ public class GenericOpencellRestful extends Application {
             log.warn("There was a problem loading version information");
             e.printStackTrace();
         }
+    }
+
+    private void loadEntitiesList() {
+        List<String> listEntities = new ArrayList<>();
+        for ( Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet() ) {
+            listEntities.add( entry.getValue().getSimpleName() );
+        }
+        ENTITIES_MAP.put( "entities", listEntities );
     }
 }

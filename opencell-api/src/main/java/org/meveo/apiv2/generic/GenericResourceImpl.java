@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
 @Stateless
 public class GenericResourceImpl implements GenericResource {
     @Inject
@@ -54,6 +56,17 @@ public class GenericResourceImpl implements GenericResource {
                 .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
     }
+
+    @Override
+    public Response getFullListEntities() {
+        return Response.ok().entity(GenericOpencellRestful.ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @Override
+    public Response getRelatedFieldsAndTypesOfEntity( String entityName ) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        return Response.ok().entity(getPersistenceService(entityClass).mapRelatedFields()).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
     
     @Override
     public Response update(String entityName, Long id, String dto) {
@@ -73,6 +86,11 @@ public class GenericResourceImpl implements GenericResource {
     public Response delete(String entityName, Long id) {
         return Response.ok().entity(genericApiAlteringService.delete(entityName, id))
                         .links(buildSingleResourceLink(entityName, id)).build();
+    }
+
+    @Override
+    public Response getVersions() {
+        return Response.ok().entity(GenericOpencellRestful.VERSION_INFO).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     private Link buildPaginatedResourceLink(String entityName) {

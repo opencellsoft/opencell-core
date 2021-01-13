@@ -3,6 +3,8 @@ package org.meveo.api.custom;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.api.dto.custom.SequenceType.ALPHA_UP;
+import static org.meveo.api.dto.custom.SequenceType.REGEXP;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.GenericCodeDto;
@@ -73,8 +75,22 @@ public class GenericCodeApi extends BaseApi {
     }
 
     public void createSequence(SequenceDto sequenceDto) {
+        validateInputs(sequenceDto);
         Sequence sequence = SequenceDto.from(sequenceDto);
         sequenceService.create(sequence);
+    }
+
+    private void validateInputs(SequenceDto sequenceDto) {
+        if(sequenceDto.getSequenceType() == REGEXP) {
+            ofNullable(sequenceDto.getSize())
+                    .orElseThrow(() -> new MeveoApiException("Sequence size is required"));
+            ofNullable(sequenceDto.getPattern())
+                    .orElseThrow(() -> new MeveoApiException("Sequence pattern is required"));
+        }
+        if (sequenceDto.getSequenceType() == ALPHA_UP) {
+            ofNullable(sequenceDto.getSize())
+                    .orElseThrow(() -> new MeveoApiException("Sequence size is required"));
+        }
     }
 
     public void updateSequence(SequenceDto sequenceDto) {

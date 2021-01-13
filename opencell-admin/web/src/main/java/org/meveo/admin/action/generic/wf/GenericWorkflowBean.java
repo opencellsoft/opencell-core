@@ -367,6 +367,13 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
         this.editWFStatus = true;
     }
 
+    public void showTransitionActions(String wfCode, String transitionUuid) throws IOException {
+        facesContext.getCurrentInstance().getExternalContext()
+                .redirect("/opencell/pages/admin/workflow/actions.xhtml?wfCode=" + wfCode
+                        + "&transition=" + transitionUuid);
+
+    }
+
     public boolean isEditWFStatus() {
         return editWFStatus;
     }
