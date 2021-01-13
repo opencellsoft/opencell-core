@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
+import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
