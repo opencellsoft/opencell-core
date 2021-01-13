@@ -147,11 +147,10 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
 	@Override
-	public ActionStatus rebuildInvoice(Long billingRunId, InvoiceValidationDto invoiceValidationDto) {
+	public ActionStatus rebuildInvoice(InvoiceValidationDto invoiceValidationDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        log.debug("rebuildInvoice request={}", billingRunId);
         try {
-            invoicingApi.rebuildInvoice(billingRunId, invoiceValidationDto.getInvoices());
+            invoicingApi.rebuildInvoice(null, invoiceValidationDto.getInvoices());
         } catch (Exception e) {
             processException(e, result);
         }

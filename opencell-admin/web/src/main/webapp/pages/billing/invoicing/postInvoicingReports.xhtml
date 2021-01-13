@@ -212,22 +212,22 @@
                     <f:facet name="header">
                         <h:outputText value="#{messages['commons.actions']}" />
                     </f:facet>
-                    <p:button id="usagesButton" outcome="updateInvoiceDetail" icon="ui-icon-document">
+                    <p:button id="usagesButton" outcome="updateInvoiceDetail" icon="ui-icon-document" disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true" />
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                         <f:param name="backView" value="postInvoicingReports" />
                     </p:button>
-                                      <!-- rendered="#{invoice.status eq 'REJECTED' or invoice.status eq 'SUSPECT'}" -->                      
-                    <p:commandButton 
-                        action="#{invoiceBean.validateInvoice(entity)}" icon="ui-icon-circle-check" update=":results_form">
+                    <p:commandButton disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}"
+                        action="#{invoiceBean.validateInvoice(entity)}" icon="ui-icon-circle-check" update=":results_form :operationsForm">
                         <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmValidateInvoice']}" icon="ui-icon-alert" />
                     </p:commandButton>
-                    <p:commandButton 
-                        action="#{invoiceBean.cancelInvoice(entity)}" icon="ui-icon-circle-close" update=":results_form">
+                    <p:commandButton disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}"
+                        action="#{invoiceBean.cancelInvoice(entity)}" icon="ui-icon-circle-close" update=":results_form :operationsForm">
                         <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmCancelInvoice']}" icon="ui-icon-alert" />
                     </p:commandButton>
-                    <p:commandButton action="#{invoiceBean.rebuildInvoice(entity)}" icon="ui-icon-refresh" >
+                    <p:commandButton disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}"
+                    	action="#{invoiceBean.rebuildInvoice(entity)}" icon="ui-icon-refresh"  update=":results_form :operationsForm">
 		                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmRebuildInvoice']}" icon="ui-icon-alert" />
 		            </p:commandButton>
                 </p:column>
@@ -235,26 +235,31 @@
             <p:panel styleClass="action-buttons" id="actionsButtons">
                 <p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{invoiceBean.excludeBaDisabled}"
                                  value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
-                                 update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}"
+                                 update=":results_form :operationsForm :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}"
                                  rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
                     <p:confirm header="#{messages['commons.confirmationHeader']}"
                                message="#{messages['commons.excludeBillingAccounts']}"
                                icon="ui-icon-alert"/>
                 </p:commandButton>
-                <p:commandButton id="cancelInvoices" style="left:10px; top:-26px" disabled="#{invoiceBean.areSelectedInvoicesInvalidated()}"
+                <p:commandButton id="cancelInvoices" style="left:10px; top:-26px" disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}"
                                  value="#{messages['commons.cancelInvoices']}"
-                                 update=":results_form :messages" action="#{invoiceBean.cancelInvoices()}"
-                                 rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
+                                 update=":results_form :operationsForm :messages" action="#{invoiceBean.cancelInvoices()}">
                     <p:confirm header="#{messages['commons.confirmationHeader']}"
                                message="#{messages['commons.cancelInvoices']}"
                                icon="ui-icon-alert"/>
                 </p:commandButton>
-                <p:commandButton id="validateInvoices" style="left:10px; top:-26px" disabled="#{invoiceBean.areSelectedInvoicesInvalidated()}"
+                <p:commandButton id="validateInvoices" style="left:10px; top:-26px" disabled="#{billingRunBean.entity.status.toString() != 'VALIDATED' and invoiceBean.areSelectedInvoicesInvalidated()}"
                                  value="#{messages['commons.validateInvoices']}"
-                                 update=":results_form :messages" action="#{invoiceBean.validateInvoices()}"
-                                 rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
+                                 update=":results_form :operationsForm :messages" action="#{invoiceBean.validateInvoices()}">
                     <p:confirm header="#{messages['commons.confirmationHeader']}"
                                message="#{messages['commons.validateInvoices']}"
+                               icon="ui-icon-alert"/>
+                </p:commandButton>
+                <p:commandButton id="moveInvoices" style="left:10px; top:-26px" disabled="billingRunBean.entity.status.toString() != 'VALIDATED' and #{invoiceBean.areSelectedInvoicesInvalidated()}"
+                                 value="#{messages['commons.moveInvoices']}"
+                                 update=":results_form :operationsForm :messages" action="#{invoiceBean.moveInvoices(billingRunBean.entity)}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}"
+                               message="#{messages['commons.moveInvoices']}"
                                icon="ui-icon-alert"/>
                 </p:commandButton>
             </p:panel>
@@ -292,9 +297,10 @@
             <h:form id="operationsForm" rendered="#{!edit}">
                 <div class="action-buttons" style="margin: 0 auto; width: 200px; height: 50px;">
                     <p:commandButton action="#{billingRunBean.validateInvoicing()}"
-                    				
+                    				 update=":messages"
                                      value="#{messages['action.validate']}"
-                                     rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
+                                     rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
+                                     disabled="#{!billingRunBean.canBeValidated()}"/>
                     <!-- <h:commandButton
                     action="#{billingRunBean.rerate()}"
                     value="Rerate" /> -->

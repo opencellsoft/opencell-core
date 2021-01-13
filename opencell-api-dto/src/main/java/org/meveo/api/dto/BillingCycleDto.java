@@ -188,8 +188,35 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private Boolean thresholdPerEntity;
+    
+    @XmlElement
+    private String billingRunValidationScriptCode;
 
-    public Boolean isThresholdPerEntity() {
+    public String getLastTransactionDateDelayEL() {
+		return lastTransactionDateDelayEL;
+	}
+
+	public void setLastTransactionDateDelayEL(String lastTransactionDateDelayEL) {
+		this.lastTransactionDateDelayEL = lastTransactionDateDelayEL;
+	}
+
+	public String getBillingRunValidationScriptCode() {
+		return billingRunValidationScriptCode;
+	}
+
+	public void setBillingRunValidationScriptCode(String billingRunValidationScriptCode) {
+		this.billingRunValidationScriptCode = billingRunValidationScriptCode;
+	}
+
+	public Boolean getThresholdPerEntity() {
+		return thresholdPerEntity;
+	}
+
+	public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+		this.dueDateDelayELSpark = dueDateDelayELSpark;
+	}
+
+	public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
@@ -244,6 +271,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
+            billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
         }
     }
 
