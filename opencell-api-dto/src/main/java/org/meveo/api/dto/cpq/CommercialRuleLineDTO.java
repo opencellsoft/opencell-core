@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 
 @XmlRootElement(name = "CommercialRuleLineDTO")
@@ -27,7 +28,7 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	private String groupedAttributeCode;
 	private String attributeValue;
 	private String tagCode;
-	private int operator;
+	private RuleOperatorEnum operator;
 	public CommercialRuleLineDTO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -121,18 +122,23 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	public void setAttributeValue(String attributeValue) {
 		this.attributeValue = attributeValue;
 	}
+ 
 	/**
 	 * @return the operator
 	 */
-	public int getOperator() {
+	public RuleOperatorEnum getOperator() {
 		return operator;
 	}
+
+
 	/**
 	 * @param operator the operator to set
 	 */
-	public void setOperator(int operator) {
+	public void setOperator(RuleOperatorEnum operator) {
 		this.operator = operator;
 	}
+
+
 	/**
 	 * @return the tagCode
 	 */
