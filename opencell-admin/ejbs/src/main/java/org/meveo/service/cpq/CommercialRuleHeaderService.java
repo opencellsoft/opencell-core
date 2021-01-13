@@ -1,7 +1,10 @@
 package org.meveo.service.cpq;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -101,61 +104,119 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}
-	public boolean isProductSelectable(String offerCode,List<CommercialRuleHeader> commercialRules,List<ProductContextDTO> selectedProducts) {
-		Boolean isSelectable=Boolean.TRUE;
-		List<CommercialRuleItem> items=null;
-		boolean continueProcess=false;
-		for(CommercialRuleHeader commercialRule: commercialRules) {
-			if(RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType())) {
-				items=commercialRule.getCommercialRuleItems();
-				for(CommercialRuleItem item:items) {
-					Iterator<CommercialRuleLine> lineIterator=item.getCommercialRuleLines().iterator();
-					while (lineIterator.hasNext()) {
-						CommercialRuleLine line=lineIterator.next();
-						if(line.getSourceOfferTemplate()!=null && line.getSourceOfferTemplate().getCode()!=offerCode) {
-							continueProcess=checkOperator(item.getOperator(), !lineIterator.hasNext(), isSelectable);
-							if(continueProcess) {
+
+	public boolean isProductSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,
+			List<ProductContextDTO> selectedProducts) {
+		Boolean isSelectable = Boolean.TRUE;
+		List<CommercialRuleItem> items = null;
+		boolean continueProcess = false;
+		for (CommercialRuleHeader commercialRule : commercialRules) {
+			if (RuleTypeEnum.REPLACEMENT.equals(commercialRule.getRuleType())) {
+				continue;
+			}
+			boolean isPreRequisite = RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType());
+			items = commercialRule.getCommercialRuleItems();
+			for (CommercialRuleItem item : items) {
+				Iterator<CommercialRuleLine> lineIterator = item.getCommercialRuleLines().iterator();
+				while (lineIterator.hasNext()) {
+					CommercialRuleLine line = lineIterator.next();
+					continueProcess = checkOperator(item.getOperator(), !lineIterator.hasNext(), isPreRequisite,
+							isSelectable);
+					if ((isPreRequisite && line.getSourceOfferTemplate() != null
+							&& !line.getSourceOfferTemplate().getCode().equals(offerCode))
+							|| (!isPreRequisite && line.getSourceOfferTemplate() != null /*****@TODO : check offer attributes*************/
+									&& line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct()==null)) {
+						if (continueProcess) {
+							continue;
+						} else {
+							return false;
+						}
+
+					}
+					if (line.getSourceProduct() != null) {
+						String sourceProductCode = line.getSourceProduct().getCode();
+						ProductContextDTO productContext = selectedProducts.stream()
+								.filter(pdtCtx -> sourceProductCode.equals(pdtCtx.getProductCode())).findAny()
+								.orElse(null);
+
+						if ((isPreRequisite && productContext == null)
+								|| (!isPreRequisite && productContext != null && line.getTargetAttribute()==null)) {
+							if (continueProcess) {
 								continue;
-							}else {
+							} else {
 								return false;
 							}
-							
 						}
-						if(line.getSourceProduct()!=null) {
-							String sourceProductCode=line.getSourceProduct().getCode();
-							ProductContextDTO productContext = selectedProducts.stream()
-									  .filter(pdtCtx -> sourceProductCode.equals(pdtCtx.getProductCode()))
-									  .findAny()
-									  .orElse(null);
-							
-						 if(productContext==null) {
-							 continueProcess=checkOperator(item.getOperator(), !lineIterator.hasNext(), isSelectable);
-							 if(continueProcess) {
-									continue;
-								}else {
-									return false;
+						if (line.getTargetAttribute() != null) {
+							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
+							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
+								String attributeCode = entry.getKey();
+								Object attributeValue = entry.getValue();
+								String convertedValue = String.valueOf(attributeValue);
+								;
+								if (attributeCode.equals(line.getTargetAttribute().getCode())) {
+									switch (line.getTargetAttribute().getAttributeType()) {
+									case LIST_MULTIPLE_TEXT:
+									case LIST_MULTIPLE_NUMERIC:
+										List<String> values = Arrays.asList(convertedValue.split(";"));
+										if (!values.contains(line.getSourceAttributeValue())) {
+											if (continueProcess) {
+												continue;
+											} else {
+												return false;
+											}
+										}
+									default:
+										if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
+												|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
+											if (continueProcess) {
+												continue;
+											} else {
+												return false;
+											}
+										}
+
+									}
 								}
-						 }
-						
-				     }
+							}
+						}
+
+					}
 				}
 			}
+
 		}
-		return isSelectable;
+		return true;
 	}
-	
-	private boolean checkOperator(OperatorEnum operator, boolean isLastLine, Boolean isSelectable) {
-		if( OperatorEnum.AND.equals(operator)) {
-			return false;
-		}else {
-			if(isLastLine && !isSelectable) {
+
+	private boolean checkOperator(OperatorEnum operator, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable) {
+		if(isPreRequisite){
+			if( OperatorEnum.AND.equals(operator)) {
 				return false;
 			}else {
-				isSelectable=false;
-				return true;
+				if(isLastLine && !isSelectable) {
+					return false;
+				}else {
+					isSelectable=false;
+					return true;
+				}
+				
 			}
-			
+			//incompatibility
+		}else {
+			if( OperatorEnum.OR.equals(operator)) {
+				return false;
+			}else {
+				if(isLastLine && !isSelectable) {
+					return false;
+				}else {
+					isSelectable=false;
+					return true;
+				}
+				
+			}
 		}
+	
 	}
 	
 	

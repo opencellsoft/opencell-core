@@ -17,7 +17,9 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
+import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
+import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -42,12 +44,14 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -93,6 +97,9 @@ public class ProductApi extends BaseApi {
 
 	@Inject
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+	
+	@Inject
+	private CommercialRuleHeaderService commercialRuleHeaderService;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -616,6 +623,18 @@ public class ProductApi extends BaseApi {
 		 }   
 		 log.info("OfferTemplateApi requestedTagTypes={}",requestedTagTypes);   
 		 GetOfferTemplateResponseDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
+		 for(OfferProductsDto offerProduct:offertemplateDTO.getOfferTemplate().getOfferProducts()) {
+			 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion());
+			 List<CommercialRuleHeaderDTO >commercialRuleDtoList=new ArrayList<CommercialRuleHeaderDTO>();
+			 for(CommercialRuleHeader rule:commercialRules) {
+					CommercialRuleHeaderDTO commercialRuleDto=new CommercialRuleHeaderDTO(rule);
+					commercialRuleDtoList.add(commercialRuleDto);
+			 }	
+			 offerProduct.setCommercialRules(commercialRuleDtoList);
+			 boolean isSelectable=commercialRuleHeaderService.isProductSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
+			 offerProduct.setSelectable(isSelectable);
+	     }
+		 
 		 result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
 		 return result;
 	 }

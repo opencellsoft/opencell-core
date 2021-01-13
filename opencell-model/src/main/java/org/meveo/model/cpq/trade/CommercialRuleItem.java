@@ -55,7 +55,7 @@ public class CommercialRuleItem extends BaseEntity {
 	@Column(name = "operator", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	private OperatorEnum operator = OperatorEnum.ET;
+	private OperatorEnum operator = OperatorEnum.AND;
 	
 	/**
 	 * Expression language
