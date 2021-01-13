@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -142,7 +143,7 @@ public class PricePlanMatrixValue extends BaseEntity {
         this.toDoubleValue = toDoubleValue;
     }
 
-    public boolean match(List<QuoteAttribute> quoteAttributes) {
+    public boolean match(Set<QuoteAttribute> quoteAttributes) {
         return quoteAttributes.stream()
                 .anyMatch( quoteAttribute -> quoteAttribute.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
                         && pricePlanMatrixColumn.getType().valueMatch(this, quoteAttribute));
@@ -152,7 +153,6 @@ public class PricePlanMatrixValue extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         PricePlanMatrixValue that = (PricePlanMatrixValue) o;
         return Objects.equals(pricePlanMatrixColumn, that.pricePlanMatrixColumn) &&
                 Objects.equals(pricePlanMatrixLine, that.pricePlanMatrixLine) &&

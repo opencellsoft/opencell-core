@@ -28,11 +28,13 @@ public enum ColumnTypeEnum {
                 case COMPTAGE:
                 case TOTAL:
                 case NUMERIC:
-                    BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue()));
+                    return BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue()));
                 case LIST_NUMERIC:
-                case LIST_MULTIPLE_NUMERIC: return Stream.of(quoteAttribute.getStringValue().split(" ; "))
+                case LIST_MULTIPLE_NUMERIC: {
+                    return Stream.of(quoteAttribute.getStringValue().split(" ; "))
                                                         .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
                                                         .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
+                }
                 default:return false;
 
             }
@@ -46,7 +48,7 @@ public enum ColumnTypeEnum {
                 case COMPTAGE:
                 case TOTAL:
                 case NUMERIC:
-                    BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()));
+                    return BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()));
                 case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: return Stream.of(quoteAttribute.getStringValue().split(" ; "))
                         .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))

@@ -122,7 +122,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return new PricePlanMatrixLineDto(ppmLine);
     }
 
-    public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, List<QuoteAttribute> quoteAttributes) {
+    public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<QuoteAttribute> quoteAttributes) {
         return findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
                 .filter(line -> line.match(quoteAttributes))
                 .collect(Collectors.toList());

@@ -75,7 +75,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.pricePlanMatrixValues = pricePlanMatrixValues;
     }
 
-    public boolean match(List<QuoteAttribute> quoteAttributes) {
+    public boolean match(Set<QuoteAttribute> quoteAttributes) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(quoteAttributes));
     }

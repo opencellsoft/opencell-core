@@ -6,6 +6,7 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,13 +27,13 @@ public class PricePlanMatrixValueTest {
         monthlyValue.setStringValue("Monthly");
 
 
-        assertThat(monthlyValue.match(List.of(monthlyQuoteAttribute))).isTrue();
+        assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
 
         QuoteAttribute annuallyQuoteAttribute = new QuoteAttribute();
         annuallyQuoteAttribute.setAttribute(stringAttribute);
         annuallyQuoteAttribute.setStringValue("Annually");
 
-        assertThat(monthlyValue.match(List.of(annuallyQuoteAttribute))).isFalse();
+        assertThat(monthlyValue.match(Set.of(annuallyQuoteAttribute))).isFalse();
 
     }
 
@@ -50,7 +51,7 @@ public class PricePlanMatrixValueTest {
         monthlyValue.setPricePlanMatrixColumn(bcColumn);
         monthlyValue.setStringValue("Monthly");
 
-        assertThat(monthlyValue.match(List.of(monthlyQuoteAttribute))).isTrue();
+        assertThat(monthlyValue.match(Set.of(monthlyQuoteAttribute))).isTrue();
     }
 
     private PricePlanMatrixColumn createColumn(Attribute attribute, ColumnTypeEnum columnType) {

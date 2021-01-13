@@ -27,28 +27,13 @@ public enum AttributeTypeEnum {
 	TEXT,
 	
 	/** Numeric value: Entry of a number **/
-	NUMERIC{
-		@Override
-		public String getValue(QuoteAttribute quoteAttribute) {
-			return quoteAttribute.getDoubleValue().toString();
-		}
-	},
+	NUMERIC,
 	
 	/** numeric with predefined decimale **/
-	INTEGER{
-		@Override
-		public String getValue(QuoteAttribute quoteAttribute) {
-			return quoteAttribute.getDoubleValue().toString();
-		}
-	},
+	INTEGER,
 	
 	/** Date type**/
-	DATE{
-		@Override
-		public String getValue(QuoteAttribute quoteAttribute) {
-			return quoteAttribute.getDateValue().toString();
-		}
-	},
+	DATE,
 	
 	/** choice of calendar of opencell's calendar**/
 	CALENDAR, // To analyze
@@ -60,21 +45,7 @@ public enum AttributeTypeEnum {
 	PHONE,
 	
 	/** display some of list of numerics **/
-	TOTAL{
-		@Override
-		public String getValue(QuoteAttribute quoteAttribute) {
-			return quoteAttribute.getDoubleValue().toString();
-		}
-	},
+	TOTAL,
 	
-	COMPTAGE{
-		@Override
-		public String getValue(QuoteAttribute quoteAttribute) {
-			return quoteAttribute.getDoubleValue().toString();
-		}
-	};
-
-	public String getValue(QuoteAttribute quoteAttribute) {
-		return quoteAttribute.getStringValue();
-	}
+	COMPTAGE;
 }
