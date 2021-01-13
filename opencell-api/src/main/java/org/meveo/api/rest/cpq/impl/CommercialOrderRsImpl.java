@@ -8,6 +8,9 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -84,14 +87,27 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 
 	@Override
 	public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering) {
-		// TODO Auto-generated method stub
-		return null;
+		GetListCommercialOrderDtoResponse result = new GetListCommercialOrderDtoResponse();
+
+	        try {  
+	    			result = commercialOrderApi.listCommercialOrder(pagingAndFiltering);
+	    			
+	    			return Response.ok(result).build(); 
+	        	
+	        } catch (MeveoApiException e) { 
+	            return errorResponse(e, result.getActionStatus());
+	        } 
 	}
 
 	@Override
 	public Response findByOrderNumber(String orderNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+	    try {
+	    	result.setCommercialOrderDto(commercialOrderApi.findByOrderNumber(orderNumber));
+	        return Response.ok(result).build();
+	    } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+	    }
 	}
 
 }

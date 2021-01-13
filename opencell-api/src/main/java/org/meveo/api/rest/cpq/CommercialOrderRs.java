@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -118,7 +119,7 @@ public interface CommercialOrderRs {
     tags = { "Order management" },
     description ="Get commercial orders matching the given criteria",
     responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class)))
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialOrderDtoResponse.class)))
     })
     public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering);
 	
@@ -129,7 +130,7 @@ public interface CommercialOrderRs {
     tags = { "Order management" },
     description ="Get commercial order matching the given order number",
     responses = {
-            @ApiResponse(responseCode="200", description = "The order is succefully retrieved",content = @Content(schema = @Schema(implementation = GetListProductsResponseDto.class))),
+            @ApiResponse(responseCode="200", description = "The order is succefully retrieved",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
      	   })
     public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
