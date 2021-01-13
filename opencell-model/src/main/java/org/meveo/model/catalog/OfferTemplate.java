@@ -49,6 +49,7 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 
@@ -189,6 +190,12 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
     private List<Attribute> attributes = new ArrayList<Attribute>();
+	
+	
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Media> medias = new ArrayList<>();
+	
      
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -539,6 +546,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
 	}
 
 	
