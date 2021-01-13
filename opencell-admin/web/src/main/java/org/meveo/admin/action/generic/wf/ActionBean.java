@@ -77,7 +77,7 @@ public class ActionBean extends BaseBean<Action> {
 
     @Override
     protected IPersistenceService<Action> getPersistenceService() {
-        return getPersistenceService();
+        return actionsService;
     }
 
     @Override

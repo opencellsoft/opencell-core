@@ -161,7 +161,6 @@
                             <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
                             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
                             <hftl:column label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" />
-                            <hftl:column label="#{messages['generic.wf.actionScript']}" field="actionScript.code" />
 
                             <p:column styleClass="actions-column" rendered="#{genericWorkflowBean.edit}">
                                 <f:facet name="header">
@@ -214,6 +213,8 @@
                                     <p:commandButton action="#{genericWorkflowBean.saveWfTransition}" value="#{messages['action.save']}" process="@form" update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
                                     <p:commandButton action="#{genericWorkflowBean.cancelTransitionDetail}" value="#{messages['action.cancel']}" process="@this"
                                         update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
+									<p:commandButton action="#{genericWorkflowBean.showTransitionActions(genericWorkflowBean.entity.code, gWFTransitionBean.entity.uuid)}"
+													 value="#{messages['action.show']}" process="@this"/>
                                 </p:panel>
                             </hftl:formPanel>
                         </p:panel>
