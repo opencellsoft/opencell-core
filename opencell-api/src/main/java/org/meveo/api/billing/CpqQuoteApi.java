@@ -37,6 +37,7 @@ import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
+import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -404,9 +405,9 @@ public class CpqQuoteApi extends BaseApi {
 		GetQuoteDtoResponse result=new GetQuoteDtoResponse();
 		result.setQuoteDto(populateQuoteToDto(quote));
 		final List<QuoteVersion> quoteVersions = quoteVersionService.findByQuoteCode(quote.getCode());
-		QuoteVersionDto quoteVersionDto=null;
+		GetQuoteVersionDtoResponse quoteVersionDto=null;
 		for(QuoteVersion  version:quoteVersions) {
-			quoteVersionDto=new QuoteVersionDto(version,true,true,true);
+			quoteVersionDto=new GetQuoteVersionDtoResponse(version,true,true,true);
 			result.addQuoteVersion(quoteVersionDto);
 		}
 		

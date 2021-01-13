@@ -46,13 +46,6 @@ public class QuoteVersionDto extends BaseEntityDto {
 	/** billing code */
 	private String billingPlanCode;
 
-	private List<QuoteOfferDTO> quoteItems = new ArrayList<QuoteOfferDTO>();
-
-	/**
-	 * List of quote prices
-	 */
-	private List<PriceDTO> prices;
-
 	/**
 	 * Instantiates a new product version dto.
 	 */
@@ -72,18 +65,6 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.endDate = q.getEndDate();
 		this.billingPlanCode = q.getBillingPlanCode();
 		this.startDate = q.getStartDate();
-	}
-
-	public QuoteVersionDto(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,
-			boolean loadQuoteAttributes) {
-		 super();
-		 init(q);
-		if (loadQuoteOffers) {
-			for (QuoteOffer quoteOffer : q.getQuoteOffers()) {
-				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes));
-			}
-		}
-
 	}
 
 	/**
@@ -192,33 +173,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.billingPlanCode = billingPlanCode;
 	}
 
-	/**
-	 * @return the quoteItems
-	 */
-	public List<QuoteOfferDTO> getQuoteItems() {
-		return quoteItems;
-	}
 
-	/**
-	 * @param quoteItems the quoteItems to set
-	 */
-	public void setQuoteItems(List<QuoteOfferDTO> quoteItems) {
-		this.quoteItems = quoteItems;
-	}
-
-	/**
-	 * @return the prices
-	 */
-	public List<PriceDTO> getPrices() {
-		return prices;
-	}
-
-	/**
-	 * @param prices the prices to set
-	 */
-	public void setPrices(List<PriceDTO> prices) {
-		this.prices = prices;
-	}
 	
 	
 

@@ -30,7 +30,7 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	 */
 	private QuoteDTO quoteDto;
 	
-    private List<QuoteVersionDto> allQuoteVersions = new ArrayList<QuoteVersionDto>();
+    private List<GetQuoteVersionDtoResponse> allQuoteVersions = new ArrayList<GetQuoteVersionDtoResponse>();
 	
     
     
@@ -61,14 +61,14 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	/**
 	 * @return the allQuoteVersions
 	 */
-	public List<QuoteVersionDto> getAllQuoteVersions() {
+	public List<GetQuoteVersionDtoResponse> getAllQuoteVersions() {
 		return allQuoteVersions;
 	}
 
 	/**
 	 * @param allQuoteVersions the allQuoteVersions to set
 	 */
-	public void setAllQuoteVersions(List<QuoteVersionDto> allQuoteVersions) {
+	public void setAllQuoteVersions(List<GetQuoteVersionDtoResponse> allQuoteVersions) {
 		this.allQuoteVersions = allQuoteVersions;
 	}
 
@@ -77,9 +77,9 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	/**
 	 * @param allQuoteVersions the allQuoteVersions to set
 	 */
-	public void addQuoteVersion(QuoteVersionDto quoteVersion) {
+	public void addQuoteVersion(GetQuoteVersionDtoResponse quoteVersion) {
 		 if(allQuoteVersions==null) {
-			 allQuoteVersions=new ArrayList<QuoteVersionDto>();
+			 allQuoteVersions=new ArrayList<GetQuoteVersionDtoResponse>();
 		 }
 		 allQuoteVersions.add(quoteVersion);
 	}
