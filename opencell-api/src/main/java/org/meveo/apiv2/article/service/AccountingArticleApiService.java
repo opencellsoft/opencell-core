@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
@@ -122,6 +123,9 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             ArticleFamily articleFamily = articleFamilyService.findById(baseEntity.getArticleFamily().getId());
             if(articleFamily == null)
                 throw new BadRequestException("No article family found with id: " + baseEntity.getArticleFamily().getId());
+        }
+        if(!Strings.isEmpty(baseEntity.getDescription())) {
+        	accountingArticle.setDescription(baseEntity.getDescription());
         }
         accountingArticleService1.update(accountingArticle);
         

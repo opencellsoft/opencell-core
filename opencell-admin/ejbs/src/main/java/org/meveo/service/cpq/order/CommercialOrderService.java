@@ -4,7 +4,12 @@ import java.util.Calendar;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.service.base.PersistenceService;
@@ -40,5 +45,19 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		
         update(commercialOrder);
 		return commercialOrder;
+	}
+	
+	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
+		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");
+		queryBuilder.addCriterion("co.orderNumber", "=", orderNumber, false);
+		Query query = queryBuilder.getQuery(getEntityManager());
+		
+		try {
+			return (CommercialOrder) query.getSingleResult();
+		}catch(NoResultException e) {
+			return null;
+		}catch(NonUniqueResultException e) {
+			throw new BusinessException("Found many order number !!");
+		}
 	}
 }
