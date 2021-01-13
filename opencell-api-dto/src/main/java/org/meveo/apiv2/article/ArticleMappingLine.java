@@ -5,6 +5,8 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Value.Immutable
@@ -14,6 +16,7 @@ public interface ArticleMappingLine extends Resource {
 
     Resource getArticleMapping();
 
+    @NotNull
     Resource getAccountingArticle();
 
     @Nullable
