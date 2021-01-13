@@ -264,14 +264,14 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 			if(attribute==null) {
 				throw new EntityDoesNotExistsException(Attribute.class, dto.getAttributeCode());
 			}
-			commercialRuleLine.setTargetAttribute(attribute);
+			commercialRuleLine.setSourceAttribute(attribute);
 		}
 		if(!StringUtils.isBlank(dto.getTagCode())) {
 			Tag tag =tagService.findByCode(dto.getTagCode());
 			if(tag==null) {
 				throw new EntityDoesNotExistsException(Tag.class, dto.getTagCode());
 			}
-			commercialRuleLine.setTargetTag(tag);
+			commercialRuleLine.setSourceTag(tag);
 		}
 
 		if(!StringUtils.isBlank(dto.getGroupedAttributeCode())) {
@@ -280,7 +280,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(GroupedAttributes.class, dto.getGroupedAttributeCode());
 			}
 			
-			commercialRuleLine.setTargetGroupedAttributes(groupedAttributes);
+			commercialRuleLine.setSourceGroupedAttributes(groupedAttributes);
 		}
 	}
 	

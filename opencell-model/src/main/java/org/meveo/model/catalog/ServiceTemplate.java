@@ -263,7 +263,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         return result;
     }
     
-    @OneToMany(mappedBy = "serviceTempalte", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
 
