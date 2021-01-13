@@ -21,11 +21,9 @@ package org.meveo.apiv2;
 import org.junit.Test;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.ordering.ValidationUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Customer;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

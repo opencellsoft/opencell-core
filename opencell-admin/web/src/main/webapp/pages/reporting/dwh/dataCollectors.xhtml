@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml"
+    	xmlns:p="http://primefaces.org/ui">
+  	
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{dataCollectorListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="dataCollectors" value="#{messages['menu.dataCollector']}" />
+			</p:breadCrumb>
+		</h:form>   		
+
+			<hftl:searchPanel label="#{messages['menu.dataCollector']}" columns="3" backingBean="#{dataCollectorListBean}">
+				<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+				<hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+			</hftl:searchPanel>
+
+
+			<hftl:dataList backingBean="#{dataCollectorListBean}" exportButton="false" exportToCsv="true"  fileName="MeasurableQuantity" sortBy="code">
+			    <hftl:column label="#{messages['businessEntity.code']}"
+					field="code" />
+				<hftl:column label="#{messages['businessEntity.description']}"
+							 field="description" />
+				<hftl:column
+					label="#{messages['entity.dataCollector.sqlQuery']}"
+					field="sqlQuery" />
+				<hftl:column
+					label="#{messages['entity.dataCollector.lastRun']}"
+					field="lastRunDate" />
+
+				<hftl:actionsColumn editView="/pages/reporting/dwh/dataCollectorDetail.xhtml"
+									permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
+			</hftl:dataList>
+	</ui:define>
+</ui:composition>

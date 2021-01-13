@@ -38,7 +38,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.job.JobExecutionService;
 
 /**

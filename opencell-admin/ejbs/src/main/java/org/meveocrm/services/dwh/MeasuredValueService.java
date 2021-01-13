@@ -39,6 +39,7 @@ import org.meveo.service.base.PersistenceService;
  * @lastModifiedVersion 5.0.1
  */
 @Stateless
+@Deprecated
 public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
     /**

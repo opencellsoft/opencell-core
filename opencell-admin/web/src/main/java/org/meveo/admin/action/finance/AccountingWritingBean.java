@@ -18,7 +18,7 @@
 package org.meveo.admin.action.finance;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.finance.AccountingEntry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.AccountingWritingService;
@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
- * Standard backing bean for {@link AccountingWriting} (extends {@link BaseBean} that
+ * Standard backing bean for {@link AccountingEntry} (extends {@link BaseBean} that
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
@@ -37,19 +37,19 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class AccountingWritingBean extends BaseBean<AccountingWriting> {
+public class AccountingWritingBean extends BaseBean<AccountingEntry> {
 
     /**
-     * Injected @{link {@link AccountingWriting} service. Extends {@link PersistenceService}
+     * Injected @{link {@link AccountingEntry} service. Extends {@link PersistenceService}
      */
     @Inject
-    private AccountingWritingService accountingWritingService;
+    private AccountingWritingService accountingEntryService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public AccountingWritingBean() {
-        super(AccountingWriting.class);
+        super(AccountingEntry.class);
     }
 
     /**
@@ -60,7 +60,7 @@ public class AccountingWritingBean extends BaseBean<AccountingWriting> {
      * @return Persistence service
      */
     @Override
-    protected IPersistenceService<AccountingWriting> getPersistenceService() {
-        return accountingWritingService;
+    protected IPersistenceService<AccountingEntry> getPersistenceService() {
+        return accountingEntryService;
     }
 }

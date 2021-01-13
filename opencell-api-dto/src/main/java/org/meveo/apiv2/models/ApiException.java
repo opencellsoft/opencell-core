@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Value.Immutable
@@ -32,7 +33,7 @@ public interface ApiException extends Resource{
     @Nullable
     String getCode();
     @Nullable
-    String getStatus();
+    Response.Status getStatus();
     @Nullable
     String getDetails();
     @Nullable

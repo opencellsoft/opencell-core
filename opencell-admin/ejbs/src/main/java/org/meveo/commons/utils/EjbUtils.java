@@ -17,14 +17,13 @@
  */
 package org.meveo.commons.utils;
 
-import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Properties;
 
 /**
  * Util class for remote ejb lookups.
@@ -105,7 +104,7 @@ public class EjbUtils {
             return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + serviceInterfaceName);
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(EjbUtils.class);
-            log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
+            log.debug("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
     }

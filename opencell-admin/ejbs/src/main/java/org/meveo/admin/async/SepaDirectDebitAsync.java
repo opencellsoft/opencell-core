@@ -89,14 +89,14 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
+	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, boolean isToMatching, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
 			if (result != null && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
 				break;
 			}
 			try {
-				unitSSDJobBean.execute(result, ddRequestItem);
+				unitSSDJobBean.execute(result, ddRequestItem, isToMatching);
 			} catch (Exception e) {
 				Log.warn("Error on launchAndForgetPaymentCreation", e);
 				if(result != null) {

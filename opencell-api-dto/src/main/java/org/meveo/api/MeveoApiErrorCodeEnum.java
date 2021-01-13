@@ -19,7 +19,8 @@
 package org.meveo.api;
 
 /**
- * Action status error codes. See ActionStatus.message for a detailed error message
+ * Action
+ * status error codes. See ActionStatus.message for a detailed error message
  * 
  * @author Andrius Karpavicius
  * @lastModifiedVersion 5.2
@@ -105,5 +106,10 @@ public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
     /**
      * database constraint violation.
      */
-    CONSTRAINT_VIOLATION_EXCEPTION;
+    CONSTRAINT_VIOLATION_EXCEPTION,
+
+    /**
+     * Transition not executed: condition is false
+     */
+    CONDITION_FALSE
 }

@@ -359,17 +359,17 @@
                                     <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
 
                                     <hftl:formField label="#{messages['offerTemplate.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1"
-                                        maxlength="2000" componentWidth="50" newLine="true" />
+                                        maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxEl':'offerTemplate.minimumAmountWithTaxEl']}"
-                                        field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                        field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
-                                        rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}" />
+                                        rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField
                                         label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}"
                                         field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                        rendered="#{paramBean.sparkEnabled}" />
+                                        rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
-                                        listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" />
+                                        listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 
                                     <hftl:decorateFormField fieldId="balance_text" label="#{messages['subscription.balanceDue']}">
                                         <h:outputText id="balance_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceDue()}"
@@ -906,7 +906,7 @@
         <p:dialog id="instantiateDiscountPlanDialog" header="#{messages['discountPlan.instantiation']}" widgetVar="dlg_instantiateDiscountPlanDialog" modal="true"
             appendTo="@(body)" closeOnEscape="true" width="600">
             <hftl:formPanel formId="formDPI" edit="true" backingBean="#{subscriptionBean}" entity="#{subscriptionBean.entity.discountPlan}" styleClass="formPanel"
-                showFormButtons="false">
+                showFormButtons="false" useCustomIdParam="true">
                 <p:tabView>
                     <p:tab title="#{messages['commons.information']}">
                         <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
@@ -916,6 +916,7 @@
                         <p:panel styleClass="action-buttons">
                             <p:commandButton action="#{subscriptionBean.instantiateDiscountPlan()}" value="#{messages['button.instanciateButton']}"
                                 update=":#{p:component('discountPanel')}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+                                	<f:param name="subscriptionId" value="#{subscriptionBean.objectId}" />
                             </p:commandButton>
                             <p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
                         </p:panel>

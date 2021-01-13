@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -70,7 +71,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
-        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERRATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
 
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
@@ -304,8 +305,33 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "skip_validation_script")
+    private boolean skipValidationScript = false;
 
-    public Date getProcessDate() {
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date")
+    private Date collectionDate;
+    
+    /**
+     * The next BillingRun where rejected/suspect invoices may be moved.
+     */
+    @OneToOne
+    @JoinColumn(name = "next_billing_run_id")
+    private BillingRun nextBillingRun;
+
+    public BillingRun getNextBillingRun() {
+		return nextBillingRun;
+	}
+
+	public void setNextBillingRun(BillingRun nextBillingRun) {
+		this.nextBillingRun = nextBillingRun;
+	}
+
+	public Date getProcessDate() {
         return processDate;
     }
 
@@ -684,4 +710,54 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setReferenceDate(ReferenceDateEnum referenceDate) {
         this.referenceDate = referenceDate;
     }
+
+    /**
+     * Gets CollectionDate date.
+     *
+     * @return ollectionDate date.
+     */
+    public Date getCollectionDate() {
+        return collectionDate;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDate
+     */
+    public void setCollectionDate(Date collectionDate) {
+        this.collectionDate = collectionDate;
+    }
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "reject_auto_action")
+    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "suspect_auto_action")
+    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    
+    public BillingRunAutomaticActionEnum getRejectAutoAction() {
+		return rejectAutoAction;
+	}
+
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum autoRejectAction) {
+		this.rejectAutoAction = autoRejectAction;
+	}
+
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
+
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum autoSuspectAction) {
+		this.suspectAutoAction = autoSuspectAction;
+	}
+
+	public boolean isSkipValidationScript() {
+		return skipValidationScript;
+	}
+
+	public void setSkipValidationScript(boolean skipValidationScript) {
+		this.skipValidationScript = skipValidationScript;
+	}
 }

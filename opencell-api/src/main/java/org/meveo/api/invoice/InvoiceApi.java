@@ -196,7 +196,14 @@ public class InvoiceApi extends BaseApi {
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
-
+        // Validate and populate customFields
+        try {
+            populateCustomFields(invoiceDTO.getCustomFields(), invoice, false);
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to invoice: {}", e.getMessage());
+            throw e;
+        }
+        
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());
         response.setAmountWithoutTax(invoice.getAmountWithoutTax());
@@ -610,7 +617,7 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceType");
         }
 
-        if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty()) {
+        if ((invoiceDTO.getRatedTransactionsTolink() == null || invoiceDTO.getRatedTransactionsTolink().isEmpty()) && (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty())) {
             missingParameters.add("categoryInvoiceAgregates");
         }
 
@@ -1069,6 +1076,7 @@ public class InvoiceApi extends BaseApi {
         dto.setDiscount(invoice.getDiscount());
         dto.setCheckAlreadySent(invoice.isAlreadySent());
         dto.setSentByEmail(invoice.isDontSend());
+        dto.setInitialCollectionDate(invoice.getInitialCollectionDate());
 
         List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<>();
         List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<>();

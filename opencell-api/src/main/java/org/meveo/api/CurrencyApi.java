@@ -73,6 +73,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
+        tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
         if (postData.isDisabled() != null) {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
@@ -130,6 +131,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrency(currency);
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
+        tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
 
         tradingCurrencyService.update(tradingCurrency);
     }

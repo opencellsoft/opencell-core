@@ -130,7 +130,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Column(name = "due_date_delay_el", length = 2000, nullable = false)
     @Size(max = 2000)
-    @NotNull
     private String dueDateDelayEL;
 
     /**
@@ -204,6 +203,20 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     private boolean splitPerPaymentMethod;
 
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String collectionDateDelayEl;
+    
+    /**
+     * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run_validation_script_id")
+    private ScriptInstance billingRunValidationScript;
+    
     /**
      * @return Invoicing calendar
      */
@@ -453,4 +466,30 @@ public class BillingCycle extends BusinessCFEntity {
     public void setSplitPerPaymentMethod(boolean splitPerPaymentMethod) {
         this.splitPerPaymentMethod = splitPerPaymentMethod;
     }
+
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+    
+	public ScriptInstance getBillingRunValidationScript() {
+		return billingRunValidationScript;
+	}
+
+	public void setBillingRunValidationScript(ScriptInstance billingRunValidationScript) {
+		this.billingRunValidationScript = billingRunValidationScript;
+	}
 }

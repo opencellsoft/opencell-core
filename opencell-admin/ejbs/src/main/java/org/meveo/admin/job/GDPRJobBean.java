@@ -31,7 +31,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -41,8 +41,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.intcrm.impl.ContactService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.util.ApplicationProvider;
@@ -81,7 +81,7 @@ public class GDPRJobBean extends BaseJobBean {
 	private AccountOperationService accountOperationService;
 	
 	@Inject
-	private ContactService contactService;
+	private CustomerService customerService;
 
 	@JpaAmpNewTx
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -90,61 +90,156 @@ public class GDPRJobBean extends BaseJobBean {
 
 		Provider provider = providerService.findById(appProvider.getId());
 		GdprConfiguration gdprConfiguration = provider.getGdprConfigurationNullSafe();
-
+		
 		try {
+		    int nbItemsToProcess = 0;
+		    
 			if (gdprConfiguration.isDeleteSubscription()) {
-				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
+				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveSubscriptionLife());
 				log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
-				if (!inactiveSubscriptions.isEmpty()) {
-					subscriptionService.bulkDelete(inactiveSubscriptions);
-				}
+				nbItemsToProcess += inactiveSubscriptions.size();
+				bulkSubscriptionDelete(inactiveSubscriptions, result);
 			}
 
 			if (gdprConfiguration.isDeleteOrder()) {
 				List<Order> inactiveOrders = orderService.listInactiveOrders(gdprConfiguration.getInactiveOrderLife());
 				log.debug("Found {} inactive orders", inactiveOrders.size());
-				if (!inactiveOrders.isEmpty()) {
-					orderService.bulkDelete(inactiveOrders);
-				}
+				nbItemsToProcess += inactiveOrders.size();
+				bulkOrderDelete(inactiveOrders, result);
 			}
 
 			if (gdprConfiguration.isDeleteInvoice()) {
 				List<Invoice> inactiveInvoices = invoiceService.listInactiveInvoice(gdprConfiguration.getInvoiceLife());
 				log.debug("Found {} inactive invoices", inactiveInvoices.size());
-				if (!inactiveInvoices.isEmpty()) {
-					invoiceService.bulkDelete(inactiveInvoices);
-				}
+				nbItemsToProcess += inactiveInvoices.size();
+				bulkInvoiceDelete(inactiveInvoices, result);
 			}
 
 			if (gdprConfiguration.isDeleteAccounting()) {
 				List<AccountOperation> inactiveAccountOps = accountOperationService.listInactiveAccountOperations(gdprConfiguration.getAccountingLife());
 				log.debug("Found {} inactive accountOperations", inactiveAccountOps.size());
-				if (!inactiveAccountOps.isEmpty()) {
-					accountOperationService.bulkDelete(inactiveAccountOps);
-				}
+				nbItemsToProcess += inactiveAccountOps.size();
+				bulkAODelete(inactiveAccountOps, result);
 			}
 
 			if (gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
 				List<AccountOperation> unpaidAccountOperations = accountOperationService.listUnpaidAccountOperations(gdprConfiguration.getAoCheckUnpaidLife());
 				log.debug("Found {} unpaid accountOperations", unpaidAccountOperations.size());
-				if (!unpaidAccountOperations.isEmpty()) {
-					accountOperationService.bulkDelete(unpaidAccountOperations);
-				}
+				nbItemsToProcess += unpaidAccountOperations.size();
+				bulkAODelete(unpaidAccountOperations, result);
 			}
 
 			if(gdprConfiguration.isDeleteCustomerProspect()) {
-				List<Contact> oldCustomerProspects = contactService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
+				List<Customer> oldCustomerProspects = customerService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
 				log.debug("Found {} old customer prospects", oldCustomerProspects.size());
-				if (!oldCustomerProspects.isEmpty()) {
-					contactService.bulkDelete(oldCustomerProspects);
-				}
+				nbItemsToProcess += oldCustomerProspects.size();
+				bulkProspectDelete(oldCustomerProspects, result);
 			}
-
-			// TODO: check for mailing
+			
+			result.registerSucces();
+			result.setNbItemsToProcess(nbItemsToProcess);
 			
 		} catch (Exception e) {
 			log.error("Failed to run GDPR data erasure job", e);
+			result.addReport(e.getMessage());
 			result.registerError(e.getMessage());
 		}
 	}
+	
+	/**
+     * Bulk delete prospects.
+     *
+     * @param inactiveProspects the inactive prospects
+     * @param result job execution stats
+     */
+	private void bulkProspectDelete(List<Customer> inactiveProspects, JobExecutionResultImpl result) {
+        for (Customer inactiveProspect : inactiveProspects) {
+            try {
+                customerService.remove(inactiveProspect);
+                result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
+            } catch(Exception e) {
+                result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
+                result.addReport(e.getMessage());
+                result.registerError(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Bulk delete accountOperations.
+     *
+     * @param inactiveAccountOps the inactive account ops
+     * @param result job execution stats
+     */
+    private void bulkAODelete(List<AccountOperation> inactiveAccountOps, JobExecutionResultImpl result) {
+        for (AccountOperation inactiveAccountOp : inactiveAccountOps) {
+            try {
+                accountOperationService.remove(inactiveAccountOp);
+                result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
+            } catch(Exception e) {
+                result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
+                result.addReport(e.getMessage());
+                result.registerError(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Bulk delete invoices.
+     *
+     * @param inactiveInvoices the inactive invoices
+     * @param result job execution stats
+     */
+    private void bulkInvoiceDelete(List<Invoice> inactiveInvoices, JobExecutionResultImpl result) {
+        for (Invoice inactiveInvoice : inactiveInvoices) {
+            try {
+                invoiceService.remove(inactiveInvoice);
+                result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
+            } catch(Exception e) {
+                result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
+                result.addReport(e.getMessage());
+                result.registerError(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Bulk delete orders.
+     *
+     * @param inactiveOrders the inactive orders
+     * @param result job execution stats
+     */
+    private void bulkOrderDelete(List<Order> inactiveOrders, JobExecutionResultImpl result) {
+        for (Order inactiveOrder : inactiveOrders) {
+            try {
+                orderService.remove(inactiveOrder);
+                result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
+            } catch(Exception e) {
+                result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
+                result.addReport(e.getMessage());
+                result.registerError(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Bulk delete subscriptions.
+     *
+     * @param inactiveSubscriptions the inactive subscriptions
+     * @param result job execution stats
+     */
+    private void bulkSubscriptionDelete(List<Subscription> inactiveSubscriptions, JobExecutionResultImpl result) {
+        for (Subscription inactiveSubscription : inactiveSubscriptions) {
+            try {
+                subscriptionService.remove(inactiveSubscription);
+                result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
+            } catch(Exception e) {
+                result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
+                result.addReport(e.getMessage());
+                result.registerError(e.getMessage());
+            }
+        }
+    }
+
+
 }

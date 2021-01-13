@@ -27,6 +27,7 @@ import java.util.List;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -178,7 +179,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     /**
      * Wallet operations associated with a charge
      */
-    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     /**

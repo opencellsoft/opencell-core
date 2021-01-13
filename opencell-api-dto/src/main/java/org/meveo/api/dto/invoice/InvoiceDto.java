@@ -95,7 +95,7 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The category invoice aggregates. */
     @XmlElementWrapper
-    @XmlElement(name = "categoryInvoiceAgregate", required = true)
+    @XmlElement(name = "categoryInvoiceAgregate")
     protected List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
 
     /** The tax aggregates */
@@ -204,25 +204,25 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of related payment schedule instances
-     * 
+     *
      */
     protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
 
     /**
      * associated dunning creation date
-     * 
+     *
      */
     protected Date dunningEntryDate;
 
     /**
      * associated dunning last update date
-     * 
+     *
      */
     protected Date dunningLastModification;
 
     /**
      * associated dunning current status
-     * 
+     *
      */
     protected String dunningStatus;
 
@@ -233,18 +233,18 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
-     * 
+     *
      */
     protected List<Long> ratedTransactionsToLink;
     /**
      * paymentIncident
-     * 
+     *
      */
     protected List<String> paymentIncidents;
 
     /**
      * sendPaymentDate
-     * 
+     *
      */
     protected Date sendPaymentDate;
 
@@ -257,6 +257,11 @@ public class InvoiceDto extends AuditableEntityDto {
      * last payment Date
      */
     protected Date paymentDate;
+
+    /**
+     * Invoice payment collection date.
+     */
+    private Date initialCollectionDate;
 
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
@@ -580,7 +585,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * @return the categoryInvoiceAgregates
      */
     public List<CategoryInvoiceAgregateDto> getCategoryInvoiceAgregates() {
-        return categoryInvoiceAgregates;
+        return categoryInvoiceAgregates == null ? new ArrayList<>() : categoryInvoiceAgregates;
     }
 
     /**
@@ -931,5 +936,13 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
         this.realTimeStatus = realTimeStatus;
+    }
+
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
+    }
+
+    public void setInitialCollectionDate(Date intialCollectionDate) {
+        this.initialCollectionDate = intialCollectionDate;
     }
 }

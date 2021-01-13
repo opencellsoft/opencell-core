@@ -110,7 +110,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @author Mbarek Ait-yaazza
+ * @author Mbarek-Ay
  * @lastModifiedVersion 10.0.0 
  */
 @PaymentGatewayClass
@@ -231,7 +231,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
 
     }
-    
+      /*reserved to GlobalCollect platform*/
     @Override
     public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias,String accountHolderName,String iban) throws BusinessException {
         try {
@@ -307,6 +307,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
 
     }
+    
     @Override
     public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
     	try {
@@ -317,21 +318,20 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if(customerAccount.getContactInformation() != null ) {
     			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
     		}
-    		
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
     		address.setCity(customerAccount.getAddress().getCity());
-    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-    		address.setHouseNumber(""); 
+    		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
     		address.setStreet(customerAccount.getAddress().getAddress1());
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
     		MandatePersonalName name = new MandatePersonalName();
-    		MandatePersonalInformation personalInformation =new MandatePersonalInformation();
+    		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
+    		
     		if (customerAccount.getName() != null) {
     			name.setFirstName(customerAccount.getName().getFirstName());
     			name.setSurname(customerAccount.getName().getLastName()); 
-    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
+    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
     		}  
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
@@ -348,12 +348,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
 
-    	    client.merchant(paymentGateway.getMarchandId()).mandates().create(body); 
+    	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
-    	} catch (ApiException ev) {
+    	} catch (ApiException ev) { 
     		throw new BusinessException(ev.getResponseBody());
 
-    	} catch (Exception e) {
+    	} catch (Exception e) { 
     		throw new BusinessException(e.getMessage());
     	}
 

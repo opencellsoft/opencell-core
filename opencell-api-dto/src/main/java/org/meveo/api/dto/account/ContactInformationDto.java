@@ -19,10 +19,12 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
@@ -47,6 +49,11 @@ public class ContactInformationDto implements Serializable {
     
     /** The fax. */
     protected String fax;
+    
+    /** address **/
+    protected AddressDto address;
+    
+    
 
     /**
      * Instantiates a new contact information dto.
@@ -144,4 +151,17 @@ public class ContactInformationDto implements Serializable {
         return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + "]";
     }
 
+	/**
+	 * @return the address
+	 */
+	public AddressDto getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(AddressDto address) {
+		this.address = address;
+	}
 }

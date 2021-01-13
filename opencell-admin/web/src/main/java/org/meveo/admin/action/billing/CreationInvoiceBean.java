@@ -32,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
@@ -148,6 +150,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private RatedTransaction selectedRatedTransaction;
     private List<SelectItem> invoiceCategoriesGUI;
     private ChargeTemplate selectedCharge;
+    
+    List<RatedTransaction> initialRTList;
 
     private boolean includeBalance;
 
@@ -191,32 +195,44 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-        aggregateHandler.reset();
-        entity = super.initEntity();
-        entity.setDueDate(new Date());
-        entity.setInvoiceDate(new Date());
-
-        if (entity.isTransient()) {
-            if (mode != null) {
-                setDetailled("detailed".equals(mode));
+    	final String id = facesContext.getExternalContext().getRequestParameterMap().get("objectId");
+    	initialRTList = new ArrayList<RatedTransaction>();
+		if (id != null) {
+    		setObjectId(Long.parseLong(id));
+    		entity = super.initEntity();
+    		initialRTList = ratedTransactionService.listRatedTransactionsByInvoice(entity);
+            for (RatedTransaction ratedTransaction : initialRTList) {
+                aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
             }
-            if (linkedInvoiceIdParam != null) {
-                rootInvoiceId = linkedInvoiceIdParam;
-                rootInvoice = invoiceService.findById(rootInvoiceId);
-                entity.setBillingAccount(rootInvoice.getBillingAccount());
-                entity.getLinkedInvoices().add(rootInvoice);
-                try {
-                    entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
-                } catch (BusinessException e) {
-                    log.error("Cant get DefaultAdjustement Type:", e);
-                }
-            }
-        }
-        entity.setAmountWithoutTax(BigDecimal.ZERO);
-        entity.setAmountWithTax(BigDecimal.ZERO);
-        entity.setAmountTax(BigDecimal.ZERO);
-        entity.setNetToPay(BigDecimal.ZERO);
-        return entity;
+            updateAmountsAndLines();
+    	} else{
+	        aggregateHandler.reset();
+	        entity = super.initEntity();
+	        entity.setDueDate(new Date());
+	        entity.setInvoiceDate(new Date());
+	
+	        if (entity.isTransient()) {
+	            if (mode != null) {
+	                setDetailled("detailed".equals(mode));
+	            }
+	            if (linkedInvoiceIdParam != null) {
+	                rootInvoiceId = linkedInvoiceIdParam;
+	                rootInvoice = invoiceService.findById(rootInvoiceId);
+	                entity.setBillingAccount(rootInvoice.getBillingAccount());
+	                entity.getLinkedInvoices().add(rootInvoice);
+	                try {
+	                    entity.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
+	                } catch (BusinessException e) {
+	                    log.error("Cant get DefaultAdjustement Type:", e);
+	                }
+	            }
+	        }
+	        entity.setAmountWithoutTax(BigDecimal.ZERO);
+	        entity.setAmountWithTax(BigDecimal.ZERO);
+	        entity.setAmountTax(BigDecimal.ZERO);
+	        entity.setNetToPay(BigDecimal.ZERO);
+    	}
+    	return entity;
     }
 
     /**
@@ -326,7 +342,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
             ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
-            seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null);
+            seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass, null, null);
 
         ratedTransaction.setInvoice(entity);
 
@@ -442,9 +458,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteLinkedInvoiceCategoryDetaild() {
 
-        for (int i = 0; i < selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().size(); i++) {
-            aggregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().get(i));
+        List<RatedTransaction> listToRemove = new ArrayList<RatedTransaction>();
+        listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
+		for (RatedTransaction rt : listToRemove) {
+            aggregateHandler.removeRT(rt);
         }
+		updateAmountsAndLines();
     }
 
     /**
@@ -623,15 +642,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
-        BillingAccount billingAccount = getFreshBA();
-        Customer customer = billingAccount.getCustomerAccount().getCustomer();
-        entity.setBillingAccount(billingAccount);
-        entity.setDetailedInvoice(isDetailed());
-        if (entity.getSeller() == null) {
-            entity.setSeller(customer.getSeller());
-        }
-
-        for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
+    	List<RatedTransaction> rts = null;
+    	for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
             taxInvAgr.setInvoice(entity);
             taxInvAgr.updateAudit(currentUser);
@@ -643,46 +655,66 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             catInvAgr.updateAudit(currentUser);
             catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
         }
-
-        List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
-
-        for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
-            subCatInvAggr.setInvoice(entity);
-            subCatInvAggr.updateAudit(currentUser);
-
-            for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
-                rt.setInvoice(entity);
-                rt.setInvoiceAgregateF(subCatInvAggr);
-                rt.changeStatus(RatedTransactionStatusEnum.BILLED);
-                rts.add(rt);
-            }
-        }
-
-        entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
-
-        super.saveOrUpdate(false);
-
-        for (RatedTransaction rt : rts) {
-        	if(rt.getId() == null) {
-        		ratedTransactionService.create(rt);
-        	}else {
-        		ratedTransactionService.update(rt);
-        	}
-        }
-
-        invoiceService.postCreate(entity);
-
-        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
-
-        try {
+        rts = saveRTs();
+    	if(entity.getId()==null) {
+	        BillingAccount billingAccount = getFreshBA();
+	        Customer customer = billingAccount.getCustomerAccount().getCustomer();
+	        entity.setBillingAccount(billingAccount);
+	        entity.setDetailedInvoice(isDetailed());
+	        if (entity.getSeller() == null) {
+	            entity.setSeller(customer.getSeller());
+	        }
+	        invoiceService.postCreate(entity);
+	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
+	        
+    	}
+    	try {
             entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
         } catch (Exception e) {
             log.error("Failed to create an XML and PDF invoice", e);
             messages.error("Error generating xml / pdf invoice=" + e.getMessage());
         }
-
+        if("DRAFT".equals(entity.getInvoiceType().getCode())){
+            for (RatedTransaction rt : rts) {
+                ratedTransactionService.remove(rt);
+            }
+        }
         return getListViewName();
     }
+
+	private List<RatedTransaction> saveRTs() {
+		List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
+
+		for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
+		    subCatInvAggr.setInvoice(entity);
+		    subCatInvAggr.updateAudit(currentUser);
+
+		    for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
+		        rt.setInvoice(entity);
+		        rt.setInvoiceAgregateF(subCatInvAggr);
+		        rt.changeStatus(RatedTransactionStatusEnum.BILLED);
+		        rts.add(rt);
+		    }
+		}
+
+		entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
+
+		super.saveOrUpdate(false);
+
+		for (RatedTransaction rt : rts) {
+			if(rt.getId() == null) {
+				ratedTransactionService.create(rt);
+			}
+		}
+		List<RatedTransaction> RtsToCancel = initialRTList.stream().filter(i -> !rts.contains(i)).collect (Collectors.toList());
+		cancelRTs(RtsToCancel);
+		return rts;
+	}
+
+	private void cancelRTs(List<RatedTransaction> RtsToCancel) {
+		RtsToCancel.stream().forEach(rt -> aggregateHandler.removeRT(rt));
+		ratedTransactionService.cancelRatedTransactions(RtsToCancel.stream().map(rt -> rt.getId()).collect(Collectors.toList()));
+	}
 
     /**
      * Include a copy from linkedIncoice's RatedTransaction
@@ -728,7 +760,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         rt.getAmountWithTax(), rt.getAmountTax(), RatedTransactionStatusEnum.BILLED, ua.getWallet(), entity.getBillingAccount(), ua, rt.getInvoiceSubCategory(), rt.getParameter1(), rt.getParameter2(),
                         rt.getParameter3(), null, rt.getOrderNumber(), null, rt.getUnityDescription(), rt.getRatingUnitDescription(), null, null, null, rt.getCode(), rt.getDescription(), rt.getStartDate(),
                         rt.getEndDate(), rt.getSeller(), taxInfo != null ? taxInfo.tax : rt.getTax(), taxInfo != null ? taxInfo.tax.getPercent() : rt.getTax().getPercent(), null,
-                        taxInfo != null ? taxInfo.taxClass : null, null);
+                        taxInfo != null ? taxInfo.taxClass : null, null, rt.getType());
 
                     newRT.setInvoice(entity);
 
@@ -1246,5 +1278,17 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
+    }
+    
+    public void cancelInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.cancelInvoiceWithoutDelete(invoice);
+    }
+    
+    public void validateInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.validateInvoice(invoice);
+    }
+    
+    public void rebuildInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.rebuildInvoice(invoice);
     }
 }

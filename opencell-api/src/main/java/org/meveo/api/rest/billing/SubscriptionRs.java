@@ -19,9 +19,9 @@
 package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -44,7 +44,11 @@ import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.rest.PATCH;
+import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -147,6 +151,16 @@ public interface SubscriptionRs extends IBaseRs {
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    
+    /**
+     * List subscriptions matching a given criteria
+     * 
+     * @param customerCode The customer's code.
+     * @return List of subscriptions
+     */
+    @GET
+    @Path("/findByCustomer")
+    public SubscriptionsListResponseDto findByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
      * List subscriptions matching a given criteria
@@ -186,8 +200,8 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
             @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
-
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+                                                @QueryParam("validityDate") @RestDateParam Date validityDate);
 
     /**
      * Search for a subscription with a given code.
@@ -198,7 +212,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @DELETE
     @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
-    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
+    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode, @QueryParam("validityDate") Date validityDate);
 
 
     /**
@@ -209,7 +223,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listOneshotChargeOthers")
-    GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode);
+    GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("validityDate") Date validityDate);
 
     /**
      * Create or update subscription information ONLY. Does not include access, services nor products
@@ -304,18 +318,19 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Path("serviceInstance")
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
-            @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
     /**
      * Returns a list of service instances.
      * 
      * @param subscriptionCode subscription code
+     * @param subscriptionValidityDate
      * @param serviceInstanceCode service instance code.
      * @return list of service instances
      */
     @GET
     @Path("serviceInstances")
-    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.
@@ -328,7 +343,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/dueDateDelay")
-    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
+    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
     /**
@@ -368,7 +383,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
-    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode);
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
     /**
      * Create a subscription and activate services in a single transaction.
@@ -379,4 +394,12 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/subscribeAndActivateServices")
     ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData);
+
+    @PATCH
+    @Path("/{code}/offer")
+    ActionStatus patchSubscription(@PathParam("code") String code, SubscriptionPatchDto subscriptionPatchDto);
+
+    @PATCH
+    @Path("{code}/offer/rollback")
+    ActionStatus rollbackOffer(@PathParam("code") String code, OfferRollbackDto offerRollbackDto);
 }

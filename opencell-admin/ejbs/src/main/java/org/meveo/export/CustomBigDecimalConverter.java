@@ -20,6 +20,7 @@ package org.meveo.export;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -47,7 +48,7 @@ public class CustomBigDecimalConverter extends BigDecimalConverter {
 
 	@Override
 	public String toString(Object obj) {
-		return obj == null ? BigDecimal.ZERO.toString() : NumberFormat.getNumberInstance().format(new BigDecimal(obj.toString()));
+		return obj == null ? BigDecimal.ZERO.toString() : NumberFormat.getNumberInstance(Locale.ENGLISH).format(new BigDecimal(obj.toString()));
 	}
 
 }

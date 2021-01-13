@@ -19,7 +19,6 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -166,8 +165,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.info("ddrequestOps found:" + ddrequestOps.size());
-				result.setNbItemsToProcess(ddrequestOps.size());
+				log.info("ddrequestOps found:" + ddrequestOps.size());				
 
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
@@ -180,6 +178,10 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
 				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 					break;
+				}
+				boolean isToMatching = true;
+				if(ddrequestLotOp.isMatchPaymentLines() == Boolean.FALSE) {
+					isToMatching = false;
 				}
 				try {
 					DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
@@ -197,16 +199,21 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
 							log.info("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								result.registerSucces();
+							
+							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, nbRuns, waitingMillis, result);
+								log.info("end createPaymentsOrRefundsForDDRequestLot");
+								if (isEmpty(ddRequestLOT.getRejectedCause())) {
+									result.registerSucces();
+								}
 							}
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
-						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
-						result.registerSucces();
+						if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), isToMatching, nbRuns, waitingMillis, result);
+							result.registerSucces();
+						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);

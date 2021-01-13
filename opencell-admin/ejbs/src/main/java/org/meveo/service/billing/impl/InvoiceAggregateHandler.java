@@ -44,7 +44,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.tax.TaxMappingService;
-import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,10 +223,10 @@ public class InvoiceAggregateHandler {
 
         SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());
         CategoryInvoiceAgregate categoryInvoiceAgregate = null;
-        if (subCategoryInvoiceAgregate != null) {
+        if (subCategoryInvoiceAgregate != null && subCategoryInvoiceAgregate.getCategoryInvoiceAgregate()!=null) {
             categoryInvoiceAgregate = subCategoryInvoiceAgregate.getCategoryInvoiceAgregate();
 
-        } else if (isToAdd) {
+        } else {
             categoryInvoiceAgregate = catInvAgregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
             if (categoryInvoiceAgregate == null) {
                 categoryInvoiceAgregate = new CategoryInvoiceAgregate();

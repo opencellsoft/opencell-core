@@ -5,7 +5,7 @@
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>10.0.0-SNAPSHOT</version>
+        <version>10.0.3-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-admin-web</artifactId>
     <name>Opencell Admin Web Application - Web Module</name>
@@ -86,39 +86,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <!-- <include>${project.build.directory}/**/persistence.xml</include> -->
-                        <!--<include>${project.build.directory}/**/layout/*.xhtml</include> -->
-                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
-                        <include>${project.build.directory}/opencell/about.xhtml</include>
-                        <include>${project.build.outputDirectory}/version.json</include>
-                    </includes>
-                    <replacements>
-                        <replacement>
-                            <token>@VERSION_NUMBER@</token>
-                            <value>${project.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>@BUILD_NUMBER@</token>
-                            <value>${buildNumber}</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -179,7 +146,93 @@
 				</executions>
 			</plugin>
 			 -->
+            <!-- SWAGGER UI -->
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>swagger-ui</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <skipCache>false</skipCache>
+                            <url>https://github.com/swagger-api/swagger-ui/archive/master.tar.gz</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>./target</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>./target/opencell/pages/docs</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./target/swagger-ui-master/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>replace-version-location</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>replace-swagger-json-location</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>${project.build.directory}/opencell/pages/docs/index.html</include>
+                        <include>${project.build.directory}/opencell/layout/*.xhtml</include>
+                        <include>${project.build.directory}/opencell/about.xhtml</include>
+                        <include>${project.build.outputDirectory}/version.json</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>https://petstore.swagger.io/v2/swagger.json</token>
+                            <value>/opencell/api/rest/v2/openapi.json</value>
+                        </replacement>
+                        <replacement>
+                            <token>@VERSION_NUMBER@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@BUILD_NUMBER@</token>
+                            <value>${buildNumber}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            <!-- SWAGGER UI -->
         </plugins>
 
     </build>

@@ -42,6 +42,7 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
+@Deprecated
 public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuantityRs {
 
     @Inject

@@ -22670,9 +22670,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <customField code="FlatFileProcessingJob_recordVariableName">
                      <stringValue>record</stringValue>
                   </customField>
-                  <customField code="FlatFileProcessingJob_fileNameExtension">
-                     <stringValue>cdr</stringValue>
-                  </customField>
                   <customField code="FlatFileProcessingJob_originFilename">
                      <stringValue>originBatch</stringValue>
                   </customField>
@@ -55607,6 +55604,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                <paymentMethodType>CARD</paymentMethodType>
                <scriptInstanceCode>org.meveo.service.script.smoove.${#Project#entityPrefix}_${#TestSuite#index}_CustomGatewayPaymentScript</scriptInstanceCode>
               <applicationEL>#{customerAccount.code eq "${#TestSuite#CUST}"}</applicationEL>
+              	<sellerCode>CLASSIC</sellerCode>
                </paymentGateway>              
                <notification code="${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBack">\r
                   <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>\r

@@ -184,4 +184,9 @@ public abstract class Calendar extends BusinessEntity {
     public boolean isInitializationRequired() {
         return false;
     }
+
+    protected Date nextCalendarDate(Date date, Date initDate) {
+        setInitDate(initDate);
+        return nextCalendarDate(date);
+    }
 }
