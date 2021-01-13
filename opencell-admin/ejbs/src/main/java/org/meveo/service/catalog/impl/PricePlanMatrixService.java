@@ -729,6 +729,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) {
 
+        // add check on offerTemplate
         List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(quoteProduct.getProductVersion().getProduct());
 
         List<QuoteAttribute> quoteAttributes = pricePlanMatrixColumns.stream()

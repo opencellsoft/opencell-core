@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.QuoteAttribute;
 
+import java.util.Date;
+
 /**
  * DTO to create or update a quote
  * 
@@ -44,7 +46,11 @@ public class QuoteAttributeDTO extends BaseEntityDto{
     
     private String quoteAttributeCode;
     
-    private String value;
+    private String stringValue;
+
+	private Double doubleValue;
+
+	private Date dateValue;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -61,7 +67,9 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		super();
 		quoteAttributeId=quoteAttribue.getId();
 		quoteAttributeCode=quoteAttribue.getAttribute().getCode();
-		value=quoteAttribue.getValue();
+		stringValue =quoteAttribue.getStringValue();
+		dateValue =quoteAttribue.getDateValue();
+		doubleValue =quoteAttribue.getDoubleValue();
 	}
 
 	/**
@@ -69,20 +77,6 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	 */
 	public void setQuoteAttributeCode(String quoteAttributeCode) {
 		this.quoteAttributeCode = quoteAttributeCode;
-	}
-
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return value;
-	}
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		this.value = value;
 	}
 
 	/**
@@ -98,16 +92,29 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	public void setQuoteAttributeId(Long quoteAttributeId) {
 		this.quoteAttributeId = quoteAttributeId;
 	}
-    
-	
 
 
+	public String getStringValue() {
+		return stringValue;
+	}
 
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
+	}
 
-	
-    
-    
-	
-    
-   
+	public Double getDoubleValue() {
+		return doubleValue;
+	}
+
+	public void setDoubleValue(Double doubleValue) {
+		this.doubleValue = doubleValue;
+	}
+
+	public Date getDateValue() {
+		return dateValue;
+	}
+
+	public void setDateValue(Date dateValue) {
+		this.dateValue = dateValue;
+	}
 }
