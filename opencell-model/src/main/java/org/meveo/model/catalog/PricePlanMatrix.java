@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,6 +54,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -92,7 +94,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PricePlanMatrixVersion> versions;
 
     /**

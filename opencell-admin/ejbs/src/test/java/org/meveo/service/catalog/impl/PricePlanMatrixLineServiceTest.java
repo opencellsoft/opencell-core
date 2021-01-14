@@ -13,7 +13,9 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.quote.QuoteProduct;
 
+import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Set;
 
@@ -27,29 +29,92 @@ public class PricePlanMatrixLineServiceTest {
     @Test
     public void can_load_plan_price_matrix_line_by_quoted_attribute() {
         PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
-        PricePlanMatrix pricePlanMatrix = createPlanPriceMatrix();
-        PricePlanMatrixVersion pricePlanMatrixVersion = createPpmVersion(pricePlanMatrix);
+        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
 
 
         Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
         Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
 
-        QuoteAttribute quotedBcAttribute1 = new QuoteAttribute();
-        quotedBcAttribute1.setAttribute(attrb1);
-        quotedBcAttribute1.setStringValue("Monthly");
-        QuoteAttribute monthlyQuotedAttribute = quotedBcAttribute1;
-        QuoteAttribute quotedBcAttribute = new QuoteAttribute();
-        quotedBcAttribute.setAttribute(attrb2);
-        quotedBcAttribute.setDoubleValue(12.0);
-        QuoteAttribute twelveQuotedAttribute = quotedBcAttribute;
+        QuoteProduct quoteProduct = createQuoteProduct();
+
+        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attrb1, quoteProduct);
+        monthlyQuotedAttribute.setStringValue("Monthly");
+
+        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attrb2, quoteProduct);
+        sevenTeenEngagementDuration.setDoubleValue(12.0);
 
 
-        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, twelveQuotedAttribute));
+        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
 
         assertThat(ppmLines.size()).isEqualTo(1);
         assertThat(ppmLines.get(0).getDescription()).isEqualTo("Price1");
         assertThat(ppmLines.get(0).getPricetWithoutTax()).isEqualTo(valueOf(24));
+    }
 
+    private PricePlanMatrixVersion createPricePlanMatrixVersion() {
+        PricePlanMatrix pricePlanMatrix = createPlanPriceMatrix();
+        return createPpmVersion(pricePlanMatrix);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void if_no_attr_match_and_without_default_line_throw_exception() {
+        PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
+        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
+
+        Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
+        Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
+
+        QuoteProduct quoteProduct = createQuoteProduct();
+
+        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attrb1, quoteProduct);
+        monthlyQuotedAttribute.setStringValue("Monthly");
+
+        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attrb2, quoteProduct);
+        sevenTeenEngagementDuration.setDoubleValue(17.0);
+
+        pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+    }
+
+    @Test
+    public void if_no_attr_match_and_default_line_set_retreive_default_line() {
+        PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
+        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
+        PricePlanMatrixLine defaultLine = new PricePlanMatrixLine();
+        defaultLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
+        defaultLine.setPricetWithoutTax(valueOf(20));
+        defaultLine.setDescription("Default line for matrix version");
+        pricePlanMatrixVersion.setDefaultLine(defaultLine);
+
+        Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
+        Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
+
+        QuoteProduct quoteProduct = createQuoteProduct();
+
+        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attrb1, quoteProduct);
+        monthlyQuotedAttribute.setStringValue("Monthly");
+
+        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attrb2, quoteProduct);
+        sevenTeenEngagementDuration.setDoubleValue(17.0);
+
+        List<PricePlanMatrixLine> pricePlanMatrixLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+
+        assertThat(pricePlanMatrixLines.size()).isEqualTo(1);
+        assertThat(pricePlanMatrixLines.get(0).getDescription()).isEqualTo("Default line for matrix version");
+        assertThat(pricePlanMatrixLines.get(0).getPricetWithoutTax()).isEqualTo(valueOf(20));
+
+    }
+
+    private QuoteProduct createQuoteProduct() {
+        QuoteProduct quoteProduct = new QuoteProduct();
+        quoteProduct.setId(1L);
+        return quoteProduct;
+    }
+
+    private QuoteAttribute createQuoteAttribute(Attribute attribute, QuoteProduct quoteProduct) {
+        QuoteAttribute sevenTeenEngagementDuration = new QuoteAttribute();
+        sevenTeenEngagementDuration.setAttribute(attribute);
+        sevenTeenEngagementDuration.setQuoteProduct(quoteProduct);
+        return sevenTeenEngagementDuration;
     }
 
     private PricePlanMatrixVersion createPpmVersion(PricePlanMatrix pricePlanMatrix) {
@@ -65,13 +130,6 @@ public class PricePlanMatrixLineServiceTest {
         attrb1.setCode(billing_cycle);
         attrb1.setAttributeType(listText);
         return attrb1;
-    }
-
-    private void createProductVersion(Product product) {
-        ProductVersion productVersion = new ProductVersion();
-        productVersion.setProduct(product);
-        productVersion.setStatus(VersionStatusEnum.DRAFT);
-        productVersion.setCurrentVersion(1);
     }
 
     private PricePlanMatrix createPlanPriceMatrix() {

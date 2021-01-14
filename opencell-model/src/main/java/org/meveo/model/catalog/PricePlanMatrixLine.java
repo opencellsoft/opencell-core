@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -68,7 +68,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     }
 
     public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
-        return pricePlanMatrixValues;
+        return pricePlanMatrixValues == null ? new HashSet<>() : pricePlanMatrixValues;
     }
 
     public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
