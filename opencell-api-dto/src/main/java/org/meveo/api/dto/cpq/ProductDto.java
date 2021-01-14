@@ -27,6 +27,7 @@ public class ProductDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
+	protected Long id;
     @NotNull
     protected String code;
     protected String label;
@@ -59,6 +60,7 @@ public class ProductDto extends BaseEntityDto{
     public ProductDto() {}
     
     public ProductDto(Product p) {
+    	this.id=p.getId();
     	this.code = p.getCode();
     	this.label = p.getDescription();
     	this.status = p.getStatus();
@@ -269,6 +271,20 @@ public class ProductDto extends BaseEntityDto{
 	 */
 	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
 		this.chargeTemplateCodes = chargeTemplateCodes;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 

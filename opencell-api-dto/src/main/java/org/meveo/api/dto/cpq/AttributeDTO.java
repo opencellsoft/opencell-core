@@ -56,6 +56,7 @@ public class AttributeDTO extends EnableBusinessDto {
     /**
      * Corresponding to minimum one shot charge template code.
      */
+    @NotNull
     protected AttributeTypeEnum attributeType;
     
     /**
