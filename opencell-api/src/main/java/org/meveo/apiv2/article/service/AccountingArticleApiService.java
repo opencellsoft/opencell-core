@@ -91,7 +91,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @Override
     public Optional<AccountingArticle> findById(Long id) {
-        return Optional.of(accountingArticleService1.findById(id));
+        return Optional.ofNullable(accountingArticleService1.findById(id));
     }
 
     @Override

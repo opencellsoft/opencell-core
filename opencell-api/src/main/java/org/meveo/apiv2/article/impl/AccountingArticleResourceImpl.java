@@ -48,7 +48,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
         Optional<AccountingArticle> accoutningUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())
-                .entity(toResourceOrderWithLink(mapper.toResource(accoutningUpdated.get())))
+                .entity(toResourceOrderWithLink(mapper.toResource(accoutningUpdated.orElseThrow(NotFoundException::new))))
                 .build();
 	}
 
