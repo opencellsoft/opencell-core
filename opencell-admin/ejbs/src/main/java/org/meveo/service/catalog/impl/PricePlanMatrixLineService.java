@@ -2,6 +2,7 @@ package org.meveo.service.catalog.impl;
 
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
@@ -17,6 +18,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.ws.rs.BadRequestException;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
@@ -40,8 +43,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             return getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion", PricePlanMatrixLine.class)
                     .setParameter("pricePlanMatrixVersion", pricePlanMatrixVersion)
                     .getResultList();
-        }catch(NoResultException exp){
-            return null;
+        } catch (NoResultException exp) {
+            return new ArrayList<>();
         }
     }
 
@@ -65,7 +68,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
         PricePlanMatrixLine pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
 
-        if(pricePlanMatrixLine == null){
+        if (pricePlanMatrixLine == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPricePlanMatrixCode(), "pricePlanMatrixVersion.pricePlanMatrixCode", "" + pricePlanMatrixLineDto.getPricePlanMatrixVersion(), "pricePlanMatrixVersion.currentVersion");
         }
         pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
@@ -79,7 +82,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private PricePlanMatrixVersion getPricePlanMatrixVersion(PricePlanMatrixLineDto dtoData) {
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
-        if(pricePlanMatrixVersion == null){
+        if (pricePlanMatrixVersion == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", "" + dtoData.getPricePlanMatrixVersion(), "currentVersion");
         }
         return pricePlanMatrixVersion;
@@ -90,15 +93,15 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 .stream()
                 .map(value -> {
                     PricePlanMatrixValue pricePlanMatrixValue;
-                    if(value.getPpmValueId() != null){
+                    if (value.getPpmValueId() != null) {
                         pricePlanMatrixValue = pricePlanMatrixValueService.findById(value.getPpmValueId());
-                        if(pricePlanMatrixValue == null)
+                        if (pricePlanMatrixValue == null)
                             throw new EntityDoesNotExistsException(PricePlanMatrixValue.class, value.getPpmValueId());
-                    }else {
+                    } else {
                         pricePlanMatrixValue = new PricePlanMatrixValue();
                     }
                     PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(value.getPpmColumnCode());
-                    if(pricePlanMatrixColumn == null)
+                    if (pricePlanMatrixColumn == null)
                         throw new EntityDoesNotExistsException(PricePlanMatrixColumn.class, value.getPpmColumnCode());
                     pricePlanMatrixValue.setPricePlanMatrixColumn(pricePlanMatrixColumn);
                     pricePlanMatrixValue.setDoubleValue(value.getDoubleValue());
@@ -116,15 +119,24 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     public PricePlanMatrixLineDto load(Long ppmLineId) {
         PricePlanMatrixLine ppmLine = findById(ppmLineId);
-        if(ppmLine == null){
+        if (ppmLine == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
         }
         return new PricePlanMatrixLineDto(ppmLine);
     }
 
     public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<QuoteAttribute> quoteAttributes) {
-        return findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
+        List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
                 .filter(line -> line.match(quoteAttributes))
                 .collect(Collectors.toList());
+        if (priceLines.isEmpty()) {
+            if(pricePlanMatrixVersion.getDefaultLine() != null)
+                return List.of(pricePlanMatrixVersion.getDefaultLine());
+            else
+                throw new BusinessApiException("No price match with quote product id: " + quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+        }
+
+        return priceLines;
     }
+
 }

@@ -16,6 +16,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,7 +37,7 @@ import java.util.Set;
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
