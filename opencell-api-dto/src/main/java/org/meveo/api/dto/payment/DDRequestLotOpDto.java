@@ -30,6 +30,7 @@ import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 
 /**
  * The Class DDRequestLotOpDto.
@@ -84,8 +85,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /** Flag to activate generation of payment lines (by default true). */
     private Boolean generatePaymentLines = Boolean.TRUE;
 
-    /** Flag to match payment lines (by default true). */
-    private Boolean matchPaymentLines = Boolean.TRUE;
+    /** Default payment status. */
+    private PaymentStatusEnum paymentStatus;
     
     /**
      * Instantiates a new DD request lot op dto.
@@ -111,7 +112,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.paymentOrRefundEnum = ddrequestLotOp.getPaymentOrRefundEnum();
         this.sellerCode = ddrequestLotOp.getSeller() != null ? ddrequestLotOp.getSeller().getCode() : null;
         this.generatePaymentLines = ddrequestLotOp.isGeneratePaymentLines();
-        this.matchPaymentLines = ddrequestLotOp.isMatchPaymentLines();
+        this.paymentStatus = ddrequestLotOp.getPaymentStatus();
     }
 
     /**
@@ -324,18 +325,18 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
 		this.generatePaymentLines = generatePaymentLines;
 	}
 
-	/**
-	 * @return the matchPaymentLines
-	 */
-	public Boolean isMatchPaymentLines() {
-		return matchPaymentLines;
-	}
+    /**
+     * @return the paymentStatus
+     */
+    public PaymentStatusEnum getPaymentStatus() {
+        return paymentStatus;
+    }
 
-	/**
-	 * @param matchPaymentLines the matchPaymentLines to set
-	 */
-	public void setMatchPaymentLines(Boolean matchPaymentLines) {
-		this.matchPaymentLines = matchPaymentLines;
-	}
+    /**
+     * @param paymentStatus the paymentStatus to set
+     */
+    public void setPaymentStatus(PaymentStatusEnum paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 
 }
