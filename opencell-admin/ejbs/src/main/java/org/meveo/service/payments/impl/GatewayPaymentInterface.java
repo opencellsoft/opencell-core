@@ -226,7 +226,7 @@ public interface GatewayPaymentInterface {
      * @param mandateReference mandate reference.
      * @throws BusinessException business exception
      */
-    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException;
+    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference, boolean isEntreprise) throws BusinessException;
     
     /**
      * approve a mandate to be used in a SEPA Direct Debit payment.

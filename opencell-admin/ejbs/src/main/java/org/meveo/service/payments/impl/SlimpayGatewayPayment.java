@@ -424,7 +424,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
  
 
 	@Override
-	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException { 
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference, boolean isEntreprise) throws BusinessException { 
 	        throw new UnsupportedOperationException();
 		
 	}

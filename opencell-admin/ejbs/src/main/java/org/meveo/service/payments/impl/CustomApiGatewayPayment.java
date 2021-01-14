@@ -329,7 +329,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference) throws BusinessException {
+	public void createMandate(CustomerAccount customerAccount, String iban,String mandateReference, boolean isEntreprise) throws BusinessException {
 		  Map<String, Object> scriptContext = new HashMap<String, Object>();
 	        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
 	        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);

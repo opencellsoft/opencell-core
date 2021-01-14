@@ -309,7 +309,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
     
     @Override
-    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
+    public void createMandate(CustomerAccount customerAccount,String iban,String mandateReference, boolean isEntreprise) throws BusinessException {
+    	log.info("Ingenico createMandate CA={},mandatereference={}",customerAccount.getCode(),mandateReference);
     	try {
     		BankAccountIban bankAccountIban=new BankAccountIban(); 
     		bankAccountIban.setIban(iban);
@@ -322,24 +323,28 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		if (customerAccount.getAddress() != null) {
     		address.setCity(customerAccount.getAddress().getCity());
     		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
-    		address.setStreet(customerAccount.getAddress().getAddress1());
+    		String address1=customerAccount.getAddress().getAddress1().replaceAll("/", "-");// Ingenico doesn't authorize "/" in street field
+    		address.setStreet(address1);
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
     		MandatePersonalName name = new MandatePersonalName();
     		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
     		
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(customerAccount.getName().getFirstName());
+    			name.setFirstName(isEntreprise?"-":customerAccount.getName().getFirstName());
     			name.setSurname(customerAccount.getName().getLastName()); 
-    			personalInformation.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription());
+    			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
     		}  
+    		
     		personalInformation.setName(name);
     		MandateCustomer customer=new MandateCustomer();
     		customer.setBankAccountIban(bankAccountIban);
     		customer.setContactDetails(contactDetails);
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
-
+    		if(isEntreprise) {
+    			customer.setCompanyName(customerAccount.getName().getLastName());
+    		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();
     		body.setUniqueMandateReference(mandateReference);
@@ -347,7 +352,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-
+    		  ObjectMapper mapper = new ObjectMapper(); 
+              String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    		log.debug("createMandate body={}",jsonString);
     	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
     	} catch (ApiException ev) { 
@@ -367,7 +374,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     	body.setMandateSignaturePlace("");
     	body.setMandateSigned(true);
     	
-    	client.merchant(paymentGateway.getMarchandId()).tokens().approvesepadirectdebit(token, body);
+    	getClient().merchant(paymentGateway.getMarchandId()).tokens().approvesepadirectdebit(token, body);
     	
     	}catch (Exception e) {
     		throw new BusinessException(e.getMessage());
@@ -688,7 +695,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			//body.setCustomer(customer);	
 			getClient();
 			log.info("REQUEST:"+marshaller.marshal(body));
-			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
+			PayoutResponse response = getClient().merchant(paymentGateway.getMarchandId()).payouts().create(body);			
 			if (response != null) {
 				log.info("RESPONSE:"+marshaller.marshal(response));
 				
@@ -737,7 +744,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
     	MandatInfoDto mandatInfoDto=new MandatInfoDto();
-    	GetMandateResponse response = client.merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
+    	GetMandateResponse response = getClient().merchant(paymentGateway.getMarchandId()).mandates().get(mandatReference); 
     	MandateResponse mandatResponse=response.getMandate();
     	if(mandatResponse!=null) { 
     		if("WAITING_FOR_REFERENCE".equals(mandatResponse.getStatus())) {
@@ -802,7 +809,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setOrder(order);
 			getClient();
 			log.info("REQUEST:"+marshaller.marshal(body));
-			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
+			CreateHostedCheckoutResponse response = getClient().merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
 			log.info("RESPONSE:"+marshaller.marshal(response));
 			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
 			return redirectionUrl;

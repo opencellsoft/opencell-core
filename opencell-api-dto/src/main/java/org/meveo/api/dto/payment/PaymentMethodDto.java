@@ -348,6 +348,7 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             if(Objects.nonNull(document)){
                 pmEntity.setReferenceDocument(document);
             }
+            pmEntity.setTokenId(getTokenId());
         }
         return pmEntity;
     }
