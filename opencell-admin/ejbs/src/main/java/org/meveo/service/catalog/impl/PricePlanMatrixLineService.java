@@ -126,17 +126,21 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<QuoteAttribute> quoteAttributes) {
-        List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion).stream()
+        List<PricePlanMatrixLine> prices = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
+        List<PricePlanMatrixLine> matchedPrices = prices.stream()
                 .filter(line -> line.match(quoteAttributes))
                 .collect(Collectors.toList());
-        if (priceLines.isEmpty()) {
-            if(pricePlanMatrixVersion.getDefaultLine() != null)
-                return List.of(pricePlanMatrixVersion.getDefaultLine());
-            else
-                throw new BusinessApiException("No price match with quote product id: " + quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+        if (matchedPrices.isEmpty()) {
+                return List.of(prices.stream()
+                        .filter(p -> p.getIsDefault())
+                        .findAny()
+                        .orElseThrow(
+                                () -> new BusinessApiException("No price match with quote product id: " + quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")")
+                        ));
+
         }
 
-        return priceLines;
+        return matchedPrices;
     }
 
 }

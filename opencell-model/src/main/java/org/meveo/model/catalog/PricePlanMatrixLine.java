@@ -43,6 +43,9 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
+    @Column(name = "is_default")
+    private boolean isDefault = false;
+
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
     }
@@ -78,5 +81,13 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public boolean match(Set<QuoteAttribute> quoteAttributes) {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(quoteAttributes));
+    }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public boolean getIsDefault() {
+        return isDefault;
     }
 }

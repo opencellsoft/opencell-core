@@ -95,10 +95,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
-        if(pricePlanMatrixVersionDto.getDefaultLine() != null)
-            createOrUpdateDefaultLine(pricePlanMatrixVersion, pricePlanMatrixVersionDto);
-        else
-            pricePlanMatrixVersion.setDefaultLine(null);
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionDto.getVersion());
         pricePlanMatrixVersion.setValidity(pricePlanMatrixVersionDto.getValidity());
@@ -111,20 +107,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
-    }
-
-    private void createOrUpdateDefaultLine(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto) {
-        PricePlanMatrixLine defaultLine = new PricePlanMatrixLine();
-        if(pricePlanMatrixVersionDto.getDefaultLine().getPpmLineId() != null){
-            defaultLine = pricePlanMatrixLineService.findById(pricePlanMatrixVersionDto.getDefaultLine().getPpmLineId());
-            if(defaultLine == null)
-                throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixVersionDto.getDefaultLine().getPpmLineId());defaultLine.setPricetWithoutTax(pricePlanMatrixVersionDto.getDefaultLine().getPricetWithoutTax());
-        }
-        defaultLine.setPricetWithoutTax(pricePlanMatrixVersionDto.getDefaultLine().getPricetWithoutTax());
-        defaultLine.setDescription(pricePlanMatrixVersionDto.getDefaultLine().getDescription());
-        defaultLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        pricePlanMatrixLineService.updateAudit(defaultLine);
-        pricePlanMatrixVersion.setDefaultLine(defaultLine);
     }
 
     public GetPricePlanVersionResponseDto updateProductVersionStatus(String pricePlanMatrixCode, int currentVersion, VersionStatusEnum status) {
