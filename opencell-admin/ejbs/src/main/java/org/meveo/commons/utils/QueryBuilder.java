@@ -89,13 +89,13 @@ public class QueryBuilder {
 
     public String format(String rootAlias, InnerJoin innerJoin) {
 
-        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+        String sql = "inner join fetch " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next);
-                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                    return String.format("inner join fetch %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -215,7 +215,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -244,7 +244,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
