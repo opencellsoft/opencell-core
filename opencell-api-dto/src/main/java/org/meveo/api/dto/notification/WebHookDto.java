@@ -111,8 +111,8 @@ public class WebHookDto extends NotificationDto {
         if (webHook.getHeaders() != null) {
             headers.putAll(webHook.getHeaders());
         }
-        if (webHook.getParams() != null) {
-            params.putAll(webHook.getParams());
+        if (webHook.getWebhookParams() != null) {
+            params.putAll(webHook.getWebhookParams());
         }
         httpProtocol = webHook.getHttpProtocol();
         bodyEl = webHook.getBodyEL();
