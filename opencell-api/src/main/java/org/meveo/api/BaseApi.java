@@ -125,6 +125,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class BaseApi {
+	
+
+	protected static final String DEFAULT_SORT_ORDER_ID = "id";
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 

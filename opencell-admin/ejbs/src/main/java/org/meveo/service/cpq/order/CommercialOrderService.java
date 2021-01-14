@@ -1,6 +1,8 @@
 package org.meveo.service.cpq.order;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -59,5 +61,13 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}catch(NonUniqueResultException e) {
 			throw new BusinessException("Found many order number !!");
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommercialOrder> findByOrderType(String orderTypeCode) {
+		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co", Arrays.asList("orderType"));
+		queryBuilder.addCriterion("co.orderType.code", "=", orderTypeCode, false);
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
 	}
 }
