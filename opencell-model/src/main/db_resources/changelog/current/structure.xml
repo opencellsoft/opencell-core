@@ -3683,7 +3683,32 @@ END $$;]]>
             </column>
         </addColumn>  
     </changeSet>
-    
+    <changeSet id="5687_20203011" author="khalidHORRI">
+        <addColumn tableName="billing_cycle">
+            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="compute_dates_validation" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="#5680_20201126" author="khalidHORRI">
+        <addColumn tableName="billing_invoice">
+            <column name="initial_collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="collection_date_delay_el" type="varchar(2000)"/>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="collection_date" type="datetime"/>
+        </addColumn>
+        <sql>
+            update ${db.schema.adapted}billing_invoice set initial_collection_date = due_date;
+            update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
+        </sql>
+    </changeSet>
     <!-- for MediaPost -->
      
     <include file="cpq_structure.xml" relativeToChangelogFile="true" />
