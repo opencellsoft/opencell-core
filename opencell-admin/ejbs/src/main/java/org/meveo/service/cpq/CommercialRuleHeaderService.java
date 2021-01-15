@@ -60,13 +60,24 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		if(tag == null) { 
 			throw new EntityDoesNotExistsException(Tag.class,tagCode);
 		}
-
 		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getTagRules")
 				.setParameter("tagCode", tagCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<CommercialRuleHeader> getOfferRules(String offerCode) throws BusinessException{
+		OfferTemplate offer=offerTemplateService.findByCode(offerCode);
+		if(offer == null) { 
+			throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode);
+		}
+		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferRules")
+				.setParameter("offerCode", offerCode);
+		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
+		return commercialRules;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<CommercialRuleHeader> getAttributeRules(String attributeCode,String productCode) throws BusinessException{

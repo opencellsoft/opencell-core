@@ -319,6 +319,16 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		return result;
 	}
 	
+	public GetListCommercialRulesResponseDto findOfferRules(String OfferCode) {
+		 
+		if(Strings.isEmpty(OfferCode)) {
+			missingParameters.add("OfferCode");
+		}
+		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getOfferRules(OfferCode); 
+		GetListCommercialRulesResponseDto result =getCommmercialRules(commercialRules);
+		return result;
+	}
+	
 	public GetListCommercialRulesResponseDto findAttributeRules(String attributeCode,String productCode) { 
 		if(StringUtils.isBlank(attributeCode)) {
 			missingParameters.add("attributeCode");
