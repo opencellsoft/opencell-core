@@ -1,10 +1,13 @@
 package org.meveo.service.base;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Invoice;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+import static org.meveo.service.base.PersistenceService.SEARCH_ATTR_TYPE_CLASS;
+import static org.meveo.service.base.PersistenceService.SEARCH_IS_NOT_NULL;
+import static org.meveo.service.base.PersistenceService.SEARCH_IS_NULL;
+import static org.meveo.service.base.PersistenceService.SEARCH_SQL;
+import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR;
+import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,8 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.meveo.service.base.PersistenceService.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Invoice;
 
 public class PersistenceServiceTest {
 
