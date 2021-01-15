@@ -1095,32 +1095,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
-	private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
-
-        if (billingCycle.getCollectionDateDelayEl() == null) {
-            invoice.setInitialCollectionDate(invoice.getDueDate());
-            return;
-        }
-        if (billingRun != null && billingRun.getCollectionDate() != null) {
-            invoice.setInitialCollectionDate(billingRun.getCollectionDate());
-            return;
-        }
-        BillingAccount billingAccount = invoice.getBillingAccount();
-        Order order = invoice.getOrder();
-
-        // Determine invoice due date delay either from Order, Customer account or Billing cycle
-        Integer delay = 0;
-        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
-        if (delay == null) {
-            throw new BusinessException("collection date delay is null");
-        }
-
-        Date initailCollectionDate = DateUtils.addDaysToDate(invoice.getDueDate(), delay);
-
-        invoice.setInitialCollectionDate(initailCollectionDate);
-
-    }
-
     private Integer evaluateCollectionDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) {
         Integer result = null;
         if (StringUtils.isBlank(expression)) {

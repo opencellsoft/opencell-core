@@ -310,6 +310,17 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "skip_validation_script")
     private boolean skipValidationScript = false;
 
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date")
+    private Date collectionDate;
+
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    @Column(name = "compute_dates_validation")
+    private Boolean computeDatesAtValidation;
     
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
@@ -708,11 +719,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "reject_auto_action")
-    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    private BillingRunAutomaticActionEnum rejectAutoAction;
     
     @Enumerated(value = EnumType.STRING)
     @Column(name = "suspect_auto_action")
-    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+    private BillingRunAutomaticActionEnum suspectAutoAction;
     
     public BillingRunAutomaticActionEnum getRejectAutoAction() {
 		return rejectAutoAction;

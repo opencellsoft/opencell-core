@@ -77,6 +77,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
@@ -1113,7 +1114,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
 	public BillingRunStatusEnum validateBillingRun(BillingRun billingRun) {
-		if(BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+		if(BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
 			BillingRunStatusEnum status = BillingRunStatusEnum.POSTINVOICED;
 			if(!isBillingRunValid(billingRun)) {
 				status = BillingRunStatusEnum.REJECTED;

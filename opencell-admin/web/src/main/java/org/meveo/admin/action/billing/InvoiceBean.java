@@ -889,15 +889,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         entity.setLinkedInvoices(linkedInvoices);
     }
 
-    public LazyDataModel<Invoice> getDueInvoices(DunningDocument dunningDocument){
-        if (!dunningDocument.isTransient()) {
-            filters.put("recordedInvoice.dunningDocument", dunningDocument);
-            return getLazyDataModel();
-        } else {
-            return null;
-        }
-    }
-    
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         invoiceService.cancelInvoiceWithoutDelete(invoice);
     }
