@@ -1,9 +1,15 @@
 package org.meveo.model.catalog;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,13 +28,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 /**
  * @author Tarik FA.
  * @version 10.0
@@ -77,6 +80,16 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal priceWithoutTax;
+
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PricePlanMatrixLine> lines;
+
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PricePlanMatrixColumn> columns;
+
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name ="default_line_id")
+    private PricePlanMatrixLine defaultLine;
     /**
      * @return the status
      */
@@ -153,5 +166,29 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     public void setMatrix(Boolean matrix) {
         isMatrix = matrix;
+    }
+
+    public List<PricePlanMatrixLine> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<PricePlanMatrixLine> lines) {
+        this.lines = lines;
+    }
+
+    public List<PricePlanMatrixColumn> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<PricePlanMatrixColumn> columns) {
+        this.columns = columns;
+    }
+
+    public PricePlanMatrixLine getDefaultLine() {
+        return defaultLine;
+    }
+
+    public void setDefaultLine(PricePlanMatrixLine defaultLine) {
+        this.defaultLine = defaultLine;
     }
 }

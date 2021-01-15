@@ -9,6 +9,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -23,16 +24,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
-    	var pricePlanMatrixVersion = this.findLastVersionByCode(entity.getPricePlanMatrix().getCode());
-    	entity.setCurrentVersion(pricePlanMatrixVersion.size() == 0 ? 1 : pricePlanMatrixVersion.get(0).getCurrentVersion() + 1);
-		super.create(entity);
+        super.create(entity);
     }
-
-	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrixVersion> findLastVersionByCode(String code) {
-			return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByCode")
-																			.setParameter("code", code).getResultList();
-	}
 
 
     public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
@@ -86,10 +79,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException("Failed to clone price plan matrix version", e);
         }
-        Integer lastVersion = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
-                .setParameter("pricePlanMatrixCode", pricePlanMatrixVersion.getPricePlanMatrix().getCode())
-                .getSingleResult();
+        String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
+        Integer lastVersion = getLastVersion(ppmCode);
         duplicate.setId(null);
+        duplicate.setColumns(new ArrayList<>());
+        duplicate.setDefaultLine(null);
+        duplicate.setLines(new ArrayList<>());
         duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);
         duplicate.setStatus(VersionStatusEnum.DRAFT);
@@ -101,5 +96,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         return duplicate;
+    }
+
+    private Integer getLastVersion(String ppmCode) {
+        return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
+                    .setParameter("pricePlanMatrixCode", ppmCode)
+                    .getSingleResult();
     }
 }

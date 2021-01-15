@@ -33,6 +33,8 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     private Boolean isMatrix;
     private BigDecimal priceWithoutTax;
 
+    private PricePlanMatrixLineDto defaultLine;
+
     public PricePlanMatrixVersionDto() {
     }
 
@@ -45,6 +47,8 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
+        if(pricePlanMatrixVersion.getDefaultLine() != null)
+            setDefaultLine(new PricePlanMatrixLineDto(pricePlanMatrixVersion.getDefaultLine()));
     }
 
     public String getPricePlanMatrixCode() {
@@ -111,5 +115,11 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         this.priceWithoutTax = priceWithoutTax;
     }
 
+    public PricePlanMatrixLineDto getDefaultLine() {
+        return defaultLine;
+    }
 
+    public void setDefaultLine(PricePlanMatrixLineDto defaultLine) {
+        this.defaultLine = defaultLine;
+    }
 }
