@@ -81,21 +81,22 @@ public class QueryBuilder {
         return clazz;
     }
 
-    public String formatInnerJoins(){
+    public String formatInnerJoins(boolean doFetch){
         return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin()))
+                .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
-    public String format(String rootAlias, InnerJoin innerJoin) {
+    public String format(String rootAlias, InnerJoin innerJoin, boolean doFetch) {
 
-        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+        String shouldFetch = doFetch ? "fetch " : "";
+        String sql = "inner join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
-                        return format(innerJoin.getAlias(), next);
-                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                        return format(innerJoin.getAlias(), next, doFetch);
+                    return String.format("inner join %s%s.%s %s",shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -215,7 +216,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -244,7 +245,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -1098,6 +1099,8 @@ public class QueryBuilder {
             JoinWrapper joinWrapper = parse(concatenatedFields);
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
+        } else if(fields.length == 1){
+            return this.alias + "." + concatenatedFields;
         }
         return concatenatedFields;
     }
@@ -1133,7 +1136,7 @@ public class QueryBuilder {
     public Query getQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
 
-        Query result = em.createQuery(toStringQuery());
+        Query result = em.createQuery(toStringQuery(true));
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -1153,11 +1156,11 @@ public class QueryBuilder {
      * @param convertToMap If False, query will return a list of Object[] values. If True, query will return a list of map of values.
      * @return instance of Query.
      */
-    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
+    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap, boolean doFetch) {
         applyOrdering(paginationSortAlias);
 
         Session session = em.unwrap(Session.class);
-        SQLQuery result = session.createSQLQuery(toStringQuery());
+        SQLQuery result = session.createSQLQuery(toStringQuery(doFetch));
         applyPagination(result);
 
         if (convertToMap) {
@@ -1185,7 +1188,7 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(toStringQuery().substring(q.indexOf(FROM)));
+        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(toStringQuery(true).substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1216,7 +1219,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-    	String countSql = "select count(*) " + toStringQuery().substring(q.indexOf(FROM));
+    	String countSql = "select count(*) " + toStringQuery(false).substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
@@ -1253,7 +1256,7 @@ public class QueryBuilder {
      */
     public Query getNativeCountQuery(EntityManager em) {
 
-        String countSql = "select count(*) " + addCurrentSchema(toStringQuery().substring(q.indexOf(FROM)));
+        String countSql = "select count(*) " + addCurrentSchema(toStringQuery(false).substring(q.indexOf(FROM)));
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.trace("Count query is {}", countSql);
 
@@ -1322,8 +1325,14 @@ public class QueryBuilder {
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
             Object[] orderings = paginationConfiguration.getOrderings();
-            for (int i = 0; i < orderings.length; i = i + 2) {
-                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
+            Object defaultOrder = orderings[1];
+            String[] fields = orderings[0].toString().split(", ");
+            for (String field : fields){
+                String[] fieldAndOrder = field.split(" ");
+                if(fieldAndOrder.length == 1)
+                    addOrderCriterion(((alias != null) ? (alias + ".") : "") + field, defaultOrder == SortOrder.ASCENDING);
+                else
+                    addOrderCriterion(((alias != null) ? (alias + ".") : "") + fieldAndOrder[0], fieldAndOrder[1].toLowerCase().equals("asc"));
             }
         }
     }
@@ -1386,11 +1395,11 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return toStringQuery();
+        return toStringQuery(true);
     }
 
-    private String toStringQuery() {
-        return q.toString().replace(INNER_JOINS, formatInnerJoins());
+    private String toStringQuery(boolean doFetch) {
+        return q.toString().replace(INNER_JOINS, formatInnerJoins(doFetch));
     }
 
     public Map<String, Object> getParams() {
@@ -1403,7 +1412,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = toStringQuery();
+        String result = toStringQuery(true);
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
