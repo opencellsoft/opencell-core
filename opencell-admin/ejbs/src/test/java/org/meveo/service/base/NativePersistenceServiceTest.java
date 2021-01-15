@@ -25,9 +25,9 @@ import org.meveo.model.billing.Invoice;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,7 +115,7 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_in_list() {
-        filters.put("inList inListField1", List.of("hello", "test"));
+        filters.put("inList inListField1", Arrays.asList("hello", "test"));
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where " +
                 "lower(a.inListField1) IN (:a_inListField1) " +
                 "Param name:a_inListField1 value:[hello, test]");
@@ -123,7 +123,7 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_not_in_list() {
-        filters.put("not-inList notInListField1", List.of("hello", "test"));
+        filters.put("not-inList notInListField1", Arrays.asList("hello", "test"));
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where " +
                 "lower(a.notInListField1) NOT  IN (:a_notInListField1) " +
                 "Param name:a_notInListField1 value:[hello, test]");
@@ -185,7 +185,7 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_overlap_optional_range() {
-        filters.put("overlapOptionalRange overlapOptionalRangeFiled1 overlapOptionalRangeField2", List.of(10, 20));
+        filters.put("overlapOptionalRange overlapOptionalRangeFiled1 overlapOptionalRangeField2", Arrays.asList(10, 20));
         String query = getQuery();
         assertThat(query).isEqualTo("select a.selectField from tableName a  where " +
                 "(" +
@@ -203,7 +203,7 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_overlap_optional_range_inclusive() {
-        filters.put("overlapOptionalRangeInclusive overlapOptionalRangeFiled1 overlapOptionalRangeField2", List.of(10, 20));
+        filters.put("overlapOptionalRangeInclusive overlapOptionalRangeFiled1 overlapOptionalRangeField2", Arrays.asList(10, 20));
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where " +
                 "(" +
                     "( a.overlapOptionalRangeFiled1 IS NULL and a.overlapOptionalRangeField2 IS NULL) " +
@@ -296,7 +296,7 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_search_att_type_class_list_class() {
-        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, List.of("org.meveo.model.billing.Invoice"));
+        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, Arrays.asList("org.meveo.model.billing.Invoice"));
 
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where type_class  in :type_class Param name:type_class value:[org.meveo.model.billing.Invoice]");
     }
@@ -333,7 +333,7 @@ public class NativePersistenceServiceTest {
         filters.put("list listFilter", 10);
         filters.put("inList inListFilter", 10);
         filters.put("minmaxRange minmaxRangeFilter1 minmaxRangeFilter2", 10);
-        filters.put("overlapOptionalRange overlapOptionalRangeFilter1 overlapOptionalRangeFilter2", List.of(10, 15));
+        filters.put("overlapOptionalRange overlapOptionalRangeFilter1 overlapOptionalRangeFilter2", Arrays.asList(10, 15));
         filters.put("likeCriterias likeCriteriasFilter", "likeWord");
         filters.put(SEARCH_WILDCARD_OR + " wildcardOrFilter", "wildCard*");
         filters.put(SEARCH_WILDCARD_OR_IGNORE_CAS + " wildcardOrIgnoreCaseFilter", "wildCardIngoreCase*");
@@ -365,13 +365,13 @@ public class NativePersistenceServiceTest {
 
     @Test
     public void test_aggregation_functions() {
-        PaginationConfiguration configuration = new PaginationConfiguration(1, 10, filters, "text", List.of("field", "field2", "max(field3)"));
+        PaginationConfiguration configuration = new PaginationConfiguration(1, 10, filters, "text", Arrays.asList("field", "field2", "max(field3)"), null, null);
 
         //assertThat(queryWithAggFields(configuration)).isEqualTo("select a.field, a.field2, max(field3) from tableName a  GROUP BY  a.field, a.field2");
     }
 
     private String getQuery() {
-        return sut.getQuery("tableName", new PaginationConfiguration(10, 40, filters, "text", List.of("selectField"), "selectField", "desc")).toString();
+        return sut.getQuery("tableName", new PaginationConfiguration(10, 40, filters, "text", Arrays.asList("selectField"), null, null)).toString();
     }
 
     private String queryWithAggFields(PaginationConfiguration configuration) {
