@@ -123,7 +123,7 @@ public interface GroupedAttributesRs extends IBaseRs {
     description ="retrieve and return an existing grouped attribute",
     responses = {
             @ApiResponse(responseCode="200", description = "the grouped attribute successfully retrieved",
-                    content = @Content(schema = @Schema(implementation = GroupedAttributes.class))),
+                    content = @Content(schema = @Schema(implementation = GetGroupedAttributesResponse.class))),
             @ApiResponse(responseCode = "404", description = "the grouped attribute with groupedAttributeCode in param does not exist"),
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
             		content = @Content(schema = @Schema(implementation = BusinessException.class)))
