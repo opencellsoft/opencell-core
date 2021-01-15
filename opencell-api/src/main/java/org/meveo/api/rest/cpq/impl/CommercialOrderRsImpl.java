@@ -9,8 +9,6 @@ import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
-import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
-import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -46,7 +44,7 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 		ActionStatus status = new ActionStatus();
 		try {
 			commercialOrderApi.delete(orderId);;
-			return Response.ok().build();
+			return Response.ok(status).build();
 		}catch(MeveoApiException e) {
 			return errorResponse(e, status);
 		}

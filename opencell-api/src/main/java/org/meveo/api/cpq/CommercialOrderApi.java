@@ -199,7 +199,8 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString()))
 			commercialOrderService.remove(order);
-		throw new MeveoApiException("Can not be deleted, only status In_Creation or Canceled can be delete, current status : " + order.getStatus() );
+		else
+			throw new MeveoApiException("Can not be deleted, only status In_Creation or Canceled can be delete, current status : " + order.getStatus() );
 	}
 	
 	public void updateStatus(Long commercialOrderId, String statusTarget) {
