@@ -907,7 +907,7 @@ public class NativePersistenceService extends BaseService {
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
 
         QueryBuilder queryBuilder = getQuery(tableName, config);
-        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true, false);
         return query.list();
     }
 
@@ -922,7 +922,7 @@ public class NativePersistenceService extends BaseService {
     public List<Object[]> listAsObjets(String tableName, PaginationConfiguration config) {
 
         QueryBuilder queryBuilder = getQuery(tableName, config);
-        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
+        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false, false);
         return query.list();
     }
 
