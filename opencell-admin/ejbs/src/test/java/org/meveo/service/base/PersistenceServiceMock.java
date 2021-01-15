@@ -1,5 +1,6 @@
 package org.meveo.service.base;
 
-public class PersistenceServiceMock extends PersistenceService {
+import org.meveo.model.billing.Invoice;
 
+public class PersistenceServiceMock extends PersistenceService<Invoice> {
 }
