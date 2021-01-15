@@ -103,13 +103,18 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.status = org.meveo.model.billing.InvoiceStatusEnum.UNPAID"
                 + " WHERE inv.dueDate <= NOW() AND inv.status IN (org.meveo.model.billing.InvoiceStatusEnum.CREATED, org.meveo.model.billing.InvoiceStatusEnum.GENERATED, org.meveo.model.billing.InvoiceStatusEnum.SENT)"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
                 "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
                         + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
-        @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false") })
+        @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
+        @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED") 
+
+})
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -411,8 +416,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private String externalRef;
     
     
+    /**
+     * Invoicing error reason
+     */
+    @Column(name = "reject_reason", columnDefinition = "text")
+    @Size(max = 255)
+    private String rejectReason;
 
-    @Transient
+    /**
+     * Invoice payment collection date.
+     */
+    @Column(name = "initial_collection_date")
+    private Date initialCollectionDate;
+
+	@Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
     @Transient
@@ -464,6 +481,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+        this.status=InvoiceStatusEnum.CREATED;
     }
 
     public Date getProductDate() {
@@ -1108,4 +1126,31 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public List<RatedTransaction> getDraftRatedTransactions() {
         return draftRatedTransactions;
     }
+
+    /**
+     * Gets the invoice payment collection date
+     *
+     * @return Invoice payment collection date
+     */
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
+    }
+
+    /**
+     * Sets Invoice payment collection date.
+     *
+     * @param initialCollectionDate
+     */
+    public void setInitialCollectionDate(Date initialCollectionDate) {
+        this.initialCollectionDate = initialCollectionDate;
+    }
+
+	public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
+    
 }

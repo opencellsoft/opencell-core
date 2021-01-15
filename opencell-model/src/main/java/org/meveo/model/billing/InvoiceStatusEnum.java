@@ -65,7 +65,24 @@ public enum InvoiceStatusEnum {
     /**
      * when when invoice AO is disputed or into dunning active
      */
-    DISPUTED(9, "invoiceStatusEnum.disputed");
+    DISPUTED(9, "invoiceStatusEnum.disputed"),
+    
+    /**
+     * invoice is computed in draft mode (no invoice number is set)
+     */
+    DRAFT(10, "invoiceStatusEnum.draft"),
+    /**
+     * invoice has been rejected without blocker reason by automatic check and is waiting for manual validation,
+     */
+    SUSPECT(11, "invoiceStatusEnum.suspect"),
+    /**
+     * invoice has been rejected with blocker reason by automatic check and is waiting for manual validation,
+     */
+    REJECTED(12, "invoiceStatusEnum.rejected"),
+    /**
+     * invoice is canceled and won't be further processed during the bulling run
+     */
+    CANCELED(13, "invoiceStatusEnum.canceled");
     
     private Integer id;
     private String label;

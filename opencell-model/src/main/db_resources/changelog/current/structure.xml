@@ -3688,4 +3688,31 @@ END $$;]]>
      
     <include file="cpq_structure.xml" relativeToChangelogFile="true" />
   
+	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="skip_validation_script" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="suspect_auto_action" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="reject_auto_action" type="varchar(255)"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_invoice">
+            <column name="reject_reason" type="varchar(255)"/>
+        </addColumn>
+        
+        <addColumn tableName="billing_invoice_type">
+            <column name="billing_run_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="invoice_validation_script_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_billing_run_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
+              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+    </changeSet>
+    
 </databaseChangeLog>
