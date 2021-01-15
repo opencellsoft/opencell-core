@@ -64,7 +64,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.finance.AccountingEntry;
 
 /**
  * Account operation
@@ -92,7 +92,7 @@ import org.meveo.model.finance.AccountingWriting;
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and " +
                 "                                pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
-                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+                "                                ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
                 "                                pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
                 + "                             in ('I','OCC')  and " +
@@ -152,7 +152,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      * List of associated accounting writing
      */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
-    private List<AccountingWriting> accountingWritings = new ArrayList<>();
+    private List<AccountingEntry> accountingEntries = new ArrayList<>();
 
     /**
      * Deprecated in 5.2. Use accountingCode instead
@@ -364,7 +364,10 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 
 
     @ManyToMany
-    @JoinTable(name = "ar_ao_payment_histories", joinColumns = @JoinColumn(name = "ao_id"), inverseJoinColumns = @JoinColumn(name = "history_id"))
+    @JoinTable(
+      name = "ar_ao_payment_histories",
+      joinColumns = @JoinColumn(name = "ao_id"),
+      inverseJoinColumns = @JoinColumn(name = "history_id"))
     private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
 
     /**
@@ -621,12 +624,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
         this.accountingCode = accountingCode;
     }
 
-    public List<AccountingWriting> getAccountingWritings() {
-		return accountingWritings;
+    public List<AccountingEntry> getAccountingEntries() {
+		return accountingEntries;
 	}
 
-	public void setAccountingWritings(List<AccountingWriting> accountingWritings) {
-		this.accountingWritings = accountingWritings;
+	public void setAccountingEntries(List<AccountingEntry> accountingEntries) {
+		this.accountingEntries = accountingEntries;
 	}
 
     /**

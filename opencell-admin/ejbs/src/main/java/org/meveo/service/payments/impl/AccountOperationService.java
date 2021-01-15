@@ -394,7 +394,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         newAccountOperation.setUnMatchingAmount(amount);
         newAccountOperation.setAmount(amount);
         newAccountOperation.setCustomerAccount(toCustomerAccount);
-        newAccountOperation.setAccountingWritings(new ArrayList<>());
+        newAccountOperation.setAccountingEntries(new ArrayList<>());
         newAccountOperation.setInvoices(null);
         newAccountOperation.setMatchingAmounts(new ArrayList<>());
         newAccountOperation.setTransactionDate(new Date());
