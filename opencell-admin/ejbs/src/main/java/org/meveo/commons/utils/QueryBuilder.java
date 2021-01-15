@@ -1166,6 +1166,8 @@ public class QueryBuilder {
             JoinWrapper joinWrapper = parse(concatenatedFields);
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
+        } else if(fields.length == 1){
+            return this.alias + "." + concatenatedFields;
         }
         return concatenatedFields;
     }
