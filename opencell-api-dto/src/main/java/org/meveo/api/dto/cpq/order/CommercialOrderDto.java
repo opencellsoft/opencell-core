@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.order.OrderStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -51,6 +50,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	}
 
 	public CommercialOrderDto(CommercialOrder order) {
+		this.id = order.getId();
 		this.sellerCode = order.getSeller().getCode();
 		this.orderNumber = order.getOrderNumber();
 		this.label = order.getLabel();
