@@ -39,6 +39,7 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.GroupedAttributes;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -113,7 +114,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus remove(@PathParam("groupedAttributeCode") String groupedAttributeCode);
+    ActionStatus remove(@Parameter(required = true) @PathParam("groupedAttributeCode") String groupedAttributeCode);
     
     @GET
     @Path("/")
@@ -127,7 +128,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
             		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    Response find(@QueryParam("groupedAttributeCode") String groupedAttributeCode);
+    Response find(@Parameter(required = true) @QueryParam("groupedAttributeCode") String groupedAttributeCode);
 
 
 }
