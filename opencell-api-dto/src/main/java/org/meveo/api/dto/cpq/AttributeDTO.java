@@ -96,6 +96,17 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElement(name = "commercialRuleCodes") 
     protected List<String> commercialRuleCodes=new ArrayList<String>();
     
+    /** The medias */
+    @XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    protected List<MediaDto> medias;
+    
+    
+    /** The tags */
+    @XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    protected List<TagDto> tags;
+    
     public AttributeDTO() {
     }
 
@@ -315,6 +326,43 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
+
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
+
+
+
+	/**
+	 * @return the tags
+	 */
+	public List<TagDto> getTags() {
+		return tags;
+	}
+
+
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<TagDto> tags) {
+		this.tags = tags;
+	}
+
+
+	
  
 
 

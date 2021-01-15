@@ -54,7 +54,10 @@ public class ProductDto extends BaseEntityDto{
     protected List<String> commercialRuleCodes=new ArrayList<String>();
     
    
-
+    /** The medias */
+    @XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    protected List<MediaDto> medias;
     
     
     public ProductDto() {}
@@ -287,6 +290,35 @@ public class ProductDto extends BaseEntityDto{
 		this.id = id;
 	}
 
+	/**
+	 * @return the commercialRuleCodes
+	 */
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
+	}
+
+	/**
+	 * @param commercialRuleCodes the commercialRuleCodes to set
+	 */
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
+
+	
 
 
 

@@ -118,6 +118,11 @@ public class Attribute extends EnableBusinessCFEntity{
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
     
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Tag> tags = new ArrayList<>();
+    
 
     public Attribute(){
 
@@ -254,6 +259,22 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
 	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+	
+	
 	
 	
     

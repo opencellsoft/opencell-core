@@ -18,6 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -195,6 +199,13 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
+    
+    /**
+     * date of status : it set automatically when ever the status of offerTemplate is changed
+     */
+    @Column(name = "status_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)   
+    private Date statusDate;
 	
      
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
@@ -562,6 +573,21 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.medias = medias;
 	}
 
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	
 	
 	
 

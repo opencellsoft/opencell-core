@@ -18,11 +18,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -86,6 +83,15 @@ public class Tag extends BusinessEntity {
 	@Size(max = 2000)
     @Column(name = "filter_el", columnDefinition = "TEXT") 
 	private String filterEl;
+	
+	
+	/**
+	 * seller associated to the entity
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "attribute_id",referencedColumnName = "id")
+	private Attribute attribute;
+	
  
 	public String getName() {
 		return name;
@@ -154,6 +160,22 @@ public class Tag extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
+
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		return attribute;
+	}
+
+	/**
+	 * @param attribute the attribute to set
+	 */
+	public void setAttribute(Attribute attribute) {
+		this.attribute = attribute;
+	}
+	
+	
  
  
 	

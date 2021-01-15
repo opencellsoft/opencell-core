@@ -135,6 +135,7 @@
 			<column name="tag_type_id" type="bigint" />
 			<column name="parent_tag_id" type="bigint" />
 			<column name="filter_el" type="varchar(2000)"/>
+			 <column name="attribute_id" type="bigint" />
 		</createTable>
 	</changeSet>
 
@@ -429,6 +430,11 @@
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-08">
 		<addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag_type" />
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-attribute_tag">
+		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_tag" constraintName="fk_tag_attribute" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 	</changeSet>
 
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-09">
@@ -1066,6 +1072,7 @@
         <changeSet id="#5595_18_20201102" author="Mbarek-Ay">
         <addColumn tableName="cat_offer_template">
             <column name="product_status" type="varchar(50)"/>
+            <column name="status_date" type="datetime" />
         </addColumn>
         </changeSet>
 
