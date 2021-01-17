@@ -71,6 +71,30 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 	public void setActionStatus(ActionStatus actionStatus) {
 		this.actionStatus = actionStatus;
 	}
+	/**
+	 * @return the quoteItems
+	 */
+	public List<QuoteOfferDTO> getQuoteItems() {
+		return quoteItems;
+	}
+	/**
+	 * @param quoteItems the quoteItems to set
+	 */
+	public void setQuoteItems(List<QuoteOfferDTO> quoteItems) {
+		this.quoteItems = quoteItems;
+	}
+	/**
+	 * @return the prices
+	 */
+	public List<PriceDTO> getPrices() {
+		return prices;
+	}
+	/**
+	 * @param prices the prices to set
+	 */
+	public void setPrices(List<PriceDTO> prices) {
+		this.prices = prices;
+	}
 
 
 	
