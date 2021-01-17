@@ -637,6 +637,8 @@
                                     <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
                                 </p:column>
                                 <hftl:column label="#{messages['counterTemplate.title']}" field="counter.description" />
+                                <hftl:column label="#{messages['usageChargeTemplate.priority']}"
+                                             field="priority" />
                                 <p:column styleClass="actions-column" width="55">
                                     <f:facet name="header">
                                         <h:outputText value="#{messages['commons.actions']}" />
