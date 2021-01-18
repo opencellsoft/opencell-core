@@ -8,9 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.BaseQuoteDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
-import org.meveo.api.dto.cpq.QuoteOfferDTO;
-import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.quote.Quote;
 
@@ -28,7 +27,8 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	/**
 	 * Quote data
 	 */
-	private QuoteDTO quoteDto;
+	private BaseQuoteDTO quoteDto;
+	private GetQuoteVersionDtoResponse currentVersion;
 	
     private List<GetQuoteVersionDtoResponse> allQuoteVersions = new ArrayList<GetQuoteVersionDtoResponse>();
 	
@@ -47,14 +47,14 @@ public class GetQuoteDtoResponse extends BaseResponse{
 	/**
 	 * @return the quoteDto
 	 */
-	public QuoteDTO getQuoteDto() {
+	public BaseQuoteDTO getQuoteDto() {
 		return quoteDto;
 	}
 
 	/**
 	 * @param quoteDto the quoteDto to set
 	 */
-	public void setQuoteDto(QuoteDTO quoteDto) {
+	public void setQuoteDto(BaseQuoteDTO quoteDto) {
 		this.quoteDto = quoteDto;
 	}
 
@@ -83,6 +83,22 @@ public class GetQuoteDtoResponse extends BaseResponse{
 		 }
 		 allQuoteVersions.add(quoteVersion);
 	}
+
+	/**
+	 * @return the currentVersion
+	 */
+	public GetQuoteVersionDtoResponse getCurrentVersion() {
+		return currentVersion;
+	}
+
+	/**
+	 * @param currentVersion the currentVersion to set
+	 */
+	public void setCurrentVersion(GetQuoteVersionDtoResponse currentVersion) {
+		this.currentVersion = currentVersion;
+	}
+
+
 
 	
 	
