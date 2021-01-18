@@ -1254,8 +1254,7 @@
 	            <column name="display" type="${type.boolean}" />
 	        </addColumn>
 
-
-     	</changeSet>
+	  </changeSet>
 
 
 	    <changeSet author="Mbarek-Ay" id="#51-20201123">
@@ -1512,6 +1511,66 @@
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
 
 	    </changeSet>
+
+	<changeSet id="#5569_124_20200118" author="NabilOUACHI">
+
+
+		<createSequence sequenceName="cpq_quote_price_seq" startValue="1" />
+		<createTable tableName="cpq_quote_price">
+
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_quote_price" />
+			</column>
+			<!-- BusinessEntity Start -->
+			<column name="code" type="varchar(255)" >
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<!-- BusinessEntity End -->
+			<!-- Auditable Start -->
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<!-- Auditable End -->
+
+			<column name="quote_article_line_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="quote_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="price_level" type="varchar(50)" />
+			<column name="price_type" type="varchar(50)" />
+
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+			<column name="unit_price_without_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
+			<column name="tax_amount" type="numeric(23, 12)" />
+			<column name="tax_rate" type="numeric(23, 12)" />
+
+			<column name="price_over_charged" type="${type.boolean}" />
+
+
+			<column name="currency_code" type="varchar(25)" />
+
+			<column name="recurrence_duration" type="int8" />
+
+
+			<column name="recurrence_periodicity" type="varchar(50)" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_quote_article_Line" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_article_line" />
+		<addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_quote" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+
+
+	</changeSet>
 
       <changeSet id="current-str-fk-35" author="TarikFAKHOURI">
 
