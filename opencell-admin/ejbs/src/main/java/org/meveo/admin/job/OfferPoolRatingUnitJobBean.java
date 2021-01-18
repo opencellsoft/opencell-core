@@ -37,9 +37,8 @@ public class OfferPoolRatingUnitJobBean {
 
     private static final String CF_POOL_PER_OFFER_MAP = "POOL_PER_OFFER_MAP";
 
-    private static final String OVER_CHARGE_INSTANCE_QUERY = "Select uci \n" +
-            "From UsageChargeInstance As uci \n" +
-            "Where uci.serviceInstance = :serviceInstance And uci.code = :code";
+    private static final String OVER_CHARGE_INSTANCE_QUERY = "Select uci \n" + "From UsageChargeInstance As uci \n"
+            + "Where uci.serviceInstance = :serviceInstance And uci.code = :code";
 
     @Inject
     private Logger log;
@@ -60,7 +59,7 @@ public class OfferPoolRatingUnitJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long walletOperationId) throws BusinessException {
@@ -77,11 +76,10 @@ public class OfferPoolRatingUnitJobBean {
             String agencyCode = walletOperation.getSubscription().getUserAccount().getCode();
             String agencyCounterKey = agencyCode + "_value";
 
-            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate,
-                    CF_POOL_PER_OFFER_MAP, walletOperation.getOperationDate());
+            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, walletOperation.getOperationDate());
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
-                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " +
-                        "ServiceTemplate=%s Agency=%s", walletOperation.getOperationDate(),serviceTemplate.getCode(),  agencyCode));
+                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " + "ServiceTemplate=%s Agency=%s",
+                    walletOperation.getOperationDate(), serviceTemplate.getCode(), agencyCode));
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
 
@@ -107,24 +105,20 @@ public class OfferPoolRatingUnitJobBean {
 
         } catch (Exception e) {
             log.error("Failed to check overage usage for WalletOperationId={}: {}", walletOperationId, e);
-            result.registerError("Error on processing WOId=" + walletOperationId + ": " +e.getMessage());
+            result.registerError("Error on processing WOId=" + walletOperationId + ": " + e.getMessage());
         }
     }
 
-    private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity,
-                                              String overageUnit, Double overagePrice, Double multiplier) {
+    private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity, String overageUnit, Double overagePrice, Double multiplier) {
         WalletOperation overageWO = new WalletOperation();
 
         // check and find over usage charge instance
         String overChargeCode = "CH_M2M_USG_" + wo.getParameter1() + "_OVER";
-        UsageChargeInstance overCharge = walletOperationService.getEntityManager()
-                .createQuery(OVER_CHARGE_INSTANCE_QUERY, UsageChargeInstance.class)
-                .setParameter("serviceInstance", wo.getServiceInstance())
-                .setParameter("code", overChargeCode).getSingleResult();
-        if(overCharge == null) {
-            throw new IllegalStateException(String.format("No Over UCI with code=%s "
-                    + "is defined on SI[id=%s, code=%s]", overChargeCode,
-                    wo.getServiceInstance().getId(), wo.getServiceInstance().getCode()));
+        UsageChargeInstance overCharge = walletOperationService.getEntityManager().createQuery(OVER_CHARGE_INSTANCE_QUERY, UsageChargeInstance.class)
+            .setParameter("serviceInstance", wo.getServiceInstance()).setParameter("code", overChargeCode).getSingleResult();
+        if (overCharge == null) {
+            throw new IllegalStateException(String.format("No Over UCI with code=%s " + "is defined on SI[id=%s, code=%s]", overChargeCode, wo.getServiceInstance().getId(),
+                wo.getServiceInstance().getCode()));
         }
         overageWO.setChargeInstance(overCharge);
 
@@ -140,7 +134,8 @@ public class OfferPoolRatingUnitJobBean {
         BigDecimal taxPercent = wo.getTaxPercent();
 
         BigDecimal unitAmountWithoutTax = BigDecimal.valueOf(overagePrice);
-        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), appProvider.getRounding(),
+            appProvider.getRoundingMode().getRoundingMode());
         BigDecimal unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
         BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
         BigDecimal amountTax = unitAmountTax.multiply(quantity);
