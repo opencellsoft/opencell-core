@@ -5,6 +5,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 
 import javax.persistence.Column;
@@ -34,6 +35,10 @@ public class QuotePrice extends BusinessEntity {
 	@JoinColumn(name = "quote_id", nullable = false)
 	@NotNull
 	private CpqQuote Quote;
+
+	@Column(name = "price_level")
+	@Enumerated(EnumType.STRING)
+	private PriceLevelEnum priceLevelEnum;
 
 	@Column(name = "price_type")
 	@Enumerated(EnumType.STRING)
@@ -172,5 +177,13 @@ public class QuotePrice extends BusinessEntity {
 
 	public void setRecurrencePeriodicity(String recurrencePeriodicity) {
 		this.recurrencePeriodicity = recurrencePeriodicity;
+	}
+
+	public PriceLevelEnum getPriceLevelEnum() {
+		return priceLevelEnum;
+	}
+
+	public void setPriceLevelEnum(PriceLevelEnum priceLevelEnum) {
+		this.priceLevelEnum = priceLevelEnum;
 	}
 }
