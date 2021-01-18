@@ -253,7 +253,7 @@ public class CustomTableService extends NativePersistenceService {
         try {
             QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config);
 
-            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true, false);
+            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
 
             int firstRow = 0;
             int nrItemsFound = 0;
@@ -903,7 +903,7 @@ public class CustomTableService extends NativePersistenceService {
 	private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion("id", "=", id, true);
-        Query query = queryBuilder.getNativeQuery(getEntityManager(), true, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return (Map<String, Object>) query.uniqueResult();
     }
 
@@ -960,7 +960,7 @@ public class CustomTableService extends NativePersistenceService {
         if (!StringUtils.isEmpty(wildCode)) {
             qb.addSql(" cast(" + FIELD_ID + " as varchar(100)) like :id");
         }
-        Query query = qb.getNativeQuery(getEntityManager(), true, false);
+        Query query = qb.getNativeQuery(getEntityManager(), true);
         if (!StringUtils.isEmpty(wildCode)) {
             query.setParameter("id", "%" + wildCode.toLowerCase() + "%");
         }
@@ -971,7 +971,7 @@ public class CustomTableService extends NativePersistenceService {
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion(columnName, "=", id, true);
-        Query query = queryBuilder.getNativeQuery(getEntityManager(), true, false);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return !query.list().isEmpty();
     }
 
