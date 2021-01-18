@@ -38,10 +38,14 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
     private static final int TERMINATION_DELAY = 90; // 3 months
 
-    private static final String FROM_CLAUSE = "from billing_subscription sub \n" + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
-            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n" + "and sub.status='ACTIVE' \n" + "and sub.subscription_date <= :counterEndDate \n"
-            + "and ( sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS ') <= :counterEndDate ) \n"
-            + "group by sub.user_account_id, offerId \n" + "having count(sub.id) > 0";
+    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
+            + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
+            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
+            + "and sub.status='ACTIVE' \n"
+            + "and sub.subscription_date <= :counterEndDate \n"
+            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
+            + "group by sub.user_account_id, offerId \n"
+            + "having count(sub.id) > 0";
 
     private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " + "(select sub.user_account_id, offer.id offerId, count(sub.id) \n" + FROM_CLAUSE + ") t";
 

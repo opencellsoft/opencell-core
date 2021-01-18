@@ -3,6 +3,19 @@
  */
 package org.meveo.admin.async;
 
+import static org.meveo.admin.job.OfferPoolRatingJobBean.WO_FILTER_QUERY;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.job.OfferPoolRatingUnitJobBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -10,13 +23,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import java.math.BigInteger;
-import java.util.List;
-import java.util.concurrent.Future;
+import org.slf4j.Logger;;
 
 /**
  * @author Mounir BOUKAYOUA
@@ -25,10 +32,8 @@ import java.util.concurrent.Future;
 public class OfferPoolRatingAsync {
 
     private static final String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
-            "  FROM billing_wallet_operation wo \n" +
-            "  WHERE wo.offer_id = :offerId AND wo.status != 'CANCELED' \n" +
-            "   AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
-            "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL')";
+            "FROM billing_wallet_operation wo \n" +
+            "WHERE wo.offer_id = :offerId AND \n" + WO_FILTER_QUERY;
 
     @Inject
     private Logger log;

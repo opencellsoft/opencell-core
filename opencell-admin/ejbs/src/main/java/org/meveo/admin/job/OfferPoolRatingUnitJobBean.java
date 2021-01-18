@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -39,9 +37,9 @@ public class OfferPoolRatingUnitJobBean {
 
     private static final String CF_POOL_PER_OFFER_MAP = "POOL_PER_OFFER_MAP";
 
-    private static final String OVER_CHARGE_INSTANCE_QUERY = "Select uci " +
-            " From UsageChargeInstance As uci " +
-            " Where uci.serviceInstance = :serviceInstance And uci.code = :code";
+    private static final String OVER_CHARGE_INSTANCE_QUERY = "Select uci \n" +
+            "From UsageChargeInstance As uci \n" +
+            "Where uci.serviceInstance = :serviceInstance And uci.code = :code";
 
     @Inject
     private Logger log;
@@ -109,7 +107,7 @@ public class OfferPoolRatingUnitJobBean {
 
         } catch (Exception e) {
             log.error("Failed to check overage usage for WalletOperationId={}: {}", walletOperationId, e);
-            result.registerError("Error on processing WOId="+ walletOperationId + ": " +e.getMessage());
+            result.registerError("Error on processing WOId=" + walletOperationId + ": " +e.getMessage());
         }
     }
 

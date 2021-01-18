@@ -1,5 +1,17 @@
 package org.meveo.admin.job;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.async.OfferPoolRatingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -11,38 +23,23 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 /**
  * @author Mounir BOUKAYOUA
  */
 @Stateless
 public class OfferPoolRatingJobBean extends BaseJobBean {
 
-    private static final String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id)\n" +
-            "  FROM billing_wallet_operation wo\n" +
-            "   INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
-            "  WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            "   AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' " +
-            "   AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL' ) \n" +
-            "   AND wo.status != 'CANCELED' ";
+    public static final String WO_FILTER_QUERY = "AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
+            "AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL') \n" +
+            "AND wo.status != 'CANCELED'";
 
-    private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id\n" +
-            "FROM billing_wallet_operation wo\n" +
-            " INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
-            "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
-            " AND wo.code LIKE 'CH_M2M_USG_%_IN' AND wo.code NOT LIKE '%FREE%' AND wo.parameter_1 NOT LIKE '%_NUM_SPE'\n" +
-            " AND (wo.parameter_2 IS NULL OR wo.parameter_2 != 'DEDUCTED_FROM_POOL') \n" +
-            " AND wo.status != 'CANCELED' ";
+    private static final String SUB_QUERY = "FROM billing_wallet_operation wo \n" +
+            "INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id \n" +
+            "WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n" + WO_FILTER_QUERY;
+
+    private static final String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id) \n" + SUB_QUERY;
+
+    private static final String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id \n" + SUB_QUERY;
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
