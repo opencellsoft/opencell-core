@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 
@@ -27,8 +28,8 @@ public class InfoOrder {
 	private ProductVersion productVersion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_template_id")
-	private ServiceTemplate serviceTemplate;
+	@JoinColumn(name = "attribute_id")
+	private Attribute attribute;
 	
 	@Column(name = "prestation")
 	private String prestation;
@@ -76,19 +77,6 @@ public class InfoOrder {
 		this.productVersion = productVersion;
 	}
 
-	/**
-	 * @return the serviceTemplate
-	 */
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	/**
-	 * @param serviceTemplate the serviceTemplate to set
-	 */
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
 
 	/**
 	 * @return the prestation
@@ -102,6 +90,20 @@ public class InfoOrder {
 	 */
 	public void setPrestation(String prestation) {
 		this.prestation = prestation;
+	}
+
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		return attribute;
+	}
+
+	/**
+	 * @param attribute the attribute to set
+	 */
+	public void setAttribute(Attribute attribute) {
+		this.attribute = attribute;
 	}
 	
 	

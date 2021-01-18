@@ -60,6 +60,7 @@ public class CommercialOrder extends AuditableEntity {
 		this.customerServiceDuration = copy.customerServiceDuration;
 		this.externalReference = copy.externalReference;
 		this.orderParent = copy.orderParent;
+		this.orderInvoiceType = copy.orderInvoiceType;
 	}
 
 	/**
