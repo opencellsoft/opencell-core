@@ -1229,11 +1229,11 @@ public class QueryBuilder {
      * @param convertToMap If False, query will return a list of Object[] values. If True, query will return a list of map of values.
      * @return instance of Query.
      */
-    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap, boolean doFetch) {
+    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
         applyOrdering(paginationSortAlias);
 
         Session session = em.unwrap(Session.class);
-        SQLQuery result = session.createSQLQuery(toStringQuery(doFetch));
+        SQLQuery result = session.createSQLQuery(toStringQuery());
         applyPagination(result);
 
         if (convertToMap) {
