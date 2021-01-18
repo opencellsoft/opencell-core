@@ -709,7 +709,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	        // generate invoice line for min amount RT
 	        Element userAccountTag = doc.createElement("userAccount");
 	        userAccountTag.setAttribute("description", "-");
-	        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
+	        userAccountTag.appendChild(getUnregularRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
 	        userAccountsTag.appendChild(userAccountTag);
         }
         
@@ -1299,7 +1299,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
     
     /**
-     * Provide categories elements for min amount transactions
+     * Provide categories elements for min RTs and RTs without type and wallet
      * 
      * @param doc dom document
      * @param ratedTransactions rated transactions
@@ -1307,15 +1307,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return category element
      * @throws BusinessException business exception
      */
-    private Element getMinAmountRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
+    private Element getUnregularRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<>();
         if(ratedTransactions != null) {
             for (RatedTransaction ratedTransaction : ratedTransactions) {
-                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM) {
+                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM || (ratedTransaction.getType() == null && ratedTransaction.getWallet() == null)) {
 
                     Element subCategory = null;
                     InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
