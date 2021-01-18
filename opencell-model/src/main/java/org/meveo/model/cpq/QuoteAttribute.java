@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -60,6 +61,9 @@ public class QuoteAttribute extends AuditableEntity{
 	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
 	private QuoteProduct quoteProduct;
 
+	@Transient
+	private MatchingTypeEnum matchingTypeEnum;
+
 	/**
 	 * @return the attribute
 	 */
@@ -101,6 +105,14 @@ public class QuoteAttribute extends AuditableEntity{
 	 */
 	public void setQuoteProduct(QuoteProduct quoteProduct) {
 		this.quoteProduct = quoteProduct;
+	}
+
+	public void setMatchingTypeEnum(MatchingTypeEnum matchingTypeEnum) {
+		this.matchingTypeEnum = matchingTypeEnum;
+	}
+
+	public MatchingTypeEnum getMatchingTypeEnum() {
+		return matchingTypeEnum;
 	}
 
 	@Override
@@ -148,5 +160,21 @@ public class QuoteAttribute extends AuditableEntity{
 		this.id = other.id;
 		this.version = other.version;
 		
+	}
+
+	public enum MatchingTypeEnum {
+		/**
+		 * the quote value is exactly the same as the column value
+		 */
+		EXACT_VALUE,
+		/**
+		 * the quote value is within the range of the column range
+		 */
+		RANGE_VALUE,
+		/**
+		 * the quote value match the reg ex of the column
+		 */
+		REG_MATCHING;
+
 	}
 }
