@@ -14,6 +14,7 @@ import java.util.List;
 @JsonDeserialize(as = ImmutableArticleMappingLine.class)
 public interface ArticleMappingLine extends Resource {
 
+	@NotNull
     Resource getArticleMapping();
 
     @NotNull
@@ -41,5 +42,5 @@ public interface ArticleMappingLine extends Resource {
     String getMappingKeyEL();
 
     @Nullable
-    List<AttributeMapping> getAttributesMapping();
+    List<org.meveo.apiv2.article.AttributeMapping> getAttributesMapping();
 }
