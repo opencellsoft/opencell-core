@@ -150,13 +150,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<QuoteAttribute> quoteAttributes) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        List<PricePlanMatrixLine> matchedPrices = priceLines.stream()
-                .filter(line -> line.match(quoteAttributes))
-                .sorted(Comparator.comparing(line -> line.getMatchingTypeEnum().getPriority()))
-                .collect(Collectors.toList());
+        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(quoteAttributes, priceLines);
         if (matchedPrices.isEmpty()) {
                 return List.of(priceLines.stream()
-                        .filter(p -> p.getIsDefault())
+                        .filter(PricePlanMatrixLine::getIsDefault)
                         .findAny()
                         .orElseThrow(
                                 () -> new BusinessApiException("No price match with quote product id: " + quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")")
@@ -165,6 +162,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         }
 
         return List.of(matchedPrices.get(0));
+    }
+
+    private List<PricePlanMatrixLine> getMatchedPriceLines(Set<QuoteAttribute> quoteAttributes, List<PricePlanMatrixLine> priceLines) {
+        return priceLines.stream()
+                    .filter(line -> line.match(quoteAttributes))
+                    .sorted(Comparator.comparing(line -> line.getMatchingTypeEnum().getPriority()))
+                    .collect(Collectors.toList());
     }
 
 }
