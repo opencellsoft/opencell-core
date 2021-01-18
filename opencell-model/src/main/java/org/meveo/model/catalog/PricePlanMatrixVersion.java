@@ -87,9 +87,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PricePlanMatrixColumn> columns;
 
-    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name ="default_line_id")
-    private PricePlanMatrixLine defaultLine;
     /**
      * @return the status
      */
@@ -182,13 +179,5 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     public void setColumns(List<PricePlanMatrixColumn> columns) {
         this.columns = columns;
-    }
-
-    public PricePlanMatrixLine getDefaultLine() {
-        return defaultLine;
-    }
-
-    public void setDefaultLine(PricePlanMatrixLine defaultLine) {
-        this.defaultLine = defaultLine;
     }
 }

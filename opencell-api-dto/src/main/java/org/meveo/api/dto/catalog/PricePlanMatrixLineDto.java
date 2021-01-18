@@ -31,6 +31,8 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
 
+	private boolean isDefault;
+
 	public PricePlanMatrixLineDto() {
 	}
 
@@ -40,6 +42,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.description = pricePlanMatrixLine.getDescription();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
+		this.isDefault = pricePlanMatrixLine.getIsDefault();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
 				.stream()
 				.map(value -> new PricePlanMatrixValueDto(value))
@@ -110,5 +113,13 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isDefault() {
+		return isDefault;
+	}
+
+	public void setDefault(boolean aDefault) {
+		isDefault = aDefault;
 	}
 }

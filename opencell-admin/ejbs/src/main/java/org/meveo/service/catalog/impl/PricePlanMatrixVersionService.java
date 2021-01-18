@@ -83,7 +83,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         Integer lastVersion = getLastVersion(ppmCode);
         duplicate.setId(null);
         duplicate.setColumns(new ArrayList<>());
-        duplicate.setDefaultLine(null);
         duplicate.setLines(new ArrayList<>());
         duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);

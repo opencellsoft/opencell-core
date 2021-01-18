@@ -430,13 +430,8 @@
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-08">
 		<addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag_type" />
-	</changeSet>
+	</changeSet> 
 	
-	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-attribute_tag">
-		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_tag" constraintName="fk_tag_attribute" deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-	</changeSet>
-
 	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-09">
 		<addForeignKeyConstraint baseColumnNames="parent_tag_id" baseTableName="cpq_tag" constraintName="fk_pomjqq6n5u0vcodkopm" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
@@ -694,7 +689,6 @@
 			<column name="updated" type="datetime" />
 			<column name="updater" type="varchar(100)" />
 			<column name="ppm_id" type="bigint" />
-			<column name="default_line_id" type="bigint" />
 			<column name="status" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
@@ -2664,6 +2658,7 @@
 	            <column name="version" type="int4" />
 
 	            <column name="ppm_version_id" type="bigint" />
+	            <column name="is_default" type="${type.boolean}" defaultValueNumeric="0"/>
 
 	            <column name="description" type="varchar(255)"/>
 	            <column name="price_without_tax" type="numeric(23, 12)" />
@@ -2689,9 +2684,6 @@
 
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
-
-        <addForeignKeyConstraint baseColumnNames="default_line_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
 
     </changeSet>
 
@@ -2768,6 +2760,11 @@
 		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cpq_product_mapping" constraintName="fk-accounting_article-product_mapping" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 	            
+	</changeSet>
+	
+	<changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-attribute_tag">
+		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_tag" constraintName="fk_tag_attribute" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 	</changeSet>
 </databaseChangeLog>
 
