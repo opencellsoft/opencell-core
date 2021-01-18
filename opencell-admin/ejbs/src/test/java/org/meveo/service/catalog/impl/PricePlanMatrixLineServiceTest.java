@@ -79,11 +79,6 @@ public class PricePlanMatrixLineServiceTest {
     public void if_no_attr_match_and_default_line_set_retreive_default_line() {
         PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
         PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
-        PricePlanMatrixLine defaultLine = new PricePlanMatrixLine();
-        defaultLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        defaultLine.setPricetWithoutTax(valueOf(20));
-        defaultLine.setDescription("Default line for matrix version");
-        pricePlanMatrixVersion.setDefaultLine(defaultLine);
 
         Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
         Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
@@ -195,6 +190,7 @@ public class PricePlanMatrixLineServiceTest {
             monthlyPrice1Line.setId(1L);
             monthlyPrice1Line.setDescription("Price1");
             monthlyPrice1Line.setPricetWithoutTax(valueOf(24));
+            monthlyPrice1Line.setIsDefault(true);
             monthlyPrice1Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twelveSubscriptionDurationValue));
             monthlyPrice1Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 

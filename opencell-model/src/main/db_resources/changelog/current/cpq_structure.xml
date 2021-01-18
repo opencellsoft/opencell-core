@@ -689,7 +689,6 @@
 			<column name="updated" type="datetime" />
 			<column name="updater" type="varchar(100)" />
 			<column name="ppm_id" type="bigint" />
-			<column name="default_line_id" type="bigint" />
 			<column name="status" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
@@ -2320,6 +2319,60 @@
 		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false"
 								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 
+		<createSequence sequenceName="order_price_seq" startValue="1" />
+		<createTable tableName="order_price">
+
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_order_price" />
+			</column>
+			<!-- BusinessEntity Start -->
+			<column name="code" type="varchar(255)" >
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="varchar(255)" />
+			<column name="version" type="int4" />
+			<!-- BusinessEntity End -->
+			<!-- Auditable Start -->
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<!-- Auditable End -->
+
+			<column name="order_article_line_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="order_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="price_level" type="varchar(50)" />
+			<column name="price_type" type="varchar(50)" />
+
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+			<column name="unit_price_without_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
+			<column name="tax_amount" type="numeric(23, 12)" />
+			<column name="tax_rate" type="numeric(23, 12)" />
+
+			<column name="price_over_charged" type="${type.boolean}" />
+
+
+			<column name="currency_code" type="varchar(25)" />
+
+			<column name="recurrence_duration" type="int8" />
+
+
+			<column name="recurrence_periodicity" type="varchar(50)" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="order_article_line_id" baseTableName="order_price" constraintName="fk_order_price_order_article_Line" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="order_article_line" />
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_price" constraintName="fk_order_price_order_commercial_order" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+
 		  <createTable tableName="cpq_order_invoice">
 
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2659,6 +2712,7 @@
 	            <column name="version" type="int4" />
 
 	            <column name="ppm_version_id" type="bigint" />
+	            <column name="is_default" type="${type.boolean}" defaultValueNumeric="0"/>
 
 	            <column name="description" type="varchar(255)"/>
 	            <column name="price_without_tax" type="numeric(23, 12)" />
@@ -2684,9 +2738,6 @@
 
         <addForeignKeyConstraint baseColumnNames="ppm_version_id" baseTableName="cpq_price_plan_matrix_line" constraintName="fk_price_plan_matrix_line_price_plan_matrix_version" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_version" />
-
-        <addForeignKeyConstraint baseColumnNames="default_line_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix_line" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_price_plan_matrix_line" />
 
     </changeSet>
 
