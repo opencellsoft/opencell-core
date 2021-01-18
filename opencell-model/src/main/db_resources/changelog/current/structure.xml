@@ -3842,7 +3842,7 @@ END $$;]]>
     
     <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
     	<sql>
-    		update meveo_job_instance
+    		update ${db.schema.adapted}meveo_job_instance
 			set cf_values=
 				case
 					when cf_values is not null then (cf_values::jsonb || ('{"AccountOperationsGenerationJob_excludeInvoicesWithoutAmount": [{"boolean": ' || exclude_inv_without_amount::boolean || '}]}')::jsonb)::text
