@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 
 /** 
  * @author Tarik F.
@@ -48,8 +48,8 @@ public class OrderProduct extends BusinessEntity {
 	private OrderOffer orderOffer;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id")
-	private Product product;
+	@JoinColumn(name = "product_version_id")
+	private ProductVersion productVersion;
 
     
 	@Column(name = "quantity", nullable = false, scale = NB_DECIMALS, precision = NB_PRECISION)
@@ -103,23 +103,6 @@ public class OrderProduct extends BusinessEntity {
 	public void setOrderOffer(OrderOffer orderOffer) {
 		this.orderOffer = orderOffer;
 	}
-
-
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
 
 	/**
 	 * @return the quantity
