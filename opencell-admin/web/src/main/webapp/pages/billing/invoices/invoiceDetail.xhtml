@@ -50,7 +50,9 @@
                                         <!-- 						<hftl:formField label="#{messages['invoice.billingAccount']}" -->
                                         <!-- 							field="billingAccount" valueLabelField="code" popup="false" -->
                                         <!-- 							popupId="searchBillingAccountPopup" showResetButton="true" /> -->
-										<hftl:decorateFormField label="#{messages['invoice.invoiceNumber']}">
+                                        <hftl:formField id="invoiceTypeField" label="#{messages['invoice.invoiceType']}" field="invoiceType" valueLabelField="code"
+                                        />
+                                        <hftl:decorateFormField label="#{messages['invoice.invoiceNumber']}">
 											<h:outputText value="#{invoiceBean.entity.invoiceNumberOrTemporaryNumber}" styleClass="field-value" />
 										</hftl:decorateFormField>
                                         <hftl:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate"/>
@@ -62,6 +64,7 @@
                                         <hftl:formField label="#{messages['invoice.alreadySent']}" field="alreadySent" isMessage="true"/>
                                         <hftl:formField label="#{messages['invoice.dontSend']}" field="dontSend" isMessage="true"/>
                                         <hftl:formField label="#{messages['billingRun.panel']}" field="billingRun" />
+
                                     </h:panelGroup>
                                 </p:fieldset>
                                 <h:panelGroup id="attachments">
