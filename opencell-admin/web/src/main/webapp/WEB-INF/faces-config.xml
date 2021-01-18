@@ -1415,6 +1415,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		</to-view-id>
 		<redirect />
 	</navigation-case>
+    <navigation-case>
+        <from-outcome>userAccountList</from-outcome>
+        <to-view-id>/pages/billing/userAccounts/userAccounts.xhtml
+        </to-view-id>
+        <redirect />
+    </navigation-case>
 	<navigation-case>
 		<from-outcome>userAccountDetail</from-outcome>
 		<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml

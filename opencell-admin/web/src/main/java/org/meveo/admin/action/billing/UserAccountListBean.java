@@ -23,44 +23,62 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 
 /**
- * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
 public class UserAccountListBean extends BaseBean<UserAccount> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private UserAccountService userAccountService;
+    @Inject
+    private UserAccountService userAccountService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public UserAccountListBean() {
-		super(UserAccount.class);
-	}
+    @Inject
+    private BillingAccountService billingAccountService;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<UserAccount> getPersistenceService() {
-		return userAccountService;
-	}
+    private Long parentEntityId;
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public UserAccountListBean() {
+        super(UserAccount.class);
+    }
 
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<UserAccount> getPersistenceService() {
+        return userAccountService;
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    public void setParentEntityId(Long parentEntityId) {
+        this.parentEntityId = parentEntityId;
+    }
+
+    public Long getParentEntityId() {
+        return parentEntityId;
+    }
+
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+
+        if (parentEntityId != null) {
+            filters.put("billingAccount", billingAccountService.findById(parentEntityId));
+        }
+    }
 }

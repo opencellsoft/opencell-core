@@ -83,7 +83,6 @@ import java.util.Map;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
