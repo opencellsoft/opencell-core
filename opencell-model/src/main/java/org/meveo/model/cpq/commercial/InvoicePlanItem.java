@@ -25,7 +25,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "cpq_invoicing_plan_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoicing_plan_item_seq")})
-public class BillingPlanItem extends BusinessEntity {
+public class InvoicePlanItem extends BusinessEntity {
 
 	/**
 	 * 
