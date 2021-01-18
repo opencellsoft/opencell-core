@@ -65,7 +65,6 @@ import java.util.Map.Entry;
  */
 @Entity
 @ObservableEntity
-@Cacheable
 @Table(name = "billing_counter_period", uniqueConstraints = @UniqueConstraint(columnNames = { "counter_instance_id", "period_start_date" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
@@ -78,7 +77,6 @@ import java.util.Map.Entry;
                 + "AND cp.periodStartDate<=:date AND cp.periodEndDate>:date AND cp.counterInstance.code=:counterCode")
 
 })
-
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
