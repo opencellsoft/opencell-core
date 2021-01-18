@@ -50,6 +50,7 @@
                                         <!-- 						<hftl:formField label="#{messages['invoice.billingAccount']}" -->
                                         <!-- 							field="billingAccount" valueLabelField="code" popup="false" -->
                                         <!-- 							popupId="searchBillingAccountPopup" showResetButton="true" /> -->
+                                        <hftl:formField id="invoiceTypeField" label="#{messages['invoice.invoiceType']}" field="invoiceType" valueLabelField="code" />
                                         <hftl:decorateFormField label="#{messages['invoice.invoiceNumber']}">
                                             <h:outputText value="#{invoiceBean.entity.invoiceNumberOrTemporaryNumber}" styleClass="field-value" />
                                         </hftl:decorateFormField>
