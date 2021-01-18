@@ -81,6 +81,12 @@ public class QueryBuilder {
         return clazz;
     }
 
+    public String formatInnerJoins(){
+        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
+                .map(jw -> format(alias, jw.getRootInnerJoin(), q.toString().startsWith(FROM)))
+                .collect(Collectors.joining(" ", " ", " "));
+    }
+
     public String formatInnerJoins(boolean doFetch){
         return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
                 .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
@@ -96,7 +102,7 @@ public class QueryBuilder {
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
-                    return String.format("inner join %s%s.%s %s",shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
+                    return String.format("inner join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -1150,7 +1156,7 @@ public class QueryBuilder {
     public Query getQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
 
-        Query result = em.createQuery(toStringQuery(true));
+        Query result = em.createQuery(toStringQuery());
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -1202,7 +1208,10 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(toStringQuery(true).substring(q.indexOf(FROM)));
+        StringBuilder s = new StringBuilder("select ")
+                .append(alias != null ? alias + "." : "")
+                .append("id ")
+                .append(toStringQuery(false).substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1409,7 +1418,11 @@ public class QueryBuilder {
     }
 
     public String getSqlString() {
-        return toStringQuery(true);
+        return toStringQuery();
+    }
+
+    private String toStringQuery() {
+        return q.toString().replace(INNER_JOINS, formatInnerJoins());
     }
 
     private String toStringQuery(boolean doFetch) {
@@ -1426,7 +1439,7 @@ public class QueryBuilder {
     }
 
     public String toString() {
-        String result = toStringQuery(true);
+        String result = toStringQuery();
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
