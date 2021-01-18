@@ -9,6 +9,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.cpq.ProductLineDto;
+import org.meveo.api.dto.response.ParentListResponse;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -116,8 +118,16 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 	                if (parentProductLine == null) {
 	                    throw new EntityDoesNotExistsException(ProductLine.class, prodLineParentCode);
 	                }
-
-	                productLine.setParentLine(parentProductLine);
+	                if(!parentProductLine.getCode().equalsIgnoreCase(productLine.getCode())) {
+	                	ProductLine parentOfParent = parentProductLine.getParentLine();
+	                	if(parentOfParent != null && parentOfParent.getParentLine() != null) {
+	                		if(parentOfParent.getParentLine().getCode().equalsIgnoreCase(prodLineParentCode)) {
+	                			throw new BusinessApiException("Product line code : "+ prodLineParentCode + " already has a product line parent with code : " + parentOfParent.getCode());
+	                		}
+	                	}
+	                	productLine.setParentLine(parentProductLine);
+	                }else
+	                	throw new MeveoApiException("Parent and child of product line  has the same code !!");
 	            } else {
 	            	productLine.setParentLine(null);
 	            }
