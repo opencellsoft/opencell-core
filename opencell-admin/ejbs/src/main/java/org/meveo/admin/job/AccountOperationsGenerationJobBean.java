@@ -86,14 +86,16 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
-            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, jobInstance.isExcludeInvoicesWithoutAmount(), Boolean.TRUE);
+
+            Boolean isExcludeInvoicesWithoutAmount = (Boolean) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_excludeInvoicesWithoutAmount", Boolean.FALSE);
+            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, isExcludeInvoicesWithoutAmount, Boolean.TRUE);
 
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             String scriptInstanceCode = null;
             Map<String, Object> context = new HashMap<String, Object>();
             try {
-            	scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
+                scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
                 if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
                     context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
                 }
