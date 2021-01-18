@@ -124,7 +124,7 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** The include invoices without amount. */
     @Type(type = "numeric_boolean")
     @Column(name = "exclude_inv_without_amount")
-    private boolean excludeInvoicesWithoutAmount;
+    private boolean excludeInvoicesWithoutAmount = false;
 
     /**
      * Whether a verbose error log will be kept.

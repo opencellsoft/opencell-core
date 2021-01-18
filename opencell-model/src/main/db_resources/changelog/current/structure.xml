@@ -3985,7 +3985,7 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
     </changeSet>
     
-    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    <changeSet id="#5872_20210104" author="AmineBENAICHA" dbms="postgresql">
     	<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_other_tmp AS
 			SELECT
@@ -4060,6 +4060,18 @@ END $$;]]>
 		</sql>
 		
 		<dropTable tableName="rating_edr_other_tmp"/>
+    </changeSet>
+    
+    <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>
+    		update meveo_job_instance
+			set cf_values=
+				case
+					when cf_values is not null then (cf_values::jsonb || ('{"AccountOperationsGenerationJob_excludeInvoicesWithoutAmount": [{"boolean": ' || exclude_inv_without_amount::boolean || '}]}')::jsonb)::text
+					else '{"AccountOperationsGenerationJob_excludeInvoicesWithoutAmount": [{"boolean": ' || exclude_inv_without_amount::boolean || '}]}'
+				end
+			where (id=-14 or code='AO_Job')
+    	</sql>
     </changeSet>
     
 </databaseChangeLog>
