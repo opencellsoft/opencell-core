@@ -81,9 +81,10 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 
     @Override
 	public Response delete(String accountingArticleCode, Request request) {
-		return accountingArticleApiService.delete(accountingArticleCode)
+		accountingArticleApiService.delete(accountingArticleCode)
 											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
 												.orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
 	}
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
