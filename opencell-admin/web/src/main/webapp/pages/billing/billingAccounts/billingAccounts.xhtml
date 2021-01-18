@@ -1,23 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" 
-xmlns:h="http://xmlns.jcp.org/jsf/html"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:event type="preRenderView" listener="#{billingAccountListBean.preRenderView}" />
+            <f:viewParam name="parentObjectId" value="#{billingAccountListBean.parentEntityId}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
-				<p:menuitem outcome="billingAccounts" value="#{messages['menu.billingAccounts']}" />
-			</p:breadCrumb>
-		</h:form>      
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem outcome="billingAccounts" value="#{messages['menu.billingAccounts']}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <!-- Entity select popup. -->
+        <hftl:entityPopup id="searchCustomerAccountPopup" header="#{messages['customerAccount.popup.header']}" backingBean="#{customerAccountBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" searchField2="description"
+            column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{billingAccountListBean.filters['customerAccount']}"
+            updateField=":searchForm:customerAccount">
+        </hftl:entityPopup>
 
         <hftl:searchPanel label="#{messages['billingAccount.search']}" backingBean="#{billingAccountListBean}">
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:searchField id="customerAccount" label="#{messages['billingAccount.customerAccount']}" field="customerAccount" valueLabelField="code" popup="true"
+                popupId="searchCustomerAccountPopup" />
             <hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
             <hftl:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
             <hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
@@ -34,7 +44,7 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
             <hftl:column label="#{messages['billingAccount.name']}" field="name" />
             <hftl:column label="#{messages['commons.address']}" field="address.address1" />
             <hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" isDate="true" />
-            <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" /> 
+            <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />
             <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 
             <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('billingManagement')}" />

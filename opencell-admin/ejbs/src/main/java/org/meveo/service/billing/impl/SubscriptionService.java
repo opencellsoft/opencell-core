@@ -891,4 +891,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 
     }
+
+    /**
+     * Get a count of subscriptions by a parent user account
+     * 
+     * @param parent Parent user account
+     * @return A number of child subscriptions
+     */
+    public long getCountByParent(UserAccount parent) {
+
+        return getEntityManager().createNamedQuery("Subscription.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
 }

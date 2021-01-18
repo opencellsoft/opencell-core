@@ -18,11 +18,36 @@
 package org.meveo.admin.action.medina;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.meveo.service.billing.impl.SubscriptionService;
 
 @Named
 @ConversationScoped
 public class AccessListBean extends AccessBean {
 
     private static final long serialVersionUID = -3037867704912788038L;
+
+    @Inject
+    private SubscriptionService subscriptionService;
+
+    private Long parentEntityId;
+
+    public void setParentEntityId(Long parentEntityId) {
+        this.parentEntityId = parentEntityId;
+    }
+
+    public Long getParentEntityId() {
+        return parentEntityId;
+    }
+
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+
+        if (parentEntityId != null) {
+            filters.put("subscription", subscriptionService.findById(parentEntityId));
+        }
+    }
 }

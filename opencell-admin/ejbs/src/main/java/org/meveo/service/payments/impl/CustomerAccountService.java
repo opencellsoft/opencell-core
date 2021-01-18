@@ -761,4 +761,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		}
 		return ao.getCustomerAccount().getPreferredPaymentMethod();
 	}
+
+    /**
+     * Get a count of customer accounts by a parent customer
+     * 
+     * @param parent Parent customer
+     * @return A number of child customer accounts
+     */
+    public long getCountByParent(Customer parent) {
+
+        return getEntityManager().createNamedQuery("CustomerAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
 }
