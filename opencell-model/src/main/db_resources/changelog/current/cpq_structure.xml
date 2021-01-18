@@ -2320,7 +2320,7 @@
 		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false"
 								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 
-		<createSequence sequenceName="order_price_sq" startValue="1" />
+		<createSequence sequenceName="order_price_seq" startValue="1" />
 		<createTable tableName="order_price">
 
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2354,7 +2354,7 @@
 			<column name="amount_with_tax" type="numeric(23, 12)" />
 			<column name="unit_price_without_tax" type="numeric(23, 12)" />
 			<column name="amount_without_tax" type="numeric(23, 12)" />
-			<column name="amount_without_tax_with_discount" type="int" />
+			<column name="amount_without_tax_with_discount" type="numeric(23, 12)" />
 			<column name="tax_amount" type="numeric(23, 12)" />
 			<column name="tax_rate" type="numeric(23, 12)" />
 
