@@ -29,12 +29,12 @@ import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.GetFilterResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.FilterRs;
+
 /**
  * @author Tyshan Shi
- * 
  **/
 @RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
+@Interceptors({WsRestApiInterceptor.class})
 public class FilterRsImpl extends BaseRs implements FilterRs {
     @Inject
     private FilterApi filterApi;
@@ -91,7 +91,8 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
         return result;
     }
 
-     public ActionStatus update(FilterDto postData) {
+    @Override
+    public ActionStatus update(FilterDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -103,7 +104,7 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
         return result;
     }
 
-
+    @Override
     public ActionStatus create(FilterDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -115,8 +116,6 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
 
         return result;
     }
-
-    
 
 
 }
