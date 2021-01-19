@@ -3749,4 +3749,52 @@ END $$;]]>
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
     </changeSet>
+    	<changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
+    	    <addColumn tableName="billing_invoice">
+	            <column name="status_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="xml_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="pdf_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="email_sent_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="payment_status" type="varchar(255)" />
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="payment_status_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="start_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="end_date" type="datetime"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="raw_amount" type="numeric(23, 12)">
+	            	<constraints nullable="false" />
+	            </column>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="discount_amount" type="numeric(23, 12)">
+	            	<constraints nullable="false" />
+	            </column>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="discount_rate" type="numeric(3, 3)">
+	            </column>
+	        </addColumn>
+	        
+	        <addColumn tableName="billing_invoice">
+	            <column name="is_already_applied_minimum" type="${type.boolean}"/>
+	        </addColumn>
+	        <addColumn tableName="billing_invoice">
+	            <column name="is_already_added_discount" type="${type.boolean}"/>
+	        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

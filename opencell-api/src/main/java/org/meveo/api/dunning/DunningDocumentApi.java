@@ -40,7 +40,7 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.AccountOperation;
@@ -105,7 +105,7 @@ public class DunningDocumentApi extends BaseApi {
                 if (invoice.getRecordedInvoice() == null) {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
-                invoice.setStatus(InvoiceStatusEnum.DISPUTED);
+                invoice.setPaymentStatus(InvoicePaymentStatusEnum.DISPUTED);
                 RecordedInvoice ri = invoice.getRecordedInvoice();
                 ri.setDunningDocument(dunningDocument);
                 ris.add(invoice.getRecordedInvoice());

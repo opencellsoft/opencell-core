@@ -1285,7 +1285,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
 
         produceInvoicePdfNoUpdate(invoice);
-        invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        invoice.setPdfDate(new Date());
 
         pdfGeneratedEventProducer.fire(invoice);
 
@@ -1924,7 +1924,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoiceXml(Invoice invoice) throws BusinessException {
 
         produceInvoiceXmlNoUpdate(invoice);
-        invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        invoice.setXmlDate(new Date());
         invoice = updateNoCheck(invoice);
         return invoice;
     }
@@ -2985,7 +2985,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
-                invoice.setStatus(InvoiceStatusEnum.SENT);
+                invoice.setEmailSentDate(new Date());
                 invoice.setAlreadySent(true);
                 update(invoice);
 
@@ -3625,7 +3625,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
-        invoice.setStatus(automaticInvoiceCheck? InvoiceStatusEnum.DRAFT : InvoiceStatusEnum.CREATED);
+        invoice.setStatus(automaticInvoiceCheck? InvoiceStatusEnum.DRAFT : InvoiceStatusEnum.VALIDATED);
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);
@@ -4105,10 +4105,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDraft(invoiceDTO.isDraft());
         invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
         if (invoiceDTO.isCheckAlreadySent()) {
-            invoice.setStatus(InvoiceStatusEnum.SENT);
-        } else {
-            invoice.setStatus(InvoiceStatusEnum.CREATED);
+            invoice.setEmailSentDate(invoiceDTO.getEmailSentDate());
         }
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {

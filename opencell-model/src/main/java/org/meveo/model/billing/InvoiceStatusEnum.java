@@ -22,67 +22,37 @@ package org.meveo.model.billing;
  */
 public enum InvoiceStatusEnum {
 
-    /**
-     * when invoice created
-     */
-    CREATED(1, "invoiceStatusEnum.created"),
     
     /**
-     * when produced by a job (xml custom, xml, pdf...)
+     * invoice entity has been created but incomplete
      */
-    GENERATED(2, "invoiceStatusEnum.generated"),
+    NEW(1, "invoiceStatusEnum.new"),
     
     /**
-     * when exported by a job (email or custom processing)
+     * invoice is complete but not validated. It can be edited.
      */
-    SENT(3, "invoiceStatusEnum.sent"),
+    DRAFT(2, "invoiceStatusEnum.draft"),
+
+    /**
+     * invoice has been marked as suspect by automatic controls (this status doesn’t block automatic generation)
+     */
+    SUSPECT(3, "invoiceStatusEnum.suspect"), 
+
+    /**
+     * invoice has been rejected by automatic controls (this status block automatic generation)
+     */
+    REJECTED(4, "invoiceStatusEnum.rejected"), 
+
+    /**
+     * invoice has been canceled (all related rated transactions are released. This is a final status)
+     */
+    CANCELED(5, "invoiceStatusEnum.canceled"),
     
     /**
-     *  when fully paid (matched status)
+     * invoice is validated and cannot be edited anymore (this a final status)
      */
-    PAID(4, "invoiceStatusEnum.paid"),
-    
-    /**
-     * when partially paid (unmatched amount >0)
-     */
-    PPAID(5, "invoiceStatusEnum.ppaid"),
-    
-    /**
-     * when when no payment and due date
-     */
-    UNPAID(6, "invoiceStatusEnum.unpaid"),
-    
-    /**
-     * when writen off (matched to a write off AO)
-     */
-    ABANDONED(7, "invoiceStatusEnum.abandonned"),
-    
-    /**
-     * when when refunded (by a credit note through linkedToInvoice )
-     */
-    REFUNDED(8, "invoiceStatusEnum.refunded"),
-    
-    /**
-     * when when invoice AO is disputed or into dunning active
-     */
-    DISPUTED(9, "invoiceStatusEnum.disputed"),
-    
-    /**
-     * invoice is computed in draft mode (no invoice number is set)
-     */
-    DRAFT(10, "invoiceStatusEnum.draft"),
-    /**
-     * invoice has been rejected without blocker reason by automatic check and is waiting for manual validation,
-     */
-    SUSPECT(11, "invoiceStatusEnum.suspect"),
-    /**
-     * invoice has been rejected with blocker reason by automatic check and is waiting for manual validation,
-     */
-    REJECTED(12, "invoiceStatusEnum.rejected"),
-    /**
-     * invoice is canceled and won't be further processed during the bulling run
-     */
-    CANCELED(13, "invoiceStatusEnum.canceled");
+    VALIDATED(6, "invoiceStatusEnum.validated");
+
     
     private Integer id;
     private String label;

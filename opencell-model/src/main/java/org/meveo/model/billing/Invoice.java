@@ -58,6 +58,8 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -103,12 +105,12 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun where invoice in (:invoiceIds)"),
+        @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun where inv.id in (:invoiceIds)"),
         @NamedQuery(name = "Invoice.moveToBR", query = "update Invoice inv set inv.billingRun=:nextBR where inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.status = org.meveo.model.billing.InvoiceStatusEnum.UNPAID"
-                + " WHERE inv.dueDate <= NOW() AND inv.status IN (org.meveo.model.billing.InvoiceStatusEnum.CREATED, org.meveo.model.billing.InvoiceStatusEnum.GENERATED, org.meveo.model.billing.InvoiceStatusEnum.SENT)"),
+        @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.paymentStatus = org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID"
+                + " WHERE inv.dueDate <= NOW() AND inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
         @NamedQuery(name = "Invoice.sumInvoiceableAmountByBR", query =
                 "select sum(inv.amountWithoutTax), sum(inv.amountWithTax), inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id "
                         + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
@@ -180,6 +182,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 25)
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private InvoiceStatusEnum status;
 
     /**
@@ -417,7 +420,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Size(max = 255)
     private String externalRef;
     
-    
     /**
      * Invoicing error reason
      */
@@ -431,7 +433,99 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "initial_collection_date")
     private Date initialCollectionDate;
 
-	@Transient
+    /**
+     * Invoice status change date
+     */
+    @Column(name = "status_date")
+    private Date statusDate;
+    
+    /**
+     * Date when the XML has been produced on a validated invoice.
+     */
+    @Column(name = "xml_date")
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+    private Date xmlDate;
+    
+    /**
+     * Date when the PDf has been produced on a validated invoice.
+     */
+    @Column(name = "pdf_date")
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+    private Date pdfDate;
+    
+    /**
+     * Date when the invoice has been sent for a validated invoice
+     */
+    @Column(name = "email_sent_date")
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+    private Date emailSentDate;
+    
+    /**
+     * 
+     */
+	@Column(name = "payment_status")
+	@Enumerated(EnumType.STRING)
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
+	private InvoicePaymentStatusEnum paymentStatus;
+	
+    /**
+     * Payment status change date
+     */
+    @Column(name = "payment_status_date")
+    private Date paymentStatusDate;
+    
+    /**
+     * Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))
+     */
+    @Column(name = "start_date")
+    private Date startDate;
+
+    
+    /**
+     * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
+     */
+    @Column(name = "end_date")
+    private Date endDate;
+    
+     
+    /**
+     * Total raw amount from invoice lines.
+     *      -Does not include discount.
+     *      -With or without tax depending on provider setting (isEnterprise).
+     */
+    @Column(name = "raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal rawAmount;
+    
+    /**
+     * Discount rate to apply (in %).
+     * Initialize with discount rate from linked invoice discount plan.
+     */
+    @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discountRate;
+    
+	/**
+     * Total discount amount with or without tax depending on provider settings.
+	 * Can be inconsistent with discountRate.
+	 * discountAmount has precedence over discountRate
+     */
+    @Column(name = "discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discountAmount=BigDecimal.ZERO;
+    
+    /**
+     * Indicates if the invoicing minimum has already been applied
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_already_applied_minimum")
+    private boolean isAlreadyAppliedMinimum;
+
+    /**
+     * Indicates if the invoice discounts have already been applied
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_already_added_discount")
+    private boolean isAlreadyAddedDiscount;
+    
+    @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
     @Transient
@@ -484,7 +578,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
         if(this.status ==null || this.status==InvoiceStatusEnum.DRAFT) {
-        	this.status=InvoiceStatusEnum.CREATED;
+        	this.status=InvoiceStatusEnum.VALIDATED;
         }
     }
 
@@ -727,15 +821,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return status;
     }
     
-    public InvoiceStatusEnum getRealTimeStatus() {
-    	if(dueDate!=null && dueDate.before( new Date()) && (status==InvoiceStatusEnum.CREATED || status==InvoiceStatusEnum.GENERATED || status==InvoiceStatusEnum.SENT)) {
-    		return InvoiceStatusEnum.UNPAID;
+    public InvoicePaymentStatusEnum getRealTimeStatus() {
+    	if(dueDate!=null && dueDate.before( new Date()) && (status==InvoiceStatusEnum.VALIDATED)) {
+    		return InvoicePaymentStatusEnum.UNPAID;
     	}
-        return status;
+        return paymentStatus;
     }
 
     public void setStatus(InvoiceStatusEnum status) {
         this.status = status;
+        setStatusDate(new Date());
     }
 
     @Override
@@ -1155,6 +1250,118 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Date getXmlDate() {
+		return xmlDate;
+	}
+
+	public void setXmlDate(Date xmlDate) {
+		this.xmlDate = xmlDate;
+	}
+
+	public Date getPdfDate() {
+		return pdfDate;
+	}
+
+	public void setPdfDate(Date pdfDate) {
+		this.pdfDate = pdfDate;
+	}
+
+	public Date getEmailSentDate() {
+		return emailSentDate;
+	}
+
+	public void setEmailSentDate(Date emailSentDate) {
+		this.emailSentDate = emailSentDate;
+	}
+
+	public InvoicePaymentStatusEnum getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(InvoicePaymentStatusEnum paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public Date getPaymentStatusDate() {
+		return paymentStatusDate;
+	}
+
+	public void setPaymentStatusDate(Date paymentStatusDate) {
+		this.paymentStatusDate = paymentStatusDate;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public BigDecimal getRawAmount() {
+		return rawAmount;
+	}
+
+	public void setRawAmount(BigDecimal rawAmount) {
+		this.rawAmount = rawAmount;
+	}
+
+	public BigDecimal getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(BigDecimal discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public BigDecimal getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public void setDiscountAmount(BigDecimal discountAmount) {
+		this.discountAmount = discountAmount;
+	}
+
+	public boolean isAlreadyAppliedMinimum() {
+		return isAlreadyAppliedMinimum;
+	}
+
+	public void setAlreadyAppliedMinimum(boolean isAlreadyAppliedMinimum) {
+		this.isAlreadyAppliedMinimum = isAlreadyAppliedMinimum;
+	}
+
+	public boolean isAlreadyAddedDiscount() {
+		return isAlreadyAddedDiscount;
+	}
+
+	public void setAlreadyAddedDiscount(boolean isAlreadyAddedDiscount) {
+		this.isAlreadyAddedDiscount = isAlreadyAddedDiscount;
+	}
+
+	public Boolean getDraft() {
+		return draft;
+	}
+
+	public void setPreviousInvoiceNumber(String previousInvoiceNumber) {
+		this.previousInvoiceNumber = previousInvoiceNumber;
 	}
     
 }
