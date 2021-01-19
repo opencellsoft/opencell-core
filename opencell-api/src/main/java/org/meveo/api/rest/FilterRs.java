@@ -21,30 +21,29 @@ package org.meveo.api.rest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import org.meveo.api.dto.CurrencyDto;
+import javax.ws.rs.PUT;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.GetFilterResponseDto;
 
 /**
  * @author Tyshan Shi
- * 
  **/
 @Path("/filter")
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 
 public interface FilterRs extends IBaseRs {
 
     /**
      * Create new or update an existing filter with a given code
-     * 
+     *
      * @param postData The filter's data
      * @return Request processing status
      */
@@ -64,7 +63,7 @@ public interface FilterRs extends IBaseRs {
 
     /**
      * Enable a Filter with a given code
-     * 
+     *
      * @param code Filter code
      * @return Request processing status
      */
@@ -74,7 +73,7 @@ public interface FilterRs extends IBaseRs {
 
     /**
      * Disable a Filter with a given code
-     * 
+     *
      * @param code Filter code
      * @return Request processing status
      */
@@ -82,14 +81,24 @@ public interface FilterRs extends IBaseRs {
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
 
+    /**
+     * update an existing filter.Same input parameter as create. If the filter code does not exists, a filter record is created. The operation fails if the filter is
+     * null
+     *
+     * @param postData filter to be updated
+     * @return action status
+     */
     @PUT
     @Path("/")
     ActionStatus update(FilterDto postData);
 
-
-   @POST
+    /**
+     * Creates filter based on filter code. If the filter code does not exists, a filter record is created
+     *
+     * @param postData filter to be created
+     * @return action status
+     */
+    @POST
     @Path("/")
     ActionStatus create(FilterDto postData);
-
-
 }
