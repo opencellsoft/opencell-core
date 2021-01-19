@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import org.meveo.service.cpq.TagTypeService;
  * @author Tarik FAKHOURI
  * @version 10.0
  */
+@Stateless
 public class TagApi extends BaseApi {
 
 	@Inject
@@ -64,8 +66,11 @@ public class TagApi extends BaseApi {
 
 		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
 			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());
-			if(parentTag!=null)
-				tag.setParentTag(parentTag);
+			if(parentTag!=null) 
+				if(!tagDto.getParentTagCode().equalsIgnoreCase(tagDto.getCode()))
+					tag.setParentTag(parentTag);
+				else
+					throw new BusinessApiException("Parent and child has the same code !!");
 			}
 		tag.setFilterEl(tagDto.getFilterEl());
 		
@@ -103,9 +108,22 @@ public class TagApi extends BaseApi {
 		}
 		tag.setDescription(tagDto.getDescription());		
 		tag.setName(tagDto.getName());
-		tag.setParentTag(tagService.findByCode(tagDto.getParentTagCode()));
 		tag.setFilterEl(tagDto.getFilterEl());
-
+		Tag parentTag = null;
+		if(!Strings.isEmpty(tagDto.getParentTagCode())) {
+			parentTag = tagService.findByCode(tagDto.getParentTagCode());
+			if(parentTag!= null) {
+				if(!parentTag.getCode().contentEquals(tagDto.getCode())) {
+					if(parentTag.getParentTag() != null) {
+						if(parentTag.getParentTag().getCode().contentEquals(tagDto.getCode()))
+							throw new BusinessApiException("Tag code : "+ parentTag.getCode() + " already has a tag parent with code : " + tagDto.getCode());
+					}
+				}
+				else
+					throw new BusinessApiException("Parent and child of tag line has the same code !!");
+			}
+		}
+		tag.setParentTag(parentTag);
 		tagService.update(tag);
 		return tagDto;
 	}
