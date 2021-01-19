@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -107,6 +108,7 @@ public class ProductService extends BusinessService<Product> {
 		product.getDiscountList().size();
 		product.getModelChlidren().size();
 		product.getOfferComponents().size();
+		product.getMedias().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		
@@ -114,6 +116,7 @@ public class ProductService extends BusinessService<Product> {
 		var discountPlans = new HashSet<>(product.getDiscountList());
 		var modelChildren = new HashSet<>(product.getModelChlidren());
 		var offerComponents = new ArrayList<>(product.getOfferComponents());
+		var medias = new ArrayList<>(product.getMedias());
 		
 		detach(product);
 
@@ -157,6 +160,9 @@ public class ProductService extends BusinessService<Product> {
    		 duplicate.setPackageFlag(product.isPackageFlag());
    		 duplicate.setDiscountList(new HashSet<>());
    		 duplicate.setOfferComponents(new ArrayList<>());
+   		 duplicate.setMedias(new ArrayList<>());
+   		 duplicate.setUuid(UUID.randomUUID().toString());
+   		 
 	   	
 	   	 
 	   	 if(!preserveCode) {
@@ -171,7 +177,7 @@ public class ProductService extends BusinessService<Product> {
 	   	 }
 	   	 
 	   	 if(duplicateHierarchy) {
-	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, duplicate.getId() + "_");
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, medias, duplicate.getId() + "_");
 	   	 }
 	   	 return duplicate;
 	}

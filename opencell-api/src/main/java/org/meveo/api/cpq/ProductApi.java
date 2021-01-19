@@ -1,6 +1,7 @@
 package org.meveo.api.cpq;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -572,7 +574,15 @@ public class ProductApi extends BaseApi {
 		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
 			 sortBy = pagingAndFiltering.getSortBy();
 		 }
-		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, ProductVersion.class);
+		 var filters = new HashedMap<String, Object>();
+		 pagingAndFiltering.getFilters().forEach( (key, value) -> {
+			 String newKey = key.replace("productCode", "product.code");
+			 filters.put(key.replace(key, newKey), value);
+		 });
+		 pagingAndFiltering.getFilters().clear();
+		 pagingAndFiltering.getFilters().putAll(filters);
+		 List<String> fields = Arrays.asList("productLine", "brand");
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, ProductVersion.class);
 		 Long totalCount = productVersionService.count(paginationConfiguration);
 		 GetListProductVersionsResponseDto result = new GetListProductVersionsResponseDto();
 		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
@@ -595,7 +605,16 @@ public class ProductApi extends BaseApi {
 		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
 			 sortBy = pagingAndFiltering.getSortBy();
 		 }
-		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Product.class);
+		 var filters = new HashedMap<String, Object>();
+		 pagingAndFiltering.getFilters().forEach( (key, value) -> {
+			 String newKey = key.replace("productLineCode", "productLine.code")
+					 .replace("brandCode", "brand.code");
+			 filters.put(key.replace(key, newKey), value);
+		 });
+		 pagingAndFiltering.getFilters().clear();
+		 pagingAndFiltering.getFilters().putAll(filters);
+		 List<String> fields = Arrays.asList("productLine", "brand");
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, Product.class);
 		 Long totalCount = productService.count(paginationConfiguration);
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
 		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
