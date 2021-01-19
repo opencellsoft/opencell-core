@@ -19,6 +19,7 @@ public class MediaDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
 	
 	private String offerCode;
 	
@@ -42,6 +43,7 @@ public class MediaDto extends BaseEntityDto{
 	}
 	
 	public MediaDto(Media media) {
+		this.id=media.getId();
 		this.productCode = media.getProduct()!=null? media.getProduct().getCode():null;
 		this.serviceTemplateCode = media.getServiceTemplate()!=null?media.getServiceTemplate().getCode():null;
 		this.offerCode=media.getOffer()!=null?media.getOffer().getCode():null;
@@ -164,5 +166,20 @@ public class MediaDto extends BaseEntityDto{
 		this.attributeCode = attributeCode;
 	}
 
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	
 	
 }
