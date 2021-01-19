@@ -79,16 +79,18 @@ public interface CustomerAccountRs extends IBaseRs {
     /**
      * Search for a customer account with a given code.
      *
-     * @param customerAccountCode   The customer account's code
-     * @param calculateBalances     true if needs  to calculate balances
-     * @param inheritCF             Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
-     * @param withAccountOperations true if needs to get account operations
+     * @param customerAccountCode The customer account's code
+     * @param calculateBalances True if needs to calculate balances
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param withAccountOperations True if needs to get account operations
+     * @param includeBillingAccounts True to include billing accounts
      * @return customer account
      */
     @GET
     @Path("/")
-    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") Boolean withAccountOperations);
+    GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") boolean withAccountOperations,
+            @QueryParam("includeBillingAccounts") boolean includeBillingAccounts);
 
     /**
      * Remove customerAccount with a given code.
@@ -154,7 +156,7 @@ public interface CustomerAccountRs extends IBaseRs {
      * Filter counters by period date.
      *
      * @param customerAccountCode The customer account's code
-     * @param date                The date corresponding to the period
+     * @param date The date corresponding to the period
      * @return counter instances.
      */
     @GET

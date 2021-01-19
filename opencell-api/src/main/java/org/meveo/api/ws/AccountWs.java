@@ -72,7 +72,6 @@ import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -109,10 +108,12 @@ public interface AccountWs extends IBaseWs {
      * 
      * @param customerCode The customer's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeCustomerAccounts True to include customer accounts
      * @return The customer's data
      */
     @WebMethod
-    GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @WebParam(name = "includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Remove customer with a given code
@@ -244,8 +245,8 @@ public interface AccountWs extends IBaseWs {
      * @return customer account
      */
     @WebMethod
-    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode,
-            @WebParam(name = "calculateBalances") Boolean calculateBalances, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "calculateBalances") boolean calculateBalances,
+            @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF, @WebParam(name = "includeBillingAccounts") boolean includeBillingAccounts);
 
     /**
      * Remove customerAccount with a given code.
@@ -331,11 +332,12 @@ public interface AccountWs extends IBaseWs {
      * 
      * @param billingAccountCode Billing account's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeUserAccounts True to include user accounts
      * @return Billing account's data
      */
     @WebMethod
-    GetBillingAccountResponseDto findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode,
-            @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetBillingAccountResponseDto findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @WebParam(name = "includeUserAccounts") boolean includeUserAccounts);
 
     @WebMethod
     ActionStatus removeBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
@@ -362,10 +364,12 @@ public interface AccountWs extends IBaseWs {
      * 
      * @param userAccountCode User account's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeSubscriptions True to include subscriptions
      * @return User account's data
      */
     @WebMethod
-    GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @WebParam(name = "includeSubscriptions") boolean includeSubscriptions);
 
     @WebMethod
     ActionStatus removeUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
@@ -384,11 +388,13 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
-   @WebMethod
-    GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
+    @WebMethod
+    GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate,
+            @WebParam(name = "endDate") Date endDate);
 
     @WebMethod
-    ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
+    ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate,
+            @WebParam(name = "endDate") Date endDate);
 
     /**
      * Enable an Access point with a given access code and subscription code.
@@ -398,7 +404,8 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus enableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
+    ActionStatus enableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate,
+            @WebParam(name = "endDate") Date endDate);
 
     /**
      * Disable an Access point with a given access code and subscription code.
@@ -408,7 +415,8 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus disableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
+    ActionStatus disableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate,
+            @WebParam(name = "endDate") Date endDate);
 
     @WebMethod
     AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
@@ -464,9 +472,8 @@ public interface AccountWs extends IBaseWs {
      * @return A list of account operations
      */
     @WebMethod
-    AccountOperationsResponseDto listAccountOperations(@Deprecated @WebParam(name = "customerAccountCode") String customerAccountCode,
-            @Deprecated @WebParam(name = "sortBy") String sortBy, @Deprecated @WebParam(name = "sortOrder") SortOrder sortOrder,
-            @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    AccountOperationsResponseDto listAccountOperations(@Deprecated @WebParam(name = "customerAccountCode") String customerAccountCode, @Deprecated @WebParam(name = "sortBy") String sortBy,
+            @Deprecated @WebParam(name = "sortOrder") SortOrder sortOrder, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     @WebMethod
     ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);
@@ -624,28 +631,31 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     GenericSequenceValueResponseDto getNextCustomerNumberSequence();
 
-	/**
-	 * Creates a new customer sequence.
-	 * @param postData customer sequence data
-	 * @return request status
-	 */
-	@WebMethod
-	ActionStatus createCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+    /**
+     * Creates a new customer sequence.
+     * 
+     * @param postData customer sequence data
+     * @return request status
+     */
+    @WebMethod
+    ActionStatus createCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
 
-	/**
-	 * Updates a new customer sequence with a given code.
-	 * @param postData customer sequence data
-	 * @return request status
-	 */
-	@WebMethod
-	ActionStatus updateCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+    /**
+     * Updates a new customer sequence with a given code.
+     * 
+     * @param postData customer sequence data
+     * @return request status
+     */
+    @WebMethod
+    ActionStatus updateCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
 
-	/**
-	 * Generates the next customer sequence number.
-	 * @param code code of the sequence
-	 * @return sequence value dto
-	 */
-	@WebMethod
-	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@WebParam(name = "code") String code);
-	
+    /**
+     * Generates the next customer sequence number.
+     * 
+     * @param code code of the sequence
+     * @return sequence value dto
+     */
+    @WebMethod
+    GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@WebParam(name = "code") String code);
+
 }

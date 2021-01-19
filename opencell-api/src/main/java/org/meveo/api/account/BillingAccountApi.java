@@ -524,11 +524,11 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
-        return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
-    public BillingAccountDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+    public BillingAccountDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF, boolean includeUserAccounts) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
             handleMissingParameters();
@@ -538,7 +538,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
-        BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
+        BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF, includeUserAccounts);
 
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountDto.setDiscountPlanInstances(billingAccount.getDiscountPlanInstances().stream()

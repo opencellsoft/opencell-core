@@ -101,11 +101,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public GetCustomerResponseDto find(String customerCode, CustomFieldInheritanceEnum inheritCF) {
+    public GetCustomerResponseDto find(String customerCode, CustomFieldInheritanceEnum inheritCF, boolean includeCustomerAccounts) {
         GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
-            result.setCustomer(customerApi.find(customerCode, inheritCF));
+            result.setCustomer(customerApi.find(customerCode, inheritCF, includeCustomerAccounts));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
