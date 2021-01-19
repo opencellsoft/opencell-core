@@ -1,13 +1,14 @@
 package org.meveo.api.cpq;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -284,7 +285,19 @@ public class CommercialOrderApi extends BaseApi {
 		 if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
 			 sortBy = pagingAndFiltering.getSortBy();
 		 }
-		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, CommercialOrder.class);
+		 var filters = new HashedMap<String, Object>();
+		 pagingAndFiltering.getFilters().forEach( (key, value) -> {
+			 String newKey = key.replace("sellerCode", "seller.code")
+					 .replace("billingAccountCode", "billingAccount.code")
+					 .replace("quoteCode", "quote.code")
+					 .replace("contractCode", "contract.code")
+					 .replace("orderTypeCode", "orderType.code");
+			 filters.put(key.replace(key, newKey), value);
+		 });
+		 pagingAndFiltering.getFilters().clear();
+		 pagingAndFiltering.getFilters().putAll(filters);
+		 List<String> fields = Arrays.asList("seller", "billingAccount", "quote", "contract", "orderType");
+		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, CommercialOrder.class);
 		 Long totalCount = commercialOrderService.count(paginationConfiguration);
 		 GetListCommercialOrderDtoResponse result = new GetListCommercialOrderDtoResponse();
 		 result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
