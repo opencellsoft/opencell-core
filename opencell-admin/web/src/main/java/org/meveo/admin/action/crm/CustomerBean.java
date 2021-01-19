@@ -60,6 +60,8 @@ public class CustomerBean extends AccountBean<Customer> {
 
     @Inject
     private GdprService gpdrService;
+    
+    private Boolean messageDisplayed= false;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -141,4 +143,21 @@ public class CustomerBean extends AccountBean<Customer> {
 
         return null;
     }
+    
+    /**
+   	 * Check if field is still encrypted
+   	 * @param field
+   	 * @return boolean 
+   	 */
+       public Boolean isEncrypted(String field) {
+       	if(field == null) {
+       		return false;
+       	}
+       	Boolean encrypted = field.startsWith("AES");
+       	if(encrypted && !messageDisplayed) {
+       		messages.error(new BundleKey("messages", "decrypt.ko"));
+       		messageDisplayed = true;
+       	}
+       	return encrypted;
+       }
 }

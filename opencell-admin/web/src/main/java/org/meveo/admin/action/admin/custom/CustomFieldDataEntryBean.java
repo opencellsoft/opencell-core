@@ -2163,4 +2163,17 @@ public class CustomFieldDataEntryBean implements Serializable {
         valueList.remove(mapValues);
         cfv.setDatasetForGUI(null);
     }
+    
+    /**
+	 * Check if field is still encrypted
+	 * @param field
+	 * @return boolean 
+	 */
+    public Boolean isEncrypted(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+    	
+    	if(entity != null && entity.getCfValues() != null && entity.getCfValues().getValuesByCode() != null && entity.getCfValues().getValuesByCode().get("AES") != null) {
+    		return true;
+    	}
+    	return false;
+    }
 }
