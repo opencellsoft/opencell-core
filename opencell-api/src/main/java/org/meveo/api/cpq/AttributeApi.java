@@ -61,9 +61,6 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
-		if (StringUtils.isBlank(postData.getGroupedAttributeCode())) {
-			missingParameters.add("GroupedAttributeCode");
-		}
 		if (attributeService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Attribute.class, postData.getCode());
 		}
@@ -99,11 +96,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getGroupedAttributeCode())) {
-			missingParameters.add("GroupedAttributeCode");
-		}
-
+		} 
 		Attribute attribute=attributeService.findByCode(postData.getCode());
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, postData.getCode());
