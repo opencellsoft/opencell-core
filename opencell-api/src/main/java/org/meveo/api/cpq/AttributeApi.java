@@ -68,11 +68,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		handleMissingParametersAndValidate(postData);
 
 		// check if groupedAttributes  exists
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode());
-		if (groupedAttributes == null) {
-			throw new EntityDoesNotExistsException(GroupedAttributes.class, postData.getGroupedAttributeCode());
-		}
-
+		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		Attribute attribute = new Attribute();
 		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
@@ -100,13 +96,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		Attribute attribute=attributeService.findByCode(postData.getCode());
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, postData.getCode());
-		}
-
-		// check if groupedAttributes  exists
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode());
-		if (groupedAttributes == null) {
-			throw new EntityDoesNotExistsException(GroupedAttributes.class, postData.getGroupedAttributeCode());
-		}  
+		} 
+		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setGroupedAttributes(groupedAttributes);

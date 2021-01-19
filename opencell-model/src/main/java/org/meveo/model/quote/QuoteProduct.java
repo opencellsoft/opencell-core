@@ -42,22 +42,6 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 })
 public class QuoteProduct extends AuditableEntity {
 
-    public QuoteProduct() {
-	}
-    
-    
-	public QuoteProduct(QuoteProduct copy) {
-		this.quote = copy.quote;
-		this.quoteVersion = copy.quoteVersion;
-		this.quoteLot = copy.quoteLot;
-		this.productVersion = copy.productVersion;
-		this.quantity = copy.quantity;
-		this.billableAccount = copy.billableAccount;
-		this.quoteOffre = copy.quoteOffre;
-		this.quoteAttributes = copy.quoteAttributes;
-	}
-
-
 	/**
      * quote
      */
@@ -71,13 +55,6 @@ public class QuoteProduct extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_version_id", referencedColumnName = "id")
     private QuoteVersion quoteVersion;
-
-    /**
-     * quote customer
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_lot_id", referencedColumnName = "id")
-    private QuoteLot quoteLot;
 
     /**
      * product
@@ -112,24 +89,38 @@ public class QuoteProduct extends AuditableEntity {
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
+	public QuoteProduct() {
 	}
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
+
+
+	public QuoteProduct(QuoteProduct copy) {
+		this.quote = copy.quote;
+		this.quoteVersion = copy.quoteVersion;
+		this.productVersion = copy.productVersion;
+		this.quantity = copy.quantity;
+		this.billableAccount = copy.billableAccount;
+		this.quoteOffre = copy.quoteOffre;
+		this.quoteAttributes = copy.quoteAttributes;
 	}
 	
 	public void update(QuoteProduct other) {
     	this.quoteOffre = other.quoteOffre;
     	this.quote = other.quote;
 		this.quoteVersion = other.quoteVersion;
-		this.quoteLot = other.quoteLot;
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
 		this.billableAccount = other.billableAccount;
 		this.quoteOffre = other.quoteOffre;
 		this.quoteAttributes = other.quoteAttributes;
     }
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
 	/**
 	 * @return the quote
 	 */
@@ -190,20 +181,6 @@ public class QuoteProduct extends AuditableEntity {
 
 
 	/**
-	 * @return the quoteLot
-	 */
-	public QuoteLot getQuoteLot() {
-		return quoteLot;
-	}
-
-	/**
-	 * @param quoteLot the quoteLot to set
-	 */
-	public void setQuoteLot(QuoteLot quoteLot) {
-		this.quoteLot = quoteLot;
-	}
-
-	/**
 	 * @return the productVersion
 	 */
 	public ProductVersion getProductVersion() {
@@ -235,7 +212,7 @@ public class QuoteProduct extends AuditableEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(billableAccount, productVersion, quantity, quote, quoteLot, quoteOffre, quoteVersion);
+				+ Objects.hash(billableAccount, productVersion, quantity, quote, quoteOffre, quoteVersion);
 		return result;
 	}
 	@Override
@@ -247,7 +224,7 @@ public class QuoteProduct extends AuditableEntity {
 		QuoteProduct other = (QuoteProduct) obj;
 		return Objects.equals(billableAccount, other.billableAccount)
 				&& Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
-				&& Objects.equals(quote, other.quote) && Objects.equals(quoteLot, other.quoteLot)
+				&& Objects.equals(quote, other.quote)
 				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
 	}
 	/**

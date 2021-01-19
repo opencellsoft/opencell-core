@@ -57,7 +57,7 @@ public class PricePlanMatrixLineServiceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void if_no_attr_match_and_without_default_line_throw_exception() {
+    public void if_no_attr_match_throw_exception() {
         PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
         PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
 
@@ -75,29 +75,6 @@ public class PricePlanMatrixLineServiceTest {
         pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
     }
 
-    @Test
-    public void if_no_attr_match_and_default_line_set_retreive_default_line() {
-        PricePlanMatrixLineService pricePlanMatrixService = new PricePlanMatrixLineServiceMock();
-        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
-
-        Attribute attrb1 = createAttribute("billing_cycle", AttributeTypeEnum.LIST_TEXT);
-        Attribute attrb2 = createAttribute("engagement_duration", AttributeTypeEnum.NUMERIC);
-
-        QuoteProduct quoteProduct = createQuoteProduct();
-
-        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attrb1, quoteProduct);
-        monthlyQuotedAttribute.setStringValue("Monthly");
-
-        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attrb2, quoteProduct);
-        sevenTeenEngagementDuration.setDoubleValue(17.0);
-
-        List<PricePlanMatrixLine> pricePlanMatrixLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
-
-        assertThat(pricePlanMatrixLines.size()).isEqualTo(1);
-        assertThat(pricePlanMatrixLines.get(0).getDescription()).isEqualTo("Default line for matrix version");
-        assertThat(pricePlanMatrixLines.get(0).getPricetWithoutTax()).isEqualTo(valueOf(20));
-
-    }
 
     private QuoteProduct createQuoteProduct() {
         QuoteProduct quoteProduct = new QuoteProduct();
@@ -190,7 +167,6 @@ public class PricePlanMatrixLineServiceTest {
             monthlyPrice1Line.setId(1L);
             monthlyPrice1Line.setDescription("Price1");
             monthlyPrice1Line.setPricetWithoutTax(valueOf(24));
-            monthlyPrice1Line.setIsDefault(true);
             monthlyPrice1Line.setPricePlanMatrixValues(Set.of(monthlyBcValue, twelveSubscriptionDurationValue));
             monthlyPrice1Line.setPricePlanMatrixVersion(pricePlanMatrixVersion);
 

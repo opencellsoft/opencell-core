@@ -63,8 +63,6 @@ public class QuoteProductDTO extends BaseEntityDto{
     private BigDecimal quantity;
     
     private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
-
-    private String quoteLotCode;
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
     
@@ -85,7 +83,6 @@ public class QuoteProductDTO extends BaseEntityDto{
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
-		quoteLotCode=quoteProduct.getQuoteLot()!=null?quoteProduct.getQuoteLot().getCode():null;
 	}
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
@@ -186,20 +183,6 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteVersion(int quoteVersion) {
 		this.quoteVersion = quoteVersion;
-	}
-
-	/**
-	 * @return the quoteLotCode
-	 */
-	public String getQuoteLotCode() {
-		return quoteLotCode;
-	}
-
-	/**
-	 * @param quoteLotCode the quoteLotCode to set
-	 */
-	public void setQuoteLotCode(String quoteLotCode) {
-		this.quoteLotCode = quoteLotCode;
 	}
 
 	/**

@@ -1216,9 +1216,6 @@
 	            </column>
 	            <column name="updated" type="datetime" />
 	            <column name="updater" type="varchar(100)" />
-	            <column name="quote_customer_service_id" type="bigint">
-	                <constraints nullable="false" />
-	            </column>
 	            <column name="billable_account_id" type="bigint" >
 	                <constraints nullable="false" />
 	            </column>
@@ -1242,9 +1239,6 @@
 	            <column name="rc_tax_rate" type="INT4" />
 	            <column name="rc_price_with_tax" type="numeric(23, 12)" />
 	    	</createTable>
-
-	        <addForeignKeyConstraint baseColumnNames="quote_customer_service_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_quote_customer_service_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 
 	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
@@ -1307,10 +1301,13 @@
 	            <column name="offer_quote_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
+				<column name="quote_article_line_id" type="bigint" />
 	        </addColumn>
 
 	        <addForeignKeyConstraint baseColumnNames="offer_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_offer_quote_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+			<addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_article_line_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_article_line" />
 	    </changeSet>
 
 	    <changeSet id="540-66-20201201" author="TarikFA">
@@ -1540,7 +1537,7 @@
 			<column name="quote_article_line_id" type="bigint" >
 				<constraints nullable="false"/>
 			</column>
-			<column name="quote_id" type="bigint" >
+			<column name="quote_version_id" type="bigint" >
 				<constraints nullable="false"/>
 			</column>
 			<column name="price_level" type="varchar(50)" />
@@ -1566,8 +1563,8 @@
 
 		<addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_quote_article_Line" deferrable="false"
 								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_article_line" />
-		<addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_quote" deferrable="false"
-								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
+		<addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_quote_version" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
 
 
 	</changeSet>
@@ -2768,7 +2765,7 @@
 	            <column name="version" type="int4" />
 
 	            <column name="ppm_version_id" type="bigint" />
-	            <column name="is_default" type="${type.boolean}" defaultValueNumeric="0"/>
+				<column name="priority" type="int4" defaultValueNumeric="0"/>
 
 	            <column name="description" type="varchar(255)"/>
 	            <column name="price_without_tax" type="numeric(23, 12)" />
