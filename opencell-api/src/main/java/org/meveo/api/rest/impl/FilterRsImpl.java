@@ -25,7 +25,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.FilterApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.GetFilterResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
