@@ -49,13 +49,9 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "is_default")
+    @Column(name = "priority")
     @NotNull
-    private boolean isDefault = false;
-
-    @Transient
-    private MatchingTypeEnum matchingTypeEnum;
+    private Integer priority = 0;
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
@@ -89,83 +85,17 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.pricePlanMatrixValues = pricePlanMatrixValues;
     }
 
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority != null ? priority : 0;
+    }
+
     public boolean match(Set<QuoteAttribute> quoteAttributes) {
-        boolean isMatch = pricePlanMatrixValues.stream()
+        return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(quoteAttributes));
-        if (isMatch) {
-            computeMatchType(quoteAttributes);
-        }
-
-        return isMatch;
     }
 
-    private void computeMatchType(Set<QuoteAttribute> quoteAttributes) {
-        List<QuoteAttribute.MatchingTypeEnum> matchingTypes = quoteAttributes.stream()
-                .map(QuoteAttribute::getMatchingTypeEnum)
-                .collect(Collectors.toList());
-        boolean containsRegEx = false;
-        boolean containsExactValue = false;
-        boolean containsRangeValue = false;
-
-        for (QuoteAttribute.MatchingTypeEnum matchingType : matchingTypes) {
-            if (matchingType == QuoteAttribute.MatchingTypeEnum.REG_MATCHING)
-                containsRegEx = true;
-            else if (matchingType == QuoteAttribute.MatchingTypeEnum.EXACT_VALUE)
-                containsExactValue = true;
-            else if (matchingType == QuoteAttribute.MatchingTypeEnum.RANGE_VALUE)
-                containsRangeValue = true;
-        }
-        setLineMatchingType(containsExactValue, containsRangeValue, containsRegEx);
-    }
-
-    private void setLineMatchingType(boolean containsExactValue, boolean containsRangeValue, boolean containsRegEx) {
-        if (containsExactValue && !containsRangeValue && !containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.ALL_EXACT_VALUES;
-        else if (!containsExactValue && containsRangeValue && !containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.ALL_RANGE_VALUE;
-        else if (!containsExactValue && !containsRangeValue && containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.ALL_REG_EX;
-        else if (containsExactValue && containsRangeValue && !containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.RANGE_AND_EXACT_VALUES;
-        else if (containsExactValue && !containsRangeValue && containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.REG_EX_AND_EXACT_VALUE;
-        else if (!containsExactValue && containsRangeValue && containsRegEx)
-            this.matchingTypeEnum = MatchingTypeEnum.RANGE_AND_REG_EX;
-
-    }
-
-    public void setIsDefault(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
-
-    public boolean getIsDefault() {
-        return isDefault;
-    }
-
-    public MatchingTypeEnum getMatchingTypeEnum() {
-        return matchingTypeEnum;
-    }
-
-    public void setMatchingTypeEnum(MatchingTypeEnum matchingTypeEnum) {
-        this.matchingTypeEnum = matchingTypeEnum;
-    }
-
-    public enum MatchingTypeEnum {
-        ALL_EXACT_VALUES(1),
-        RANGE_AND_EXACT_VALUES(2),
-        ALL_RANGE_VALUE(3),
-        REG_EX_AND_EXACT_VALUE(4),
-        RANGE_AND_REG_EX(5),
-        ALL_REG_EX(6);
-
-        private Integer priority;
-
-        MatchingTypeEnum(Integer priority) {
-            this.priority = priority;
-        }
-
-        public Integer getPriority() {
-            return priority;
-        }
-    }
 }
