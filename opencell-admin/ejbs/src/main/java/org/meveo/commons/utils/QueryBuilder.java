@@ -91,19 +91,26 @@ public class QueryBuilder {
 
     public String formatInnerJoins(){
         return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
-                .map(jw -> format(alias, jw.getRootInnerJoin()))
+                .map(jw -> format(alias, jw.getRootInnerJoin(), q.toString().startsWith(FROM)))
                 .collect(Collectors.joining(" ", " ", " "));
     }
 
-    public String format(String rootAlias, InnerJoin innerJoin) {
+    public String formatInnerJoins(boolean doFetch){
+        return innerJoins.values().isEmpty() ? "" : innerJoins.values().stream()
+                .map(jw -> format(alias, jw.getRootInnerJoin(), doFetch))
+                .collect(Collectors.joining(" ", " ", " "));
+    }
 
-        String sql = "inner join " + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
+    public String format(String rootAlias, InnerJoin innerJoin, boolean doFetch) {
+
+        String shouldFetch = doFetch ? "fetch " : "";
+        String sql = "inner join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
-                        return format(innerJoin.getAlias(), next);
-                    return String.format("inner join %s.%s %s", innerJoin.getAlias(), next.getName(), next.getAlias());
+                        return format(innerJoin.getAlias(), next, doFetch);
+                    return String.format("inner join %s%s.%s %s", shouldFetch, innerJoin.getAlias(), next.getName(), next.getAlias());
                 })
                 .collect(Collectors.joining(" ", sql, ""));
     }
@@ -223,7 +230,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -252,7 +259,7 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-        StringBuilder query = new StringBuilder("select " + alias + " from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
                 query.append(" left join fetch " + alias + "." + fetchField);
@@ -496,10 +503,10 @@ public class QueryBuilder {
     public QueryBuilder addCriterionEntity(String field, Object entity) {
         return addCriterionEntity(field, entity, " = ", false);
     }
-    
+
     /**
      * Add a criteria to check field value is equal to the entity passed
-     * 
+     *
      * @param field name of field
      * @param entity entity of given field to add criterion
      * @param condition Comparison type
@@ -541,10 +548,10 @@ public class QueryBuilder {
     public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
         return addCriterionEnum(field, enumValue, "=", false);
     }
-    
+
     /**
      * Add a criteria to check field value is equal to the enum passed
-     * 
+     *
      * @param field Field name
      * @param enumValue Enum value to compare to
      * @param condition Comparison type
@@ -668,10 +675,10 @@ public class QueryBuilder {
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
         return addCriterionWildcard(field, value, caseInsensitive, false, false);
     }
-    
+
     /**
      * Add a criteria to check field value is like a value passed
-     * 
+     *
      * @param field name of field
      * @param value value of field
      * @param caseInsensitive true/false
@@ -812,7 +819,7 @@ public class QueryBuilder {
             return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start);
         }
     }
-    
+
     /**
      * @param field name of field to add
      * @param valueTo date value.
@@ -821,7 +828,7 @@ public class QueryBuilder {
     public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
         return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
     }
-    
+
     /**
      * Add a criteria to check that field value is before the date passed. Date value is truncated to a day.
      *
@@ -1165,6 +1172,8 @@ public class QueryBuilder {
             JoinWrapper joinWrapper = parse(concatenatedFields);
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
+        } else if(fields.length == 1){
+            return this.alias + "." + concatenatedFields;
         }
         return concatenatedFields;
     }
@@ -1252,7 +1261,10 @@ public class QueryBuilder {
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyOrdering(paginationSortAlias);
-        StringBuilder s = new StringBuilder("select ").append(alias != null ? alias + "." : "").append("id ").append(toStringQuery().substring(q.indexOf(FROM)));
+        StringBuilder s = new StringBuilder("select ")
+                .append(alias != null ? alias + "." : "")
+                .append("id ")
+                .append(toStringQuery(false).substring(q.indexOf(FROM)));
 
         TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
@@ -1275,7 +1287,7 @@ public class QueryBuilder {
         }
         return query;
     }
-    
+
     /**
      * Convert to a query to count number of entities matched: "select .. from" is changed to "select count(*) from"
      * 
@@ -1283,7 +1295,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
-        String countSql = "select count(*) " + toStringQuery().substring(q.indexOf(FROM));
+    	String countSql = "select count(*) " + toStringQuery(false).substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
         // String sql = q.toString().toLowerCase();
@@ -1320,7 +1332,7 @@ public class QueryBuilder {
      */
     public Query getNativeCountQuery(EntityManager em) {
 
-        String countSql = "select count(*) " + addCurrentSchema(toStringQuery().substring(q.indexOf(FROM)));
+        String countSql = "select count(*) " + addCurrentSchema(toStringQuery(false).substring(q.indexOf(FROM)));
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.trace("Count query is {}", countSql);
 
@@ -1455,6 +1467,10 @@ public class QueryBuilder {
 
     private String toStringQuery() {
         return q.toString().replace(INNER_JOINS, formatInnerJoins());
+    }
+
+    private String toStringQuery(boolean doFetch) {
+        return q.toString().replace(INNER_JOINS, formatInnerJoins(doFetch));
     }
 
     public Map<String, Object> getParams() {

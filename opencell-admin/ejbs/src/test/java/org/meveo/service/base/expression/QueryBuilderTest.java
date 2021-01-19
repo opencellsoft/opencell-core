@@ -42,7 +42,7 @@ public class QueryBuilderTest {
     @Test
     public void can_format_one_join() {
         InnerJoin innerJoin = new InnerJoin("ab");
-        String joinString = queryBuilder.format("", innerJoin);
+        String joinString = queryBuilder.format("", innerJoin, false);
 
         assertThat(joinString).isEqualTo(format("inner join ab %s ", innerJoin.getAlias()));
     }
@@ -54,7 +54,7 @@ public class QueryBuilderTest {
         InnerJoin bcInnerJoin = new InnerJoin("bc");
         abInnerJoin.next(bcInnerJoin);
 
-        String joinString = queryBuilder.format("", abInnerJoin);
+        String joinString = queryBuilder.format("", abInnerJoin, false);
 
        assertThat(joinString).isEqualTo(format("inner join ab %s inner join %s.bc %s", abInnerJoin.getAlias(), abInnerJoin.getAlias(), bcInnerJoin.getAlias()));
     }
@@ -67,7 +67,7 @@ public class QueryBuilderTest {
         abInnerJoin.next(acInnerJoin);
         acInnerJoin.next(adInnerJoin);
 
-        String joinString = queryBuilder.format("", abInnerJoin);
+        String joinString = queryBuilder.format("", abInnerJoin, false);
 
         assertThat(joinString).isEqualTo(format("inner join ab %s inner join %s.ac %s inner join %s.ad %s", abInnerJoin.getAlias(), abInnerJoin.getAlias(), acInnerJoin.getAlias(), acInnerJoin.getAlias(), adInnerJoin.getAlias()));
     }
