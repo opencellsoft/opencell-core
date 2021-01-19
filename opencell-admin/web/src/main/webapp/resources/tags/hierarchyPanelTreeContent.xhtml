@@ -63,32 +63,32 @@
         </p:treeNode>
 
         <p:treeNode type="CA_LIST" icon="#{node.currencyIconClass}">
-            <h:link id="ca_list_tree_value" value="#{node.code}" outcome="#{node.view}">
+            <h:link id="ca_list_tree_value" value="#{messages['customerAccount.moreCustomerAccounts']} (#{node.code})" outcome="#{node.view}">
                 <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
 
         <p:treeNode type="BA_LIST" icon="fa fa-file-text-o">
-            <h:link id="ba_list_tree_value" value="#{node.code}" outcome="#{node.view}">
+            <h:link id="ba_list_tree_value" value="#{messages['billingAccount.moreBillingAccounts']} (#{node.code})" outcome="#{node.view}">
                 <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
 
         <p:treeNode type="UA_LIST" icon="fa fa-user">
-            <h:link id="ua_list_tree_value" value="#{node.code}" outcome="#{node.view}">
+            <h:link id="ua_list_tree_value" value="#{messages['userAccount.moreUserAccounts']} (#{node.code})" outcome="#{node.view}">
                 <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
 
 
         <p:treeNode type="SUB_LIST" icon="fa fa-shopping-cart">
-            <h:link id="sub_list_tree_value" value="#{node.code}" outcome="#{node.view}">
+            <h:link id="sub_list_tree_value" value="#{messages['subscription.moreSubscriptions']} (#{node.code})" outcome="#{node.view}">
                 <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
 
         <p:treeNode type="AP_LIST" icon="fa fa-sign-in">
-            <h:link id="ap_list_tree_value" value="#{node.code}" outcome="#{node.view}">
+            <h:link id="ap_list_tree_value" value="#{messages['access.moreAccess']} (#{node.code})" outcome="#{node.view}">
                 <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
