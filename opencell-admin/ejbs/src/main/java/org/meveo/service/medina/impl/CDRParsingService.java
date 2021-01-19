@@ -153,9 +153,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
                     && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
                 foundMatchingAccess = true;
                 EDR edr = cdrToEdr(cdr, accessPoint, null);
-                if(edr.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+                if(edr.getSubscription().getTerminationDate() != null && cdr.getTimestamp().getTime() > edr.getSubscription().getTerminationDate().getTime()) {
                     throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_TERMINATED);
-                }else if(edr.getSubscription().getStatus() != SubscriptionStatusEnum.ACTIVE) {
+                } else if(edr.getSubscription().getSubscriptionDate() != null && cdr.getTimestamp().getTime() < edr.getSubscription().getSubscriptionDate().getTime()) {
                     throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.SUBSCRIPTION_NOT_ACTIVATED);
                 }
                 edrs.add(edr);
@@ -254,7 +254,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccess_id());
         if (accesses == null || accesses.size() == 0) {
             rejectededCdrEventProducer.fire(cdr);
-            throw new InvalidAccessException(cdr);
+            throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.ACCESS_NOT_FOUND);
         }
         return accesses;
     }
