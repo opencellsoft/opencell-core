@@ -29,7 +29,6 @@ import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.GetFilterResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.FilterRs;
-
 /**
  * @author Tyshan Shi
  * 
@@ -91,4 +90,33 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
 
         return result;
     }
+
+     public ActionStatus update(FilterDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            filterApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    public ActionStatus create(FilterDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            filterApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    
+
+
 }

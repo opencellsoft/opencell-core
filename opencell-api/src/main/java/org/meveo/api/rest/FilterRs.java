@@ -26,7 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.PUT;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.GetFilterResponseDto;
@@ -81,4 +81,16 @@ public interface FilterRs extends IBaseRs {
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
 
+
+    @PUT
+
+    @Path("/")
+
+    ActionStatus update(FilterDto postData);
+
+    @POST
+
+    @Path("/")
+
+    ActionStatus create(FilterDto postData);
 }
