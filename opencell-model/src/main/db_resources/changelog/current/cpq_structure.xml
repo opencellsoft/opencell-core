@@ -2641,8 +2641,11 @@
 
 		<addColumn tableName="billing_wallet_operation">
 			<column name="order_id" type="bigint" />
+			<column name="accounting_article_id" type="bigint" />
+			<column name="order_customer_service_id" type="bigint" />
 			<column name="product_id" type="bigint" />
 			<column name="product_version_id" type="bigint" />
+			<column name="product_version__id" type="bigint" />
 			<column name="attribute_id" type="bigint" />
 			<column name="prestation" type="varchar(255)" />
 		</addColumn>
@@ -2659,6 +2662,15 @@
 
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_attribute_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_accounting_article_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+
+		<addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_order_customer_service_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+
+		<addForeignKeyConstraint baseColumnNames="product_version__id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_version__id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
 
 		<addColumn tableName="billing_rated_transaction">
 			<column name="order_id" type="bigint" />
