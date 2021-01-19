@@ -1984,7 +1984,7 @@
 		<sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS LAST)</sql>
    </changeSet>
 
-   <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+   <changeSet id="#5872_20210104" author="AmineBENAICHA" dbms="postgresql">
     	<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_other_tmp AS
 			SELECT
