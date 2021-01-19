@@ -1,12 +1,14 @@
 package org.meveo.model.quote;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -30,14 +32,9 @@ import org.meveo.model.cpq.CpqAccountingArticle;
         @Parameter(name = "sequence_name", value = "cpq_quote_article_line_seq"), })
 public class QuoteArticleLine extends BusinessEntity {
 
-
-    /**
-     * quote customer service
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_customer_service_id", nullable = false, referencedColumnName = "id")
-	@NotNull
-	private QuoteLot quoteLot;
+    @OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_article_line_id")
+    private List<QuoteProduct> quoteProducts;
 
     /**
      * billable account
@@ -60,6 +57,14 @@ public class QuoteArticleLine extends BusinessEntity {
 
     @Column(name = "service_quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     private BigDecimal serviceQuantity;
+
+	public List<QuoteProduct> getQuoteProducts() {
+		return quoteProducts;
+	}
+
+	public void setQuoteProducts(List<QuoteProduct> quoteProducts) {
+		this.quoteProducts = quoteProducts;
+	}
 
 	/**
 	 * @return the billableAccount
@@ -101,20 +106,6 @@ public class QuoteArticleLine extends BusinessEntity {
 	 */
 	public void setServiceQuantity(BigDecimal serviceQuantity) {
 		this.serviceQuantity = serviceQuantity;
-	}
-
-	/**
-	 * @return the quoteLot
-	 */
-	public QuoteLot getQuoteLot() {
-		return quoteLot;
-	}
-
-	/**
-	 * @param quoteLot the quoteLot to set
-	 */
-	public void setQuoteLot(QuoteLot quoteLot) {
-		this.quoteLot = quoteLot;
 	}
 
 	/**

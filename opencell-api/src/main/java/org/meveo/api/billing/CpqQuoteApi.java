@@ -206,9 +206,6 @@ public class CpqQuoteApi extends BaseApi {
 				QuoteProduct quoteProduct = null;
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
-				if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
-					quoteProduct.setQuoteLot(quoteLotService.findByCode(quoteProductDTO.getQuoteLotCode()));
-				}
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
 				quoteProduct.setBillableAccount(quoteOffer.getBillableAccount());
@@ -537,15 +534,9 @@ public class CpqQuoteApi extends BaseApi {
 			q = new QuoteProduct();
 			isNew = true;
 		}
-			
-		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
-			q.setQuoteLot(quoteLotService.findByCode(quoteProductDTO.getQuoteLotCode()));
-		}
+
 		if(!Strings.isEmpty(quoteProductDTO.getQuoteCode())) {
 			q.setQuote(cpqQuoteService.findByCode(quoteProductDTO.getQuoteCode()));
-		}
-		if(!Strings.isEmpty(quoteProductDTO.getQuoteLotCode())) {
-			q.setQuoteVersion(quoteVersionService.findByQuoteAndVersion(quoteProductDTO.getQuoteCode(), quoteProductDTO.getQuoteVersion()));
 		}
 		
 		q.setProductVersion(productVersion);

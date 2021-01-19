@@ -32,9 +32,9 @@ public class QuotePrice extends BusinessEntity {
 	private QuoteArticleLine quoteArticleLine;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_id", nullable = false)
+	@JoinColumn(name = "quote_version_id", nullable = false)
 	@NotNull
-	private CpqQuote Quote;
+	private QuoteVersion quoteVersion;
 
 	@Column(name = "price_level")
 	@Enumerated(EnumType.STRING)
@@ -83,12 +83,12 @@ public class QuotePrice extends BusinessEntity {
 		this.quoteArticleLine = quoteArticleLine;
 	}
 
-	public CpqQuote getQuote() {
-		return Quote;
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
 	}
 
-	public void setQuote(CpqQuote quote) {
-		Quote = quote;
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
 	}
 
 	public PriceTypeEnum getPriceTypeEnum() {
