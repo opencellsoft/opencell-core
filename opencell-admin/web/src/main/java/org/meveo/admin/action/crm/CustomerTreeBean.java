@@ -119,7 +119,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     @PostConstruct
     public void init() {
-        limitHierarchyToNrOfNodes = ParamBean.getInstance().getPropertyAsInteger("accountTree.limitToNrOfChildNodes", 50);
+        limitHierarchyToNrOfNodes = 2;// ParamBean.getInstance().getPropertyAsInteger("accountTree.limitToNrOfChildNodes", 50);
     }
 
     public boolean isVisible() {
@@ -608,7 +608,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             if (entity instanceof Customer) {
 
                 if (asLinkToChildren) {
-                    this.code = "..." + numberOfChildren + "...";
+                    this.code = Long.toString(numberOfChildren);
                     this.type = NODE_TYPE_CA_LIST;
 
                 } else {
@@ -618,7 +618,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
             } else if (entity instanceof CustomerAccount) {
                 if (asLinkToChildren) {
-                    this.code = "..." + numberOfChildren + "...";
+                    this.code = Long.toString(numberOfChildren);
                     this.type = NODE_TYPE_BA_LIST;
 
                 } else {
@@ -633,7 +633,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             } else if (entity instanceof BillingAccount) {
 
                 if (asLinkToChildren) {
-                    this.code = "..." + numberOfChildren + "...";
+                    this.code = Long.toString(numberOfChildren);
                     this.type = NODE_TYPE_UA_LIST;
 
                 } else {
@@ -647,7 +647,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             } else if (entity instanceof UserAccount) {
 
                 if (asLinkToChildren) {
-                    this.code = "..." + numberOfChildren + "...";
+                    this.code = Long.toString(numberOfChildren);
                     this.type = NODE_TYPE_SUB_LIST;
 
                 } else {
@@ -660,7 +660,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
             } else if (entity instanceof Subscription) {
                 if (asLinkToChildren) {
-                    this.code = "..." + numberOfChildren + "...";
+                    this.code = Long.toString(numberOfChildren);
                     this.type = NODE_TYPE_AP_LIST;
 
                 } else {
