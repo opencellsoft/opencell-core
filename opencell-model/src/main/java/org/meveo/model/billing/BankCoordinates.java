@@ -265,6 +265,21 @@ public class BankCoordinates implements Serializable, Cloneable {
                 + ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
                 + ics + "]";
     }
+    
+    public void anonymize(String code) {
+        setBankCode(code);
+        setBranchCode(code);
+        setAccountNumber(code);
+        setKey(code);
+        setIban(code);
+        setBic(code);
+        setAccountOwner(code);
+        setBankName(code);
+        setBankId(code);
+        setIssuerNumber(code);
+        setIssuerName(code);
+        setIcs(code);
+    }
 
     @Override
     public boolean equals(Object obj) {

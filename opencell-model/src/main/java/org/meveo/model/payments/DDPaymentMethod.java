@@ -109,6 +109,15 @@ public class DDPaymentMethod extends PaymentMethod {
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
 	}
+	
+	public void anonymize(String code) {
+	    super.anonymize(code);
+	    setMandateIdentification(code);
+	    setMandateDate(null);
+	    if(bankCoordinates != null) {
+	        bankCoordinates.anonymize(code);
+	    }
+    }
 
 	@Override
 	public boolean equals(Object obj) {
