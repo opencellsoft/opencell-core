@@ -32,6 +32,10 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     @NotNull
     private Boolean isMatrix;
     private BigDecimal priceWithoutTax;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithTax;
+    private String amountWithoutTaxEL;
+    private String amountWithTaxEL;
 
     public PricePlanMatrixVersionDto() {
     }
@@ -45,6 +49,10 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
+        setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
+        setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
+        setAmountWithoutTaxEL(pricePlanMatrixVersion.getAmountWithoutTaxEL());
+        setAmountWithTaxEL(pricePlanMatrixVersion.getAmountWithTaxEL());
     }
 
     public String getPricePlanMatrixCode() {
@@ -109,5 +117,37 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 
     public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
         this.priceWithoutTax = priceWithoutTax;
+    }
+
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
+
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
+
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
+
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
+
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
+
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
     }
 }

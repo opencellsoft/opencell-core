@@ -103,6 +103,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (statusTime != null)
             pricePlanMatrixVersion.setStatusDate(statusTime);
         pricePlanMatrixVersion.setPriceWithoutTax(pricePlanMatrixVersionDto.getPriceWithoutTax());
+        pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
+        pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
+        pricePlanMatrixVersion.setAmountWithoutTaxEL(pricePlanMatrixVersionDto.getAmountWithoutTaxEL());
+        pricePlanMatrixVersion.setAmountWithTaxEL(pricePlanMatrixVersionDto.getAmountWithTaxEL());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
         pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
