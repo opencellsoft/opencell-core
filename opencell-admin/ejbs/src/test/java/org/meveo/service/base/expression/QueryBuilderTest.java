@@ -7,6 +7,7 @@ import org.meveo.commons.utils.JoinWrapper;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -18,7 +19,7 @@ public class QueryBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        queryBuilder = new QueryBuilder(Invoice.class, "I", List.of());
+        queryBuilder = new QueryBuilder(Invoice.class, "I", Arrays.asList());
     }
 
     @Test

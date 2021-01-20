@@ -8,6 +8,8 @@ import org.meveo.model.billing.Invoice;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +35,7 @@ public class PersistenceServiceTest {
 
     @Test
     public void test_search_att_type_class_list_class() {
-        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, List.of("org.meveo.model.billing.Invoice"));
+        filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, Arrays.asList("org.meveo.model.billing.Invoice"));
 
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 "type(a) in (:typeClass) Param name:typeClass value:[class org.meveo.model.billing.Invoice]");
@@ -115,21 +117,21 @@ public class PersistenceServiceTest {
 
     @Test
     public void inner_join_for_is_equal_requests() {
-        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", Arrays.asList("billingAccount.id"));
         query.addValueIsEqualToField("a.b.c", "value", false, true);
         assertThat(query.toString()).contains("inner join fetch I.a a_", "inner join fetch a_");
     }
 
     @Test
     public void inner_join_for_is_list_requests() {
-        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", Arrays.asList("billingAccount.id"));
         query.addListFilters("a.b.c", "Value");
         assertThat(query.toString()).contains("inner join fetch I.a a_", "inner join fetch a_");
     }
 
     @Test
     public void test_in_list() {
-        filters.put("inList invoiceAgregates", List.of("hello", "test"));
+        filters.put("inList invoiceAgregates", Arrays.asList("hello", "test"));
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where  " +
                 "exists " +
                 "(" +
@@ -141,14 +143,14 @@ public class PersistenceServiceTest {
 
     @Test
     public void test_not_in_list_json() {
-        filters.put("not-inList " + FROM_JSON_FUNCTION + "jsonField)", List.of("hello", "test"));
+        filters.put("not-inList " + FROM_JSON_FUNCTION + "jsonField)", Arrays.asList("hello", "test"));
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 "lower(FromJson(a.cfValues,jsonField)) NOT  IN (:FromJson_a_cfValues_jsonField_) Param name:FromJson_a_cfValues_jsonField_ value:[hello, test]");
     }
 
     @Test
     public void test_not_in_list_collection() {
-        filters.put("not-inList invoiceAgregates", List.of("hello", "test"));
+        filters.put("not-inList invoiceAgregates", Arrays.asList("hello", "test"));
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where  " +
                 "exists " +
                 "(" +
@@ -214,7 +216,7 @@ public class PersistenceServiceTest {
 
     @Test
     public void test_overlap_optional_range() {
-        filters.put("overlapOptionalRange overlapOptionalRangeFiled1 overlapOptionalRangeField2", List.of(10, 20));
+        filters.put("overlapOptionalRange overlapOptionalRangeFiled1 overlapOptionalRangeField2", Arrays.asList(10, 20));
         String query = getQuery();
         assertThat(query).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 "(" +
@@ -232,7 +234,7 @@ public class PersistenceServiceTest {
 
     @Test
     public void test_overlap_optional_range_inclusive() {
-        filters.put("overlapOptionalRangeInclusive overlapOptionalRangeFiled1 overlapOptionalRangeField2", List.of(10, 20));
+        filters.put("overlapOptionalRangeInclusive overlapOptionalRangeFiled1 overlapOptionalRangeField2", Arrays.asList(10, 20));
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 "(" +
                 "( a.overlapOptionalRangeFiled1 IS NULL and a.overlapOptionalRangeField2 IS NULL) " +
@@ -357,7 +359,7 @@ public class PersistenceServiceTest {
         filters.put("toRange toRangeFilter", 10);
         filters.put("list listFilter", 10);
         filters.put("minmaxRange minmaxRangeFilter1 minmaxRangeFilter2", 10);
-        filters.put("overlapOptionalRange overlapOptionalRangeFilter1 overlapOptionalRangeFilter2", List.of(10, 15));
+        filters.put("overlapOptionalRange overlapOptionalRangeFilter1 overlapOptionalRangeFilter2", Arrays.asList(10, 15));
         filters.put("likeCriterias likeCriteriasFilter", "likeWord");
         filters.put(SEARCH_WILDCARD_OR + " wildcardOrFilter", "wildCard*");
         filters.put(SEARCH_WILDCARD_OR_IGNORE_CAS + " wildcardOrIgnoreCaseFilter", "wildCardIngoreCase*");
@@ -388,6 +390,6 @@ public class PersistenceServiceTest {
     }
 
     private String getQuery() {
-        return persistenceService.getQuery(new PaginationConfiguration(10, 40, filters, "text", List.of("fetchField"), "fetchField", "desc")).toString();
+        return persistenceService.getQuery(new PaginationConfiguration(filters)).toString();
     }
 }
