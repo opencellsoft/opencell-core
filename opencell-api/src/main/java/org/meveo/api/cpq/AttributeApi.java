@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +14,7 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
@@ -27,11 +27,13 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.TagService;
 
 /**
  * @author Mbarek-Ay
@@ -54,6 +56,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	
 	@Inject
 	private ProductService  productService;
+	
+	@Inject
+	private TagService  tagService;
 
 	@Override
 	public Attribute create(AttributeDTO postData) throws MeveoApiException, BusinessException {
@@ -80,10 +85,25 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-
+		processTags(postData,attribute);
 		attributeService.create(attribute);
 		return attribute;
 	}
+	
+	private void processTags(AttributeDTO postData, Attribute attribute) {
+		List<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			Set<Tag> tags=new HashSet<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tags.add(tag);
+			}
+			attribute.getTags().addAll(tags);
+		}
+	} 
 	
 
 
@@ -108,7 +128,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-
+		processTags(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;
 	}
@@ -129,8 +149,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			chargeTemplateDto=new ChargeTemplateDto(charge,entityToDtoConverter.getCustomFieldsDTO(charge));
 			chargeTemplateDtos.add(chargeTemplateDto);
 		}
+		TagDto tagDto=null;
+		List<TagDto> tagDtos=new ArrayList<TagDto>();
+		for(Tag tag : attribute.getTags()) {
+			tagDto=new TagDto(tag);
+			tagDtos.add(tagDto);
+		}
 		
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos); 
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos); 
 		return result;
 	}
 
