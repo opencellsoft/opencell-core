@@ -66,6 +66,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -81,6 +82,7 @@ import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -161,6 +163,9 @@ public class CatalogHierarchyBuilderService {
     
     @Inject
     private OfferComponentService offerComponentService;
+    
+    @Inject
+    private MediaService mediaService;
 
     @Inject
     @CurrentUser
@@ -184,7 +189,8 @@ public class CatalogHierarchyBuilderService {
         }
     }
    
-	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, List<OfferComponent> offerComponents, String prefix) {
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
+										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, String prefix) {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
@@ -237,6 +243,17 @@ public class CatalogHierarchyBuilderService {
     	        }
     			offerComponentService.create(newOffer);
     			entity.getOfferComponents().add(newOffer);
+    		});
+    	}
+    	
+    	if(medias != null) {
+    		entity.setMedias(new ArrayList<>());
+    		medias.forEach(media -> {
+    			mediaService.detach(media);
+    			Media newMedia = new Media(media); 
+    			newMedia.setProduct(entity);
+    			mediaService.create(newMedia);
+    			entity.getMedias().add(newMedia);
     		});
     	}
     }

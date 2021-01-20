@@ -1,12 +1,14 @@
 package org.meveo.api.cpq;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -229,7 +231,15 @@ public class ContractApi extends BaseApi{
         if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
             sortBy = pagingAndFiltering.getSortBy();
         }
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Contract.class);
+		 var filters = new HashedMap<String, Object>();
+		 pagingAndFiltering.getFilters().forEach( (key, value) -> {
+			 String newKey = key.replace("accountCode", "billingAccount.code");
+			 filters.put(key.replace(key, newKey), value);
+		 });
+		 pagingAndFiltering.getFilters().clear();
+		 pagingAndFiltering.getFilters().putAll(filters);
+		 List<String> fields = Arrays.asList("billingAccount");
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, fields, pagingAndFiltering, Contract.class);
 
         Long totalCount = contractService.count(paginationConfiguration);
         ContractListResponsDto result = new ContractListResponsDto();

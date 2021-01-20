@@ -1,11 +1,13 @@
 package org.meveo.api.cpq;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -294,7 +296,20 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
 			sortBy = pagingAndFiltering.getSortBy();
 		}
-		PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, CommercialRuleHeader.class);
+		 var filters = new HashedMap<String, Object>();
+		 pagingAndFiltering.getFilters().forEach( (key, value) -> {
+			 String newKey = key.replace("offerCode", "targetOfferTemplate.code")
+					 .replace("productCode", "targetProduct.code")
+					 .replace("productVersion", "targetProductVersion.currentVersion")
+					 .replace("attributeCode", "targetAttribute.code")
+					 .replace("tagCode", "targetTag.code")
+					 .replace("groupedAttributeCode", "targetGroupedAttributes.code");
+			 filters.put(key.replace(key, newKey), value);
+		 });
+		 pagingAndFiltering.getFilters().clear();
+		 pagingAndFiltering.getFilters().putAll(filters);
+		 List<String> fields = Arrays.asList("targetOfferTemplate", "targetProduct", "targetProductVersion", "targetGroupedAttributes", "targetAttribute", "targetTag");
+		PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, CommercialRuleHeader.class);
 		Long totalCount = commercialRuleHeaderService.count(paginationConfiguration);
 		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
 		result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());

@@ -14,6 +14,8 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.article.AccountingArticles;
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
 import org.meveo.apiv2.article.ImmutableAccountingArticles;
@@ -84,7 +86,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 		accountingArticleApiService.delete(accountingArticleCode)
 											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
 												.orElseThrow(NotFoundException::new);
-        return Response.noContent().build();
+        return Response.ok(ActionStatusEnum.SUCCESS).build();
 	}
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
