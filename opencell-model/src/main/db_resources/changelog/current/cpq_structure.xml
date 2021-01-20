@@ -2873,6 +2873,51 @@
 		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_tag" constraintName="fk_tag_attribute" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 	</changeSet>
+
+	<changeSet id="540-139-20012020" author="NabilOUACHI">
+
+
+		<createSequence sequenceName="cpq_attribute_instance_seq" />
+
+		<createTable tableName="cpq_attribute_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_attribute_instance" />
+			</column>
+			<column name="version" type="int4" />
+			<!-- Auditable Start -->
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<!-- Auditable End -->
+
+			<column name="attribute_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="service_instance_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="subscription_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+
+			<column name="string_value" type="varchar(255)" />
+			<column name="double_value" type="float8" />
+			<column name="date_value" type="datetime" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_service_instance_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+
+		<addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_subscription_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+	</changeSet>
+
 </databaseChangeLog>
 
 
