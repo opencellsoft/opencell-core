@@ -16,9 +16,12 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.catalog.DiscountPlanApi;
+import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
@@ -36,6 +39,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
@@ -51,6 +55,7 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
@@ -102,6 +107,15 @@ public class ProductApi extends BaseApi {
 	
 	@Inject
 	private CommercialRuleHeaderService commercialRuleHeaderService;
+
+	@Inject
+	private DiscountPlanService discountPlanService;
+
+	@Inject
+	private DiscountPlanApi discountPlanApi;
+
+	@Inject
+	private DiscountPlanItemApi discountPlanItemApi;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -109,7 +123,7 @@ public class ProductApi extends BaseApi {
 	 * @return ProductDto
 	 * @throws ProductException
 	 */
-	public Long create(ProductDto productDto){
+	public ProductDto create(ProductDto productDto){
 		if(Strings.isEmpty(productDto.getCode())) {
 			missingParameters.add("code");
 		}
@@ -118,11 +132,12 @@ public class ProductApi extends BaseApi {
 			Product product=populateProduct(productDto);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
+			ProductDto response = new ProductDto(product);
 			if(currentProductVersion!=null) {
-				createProductVersion(productDto.getCurrentProductVersion());
+				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
-			
-			return product.getId();
+			return response;
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
@@ -433,6 +448,25 @@ public class ProductApi extends BaseApi {
     		} 
 			product.setBrand(customerBrand);
 		}
+
+    	if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()){
+    		product.setDiscountList(productDto.getDiscountList().stream()
+					.map(discount -> createDiscountPlan(discount))
+					.collect(Collectors.toSet()));
+		}
+
+    	if(productDto.getDiscountListCodes() != null && !productDto.getDiscountListCodes().isEmpty()){
+    		product.getDiscountList().addAll(productDto.getDiscountListCodes().stream()
+					.map(discountCode -> {
+						DiscountPlan discountPlan = discountPlanService.findByCode(discountCode);
+						if(discountPlan == null)
+							throw new EntityDoesNotExistsException(DiscountPlan.class, discountCode);
+						return discountPlan;
+					})
+					.collect(Collectors.toSet())
+			);
+		}
+
 		product.setReference(productDto.getReference());
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
@@ -444,6 +478,16 @@ public class ProductApi extends BaseApi {
 		
 		return product;
     }
+
+	private DiscountPlan createDiscountPlan(DiscountPlanDto discount) {
+		DiscountPlan discountPlan = discountPlanApi.create(discount);
+		discount.getDiscountPlanItems().stream()
+				.map(discountItem -> {
+					discountPlanItemApi.create(discountItem);
+					return discountItem;
+				}).collect(Collectors.toList());
+		return discountPlan;
+	}
 
 	private List<ProductChargeTemplateMapping> createProductChargeTemplateMappings(Product product, List<String> chargeTemplateCodes) {
 		Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);

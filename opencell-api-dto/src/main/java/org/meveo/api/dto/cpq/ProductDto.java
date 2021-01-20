@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
@@ -27,6 +29,7 @@ public class ProductDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
+	private Set<DiscountPlanDto> discountList;
 	protected Long id;
     @NotNull
     protected String code;
@@ -52,6 +55,8 @@ public class ProductDto extends BaseEntityDto{
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
     protected List<String> commercialRuleCodes=new ArrayList<String>();
+
+	protected List<String> discountListCodes=new ArrayList<String>();
     
    
     /** The medias */
@@ -79,6 +84,9 @@ public class ProductDto extends BaseEntityDto{
     	this.modelChildren = p.getModelChildren();
     	this.discountFlag = p.isDiscountFlag();
     	this.packageFlag = p.isPackageFlag();
+    	this.discountList = p.getDiscountList().stream()
+				.map(dl -> new DiscountPlanDto(dl, null))
+				.collect(Collectors.toSet());
     }
 	/**
 	 * @return the status
@@ -318,11 +326,24 @@ public class ProductDto extends BaseEntityDto{
 		this.medias = medias;
 	}
 
-	
 
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
 
+	public Set<DiscountPlanDto> getDiscountList() {
+		return discountList;
+	}
 
-	
-	
-    
+	public void setDiscountList(Set<DiscountPlanDto> discountList) {
+		this.discountList = discountList;
+	}
+
+	public List<String> getDiscountListCodes() {
+		return discountListCodes;
+	}
+
+	public void setDiscountListCodes(List<String> discountListCodes) {
+		this.discountListCodes = discountListCodes;
+	}
 }
