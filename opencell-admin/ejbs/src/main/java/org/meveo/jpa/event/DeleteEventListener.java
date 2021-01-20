@@ -35,7 +35,12 @@ import org.slf4j.LoggerFactory;
  */
 public class DeleteEventListener implements PostDeleteEventListener {
 
-    private static final long serialVersionUID = 4290464068190662604L;
+    //private static final long serialVersionUID = 4290464068190662604L;
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Override
     public void onPostDelete(PostDeleteEvent event) {
