@@ -76,7 +76,7 @@ public class ProductDto extends BaseEntityDto{
     	}
     	this.reference = p.getReference();
     	this.model = p.getModel();
-    	this.modelChildren = p.getModelChlidren();
+    	this.modelChildren = p.getModelChildren();
     	this.discountFlag = p.isDiscountFlag();
     	this.packageFlag = p.isPackageFlag();
     }

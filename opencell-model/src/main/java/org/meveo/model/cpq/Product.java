@@ -35,7 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -120,7 +119,7 @@ public class Product extends EnableBusinessCFEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "model_chlidren")
 	@CollectionTable(name = "cpq_product_model_children", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-	private Set<String> modelChlidren=new HashSet<String>();
+	private Set<String> modelChildren =new HashSet<String>();
 	
 
 	/**
@@ -275,18 +274,18 @@ public class Product extends EnableBusinessCFEntity {
 
 
 	/**
-	 * @return the modelChlidren
+	 * @return the modelChildren
 	 */
-	public Set<String> getModelChlidren() {
-		return modelChlidren;
+	public Set<String> getModelChildren() {
+		return modelChildren;
 	}
 
 
 	/**
-	 * @param modelChlidren the modelChlidren to set
+	 * @param modelChildren the modelChildren to set
 	 */
-	public void setModelChlidren(Set<String> modelChlidren) {
-		this.modelChlidren = modelChlidren;
+	public void setModelChildren(Set<String> modelChildren) {
+		this.modelChildren = modelChildren;
 	}
 
 
@@ -343,7 +342,7 @@ public class Product extends EnableBusinessCFEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(brand, discountFlag, discountList, model, modelChlidren, productLine,
+		result = prime * result + Objects.hash(brand, discountFlag, discountList, model, modelChildren, productLine,
 				reference, status, statusDate);
 		return result;
 	}
@@ -364,7 +363,7 @@ public class Product extends EnableBusinessCFEntity {
 	        }
 		return Objects.equals(brand, other.brand) && discountFlag == other.discountFlag
 				&& Objects.equals(discountList, other.discountList) && Objects.equals(model, other.model)
-				&& Objects.equals(modelChlidren, other.modelChlidren) && Objects.equals(productLine, other.productLine)
+				&& Objects.equals(modelChildren, other.modelChildren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
 	}
