@@ -91,6 +91,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElement(name = "medias")
     protected List<MediaDto> medias;
     
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
+    
 
     /** The renewal rule. */
     protected SubscriptionRenewalDto renewalRule;
@@ -463,6 +467,20 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	 */
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRuleCodes
+	 */
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
+	}
+
+	/**
+	 * @param commercialRuleCodes the commercialRuleCodes to set
+	 */
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
 

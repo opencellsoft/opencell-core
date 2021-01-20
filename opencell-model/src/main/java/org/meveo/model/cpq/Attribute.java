@@ -33,6 +33,7 @@ import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -122,6 +123,10 @@ public class Attribute extends EnableBusinessCFEntity{
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Tag> tags = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     
 
     public Attribute(){
@@ -273,6 +278,21 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+	
 	
 	
 	
