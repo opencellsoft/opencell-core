@@ -134,6 +134,7 @@ public class ProductApi extends BaseApi {
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
 			if(currentProductVersion!=null) {
+
 				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
@@ -169,6 +170,16 @@ public class ProductApi extends BaseApi {
 				} 
 				product.setBrand(customerBrand);
 			}
+
+			if(productDto.getCurrentProductVersion() != null){
+				checkMandatoryFields(productDto.getCurrentProductVersion());
+				ProductVersion existingProductVersion = productVersionService.findByProductAndVersion(productDto.getCode(), productDto.getCurrentProductVersion().getCurrentVersion());
+				if(existingProductVersion != null)
+					updateProductVersion(productDto.getCurrentProductVersion(), existingProductVersion);
+				else
+					createProductVersion(productDto.getCurrentProductVersion());
+			}
+
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
 			product.setModelChildren(productDto.getModelChildren());
@@ -228,38 +239,47 @@ public class ProductApi extends BaseApi {
 			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos); 
 			return result;
 		}
-	
- 
- 
+
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
-        String description = postData.getShortDescription();
-        String productCode = postData.getProductCode();
-        int currentVersion = postData.getCurrentVersion();
-        if (StringUtils.isBlank(productCode)) {
-            missingParameters.add("productCode");
-        }
-        if (StringUtils.isBlank(currentVersion)) {
-            missingParameters.add("currentVersion");
-        }
-        handleMissingParametersAndValidate(postData);
-        Product product = productService.findByCode(productCode);
-        if (product == null) {
-            throw new EntityDoesNotExistsException(Product.class,productCode,"productCode");
-        }
-        ProductVersion  productVersion= new ProductVersion();
-        productVersion.setProduct(product);
-        productVersion.setShortDescription(description);
-        productVersion.setLongDescription(postData.getLongDescription());
-        productVersion.setCurrentVersion(currentVersion);
-        productVersion.setValidity(postData.getValidity());
-        productVersion.setStatus(VersionStatusEnum.DRAFT);
-        productVersion.setStatusDate(Calendar.getInstance().getTime());
-        processAttributes(postData,productVersion);
-        processTags(postData, productVersion); 
-        productVersionService.create(productVersion);
+		checkMandatoryFields(postData);
+		Product product = checkProductExiste(postData);
+		ProductVersion  productVersion= new ProductVersion();
+		populateProduct(postData, product, productVersion);
+		productVersionService.create(productVersion);
         return productVersion;
     }
-       /**
+
+	private void populateProduct(ProductVersionDto postData, Product product, ProductVersion productVersion) {
+		productVersion.setProduct(product);
+		productVersion.setShortDescription(postData.getShortDescription());
+		productVersion.setLongDescription(postData.getLongDescription());
+		productVersion.setCurrentVersion(postData.getCurrentVersion());
+		productVersion.setValidity(postData.getValidity());
+		productVersion.setStatus(VersionStatusEnum.DRAFT);
+		productVersion.setStatusDate(Calendar.getInstance().getTime());
+		processAttributes(postData,productVersion);
+		processTags(postData, productVersion);
+	}
+
+	private void checkMandatoryFields(ProductVersionDto postData) {
+		if (StringUtils.isBlank(postData.getProductCode())) {
+            missingParameters.add("productCode");
+        }
+		if (StringUtils.isBlank(postData.getCurrentVersion())) {
+			missingParameters.add("currentVersion");
+		}
+		handleMissingParametersAndValidate(postData);
+	}
+
+	private Product checkProductExiste(ProductVersionDto postData) {
+		Product product = productService.findByCode(postData.getProductCode());
+		if (product == null) {
+			throw new EntityDoesNotExistsException(Product.class, postData.getProductCode(),"productCode");
+		}
+		return product;
+	}
+
+	/**
      * Updates a product version Entity
      *
      * @param postData posted data to API
@@ -287,19 +307,26 @@ public class ProductApi extends BaseApi {
        if(productVersion==null) {
            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
        }
-        productVersion.setShortDescription(postData.getShortDescription());
-        productVersion.setLongDescription(postData.getLongDescription());
-        productVersion.setValidity(postData.getValidity());
-        productVersion.setStatus(postData.getStatus());
-        processAttributes(postData,productVersion);
-        try {
+		return updateProductVersion(postData, productVersion);
+	}
+
+	private ProductVersion updateProductVersion(ProductVersionDto postData, ProductVersion productVersion) {
+		productVersion.setShortDescription(postData.getShortDescription());
+		productVersion.setLongDescription(postData.getLongDescription());
+		productVersion.setValidity(postData.getValidity());
+		productVersion.setStatus(postData.getStatus() == null ? VersionStatusEnum.DRAFT : postData.getStatus());
+		productVersion.setStatusDate(Calendar.getInstance().getTime());
+		processAttributes(postData,productVersion);
+		processTags(postData, productVersion);
+		try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
 		}
-        return productVersion;
-    }
-    /**
+		return productVersion;
+	}
+
+	/**
      * Delete a product version Entity
      *
      * @param productCode and currentVersion
