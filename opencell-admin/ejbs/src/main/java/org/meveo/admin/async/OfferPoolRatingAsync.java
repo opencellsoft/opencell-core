@@ -33,7 +33,7 @@ public class OfferPoolRatingAsync {
 
     private static final String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
             "FROM billing_wallet_operation wo \n" +
-            "WHERE wo.offer_id = :offerId AND \n" + WO_FILTER_QUERY;
+            "WHERE wo.offer_id = :offerId \n" + WO_FILTER_QUERY;
 
     @Inject
     private Logger log;
