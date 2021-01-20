@@ -42,7 +42,7 @@
 
     <c:if test="#{cc.attrs.cft.fieldType eq CustomFieldTypeEnum.CHILD_ENTITY}">
         <hftl:customFieldCHEListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
-                                      field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}"
+                                      field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}"
                                       datePattern="#{cc.attrs.datePattern}"
                                       dateTimePattern="#{cc.attrs.dateTimePattern}"/>
     </c:if>
@@ -55,7 +55,7 @@
                 componentWidth="25" displayOneLine="false">
             <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
                                         entity="#{cc.attrs.entity}"
-                                        disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
+                                        disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
         </hftl:decorateFormField>
     </c:if>
 
@@ -70,7 +70,7 @@
                         componentWidth="25" displayOneLine="false">
                     <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
                                                 entity="#{cc.attrs.entity}"
-                                                disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
+                                                disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
                 </hftl:decorateFormField>
 
                 <c:if test="#{inheritedValue !=null}">
@@ -89,13 +89,13 @@
 
                 <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
                                            datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
-                                           messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}"
+                                           messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}"
                                            hasInheritedValue="#{inheritedValue !=null}"/>
 
                 <c:if test="#{inheritedValue !=null}">
                     <hftl:customFieldListTable inherited="true" edit="false" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}"
                                                datePattern="#{cc.attrs.datePattern}"
-                                               prefix="#{cc.attrs.prefix}" field="#{inheritedValue}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}"/>
+                                               prefix="#{cc.attrs.prefix}" field="#{inheritedValue}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}"/>
                 </c:if>
             </c:if>
         </c:if>
@@ -109,7 +109,7 @@
                 <hftl:customFieldPeriods cfVersionableValues="#{cc.attrs.cfValueHolder.getValues(cc.attrs.cft)}" cft="#{cc.attrs.cft}" edit="#{cc.attrs.edit}"
                                          datePattern="#{cc.attrs.datePattern}"
                                          dateTimePattern="#{cc.attrs.dateTimePattern}" entity="#{cc.attrs.entity}" messagesId="#{cc.attrs.messagesId}"
-                                         disabled="#{cc.attrs.disabled}" prefix="#{cc.attrs.prefix}"
+                                         disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}" prefix="#{cc.attrs.prefix}"
                                          clientGuiId="#{cc.clientId}"
                                          periodDetailsGuiId=":#{customFieldDataEntryBean.getParentComponentId(cc.clientId).concat(':').concat(cc.attrs.prefix).concat('periodFields')}"/>
             </hftl:decorateFormField>
@@ -122,7 +122,7 @@
                                              cft="#{cc.attrs.cft}"
                                              edit="false" datePattern="#{cc.attrs.datePattern}" dateTimePattern="#{cc.attrs.dateTimePattern}" entity="#{cc.attrs.entity}"
                                              messagesId="#{cc.attrs.messagesId}"
-                                             disabled="#{cc.attrs.disabled}" prefix="#{cc.attrs.prefix}" clientGuiId="#{cc.clientId}"
+                                             disabled="#{cc.attrs.disabled or customFieldDataEntryBean.isEncrypted(entity, cc.attrs.cft)}" prefix="#{cc.attrs.prefix}" clientGuiId="#{cc.clientId}"
                                              periodDetailsGuiId=":#{customFieldDataEntryBean.getParentComponentId(cc.clientId).concat(':').concat(cc.attrs.prefix).concat('periodFields')}"/>
                 </hftl:decorateFormField>
             </c:if>
