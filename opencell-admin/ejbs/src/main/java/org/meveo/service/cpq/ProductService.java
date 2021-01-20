@@ -17,13 +17,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.slf4j.Logger;
@@ -105,14 +102,14 @@ public class ProductService extends BusinessService<Product> {
 		
 		product.getProductVersions().size();
 		product.getDiscountList().size();
-		product.getModelChlidren().size();
+		product.getModelChildren().size();
 		product.getOfferComponents().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
-		var modelChildren = new HashSet<>(product.getModelChlidren());
+		var modelChildren = new HashSet<>(product.getModelChildren());
 		var offerComponents = new ArrayList<>(product.getOfferComponents());
 		
 		detach(product);
@@ -146,7 +143,7 @@ public class ProductService extends BusinessService<Product> {
    	 	
 	   	 duplicate.setId(null);
 	   	 duplicate.setBrand(null);
-	   	 duplicate.setModelChlidren(new HashSet<>());
+	   	 duplicate.setModelChildren(new HashSet<>());
 	   	 duplicate.setProductVersions(new ArrayList<>());
 	   	 duplicate.setStatus(ProductStatusEnum.DRAFT);
 	   	 duplicate.setStatusDate(Calendar.getInstance().getTime());

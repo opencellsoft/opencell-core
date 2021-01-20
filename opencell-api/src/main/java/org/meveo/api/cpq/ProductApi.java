@@ -154,7 +154,7 @@ public class ProductApi extends BaseApi {
 			}
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
-			product.setModelChlidren(productDto.getModelChildren());
+			product.setModelChildren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
 			product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
@@ -433,7 +433,7 @@ public class ProductApi extends BaseApi {
 		}
 		product.setReference(productDto.getReference());
 		product.setModel(productDto.getModel());
-		product.setModelChlidren(productDto.getModelChildren());
+		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
 		product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
 		/***@TODO : update product chargeTemplates

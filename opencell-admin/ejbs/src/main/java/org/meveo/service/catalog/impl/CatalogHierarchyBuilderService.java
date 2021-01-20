@@ -216,9 +216,9 @@ public class CatalogHierarchyBuilderService {
     		});
     	}
     	if(modelChildren != null) {
-    		entity.setModelChlidren(new HashSet<String>());
+    		entity.setModelChildren(new HashSet<String>());
     		modelChildren.forEach( model -> {
-    			entity.getModelChlidren().add(model);
+    			entity.getModelChildren().add(model);
     		});
     	}
     	
