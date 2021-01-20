@@ -216,6 +216,8 @@ public class ProductService extends BusinessService<Product> {
 	 */
 	public Product updateStatus(String productCode, ProductStatusEnum status) throws BusinessException{
 		Product product =findByCode(productCode);
+		if(product == null)
+			throw new EntityDoesNotExistsException(Product.class, productCode);
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
