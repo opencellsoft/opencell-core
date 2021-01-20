@@ -44,7 +44,6 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setLabel(pricePlanMatrixVersion.getLabel());
         setMatrix(pricePlanMatrixVersion.getMatrix());
         setPricePlanMatrixCode(pricePlanMatrixVersion.getPricePlanMatrix().getCode());
-        setPriceWithoutTax(pricePlanMatrixVersion.getPriceWithoutTax());
         setVersion(pricePlanMatrixVersion.getCurrentVersion());
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());

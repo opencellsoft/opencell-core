@@ -77,10 +77,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Column(name = "is_matrix")
     private Boolean isMatrix;
 
-    @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    private BigDecimal priceWithoutTax;
-
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
@@ -126,19 +122,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
-    }
-
-    /**
-     * @return the pricetWithoutTax
-     */
-    public BigDecimal getPriceWithoutTax() {
-        return priceWithoutTax;
-    }
-    /**
-     * @param priceWithoutTax the pricetWithoutTax to set
-     */
-    public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-        this.priceWithoutTax = priceWithoutTax;
     }
 
     public PricePlanMatrix getPricePlanMatrix() {

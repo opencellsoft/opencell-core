@@ -697,11 +697,10 @@
 			</column>
 			<column name="valid_from" type="datetime" />
 			<column name="valid_to" type="datetime" />
-			<column name="price_without_tax" type="numeric(23, 12)" />
 			<column name="amount_without_tax" type="numeric(23, 12)" />
 			<column name="amount_with_tax" type="numeric(23, 12)" />
 			<column name="amount_without_tax_el" type="varchar(255)" />
-			<column name="amountWithTaxEL" type="varchar(255)" />
+			<column name="amount_with_tax_el" type="varchar(255)" />
 			<column name="is_matrix" type="${type.boolean}"/>
 		</createTable>
 	</changeSet>
