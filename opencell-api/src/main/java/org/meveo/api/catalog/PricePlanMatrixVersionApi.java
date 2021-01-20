@@ -2,6 +2,7 @@ package org.meveo.api.catalog;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -19,6 +20,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Stateless
 public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersion, PricePlanMatrixVersionDto> {
@@ -88,7 +90,15 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
 
-        return pricePlanMatrixVersion;
+        if(pricePlanMatrixVersionDto.getLines() != null && !pricePlanMatrixVersionDto.getLines().isEmpty()){
+            pricePlanMatrixVersionDto.getLines().forEach(p -> {
+                p.setPricePlanMatrixCode(pricePlanMatrixCode);
+                p.setPricePlanMatrixVersion(currentVersion);
+            });
+            pricePlanMatrixLineService.createLines(pricePlanMatrixVersionDto.getLines());
+        }
+
+        return pricePlanMatrixVersionService.findById(pricePlanMatrixVersion.getId());
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {

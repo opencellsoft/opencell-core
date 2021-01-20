@@ -68,6 +68,14 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<PricePlanMatrixLineDto> createLines(List<PricePlanMatrixLineDto> lines) {
+        return lines.stream()
+                .map(l -> createPricePlanMatrixLine(l))
+                .collect(Collectors.toList());
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
         PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixLineDto);
 

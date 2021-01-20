@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixVersionDto extends BaseEntityDto {
@@ -33,6 +35,8 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     private Boolean isMatrix;
     private BigDecimal priceWithoutTax;
 
+    private List<PricePlanMatrixLineDto> lines;
+
     public PricePlanMatrixVersionDto() {
     }
 
@@ -45,6 +49,9 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
+        lines = pricePlanMatrixVersion.getLines().stream()
+                .map(PricePlanMatrixLineDto::new)
+                .collect(Collectors.toList());
     }
 
     public String getPricePlanMatrixCode() {
@@ -109,5 +116,13 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 
     public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
         this.priceWithoutTax = priceWithoutTax;
+    }
+
+    public List<PricePlanMatrixLineDto> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<PricePlanMatrixLineDto> lines) {
+        this.lines = lines;
     }
 }
