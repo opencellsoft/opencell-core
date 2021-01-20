@@ -179,6 +179,16 @@ public class CardPaymentMethod extends PaymentMethod {
     public void setHiddenCardNumber(String hiddenCardNumber) {
         this.hiddenCardNumber = hiddenCardNumber;
     }
+    
+    public void anonymize(String code) {
+        super.anonymize(code);
+        setOwner(code);
+        setMonthExpiration(null);
+        setYearExpiration(null);
+        setCardNumber(code);
+        setCardType(null);
+        setIssueNumber(code);
+     }
 
     @Override
     public boolean equals(Object obj) {

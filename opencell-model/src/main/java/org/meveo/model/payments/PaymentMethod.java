@@ -267,6 +267,16 @@ public abstract class PaymentMethod extends EnableEntity {
     public void setReferenceDocument(Document referenceDocument) {
         this.referenceDocument = referenceDocument;
     }
+    
+    public void anonymize(String code) {
+        setInfo1(code);
+        setInfo2(code);
+        setInfo3(code);
+        setInfo4(code);
+        setInfo5(code);
+        setTokenId(code);
+        setUserId(code);
+    }
 
     @Override
     public boolean equals(Object obj) {
