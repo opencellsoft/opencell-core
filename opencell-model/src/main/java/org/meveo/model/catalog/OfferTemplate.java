@@ -56,6 +56,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -199,6 +200,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     
     /**
      * date of status : it set automatically when ever the status of offerTemplate is changed
@@ -585,6 +590,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	 */
 	public void setStatusDate(Date statusDate) {
 		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
 	}
 
 	
