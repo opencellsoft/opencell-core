@@ -282,6 +282,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialServiceRenewal;
 
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttributeInstance> attributeInstances;
+
     /**
      * PK of OrderItem.id.
      */
