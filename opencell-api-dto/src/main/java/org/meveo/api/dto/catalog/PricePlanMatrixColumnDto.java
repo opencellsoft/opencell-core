@@ -56,6 +56,7 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
         this.position = pricePlanMatrixColumn.getPosition();
         this.type = pricePlanMatrixColumn.getType();
         this.elValue = pricePlanMatrixColumn.getElValue();
+        this.isRange = pricePlanMatrixColumn.getRange();
     }
 
     public String getCode() {
