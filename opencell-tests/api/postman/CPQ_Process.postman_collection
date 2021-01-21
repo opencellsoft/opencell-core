@@ -2946,7 +2946,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n     \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"mediaPath\": \"/nePath/created/newDir\"\r\n}",
+							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n     \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
