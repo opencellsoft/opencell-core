@@ -9,8 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -35,7 +38,9 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     private Boolean isMatrix;
     private BigDecimal priceWithoutTax;
 
-    private List<PricePlanMatrixLineDto> lines;
+    private Set<PricePlanMatrixColumnDto> columns;
+
+    private Set<PricePlanMatrixLineDto> lines;
 
     public PricePlanMatrixVersionDto() {
     }
@@ -49,10 +54,15 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
-        if(pricePlanMatrixVersion.getLines() != null)
+        if(pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty())
             lines = pricePlanMatrixVersion.getLines().stream()
                             .map(PricePlanMatrixLineDto::new)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toSet());
+        if(pricePlanMatrixVersion.getColumns() != null && !pricePlanMatrixVersion.getColumns().isEmpty()){
+            columns = pricePlanMatrixVersion.getColumns().stream()
+                            .map(PricePlanMatrixColumnDto::new)
+                            .collect(Collectors.toSet());
+        }
     }
 
     public String getPricePlanMatrixCode() {
@@ -119,11 +129,19 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         this.priceWithoutTax = priceWithoutTax;
     }
 
-    public List<PricePlanMatrixLineDto> getLines() {
-        return lines;
+    public Set<PricePlanMatrixLineDto> getLines() {
+        return lines == null ? new HashSet<>() : lines;
     }
 
-    public void setLines(List<PricePlanMatrixLineDto> lines) {
+    public void setLines(Set<PricePlanMatrixLineDto> lines) {
         this.lines = lines;
+    }
+
+    public Set<PricePlanMatrixColumnDto> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Set<PricePlanMatrixColumnDto> columns) {
+        this.columns = columns;
     }
 }

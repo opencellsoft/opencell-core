@@ -2,25 +2,31 @@ package org.meveo.api.catalog;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,7 +38,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
     @Inject
-    private PricePlanMatrixLineService pricePlanMatrixLineService;
+    private PricePlanMatrixValueService pricePlanMatrixValueService;
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 
     @Override
     public PricePlanMatrixVersion create(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
@@ -92,48 +100,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         }
         pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
 
-        if(pricePlanMatrixVersionDto.getLines() != null && !pricePlanMatrixVersionDto.getLines().isEmpty()){
-            pricePlanMatrixVersionDto.getLines().forEach(this::checkCommunMissingParameters);
-            removeLinesToRemove(pricePlanMatrixVersionDto, pricePlanMatrixVersion);
-            pricePlanMatrixLineService.createOrUpdateLines(pricePlanMatrixVersionDto.getLines());
-        } else if(pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty()) {
-            pricePlanMatrixLineService.removeAll(pricePlanMatrixVersion.getLines().stream().collect(Collectors.toSet()));
-        }
         return pricePlanMatrixVersion;
-    }
-
-    private void removeLinesToRemove(PricePlanMatrixVersionDto pricePlanMatrixVersionDto, PricePlanMatrixVersion pricePlanMatrixVersion) {
-        Set<Long> linesToUpdate = pricePlanMatrixVersionDto.getLines()
-                .stream()
-                .filter(l -> l.getPpmLineId() != null)
-                .map(PricePlanMatrixLineDto::getPpmLineId)
-                .collect(Collectors.toSet());
-
-        Set<PricePlanMatrixLine> linesToRemove = pricePlanMatrixVersion.getLines()
-                .stream()
-                .filter(l -> !linesToUpdate.contains(l.getId()))
-                .collect(Collectors.toSet());
-
-        if(!linesToRemove.isEmpty())
-            pricePlanMatrixLineService.removeAll(linesToRemove);
-    }
-
-    private void checkCommunMissingParameters(PricePlanMatrixLineDto dtoData) {
-        if(StringUtils.isBlank(dtoData.getPricePlanMatrixCode())){
-            missingParameters.add("pricePlanMatrixCode");
-        }
-        if(StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())){
-            missingParameters.add("pricePlanMatrixVersion");
-        }
-
-        dtoData.getPricePlanMatrixValues().stream()
-                .forEach(value -> {
-                    if(StringUtils.isBlank(value.getPpmColumnCode())){
-                        missingParameters.add("pricePlanMatrixValues.ppmColumnCode");
-                    }
-                });
-
-        handleMissingParametersAndValidate(dtoData);
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {
@@ -178,5 +145,9 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }
+    }
+
+    public PricePlanMatrixVersionDto load(Long id) {
+        return pricePlanMatrixVersionService.load(id);
     }
 }

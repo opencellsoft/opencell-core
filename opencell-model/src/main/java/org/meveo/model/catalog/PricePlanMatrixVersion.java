@@ -32,6 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 /**
  * @author Tarik FA.
  * @version 10.0
@@ -83,10 +85,10 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     private BigDecimal priceWithoutTax;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixLine> lines;
+    private Set<PricePlanMatrixLine> lines;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixColumn> columns;
+    private Set<PricePlanMatrixColumn> columns;
 
     /**
      * @return the status
@@ -166,19 +168,19 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         isMatrix = matrix;
     }
 
-    public List<PricePlanMatrixLine> getLines() {
+    public Set<PricePlanMatrixLine> getLines() {
         return lines;
     }
 
-    public void setLines(List<PricePlanMatrixLine> lines) {
+    public void setLines(Set<PricePlanMatrixLine> lines) {
         this.lines = lines;
     }
 
-    public List<PricePlanMatrixColumn> getColumns() {
+    public Set<PricePlanMatrixColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<PricePlanMatrixColumn> columns) {
+    public void setColumns(Set<PricePlanMatrixColumn> columns) {
         this.columns = columns;
     }
 }

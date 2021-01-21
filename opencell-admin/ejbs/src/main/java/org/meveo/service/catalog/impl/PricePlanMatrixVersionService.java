@@ -1,12 +1,10 @@
 package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -15,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -26,8 +25,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version (%d) is %s, it can not be updated nor removed";
 
     @Override
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
         super.create(entity);
     }
@@ -87,8 +84,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
         Integer lastVersion = getLastVersion(ppmCode);
         duplicate.setId(null);
-        duplicate.setColumns(new ArrayList<>());
-        duplicate.setLines(new ArrayList<>());
+        duplicate.setColumns(new HashSet<>());
+        duplicate.setLines(new HashSet<>());
         duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);
         duplicate.setStatus(VersionStatusEnum.DRAFT);
@@ -106,5 +103,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
                     .setParameter("pricePlanMatrixCode", ppmCode)
                     .getSingleResult();
+    }
+
+    public PricePlanMatrixVersionDto load(Long id) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
+        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
     }
 }

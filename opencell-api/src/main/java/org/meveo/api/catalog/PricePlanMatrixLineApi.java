@@ -8,15 +8,19 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Set;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     public PricePlanMatrixLineDto addPricePlanMatrixLine(PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
@@ -61,7 +65,8 @@ public class PricePlanMatrixLineApi extends BaseApi {
         if(ppmLine == null){
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
         }
-        pricePlanMatrixLineService.remove(ppmLine);
+        ppmLine.getPricePlanMatrixVersion().getLines().remove(ppmLine);
+        pricePlanMatrixVersionService.update(ppmLine.getPricePlanMatrixVersion());
     }
 
     public PricePlanMatrixLineDto load(Long ppmLineId){
