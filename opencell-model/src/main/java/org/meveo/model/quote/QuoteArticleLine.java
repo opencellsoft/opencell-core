@@ -33,7 +33,7 @@ import org.meveo.model.cpq.CpqAccountingArticle;
 public class QuoteArticleLine extends BusinessEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quote_article_line_id")
+	@JoinColumn(name = "quote_product_id")
     private QuoteProduct quoteProduct;
 
     /**

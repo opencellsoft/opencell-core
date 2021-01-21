@@ -1307,13 +1307,10 @@
 	            <column name="offer_quote_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-				<column name="quote_article_line_id" type="bigint" />
 	        </addColumn>
 
 	        <addForeignKeyConstraint baseColumnNames="offer_quote_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_offer_quote_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
-			<addForeignKeyConstraint baseColumnNames="quote_article_line_id" baseTableName="cpq_quote_product" constraintName="fk_cpq_quote_product_article_line_id" deferrable="false" initiallyDeferred="false"
-									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_article_line" />
 	    </changeSet>
 
 	    <changeSet id="540-66-20201201" author="TarikFA">
@@ -2925,6 +2922,15 @@
 
 		<addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_subscription_id" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+	</changeSet>
+	<changeSet id="#20210121-540-128" author="TarikFA">
+		
+	        <addColumn tableName="cpq_quote_article_line">
+				<column name="quote_product_id" type="bigint" />
+	        </addColumn>
+	        
+			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_product_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
 	</changeSet>
 
 </databaseChangeLog>
