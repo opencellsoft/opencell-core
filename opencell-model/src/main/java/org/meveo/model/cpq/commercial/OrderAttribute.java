@@ -26,7 +26,7 @@ import org.meveo.model.cpq.Attribute;
 @Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_item_seq")})
-public class CommercialOrderAttribute extends BusinessEntity {
+public class OrderAttribute extends BusinessEntity {
 
 	/**
 	 * 
@@ -39,8 +39,8 @@ public class CommercialOrderAttribute extends BusinessEntity {
 	private CommercialOrder orderCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_customer_service_id")
-	private OrderCustomerService orderCustomerService;
+	@JoinColumn(name = "order_lot_id")
+	private OrderLot orderLot;
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -113,20 +113,6 @@ public class CommercialOrderAttribute extends BusinessEntity {
 
 
 	/**
-	 * @return the orderCustomerService
-	 */
-	public OrderCustomerService getOrderCustomerService() {
-		return orderCustomerService;
-	}
-
-	/**
-	 * @param orderCustomerService the orderCustomerService to set
-	 */
-	public void setOrderCustomerService(OrderCustomerService orderCustomerService) {
-		this.orderCustomerService = orderCustomerService;
-	}
-
-	/**
 	 * @return the attribute
 	 */
 	public Attribute getAttribute() {
@@ -180,6 +166,20 @@ public class CommercialOrderAttribute extends BusinessEntity {
 	 */
 	public void setDoubleValue(Double doubleValue) {
 		this.doubleValue = doubleValue;
+	}
+
+	/**
+	 * @return the orderLot
+	 */
+	public OrderLot getOrderLot() {
+		return orderLot;
+	}
+
+	/**
+	 * @param orderLot the orderLot to set
+	 */
+	public void setOrderLot(OrderLot orderLot) {
+		this.orderLot = orderLot;
 	}
 	
 }

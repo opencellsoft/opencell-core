@@ -32,9 +32,9 @@ import org.meveo.model.cpq.CpqAccountingArticle;
         @Parameter(name = "sequence_name", value = "cpq_quote_article_line_seq"), })
 public class QuoteArticleLine extends BusinessEntity {
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_article_line_id")
-    private List<QuoteProduct> quoteProducts;
+    private QuoteProduct quoteProduct;
 
     /**
      * billable account
@@ -58,12 +58,12 @@ public class QuoteArticleLine extends BusinessEntity {
     @Column(name = "service_quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     private BigDecimal serviceQuantity;
 
-	public List<QuoteProduct> getQuoteProducts() {
-		return quoteProducts;
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
 	}
 
-	public void setQuoteProducts(List<QuoteProduct> quoteProducts) {
-		this.quoteProducts = quoteProducts;
+	public void setQuoteProduct(QuoteProduct quoteProducts) {
+		this.quoteProduct = quoteProducts;
 	}
 
 	/**

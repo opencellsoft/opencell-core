@@ -2008,7 +2008,7 @@
         <createSequence sequenceName="cpq_order_type_seq" />
         <createSequence sequenceName="cpq_order_item_seq" />
         <createSequence sequenceName="cpq_order_product_seq" />
-        <createSequence sequenceName="cpq_order_service_commercial_seq" />
+        <createSequence sequenceName="cpq_order_lot_seq" />
         <createSequence sequenceName="cpq_order_offer_seq" />
         <createSequence sequenceName="order_article_line_seq" />
         <createSequence sequenceName="cpq_order_invoice_seq" />
@@ -2176,7 +2176,7 @@
 	            <column name="order_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-	            <column name="order_customer_service_id" type="bigint" />
+	            <column name="order_lot_id" type="bigint" />
 	            <column name="order_product_id" type="bigint" />
 	            <column name="access_point" type="varchar(20)" />
 	            <column name="attribute_id" type="bigint" />
@@ -2220,9 +2220,9 @@
 	            </column>
 		</createTable>
 
-		<createTable tableName="cpq_order_service_commercial">
+		<createTable tableName="cpq_order_lot">
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
-	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_service_commercial" />
+	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_lot" />
 	            </column>
 			<!-- BusinessEntity Start -->
 				<column name="code" type="varchar(255)" >
@@ -2246,11 +2246,11 @@
 				<column name="name" type="varchar(50)" />
 		</createTable>
 
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_service_commercial_order_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_lot_order_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
 
-        <addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_service_commercial_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+        <addForeignKeyConstraint baseColumnNames="order_lot_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_service_commercial_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
 
         <addForeignKeyConstraint baseColumnNames="order_product_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_order_product_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_product" />
@@ -2296,7 +2296,7 @@
 
 		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
 
-		<addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_service_commercial_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+		<addForeignKeyConstraint baseColumnNames="order_service_commercial_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_service_commercial_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
 
 		<addForeignKeyConstraint baseColumnNames="order_offer_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_order_offer_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
 
@@ -2355,7 +2355,7 @@
 								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
 
 		<addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_order_customer_service_id" deferrable="false"
-								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
 
 		<addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="order_article_line" constraintName="fk_order_article_Line_accounting_article_id" deferrable="false"
 								initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
@@ -2667,7 +2667,7 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 
 		<addForeignKeyConstraint baseColumnNames="order_customer_service_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_order_customer_service_id" deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_service_commercial" />
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
 
 		<addForeignKeyConstraint baseColumnNames="product_version__id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_product_version__id" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />

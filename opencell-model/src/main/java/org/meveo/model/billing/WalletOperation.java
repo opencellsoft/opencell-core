@@ -68,7 +68,7 @@ import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.InfoOrder;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
-import org.meveo.model.cpq.commercial.OrderCustomerService;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -549,7 +549,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_customer_service_id")
-    private OrderCustomerService orderCustomerService;
+    private OrderLot orderCustomerService;
 
     /**
      * Constructor
@@ -1469,11 +1469,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.productVersion = productVersion;
     }
 
-    public OrderCustomerService getOrderCustomerService() {
+    public OrderLot getOrderCustomerService() {
         return orderCustomerService;
     }
 
-    public void setOrderCustomerService(OrderCustomerService orderCustomerService) {
+    public void setOrderCustomerService(OrderLot orderCustomerService) {
         this.orderCustomerService = orderCustomerService;
     }
 }
