@@ -35,11 +35,13 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
     private String attributeCode;
     @NotNull
     private int position;
-    @NotNull
+
     private ColumnTypeEnum type;
 
     @NotNull
     private String elValue;
+
+    private Boolean isRange;
 
     public PricePlanMatrixColumnDto() {
     }
@@ -126,5 +128,13 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
 
     public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
         this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+    }
+
+    public Boolean getRange() {
+        return isRange == null ? false : isRange;
+    }
+
+    public void setRange(Boolean range) {
+        isRange = range;
     }
 }

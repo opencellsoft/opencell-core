@@ -68,9 +68,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<PricePlanMatrixLineDto> createLines(List<PricePlanMatrixLineDto> lines) {
+    public List<PricePlanMatrixLineDto> createOrUpdateLines(List<PricePlanMatrixLineDto> lines) {
         return lines.stream()
-                .map(l -> createPricePlanMatrixLine(l))
+                .map(l -> l.getPpmLineId() != null ? updatePricePlanMatrixLine(l) : createPricePlanMatrixLine(l))
                 .collect(Collectors.toList());
     }
 
@@ -160,4 +160,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return matchedPrices;
     }
 
+    public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
+        for (PricePlanMatrixLine l : linesToRemove) {
+            remove(findById(l.getId()));
+        }
+    }
 }

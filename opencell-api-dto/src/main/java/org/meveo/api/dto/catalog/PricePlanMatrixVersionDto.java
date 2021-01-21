@@ -49,9 +49,10 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
-        lines = pricePlanMatrixVersion.getLines().stream()
-                .map(PricePlanMatrixLineDto::new)
-                .collect(Collectors.toList());
+        if(pricePlanMatrixVersion.getLines() != null)
+            lines = pricePlanMatrixVersion.getLines().stream()
+                            .map(PricePlanMatrixLineDto::new)
+                            .collect(Collectors.toList());
     }
 
     public String getPricePlanMatrixCode() {

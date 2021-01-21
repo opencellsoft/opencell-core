@@ -57,19 +57,21 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, QuoteAttribute quoteAttribute) {
-            if (pricePlanMatrixValue.getDoubleValue() == null) {
+            if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null)
                 return true;
-            }
+            BigDecimal quote =  BigDecimal.valueOf(quoteAttribute.getDoubleValue());
             switch (quoteAttribute.getAttribute().getAttributeType()) {
                 case INTEGER:
                 case COMPTAGE:
                 case TOTAL:
                 case NUMERIC: {
                     {
-                        if (quoteAttribute.getDoubleValue() == null) {
+
+                        if (quote == null) {
                             return true;
                         }
-                        return BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()));
+                        BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
+                        return quote.equals(value);
                     }
                 }
                 case LIST_NUMERIC:
@@ -77,9 +79,9 @@ public enum ColumnTypeEnum {
                     if (quoteAttribute.getStringValue() == null) {
                         return true;
                     }
-                    return Stream.of(quoteAttribute.getStringValue().split(" ; "))
-                            .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
-                            .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue())));
+                    return Stream.of(pricePlanMatrixValue.getStringValue().split(" ; "))
+                            .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
+                            .anyMatch(number -> number.equals(quote));
                 }
                 default:
                     return false;
