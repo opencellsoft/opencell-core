@@ -154,6 +154,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChargeInstance> chargeInstances = new ArrayList<>();
+    
+    /**
+     * RT associated with a service instance
+     */
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     /** Termination reason. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -1109,6 +1115,20 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setChargeInstances(List<ChargeInstance> chargeInstances) {
         this.chargeInstances = chargeInstances;
+    }
+
+    /**
+     * @return the ratedTransactions
+     */
+    public List<RatedTransaction> getRatedTransactions() {
+        return ratedTransactions;
+    }
+
+    /**
+     * @param ratedTransactions the ratedTransactions to set
+     */
+    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
     }
 
     /**
