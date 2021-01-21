@@ -40,7 +40,7 @@ public class OrderArticleLine extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_customer_service_id")
-	private OrderCustomerService orderCustomerService;
+	private OrderLot orderCustomerService;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accounting_article_id", nullable = false)
@@ -74,7 +74,7 @@ public class OrderArticleLine extends BusinessEntity {
 	/**
 	 * @return the orderCustomerService
 	 */
-	public OrderCustomerService getOrderCustomerService() {
+	public OrderLot getOrderCustomerService() {
 		return orderCustomerService;
 	}
 
@@ -82,7 +82,7 @@ public class OrderArticleLine extends BusinessEntity {
 	/**
 	 * @param orderCustomerService the orderCustomerService to set
 	 */
-	public void setOrderCustomerService(OrderCustomerService orderCustomerService) {
+	public void setOrderCustomerService(OrderLot orderCustomerService) {
 		this.orderCustomerService = orderCustomerService;
 	}
 
