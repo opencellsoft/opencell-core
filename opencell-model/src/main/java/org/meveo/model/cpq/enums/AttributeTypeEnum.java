@@ -47,6 +47,6 @@ public enum AttributeTypeEnum {
 	/** display some of list of numerics **/
 	TOTAL,
 	
-	COUNT;
+	COUNTING;
 	
 }
