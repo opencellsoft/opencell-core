@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 @Path("")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public interface GenericResourceAPIv2 {
+public interface GenericResourceAPIv1 {
 
     @GET
     @Path("/{segments:.*}")
@@ -29,6 +29,6 @@ public interface GenericResourceAPIv2 {
 
     @DELETE
     @Path("/{segments:.*}")
-    Response deleteAnEntity( String postData ) throws URISyntaxException;
+    Response deleteAnEntity() throws URISyntaxException;
 
 }

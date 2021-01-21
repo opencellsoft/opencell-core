@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
+import org.meveo.apiv2.generic.core.GenericRequestMapper;
+import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 
 import javax.enterprise.context.RequestScoped;
 import javax.interceptor.Interceptors;
@@ -24,7 +27,7 @@ import java.util.List;
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class GenericResourceAPIv2Impl implements GenericResourceAPIv2 {
+public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String METHOD_GET_ALL = "/list";
     private static final String METHOD_GET_AN_ENTITY = "/";
@@ -40,17 +43,22 @@ public class GenericResourceAPIv2Impl implements GenericResourceAPIv2 {
     ResteasyClient httpClient;
 
     private List<PathSegment> segmentsOfPathAPIv2;
-    private String anEntityCode;
+    private String entityCode;
     private String pathIBaseRS;
     private String entityClassName;
+    private static PaginationConfiguration paginationConfig;
 
     @Context
     private UriInfo uriInfo;
 
-    public GenericResourceAPIv2Impl(){
+    public GenericResourceAPIv1Impl(){
         BasicAuthentication basicAuthentication = new BasicAuthentication("opencell.admin", "opencell.admin");
         httpClient = new ResteasyClientBuilder().build();
         httpClient.register(basicAuthentication);
+    }
+
+    public static PaginationConfiguration getPaginationConfiguration(){
+        return paginationConfig;
     }
 
     @Override
@@ -65,6 +73,15 @@ public class GenericResourceAPIv2Impl implements GenericResourceAPIv2 {
         URI redirectURI;
 
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAllEntities ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities );
+            entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
+            MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+            Class entityClass = GenericHelper.getEntityClass(entityClassName);
+            GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParams) );
+
+//System.out.println( "paginationConfig O DAY NE : " + paginationConfig.toString() );
+
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                                         + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
                                         + METHOD_GET_ALL );
@@ -73,11 +90,11 @@ System.out.println( "GET ALL ENTITIES : " + redirectURI.getPath() );
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAnEntity );
-            anEntityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+            entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_GET_AN_ENTITY + "?"
-                    + entityClassName + "Code=" + anEntityCode);
+                    + entityClassName + "Code=" + entityCode);
 System.out.println( "GET AN ENTITY : " + redirectURI.getPath() );
             return httpClient.target( redirectURI ).request().get();
         }
@@ -116,11 +133,11 @@ System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
-            anEntityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+            entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             IEntityDto anEntityDto = (IEntityDto) new ObjectMapper().readValue( jsonDto, entityDtoClass );
             if ( anEntityDto instanceof BusinessEntityDto ) {
-                ((BusinessEntityDto) anEntityDto).setCode( anEntityCode );
+                ((BusinessEntityDto) anEntityDto).setCode(entityCode);
             }
 
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
@@ -137,7 +154,7 @@ System.out.println( "UPDATE AN ENTITY : " + redirectURI.getPath() );
     }
 
     @Override
-    public Response deleteAnEntity( String jsonDto ) throws URISyntaxException {
+    public Response deleteAnEntity() throws URISyntaxException {
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
@@ -146,10 +163,10 @@ System.out.println( "UPDATE AN ENTITY : " + redirectURI.getPath() );
 
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathDeleteAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathDeleteAnEntity );
-            anEntityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+            entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_DELETE
-                    + anEntityCode);
+                    + entityCode);
 System.out.println( "DELETE AN ENTITY : " + redirectURI.getPath() );
             return httpClient.target( redirectURI ).request().delete();
         }
