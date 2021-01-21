@@ -109,7 +109,7 @@ public class NativePersistenceServiceTest {
     public void test_list() {
         filters.put("list listField1", 1);
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where " +
-                ":listField1 in elements(listField1) " +
+                ":listField1 in elements(a.listField1) " +
                 "Param name:listField1 value:1");
     }
 
@@ -273,7 +273,7 @@ public class NativePersistenceServiceTest {
     @Test
     public void test_not_equal() {
         filters.put("ne notEqualField", 1);
-        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where notEqualField != :notEqualField Param name:notEqualField value:1");
+        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where a.notEqualField != :a_notEqualField Param name:a_notEqualField value:1");
     }
 
     @Test
@@ -281,9 +281,9 @@ public class NativePersistenceServiceTest {
         filters.put("neOptional notEqualField", 1);
         assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where " +
                 "(" +
-                    "notEqualField IS NULL " +
-                    "or (notEqualField != :notEqualField)" +
-                ") Param name:notEqualField value:1");
+                    "a.notEqualField IS NULL " +
+                    "or (a.notEqualField != :a_notEqualField)" +
+                ") Param name:a_notEqualField value:1");
     }
 
     @Test
@@ -298,7 +298,7 @@ public class NativePersistenceServiceTest {
     public void test_search_att_type_class_list_class() {
         filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, List.of("org.meveo.model.billing.Invoice"));
 
-        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where type_class  in :type_class Param name:type_class value:[org.meveo.model.billing.Invoice]");
+        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where a.type_class  in :a_type_class Param name:a_type_class value:[org.meveo.model.billing.Invoice]");
     }
 
     @Test
@@ -312,7 +312,7 @@ public class NativePersistenceServiceTest {
     public void test_search_att_type_class_string() {
         filters.put("eq " + SEARCH_ATTR_TYPE_CLASS, "org.meveo.model.billing.Invoice");
 
-        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where lower(type_class) = :type_class Param name:type_class value:org.meveo.model.billing.invoice");
+        assertThat(getQuery()).isEqualTo("select a.selectField from tableName a  where lower(a.type_class) = :a_type_class Param name:a_type_class value:org.meveo.model.billing.invoice");
     }
 
     @Test
