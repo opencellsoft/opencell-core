@@ -2896,7 +2896,7 @@
 			<column name="updater" type="varchar(100)" />
 			<!-- Auditable End -->
 
-			<column name="attribute_id" type="bigint" >
+			<column name="cpq_attribute_id" type="bigint" >
 				<constraints nullable="false"/>
 			</column>
 			<column name="service_instance_id" type="bigint" >
@@ -2911,7 +2911,7 @@
 			<column name="date_value" type="datetime" />
 		</createTable>
 
-		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
+		<addForeignKeyConstraint baseColumnNames="cpq_attribute_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
 		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_service_instance_id" deferrable="false" initiallyDeferred="false"

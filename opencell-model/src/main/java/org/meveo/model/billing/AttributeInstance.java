@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,55 +18,14 @@ import java.util.Date;
 @Table(name = "cpq_attribute_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
-public class AttributeInstance extends AuditableEntity {
+public class AttributeInstance extends AttributeValue {
 
-    @OneToOne
-    @JoinColumn(name = "attribute_id")
-    private Attribute attribute;
-    @Column(name = "string_value")
-    private String stringValue;
-    @Column(name = "date_value")
-    private Date dateValue;
-    @Column(name = "double_value")
-    private Double doubleValue;
     @ManyToOne
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
     @OneToOne
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
-
-    public Attribute getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(Attribute attribute) {
-        this.attribute = attribute;
-    }
-
-    public String getStringValue() {
-        return stringValue;
-    }
-
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
-    }
-
-    public Date getDateValue() {
-        return dateValue;
-    }
-
-    public void setDateValue(Date dateValue) {
-        this.dateValue = dateValue;
-    }
-
-    public Double getDoubleValue() {
-        return doubleValue;
-    }
-
-    public void setDoubleValue(Double doubleValue) {
-        this.doubleValue = doubleValue;
-    }
 
     public ServiceInstance getServiceInstance() {
         return serviceInstance;

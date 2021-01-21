@@ -23,7 +23,7 @@ import org.meveo.model.quote.QuoteProduct;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
 @NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId")
-public class QuoteAttribute extends AuditableEntity{
+public class QuoteAttribute extends AttributeValue {
 
 	
 	public QuoteAttribute() {
@@ -41,54 +41,12 @@ public class QuoteAttribute extends AuditableEntity{
 	 * 
 	 */
 	private static final long serialVersionUID = 582541599112934770L;
-	
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_attribute_id", nullable = false)
-	private Attribute attribute;
-	
-	
-	@Column(name = "string_value")
-	private String stringValue;
-
-	@Column(name = "date_value")
-	private Date dateValue;
-
-	@Column(name = "double_value")
-	private Double doubleValue;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
 	private QuoteProduct quoteProduct;
 
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
-		return attribute;
-	}
-
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
-	}
-
-	/**
-	 * @return the stringValue
-	 */
-	// Double, String, Date
-	public String getStringValue() {
-		return stringValue;
-	}
-
-	/**
-	 * @param stringValue the stringValue to set
-	 */
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
 
 	/**
 	 * @return the quoteProduct
@@ -113,21 +71,6 @@ public class QuoteAttribute extends AuditableEntity{
 		return result;
 	}
 
-	public Date getDateValue() {
-		return dateValue;
-	}
-
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
-
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
-
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
 
 	@Override
 	public boolean equals(Object obj) {

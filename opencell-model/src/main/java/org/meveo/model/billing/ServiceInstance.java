@@ -1137,4 +1137,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
             }
         }
     }
+
+    public List<AttributeInstance> getAttributeInstances() {
+        return attributeInstances;
+    }
+
+    public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+        this.attributeInstances = attributeInstances;
+    }
 }

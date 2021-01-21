@@ -12,6 +12,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.service.base.PersistenceService;
 
@@ -133,23 +134,21 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return new PricePlanMatrixLineDto(ppmLine);
     }
 
-    public List<PricePlanMatrixLine> loadMatchedLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<QuoteAttribute> quoteAttributes) {
+    public List<PricePlanMatrixLine> loadMatchedLinesForProductQuote(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, Long productQuoteId) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(quoteAttributes, priceLines, pricePlanMatrixVersion);
+        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(attributeValues, priceLines, pricePlanMatrixVersion);
+        if (matchedPrices.isEmpty()) {
+            throw new BusinessApiException("No price match with quote product id: " + productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
+        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
+            throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ attributeValues.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
         return List.of(matchedPrices.get(0));
     }
 
-    private List<PricePlanMatrixLine> getMatchedPriceLines(Set<QuoteAttribute> quoteAttributes, List<PricePlanMatrixLine> priceLines, PricePlanMatrixVersion pricePlanMatrixVersion) {
-        List<PricePlanMatrixLine> matchedPrices = priceLines.stream()
-                .filter(line -> line.match(quoteAttributes))
+    private List<PricePlanMatrixLine> getMatchedPriceLines(Set<AttributeValue> attributeValues, List<PricePlanMatrixLine> priceLines, PricePlanMatrixVersion pricePlanMatrixVersion) {
+        return priceLines.stream()
+                .filter(line -> line.match(attributeValues))
                 .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority).reversed())
                 .collect(Collectors.toList());
-        if (matchedPrices.isEmpty()) {
-            throw new BusinessApiException("No price match with quote product id: " + quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getPriority() == matchedPrices.get(1).getPriority())
-            throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ quoteAttributes.stream().findAny().get().getQuoteProduct().getId() + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-
-        return matchedPrices;
     }
 
 }

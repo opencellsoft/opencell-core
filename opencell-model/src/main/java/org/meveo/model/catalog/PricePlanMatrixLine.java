@@ -6,6 +6,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 
 import javax.persistence.CascadeType;
@@ -93,9 +94,9 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.priority = priority != null ? priority : 0;
     }
 
-    public boolean match(Set<QuoteAttribute> quoteAttributes) {
+    public boolean match(Set<AttributeValue> attributeValues) {
         return pricePlanMatrixValues.stream()
-                .allMatch(v -> v.match(quoteAttributes));
+                .allMatch(v -> v.match(attributeValues));
     }
 
 }

@@ -44,7 +44,7 @@ public class PricePlanMatrixLineServiceTest {
         sevenTeenEngagementDuration.setDoubleValue(12.0);
 
 
-        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+        List<PricePlanMatrixLine> ppmLines = pricePlanMatrixService.loadMatchedLinesForProductQuote(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
 
         assertThat(ppmLines.size()).isEqualTo(1);
         assertThat(ppmLines.get(0).getDescription()).isEqualTo("Price1");
@@ -72,7 +72,7 @@ public class PricePlanMatrixLineServiceTest {
         QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attrb2, quoteProduct);
         sevenTeenEngagementDuration.setDoubleValue(17.0);
 
-        pricePlanMatrixService.loadMatchedLines(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+        pricePlanMatrixService.loadMatchedLinesForProductQuote(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
     }
 
 

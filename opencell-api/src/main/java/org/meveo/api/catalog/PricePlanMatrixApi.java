@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.LoadPricesRequest;
+import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -36,6 +37,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
@@ -51,6 +53,8 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
@@ -103,6 +107,9 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
     @Inject
     private QuoteProductService quoteProductService;
+
+    @Inject
+    private ChargeInstanceService serviceInstanceService;
 
     @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
@@ -551,14 +558,38 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
         handleMissingParameters();
 
-        PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
-        if(ppm == null)
-            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, "ppmCode", loadPricesRequest.getPpmCode(), "version", loadPricesRequest.getPpmVersion().toString());
+        PricePlanMatrixVersion ppmVersion = loadMatrixVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
 
         QuoteProduct quoteProduct = quoteProductService.findById(loadPricesRequest.getQuoteProductId());
         if(quoteProduct == null)
             throw new EntityDoesNotExistsException(QuoteProduct.class, loadPricesRequest.getQuoteProductId());
 
-        return pricePlanMatrixService.loadPrices(ppm, quoteProduct);
+        return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
+    }
+
+    private PricePlanMatrixVersion loadMatrixVersion(String ppmCode, Integer ppmVersion) {
+        PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(ppmCode, ppmVersion);
+        if(ppm == null)
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, "ppmCode", ppmCode, "version", ppmVersion.toString());
+        return ppm;
+    }
+
+    public List<PricePlanMatrixLineDto>  matrixRating(MatrixRatingRequest request) {
+        if (StringUtils.isBlank(request.getPpmCode())) {
+            missingParameters.add("ppmCode");
+        }
+        if (StringUtils.isBlank(request.getPpmVersion())) {
+            missingParameters.add("ppmVersion");
+        }
+        if (StringUtils.isBlank(request.getChargeInstanceCode())) {
+            missingParameters.add("quoteProductId");
+        }
+        handleMissingParameters();
+
+        PricePlanMatrixVersion pricePlanMatrixVersion = loadMatrixVersion(request.getPpmCode(), request.getPpmVersion());
+
+        ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, request.getChargeInstanceCode(), ChargeInstance.class);
+
+        return pricePlanMatrixService.matrixRating(pricePlanMatrixVersion, chargeInstance);
     }
 }
