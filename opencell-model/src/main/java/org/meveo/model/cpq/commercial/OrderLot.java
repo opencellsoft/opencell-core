@@ -19,10 +19,10 @@ import org.meveo.model.BusinessEntity;
  * @version 11.0
  */
 @Entity
-@Table(name = "cpq_order_service_commercial", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "order_id" }))
+@Table(name = "cpq_order_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "order_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_order_service_commercial_seq")})
-public class OrderCustomerService extends BusinessEntity {
+        @Parameter(name = "sequence_name", value = "cpq_order_lot_seq")})
+public class OrderLot extends BusinessEntity {
 
 
 	/**
