@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
@@ -86,8 +87,6 @@ public class AttributeDTO extends EnableBusinessDto {
     
     protected boolean ruled=Boolean.FALSE;
     
-    protected String value;
-    
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
     private List<String> chargeTemplateCodes = new ArrayList<String>();
@@ -130,6 +129,23 @@ public class AttributeDTO extends EnableBusinessDto {
         attributeType=attribute.getAttributeType();
         groupedAttributeCode=attribute.getGroupedAttributes()!=null?attribute.getGroupedAttributes().getCode():null;
         display=attribute.isDisplay();
+        code=attribute.getCode();
+        description=attribute.getDescription();
+        id=attribute.getId();
+        mandatory=attribute.isMandatory();
+        
+        if (attribute.getMedias()!=null) {
+        	for (Media media:attribute.getMedias()) {
+        		medias.add(new MediaDto(media));
+        	}
+        }
+        if (attribute.getAssignedAttributes()!=null) {
+        	for (Attribute attr:attribute.getAssignedAttributes()) {
+        		assignedAttributes.add(attr.getCode());
+        	}
+        }
+        
+        
     }
 
  
@@ -295,21 +311,6 @@ public class AttributeDTO extends EnableBusinessDto {
 
 
 
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return value;
-	}
-
-
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
 
 
 
