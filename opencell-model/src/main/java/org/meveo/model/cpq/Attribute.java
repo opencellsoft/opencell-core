@@ -34,6 +34,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.hierarchy.HierarchyLevel;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -59,9 +60,11 @@ public class Attribute extends EnableBusinessCFEntity{
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes groupedAttributes;
 	
+	  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Attribute parentAttribute;
 	 
-	
-	
 	
 	  /**
      * Mandatory
@@ -127,6 +130,10 @@ public class Attribute extends EnableBusinessCFEntity{
     @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private List<Attribute> assignedAttributes = new ArrayList<>();
     
 
     public Attribute(){
@@ -291,6 +298,34 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
 		this.commercialRules = commercialRules;
+	}
+
+	/**
+	 * @return the assignedAttributes
+	 */
+	public List<Attribute> getAssignedAttributes() {
+		return assignedAttributes;
+	}
+
+	/**
+	 * @param assignedAttributes the assignedAttributes to set
+	 */
+	public void setAssignedAttributes(List<Attribute> assignedAttributes) {
+		this.assignedAttributes = assignedAttributes;
+	}
+
+	/**
+	 * @return the parentAttribute
+	 */
+	public Attribute getParentAttribute() {
+		return parentAttribute;
+	}
+
+	/**
+	 * @param parentAttribute the parentAttribute to set
+	 */
+	public void setParentAttribute(Attribute parentAttribute) {
+		this.parentAttribute = parentAttribute;
 	}
 	
 	

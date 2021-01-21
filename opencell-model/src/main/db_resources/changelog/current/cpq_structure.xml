@@ -233,6 +233,9 @@
 			<column name="created" type="datetime">
 				<constraints nullable="false" />
 			</column>
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
 			<column name="updated" type="datetime" />
 			<column name="code" type="varchar(255)">
 				<constraints nullable="false" />
@@ -1346,7 +1349,7 @@
 	            </column>
             	<column name="cf_values" type="${type.json}" />
             	<column name="cf_values_accum" type="${type.json}" />
-
+               <column name="parent_id" type="bigint" />
 	            <column name="grouped_attributes_id" type="bigint" />
 	            <column name="mandatory" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
@@ -1417,6 +1420,9 @@
 
 		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+		            
+		                <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_parent_attributes_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
 		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_attributes" constraintName="fk_cpq_grouped_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />

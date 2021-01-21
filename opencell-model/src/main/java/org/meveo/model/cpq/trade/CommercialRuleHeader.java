@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -125,6 +126,14 @@ public class CommercialRuleHeader extends BusinessEntity {
 	@OneToMany(mappedBy = "commercialRuleHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleItem> commercialRuleItems = new ArrayList<>();
+	
+    /**
+     * Is entity disabled
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disabled", nullable = false)
+    @NotNull
+    protected boolean disabled;
 
 	/**
 	 * @return the ruleType
@@ -265,6 +274,20 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 */
 	public void setCommercialRuleItems(List<CommercialRuleItem> commercialRuleItems) {
 		this.commercialRuleItems = commercialRuleItems;
+	}
+
+	/**
+	 * @return the disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	

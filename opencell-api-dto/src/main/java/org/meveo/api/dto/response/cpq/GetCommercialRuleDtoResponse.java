@@ -26,7 +26,7 @@ public class GetCommercialRuleDtoResponse extends CommercialRuleHeaderDTO{
      */
     private ActionStatus actionStatus = new ActionStatus();
     
-    private Boolean isTarget=Boolean.TRUE;
+   
 
     /**
      * Instantiates a new base response.
@@ -57,28 +57,8 @@ public class GetCommercialRuleDtoResponse extends CommercialRuleHeaderDTO{
 	public ActionStatus getActionStatus() {
 		return actionStatus;
 	}
-
-	/**
-	 * @param actionStatus the actionStatus to set
-	 */
-	public void setActionStatus(ActionStatus actionStatus) {
-		this.actionStatus = actionStatus;
-	}
-
-	/**
-	 * @return the isTarget
-	 */
-	public Boolean getIsTarget() {
-		return isTarget;
-	}
-
-	/**
-	 * @param isTarget the isTarget to set
-	 */
-	public void setIsTarget(Boolean isTarget) {
-		this.isTarget = isTarget;
-	}
-
+ 
+ 
 
     
   
