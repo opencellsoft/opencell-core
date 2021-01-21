@@ -7,7 +7,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.apiv2.GenericOpencellRestfulAPIv2;
+import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 
 import javax.enterprise.context.RequestScoped;
@@ -59,20 +59,20 @@ public class GenericResourceAPIv2Impl implements GenericResourceAPIv2 {
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathGetAnEntity = GenericOpencellRestfulAPIv2.API_VERSION + suffixPathBuilder.toString();
-        String pathGetAllEntities = GenericOpencellRestfulAPIv2.API_VERSION + uriInfo.getPath();
+        String pathGetAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
+        String pathGetAllEntities = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         URI redirectURI;
 
-        if ( GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAllEntities ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAllEntities ) ) {
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                                        + API_REST + GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
+                                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
                                         + METHOD_GET_ALL );
 System.out.println( "GET ALL ENTITIES : " + redirectURI.getPath() );
             return httpClient.target( redirectURI ).request().get();
         }
-        else if ( GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAnEntity );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAnEntity ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAnEntity );
             anEntityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
@@ -87,11 +87,11 @@ System.out.println( "GET AN ENTITY : " + redirectURI.getPath() );
 
     @Override
     public Response createAnEntity( String jsonDto ) throws URISyntaxException {
-        String pathCreateAnEntity = GenericOpencellRestfulAPIv2.API_VERSION + uriInfo.getPath();
+        String pathCreateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
-        if ( GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathCreateAnEntity ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathCreateAnEntity ) ) {
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathCreateAnEntity )
+                    + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathCreateAnEntity )
                     + METHOD_CREATE );
 System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
 
@@ -109,10 +109,10 @@ System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathUpdateAnEntity = GenericOpencellRestfulAPIv2.API_VERSION + suffixPathBuilder.toString();
+        String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        if ( GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathUpdateAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathUpdateAnEntity ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
@@ -123,7 +123,7 @@ System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
                 ((BusinessEntityDto) anEntityDto).setCode( anEntityCode );
             }
 
-            pathIBaseRS = GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
 System.out.println( "UPDATE AN ENTITY : " + redirectURI.getPath() );
@@ -142,15 +142,15 @@ System.out.println( "UPDATE AN ENTITY : " + redirectURI.getPath() );
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathDeleteAnEntity = GenericOpencellRestfulAPIv2.API_VERSION + suffixPathBuilder.toString();
+        String pathDeleteAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        if ( GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathDeleteAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv2.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathDeleteAnEntity );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathDeleteAnEntity ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathDeleteAnEntity );
             anEntityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_DELETE
                     + anEntityCode);
-System.out.println( "new URI redirect DELETE AN ENTITY : " + redirectURI.getPath() );
+System.out.println( "DELETE AN ENTITY : " + redirectURI.getPath() );
             return httpClient.target( redirectURI ).request().delete();
         }
         return Response.status(Response.Status.NOT_FOUND).build();

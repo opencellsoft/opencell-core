@@ -31,8 +31,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ApplicationPath(GenericOpencellRestfulAPIv2.API_VERSION)
-public class GenericOpencellRestfulAPIv2 extends Application {
+@ApplicationPath(GenericOpencellRestfulAPIv1.API_VERSION)
+public class GenericOpencellRestfulAPIv1 extends Application {
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
@@ -41,7 +41,7 @@ public class GenericOpencellRestfulAPIv2 extends Application {
     public static long API_LIST_DEFAULT_LIMIT;
 
     private static final String PATH_TO_ALL_ENTITY_RS = "org.meveo.api.rest";
-    public static final String API_VERSION = "/v2";
+    public static final String API_VERSION = "/v1";
 
     // business logic final string variables
     private static final String ACCOUNT_MANAGEMENT = "/accountManagement";
@@ -118,6 +118,30 @@ public class GenericOpencellRestfulAPIv2 extends Application {
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/billingAccount" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/userAccount" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/accountHierarchy" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accountHierarchies",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/billing/subscription" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions",
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
                         }
                         else {
