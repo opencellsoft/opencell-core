@@ -105,7 +105,11 @@ public class AttributeDTO extends EnableBusinessDto {
     /** The tags */
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
-    protected List<TagDto> tags;
+    protected List<String> tagCodes=new ArrayList<String>();
+    
+    @XmlElementWrapper(name = "assignedAttributes")
+    @XmlElement(name = "assignedAttributes")
+    protected List<String> assignedAttributes=new ArrayList<String>();
     
     public AttributeDTO() {
     }
@@ -346,20 +350,40 @@ public class AttributeDTO extends EnableBusinessDto {
 
 
 	/**
-	 * @return the tags
+	 * @return the tagCodes
 	 */
-	public List<TagDto> getTags() {
-		return tags;
+	public List<String> getTagCodes() {
+		return tagCodes;
 	}
 
 
 
 	/**
-	 * @param tags the tags to set
+	 * @param tagCodes the tagCodes to set
 	 */
-	public void setTags(List<TagDto> tags) {
-		this.tags = tags;
+	public void setTagCodes(List<String> tagCodes) {
+		this.tagCodes = tagCodes;
 	}
+
+
+
+	/**
+	 * @return the assignedAttributes
+	 */
+	public List<String> getAssignedAttributes() {
+		return assignedAttributes;
+	}
+
+
+
+	/**
+	 * @param assignedAttributes the assignedAttributes to set
+	 */
+	public void setAssignedAttributes(List<String> assignedAttributes) {
+		this.assignedAttributes = assignedAttributes;
+	}
+ 
+	
 
 
 	

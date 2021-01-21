@@ -31,7 +31,7 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
  *
  */
 @Entity
-@Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "media_name" }))
+@Table(name = "cpq_media")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq")})
 @NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m left join  m.product mp where mp.code=:productCode and m.mediaName=:mediaName")

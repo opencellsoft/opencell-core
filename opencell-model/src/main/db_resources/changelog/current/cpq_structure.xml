@@ -233,6 +233,9 @@
 			<column name="created" type="datetime">
 				<constraints nullable="false" />
 			</column>
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
 			<column name="updated" type="datetime" />
 			<column name="code" type="varchar(255)">
 				<constraints nullable="false" />
@@ -697,7 +700,10 @@
 			</column>
 			<column name="valid_from" type="datetime" />
 			<column name="valid_to" type="datetime" />
-			<column name="price_without_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+			<column name="amount_without_tax_el" type="varchar(255)" />
+			<column name="amount_with_tax_el" type="varchar(255)" />
 			<column name="is_matrix" type="${type.boolean}"/>
 		</createTable>
 	</changeSet>
@@ -1343,7 +1349,7 @@
 	            </column>
             	<column name="cf_values" type="${type.json}" />
             	<column name="cf_values_accum" type="${type.json}" />
-
+               <column name="parent_id" type="bigint" />
 	            <column name="grouped_attributes_id" type="bigint" />
 	            <column name="mandatory" type="${type.boolean}" >
 	            	<constraints nullable="false"/>
@@ -1414,6 +1420,9 @@
 
 		        <addForeignKeyConstraint baseColumnNames="grouped_attributes_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_grouped_attributes_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+		            
+		                <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cpq_attribute" constraintName="fk_cpq_attribute_parent_attributes_id" deferrable="false" initiallyDeferred="false"
+		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 
 		        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_attributes" constraintName="fk_cpq_grouped_attributes_product_version_id" deferrable="false" initiallyDeferred="false"
 		            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
@@ -2873,6 +2882,51 @@
 		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_tag" constraintName="fk_tag_attribute" deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
 	</changeSet>
+
+	<changeSet id="540-139-20012020" author="NabilOUACHI">
+
+
+		<createSequence sequenceName="cpq_attribute_instance_seq" />
+
+		<createTable tableName="cpq_attribute_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_attribute_instance" />
+			</column>
+			<column name="version" type="int4" />
+			<!-- Auditable Start -->
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<!-- Auditable End -->
+
+			<column name="attribute_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="service_instance_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="subscription_id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+
+			<column name="string_value" type="varchar(255)" />
+			<column name="double_value" type="float8" />
+			<column name="date_value" type="datetime" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_cpq_attribute_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+
+		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_service_instance_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+
+		<addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="cpq_attribute_instance" constraintName="fk_cpq_attribute_instance_subscription_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+	</changeSet>
+
 </databaseChangeLog>
 
 

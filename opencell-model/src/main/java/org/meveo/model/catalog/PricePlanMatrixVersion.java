@@ -77,9 +77,21 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Column(name = "is_matrix")
     private Boolean isMatrix;
 
-    @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    private BigDecimal priceWithoutTax;
+    private BigDecimal amountWithoutTax;
+
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private BigDecimal amountWithTax;
+
+    @Column(name = "amount_without_tax_el", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private String amountWithoutTaxEL;
+
+    @Column(name = "amount_with_tax_el", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    private String amountWithTaxEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PricePlanMatrixLine> lines;
@@ -110,19 +122,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
-    }
-
-    /**
-     * @return the pricetWithoutTax
-     */
-    public BigDecimal getPriceWithoutTax() {
-        return priceWithoutTax;
-    }
-    /**
-     * @param priceWithoutTax the pricetWithoutTax to set
-     */
-    public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-        this.priceWithoutTax = priceWithoutTax;
     }
 
     public PricePlanMatrix getPricePlanMatrix() {
@@ -179,5 +178,37 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     public void setColumns(List<PricePlanMatrixColumn> columns) {
         this.columns = columns;
+    }
+
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
+
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
+
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
+
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
+
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
+
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
     }
 }
