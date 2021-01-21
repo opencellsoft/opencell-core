@@ -742,7 +742,13 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     public List<PricePlanMatrixLineDto> matrixRating(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
         String serviceCode = chargeInstance.getServiceInstance().getCode();
-        List<AttributeInstance> attributeInstances = chargeInstance.getServiceInstance().getAttributeInstances();
-        return null;
+        Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                            .stream()
+                            .map(attributeInstance -> (AttributeValue)attributeInstance)
+                            .collect(Collectors.toSet());
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode)
+                .stream()
+                .map(PricePlanMatrixLineDto::new)
+                .collect(Collectors.toList());
     }
 }

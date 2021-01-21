@@ -109,7 +109,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     private QuoteProductService quoteProductService;
 
     @Inject
-    private ChargeInstanceService serviceInstanceService;
+    private ChargeInstanceService<ChargeInstance> serviceInstanceService;
 
     @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
