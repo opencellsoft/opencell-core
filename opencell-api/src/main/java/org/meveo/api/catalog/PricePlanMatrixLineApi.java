@@ -1,18 +1,21 @@
 package org.meveo.api.catalog;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Set;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
@@ -27,6 +30,14 @@ public class PricePlanMatrixLineApi extends BaseApi {
         checkCommunMissingParameters(dtoData);
 
         return pricePlanMatrixLineService.createPricePlanMatrixLine(dtoData);
+    }
+    
+    public GetPricePlanVersionResponseDto addPricePlanMatrixLines(PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
+            	addPricePlanMatrixLine(pricePlanMatrixLineDto);
+            }
+           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+          return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {

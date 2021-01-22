@@ -39,6 +39,7 @@ import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.PATCH;
@@ -417,4 +418,19 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "Internal error")
             })
     Response loadPrices(LoadPricesRequest loadPricesRequest);
+
+    /**
+     * add all price plan matrix lines
+     *
+     */
+    @POST
+    @Path("/addPricePlanMatrixLines")
+    @Operation(summary = "add all price plan matrix lines",
+            tags = { "Price Plan" },
+            description ="add all price plan matrix lines",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan line successfully added",content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+	Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
 }
