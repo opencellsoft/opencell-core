@@ -76,9 +76,13 @@ public class ActionStatus {
      */
     @XmlElement
     private Integer nrAffected;
+    
+    private String json;
 
     public ActionStatus() {
         status = ActionStatusEnum.SUCCESS;
+        json = "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\",\"nrAffected\": \""
+                + nrAffected + "\"}";
     }
 
     /**
@@ -185,12 +189,18 @@ public class ActionStatus {
     }
 
     public String getjson() {
-        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\",\"nrAffected\": \""
-                + nrAffected + "\"}";
+    	return json;
     }
 
     @Override
     public String toString() {
         return "ActionStatus [status=" + status + ", errorCode=" + errorCode + ", message=" + message + ", entityId=" + entityId + ", entityCode=" + entityCode + ", nrAffected=" + nrAffected + "]";
     }
+
+	/**
+	 * @param json the json to set
+	 */
+	public void setJson(String json) {
+		this.json = json;
+	}
 }

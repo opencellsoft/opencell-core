@@ -2729,7 +2729,8 @@
             <column name="product_id" type="bigint" />
 			<column name="offer_id" type="bigint" />
             <column name="attribute_id" type="bigint" />
-        </createTable>
+			<column name="is_range" type="${type.boolean}" defaultValueNumeric="0"/>
+		</createTable>
 
         <createSequence sequenceName="cpq_price_plan_matrix_value_sq" startValue="1" />
         <createTable tableName="cpq_price_plan_matrix_value">

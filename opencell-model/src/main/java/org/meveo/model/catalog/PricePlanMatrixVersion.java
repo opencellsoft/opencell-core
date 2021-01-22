@@ -15,6 +15,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -31,6 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 /**
  * @author Tarik FA.
  * @version 10.0
@@ -93,11 +96,11 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private String amountWithTaxEL;
 
-    @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixLine> lines;
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PricePlanMatrixLine> lines;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixColumn> columns;
+    private Set<PricePlanMatrixColumn> columns;
 
     /**
      * @return the status
@@ -164,19 +167,19 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         isMatrix = matrix;
     }
 
-    public List<PricePlanMatrixLine> getLines() {
+    public Set<PricePlanMatrixLine> getLines() {
         return lines;
     }
 
-    public void setLines(List<PricePlanMatrixLine> lines) {
+    public void setLines(Set<PricePlanMatrixLine> lines) {
         this.lines = lines;
     }
 
-    public List<PricePlanMatrixColumn> getColumns() {
+    public Set<PricePlanMatrixColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<PricePlanMatrixColumn> columns) {
+    public void setColumns(Set<PricePlanMatrixColumn> columns) {
         this.columns = columns;
     }
 

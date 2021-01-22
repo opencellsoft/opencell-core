@@ -36,6 +36,7 @@ import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
@@ -248,6 +249,17 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "the status of the price plan matrix is already closed")
             })
     Response updatePricePlanMatrixVersionStatus(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode, @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @Parameter @QueryParam("status") VersionStatusEnum status);
+
+    @POST
+    @Path("/pricePlanMatrixVersions")
+    @Operation(summary = "get the price plan versions",
+            tags = { "Price Plan" },
+            description ="load the list of ppm versions",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the list of price plan version successfully updated",  content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Unknown error")
+            })
+    Response listPricePlanMatrixVersions(PagingAndFiltering pagingAndFiltering);
 
     /**
      *

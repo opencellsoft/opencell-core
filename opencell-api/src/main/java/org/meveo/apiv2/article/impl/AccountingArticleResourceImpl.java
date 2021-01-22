@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.QueryParam;
@@ -83,10 +84,18 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 
     @Override
 	public Response delete(String accountingArticleCode, Request request) {
-		accountingArticleApiService.delete(accountingArticleCode)
+    	ActionStatus result = new ActionStatus();
+    	result.setJson(null);
+    	try {
+    		accountingArticleApiService.delete(accountingArticleCode)
 											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
-												.orElseThrow(NotFoundException::new);
-        return Response.ok(ActionStatusEnum.SUCCESS).build();
+												.orElse(Response.status(Response.Status.NOT_FOUND).entity(result).build());
+            return Response.ok(result).build();
+    	}catch(BadRequestException e) {
+    		result.setStatus(ActionStatusEnum.FAIL);
+    		result.setMessage(e.getMessage());
+    		return Response.status(Response.Status.NOT_FOUND).entity(result).build();
+    	}
 	}
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
