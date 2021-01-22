@@ -33,11 +33,13 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
@@ -103,6 +105,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> processFileAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 

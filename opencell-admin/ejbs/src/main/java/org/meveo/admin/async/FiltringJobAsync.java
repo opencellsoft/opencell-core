@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitFilteringJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.IEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -78,6 +80,7 @@ public class FiltringJobAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<? extends IEntity> filtredEntities, JobExecutionResultImpl result, ScriptInterface scriptInterface, String recordVariableName, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);

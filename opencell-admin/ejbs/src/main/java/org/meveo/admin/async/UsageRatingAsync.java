@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -67,6 +69,7 @@ public class UsageRatingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<Long> edrs, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
