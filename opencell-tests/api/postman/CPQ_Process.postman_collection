@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a2c00312-d683-4a3c-944a-c6785e757b3b",
+		"_postman_id": "d8226554-0cdd-4293-bbf3-1dc2f98dfdfb",
 		"name": "CPQ Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -358,7 +358,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
+									"raw": "{{opencell.url}}/catalog/product?productCode={{codeProductOne}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -369,7 +369,7 @@
 									"query": [
 										{
 											"key": "productCode",
-											"value": "{{productOneCode}}"
+											"value": "{{codeProductOne}}"
 										}
 									]
 								},
@@ -1581,6 +1581,710 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create TV_DECODER Product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TV_DECODER\",\r\n  \"label\": \"This is the tv decoder product label\",\r\n  \"status\": \"ACTIVE\",\r\n  \"statusDate\": \"2020-11-25T13:45:00.087Z\",\r\n  \"productLineCode\": \"{{productLineCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product"
+							]
+						},
+						"description": "Creation of the product"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Grouped Attribute TV",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TV_GR_ATTRIBUTE\",\r\n    \"productCode\": \"TV_DECODER\",\r\n    \"description\": \"Grouped attribute tvn desc\",\r\n    \"productVersion\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/groupedAttributes",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"groupedAttributes"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create SETUP_PRICE Attribute",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"SETUP_PRICE_ATT\",\r\n  \"description\": \"This is setup price attribute desc\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"TV_GR_ATTRIBUTE\",\r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"115\",\"205\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/attribute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create BRAND Attribute",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"BRAND_ATT\",\r\n  \"description\": \"This is brand attribute desc\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"TV_GR_ATTRIBUTE\", \r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/attribute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create TELEVISION Product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TELEVISION\",\r\n  \"label\": \"this is TV product\",\r\n  \"status\": \"ACTIVE\",\r\n  \"statusDate\": \"2020-11-25T13:45:00.087Z\",\r\n  \"productLineCode\": \"{{productLineCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product"
+							]
+						},
+						"description": "Creation of the product"
+					},
+					"response": []
+				},
+				{
+					"name": "Activate TELEVISION Product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/TELEVISION/update/status?status=ACTIVE",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"TELEVISION",
+								"update",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						},
+						"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
+					},
+					"response": []
+				},
+				{
+					"name": "Activate TV_DECODER Product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/TV_DECODER/update/status?status=ACTIVE",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"TV_DECODER",
+								"update",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						},
+						"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bouquets Attribute",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"BOUQUETS\",\r\n    \"description\": \"This is bouquets attribute desc\",\r\n    \"disabled\": true,\r\n    \"groupedAttributeCode\": \"TV_GR_ATTRIBUTE\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"netflix\",\r\n        \"canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/attribute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product Version of TELEVISION",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productCode\": \"TELEVISION\",\r\n    \"shortDescription\": \"TELEVISION product version description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for TELEVISION product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-12-25\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productVersion"
+							]
+						},
+						"description": "create a product version if it doesn't exist or update an existing product line"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product Version of TV_DECODER",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productCode\": \"TV_DECODER\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": 1,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n  \"longDescription\": \"This is a long test description for TV_DECODER product version\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productVersion"
+							]
+						},
+						"description": "create a product version if it doesn't exist or update an existing product line"
+					},
+					"response": []
+				},
+				{
+					"name": "Publish TELEVISION Product Version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productVersion/TELEVISION/1?status=PUBLISHED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productVersion",
+								"TELEVISION",
+								"1"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PUBLISHED"
+								}
+							]
+						},
+						"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+					},
+					"response": []
+				},
+				{
+					"name": "Publish TV_DECODER Product Version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/productVersion/TV_DECODER/1?status=PUBLISHED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"productVersion",
+								"TV_DECODER",
+								"1"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PUBLISHED"
+								}
+							]
+						},
+						"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TV_DECODER_OFFER\",\r\n    \"description\": \"This the desc of TV and decoder offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"TV_DECODER\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"offerTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Commercial Rule Header",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\r\n  \"code\": \"TV_COMMERCIAL_RULE\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"TV_DECODER_OFFER\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"TELEVISION\",\r\n  \"productVersion\": \"1\",\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"TV_DECODER\",  \r\n          \"attributeCode\": \"BRAND_ATT\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n  "
+						},
+						"url": {
+							"raw": "{{opencell.url}}/commercialRule/",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialRule",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find The Commercial Rule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/commercialRule?code=TV_COMMERCIAL_RULE",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialRule"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "TV_COMMERCIAL_RULE"
+								}
+							]
+						},
+						"description": "Retrieving a product with its code"
+					},
+					"response": []
+				},
+				{
+					"name": "List Products with Attributes that Match The Quote Offer Context",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"offerCode\": \"TV_DECODER_OFFER\",\r\n    \"selectedProducts\": [\r\n        {\r\n            \"productCode\": \"TELEVISION\"\r\n        },\r\n        {\r\n            \"productCode\": \"TV_DECODER\",\r\n            \"selectedAttributes\": {\r\n                \"brand\": \"SONY\"\r\n            }\r\n        }\r\n    ],\r\n    \"customerContextDTO\": {\r\n        \"requestedTagTypes\": []\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1686,91 +2390,6 @@
 					"response": []
 				},
 				{
-					"name": "Read The Attribute",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.globals.set(\"attributeOneId\",pm.response.json().id);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/attribute?code={{codeAttributeOne}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"attribute"
-							],
-							"query": [
-								{
-									"key": "code",
-									"value": "{{codeAttributeOne}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Accounting Mapping Line",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"attributesMapping\": [\r\n        {\r\n            \"attribute\": {\r\n                \"id\": {{attributeOneId}}\r\n            },\r\n            \"attributeValue\": \"ATTRIBUTE_VALUE\"\r\n        }\r\n    ],\r\n    \"product\": {\r\n        \"id\": {{productOneId}}\r\n    },\r\n    \"accountingArticle\": {\r\n        \"id\": {{accounteArticleId}}\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/v2/articleMappingLine",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"v2",
-								"articleMappingLine"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update Accounting Article",
 					"request": {
 						"auth": {
@@ -1834,14 +2453,99 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/v2/article/AC_ART_1",
+							"raw": "{{opencell.url}}/v2/article/{{accounteArticleCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"v2",
 								"article",
-								"AC_ART_1"
+								"{{accounteArticleCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read The Attribute",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"attributeOneId\",pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/attribute?code={{codeAttributeOne}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"attribute"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "{{codeAttributeOne}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Accounting Mapping Line K.O",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"attributesMapping\": [\r\n        {\r\n            \"attribute\": {\r\n                \"id\": {{attributeOneId}}\r\n            },\r\n            \"attributeValue\": \"ATTRIBUTE_VALUE\"\r\n        }\r\n    ],\r\n    \"product\": {\r\n        \"id\": {{productOneId}}\r\n    },\r\n    \"accountingArticle\": {\r\n        \"id\": {{accounteArticleId}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/articleMappingLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"articleMappingLine"
 							]
 						}
 					},
@@ -1929,6 +2633,45 @@
 		{
 			"name": "Account Hierarchy",
 			"item": [
+				{
+					"name": "Create Service Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"SE_TEMPLATE_TEST\",\r\n    \"disabled\": false,\r\n    \"mandatory\": false,\r\n    \"renewalRule\": {\r\n        \"initialTermType\": \"RECURRING\",\r\n        \"autoRenew\": false\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"serviceTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Customer Account Hierarchy",
 					"event": [
@@ -2177,6 +2920,174 @@
 							]
 						},
 						"description": "Find a tag type by codeTag parameter"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media Management",
+			"item": [
+				{
+					"name": "Create Media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n     \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Media",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/media/{{codeProductOne}}/{{mediaName}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"{{codeProductOne}}",
+								"{{mediaName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Media",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mediaName\": \"{{mediaName}}\",\r\n    \"label\": \"This is an updated media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"VIDEO\",\r\n    \"mediaPath\": \"/newPath/created/newDir\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Media by Product Code",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {\r\n        \"productCode\": \"{{codeProductOne}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Media",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/media/{{codeProductOne}}/{{mediaName}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"{{codeProductOne}}",
+								"{{mediaName}}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -3298,8 +4209,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.globals.set(\"QuoteCode\",JSON.parse(pm.request.body).code);\r",
-									"pm.globals.set(\"QuoteVersion\",JSON.parse(pm.request.body).quoteVersion.currentVersion);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3869,20 +4779,12 @@
 			"value": "TEST_CONTRACT"
 		},
 		{
-			"key": "customerCode",
-			"value": ""
-		},
-		{
 			"key": "accountLevelCode",
 			"value": "BILLING_ACCOUNT"
 		},
 		{
 			"key": "quoteCode",
 			"value": "TEST_QUOTE"
-		},
-		{
-			"key": "quoteVersion",
-			"value": 2
 		},
 		{
 			"key": "billingAccountCode",
@@ -3895,14 +4797,6 @@
 		{
 			"key": "offerTemplate",
 			"value": "OF_CLASSIC_COMMISSION"
-		},
-		{
-			"key": "quoteOffer",
-			"value": 5
-		},
-		{
-			"key": "quoteOfferId",
-			"value": 8
 		},
 		{
 			"key": "billingCycleCode",
@@ -3953,12 +4847,28 @@
 			"value": "PRICE_PLAN_COLUMN_2"
 		},
 		{
-			"key": "productOneCode",
-			"value": "TEST_PRODUCT_1"
-		},
-		{
 			"key": "accounteArticleCode",
 			"value": "ACCOUNT_ARTICLE_1"
+		},
+		{
+			"key": "productCode",
+			"value": "TV_DECODER"
+		},
+		{
+			"key": "QuoteCode",
+			"value": "TEST_QUOTE"
+		},
+		{
+			"key": "executeQuotation",
+			"value": "false"
+		},
+		{
+			"key": "mediaName",
+			"value": "MEDIA_NAME"
+		},
+		{
+			"key": "serviceTemplate",
+			"value": ""
 		}
 	]
 }

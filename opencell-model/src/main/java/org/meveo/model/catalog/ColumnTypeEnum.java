@@ -37,7 +37,7 @@ public enum ColumnTypeEnum {
             }
             switch (quoteAttribute.getAttribute().getAttributeType()) {
                 case INTEGER:
-                case COMPTAGE:
+                case COUNT:
                 case TOTAL:
                 case NUMERIC: {
                     return BigDecimal.valueOf(quoteAttribute.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue()));
@@ -62,7 +62,7 @@ public enum ColumnTypeEnum {
             BigDecimal quote =  BigDecimal.valueOf(quoteAttribute.getDoubleValue());
             switch (quoteAttribute.getAttribute().getAttributeType()) {
                 case INTEGER:
-                case COMPTAGE:
+                case COUNT:
                 case TOTAL:
                 case NUMERIC: {
                     {

@@ -21,8 +21,11 @@ import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+
+import java.util.Set;
 
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
@@ -36,12 +39,15 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response createProduct(ProductDto productDto) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	productApi.create(productDto);
-        	return Response.ok(result).build();
+			ProductDto response = productApi.create(productDto);
+			result.setId(response.getId());
+			if(response.getCurrentProductVersion() != null)
+				result.setProductVersions(Set.of(response.getCurrentProductVersion()));
+			result.setDiscountList(response.getDiscountList());
+			return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
         }
-        
 	}
 
 	@Override
@@ -135,7 +141,8 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	public Response createOrUpdateProductVersion(ProductVersionDto postData) {
 		GetProductVersionResponse result = new GetProductVersionResponse();
         try {
-			productApi.createOrUpdateProductVersion(postData);
+        	ProductVersion pv =  productApi.createOrUpdateProductVersion(postData);
+        	result.setCurrentVersion(pv.getCurrentVersion());
 			return Response.ok(result).build();
         } catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

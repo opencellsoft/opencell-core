@@ -1,7 +1,6 @@
 package org.meveo.model.cpq.enums;
 
 import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.cpq.QuoteAttribute;
 
 /**
  * 
@@ -112,8 +111,8 @@ public enum AttributeTypeEnum {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
 	},
-	
-	COMPTAGE {
+
+    COUNT {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;

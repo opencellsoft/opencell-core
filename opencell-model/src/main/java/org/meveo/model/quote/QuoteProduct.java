@@ -82,6 +82,11 @@ public class QuoteProduct extends AuditableEntity {
     @OrderBy("id")
 	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
     
+
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<QuoteArticleLine> quoteArticleLines;
+    
 	/**
 	 * discountPlan attached to this quoteProduct
 	 */
@@ -241,4 +246,22 @@ public class QuoteProduct extends AuditableEntity {
 	public void setQuoteAttributes(List<QuoteAttribute> quoteAttributes) {
 		this.quoteAttributes = quoteAttributes;
 	}
+
+
+	/**
+	 * @return the quoteArticleLines
+	 */
+	public List<QuoteArticleLine> getQuoteArticleLines() {
+		return quoteArticleLines;
+	}
+
+
+	/**
+	 * @param quoteArticleLines the quoteArticleLines to set
+	 */
+	public void setQuoteArticleLines(List<QuoteArticleLine> quoteArticleLines) {
+		this.quoteArticleLines = quoteArticleLines;
+	}
+
+
 }

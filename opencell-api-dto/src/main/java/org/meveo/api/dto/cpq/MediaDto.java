@@ -51,6 +51,7 @@ public class MediaDto extends BaseEntityDto{
 		this.label = media.getLabel();
 		this.main = media.getMain();
 		this.mediaPath = media.getMediaPath();
+		this.mediaType = media.getMediaType();
 	}
 	
 	/**

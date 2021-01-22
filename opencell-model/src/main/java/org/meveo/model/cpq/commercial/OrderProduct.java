@@ -40,7 +40,7 @@ public class OrderProduct extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_service_commercial_id")
-	private OrderCustomerService orderServiceCommercial;
+	private OrderLot orderServiceCommercial;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id", nullable = false)
@@ -76,7 +76,7 @@ public class OrderProduct extends BusinessEntity {
 	/**
 	 * @return the orderServiceCommercial
 	 */
-	public OrderCustomerService getOrderServiceCommercial() {
+	public OrderLot getOrderServiceCommercial() {
 		return orderServiceCommercial;
 	}
 
@@ -84,7 +84,7 @@ public class OrderProduct extends BusinessEntity {
 	/**
 	 * @param orderServiceCommercial the orderServiceCommercial to set
 	 */
-	public void setOrderServiceCommercial(OrderCustomerService orderServiceCommercial) {
+	public void setOrderServiceCommercial(OrderLot orderServiceCommercial) {
 		this.orderServiceCommercial = orderServiceCommercial;
 	}
 
@@ -117,6 +117,22 @@ public class OrderProduct extends BusinessEntity {
 	 */
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
+	}
+
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
 	}
 
 	

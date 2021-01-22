@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -17,13 +19,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.cpq.offer.OfferComponent;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.slf4j.Logger;
@@ -105,15 +105,17 @@ public class ProductService extends BusinessService<Product> {
 		
 		product.getProductVersions().size();
 		product.getDiscountList().size();
-		product.getModelChlidren().size();
+		product.getModelChildren().size();
 		product.getOfferComponents().size();
+		product.getMedias().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
-		var modelChildren = new HashSet<>(product.getModelChlidren());
+		var modelChildren = new HashSet<>(product.getModelChildren());
 		var offerComponents = new ArrayList<>(product.getOfferComponents());
+		var medias = new ArrayList<>(product.getMedias());
 		
 		detach(product);
 
@@ -122,7 +124,27 @@ public class ProductService extends BusinessService<Product> {
     		Collections.sort(productVersions, new Comparator<ProductVersion>() {
 				@Override
 				public int compare(ProductVersion o1, ProductVersion o2) {
-					return o2.getValidity().getFrom().compareTo(o1.getValidity().getFrom());
+					DatePeriod o1Period = o1.getValidity();
+					DatePeriod o2Period = o2.getValidity();
+					if(o1Period == null && o2Period == null) {
+						return 0;
+					}else if (o1Period != null && o2Period == null) 
+						return 1;
+					else if (o1Period == null && o2Period != null) 
+						return -1;
+					else{
+						Date o1from = o1Period.getFrom();
+						Date o2from = o2Period.getFrom();
+						if(o1from == null && o2from == null) {
+							return 0;
+						}else if (o1from != null && o2from == null) 
+							return 1;
+						else if(o1from == null && o2from != null)
+							return -1;
+						else 
+							return o2from.compareTo(o1from);
+					}
+					
 				}
 			});
     		for (ProductVersion pv : productVersions) {
@@ -146,7 +168,7 @@ public class ProductService extends BusinessService<Product> {
    	 	
 	   	 duplicate.setId(null);
 	   	 duplicate.setBrand(null);
-	   	 duplicate.setModelChlidren(new HashSet<>());
+	   	 duplicate.setModelChildren(new HashSet<>());
 	   	 duplicate.setProductVersions(new ArrayList<>());
 	   	 duplicate.setStatus(ProductStatusEnum.DRAFT);
 	   	 duplicate.setStatusDate(Calendar.getInstance().getTime());
@@ -157,6 +179,9 @@ public class ProductService extends BusinessService<Product> {
    		 duplicate.setPackageFlag(product.isPackageFlag());
    		 duplicate.setDiscountList(new HashSet<>());
    		 duplicate.setOfferComponents(new ArrayList<>());
+   		 duplicate.setMedias(new ArrayList<>());
+   		 duplicate.setUuid(UUID.randomUUID().toString());
+   		 
 	   	
 	   	 
 	   	 if(!preserveCode) {
@@ -171,7 +196,7 @@ public class ProductService extends BusinessService<Product> {
 	   	 }
 	   	 
 	   	 if(duplicateHierarchy) {
-	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, duplicate.getId() + "_");
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, medias, duplicate.getId() + "_");
 	   	 }
 	   	 return duplicate;
 	}
@@ -213,6 +238,8 @@ public class ProductService extends BusinessService<Product> {
 	 */
 	public Product updateStatus(String productCode, ProductStatusEnum status) throws BusinessException{
 		Product product =findByCode(productCode);
+		if(product == null)
+			throw new EntityDoesNotExistsException(Product.class, productCode);
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
