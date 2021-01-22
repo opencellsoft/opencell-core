@@ -40,7 +40,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -49,10 +48,15 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.MediaService;
 
 /**
  * Offer Template service implementation.
@@ -70,6 +74,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private SubscriptionService subscriptionService;
+    @Inject
+    private MediaService mediaService;
+    @Inject
+    private CommercialRuleHeaderService commercialRuleHeaderService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -201,6 +209,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getOfferTemplateCategories().size();
         offerToDuplicate.getSellers().size();
         offerToDuplicate.getCustomerCategories().size();
+        offerToDuplicate.getMedias().size();
+        offerToDuplicate.getCommercialRules().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -252,6 +262,15 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         List<CustomerCategory> customerCategories = offer.getCustomerCategories();
         offer.setCustomerCategories(new ArrayList<CustomerCategory>());
+        
+        List<Media> medias = offer.getMedias();
+        offer.setMedias(new ArrayList<Media>());
+        
+        List<CommercialRuleHeader> commercialRulesHeader = offer.getCommercialRules();
+        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
+        
+        List<OfferComponent> offerComponents = offer.getOfferComponents();
+        offer.setOfferComponents(new ArrayList<OfferComponent>());
 
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
@@ -302,6 +321,27 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
             if (offerProductTemplates != null) {
                 catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
+            }
+
+            if(medias != null) {
+            	for (Media media : medias) {
+        			mediaService.detach(media);
+        			Media newMedia = new Media(media); 
+        			newMedia.setOffer(offer);
+        			mediaService.create(newMedia);
+    				offer.getMedias().add(media);
+    			}
+            }
+            
+            if(commercialRulesHeader != null) {
+            	for (CommercialRuleHeader commercialRuleHeader : commercialRulesHeader) {
+            		commercialRuleHeader.getCommercialRuleItems().size();
+            		commercialRuleHeaderService.detach(commercialRuleHeader);
+            		CommercialRuleHeader duplicate = new CommercialRuleHeader(commercialRuleHeader);
+            		duplicate.setTargetOfferTemplate(offer);
+            		commercialRuleHeaderService.create(duplicate);
+            		offer.getCommercialRules().add(duplicate);
+    			}
             }
 
         } else {
