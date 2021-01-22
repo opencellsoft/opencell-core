@@ -2932,6 +2932,18 @@
 			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_product_id" deferrable="false" initiallyDeferred="false"
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
 	</changeSet>
+		<changeSet id="#20210121-540-128" author="TarikFA">
+		
+	        <addColumn tableName="billing_service_instance">
+				<column name="product_version_id" type="bigint" />
+				<column name="quote_product_id" type="bigint" />
+	        </addColumn>
+	        
+			<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_service_instance" constraintName="fk_cpq_quote_version_serviceInstance_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
+			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="billing_service_instance" constraintName="fk_cpq_quote_product_serviceInstance_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+	</changeSet>
 
 </databaseChangeLog>
 

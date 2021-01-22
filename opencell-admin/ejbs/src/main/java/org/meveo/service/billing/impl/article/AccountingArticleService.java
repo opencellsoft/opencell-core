@@ -20,7 +20,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class AccountingArticleService1 extends BusinessService<AccountingArticle> {
+public class AccountingArticleService extends BusinessService<AccountingArticle> {
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	

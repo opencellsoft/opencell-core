@@ -21,12 +21,18 @@ package org.meveo.api.billing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -41,38 +47,61 @@ import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.TerminationReasonService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
 import org.meveo.service.cpq.QuoteLotService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteOfferService;
 
 /**
@@ -110,6 +139,32 @@ public class CpqQuoteApi extends BaseApi {
 	private ServiceSingleton serviceSingleton;
     @Inject 
     private InvoiceTypeService invoiceTypeService;
+    @Inject
+    private TerminationReasonService terminationReasonService;
+    
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+    
+    @Inject
+    CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    OneShotChargeInstanceService oneShotChargeInstanceService;
+    
+    @Inject
+    RecurringChargeInstanceService recurringChargeInstanceService;
+    
+    @Inject
+    WalletOperationService walletOperationService;
+    
+    @Inject
+    AccountingArticleService accountingArticleService;
+    
+    @Inject
+    QuoteArticleLineService quoteArticleLineService;
 	
 	public QuoteDTO createQuote(QuoteDTO quote) {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -704,6 +759,214 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 		quoteVersionService.update(quoteVersion);
 	}
+	
+	public QuoteVersion quoteQuotation(String quoteCode, int currentVersion) {
+		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+		if(quoteVersion == null)
+			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+		for(QuoteOffer quoteOffer:quoteVersion.getQuoteOffers()) {
+			offerQuotation(quoteOffer);
+		}
+		return quoteVersion;
+	}
+	
+	public void offerQuotation(QuoteOffer quoteOffer) {
+		Subscription subscription=instantiateVirtualSubscription(quoteOffer);
+		List<WalletOperation> walletOperations=quoteRating(subscription, true);
+		QuoteArticleLine quoteArticleLine=null;
+		for(WalletOperation wo:walletOperations) {
+			 quoteArticleLine=new QuoteArticleLine();
+			 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
+			 quoteArticleLine.setQuantity(wo.getQuantity());
+			 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
+			 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
+			 quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+			 quoteArticleLineService.create(quoteArticleLine);
+		}
+	}
 
-   
+	@SuppressWarnings("unused")
+	public List<WalletOperation> quoteRating(Subscription subscription, boolean isVirtual) throws BusinessException {
+
+		List<WalletOperation> walletOperations = new ArrayList<>();
+		BillingAccount billingAccount = null;
+		if (subscription != null) {
+
+			billingAccount = subscription.getUserAccount().getBillingAccount();
+			Map<String, Object> attributes=null;
+			// Add Service charges
+			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+				attributes=new HashMap<String, Object>();
+				for (AttributeInstance attributeInstance:serviceInstance.getAttributeInstances()) {
+					Attribute attribute=attributeInstance.getAttribute();
+					Object value=null;
+					switch (attribute.getAttributeType()) {
+					case TEXT: 
+					case LIST_TEXT :
+					case LIST_MULTIPLE_TEXT :
+					case LIST_MULTIPLE_NUMERIC : 
+						value=attributeInstance.getStringValue();
+					case NUMERIC: 
+					case LIST_NUMERIC :
+						value=attributeInstance.getDoubleValue();
+					case DATE: 
+						value=attributeInstance.getDateValue();	
+					default : 
+						value=attributeInstance.getStringValue();	
+						
+					if(value!=null) {
+						attributes.put(attributeInstance.getAttribute().getCode(), value);
+					}
+					
+				}
+				}
+				Optional<AccountingArticle> accountingArticle=accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
+				// Add subscription charges
+				for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
+					try {
+						WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription,
+								subscriptionCharge, serviceInstance.getSubscriptionDate(),
+								serviceInstance.getQuantity());
+						if (wo != null) {
+							wo.setAccountingArticle(accountingArticle.get());
+							walletOperations.add(wo);
+						}
+
+					} catch (RatingException e) {
+						log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
+								e.getRejectionReason());
+						throw e; // e.getBusinessException();
+
+					} catch (BusinessException e) {
+						log.error("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getMessage(),
+								e);
+						throw e;
+					}
+				}
+
+				// Add recurring charges
+				for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+					try {
+						  Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(recurringCharge, recurringCharge.getSubscriptionDate());
+					        
+						List<WalletOperation> walletOps = recurringChargeInstanceService
+								.applyRecurringCharge(recurringCharge, nextApplicationDate, false, true, null);
+						if (walletOps != null && !walletOps.isEmpty()) {
+							for(WalletOperation wo:walletOps){
+								wo.setAccountingArticle(accountingArticle.get());
+								walletOperations.add(wo);
+							}
+							
+						}
+
+					} catch (RatingException e) {
+						log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
+						throw e; // e.getBusinessException();
+
+					} catch (BusinessException e) {
+						log.error("Failed to apply a recurring charge {}: {}", recurringCharge, e.getMessage(), e);
+						throw e;
+					}
+				}
+			}
+
+		}
+		return walletOperations;
+	}
+	
+	private Subscription instantiateVirtualSubscription(QuoteOffer quoteOffer){
+
+      
+        String subscriptionCode = UUID.randomUUID().toString();
+
+        Subscription subscription = new Subscription();
+        subscription.setCode(subscriptionCode);
+        subscription.setSeller(quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller());
+        
+        subscription.setOffer(quoteOffer.getOfferTemplate());
+        subscription.setSubscriptionDate(new Date());
+        subscription.setEndAgreementDate(null);
+//
+//        String terminationReasonCode = null;
+//
+//        Date terminationDate = null;
+//
+//        if (terminationDate == null && terminationReasonCode != null) {
+//            throw new MissingParameterException("terminationDate");
+//        } else if (terminationDate != null && terminationReasonCode == null) {
+//            throw new MissingParameterException("terminationReason");
+//        }
+//
+//        if (terminationReasonCode != null) {
+//            subscription.setTerminationDate(terminationDate);
+//
+//            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+//            if (terminationReason != null) {
+//                subscription.setSubscriptionTerminationReason(terminationReason);
+//            } else {
+//                throw new InvalidParameterException("terminationReason", terminationReasonCode);
+//            }
+//        }
+
+
+        // instantiate and activate services
+        processProducts(subscription, quoteOffer.getQuoteProduct());
+
+        return subscription;
+    }
+
+	
+    private void processProducts(Subscription subscription, List<QuoteProduct> products){
+
+        for (QuoteProduct quoteProduct : products) {
+        	Product product=quoteProduct.getProductVersion().getProduct();
+            String productCode = product.getCode();
+
+            if (StringUtils.isBlank(productCode)) {
+                throw new MissingParameterException("serviceCode");
+            }
+
+            ServiceInstance serviceInstance = new ServiceInstance();
+            serviceInstance.setCode(productCode);
+            serviceInstance.setQuantity(quoteProduct.getQuantity());
+            serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
+            serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+            serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
+            serviceInstance.setQuoteProduct(quoteProduct);
+            serviceInstance.setProductVersion(quoteProduct.getProductVersion());
+            if (serviceInstance.getTerminationDate() == null && subscription.getTerminationDate() != null) {
+                serviceInstance.setTerminationDate(subscription.getTerminationDate());
+                serviceInstance.setSubscriptionTerminationReason(subscription.getSubscriptionTerminationReason());
+            }
+
+            serviceInstance.setSubscription(subscription);
+            serviceInstance.setServiceTemplate(serviceTemplateService.findByCode(productCode));
+
+            /***** @TODO Validate and populate customFields***/
+            /***** @TODO Create attributeInstances***/
+            AttributeInstance attributeInstance=null;
+            for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
+            	attributeInstance=new AttributeInstance(quoteAttribute);
+            	attributeInstance.setServiceInstance(serviceInstance);
+            	serviceInstance.addAttributeInstance(attributeInstance);
+            }
+            serviceInstanceService.serviceInstanciation(serviceInstance, null, null, true);
+
+            List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
+            for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
+                oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
+                oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+            }
+
+            List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
+            for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
+                recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
+                recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
+                recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            }
+            subscription.addServiceInstance(serviceInstance);
+        }
+    }
+
+
 }
