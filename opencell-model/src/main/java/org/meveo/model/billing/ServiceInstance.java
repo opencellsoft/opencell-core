@@ -35,9 +35,11 @@ import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.AttributeOverride;
@@ -109,6 +111,16 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
+    
+    /** Service template/definition. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_version_id")
+    private ProductVersion productVersion;
+    
+    /** Service template/definition. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_product_id")
+    private QuoteProduct quoteProduct;
 
     /**
      * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
@@ -1113,8 +1125,64 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setChargeInstances(List<ChargeInstance> chargeInstances) {
         this.chargeInstances = chargeInstances;
     }
+    
+    
 
     /**
+	 * @return the attributeInstances
+	 */
+	public List<AttributeInstance> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	/**
+	 * @param attributeInstances the attributeInstances to set
+	 */
+	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+	
+	public void addAttributeInstance(AttributeInstance attributeInstance) {
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		if(attributeInstance!=null) {
+			attributeInstances.add(attributeInstance);
+		}
+		
+	}	
+	
+	
+
+	/**
+	 * @return the product
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+	
+	
+
+	/**
+	 * @return the quoteProduct
+	 */
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
+	}
+
+	/**
+	 * @param quoteProduct the quoteProduct to set
+	 */
+	public void setQuoteProduct(QuoteProduct quoteProduct) {
+		this.quoteProduct = quoteProduct;
+	}
+
+	/**
      * Sort out charge instances by their type
      */
     private void splitChargeInstances() {

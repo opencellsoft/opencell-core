@@ -73,6 +73,8 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -87,10 +89,12 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -146,6 +150,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    
 
 //    private Map<String, String> descriptionMap = new HashMap<>();
 
@@ -505,7 +513,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             throws BusinessException, RatingException {
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-
+        
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -554,26 +562,34 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
                 }
                 log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
-                if (appProvider.isEntreprise()) {
-                    unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
-                    if (pricePlan.getAmountWithoutTaxEL() != null) {
-                        unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
-                            unitPriceWithoutTaxOverridden);
-                        if (unitPriceWithoutTaxOverridden == null) {
-                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
-                        }
-                    }
 
-                } else {
-                    unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
-                    if (pricePlan.getAmountWithTaxEL() != null) {
-                        unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan,
-                            unitPriceWithoutTaxOverridden);
-                        if (unitPriceWithTaxOverriden == null) {
-                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
-                        }
-                    }
-                }
+    			PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService
+    					.getLastPublishedVersion(pricePlan.getCode());
+    			if(ppmVersion!=null) {
+    				rateWalletOperationWithPPMVersion(bareWalletOperation, ppmVersion, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
+    			}else {
+    				  if (appProvider.isEntreprise()) {
+    	                    unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
+    	                    if (pricePlan.getAmountWithoutTaxEL() != null) {
+    	                        unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
+    	                            unitPriceWithoutTaxOverridden);
+    	                        if (unitPriceWithoutTaxOverridden == null) {
+    	                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
+    	                        }
+    	                    }
+
+    	                } else {
+    	                    unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
+    	                    if (pricePlan.getAmountWithTaxEL() != null) {
+    	                        unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan,
+    	                            unitPriceWithoutTaxOverridden);
+    	                        if (unitPriceWithTaxOverriden == null) {
+    	                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
+    	                        }
+    	                    }
+    	                }
+    			}
+              
             }
 
             // if the wallet operation correspond to a recurring charge that is
@@ -1213,4 +1229,42 @@ public class RatingService extends PersistenceService<WalletOperation> {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
         }
     }
+    
+	public void rateWalletOperationWithPPMVersion(WalletOperation bareWalletOperation, PricePlanMatrixVersion ppmVersion,
+			BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden) {
+		
+			if (ppmVersion != null) {
+				if(!ppmVersion.isMatrix()) {
+				if (appProvider.isEntreprise()) {
+					unitPriceWithoutTaxOverridden = ppmVersion.getAmountWithoutTax();
+					if (ppmVersion.getAmountWithoutTaxEL() != null) {
+						unitPriceWithoutTaxOverridden = evaluateAmountExpression(ppmVersion.getAmountWithoutTaxEL(),
+								bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
+								null, unitPriceWithoutTaxOverridden);
+						if (unitPriceWithoutTaxOverridden == null) {
+							throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
+									+ " EL:" + ppmVersion.getAmountWithoutTaxEL());
+						}
+					}
+
+				} else {
+					unitPriceWithTaxOverriden = ppmVersion.getAmountWithTax();
+					if (ppmVersion.getAmountWithTaxEL() != null) {
+						unitPriceWithTaxOverriden = evaluateAmountExpression(ppmVersion.getAmountWithTaxEL(),
+								bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), null,
+								unitPriceWithoutTaxOverridden);
+						if (unitPriceWithTaxOverriden == null) {
+							throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
+									+ " EL:" + ppmVersion.getAmountWithTaxEL());
+						}
+					}
+				}
+				}else {
+					PricePlanMatrixLine pricePlanMatrixLine=pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation.getChargeInstance());
+					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
+				}
+			}
+		
+	}
+    	
 }

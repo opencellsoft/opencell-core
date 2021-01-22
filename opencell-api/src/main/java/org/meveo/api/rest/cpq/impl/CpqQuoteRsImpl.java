@@ -42,6 +42,7 @@ import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.QuoteStatusEnum;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
@@ -221,10 +222,16 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        }
     }
 
-//	@Override
-//	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
+		GetQuoteVersionDtoResponse getQuoteVersionDtoResponse =new GetQuoteVersionDtoResponse();
+		 try {
+	            QuoteVersion cpqQuoteVersion = cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion);
+	            getQuoteVersionDtoResponse = new GetQuoteVersionDtoResponse(cpqQuoteVersion);
+		          return Response.ok(getQuoteVersionDtoResponse).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, getQuoteVersionDtoResponse.getActionStatus());
+	        }
+	}
    
 }

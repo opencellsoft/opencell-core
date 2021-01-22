@@ -59,7 +59,6 @@ public class MyTest {
 		
 		ContactInformation ci=new ContactInformation();
 		ci.setEmail("rachidweb@gmail.com");
-		
 		Address address=new Address();
 		address.setAddress1("2578");
 		address.setCity("Paris");

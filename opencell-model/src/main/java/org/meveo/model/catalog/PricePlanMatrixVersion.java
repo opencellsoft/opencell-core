@@ -46,7 +46,7 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:code order by p.currentVersion desc ")
+        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
 })
 public class PricePlanMatrixVersion extends AuditableEntity {
     
@@ -78,7 +78,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_matrix")
-    private Boolean isMatrix;
+    private boolean isMatrix;
 
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
@@ -159,11 +159,11 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.validity = validity;
     }
 
-    public Boolean getMatrix() {
+    public Boolean isMatrix() {
         return isMatrix;
     }
 
-    public void setMatrix(Boolean matrix) {
+    public void setMatrix(boolean matrix) {
         isMatrix = matrix;
     }
 

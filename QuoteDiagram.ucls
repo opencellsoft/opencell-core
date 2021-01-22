@@ -95,7 +95,7 @@
   <class id="11" language="java" name="org.meveo.model.quote.QuoteArticleLine" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/quote/QuoteArticleLine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="102" width="219" x="1492" y="256"/>    
+    <position height="-1" width="-1" x="1496" y="289"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="true" package="false" protected="true" private="true" static="false"/>      
@@ -115,107 +115,103 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="15">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="16" name="contract">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="17" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="16" name="quoteArticleLines"/>      
+      <multiplicity id="17" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="18">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="19" name="attribute">        
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="19" name="contract">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="20" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="21">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="22" name="quoteVersion">        
-        <position height="0" width="0" x="171" y="-60"/>      
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="22" name="attribute">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="23" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="24">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="25" name="quoteVersion">        
+        <position height="0" width="0" x="171" y="-60"/>      
+      </attribute>      
+      <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="171" y="-60"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="24">    
+  <association id="27">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="25" name="quoteProduct">        
+      <attribute id="28" name="quoteProduct">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="26" minimum="0" maximum="2147483647">        
+      <multiplicity id="29" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="27">    
+  <association id="30">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="31" name="quoteArticleLine"/>      
+      <multiplicity id="32" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="33">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="34" name="quoteProduct"/>      
+      <multiplicity id="35" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="36">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="28" name="quoteLot">        
+      <attribute id="37" name="quoteLot">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="29" minimum="0" maximum="1">        
+      <multiplicity id="38" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="30">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="31" name="groupedAttributes">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="32" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="33">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="34" name="quoteProducts"/>      
-      <multiplicity id="35" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="37" name="quoteArticleLine"/>      
-      <multiplicity id="38" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="39">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="40" name="quoteVersion">        
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="40" name="groupedAttributes">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="41" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="7" navigable="false">      
+    <end type="SOURCE" refId="9" navigable="false">      
       <attribute id="43" name="quoteVersion">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -227,47 +223,59 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="45">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="46" name="quoteProduct">        
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="46" name="quoteVersion">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="47" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="48">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="49" name="quoteAttributes">        
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="49" name="quoteProduct">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="50" minimum="0" maximum="2147483647">        
+      <multiplicity id="50" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="51">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="52" name="quoteAttributes">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="53" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="51">    
+  <association id="54">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="52" name="quote">        
+      <attribute id="55" name="quote">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="53" minimum="0" maximum="1">        
+      <multiplicity id="56" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="54">    
+  <association id="57">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="55" name="quoteOffre">        
+      <attribute id="58" name="quoteOffre">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="56" minimum="0" maximum="1">        
+      <multiplicity id="59" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    

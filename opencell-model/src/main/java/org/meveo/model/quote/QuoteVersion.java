@@ -1,5 +1,6 @@
 package org.meveo.model.quote;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +39,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 @NamedQueries({ 
 	@NamedQuery(name = "QuoteVersion.findByCode", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code order by qv.quoteVersion desc"),
 	@NamedQuery(name = "QuoteVersion.countCode", query = "select count(*) from QuoteVersion qv left join qv.quote qq where qq.code=:code"),
-	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=PUBLISHED"),
+	@NamedQuery(name = "QuoteVersion.findByQuoteIdAndStatusActive", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id and qv.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteId", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.id=:id"),
 	@NamedQuery(name = "QuoteVersion.findByQuoteAndVersion", query = "select qv from QuoteVersion qv left join qv.quote qq where qq.code=:code and qv.quoteVersion=:quoteVersion")
 })
@@ -100,7 +101,7 @@ public class QuoteVersion extends BaseEntity{
     
     @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<QuoteOffer> quoteOffers;
+	private List<QuoteOffer> quoteOffers=new ArrayList<QuoteOffer>();
 	/**
 	 * @return the quoteVersion
 	 */
