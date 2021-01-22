@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -122,7 +124,27 @@ public class ProductService extends BusinessService<Product> {
     		Collections.sort(productVersions, new Comparator<ProductVersion>() {
 				@Override
 				public int compare(ProductVersion o1, ProductVersion o2) {
-					return o2.getValidity().getFrom().compareTo(o1.getValidity().getFrom());
+					DatePeriod o1Period = o1.getValidity();
+					DatePeriod o2Period = o2.getValidity();
+					if(o1Period == null && o2Period == null) {
+						return 0;
+					}else if (o1Period != null && o2Period == null) 
+						return 1;
+					else if (o1Period == null && o2Period != null) 
+						return -1;
+					else{
+						Date o1from = o1Period.getFrom();
+						Date o2from = o2Period.getFrom();
+						if(o1from == null && o2from == null) {
+							return 0;
+						}else if (o1from != null && o2from == null) 
+							return 1;
+						else if(o1from == null && o2from != null)
+							return -1;
+						else 
+							return o2from.compareTo(o1from);
+					}
+					
 				}
 			});
     		for (ProductVersion pv : productVersions) {
