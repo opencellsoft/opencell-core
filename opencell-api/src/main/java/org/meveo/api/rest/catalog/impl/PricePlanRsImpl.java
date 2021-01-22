@@ -29,6 +29,7 @@ import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixLineResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
@@ -217,6 +218,11 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         } catch (MeveoApiException e) {
             return errorResponse(e, result.getActionStatus());
         }
+    }
+
+    @Override
+    public Response listPricePlanMatrixVersions(PagingAndFiltering pagingAndFiltering) {
+        return null;
     }
 
     @Override
