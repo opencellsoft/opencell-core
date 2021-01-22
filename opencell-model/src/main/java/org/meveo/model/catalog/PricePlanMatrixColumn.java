@@ -70,6 +70,10 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @NotNull
     private Attribute attribute;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_range")
+    private Boolean isRange;
+
     @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
@@ -135,5 +139,13 @@ public class PricePlanMatrixColumn extends BusinessEntity {
 
     public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
         this.pricePlanMatrixValues = pricePlanMatrixValues;
+    }
+
+    public Boolean getRange() {
+        return isRange;
+    }
+
+    public void setRange(Boolean range) {
+        isRange = range;
     }
 }

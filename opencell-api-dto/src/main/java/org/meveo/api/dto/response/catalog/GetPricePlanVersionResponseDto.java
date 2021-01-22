@@ -46,6 +46,10 @@ public class GetPricePlanVersionResponseDto extends BaseResponse {
         this.pricePlanVersion =  new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
     }
 
+    public GetPricePlanVersionResponseDto(PricePlanMatrixVersionDto pricePlanMatrixVersion) {
+        this.pricePlanVersion = pricePlanMatrixVersion;
+    }
+
     public PricePlanMatrixVersionDto getPricePlanVersion() {
         return pricePlanVersion;
     }

@@ -8,20 +8,23 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.meveo.model.catalog.PricePlanMatrixLine;
+import java.util.Set;
 
 @Stateless
 public class PricePlanMatrixLineApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     public PricePlanMatrixLineDto addPricePlanMatrixLine(PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
-        checCommunMissingParameters(dtoData);
+        checkCommunMissingParameters(dtoData);
 
         return pricePlanMatrixLineService.createPricePlanMatrixLine(dtoData);
     }
@@ -30,13 +33,13 @@ public class PricePlanMatrixLineApi extends BaseApi {
 
         if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))
             missingParameters.add("ppmLineId");
-        checCommunMissingParameters(pricePlanMatrixLineDto);
+        checkCommunMissingParameters(pricePlanMatrixLineDto);
 
 
         return pricePlanMatrixLineService.updatePricePlanMatrixLine(pricePlanMatrixLineDto);
     }
 
-    private void checCommunMissingParameters(PricePlanMatrixLineDto dtoData) {
+    private void checkCommunMissingParameters(PricePlanMatrixLineDto dtoData) {
         if(StringUtils.isBlank(dtoData.getPricePlanMatrixCode())){
             missingParameters.add("pricePlanMatrixCode");
         }
@@ -62,7 +65,8 @@ public class PricePlanMatrixLineApi extends BaseApi {
         if(ppmLine == null){
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
         }
-        pricePlanMatrixLineService.remove(ppmLine);
+        ppmLine.getPricePlanMatrixVersion().getLines().remove(ppmLine);
+        pricePlanMatrixVersionService.update(ppmLine.getPricePlanMatrixVersion());
     }
 
     public PricePlanMatrixLineDto load(Long ppmLineId){
