@@ -137,6 +137,11 @@ public class ProductApi extends BaseApi {
 
 				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
+			}else {
+				ProductVersion  productVersion= new ProductVersion();
+				productVersion.setProduct(product);
+				productVersion.setShortDescription(productDto.getLabel());
+				productVersionService.create(productVersion);
 			}
 			return response;
 		} catch (BusinessException e) {
