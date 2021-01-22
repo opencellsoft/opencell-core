@@ -18,6 +18,13 @@
 
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
+
 import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.PricePlanMatrixColumnApi;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
@@ -35,6 +42,7 @@ import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanMatrixLineResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -43,16 +51,8 @@ import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
-import org.meveo.model.catalog.PricePlanMatrixLine;
-import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -303,6 +303,19 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
                     .build();
         } catch (MeveoApiException e) {
             return errorResponse(e, response.getActionStatus());
+        }
+    }
+    
+
+    @Override
+    public Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
+    	GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+        	result = pricePlanMatrixLineApi.addPricePlanMatrixLines(pricePlanMatrixLinesDto);
+
+        	  return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
         }
     }
 
