@@ -329,7 +329,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         			Media newMedia = new Media(media); 
         			newMedia.setOffer(offer);
         			mediaService.create(newMedia);
-    				offer.getMedias().add(media);
+    				offer.getMedias().add(newMedia);
     			}
             }
             
