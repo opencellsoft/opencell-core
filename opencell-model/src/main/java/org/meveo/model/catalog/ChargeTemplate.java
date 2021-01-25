@@ -136,8 +136,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * Corresponding invoice subcategory
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_sub_category", nullable = false)
-    @NotNull
+    @JoinColumn(name = "invoice_sub_category", nullable = false) 
     protected InvoiceSubCategory invoiceSubCategory;
 
     /**

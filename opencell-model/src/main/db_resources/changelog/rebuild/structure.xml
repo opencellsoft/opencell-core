@@ -3401,7 +3401,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="invoice_sub_category" type="bigint">
-                <constraints nullable="false" />
             </column>
             <column name="input_unit_description" type="varchar(20)" />
             <column name="rating_unit_description" type="varchar(20)" />
