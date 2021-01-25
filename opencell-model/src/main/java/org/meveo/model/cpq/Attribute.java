@@ -29,12 +29,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
-import org.meveo.model.hierarchy.HierarchyLevel;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -135,6 +135,8 @@ public class Attribute extends EnableBusinessCFEntity{
     @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
+    @Column(name = "unit_nb_decimal")
+    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
     public Attribute(){
 
@@ -326,6 +328,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setParentAttribute(Attribute parentAttribute) {
 		this.parentAttribute = parentAttribute;
+	}
+
+	/**
+	 * @return the unitNbDecimal
+	 */
+	public int getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+	/**
+	 * @param unitNbDecimal the unitNbDecimal to set
+	 */
+	public void setUnitNbDecimal(int unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
 	}
 	
 	
