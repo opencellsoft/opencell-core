@@ -4072,6 +4072,10 @@ END $$;]]>
 				end
 			where (id=-14 or code='AO_Job')
     	</sql>
+    </changeSet>        
+    
+    <changeSet id="#5909_20210118" author="AndriusKarpavicius">
+        <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
     </changeSet>
     
 </databaseChangeLog>
