@@ -158,6 +158,26 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class)))
     })
     public Response updateQuoteItem(@Parameter(description = "Product quote information", required = true) QuoteOfferDTO quoteitem, @Context UriInfo info);
+    
+    /**
+     * Get details of a single quote
+     * 
+     * @param id Product code
+     * @param info Http request context
+     * @return quote response
+     */
+    @GET
+    @Path("/quoteItem/{quoteCode}/{quoteVersion}")
+    @Operation(summary = "Get List of quote offer by quote code and quote version number",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+            @ApiResponse(responseCode="404", description = "The quote offer doesn't exist",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response findQuoteItems(@Parameter(description = "Product quote code", required = true) @PathParam("quoteCode") String quoteCode, 
+    								@Parameter(description = "Product quote code", required = true) @PathParam("quoteVersion") int quoteVersion,
+    								@Context UriInfo info);
 
     /**
      * Delete a quote.
