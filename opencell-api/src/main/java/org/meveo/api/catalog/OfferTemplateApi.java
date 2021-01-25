@@ -20,6 +20,7 @@ package org.meveo.api.catalog;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -351,6 +352,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        offerTemplate.setStatusDate(Calendar.getInstance().getTime());
 
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
