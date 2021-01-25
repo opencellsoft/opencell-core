@@ -467,7 +467,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	@Column(name = "payment_status")
 	@Enumerated(EnumType.STRING)
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
-	private InvoicePaymentStatusEnum paymentStatus;
+	private InvoicePaymentStatusEnum paymentStatus = InvoicePaymentStatusEnum.NONE;
 	
     /**
      * Payment status change date

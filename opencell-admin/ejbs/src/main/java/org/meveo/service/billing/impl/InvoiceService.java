@@ -4363,5 +4363,45 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
 		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
 	}
+	
+    /**
+     * Find by invoice number and invoice type id.
+     *
+     * @param invoiceNumber invoice's number
+     * @param invoiceType invoice's type
+     * @return found invoice
+     * @throws BusinessException business exception
+     */
+    public Invoice findByInvoiceTypeAndInvoiceNumber(String invoiceNumber, Long invoiceTypeId) throws BusinessException {
+        QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
+        qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
+        qb.addCriterion("i.invoiceType.id","=", invoiceTypeId, true);
+        try {
+            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.info("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+	public byte[] getInvoicePdf(Invoice invoice, boolean generatePdfIfNoExist) {
+		invoice=retrieveIfNotManaged(invoice);
+        if (invoice.isPrepaid()) {
+            throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
+        }
+        if (!invoiceService.isInvoicePdfExist(invoice)) {
+            if (generatePdfIfNoExist) {
+                produceInvoicePdf(invoice);
+            } else {
+            	return null;
+            }
+        }
+        return getInvoicePdf(invoice);
+	}
 
 }
