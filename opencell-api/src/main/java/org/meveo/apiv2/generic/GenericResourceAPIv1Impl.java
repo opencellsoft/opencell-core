@@ -108,13 +108,13 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
                         + METHOD_GET_ALL + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.getPath() );
+System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
                         + METHOD_GET_ALL );
-System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.getPath() );
+System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             }
             return httpClient.target( redirectURI ).request().get();
         }
@@ -125,7 +125,7 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.getPath() );
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_GET_AN_ENTITY + "?"
                     + entityClassName + "Code=" + entityCode);
-System.out.println( "GET AN ENTITY : " + redirectURI.getPath() );
+System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             return httpClient.target( redirectURI ).request().get();
         }
 
@@ -142,7 +142,7 @@ System.out.println( "GET AN ENTITY : " + redirectURI.getPath() );
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathCreateAnEntity )
                     + METHOD_CREATE );
-System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
+System.out.println( "CREATE AN ENTITY : " + redirectURI.toString() );
 
             return httpClient.target( redirectURI )
                     .request(MediaType.APPLICATION_JSON)
@@ -194,6 +194,9 @@ System.out.println( "DISABLE AN ENTITY : " + redirectURI.toString() );
                                 .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
                     }
                 }
+            }
+            else {
+
             }
         }
 

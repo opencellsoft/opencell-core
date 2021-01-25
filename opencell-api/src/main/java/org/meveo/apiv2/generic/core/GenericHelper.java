@@ -47,7 +47,10 @@ public class GenericHelper {
         Reflections reflections = new Reflections("org.meveo.api.dto");
         Map<String, Class> entitiesDtoByName = new HashMap<>();
         for ( Class aClass : reflections.getSubTypesOf(IEntityDto.class) ) {
-            entitiesDtoByName.put( aClass.getSimpleName().toLowerCase(), aClass );
+            if ( aClass.getSimpleName().equals("PricePlanMatrixDto") )
+                entitiesDtoByName.put( "priceplandto", aClass );
+            else
+                entitiesDtoByName.put( aClass.getSimpleName().toLowerCase(), aClass );
         }
         return entitiesDtoByName;
     }
