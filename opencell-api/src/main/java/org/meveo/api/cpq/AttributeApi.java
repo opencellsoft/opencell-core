@@ -85,6 +85,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		processTags(postData,attribute);
 		attributeService.create(attribute);
 		return attribute;
@@ -128,6 +129,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+		if(postData.getUnitNbDecimal() != null) {
+			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
+		}
 		processTags(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;
