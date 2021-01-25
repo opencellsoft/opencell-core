@@ -4,7 +4,7 @@
   <class id="1" language="java" name="org.meveo.model.catalog.PricePlanMatrix" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/catalog/PricePlanMatrix.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="821" width="234" x="809" y="-181"/>    
+    <position height="-1" width="-1" x="902" y="232"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -44,7 +44,7 @@
   <class id="5" language="java" name="org.meveo.model.catalog.ChargeTemplate" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/catalog/ChargeTemplate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="181" y="-36"/>    
+    <position height="-1" width="-1" x="1237" y="182"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -61,64 +61,106 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="7">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="8" name="pricePlanMatrixVersion">        
-        <position height="0" width="0" x="62" y="-21"/>      
-      </attribute>      
-      <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="0" width="0" x="62" y="-21"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="10">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="11" name="pricePlanMatrixColumn">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="12" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="13">    
+  <class id="7" language="java" name="org.meveo.model.catalog.OneShotChargeTemplate" project="opencell-model" 
+    file="/opencell-model/src/main/java/org/meveo/model/catalog/OneShotChargeTemplate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1408" y="624"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="org.meveo.model.catalog.RecurringChargeTemplate" project="opencell-model" 
+    file="/opencell-model/src/main/java/org/meveo/model/catalog/RecurringChargeTemplate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1686" y="132"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="org.meveo.model.catalog.UsageChargeTemplate" project="opencell-model" 
+    file="/opencell-model/src/main/java/org/meveo/model/catalog/UsageChargeTemplate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1602" y="454"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <generalization id="10">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="11">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="14" name="pricePlanMatrixVersion">        
+      <attribute id="12" name="pricePlanMatrixVersion">        
         <position height="0" width="0" x="62" y="-21"/>      
       </attribute>      
-      <multiplicity id="15" minimum="0" maximum="1">        
+      <multiplicity id="13" minimum="0" maximum="1">        
         <position height="0" width="0" x="62" y="-21"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="16">    
+  <association id="14">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="17" name="pricePlanMatrix">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="15" name="pricePlanMatrix">        
+        <position height="0" width="0" x="-24" y="3"/>      
       </attribute>      
-      <multiplicity id="18" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="16" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-24" y="3"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <generalization id="17">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
   <association id="19">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="20" name="pricePlanMatrixLine">        
-        <position height="0" width="0" x="6" y="95"/>      
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="20" name="pricePlanMatrixVersion">        
+        <position height="0" width="0" x="62" y="-21"/>      
       </attribute>      
       <multiplicity id="21" minimum="0" maximum="1">        
+        <position height="0" width="0" x="62" y="-21"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="22">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="23" name="pricePlanMatrixLine">        
+        <position height="0" width="0" x="6" y="95"/>      
+      </attribute>      
+      <multiplicity id="24" minimum="0" maximum="1">        
         <position height="0" width="0" x="6" y="95"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="25">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="26" name="pricePlanMatrixColumn">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="27" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 

@@ -62,6 +62,14 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<PricePlanMatrixLineDto> createOrUpdateLines(List<PricePlanMatrixLineDto> lines) {
+        return lines.stream()
+                .map(l -> l.getPpmLineId() != null ? updatePricePlanMatrixLine(l) : createPricePlanMatrixLine(l))
+                .collect(Collectors.toList());
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
         PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixLineDto);
 
@@ -83,9 +91,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     private PricePlanMatrixVersion getPricePlanMatrixVersion(PricePlanMatrixLineDto dtoData) {
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+        return getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+    }
+    
+    public PricePlanMatrixVersion getPricePlanMatrixVersion( String pricePlanMatrixCode,int version) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, version);
         if (pricePlanMatrixVersion == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", "" + dtoData.getPricePlanMatrixVersion(), "currentVersion");
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + version, "currentVersion");
         }
         return pricePlanMatrixVersion;
     }
@@ -153,4 +165,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 .collect(Collectors.toList());
     }
 
+    public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
+        for (PricePlanMatrixLine l : linesToRemove) {
+            remove(findById(l.getId()));
+        }
+    }
 }

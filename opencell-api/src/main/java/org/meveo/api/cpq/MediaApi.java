@@ -148,8 +148,8 @@ public class MediaApi extends BaseApi {
 			 pagingAndFiltering.getFilters().forEach( (key, value) -> {
 				 String newKey = key.replace("offerCode", "offer.code")
 						 .replace("productCode", "product.code")
-						 .replace("serviceTemplateCode", "attribute.code")
-						 .replace("attributeCode", "serviceTemplate.code");
+						 .replace("serviceTemplateCode", "serviceTemplate.code")
+						 .replace("attributeCode", "attribute.code");
 				 filters.put(key.replace(key, newKey), value);
 			 });
 			 pagingAndFiltering.getFilters().clear();

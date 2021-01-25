@@ -38,7 +38,7 @@ public enum ColumnTypeEnum {
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
-                case COMPTAGE:
+                case COUNT:
                 case TOTAL:
                 case NUMERIC: {
                     return BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue()));
@@ -58,19 +58,21 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (pricePlanMatrixValue.getDoubleValue() == null) {
+            if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null)
                 return true;
-            }
+            BigDecimal quote =  BigDecimal.valueOf(attributeValue.getDoubleValue());
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
-                case COMPTAGE:
+                case COUNT:
                 case TOTAL:
                 case NUMERIC: {
                     {
-                        if (attributeValue.getDoubleValue() == null) {
+
+                        if (quote == null) {
                             return true;
                         }
-                        return BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()));
+                        BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
+                        return quote.doubleValue() == value.doubleValue();
                     }
                 }
                 case LIST_NUMERIC:
@@ -78,9 +80,9 @@ public enum ColumnTypeEnum {
                     if (attributeValue.getStringValue() == null) {
                         return true;
                     }
-                    return Stream.of(attributeValue.getStringValue().split(" ; "))
-                            .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
-                            .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue())));
+                    return Stream.of(pricePlanMatrixValue.getStringValue().split(" ; "))
+                            .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
+                            .anyMatch(number -> number.doubleValue() == quote.doubleValue());
                 }
                 default:
                     return false;

@@ -15,6 +15,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -31,6 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 /**
  * @author Tarik FA.
  * @version 10.0
@@ -43,7 +46,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode"),
-        @NamedQuery(name = "PricePlanMatrixVersion.findByCode", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:code order by p.currentVersion desc ")
+        @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
 })
 public class PricePlanMatrixVersion extends AuditableEntity {
     
@@ -75,7 +78,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_matrix")
-    private Boolean isMatrix;
+    private boolean isMatrix;
 
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
@@ -93,11 +96,11 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private String amountWithTaxEL;
 
-    @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixLine> lines;
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PricePlanMatrixLine> lines;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixColumn> columns;
+    private Set<PricePlanMatrixColumn> columns;
 
     /**
      * @return the status
@@ -156,27 +159,27 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.validity = validity;
     }
 
-    public Boolean getMatrix() {
+    public Boolean isMatrix() {
         return isMatrix;
     }
 
-    public void setMatrix(Boolean matrix) {
+    public void setMatrix(boolean matrix) {
         isMatrix = matrix;
     }
 
-    public List<PricePlanMatrixLine> getLines() {
+    public Set<PricePlanMatrixLine> getLines() {
         return lines;
     }
 
-    public void setLines(List<PricePlanMatrixLine> lines) {
+    public void setLines(Set<PricePlanMatrixLine> lines) {
         this.lines = lines;
     }
 
-    public List<PricePlanMatrixColumn> getColumns() {
+    public Set<PricePlanMatrixColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<PricePlanMatrixColumn> columns) {
+    public void setColumns(Set<PricePlanMatrixColumn> columns) {
         this.columns = columns;
     }
 

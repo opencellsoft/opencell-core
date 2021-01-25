@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="org.meveo.model.catalog.OfferTemplate" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/catalog/OfferTemplate.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="205" y="475"/>    
+    <position height="-1" width="-1" x="156" y="487"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -59,7 +59,7 @@
   <class id="7" language="java" name="org.meveo.model.cpq.trade.CommercialRuleLine" project="opencell-model" 
     file="/opencell-model/src/main/java/org/meveo/model/cpq/trade/CommercialRuleLine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="549" y="591"/>    
+    <position height="-1" width="-1" x="568" y="652"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -77,27 +77,27 @@
     </display>  
   </class>  
   <association id="9">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="10" name="tags">        
-        <position height="0" width="0" x="0" y="32"/>      
-      </attribute>      
-      <multiplicity id="11" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="32"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="12">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="13" name="sourceProductVersion">        
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="10" name="targetProductVersion">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="14" minimum="0" maximum="1">        
+      <multiplicity id="11" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="12">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="13" name="targetOfferTemplate">        
+        <position height="0" width="0" x="-49" y="12"/>      
+      </attribute>      
+      <multiplicity id="14" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-49" y="12"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="15">    
@@ -113,51 +113,51 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="18">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="19" name="targetProductVersion">        
-        <position height="0" width="0" x="0" y="0"/>      
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="19" name="parentTag">        
+        <position height="0" width="0" x="0" y="32"/>      
       </attribute>      
       <multiplicity id="20" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="0" y="32"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="21">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="22" name="productVersion">        
+        <position height="0" width="0" x="62" y="-9"/>      
+      </attribute>      
+      <multiplicity id="23" minimum="0" maximum="1">        
+        <position height="0" width="0" x="62" y="-9"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="21">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="22" name="commercialRuleHeader">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="23" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="24">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="25" name="targetOfferTemplate">        
+      <attribute id="25" name="targetTag">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="27">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="28" name="attributes">        
-        <position height="0" width="0" x="98" y="170"/>      
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="28" name="commercialRuleItem">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="29" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="98" y="170"/>      
+      <multiplicity id="29" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="30">    
@@ -173,75 +173,75 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="33">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="34" name="targetAttribute">        
-        <position height="0" width="0" x="93" y="119"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="34" name="attributes">        
+        <position height="0" width="0" x="98" y="170"/>      
       </attribute>      
-      <multiplicity id="35" minimum="0" maximum="1">        
-        <position height="0" width="0" x="93" y="119"/>      
+      <multiplicity id="35" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="98" y="170"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="36">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="37" name="commercialRuleItem">        
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="37" name="commercialRuleHeader">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="38" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="39">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="40" name="parentTag">        
-        <position height="0" width="0" x="0" y="32"/>      
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="40" name="targetAttribute">        
+        <position height="0" width="0" x="93" y="119"/>      
       </attribute>      
       <multiplicity id="41" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="32"/>      
+        <position height="0" width="0" x="93" y="119"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="43" name="productVersion">        
-        <position height="0" width="0" x="62" y="-9"/>      
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="43" name="tags">        
+        <position height="0" width="0" x="0" y="32"/>      
       </attribute>      
-      <multiplicity id="44" minimum="0" maximum="1">        
-        <position height="0" width="0" x="62" y="-9"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="45">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="46" name="targetTag">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="47" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="44" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="32"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="45">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="46" name="sourceOfferTemplate">        
+        <position height="0" width="0" x="-49" y="12"/>      
+      </attribute>      
+      <multiplicity id="47" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-49" y="12"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="48">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="49" name="sourceOfferTemplate">        
+      <attribute id="49" name="sourceProductVersion">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="50" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

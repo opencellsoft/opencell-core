@@ -135,7 +135,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 							isSelectable);
 					if ((isPreRequisite && line.getSourceOfferTemplate() != null
 							&& !line.getSourceOfferTemplate().getCode().equals(offerCode))
-							|| (!isPreRequisite && line.getSourceOfferTemplate() != null /*****@TODO : check offer attributes*************/
+							|| (!isPreRequisite && line.getSourceOfferTemplate() != null 
 									&& line.getSourceOfferTemplate().getCode().equals(offerCode) && line.getSourceProduct()==null)) {
 						if (continueProcess) {
 							continue;

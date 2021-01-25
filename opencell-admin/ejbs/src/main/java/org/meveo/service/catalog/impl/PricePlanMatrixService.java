@@ -99,7 +99,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         create(pp);
     }
 
-    private void validatePricePlan(PricePlanMatrix pp) {
+    public void validatePricePlan(PricePlanMatrix pp) {
         List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
             if(!pricePlanMatrix.getId().equals(pp.getId()) &&

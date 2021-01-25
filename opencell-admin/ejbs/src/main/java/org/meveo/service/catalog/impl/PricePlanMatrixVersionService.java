@@ -1,18 +1,21 @@
 package org.meveo.service.catalog.impl;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Tarik FA.
@@ -82,8 +85,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
         Integer lastVersion = getLastVersion(ppmCode);
         duplicate.setId(null);
-        duplicate.setColumns(new ArrayList<>());
-        duplicate.setLines(new ArrayList<>());
+        duplicate.setColumns(new HashSet<>());
+        duplicate.setLines(new HashSet<>());
         duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);
         duplicate.setStatus(VersionStatusEnum.DRAFT);
@@ -102,4 +105,25 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     .setParameter("pricePlanMatrixCode", ppmCode)
                     .getSingleResult();
     }
+
+    public PricePlanMatrixVersionDto load(Long id) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
+        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
+                    .setParameter("pricePlanMatrixCode", ppmCode)
+                    .getResultList();
+        
+        return result.isEmpty()?null:result.get(0);
+    }
+    
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+    	/*******@TODO ticket 540-150*****************/
+    	return null;
+    }
+    
+    
 }

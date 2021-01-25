@@ -1068,4 +1068,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+    
+    public void addServiceInstance(ServiceInstance serviceInstance) {
+		serviceInstances=serviceInstances!=null?serviceInstances:new ArrayList<ServiceInstance>();
+		if(serviceInstance!=null) {
+			serviceInstances.add(serviceInstance);
+		}
+		
+	}
 }

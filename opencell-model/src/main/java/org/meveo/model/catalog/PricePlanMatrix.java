@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -54,7 +55,6 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -79,7 +79,61 @@ import org.meveo.model.scripts.ScriptInstance;
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix>, ISearchable {
     private static final long serialVersionUID = 1L;
 
-    /**
+    
+	public PricePlanMatrix() {
+		super();
+	}
+
+	public PricePlanMatrix(PricePlanMatrix copy) {
+		super();
+		this.eventCode = copy.eventCode;
+		this.offerTemplate = copy.offerTemplate;
+		this.startSubscriptionDate = copy.startSubscriptionDate;
+		this.endSubscriptionDate = copy.endSubscriptionDate;
+		this.startRatingDate = copy.startRatingDate;
+		this.endRatingDate = copy.endRatingDate;
+		this.minQuantity = copy.minQuantity;
+		this.maxQuantity = copy.maxQuantity;
+		this.minSubscriptionAgeInMonth = copy.minSubscriptionAgeInMonth;
+		this.maxSubscriptionAgeInMonth = copy.maxSubscriptionAgeInMonth;
+		this.criteria1Value = copy.criteria1Value;
+		this.criteria2Value = copy.criteria2Value;
+		this.criteria3Value = copy.criteria3Value;
+		this.criteriaEL = copy.criteriaEL;
+		this.criteriaELSpark = copy.criteriaELSpark;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountWithTax = copy.amountWithTax;
+		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
+		this.amountWithoutTaxELSpark = copy.amountWithoutTaxELSpark;
+		this.amountWithTaxEL = copy.amountWithTaxEL;
+		this.amountWithTaxELSpark = copy.amountWithTaxELSpark;
+		this.tradingCurrency = copy.tradingCurrency;
+		this.tradingCountry = copy.tradingCountry;
+		this.priority = copy.priority;
+		this.seller = copy.seller;
+		this.validityCalendar = copy.validityCalendar;
+		this.sequence = copy.sequence;
+		this.scriptInstance = copy.scriptInstance;
+		this.descriptionI18n = copy.descriptionI18n;
+		this.woDescriptionEL = copy.woDescriptionEL;
+		this.woDescriptionELSpark = copy.woDescriptionELSpark;
+		this.totalAmountEL = copy.totalAmountEL;
+		this.totalAmountELSpark = copy.totalAmountELSpark;
+		this.minimumAmountEL = copy.minimumAmountEL;
+		this.minimumAmountELSpark = copy.minimumAmountELSpark;
+		this.invoiceSubCategoryEL = copy.invoiceSubCategoryEL;
+		this.validityFrom = copy.validityFrom;
+		this.validityDate = copy.validityDate;
+		this.parameter1El = copy.parameter1El;
+		this.parameter2El = copy.parameter2El;
+		this.parameter3El = copy.parameter3El;
+		this.code = copy.code;
+		this.description = copy.description;
+		this.setUuid(UUID.randomUUID().toString());
+	}
+
+
+	/**
      * Charge code
      */
     @Column(name = "event_code", length = 255, nullable = false)

@@ -10,7 +10,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
-import org.meveo.service.billing.impl.article.AccountingArticleService1;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.billing.impl.article.ArticleMappingService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class ArticleMappingLineApiService implements ApiService<ArticleMappingLine> {
 
     @Inject
-    private AccountingArticleService1 accountingArticleApiService;
+    private AccountingArticleService accountingArticleApiService;
     @Inject
     private ArticleMappingService articleMappingApiService;
     @Inject

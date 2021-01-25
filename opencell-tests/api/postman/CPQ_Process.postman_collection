@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a2c00312-d683-4a3c-944a-c6785e757b3b",
+		"_postman_id": "d8226554-0cdd-4293-bbf3-1dc2f98dfdfb",
 		"name": "CPQ Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -358,7 +358,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
+									"raw": "{{opencell.url}}/catalog/product?productCode={{codeProductOne}}",
 									"host": [
 										"{{opencell.url}}"
 									],
@@ -369,7 +369,7 @@
 									"query": [
 										{
 											"key": "productCode",
-											"value": "{{productOneCode}}"
+											"value": "{{codeProductOne}}"
 										}
 									]
 								},
@@ -2634,6 +2634,45 @@
 			"name": "Account Hierarchy",
 			"item": [
 				{
+					"name": "Create Service Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"SE_TEMPLATE_TEST\",\r\n    \"disabled\": false,\r\n    \"mandatory\": false,\r\n    \"renewalRule\": {\r\n        \"initialTermType\": \"RECURRING\",\r\n        \"autoRenew\": false\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"serviceTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Customer Account Hierarchy",
 					"event": [
 						{
@@ -2881,6 +2920,174 @@
 							]
 						},
 						"description": "Find a tag type by codeTag parameter"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media Management",
+			"item": [
+				{
+					"name": "Create Media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n     \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Media",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/media/{{codeProductOne}}/{{mediaName}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"{{codeProductOne}}",
+								"{{mediaName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Media",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mediaName\": \"{{mediaName}}\",\r\n    \"label\": \"This is an updated media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"VIDEO\",\r\n    \"mediaPath\": \"/newPath/created/newDir\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Media by Product Code",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {\r\n        \"productCode\": \"{{codeProductOne}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/media/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Media",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/media/{{codeProductOne}}/{{mediaName}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"media",
+								"{{codeProductOne}}",
+								"{{mediaName}}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -4640,10 +4847,6 @@
 			"value": "PRICE_PLAN_COLUMN_2"
 		},
 		{
-			"key": "productOneCode",
-			"value": "TEST_PRODUCT_1"
-		},
-		{
 			"key": "accounteArticleCode",
 			"value": "ACCOUNT_ARTICLE_1"
 		},
@@ -4658,6 +4861,14 @@
 		{
 			"key": "executeQuotation",
 			"value": "false"
+		},
+		{
+			"key": "mediaName",
+			"value": "MEDIA_NAME"
+		},
+		{
+			"key": "serviceTemplate",
+			"value": ""
 		}
 	]
 }

@@ -18,7 +18,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.billing.impl.AccountingCodeService;
-import org.meveo.service.billing.impl.article.AccountingArticleService1;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.billing.impl.article.ArticleFamilyService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.cpq.ProductService;
@@ -28,7 +28,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     private List<String> fetchFields;
     @Inject
-    private AccountingArticleService1 accountingArticleService1;
+    private AccountingArticleService accountingArticleService;
     @Inject
     private AccountingCodeService accountingCodeService;
     @Inject
@@ -67,31 +67,31 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
                 throw new BadRequestException("No article family found with id: " + accountingArticle.getArticleFamily().getId());
         }
 
-        accountingArticleService1.create(accountingArticle);
+        accountingArticleService.create(accountingArticle);
         return accountingArticle;
     }
 
     @Override
     public List<AccountingArticle> list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), filter, null, fetchFields, null, null);
-        return accountingArticleService1.list(paginationConfiguration);
+        return accountingArticleService.list(paginationConfiguration);
     }
 
     @Override
     public Long getCount(String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null, null, filter, fetchFields, null, null);
-        return accountingArticleService1.count(paginationConfiguration);
+        return accountingArticleService.count(paginationConfiguration);
     }
 
     @Override
     public Long getCount(Map<String, Object> filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null, filter, null, fetchFields, null, null);
-        return accountingArticleService1.count(paginationConfiguration);
+        return accountingArticleService.count(paginationConfiguration);
     }
 
     @Override
     public Optional<AccountingArticle> findById(Long id) {
-        return Optional.ofNullable(accountingArticleService1.findById(id));
+        return Optional.ofNullable(accountingArticleService.findById(id));
     }
 
     @Override
@@ -127,7 +127,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(!Strings.isEmpty(baseEntity.getDescription())) {
         	accountingArticle.setDescription(baseEntity.getDescription());
         }
-        accountingArticleService1.update(accountingArticle);
+        accountingArticleService.update(accountingArticle);
         
         return accountingArticleOtional;
     }
@@ -137,7 +137,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
        Optional<AccountingArticle> accountingArticle = findById(id);
        if(accountingArticle.isPresent()) {
     	   try {
-    		   accountingArticleService1.remove(accountingArticle.get());
+    		   accountingArticleService.remove(accountingArticle.get());
            } catch (Exception e) {
                throw new BadRequestException(e);
            }
@@ -150,7 +150,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     	Optional<AccountingArticle> accountingArticle = findByCode(code);
         if(accountingArticle.isPresent()) {
      	   try {
-     		   accountingArticleService1.remove(accountingArticle.get());
+     		   accountingArticleService.remove(accountingArticle.get());
             } catch (Exception e) {
                 throw new BadRequestException(e);
             }
@@ -160,7 +160,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     
     @Override
     public Optional<AccountingArticle> findByCode(String code) {
-    	AccountingArticle accountingArticle = accountingArticleService1.findByCode(code);
+    	AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
     	if(accountingArticle == null)
     		throw new BadRequestException("No Account Article class found with code: " + code);
     	return Optional.ofNullable(accountingArticle);
@@ -172,7 +172,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 		Product product = productService.findByCode(productCode);
 		if(product == null)
             throw new BadRequestException("No Product found with code: " + productCode);
-		Optional<AccountingArticle> article = accountingArticleService1.getAccountingArticle(product, attributes);
+		Optional<AccountingArticle> article = accountingArticleService.getAccountingArticle(product, attributes);
 		return article;
 	}
 }

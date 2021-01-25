@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -47,6 +48,26 @@ import org.meveo.model.cpq.tags.Tag;
 	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode and c.targetProductVersion.product.code=:productCode and c.targetProductVersion.currentVersion=:currentVersion ")
 })
 public class CommercialRuleHeader extends BusinessEntity {
+
+	public CommercialRuleHeader(CommercialRuleHeader copy) {
+		this.ruleType = copy.ruleType;
+		this.targetOfferTemplate = copy.targetOfferTemplate;
+		this.targetProduct = copy.targetProduct;
+		this.targetProductVersion = copy.targetProductVersion;
+		this.targetGroupedAttributes = copy.targetGroupedAttributes;
+		this.targetAttribute = copy.targetAttribute;
+		this.targetAttributeValue = copy.targetAttributeValue;
+		this.targetTag = copy.targetTag;
+		this.ruleEl = copy.ruleEl;
+		this.commercialRuleItems = copy.commercialRuleItems;
+		this.disabled = copy.disabled;
+		this.code = copy.code;
+		this.description = copy.description;
+	}
+	
+	public CommercialRuleHeader() {
+		
+	}
 
 	/**
 	 * 
@@ -125,6 +146,14 @@ public class CommercialRuleHeader extends BusinessEntity {
 	@OneToMany(mappedBy = "commercialRuleHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleItem> commercialRuleItems = new ArrayList<>();
+	
+    /**
+     * Is entity disabled
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disabled", nullable = false)
+    @NotNull
+    protected boolean disabled;
 
 	/**
 	 * @return the ruleType
@@ -265,6 +294,20 @@ public class CommercialRuleHeader extends BusinessEntity {
 	 */
 	public void setCommercialRuleItems(List<CommercialRuleItem> commercialRuleItems) {
 		this.commercialRuleItems = commercialRuleItems;
+	}
+
+	/**
+	 * @return the disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	

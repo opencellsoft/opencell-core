@@ -34,6 +34,9 @@ public class QuoteAttribute extends AttributeValue {
 		this.attribute = copy.attribute;
 		this.stringValue = copy.stringValue;
 		this.quoteProduct = copy.quoteProduct;
+		this.dateValue = copy.dateValue;
+		this.doubleValue = copy.doubleValue;
+		this.quoteProduct = copy.quoteProduct;
 	}
 
 
