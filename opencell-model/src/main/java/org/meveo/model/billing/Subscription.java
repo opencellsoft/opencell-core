@@ -1068,7 +1068,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-    
+
     public void addServiceInstance(ServiceInstance serviceInstance) {
 		serviceInstances=serviceInstances!=null?serviceInstances:new ArrayList<ServiceInstance>();
 		if(serviceInstance!=null) {
@@ -1076,4 +1076,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 		}
 		
 	}
+
+    public CommercialOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(CommercialOrder order) {
+        this.order = order;
+    }
 }
