@@ -43,6 +43,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String PAIR_QUERY_PARAM_SEPARATOR = "&";
     private static final String DTO_SUFFIX = "dto";
 
+    // static final string for services
+    private static final String ENABLE_SERVICE = "enable";
+    private static final String DISABLE_SERVICE = "disable";
+
     private static final String API_REST = "api/rest";
 
     ResteasyClient httpClient;
@@ -53,6 +57,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private String entityClassName;
     private StringBuilder queryParams;
     private static PaginationConfiguration paginationConfig;
+    private MultivaluedMap<String, String> queryParamsMap;
 
     @Context
     private UriInfo uriInfo;
@@ -67,6 +72,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         return paginationConfig;
     }
 
+    /*
+     * This request is used to retrieve all entities, or also to retrieve a particular entity
+     */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException {
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
@@ -74,6 +82,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
         String pathGetAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
+
         String pathGetAllEntities = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         URI redirectURI;
@@ -82,7 +91,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
-            MultivaluedMap<String, String> queryParamsMap = uriInfo.getQueryParameters();
+            queryParamsMap = uriInfo.getQueryParameters();
 
             Class entityClass = GenericHelper.getEntityClass(entityClassName);
             GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
@@ -126,9 +135,11 @@ System.out.println( "GET AN ENTITY : " + redirectURI.getPath() );
     @Override
     public Response createAnEntity( String jsonDto ) throws URISyntaxException {
         String pathCreateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        URI redirectURI;
+        segmentsOfPathAPIv2 = uriInfo.getPathSegments();
 
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathCreateAnEntity ) ) {
-            URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathCreateAnEntity )
                     + METHOD_CREATE );
 System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
@@ -136,6 +147,54 @@ System.out.println( "CREATE AN ENTITY : " + redirectURI.getPath() );
             return httpClient.target( redirectURI )
                     .request(MediaType.APPLICATION_JSON)
                     .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+        }
+        else if ( segmentsOfPathAPIv2.size() >= 1 ) {
+            queryParamsMap = uriInfo.getQueryParameters();
+            queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
+            for( String aKey : queryParamsMap.keySet() ){
+                queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
+                        + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                        + PAIR_QUERY_PARAM_SEPARATOR );
+            }
+
+            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
+                if ( segmentsOfPathAPIv2.size() >= 2 ) {
+                    StringBuilder suffixPathBuilder = new StringBuilder();
+                    for (int i = 0; i < segmentsOfPathAPIv2.size() - 2; i++ )
+                        suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
+                    String aPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
+                    if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( aPath ) ) {
+                        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                                + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( aPath )
+                                + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
+                                + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
+System.out.println( "ENABLE AN ENTITY : " + redirectURI.toString() );
+
+                        return httpClient.target( redirectURI )
+                                .request(MediaType.APPLICATION_JSON)
+                                .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+                    }
+                }
+            }
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
+                if ( segmentsOfPathAPIv2.size() >= 2 ) {
+                    StringBuilder suffixPathBuilder = new StringBuilder();
+                    for (int i = 0; i < segmentsOfPathAPIv2.size() - 2; i++ )
+                        suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
+                    String aPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
+                    if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( aPath ) ) {
+                        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                                + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( aPath )
+                                + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
+                                + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
+System.out.println( "DISABLE AN ENTITY : " + redirectURI.toString() );
+
+                        return httpClient.target( redirectURI )
+                                .request(MediaType.APPLICATION_JSON)
+                                .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+                    }
+                }
+            }
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();

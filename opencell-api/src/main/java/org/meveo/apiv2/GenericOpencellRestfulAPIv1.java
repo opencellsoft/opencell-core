@@ -33,18 +33,22 @@ import java.util.stream.Stream;
 
 @ApplicationPath(GenericOpencellRestfulAPIv1.API_VERSION)
 public class GenericOpencellRestfulAPIv1 extends Application {
-    private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
-    private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
-    private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
     public static Map<String,String> MAP_NEW_PATH_AND_PATH_IBASE_RS = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
-
-    private static final String PATH_TO_ALL_ENTITY_RS = "org.meveo.api.rest";
     public static final String API_VERSION = "/v1";
+
+    private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
+    private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
+    private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
+    private static final String PATH_TO_ALL_ENTITY_RS = "org.meveo.api.rest";
 
     // business logic final string variables
     private static final String ACCOUNT_MANAGEMENT = "/accountManagement";
+    private static final String CATALOG = "/catalog";
+
+    // final useful strings
+    private static final String FORWARD_SLASH = "/";
 
     @Inject
     protected Logger log;
@@ -144,6 +148,21 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
                         }
+//                        else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
+//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates",
+//                                    ((Path) anAnnotation).value() );
+//
+//                            // Processing for enable and disable an offerTemplate
+//                            String aCode = "^.{1,100}$";
+//                System.out.println( "XAY DUNG MAP DAY NE : " + API_VERSION + CATALOG + "/offerTemplates"
+//                        + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" );
+//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates"
+//                                            + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" ,
+//                                    ((Path) anAnnotation).value() + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" );
+//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates"
+//                                            + FORWARD_SLASH + aCode + FORWARD_SLASH + "disable" ,
+//                                    ((Path) anAnnotation).value() + FORWARD_SLASH + aCode + FORWARD_SLASH + "disable" );
+//                        }
                         else {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ((Path) anAnnotation).value() + "s",
                                     ((Path) anAnnotation).value() );
