@@ -1357,6 +1357,7 @@
 	            	<constraints nullable="false"/>
 	            </column>
 	            <column name="attribute_type" type="varchar(100)" />
+	            <column name="unit_nb_decimal" type="int4" />
 	        </createTable>
 
 	        <createTable tableName="cpq_grouped_attributes">
