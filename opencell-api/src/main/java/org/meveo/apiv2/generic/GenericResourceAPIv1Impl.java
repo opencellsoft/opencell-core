@@ -36,6 +36,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_DELETE = "/";
 
     private static final String FORWARD_SLASH = "/";
+    private static final String BLANK_SPACE = " ";
+    private static final String BLANK_SPACE_ENCODED = "%20";
+    private static final String QUERY_PARAM_SEPARATOR = "?";
+    private static final String QUERY_PARAM_VALUE_SEPARATOR = "=";
+    private static final String PAIR_QUERY_PARAM_SEPARATOR = "&";
     private static final String DTO_SUFFIX = "dto";
 
     private static final String API_REST = "api/rest";
@@ -46,6 +51,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private String entityCode;
     private String pathIBaseRS;
     private String entityClassName;
+    private StringBuilder queryParams;
     private static PaginationConfiguration paginationConfig;
 
     @Context
@@ -75,17 +81,32 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAllEntities ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
-            MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+
+            MultivaluedMap<String, String> queryParamsMap = uriInfo.getQueryParameters();
+
             Class entityClass = GenericHelper.getEntityClass(entityClassName);
             GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParams) );
+            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
 
-//System.out.println( "paginationConfig O DAY NE : " + paginationConfig.toString() );
+            if ( ! queryParamsMap.isEmpty() ) {
+                queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
+                for( String aKey : queryParamsMap.keySet() ){
+                    queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
+                            + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                            + PAIR_QUERY_PARAM_SEPARATOR );
+                }
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
-                                        + METHOD_GET_ALL );
-System.out.println( "GET ALL ENTITIES : " + redirectURI.getPath() );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
+                        + METHOD_GET_ALL + queryParams.substring( 0, queryParams.length() - 1 ) );
+System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.getPath() );
+            }
+            else {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
+                        + METHOD_GET_ALL );
+System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.getPath() );
+            }
             return httpClient.target( redirectURI ).request().get();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAnEntity ) ) {
