@@ -19,6 +19,7 @@
 package org.meveo.api.billing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -975,6 +977,15 @@ public class CpqQuoteApi extends BaseApi {
             }
             subscription.addServiceInstance(serviceInstance);
         }
+    }
+    
+    public List<QuoteOfferDTO> findQuoteOffer(String quoteCode, int version) {
+    	QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
+    	if(quoteVersion == null)
+    		throw new EntityDoesNotExistsException("No Quote verion found for quote code= " + quoteCode + " and version = " + version);
+    	return quoteOfferService.findByQuoteVersion(quoteVersion).stream().map(qo -> {
+																	    		return new QuoteOfferDTO(qo);
+																	    	}).collect(Collectors.toList());
     }
 
 

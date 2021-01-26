@@ -71,16 +71,10 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
+        } 
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
 
         handleMissingParametersAndValidate(postData);
 
@@ -130,13 +124,7 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
         if (postData.getOneShotChargeTemplateType() != null && StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         }

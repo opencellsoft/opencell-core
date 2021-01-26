@@ -35,13 +35,11 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.catalog.ServiceTypeDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto; 
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
-import org.meveo.api.dto.response.catalog.GetServiceTypeResponseDto;
 import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;

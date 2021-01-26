@@ -49,6 +49,26 @@ import org.meveo.model.cpq.tags.Tag;
 })
 public class CommercialRuleHeader extends BusinessEntity {
 
+	public CommercialRuleHeader(CommercialRuleHeader copy) {
+		this.ruleType = copy.ruleType;
+		this.targetOfferTemplate = copy.targetOfferTemplate;
+		this.targetProduct = copy.targetProduct;
+		this.targetProductVersion = copy.targetProductVersion;
+		this.targetGroupedAttributes = copy.targetGroupedAttributes;
+		this.targetAttribute = copy.targetAttribute;
+		this.targetAttributeValue = copy.targetAttributeValue;
+		this.targetTag = copy.targetTag;
+		this.ruleEl = copy.ruleEl;
+		this.commercialRuleItems = copy.commercialRuleItems;
+		this.disabled = copy.disabled;
+		this.code = copy.code;
+		this.description = copy.description;
+	}
+	
+	public CommercialRuleHeader() {
+		
+	}
+
 	/**
 	 * 
 	 */

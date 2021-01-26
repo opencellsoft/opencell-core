@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -34,21 +33,23 @@ import org.meveo.service.cpq.order.OrderOfferService;
 import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.script.module.ModuleScript;
 
 @SuppressWarnings("serial")
 class QuoteValidationTemp extends ModuleScript {
-	
-	@Inject private QuoteVersionService quoteVersionService;
-    @Inject private InvoiceTypeService invoiceTypeService;
-    @Inject private CommercialOrderService commercialOrderService;
-    @Inject private OrderOfferService orderOfferService;
-    @Inject private OrderProductService orderProductService;
-    @Inject private OrderAttributeService orderAttributeService;
-    @Inject private OrderLotService orderCustomerServiceService;
-    @Inject private OrderArticleLineService orderArticleLineService;
-    @Inject private OrderPriceService orderPriceService;
-    @Inject private QuotePriceService quotePriceService;
+
+	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private OrderOfferService orderOfferService = (OrderOfferService) getServiceInterface(OrderOfferService.class.getSimpleName());
+    private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
+    private OrderAttributeService orderAttributeService = (OrderAttributeService) getServiceInterface(OrderAttributeService.class.getSimpleName());
+    private OrderLotService orderCustomerServiceService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
+    
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -60,7 +61,7 @@ class QuoteValidationTemp extends ModuleScript {
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
 		
-		
+		System.out.println("code:" + cpqQuote.getCode() + " current status : " + cpqQuote.getStatus());
 		
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			var quoteOfferBillableCode = quoteOffer.getBillableAccount().getCode();

@@ -104,6 +104,9 @@ public class QuoteOffer extends AuditableEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    @Column(name = "sequence")
+    protected Integer sequence=0;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -221,6 +224,24 @@ public class QuoteOffer extends AuditableEntity {
 	public void setPosition(Integer position) {
 		this.position = position;
 	}
+	
+	
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
 
 	@Override
 	public int hashCode() {
