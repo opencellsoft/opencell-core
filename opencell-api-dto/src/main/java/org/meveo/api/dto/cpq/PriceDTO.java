@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.quote.QuotePrice;
 
 /**
  * The Class AccountingArticlePrices.
@@ -62,6 +63,29 @@ public class PriceDTO extends BaseEntityDto {
     
     private Long recurrenceDuration;
     private String recurrencePeriodicity;
+    
+    
+	public PriceDTO(QuotePrice quotePrice) {
+		super();
+		priceType=quotePrice.getPriceTypeEnum();
+        amountWithtax=quotePrice.getAmountWithTax();
+	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
+	    amountWithoutTax=quotePrice.getAmountWithoutTax();
+	    amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
+	    taxAmount=quotePrice.getTaxAmount();
+	    taxRate=quotePrice.getTaxRate();
+	    priceOverCharged=quotePrice.getPriceOverCharged();
+	    currencyCode=quotePrice.getCurrencyCode();
+	    recurrenceDuration=quotePrice.getRecurrenceDuration();
+	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
+		
+	}
+	
+	public PriceDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public PriceTypeEnum getPriceType() {
 		return priceType;
 	}

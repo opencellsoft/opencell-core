@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 
 /**
  * The Class AccountingArticlePrices.
@@ -77,6 +80,26 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
   
 
     
+	public AccountingArticlePricesDTO(QuoteArticleLine quoteArticleline) {
+		super();
+		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
+		accountingArticleLabel=quoteArticleline.getDescription();
+		accountingArticlePrices=new ArrayList<PriceDTO>();
+		for(QuotePrice quotePrice:quoteArticleline.getQuotePrices()) {
+			accountingArticlePrices.add(new PriceDTO(quotePrice));
+		}
+		
+	}
+	
+	
+
+	public AccountingArticlePricesDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
 	public String getAccountingArticleCode() {
 		return accountingArticleCode;
 	}

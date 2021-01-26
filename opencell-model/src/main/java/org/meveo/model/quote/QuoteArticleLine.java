@@ -3,12 +3,14 @@ package org.meveo.model.quote;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -57,6 +59,10 @@ public class QuoteArticleLine extends BusinessEntity {
 
     @Column(name = "service_quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     private BigDecimal serviceQuantity;
+    
+    @OneToMany(mappedBy = "quoteArticleLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuotePrice> quotePrices;
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;
@@ -120,6 +126,20 @@ public class QuoteArticleLine extends BusinessEntity {
 	 */
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
+	}
+
+	/**
+	 * @return the quotePrices
+	 */
+	public List<QuotePrice> getQuotePrices() {
+		return quotePrices;
+	}
+
+	/**
+	 * @param quotePrices the quotePrices to set
+	 */
+	public void setQuotePrices(List<QuotePrice> quotePrices) {
+		this.quotePrices = quotePrices;
 	}
     
     

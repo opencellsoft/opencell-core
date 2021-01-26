@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 
 /**
@@ -95,6 +96,10 @@ public class QuoteProductDTO extends BaseEntityDto{
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
 				quoteAttributes.add(new QuoteAttributeDTO(quoteAttribute));
 			}
+		}
+		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
+		for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
+			accountingArticlePrices.add(new AccountingArticlePricesDTO(quoteArticleLine));
 		}
 		
 	}
