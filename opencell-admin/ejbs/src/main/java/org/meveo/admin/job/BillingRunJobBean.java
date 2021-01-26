@@ -99,8 +99,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 billingCycleType = BillingProcessTypesEnum.getValue(Integer.valueOf(billingCycleTypeId));
             }
             ParamBean param = paramBeanFactory.getInstance();
-            String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
-            boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
+            boolean isAllowed = param.getBooleanValue("billingRun.allowManyInvoicing", true);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
             for (String billingCycleCode : billingCyclesCode) {
                 List<BillingRun> billruns = billingRunService.getBillingRuns(billingCycleCode, POSTVALIDATED, NEW, PREVALIDATED, PREINVOICED);
@@ -128,7 +127,6 @@ public class BillingRunJobBean extends BaseJobBean {
 
                 if (invoiceDateFromCF != null) {
                     billingRun.setInvoiceDate(invoiceDateFromCF);
-
                 } else if (billingCycle.getInvoiceDateProductionDelayEL() != null) {
                     billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), InvoiceService.resolveInvoiceDateDelay(billingCycle.getInvoiceDateProductionDelayEL(), billingRun)));
                 } else {
@@ -137,10 +135,8 @@ public class BillingRunJobBean extends BaseJobBean {
 
                 if (lastTransactionDateFromCF != null) {
                     billingRun.setLastTransactionDate(lastTransactionDateFromCF);
-
                 } else if (billingCycle.getLastTransactionDateEL() != null) {
                     billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
-
                 } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
                     billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
                 } else {

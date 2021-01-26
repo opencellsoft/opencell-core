@@ -36,6 +36,7 @@ import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -229,7 +230,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * The invoice real time status.
      */
-    private InvoiceStatusEnum realTimeStatus;
+    private InvoicePaymentStatusEnum realTimeStatus;
 
     /**
      * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
@@ -257,6 +258,81 @@ public class InvoiceDto extends AuditableEntityDto {
      * last payment Date
      */
     protected Date paymentDate;
+    
+    
+    /**
+     * Invoice status change date
+     */
+    protected Date statusDate;
+    
+    /**
+     * Date when the XML has been produced on a validated invoice.
+     */
+    protected Date xmlDate;
+    
+    /**
+     * Date when the PDf has been produced on a validated invoice.
+     */
+    protected Date pdfDate;
+    
+    /**
+     * Date when the invoice has been sent for a validated invoice
+     */
+    protected Date emailSentDate;
+    
+    /**
+     * 
+     */
+	protected InvoicePaymentStatusEnum paymentStatus;
+	
+    /**
+     * Payment status change date
+     */
+	protected Date paymentStatusDate;
+    
+    /**
+     * Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))
+     */
+    protected Date startDate;
+
+    
+    /**
+     * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
+     */
+    protected Date endDate;
+    
+     
+    /**
+     * Total raw amount from invoice lines.
+     *      -Does not include discount.
+     *      -With or without tax depending on provider setting (isEnterprise).
+     */
+    @XmlElement(required = true)
+    protected BigDecimal rawAmount;
+    
+    /**
+     * Discount rate to apply (in %).
+     * Initialize with discount rate from linked invoice discount plan.
+     */
+    protected BigDecimal discountRate;
+    
+	/**
+     * Total discount amount with or without tax depending on provider settings.
+	 * Can be inconsistent with discountRate.
+	 * discountAmount has precedence over discountRate
+     */
+    @XmlElement(required = true)
+    protected BigDecimal discountAmount=BigDecimal.ZERO;
+    
+    /**
+     * Indicates if the invoicing minimum has already been applied
+     */
+    protected boolean isAlreadyAppliedMinimum;
+
+    /**
+     * Indicates if the invoice discounts have already been applied
+     */
+    protected boolean isAlreadyAddedDiscount;
 
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
@@ -922,14 +998,158 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * @return the realTimeStatus
      */
-    public InvoiceStatusEnum getRealTimeStatus() {
+    public InvoicePaymentStatusEnum getRealTimeStatus() {
         return realTimeStatus;
     }
 
     /**
      * @param realTimeStatus the realTimeStatus to set
      */
-    public void setRealTimeStatus(InvoiceStatusEnum realTimeStatus) {
+    public void setRealTimeStatus(InvoicePaymentStatusEnum realTimeStatus) {
         this.realTimeStatus = realTimeStatus;
     }
+
+	public Boolean getIsDraft() {
+		return isDraft;
+	}
+
+	public void setIsDraft(Boolean isDraft) {
+		this.isDraft = isDraft;
+	}
+
+	public List<Long> getRatedTransactionsToLink() {
+		return ratedTransactionsToLink;
+	}
+
+	public void setRatedTransactionsToLink(List<Long> ratedTransactionsToLink) {
+		this.ratedTransactionsToLink = ratedTransactionsToLink;
+	}
+
+	public Date getSendPaymentDate() {
+		return sendPaymentDate;
+	}
+
+	public void setSendPaymentDate(Date sendPaymentDate) {
+		this.sendPaymentDate = sendPaymentDate;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Date getXmlDate() {
+		return xmlDate;
+	}
+
+	public void setXmlDate(Date xmlDate) {
+		this.xmlDate = xmlDate;
+	}
+
+	public Date getPdfDate() {
+		return pdfDate;
+	}
+
+	public void setPdfDate(Date pdfDate) {
+		this.pdfDate = pdfDate;
+	}
+
+	public Date getEmailSentDate() {
+		return emailSentDate;
+	}
+
+	public void setEmailSentDate(Date emailSentDate) {
+		this.emailSentDate = emailSentDate;
+	}
+
+	public InvoicePaymentStatusEnum getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(InvoicePaymentStatusEnum paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public Date getPaymentStatusDate() {
+		return paymentStatusDate;
+	}
+
+	public void setPaymentStatusDate(Date paymentStatusDate) {
+		this.paymentStatusDate = paymentStatusDate;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public BigDecimal getRawAmount() {
+		return rawAmount;
+	}
+
+	public void setRawAmount(BigDecimal rawAmount) {
+		this.rawAmount = rawAmount;
+	}
+
+	public BigDecimal getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(BigDecimal discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public BigDecimal getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public void setDiscountAmount(BigDecimal discountAmount) {
+		this.discountAmount = discountAmount;
+	}
+
+	public boolean isAlreadyAppliedMinimum() {
+		return isAlreadyAppliedMinimum;
+	}
+
+	public void setAlreadyAppliedMinimum(boolean isAlreadyAppliedMinimum) {
+		this.isAlreadyAppliedMinimum = isAlreadyAppliedMinimum;
+	}
+
+	public boolean isAlreadyAddedDiscount() {
+		return isAlreadyAddedDiscount;
+	}
+
+	public void setAlreadyAddedDiscount(boolean isAlreadyAddedDiscount) {
+		this.isAlreadyAddedDiscount = isAlreadyAddedDiscount;
+	}
+
+	public Boolean getAutoValidation() {
+		return autoValidation;
+	}
+
+	public Boolean getReturnXml() {
+		return returnXml;
+	}
+
+	public Boolean getReturnPdf() {
+		return returnPdf;
+	}
+
+	public Boolean getIncludeBalance() {
+		return includeBalance;
+	}
 }

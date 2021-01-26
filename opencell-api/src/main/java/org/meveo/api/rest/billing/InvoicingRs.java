@@ -18,19 +18,27 @@
 
 package org.meveo.api.rest.billing;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.InvoiceValidationDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Path("/billing/invoicing")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -110,5 +118,57 @@ public interface InvoicingRs extends IBaseRs {
     @POST
     @Path("/cancelBillingRun")
     ActionStatus cancelBillingRun(Long billingRunId);
+    
+    /**
+     * Recompute invoices based on RatedTransactions and re-apply invoiceValidationScript
+     *     
+     *   
+     */
+    @PUT
+    @Path("/rebuildInvoice")
+    ActionStatus rebuildInvoice(InvoiceValidationDto InvoiceValidationDto);
+    
+    /**
+     * Reject one or several invoices (change status to REJECTED).
+     * Body will contains a list of invoice ids.
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/rejectInvoice")
+    ActionStatus rejectInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
+    
+    /**
+     * Validate one or several invoices (change status to DRAFT).
+     * Body will contain a list of invoice id
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/validateInvoice")
+    ActionStatus validateInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
+    
+    /**
+     * Move invoices to a new Billing Run with the same parameters as the current one, and also in status REJECTED|POSTINVOICED.
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/moveInvoice")
+    ActionStatus moveInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
+    
+    /**
+     * Move invoices to a new Billing Run with the same parameters as the current one, and also in status REJECTED|POSTINVOICED.
+     *   
+     */
+    @PUT
+    @Path("/billingRun/{billingRunId}/cancelInvoice")
+    ActionStatus cancelInvoice(@PathParam("billingRunId") Long billingRunId, InvoiceValidationDto InvoiceValidationDto);
+    
+    /**
+     * Delete canceled invoices for a given billing run.
+     *   
+     */
+    @DELETE
+    @Path("/billingRun/{billingRunId}/canceledInvoices")
+    ActionStatus canceledInvoices(@PathParam("billingRunId") Long billingRunId);
+
 
 }
