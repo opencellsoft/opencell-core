@@ -33,7 +33,7 @@ public class UserInfoManagement {
     /**
      * Map<providerCode, Map<roleName, rolePermissions>>
      */
-    static Map<String, Map<String, Set<String>>> roleToPermissionMapping;
+    private static Map<String, Map<String, Set<String>>> roleToPermissionMapping = new HashMap<>();
 
     @Inject
     private Event<User> userEventProducer;
@@ -172,9 +172,7 @@ public class UserInfoManagement {
     public Map<String, Set<String>> getRoleToPermissionMapping(String providerCode, EntityManager em) {
 
         synchronized (this) {
-            if (roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode) == null) {
-                roleToPermissionMapping = new HashMap<>();
-
+            if (roleToPermissionMapping.get(providerCode) == null) {
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
                     Map<String, Set<String>> roleToPermissionMappingForProvider = new HashMap<>();
@@ -192,7 +190,6 @@ public class UserInfoManagement {
                     log.error("Failed to construct role to permission mapping", e);
                 }
             }
-
             return roleToPermissionMapping.get(providerCode);
         }
     }
@@ -233,4 +230,11 @@ public class UserInfoManagement {
             return null;
         }
     }
+
+	/**
+	 * 
+	 */
+	public static void invalidateRoleToPermissionMapping() {
+		roleToPermissionMapping = new HashMap<>();
+	}
 }

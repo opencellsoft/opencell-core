@@ -192,7 +192,7 @@ public class CurrentUserProvider {
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
     public void invalidateRoleToPermissionMapping() {
-        UserInfoManagement.roleToPermissionMapping = null;
+        UserInfoManagement.invalidateRoleToPermissionMapping();
     }
 
     /**
