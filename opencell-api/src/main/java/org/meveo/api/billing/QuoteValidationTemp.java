@@ -107,7 +107,7 @@ class QuoteValidationTemp extends ModuleScript {
 	}
 	
 	private OrderType createOrderTypeTemp() {
-		final String TEMP_CODE = "SCRIPT_OT_TMP"; 
+		final String TEMP_CODE = "COMMERCIAL"; 
 		OrderType orderType = orderTypeService.findByCode(TEMP_CODE);
 		if(orderType == null) {
 			orderType = new OrderType();
