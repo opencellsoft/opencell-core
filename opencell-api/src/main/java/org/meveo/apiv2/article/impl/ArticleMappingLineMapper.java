@@ -66,7 +66,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         }
         if(resource.getProduct() != null){
             Product product = new Product();
-            product.setId(product.getId());
+            product.setId(resource.getProduct().getId());
             articleMappingLine.setProduct(product);
         }
         return articleMappingLine;

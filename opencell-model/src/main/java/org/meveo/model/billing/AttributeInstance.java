@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "cpq_attribute_instance")
@@ -49,5 +50,20 @@ public class AttributeInstance extends AttributeValue {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AttributeInstance that = (AttributeInstance) o;
+        return Objects.equals(serviceInstance, that.serviceInstance) &&
+                Objects.equals(subscription, that.subscription);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), serviceInstance, subscription);
     }
 }

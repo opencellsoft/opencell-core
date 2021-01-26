@@ -377,7 +377,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response matrixRating(MatrixRatingRequest request) {
         GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
         try {
-            List<PricePlanMatrixLineDto> pricePlanMatrixLineDto = pricePlanApi.matrixRating(request);
+            List<PricePlanMatrixLineDto> pricePlanMatrixLineDto = List.of(pricePlanApi.loadPrices(request));
             response.setPricePlanMatrixLinesDto(pricePlanMatrixLineDto);
             return Response.ok(response).build();
         }catch(MeveoApiException e) {

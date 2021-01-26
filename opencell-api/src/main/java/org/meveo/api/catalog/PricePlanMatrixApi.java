@@ -30,6 +30,7 @@ import org.meveo.api.dto.catalog.LoadPricesRequest;
 import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -45,8 +46,6 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.scripts.ScriptInstance;
@@ -54,7 +53,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
@@ -62,7 +60,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.ProductService;
-import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -574,7 +571,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return ppm;
     }
 
-    public List<PricePlanMatrixLineDto>  matrixRating(MatrixRatingRequest request) {
+    public PricePlanMatrixLineDto loadPrices(MatrixRatingRequest request) {
         if (StringUtils.isBlank(request.getPpmCode())) {
             missingParameters.add("ppmCode");
         }
@@ -590,6 +587,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, request.getChargeInstanceCode(), ChargeInstance.class);
 
-        return pricePlanMatrixService.matrixRating(pricePlanMatrixVersion, chargeInstance);
+        return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
     }
 }

@@ -1,20 +1,24 @@
 package org.meveo.model.quote;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
@@ -27,10 +31,10 @@ import org.meveo.model.cpq.CpqAccountingArticle;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_article_line", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "cpq_quote_article_line", uniqueConstraints = @UniqueConstraint(columnNames = { "id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_article_line_seq"), })
-public class QuoteArticleLine extends BusinessEntity {
+public class QuoteArticleLine extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_product_id")
@@ -57,6 +61,9 @@ public class QuoteArticleLine extends BusinessEntity {
 
     @Column(name = "service_quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     private BigDecimal serviceQuantity;
+
+    @OneToMany(mappedBy = "quoteArticleLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuotePrice> quotePrices = new ArrayList<>();
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;
@@ -121,7 +128,12 @@ public class QuoteArticleLine extends BusinessEntity {
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
 	}
-    
-    
-    
+
+	public List<QuotePrice> getQuotePrices() {
+		return quotePrices;
+	}
+
+	public void setQuotePrices(List<QuotePrice> quotePrices) {
+		this.quotePrices = quotePrices;
+	}
 }

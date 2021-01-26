@@ -223,14 +223,11 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
     }
 
 	@Override
-	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
-		GetQuoteVersionDtoResponse getQuoteVersionDtoResponse =new GetQuoteVersionDtoResponse();
-		 try {
-	            QuoteVersion cpqQuoteVersion = cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion);
-	            getQuoteVersionDtoResponse = new GetQuoteVersionDtoResponse(cpqQuoteVersion);
-		          return Response.ok(getQuoteVersionDtoResponse).build();
+	public Response quoteQuotation(String quoteCode, int quoteVersion) {
+		try {
+		          return Response.ok(cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion)).build();
 	        } catch (MeveoApiException e) {
-			       return errorResponse(e, getQuoteVersionDtoResponse.getActionStatus());
+			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
 	        }
 	}
    

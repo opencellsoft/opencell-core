@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -23,7 +24,12 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
+
+
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version (%d) is %s, it can not be updated nor removed";
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
@@ -121,8 +127,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
     
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
-    	/*******@TODO ticket 540-150*****************/
-    	return null;
+    	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance);
     }
     
     

@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
+import java.util.Objects;
 
 @MappedSuperclass
 public class AttributeValue extends AuditableEntity {
@@ -59,5 +60,22 @@ public class AttributeValue extends AuditableEntity {
 
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AttributeValue that = (AttributeValue) o;
+        return Objects.equals(attribute, that.attribute) &&
+                Objects.equals(stringValue, that.stringValue) &&
+                Objects.equals(dateValue, that.dateValue) &&
+                Objects.equals(doubleValue, that.doubleValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), attribute, stringValue, dateValue, doubleValue);
     }
 }

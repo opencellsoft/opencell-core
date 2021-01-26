@@ -1211,10 +1211,6 @@
 	    		<column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_article_line_pkey" />
 	            </column>
-	            <column name="code" type="varchar(255)">
-	                <constraints nullable="false" unique="true" />
-	            </column>
-	            <column name="description" type="varchar(255)" />
 	            <column name="version" type="int4" />
 	            <column name="creator" type="varchar(100)" />
 	            <column name="created" type="datetime">
@@ -1234,16 +1230,6 @@
             	<column name="service_quantity" type="numeric(23, 12)" >
 	                <constraints nullable="false" />
 	            </column>
-	            <column name="os_unit_price_without_tax" type="numeric(23, 12)" />
-	            <column name="os_price_without_tax" type="numeric(23, 12)" />
-	            <column name="os_tax_code" type="numeric(23, 12)" />
-	            <column name="os_tax_rate" type="INT4" />
-	            <column name="os_price_with_tax" type="numeric(23, 12)" />
-	            <column name="rc_unit_price_without_tax" type="numeric(23, 12)" />
-	            <column name="rc_price_without_tax" type="numeric(23, 12)" />
-	            <column name="rc_tax_code" type="numeric(23, 12)" />
-	            <column name="rc_tax_rate" type="INT4" />
-	            <column name="rc_price_with_tax" type="numeric(23, 12)" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_billable_account_id" deferrable="false" initiallyDeferred="false"
@@ -1524,17 +1510,9 @@
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_quote_price" />
 			</column>
-			<!-- BusinessEntity Start -->
-			<column name="code" type="varchar(255)" >
-				<constraints nullable="false" unique="true" />
-			</column>
-			<column name="description" type="varchar(255)" />
-			<column name="version" type="int4" />
-			<!-- BusinessEntity End -->
 			<!-- Auditable Start -->
-			<column name="created" type="datetime">
-				<constraints nullable="false" />
-			</column>
+			<column name="version" type="int4" />
+			<column name="created" type="datetime"/>
 			<column name="updated" type="datetime" />
 			<column name="creator" type="varchar(100)" />
 			<column name="updater" type="varchar(100)" />
@@ -1781,8 +1759,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_attribute_mapping_pk"/>
             </column>
             <column name="version" type="int4" />
-            <column name="code" type="varchar(50)" />
-            <column name="description" type="varchar(255)" />
             <column name="created" type="datetime"/>
             <column name="creator" type="varchar(50)"/>
             <column name="updater" type="varchar(50)"/>

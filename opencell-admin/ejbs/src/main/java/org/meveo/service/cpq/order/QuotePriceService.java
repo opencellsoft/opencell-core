@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Tarik FAKHOURI
@@ -17,7 +18,7 @@ import org.meveo.service.base.BusinessService;
  *
  */
 @Stateless
-public class QuotePriceService extends BusinessService<QuotePrice> {
+public class QuotePriceService extends PersistenceService<QuotePrice> {
 
 	
 	@SuppressWarnings("unchecked")

@@ -3,6 +3,7 @@ package org.meveo.model.quote;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
@@ -15,20 +16,20 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
-public class QuotePrice extends BusinessEntity {
+public class QuotePrice extends AuditableEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_article_line_id", nullable = false)
-	@NotNull
 	private QuoteArticleLine quoteArticleLine;
 
 	@ManyToOne(fetch = FetchType.LAZY)

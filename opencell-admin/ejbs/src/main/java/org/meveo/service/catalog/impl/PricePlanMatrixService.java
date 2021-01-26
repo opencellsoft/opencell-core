@@ -38,6 +38,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -740,15 +741,12 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     }
 
-    public List<PricePlanMatrixLineDto> matrixRating(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
         String serviceCode = chargeInstance.getServiceInstance().getCode();
         Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
                             .stream()
                             .map(attributeInstance -> (AttributeValue)attributeInstance)
                             .collect(Collectors.toSet());
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode)
-                .stream()
-                .map(PricePlanMatrixLineDto::new)
-                .collect(Collectors.toList());
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
     }
 }

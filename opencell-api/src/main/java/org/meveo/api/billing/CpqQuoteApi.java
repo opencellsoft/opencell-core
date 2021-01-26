@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -47,7 +48,6 @@ import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
@@ -65,7 +65,6 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
-import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -77,6 +76,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
@@ -88,6 +88,7 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TerminationReasonService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -165,6 +166,9 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     QuoteArticleLineService quoteArticleLineService;
+
+    @Inject
+    private UserAccountService userAccountService;
 	
 	public QuoteDTO createQuote(QuoteDTO quote) {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -488,9 +492,9 @@ public class CpqQuoteApi extends BaseApi {
 		QuoteOffer 	quoteOffer = new QuoteOffer();
 		quoteOffer.setOfferTemplate(offerTemplate);
 		quoteOffer.setQuoteVersion(quoteVersion);
-		if(Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
+		if(!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
 			quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
-		if(Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
+		if(!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
 			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
 		quoteOfferService.create(quoteOffer);
@@ -760,28 +764,36 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersionService.update(quoteVersion);
 	}
 	
-	public QuoteVersion quoteQuotation(String quoteCode, int currentVersion) {
+	public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
 		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
 		if(quoteVersion == null)
 			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 		for(QuoteOffer quoteOffer:quoteVersion.getQuoteOffers()) {
 			offerQuotation(quoteOffer);
 		}
-		return quoteVersion;
+		return new GetQuoteVersionDtoResponse(quoteVersion);
 	}
 	
 	public void offerQuotation(QuoteOffer quoteOffer) {
 		Subscription subscription=instantiateVirtualSubscription(quoteOffer);
 		List<WalletOperation> walletOperations=quoteRating(subscription, true);
 		QuoteArticleLine quoteArticleLine=null;
-		for(WalletOperation wo:walletOperations) {
-			 quoteArticleLine=new QuoteArticleLine();
-			 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
-			 quoteArticleLine.setQuantity(wo.getQuantity());
-			 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
-			 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
-			 quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
-			 quoteArticleLineService.create(quoteArticleLine);
+		for (WalletOperation wo : walletOperations) {
+			QuotePrice quotePrice = new QuotePrice();
+			quotePrice.setAmountWithoutTax(wo.getAmountWithoutTax());
+			quotePrice.setAmountWithTax(wo.getAmountWithTax());
+			quotePrice.setTaxAmount(wo.getAmountTax());
+			quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
+			quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
+			quoteArticleLine = new QuoteArticleLine();
+			quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
+			quoteArticleLine.setQuantity(wo.getQuantity());
+			quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
+			quoteArticleLine.setBillableAccount(wo.getBillingAccount());
+			quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
+			quoteArticleLine.getQuotePrices().add(quotePrice);
+			quotePrice.setQuoteArticleLine(quoteArticleLine);
+			quoteArticleLineService.create(quoteArticleLine);
 		}
 	}
 
@@ -793,34 +805,39 @@ public class CpqQuoteApi extends BaseApi {
 		if (subscription != null) {
 
 			billingAccount = subscription.getUserAccount().getBillingAccount();
-			Map<String, Object> attributes=null;
+			Map<String, Object> attributes=new HashMap<String, Object>();;
 			// Add Service charges
 			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-				attributes=new HashMap<String, Object>();
 				for (AttributeInstance attributeInstance:serviceInstance.getAttributeInstances()) {
 					Attribute attribute=attributeInstance.getAttribute();
 					Object value=null;
 					switch (attribute.getAttributeType()) {
-					case TEXT: 
-					case LIST_TEXT :
-					case LIST_MULTIPLE_TEXT :
-					case LIST_MULTIPLE_NUMERIC : 
-						value=attributeInstance.getStringValue();
-					case NUMERIC: 
-					case LIST_NUMERIC :
-						value=attributeInstance.getDoubleValue();
-					case DATE: 
-						value=attributeInstance.getDateValue();	
-					default : 
-						value=attributeInstance.getStringValue();	
-						
+						case TEXT:
+						case LIST_TEXT :
+						case LIST_MULTIPLE_TEXT :
+						case LIST_MULTIPLE_NUMERIC : {
+							value = attributeInstance.getStringValue();
+							break;
+						}
+						case NUMERIC:
+						case LIST_NUMERIC : {
+							value = attributeInstance.getDoubleValue();
+							break;
+						}
+						case DATE: {
+							value = attributeInstance.getDateValue();
+							break;
+						}
+						default :
+							value=attributeInstance.getStringValue();
+					}
 					if(value!=null) {
 						attributes.put(attributeInstance.getAttribute().getCode(), value);
 					}
-					
-				}
 				}
 				Optional<AccountingArticle> accountingArticle=accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
+				if(!accountingArticle.isPresent())
+					throw new BusinessException("No accounting article found for product code: " + serviceInstance.getProductVersion().getProduct().getCode() + " and attributes: " + attributes.toString());
 				// Add subscription charges
 				for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
 					try {
@@ -886,6 +903,9 @@ public class CpqQuoteApi extends BaseApi {
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
         subscription.setEndAgreementDate(null);
+
+        //TODO need user account
+		subscription.setUserAccount(quoteOffer.getBillableAccount().getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
 //
@@ -967,6 +987,5 @@ public class CpqQuoteApi extends BaseApi {
             subscription.addServiceInstance(serviceInstance);
         }
     }
-
 
 }
