@@ -93,9 +93,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
-
-            Class entityClass = GenericHelper.getEntityClass(entityClassName);
-            GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+//            Class entityClass = GenericHelper.getEntityClass(entityClassName);
+            GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
             paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
 
             if ( ! queryParamsMap.isEmpty() ) {
@@ -264,6 +263,17 @@ System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
                         + API_REST + "/billing/subscription/terminate" );
 
 System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
+                return httpClient.target( redirectURI )
+                        .request(MediaType.APPLICATION_JSON)
+                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: update existing services of a subscription
+            else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/updateServices(?:$|\\W)" )
+                    .matcher(uriInfo.getPath()).matches() ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/billing/subscription/updateServices" );
+
+System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
                 return httpClient.target( redirectURI )
                         .request(MediaType.APPLICATION_JSON)
                         .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );

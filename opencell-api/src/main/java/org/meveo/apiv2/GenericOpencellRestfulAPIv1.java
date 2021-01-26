@@ -155,6 +155,12 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions/cancelRatedTransactions",
                                     ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/billing/wallet" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/wallets",
+                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/wallets/operation",
+                                    ((Path) anAnnotation).value() + "/operation" );
+                        }
 //                        else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
 //                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates",
 //                                    ((Path) anAnnotation).value() );
