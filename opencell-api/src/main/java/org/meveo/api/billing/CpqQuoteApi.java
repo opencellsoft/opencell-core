@@ -268,12 +268,16 @@ public class CpqQuoteApi extends BaseApi {
 				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 				if(productVersion == null)
 					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
+				BillingAccount productBillingAccount = billingAccountService.findByCode(quoteProductDTO.getBillableAccountCode());
+				if(productBillingAccount == null) {
+					throw new EntityDoesNotExistsException("No Billable account found four product code : " + quoteProductDTO.getProductCode());
+				}
 				QuoteProduct quoteProduct = null;
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
-				quoteProduct.setBillableAccount(quoteOffer.getBillableAccount());
+				quoteProduct.setBillableAccount(productBillingAccount);
 				quoteProduct.setQuoteOffre(quoteOffer);
 				quoteProductService.create(quoteProduct);
 				newPopulateQuoteAttribute(quoteProductDTO.getQuoteAttributes(), quoteProduct);
@@ -316,7 +320,11 @@ public class CpqQuoteApi extends BaseApi {
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
-		
+
+		QuoteValidationTemp temp = new QuoteValidationTemp();
+		Map<String, Object> methodContext = new HashMap<String, Object>();
+		methodContext.put("cpqQuote", quote);
+		temp.execute(methodContext );
 		return populateToDto(quote,true,true,true);
 	}
 	
@@ -488,6 +496,9 @@ public class CpqQuoteApi extends BaseApi {
 			missingParameters.add("quoteVersion");
 		if(Strings.isEmpty(quoteOfferDto.getQuoteCode()))
 			missingParameters.add("quoteCode");
+		
+		handleMissingParameters();
+		
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
 		if(offerTemplate == null)
 			throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());

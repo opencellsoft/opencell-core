@@ -25,7 +25,6 @@ public class MediaDto extends BaseEntityDto{
 	
 	private String productCode;
 
-	@NotNull
 	private String serviceTemplateCode;
 	
 	private String attributeCode;
