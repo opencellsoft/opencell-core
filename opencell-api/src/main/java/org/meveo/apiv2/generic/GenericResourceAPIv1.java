@@ -15,13 +15,9 @@ public interface GenericResourceAPIv1 {
     @Path("/{segments:.*}")
     Response getAllEntitiesOrGetAnEntity() throws URISyntaxException;
 
-//    @GET
-//    @Path("/{segments:.*}/{entityCode}")
-//    Response getAllEntitiesOrGetAnEntity( @Parameter(description = "You need to specify the entityCode", required = true) @PathParam("entityCode") String entityCode ) throws URISyntaxException;
-
     @POST
     @Path("/{segments:.*}")
-    Response createAnEntity( String postData ) throws URISyntaxException;
+    Response postRequest( String postData ) throws URISyntaxException;
 
     @PUT
     @Path("/{segments:.*}")

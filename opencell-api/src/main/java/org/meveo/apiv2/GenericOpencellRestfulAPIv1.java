@@ -46,6 +46,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     // business logic final string variables
     private static final String ACCOUNT_MANAGEMENT = "/accountManagement";
     private static final String CATALOG = "/catalog";
+    private static final String BILLING = "/billing";
 
     // final useful strings
     private static final String FORWARD_SLASH = "/";
@@ -147,6 +148,12 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions",
+                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions/cancelRatedTransactions",
+                                    ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
                         }
 //                        else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
 //                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates",
