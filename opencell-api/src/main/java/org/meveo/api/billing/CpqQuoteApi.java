@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
@@ -49,7 +50,6 @@ import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
@@ -67,7 +67,6 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
-import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -94,6 +93,7 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TerminationReasonService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -172,10 +172,13 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     QuoteArticleLineService quoteArticleLineService;
-    
+
     @Inject
     QuotePriceService quotePriceService;
-	
+
+    @Inject
+    private UserAccountService userAccountService;
+
 	public QuoteDTO createQuote(QuoteDTO quote) {
 		if(Strings.isEmpty(quote.getApplicantAccountCode())) {
 			missingParameters.add("applicantAccountCode");
@@ -497,9 +500,9 @@ public class CpqQuoteApi extends BaseApi {
 		QuoteOffer 	quoteOffer = new QuoteOffer();
 		quoteOffer.setOfferTemplate(offerTemplate);
 		quoteOffer.setQuoteVersion(quoteVersion);
-		if(Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
+		if(!Strings.isEmpty(quoteOfferDto.getBillableAccountCode()))
 			quoteOffer.setBillableAccount(billingAccountService.findByCode(quoteOfferDto.getBillableAccountCode()));
-		if(Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
+		if(!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
 			quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
 		quoteOfferService.create(quoteOffer);
@@ -769,15 +772,14 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersionService.update(quoteVersion);
 	}
 	
-	public QuoteVersion quoteQuotation(String quoteCode, int currentVersion) {
+	public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
 		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
 		if(quoteVersion == null)
 			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 		for(QuoteOffer quoteOffer:quoteVersion.getQuoteOffers()) {
 			offerQuotation(quoteOffer);
 		}
-		//@TODO : compute quote totals amounts
-		return quoteVersion;
+		return new GetQuoteVersionDtoResponse(quoteVersion, true,true, true );
 	}
 	
 	public void offerQuotation(QuoteOffer quoteOffer) {
@@ -785,16 +787,15 @@ public class CpqQuoteApi extends BaseApi {
 		List<WalletOperation> walletOperations=quoteRating(subscription, true);
 		QuoteArticleLine quoteArticleLine=null;
 		Map<String, QuoteArticleLine> quoteArticleLines=new HashMap<String, QuoteArticleLine>();
-		String accountingArticleCode=null;		
+		String accountingArticleCode=null;
 		for(WalletOperation wo:walletOperations) {
-			if(wo.getAccountingArticle()!=null) {
+			if(wo.getAccountingArticle()==null) {
 				throw new BusinessException("the walletOperation id="+wo.getId()+" has is not linked to an accounting article");
 			}
 			accountingArticleCode=wo.getAccountingArticle().getCode();
-			
+
 			 if(!quoteArticleLines.containsKey(accountingArticleCode)) {
 				 quoteArticleLine=new QuoteArticleLine();
-				 quoteArticleLine.setCode(UUID.randomUUID().toString());
 				 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
 				 quoteArticleLine.setQuantity(wo.getQuantity());
 				 quoteArticleLine.setServiceQuantity(wo.getInputQuantity());
@@ -804,7 +805,6 @@ public class CpqQuoteApi extends BaseApi {
 				 quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
 			 }
 			 QuotePrice quotePrice=new QuotePrice();
-			 quotePrice.setCode(UUID.randomUUID().toString());
 			 quotePrice.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
 			 quotePrice.setPriceLevelEnum(PriceLevelEnum.ACCOUNTING_ARTICLE);
 			 quotePrice.setAmountWithoutTax(wo.getAmountWithoutTax());
@@ -812,8 +812,10 @@ public class CpqQuoteApi extends BaseApi {
 			 quotePrice.setTaxAmount(wo.getAmountTax());
 			 quotePrice.setCurrencyCode(wo.getCurrency()!=null?wo.getCurrency().getCurrencyCode():null);
 			 quotePrice.setQuoteArticleLine(quoteArticleLine);
-			 if(PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
-				 quotePrice.setRecurrenceDuration(Long.valueOf(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getDurationTermInMonth()));
+			 quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
+			Integer durationTermInMonth = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate()).getDurationTermInMonth();
+			if(PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum()) && durationTermInMonth != null) {
+				 quotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
 				 //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
 			 }
 			 quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
@@ -830,34 +832,39 @@ public class CpqQuoteApi extends BaseApi {
 		if (subscription != null) {
 
 			billingAccount = subscription.getUserAccount().getBillingAccount();
-			Map<String, Object> attributes=null;
+			Map<String, Object> attributes=new HashMap<String, Object>();;
 			// Add Service charges
 			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-				attributes=new HashMap<String, Object>();
 				for (AttributeInstance attributeInstance:serviceInstance.getAttributeInstances()) {
 					Attribute attribute=attributeInstance.getAttribute();
 					Object value=null;
 					switch (attribute.getAttributeType()) {
-					case TEXT: 
-					case LIST_TEXT :
-					case LIST_MULTIPLE_TEXT :
-					case LIST_MULTIPLE_NUMERIC : 
-						value=attributeInstance.getStringValue();
-					case NUMERIC: 
-					case LIST_NUMERIC :
-						value=attributeInstance.getDoubleValue();
-					case DATE: 
-						value=attributeInstance.getDateValue();	
-					default : 
-						value=attributeInstance.getStringValue();	
-						
+						case TEXT:
+						case LIST_TEXT :
+						case LIST_MULTIPLE_TEXT :
+						case LIST_MULTIPLE_NUMERIC : {
+							value = attributeInstance.getStringValue();
+							break;
+						}
+						case NUMERIC:
+						case LIST_NUMERIC : {
+							value = attributeInstance.getDoubleValue();
+							break;
+						}
+						case DATE: {
+							value = attributeInstance.getDateValue();
+							break;
+						}
+						default :
+							value=attributeInstance.getStringValue();
+					}
 					if(value!=null) {
 						attributes.put(attributeInstance.getAttribute().getCode(), value);
 					}
-					
-				}
 				}
 				Optional<AccountingArticle> accountingArticle=accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
+				if(!accountingArticle.isPresent())
+					throw new BusinessException("No accounting article found for product code: " + serviceInstance.getProductVersion().getProduct().getCode() + " and attributes: " + attributes.toString());
 				// Add subscription charges
 				for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
 					try {
@@ -923,6 +930,10 @@ public class CpqQuoteApi extends BaseApi {
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
         subscription.setEndAgreementDate(null);
+
+        if(quoteOffer.getBillableAccount().getUsersAccounts().isEmpty())
+        	throw new BusinessException("Billing account: " + quoteOffer.getBillableAccount().getCode() + " has no user accounts");
+		subscription.setUserAccount(quoteOffer.getBillableAccount().getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
 //
@@ -1004,7 +1015,7 @@ public class CpqQuoteApi extends BaseApi {
             subscription.addServiceInstance(serviceInstance);
         }
     }
-    
+
     public List<QuoteOfferDTO> findQuoteOffer(String quoteCode, int version) {
     	QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
     	if(quoteVersion == null)
@@ -1013,6 +1024,5 @@ public class CpqQuoteApi extends BaseApi {
 																	    		return new QuoteOfferDTO(qo);
 																	    	}).collect(Collectors.toList());
     }
-
 
 }

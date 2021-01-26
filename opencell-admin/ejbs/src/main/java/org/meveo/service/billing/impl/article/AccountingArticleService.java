@@ -32,17 +32,18 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			var finalResult = aml.getAttributesMapping().stream().filter(am -> {
 				final Attribute attribute = am.getAttribute();
 				if(attributes.get(attribute.getCode()) != null) {
-					String value = (String)attributes.get(am.getAttribute().getCode());
+					Object value = attributes.get(am.getAttribute().getCode());
 					switch (attribute.getAttributeType()) {
-					case TEXT: 
+					case TEXT:
 					case LIST_TEXT :
-					case NUMERIC: 
 					case LIST_NUMERIC :
 						if(value.toString().contentEquals(am.getAttributeValue())) return true;
+					case NUMERIC:
+						if(Double.valueOf(value.toString()).doubleValue() == Double.valueOf(am.getAttributeValue()).doubleValue()) return true;
 					case LIST_MULTIPLE_TEXT :
 					case LIST_MULTIPLE_NUMERIC :
 						List<String> source = Arrays.asList(am.getAttributeValue().split(";"));
-						List<String> input = Arrays.asList(value.split(";"));
+						List<String> input = Arrays.asList(value.toString().split(";"));
 						Optional<String> valExist = input.stream().filter( val -> {
 							if(source.contains(val))
 								return true;

@@ -83,7 +83,6 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	public AccountingArticlePricesDTO(QuoteArticleLine quoteArticleline) {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
-		accountingArticleLabel=quoteArticleline.getDescription();
 		accountingArticlePrices=new ArrayList<PriceDTO>();
 		for(QuotePrice quotePrice:quoteArticleline.getQuotePrices()) {
 			accountingArticlePrices.add(new PriceDTO(quotePrice));

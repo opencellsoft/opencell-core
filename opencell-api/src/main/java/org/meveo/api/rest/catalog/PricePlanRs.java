@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.LoadPricesRequest;
+import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -408,7 +409,7 @@ public interface PricePlanRs extends IBaseRs {
             })
     Response getPricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
 
-    @GET
+    @POST
     @Path("/loadPrices")
     @Operation(summary = "load prices",
             tags = { "Price Plan" },
@@ -432,5 +433,16 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="201", description = "the price plan line successfully added",content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
-	Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
+    Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
+
+    @POST
+    @Path("/loadPrices")
+    @Operation(summary = "load prices",
+            tags = { "Price Plan" },
+            description ="load prices",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the prices are successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response matrixRating(MatrixRatingRequest request);
 }

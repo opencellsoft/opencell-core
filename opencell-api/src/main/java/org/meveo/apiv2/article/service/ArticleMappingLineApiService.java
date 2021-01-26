@@ -87,10 +87,12 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
                     .stream()
                     .map(am -> {
-                        Attribute attribute = attributeService.findById(am.getId());
+                        Attribute attribute = attributeService.findById(am.getAttribute().getId());
                         if (attribute == null)
                             throw new BadRequestException("No attribute found with Id: " + attribute.getId());
-                        return new AttributeMapping(attribute, am.getAttributeValue());
+                        AttributeMapping attributeMapping = new AttributeMapping(attribute, am.getAttributeValue());
+                        attributeMapping.setArticleMappingLine(articleMappingLine);
+                        return attributeMapping;
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
