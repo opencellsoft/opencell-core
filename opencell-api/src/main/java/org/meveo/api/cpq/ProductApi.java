@@ -22,6 +22,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
@@ -30,6 +31,7 @@ import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -593,20 +595,6 @@ public class ProductApi extends BaseApi {
 		} 
 		return result;
 	} 
-	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
-		Set<String> tagCodes = postData.getTagCodes(); 
-		if(tagCodes != null && !tagCodes.isEmpty()){
-			Set<Tag> tags=new HashSet<Tag>();
-			for(String code:tagCodes) {
-				Tag tag=tagService.findByCode(code);
-				if(tag == null) { 
-					throw new EntityDoesNotExistsException(Tag.class,code);
-				}
-				tags.add(tag);
-			}
-			productVersion.setTags(tags);
-		}
-	} 
 	
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> attributeCodes = postData.getAttributeCodes(); 
@@ -620,6 +608,21 @@ public class ProductApi extends BaseApi {
 				attributes.add(attribute);
 			}
 			productVersion.setAttributes(attributes);
+		}
+	} 
+	
+	private void processTags(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			Set<Tag> tags=new HashSet<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tags.add(tag);
+			}
+			productVersion.setTags(tags);
 		}
 	} 
 	
@@ -722,20 +725,33 @@ public class ProductApi extends BaseApi {
 		 GetOfferTemplateResponseDto offertemplateDTO=offerTemplateApi.fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE,true,false,false, false,false,false,true,true,requestedTagTypes);
 		 for(OfferProductsDto offerProduct:offertemplateDTO.getOfferProducts()) {
 			 if(offerProduct.getProduct()!=null && offerProduct.getProduct().getCurrentProductVersion()!=null ) {
-			 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion()); 
-			 if(commercialRules!=null && !commercialRules.isEmpty()) {
-			 List<CommercialRuleHeaderDTO >commercialRuleDtoList=new ArrayList<CommercialRuleHeaderDTO>();
-			 for(CommercialRuleHeader rule:commercialRules) {
-					CommercialRuleHeaderDTO commercialRuleDto=new CommercialRuleHeaderDTO(rule);
-					commercialRuleDtoList.add(commercialRuleDto);
-			 }	
-			 offerProduct.setCommercialRules(commercialRuleDtoList);
-			 offerProduct.setRuled(true);
-			 boolean isSelectable=commercialRuleHeaderService.isProductSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
-			 offerProduct.setSelectable(isSelectable);
-	     }
+				 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion()); 
+				 if(commercialRules!=null && !commercialRules.isEmpty()) {
+					 List<CommercialRuleHeaderDTO >commercialRuleDtoList=new ArrayList<CommercialRuleHeaderDTO>();
+					 for(CommercialRuleHeader rule:commercialRules) {
+						 CommercialRuleHeaderDTO commercialRuleDto=new CommercialRuleHeaderDTO(rule);
+						 commercialRuleDtoList.add(commercialRuleDto);
+					 }	
+					 offerProduct.setCommercialRules(commercialRuleDtoList);
+					 offerProduct.setRuled(true);
+					 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
+					 offerProduct.setSelectable(isSelectable);
+				 }
 			 }
-		 }
+			 for(AttributeDTO attributeDto:offertemplateDTO.getAttributes()) {
+				 List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+				 if(commercialRules!=null && !commercialRules.isEmpty()) {
+					 List<String> commercialRuleCodes= new ArrayList<String>();
+					 for(CommercialRuleHeader rule:commercialRules) { 
+						 commercialRuleCodes.add(rule.getCode());
+					 } 
+					 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
+					 attributeDto.setRuled(true);
+					 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
+					 attributeDto.setSelectable(isSelectable);
+				 }
+			 }
+		 } 
 		 
 		 result.setCpqOfferDto(new CpqOfferDto(offertemplateDTO));
 		 return result;

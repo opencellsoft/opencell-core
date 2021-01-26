@@ -47,25 +47,28 @@ public class MediaApi extends BaseApi {
 	public MediaDto createMedia(MediaDto mediaDto) {
 		if(Strings.isEmpty(mediaDto.getProductCode()))
 			missingParameters.add("productCode");
-		if(Strings.isEmpty(mediaDto.getServiceTemplateCode()))
-			missingParameters.add("serviceTemplateCode");
 		if(Strings.isEmpty(mediaDto.getMediaName()))
 			missingParameters.add("mediaName");
 		if(Strings.isEmpty(mediaDto.getLabel()))
 			missingParameters.add("label");
 		if(mediaDto.getMediaType() == null)
 			missingParameters.add("mediaType");
-		
+		if(mediaDto.isMain() == null)
+			missingParameters.add("main");
+		handleMissingParameters();
 		//check if there any Media exist with productCode and mediaName
 		if(mediaService.findByProductAndMediaName(mediaDto.getProductCode(), mediaDto.getMediaName()) != null)
 			throw new EntityAlreadyExistsException(String.format(MEDIA_EXIST_ALREADY, mediaDto.getProductCode(), mediaDto.getMediaName()) );
 		final Product product = productService.findByCode(mediaDto.getProductCode());
 		if(product == null)
 			throw new EntityDoesNotExistsException(Product.class, mediaDto.getProductCode());
-		final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(mediaDto.getServiceTemplateCode());
-		if(serviceTemplate == null)
-			throw new EntityDoesNotExistsException(ServiceTemplate.class, mediaDto.getServiceTemplateCode());
 		final Media m = new Media(); 
+		if(!Strings.isEmpty(mediaDto.getServiceTemplateCode())) {
+			final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(mediaDto.getServiceTemplateCode());
+			if(serviceTemplate == null)
+				throw new EntityDoesNotExistsException(ServiceTemplate.class, mediaDto.getServiceTemplateCode());
+			m.setServiceTemplate(serviceTemplate);
+		}
 		if(!Strings.isEmpty(mediaDto.getOfferCode())) {
 			final OfferTemplate offerTemplate = offerTemplateService.findByCode(mediaDto.getOfferCode());
 			if(offerTemplate == null)
@@ -73,7 +76,6 @@ public class MediaApi extends BaseApi {
 			m.setOffer(offerTemplate);
 		}
 		m.setProduct(product);
-		m.setServiceTemplate(serviceTemplate);
 		m.setMediaName(mediaDto.getMediaName());
 		m.setLabel(mediaDto.getLabel());
 		m.setMediaType(mediaDto.getMediaType());

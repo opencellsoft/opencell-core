@@ -1,6 +1,7 @@
 package org.meveo.model.article;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.Attribute;
@@ -12,13 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "Attribute_Mapping")
 @Table(name = "billing_attribute_mapping")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_attribute_mapping_seq"), })
-public class AttributeMapping extends BusinessEntity {
+public class AttributeMapping extends AuditableEntity {
 
     @ManyToOne
     @JoinColumn(name = "article_mapping_line_id")

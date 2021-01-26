@@ -32,6 +32,7 @@ import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.LoadPricesRequest;
+import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -368,6 +369,18 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             response.setPricePlanMatrixLinesDto(pricePlanMatrixLineDto);
             return Response.ok(response).build();
         } catch (MeveoApiException e) {
+            return errorResponse(e, response.getActionStatus());
+        }
+    }
+
+    @Override
+    public Response matrixRating(MatrixRatingRequest request) {
+        GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
+        try {
+            List<PricePlanMatrixLineDto> pricePlanMatrixLineDto = List.of(pricePlanApi.loadPrices(request));
+            response.setPricePlanMatrixLinesDto(pricePlanMatrixLineDto);
+            return Response.ok(response).build();
+        }catch(MeveoApiException e) {
             return errorResponse(e, response.getActionStatus());
         }
     }

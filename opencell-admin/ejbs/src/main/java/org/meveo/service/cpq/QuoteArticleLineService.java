@@ -5,6 +5,7 @@ import javax.ejb.Stateless;
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -13,6 +14,6 @@ import org.meveo.service.base.BusinessService;
  *
  */
 @Stateless
-public class QuoteArticleLineService extends BusinessService<QuoteArticleLine> {
+public class QuoteArticleLineService extends PersistenceService<QuoteArticleLine> {
 
 }

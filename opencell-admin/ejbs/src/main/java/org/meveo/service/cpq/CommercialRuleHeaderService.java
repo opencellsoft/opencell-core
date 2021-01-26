@@ -116,7 +116,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		return commercialRules;
 	}
 
-	public boolean isProductSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,
+	public boolean isElementSelectable(String offerCode, List<CommercialRuleHeader> commercialRules,
 			List<ProductContextDTO> selectedProducts) {
 		Boolean isSelectable = Boolean.TRUE;
 		List<CommercialRuleItem> items = null;
