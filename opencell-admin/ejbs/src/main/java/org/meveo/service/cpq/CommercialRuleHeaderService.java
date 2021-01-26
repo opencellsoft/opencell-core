@@ -80,18 +80,25 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CommercialRuleHeader> getAttributeRules(String attributeCode,String productCode) throws BusinessException{
+	public List<CommercialRuleHeader> getProductAttributeRules(String attributeCode,String productCode) throws BusinessException{
 		Attribute attribute=attributeService.findByCode(attributeCode);
 		if(attribute == null) { 
 			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
 		}
-		Product product=productService.findByCode(productCode);
-		if(product == null) { 
-			throw new EntityDoesNotExistsException(Product.class,productCode);
-		}
-		
-		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getAttributeRules")
+		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getProductAttributeRules")
 				.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
+		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
+		return commercialRules;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommercialRuleHeader> getOfferAttributeRules(String attributeCode,String offerCode) throws BusinessException{
+		Attribute attribute=attributeService.findByCode(attributeCode);
+		if(attribute == null) { 
+			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
+		}
+		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getOfferAttributeRules")
+				.setParameter("attributeCode", attributeCode).setParameter("offerTemplateCode", offerCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}
