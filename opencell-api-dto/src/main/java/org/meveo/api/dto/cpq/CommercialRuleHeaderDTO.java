@@ -35,6 +35,7 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	protected String groupedAttributeCode;
 	protected String targetAttributeValue; 
 	protected Boolean isTarget=Boolean.TRUE;
+	protected Boolean disabled=Boolean.FALSE;
 	protected List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
 	 
 	
@@ -201,6 +202,18 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	 */
 	public void setIsTarget(Boolean isTarget) {
 		this.isTarget = isTarget;
+	}
+	/**
+	 * @return the disabled
+	 */
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	
