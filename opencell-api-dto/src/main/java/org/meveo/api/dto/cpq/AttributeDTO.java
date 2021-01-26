@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -110,6 +111,8 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElement(name = "assignedAttributes")
     protected List<String> assignedAttributes=new ArrayList<String>();
     
+    private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
+    
     public AttributeDTO() {
     }
 
@@ -133,6 +136,7 @@ public class AttributeDTO extends EnableBusinessDto {
         description=attribute.getDescription();
         id=attribute.getId();
         mandatory=attribute.isMandatory();
+        unitNbDecimal = attribute.getUnitNbDecimal();
         
         if (attribute.getMedias()!=null) {
         	for (Media media:attribute.getMedias()) {
@@ -383,6 +387,26 @@ public class AttributeDTO extends EnableBusinessDto {
 	public void setAssignedAttributes(List<String> assignedAttributes) {
 		this.assignedAttributes = assignedAttributes;
 	}
+
+
+
+	/**
+	 * @return the unitNbDecimal
+	 */
+	public Integer getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+
+
+	/**
+	 * @param unitNbDecimal the unitNbDecimal to set
+	 */
+	public void setUnitNbDecimal(Integer unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
+	}
+
+
  
 	
 

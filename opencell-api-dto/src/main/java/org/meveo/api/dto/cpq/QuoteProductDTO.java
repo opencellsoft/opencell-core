@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 
 /**
@@ -66,6 +67,8 @@ public class QuoteProductDTO extends BaseEntityDto{
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
     
+    private String billableAccountCode;
+    
     
     public QuoteProductDTO() {
     	super();
@@ -93,6 +96,10 @@ public class QuoteProductDTO extends BaseEntityDto{
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
 				quoteAttributes.add(new QuoteAttributeDTO(quoteAttribute));
 			}
+		}
+		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
+		for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
+			accountingArticlePrices.add(new AccountingArticlePricesDTO(quoteArticleLine));
 		}
 		
 	}
@@ -213,6 +220,22 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteProductId(Long quoteProductId) {
 		this.quoteProductId = quoteProductId;
+	}
+
+
+	/**
+	 * @return the billableAccountCode
+	 */
+	public String getBillableAccountCode() {
+		return billableAccountCode;
+	}
+
+
+	/**
+	 * @param billableAccountCode the billableAccountCode to set
+	 */
+	public void setBillableAccountCode(String billableAccountCode) {
+		this.billableAccountCode = billableAccountCode;
 	}
 
 

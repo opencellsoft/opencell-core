@@ -24,7 +24,8 @@ public class MediaDto extends BaseEntityDto{
 	private String offerCode;
 	
 	private String productCode;
-	
+
+	@NotNull
 	private String serviceTemplateCode;
 	
 	private String attributeCode;
@@ -33,7 +34,7 @@ public class MediaDto extends BaseEntityDto{
 	@NotNull
 	private String label;
 	@NotNull
-	private boolean main;
+	private Boolean main;
 	@NotNull
 	private MediaTypeEnum mediaType;
 	private String mediaPath;
@@ -105,13 +106,13 @@ public class MediaDto extends BaseEntityDto{
 	/**
 	 * @return the main
 	 */
-	public boolean isMain() {
+	public Boolean isMain() {
 		return main;
 	}
 	/**
 	 * @param main the main to set
 	 */
-	public void setMain(boolean main) {
+	public void setMain(Boolean main) {
 		this.main = main;
 	}
 	/**

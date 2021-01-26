@@ -4,10 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -33,22 +30,25 @@ import org.meveo.service.cpq.order.OrderLotService;
 import org.meveo.service.cpq.order.OrderOfferService;
 import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.cpq.order.OrderProductService;
+import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.script.module.ModuleScript;
 
 @SuppressWarnings("serial")
 class QuoteValidationTemp extends ModuleScript {
-	
-	@Inject private QuoteVersionService quoteVersionService;
-    @Inject private InvoiceTypeService invoiceTypeService;
-    @Inject private CommercialOrderService commercialOrderService;
-    @Inject private OrderOfferService orderOfferService;
-    @Inject private OrderProductService orderProductService;
-    @Inject private OrderAttributeService orderAttributeService;
-    @Inject private OrderLotService orderCustomerServiceService;
-    @Inject private OrderArticleLineService orderArticleLineService;
-    @Inject private OrderPriceService orderPriceService;
-    @Inject private QuotePriceService quotePriceService;
+
+	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private OrderOfferService orderOfferService = (OrderOfferService) getServiceInterface(OrderOfferService.class.getSimpleName());
+    private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
+    private OrderAttributeService orderAttributeService = (OrderAttributeService) getServiceInterface(OrderAttributeService.class.getSimpleName());
+    private OrderLotService orderCustomerServiceService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
+    private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
+    
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -60,7 +60,7 @@ class QuoteValidationTemp extends ModuleScript {
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
 		
-		
+		System.out.println("code:" + cpqQuote.getCode() + " current status : " + cpqQuote.getStatus());
 		
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			var quoteOfferBillableCode = quoteOffer.getBillableAccount().getCode();
@@ -99,11 +99,23 @@ class QuoteValidationTemp extends ModuleScript {
 		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
 		order.setExternalReference(null);
 		order.setInvoicingPlan(null); //TODO: how to map invoice plan
-		order.setOrderType(new OrderType()); //TODO: how to map order type
+		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
 		order.setOrderProgress(1);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		commercialOrderService.create(order);
 		return order;
+	}
+	
+	private OrderType createOrderTypeTemp() {
+		final String TEMP_CODE = "SCRIPT_OT_TMP"; 
+		OrderType orderType = orderTypeService.findByCode(TEMP_CODE);
+		if(orderType == null) {
+			orderType = new OrderType();
+			orderType.setCode(TEMP_CODE);
+			orderType.setDescription("generated on quote validation  script");
+			orderTypeService.create(orderType);
+		}
+		return orderType;
 	}
 	
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {

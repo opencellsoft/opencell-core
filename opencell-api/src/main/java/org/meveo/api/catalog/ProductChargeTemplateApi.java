@@ -49,13 +49,7 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
 
         handleMissingParametersAndValidate(postData);
 
@@ -76,14 +70,7 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
-
+        } 
         handleMissingParametersAndValidate(postData);
 
         // check if code already exists

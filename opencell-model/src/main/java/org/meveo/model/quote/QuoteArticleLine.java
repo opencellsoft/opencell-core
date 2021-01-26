@@ -11,7 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -63,7 +63,8 @@ public class QuoteArticleLine extends AuditableEntity {
     private BigDecimal serviceQuantity;
 
     @OneToMany(mappedBy = "quoteArticleLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuotePrice> quotePrices = new ArrayList<>();
+    @OrderBy("id")
+	private List<QuotePrice> quotePrices;
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;

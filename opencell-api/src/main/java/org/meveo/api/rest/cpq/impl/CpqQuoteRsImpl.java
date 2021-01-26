@@ -18,6 +18,8 @@
 
 package org.meveo.api.rest.cpq.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -229,6 +231,19 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
 	        }
+	}
+
+
+	@Override
+	public Response findQuoteItems(String quoteCode, int quoteVersion, UriInfo info) {
+		GetQuoteVersionDtoResponse result = new GetQuoteVersionDtoResponse();
+		try {
+            List<QuoteOfferDTO> quoteOffers = cpqQuoteApi.findQuoteOffer(quoteCode, quoteVersion);
+            result.setQuoteItems(quoteOffers);
+	          return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
 	}
    
 }

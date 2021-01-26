@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class ProductService extends BusinessService<Product> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
-	private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product (%s) is %s, it can not be updated nor removed";
+	private final static String PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE = "status of the product (%s) is %s, it can not be updated or removed";
 	private final static String PRODUCT_UNKWON = "product (%s) unknwon!";
 	private final static String PRODUCT_CAN_NOT_CHANGE_THE_STATUS = "product (%s) can not change the status beacause it not draft";
 	private static final String PRODUCT_CODE_EXIST = "code %s of the product already exist!";

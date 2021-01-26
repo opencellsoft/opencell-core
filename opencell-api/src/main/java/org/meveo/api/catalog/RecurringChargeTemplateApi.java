@@ -59,16 +59,10 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
+        } 
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
 
         handleMissingParametersAndValidate(postData);
 
@@ -88,13 +82,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
         if (postData.getCalendar() != null && StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         }
