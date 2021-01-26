@@ -171,7 +171,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     protected CustomFieldValues cfAccumulatedValues;
     
     @Column(name = "priorty")
-    private Long priorty;
+    private Long priority;
     
     
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -370,12 +370,20 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     	return new ICustomFieldEntity[] { discountPlan };
     }
     
-	public Long getPriorty() {
-		return priorty;
+
+
+	/**
+	 * @return the priority
+	 */
+	public Long getPriority() {
+		return priority;
 	}
 
-	public void setPriorty(Long priorty) {
-		this.priorty = priorty;
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Long priority) {
+		this.priority = priority;
 	}
 
 	/**

@@ -74,9 +74,11 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
@@ -774,6 +776,7 @@ public class CpqQuoteApi extends BaseApi {
 		Subscription subscription=instantiateVirtualSubscription(quoteOffer);
 		List<WalletOperation> walletOperations=quoteRating(subscription, true);
 		QuoteArticleLine quoteArticleLine=null;
+		
 		for(WalletOperation wo:walletOperations) {
 			 quoteArticleLine=new QuoteArticleLine();
 			 quoteArticleLine.setAccountingArticle(wo.getAccountingArticle());
@@ -782,6 +785,12 @@ public class CpqQuoteApi extends BaseApi {
 			 quoteArticleLine.setBillableAccount(wo.getBillingAccount());
 			 quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
 			 quoteArticleLineService.create(quoteArticleLine);
+			 QuotePrice qp=new QuotePrice();
+			 qp.setPriceTypeEnum(PriceTypeEnum.getPriceTypeEnum(wo.getChargeInstance()));
+			 qp.setAmountWithoutTax(wo.getAmountWithoutTax());
+			 qp.setAmountWithTax(wo.getAmountWithTax());
+			 qp.setTaxAmount(wo.getAmountTax());
+			
 		}
 	}
 
