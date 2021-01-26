@@ -1828,7 +1828,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Retrieve rated transactions associated to an invoice
+     * Retrieve billed rated transactions associated to an invoice
      * 
      * @param invoice Invoice
      * @return A list of rated transactions
@@ -1843,6 +1843,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else {
             return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceNotFree", RatedTransaction.class).setParameter("invoice", invoice).getResultList();
         }
+    }
+    
+    /**
+     * Retrieve all rated transactions associated to an invoice
+     * 
+     * @param invoice Invoice
+     * @return A list of rated transactions
+     */
+    public List<RatedTransaction> listRatedTransactionsByInvoice(Invoice invoice) {
+        if (invoice.getId() == null) {
+            return new ArrayList<>();
+        }
+        return getEntityManager().createNamedQuery("RatedTransaction.listAllByInvoice", RatedTransaction.class).setParameter("invoice", invoice).getResultList();
     }
 
     /**
@@ -1903,4 +1916,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 
     }
+    
+    /**
+     * invalidate RTs related to an invoice
+     * @param invoice
+     */
+    public void invalidateRTs(Invoice invoice) {
+        getEntityManager().createNamedQuery("RatedTransaction.invalidateRTByInvoice").setParameter("invoice", invoice).executeUpdate();
+    }
+    
 }

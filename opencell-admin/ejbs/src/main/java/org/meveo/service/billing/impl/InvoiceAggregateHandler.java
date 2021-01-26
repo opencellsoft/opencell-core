@@ -224,10 +224,10 @@ public class InvoiceAggregateHandler {
 
         SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());
         CategoryInvoiceAgregate categoryInvoiceAgregate = null;
-        if (subCategoryInvoiceAgregate != null) {
+        if (subCategoryInvoiceAgregate != null && subCategoryInvoiceAgregate.getCategoryInvoiceAgregate()!=null) {
             categoryInvoiceAgregate = subCategoryInvoiceAgregate.getCategoryInvoiceAgregate();
 
-        } else if (isToAdd) {
+        } else {
             categoryInvoiceAgregate = catInvAgregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
             if (categoryInvoiceAgregate == null) {
                 categoryInvoiceAgregate = new CategoryInvoiceAgregate();

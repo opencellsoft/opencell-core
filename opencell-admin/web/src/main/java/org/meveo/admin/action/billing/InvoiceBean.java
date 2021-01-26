@@ -53,6 +53,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
@@ -886,5 +887,69 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
         entity.setLinkedInvoices(linkedInvoices);
+    }
+
+    public void cancelInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.cancelInvoiceWithoutDelete(invoice);
+    }
+    
+    public void validateInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.validateInvoice(invoice);
+    }
+    
+    public void rebuildInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.rebuildInvoice(invoice);
+    }
+    
+    public void cancelInvoices() {
+        try {
+            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+                for (Invoice invoice : getSelectedEntities()) {
+                    cancelInvoice(invoice);
+                }
+                messages.info(new BundleKey("messages", "info.invoicing.cancel"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to cancel invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+    
+    public void validateInvoices() {
+        try {
+            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+                for (Invoice invoice : getSelectedEntities()) {
+                    validateInvoice(invoice);
+                }
+                messages.info(new BundleKey("messages", "info.invoicing.validated"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to validate invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+    
+    public void moveInvoices(BillingRun billingRun) {
+        try {
+            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+            	invoiceService.moveInvoices(getSelectedEntities(), billingRun.getId());
+                messages.info(new BundleKey("messages", "info.invoicing.move"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+        } catch (Exception e) {
+            log.error("Failed to move invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+
+	public boolean areSelectedInvoicesInvalidated() {
+        return !CollectionUtils.isEmpty(getSelectedEntities()) && getSelectedEntities().stream().filter(i->(InvoiceStatusEnum.REJECTED.equals(i.getStatus())||InvoiceStatusEnum.SUSPECT.equals(i.getStatus()))).count()==0;
     }
 }

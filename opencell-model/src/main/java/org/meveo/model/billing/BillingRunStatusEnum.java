@@ -27,7 +27,8 @@ public enum BillingRunStatusEnum {
     POSTINVOICED(6, "BillingRunStatusEnum.postinvoiced"), // the invoices and postinvoicing report have been generated
     POSTVALIDATED(7, "BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
     VALIDATED(8, "BillingRunStatusEnum.validated"),// the invoices are assigned an invoice number, end of the process
-    CANCELLING(9, "BillingRunStatusEnum.cancelling");
+    CANCELLING(9, "BillingRunStatusEnum.cancelling"),
+    REJECTED(10, "BillingRunStatusEnum.Rejected");// the billing run or some invoices are rejected and need to be validated/cancelled.
 
     private Integer id;
     private String label;
