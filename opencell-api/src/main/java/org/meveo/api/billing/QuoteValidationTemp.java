@@ -35,7 +35,7 @@ import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.script.module.ModuleScript;
 
 @SuppressWarnings("serial")
-class QuoteValidationTemp extends ModuleScript {
+public class QuoteValidationTemp extends ModuleScript {
 
 	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
     private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
@@ -102,6 +102,7 @@ class QuoteValidationTemp extends ModuleScript {
 		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
 		order.setOrderProgress(1);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
+		order.setProgressDate(Calendar.getInstance().getTime());
 		commercialOrderService.create(order);
 		return order;
 	}
@@ -133,6 +134,8 @@ class QuoteValidationTemp extends ModuleScript {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setOrderOffer(orderOffer);
+		orderProduct.setCode("ORD_PDT_" + commercialOrder.getId());
 		
 		orderProductService.create(orderProduct);
 		
@@ -187,6 +190,7 @@ class QuoteValidationTemp extends ModuleScript {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(orderArticleLine.getId(), quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
+			orderPrice.setCode("OD_PRC_" + commercialOrder.getId());
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);
 			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
