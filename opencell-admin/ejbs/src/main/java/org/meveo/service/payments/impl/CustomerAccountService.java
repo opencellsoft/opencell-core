@@ -587,17 +587,17 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     private void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
-        if (preferredPaymentMethod == null) {
-            throw new BusinessException("CustomerAccount does not have a preferred payment method");
-        }
-        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
-            if(ddPaymentMethods.stream()
-                    .filter(entry -> entry.getBankCoordinates().getIban().equals(ddPaymentMethod.getBankCoordinates().getIban()))
-                    .limit(2)
-                    .count() > 1){
-                throw new BusinessException("CustomerAccount Could not have two Direct debit payment method with the same iban");
-            }
-        }
+//        if (preferredPaymentMethod == null) {
+//            throw new BusinessException("CustomerAccount does not have a preferred payment method");
+//        }
+//        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
+//            if(ddPaymentMethods.stream()
+//                    .filter(entry -> entry.getBankCoordinates().getIban().equals(ddPaymentMethod.getBankCoordinates().getIban()))
+//                    .limit(2)
+//                    .count() > 1){
+//                throw new BusinessException("CustomerAccount Could not have two Direct debit payment method with the same iban");
+//            }
+//        }
     }
 
     /**

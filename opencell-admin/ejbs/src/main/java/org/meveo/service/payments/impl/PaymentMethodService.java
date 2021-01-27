@@ -17,17 +17,14 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
@@ -37,8 +34,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
@@ -91,7 +86,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
-    	DDPaymentMethod existingPaymentMethod=null;
+
         if (paymentMethod instanceof CardPaymentMethod) {
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
             if (!cardPayment.isValidForDate(new Date())) {
@@ -104,36 +99,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
             if (paymentGateway != null) {
                 createMandate(ddpaymentMethod);
-            }else {
-            	log.warn("the CA {} has no payment gateway for for this payment method : {}", ddpaymentMethod.getPaymentType());
             }
-            if(ddpaymentMethod.getBankCoordinates()!=null && !StringUtils.isBlank(ddpaymentMethod.getBankCoordinates().getIban())) {
-            	 existingPaymentMethod=findByIban(ddpaymentMethod.getBankCoordinates().getIban());
-            	 if(existingPaymentMethod!=null) {
-            		 Long id=existingPaymentMethod.getId();
-         	    	existingPaymentMethod=(DDPaymentMethod)findById(id);
-         	    	try {
-						BeanUtils.copyProperties(existingPaymentMethod, ddpaymentMethod);
-						existingPaymentMethod.setId(id);
-						paymentMethod=existingPaymentMethod;
-						update(paymentMethod);
-						log.info("the paymentMethod id={} is updated : {}", ddpaymentMethod.getId());
-					} catch (IllegalAccessException | InvocationTargetException e) {
-						 throw new BusinessException("Existing Payment method is not correctly updated, id="+existingPaymentMethod.getId(),e);
-					}
-         	    	
-         	    }
-            }
-           
-        	
         }
-        if(existingPaymentMethod==null) {
-        	super.create(paymentMethod);
-        }
-	   
-	    	
-	    
-        
+        super.create(paymentMethod);
 
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
@@ -537,69 +505,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             return query.getResultList();
         } catch (NoResultException e) {
             log.warn("error while getting list PaymentMethod by customerAccount", e);
-            return null;
-        }
-    }
-    /**
-     * Find by invoice number and type.
-     *
-     * @param invoiceNumber invoice's number
-     * @param invoiceType invoice's type
-     * @return found invoice
-     * @throws BusinessException business exception
-     */
-    public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceType invoiceType) throws BusinessException {
-        QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
-        qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
-        qb.addCriterionEntity("i.invoiceType", invoiceType);
-        try {
-            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            log.info("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
-            return null;
-        } catch (NonUniqueResultException e) {
-            log.info("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
-    /**
-     * Find by iban 
-     *
-     * @param iban 
-     * @return found DDPaymentMethod
-     * @throws BusinessException business exception
-     */
-    @SuppressWarnings("unchecked")
-	public DDPaymentMethod findByIban(String iban) throws BusinessException {
-    	log.info("findByIban iban={}",iban);
-    	if(StringUtils.isBlank(iban)) {
-    		return null;
-    	}
-        QueryBuilder qb = new QueryBuilder(DDPaymentMethod.class, "d", null);
-        qb.addCriterion("d.bankCoordinates.iban", "=", iban, true);
-        try {
-            List<DDPaymentMethod> result=  qb.getQuery(getEntityManager()).getResultList();
-            DDPaymentMethod existingDDpayementmethod=null;
-            if(result!=null && !result.isEmpty()) {
-            	existingDDpayementmethod= result.get(0);
-            	if(result.size()>1) {
-            		for(DDPaymentMethod dd:result) {
-            			if(dd.isPreferred()) {
-            				existingDDpayementmethod=dd;
-            				break;
-            			}
-            		}
-            	}
-            }
-            log.info("findByIban existingDDpayementmethod id={},query={}",existingDDpayementmethod!=null?existingDDpayementmethod.getId():null,qb.getSqlString());
-            return existingDDpayementmethod;
-        } catch (NoResultException e) {
-            log.info("DDPaymentMethod with iban {} was not found. Returning null.", iban);
-            return null;
-        } catch (Exception e) {
             return null;
         }
     }
