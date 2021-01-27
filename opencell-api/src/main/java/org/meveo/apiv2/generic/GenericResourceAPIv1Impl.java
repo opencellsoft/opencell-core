@@ -6,7 +6,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.IEntityDto;
+import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
@@ -219,9 +219,12 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
-            IEntityDto anEntityDto = (IEntityDto) new ObjectMapper().readValue( jsonDto, entityDtoClass );
-            if ( anEntityDto instanceof BusinessEntityDto ) {
-                ((BusinessEntityDto) anEntityDto).setCode(entityCode);
+            Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+            if ( aDto instanceof BusinessEntityDto ) {
+                ((BusinessEntityDto) aDto).setCode(entityCode);
+            }
+            else if ( aDto instanceof AccountHierarchyDto) {
+                ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
             }
 
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
@@ -231,7 +234,7 @@ System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString
 
             return httpClient.target( redirectURI )
                     .request(MediaType.APPLICATION_JSON)
-                    .put( Entity.entity(anEntityDto, MediaType.APPLICATION_JSON) );
+                    .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
         }
         else if ( segmentsOfPathAPIv2.size() >= 1 ) {
             // Handle the special endpoint: activation of a subscription

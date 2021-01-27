@@ -7,6 +7,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.reflections.Reflections;
 
 import javax.persistence.Entity;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,6 +53,11 @@ public class GenericHelper {
             else
                 entitiesDtoByName.put( aClass.getSimpleName().toLowerCase(), aClass );
         }
+
+        for ( Class aClass : reflections.getSubTypesOf(Serializable.class) ) {
+            entitiesDtoByName.put( aClass.getSimpleName().toLowerCase(), aClass );
+        }
+
         return entitiesDtoByName;
     }
 
