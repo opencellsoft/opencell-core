@@ -23,8 +23,10 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 
 
@@ -61,6 +63,8 @@ public class CommercialOrder extends AuditableEntity {
 		this.externalReference = copy.externalReference;
 		this.orderParent = copy.orderParent;
 		this.orderInvoiceType = copy.orderInvoiceType;
+		this.access = copy.access;
+		this.userAccount = copy.userAccount;
 	}
 
 	/**
@@ -115,7 +119,7 @@ public class CommercialOrder extends AuditableEntity {
 
 	@Column(name = "order_progress", nullable = false)
 	@NotNull
-	private Integer orderProgress;
+	private Integer orderProgress = Integer.valueOf(0);
 
 	@Column(name = "progress_date", nullable = false)
 	@NotNull
@@ -157,6 +161,16 @@ public class CommercialOrder extends AuditableEntity {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_account_id")
+	private UserAccount userAccount;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "access_id")
+	private Access access;
 
 	/**
 	 * @return the seller
@@ -474,6 +488,34 @@ public class CommercialOrder extends AuditableEntity {
 	 */
 	public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
 		this.invoicingPlan = invoicingPlan;
+	}
+
+	/**
+	 * @return the userAccount
+	 */
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	/**
+	 * @param userAccount the userAccount to set
+	 */
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	/**
+	 * @return the access
+	 */
+	public Access getAccess() {
+		return access;
+	}
+
+	/**
+	 * @param access the access to set
+	 */
+	public void setAccess(Access access) {
+		this.access = access;
 	}
 
 }
