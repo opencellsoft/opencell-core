@@ -26,6 +26,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceType;
@@ -35,6 +36,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 
 
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

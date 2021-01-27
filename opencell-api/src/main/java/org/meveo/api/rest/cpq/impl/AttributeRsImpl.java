@@ -11,6 +11,7 @@ import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.AttributeRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.Attribute;
 
 public class AttributeRsImpl extends BaseRs implements AttributeRs {
 
@@ -22,7 +23,9 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
       
         GetAttributeDtoResponse result = new GetAttributeDtoResponse();
         try {
-        	attributeApi.create(attributeDto);
+        	Attribute att = attributeApi.create(attributeDto);
+        	result.setId(att.getId());
+        	result.setCode(att.getCode());
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());

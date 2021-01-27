@@ -194,6 +194,30 @@ public class ProductApi extends BaseApi {
 				else
 					createProductVersion(productDto.getCurrentProductVersion());
 			}
+			if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()){
+				product.getDiscountList().clear();
+	    		product.getDiscountList().addAll(productDto.getDiscountList().stream()
+						.map(discount -> {
+							DiscountPlan discountPlan = discountPlanService.findByCode(discount.getCode());
+							if(discountPlan == null)
+								createDiscountPlan(discount);
+							return discountPlan;
+						})
+						.collect(Collectors.toSet()));
+			}
+
+	    	if(productDto.getDiscountListCodes() != null && !productDto.getDiscountListCodes().isEmpty()){
+				product.getDiscountList().clear();
+	    		product.getDiscountList().addAll(productDto.getDiscountListCodes().stream()
+						.map(discountCode -> {
+							DiscountPlan discountPlan = discountPlanService.findByCode(discountCode);
+							if(discountPlan == null)
+								throw new EntityDoesNotExistsException(DiscountPlan.class, discountCode);
+							return discountPlan;
+						})
+						.collect(Collectors.toSet())
+				);
+			}
 
 			product.setReference(productDto.getReference());
 			product.setModel(productDto.getModel());
@@ -523,6 +547,7 @@ public class ProductApi extends BaseApi {
 
 	private DiscountPlan createDiscountPlan(DiscountPlanDto discount) {
 		DiscountPlan discountPlan = discountPlanApi.create(discount);
+		if(discount.getDiscountPlanItems() == null || discount.getDiscountPlanItems().isEmpty()) return discountPlan;
 		discount.getDiscountPlanItems().stream()
 				.map(discountItem -> {
 					discountPlanItemApi.create(discountItem);
@@ -760,25 +785,25 @@ public class ProductApi extends BaseApi {
 						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts());
 						 attributeDto.setSelectable(isSelectable);
 					 }
+				 }  
+				 
+				 for(String groupedAttribute:offerProduct.getProduct().getCurrentProductVersion().getGroupedAttributeCodes()) {
+					 GroupedAttributes groupedAttributes=groupedAttributeService.findByCode(groupedAttribute);
+					 if(groupedAttributes==null)
+						 continue;
+					 GroupedAttributeDto groupedAttributeDTO=new GroupedAttributeDto(groupedAttributes);
+					 List<CommercialRuleHeader> groupedAttributeCommercialRules=commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+					 if(groupedAttributeCommercialRules!=null && !groupedAttributeCommercialRules.isEmpty()) {
+						 List<String> commercialRuleCodes= new ArrayList<String>();
+						 for(CommercialRuleHeader rule:groupedAttributeCommercialRules) { 
+							 commercialRuleCodes.add(rule.getCode());
+						 } 
+						 groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
+						 groupedAttributeDTO.setRuled(true);
+						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts());
+						 groupedAttributeDTO.setSelectable(isSelectable);
+					 }
 				 }
-				 /*********@TODO : check groupedAttribute Rules********/
-//				 for(String groupedAttribute:offerProduct.getProduct().getCurrentProductVersion().getGroupedAttributeCodes()) {
-//					 GroupedAttributes groupedAttributes=groupedAttributeService.findByCode(groupedAttribute);
-//					 if(groupedAttributes==null)
-//						 continue;
-//					 GroupedAttributeDto groupedAttributeDTO=new GroupedAttributeDto(groupedAttributes);
-//					 List<CommercialRuleHeader> attributeCommercialRules=commercialRuleHeaderService.getAttributeRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
-//					 if(attributeCommercialRules!=null && !attributeCommercialRules.isEmpty()) {
-//						 List<String> commercialRuleCodes= new ArrayList<String>();
-//						 for(CommercialRuleHeader rule:attributeCommercialRules) { 
-//							 commercialRuleCodes.add(rule.getCode());
-//						 } 
-//						 groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
-//						 groupedAttributeDTO.setRuled(true);
-//						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts());
-//						 groupedAttributeDTO.setSelectable(isSelectable);
-//					 }
-//				 }
 			 }
 		 } 
 		 for(AttributeDTO attributeDto:offertemplateDTO.getAttributes()) {

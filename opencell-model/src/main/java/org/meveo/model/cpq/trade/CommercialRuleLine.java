@@ -100,6 +100,15 @@ public class CommercialRuleLine extends BaseEntity {
 	@Size(max = 255)
 	private String sourceAttributeValue;
 	
+	
+	
+	/**
+	 * grouped attribute value
+	 */
+	@Column(name = "source_grouped_attribute_value", length = 255)
+	@Size(max = 255)
+	private String sourceGroupedAttributeValue;
+	
  
 	/**
 	 * rule operator
@@ -235,6 +244,20 @@ public class CommercialRuleLine extends BaseEntity {
 	 */
 	public void setCommercialRuleItem(CommercialRuleItem commercialRuleItem) {
 		this.commercialRuleItem = commercialRuleItem;
+	}
+
+	/**
+	 * @return the sourceGroupedAttributeValue
+	 */
+	public String getSourceGroupedAttributeValue() {
+		return sourceGroupedAttributeValue;
+	}
+
+	/**
+	 * @param sourceGroupedAttributeValue the sourceGroupedAttributeValue to set
+	 */
+	public void setSourceGroupedAttributeValue(String sourceGroupedAttributeValue) {
+		this.sourceGroupedAttributeValue = sourceGroupedAttributeValue;
 	}
 	
 	

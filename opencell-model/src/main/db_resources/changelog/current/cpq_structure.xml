@@ -288,6 +288,7 @@
 			<column name="tag_id" type="bigint" />
 			<column name="operator" type="varchar(255)" />
 			<column name="source_attribute_value" type="varchar(255)" />
+			<column name="source_grouped_attribute_value" type="varchar(255)" />
 			<column name="value" type="varchar(255)" />
 		</createTable>
 	</changeSet>
@@ -2050,6 +2051,8 @@
 	            <column name="invoice_type_id" type="bigint">
 	            	<constraints nullable="false"/>
 	            </column>
+	            <column name="user_account_id" type="bigint" />
+	            <column name="access_id" type="bigint" />
 	        </createTable>
 
 	        <createTable tableName="cpq_commercial_order_billing_invoice">
@@ -2922,7 +2925,49 @@
 			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="billing_service_instance" constraintName="fk_cpq_quote_product_serviceInstance_id" deferrable="false" initiallyDeferred="false"
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
 	</changeSet>
+	
+	<changeSet id="#20210127-540-190" author="TarikFA">
+			<addForeignKeyConstraint baseColumnNames="access_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_access_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="medina_access" />
+			<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_user_account_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+	</changeSet>
 
+	<changeSet id="Invoice_lines_job_20200114" author="ZBariki">
+		<addColumn tableName="cpq_invoice_line">
+			<column name="billing_run_id" type="bigint"/>
+			<column name="billing_account_id" type="bigint"/>
+			<column name="label" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="raw_amount" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="value_date" type="datetime" />
+			<column name="order_number" type="varchar(255)" />
+			<column name="discount_amount" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="subscription_id" type="bigint"/>
+			<column name="service_instance_id" type="bigint"/>
+			<column name="offer_template_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="billing_run_id"
+								 constraintName="billing_invoice_line_billing_run_id_fk"
+								 referencedTableName="billing_billing_run" referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="billing_account_id"
+								 constraintName="billing_billing_account_id_fk"
+								 referencedTableName="billing_billing_account" referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="service_instance_id"
+								 constraintName="billing_service_instance_id_fk"
+								 referencedTableName="billing_service_instance" referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="subscription_id"
+								 constraintName="billing_subscription_id_fk"
+								 referencedTableName="billing_subscription" referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="offer_template_id"
+								 constraintName="billing_offer_template_id_fk"
+								 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
+	</changeSet>
 </databaseChangeLog>
 
 

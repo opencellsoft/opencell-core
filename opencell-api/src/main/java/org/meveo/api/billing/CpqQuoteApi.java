@@ -19,7 +19,6 @@
 package org.meveo.api.billing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -35,9 +35,9 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
@@ -784,25 +784,52 @@ public class CpqQuoteApi extends BaseApi {
 	}
 	
 	public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
+		List<QuotePrice> accountingArticlePrices = new ArrayList<>();
 		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
 		if(quoteVersion == null)
 			throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 		for(QuoteOffer quoteOffer:quoteVersion.getQuoteOffers()) {
-			offerQuotation(quoteOffer);
+			accountingArticlePrices.addAll(offerQuotation(quoteOffer));
 		}
-		return new GetQuoteVersionDtoResponse(quoteVersion, true,true, true );
+		Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingArticlePrices.stream()
+				.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+
+		List<PriceDTO> quotePrices = pricesPerType
+				.keySet()
+				.stream()
+				.map(key -> reducePrices(key, pricesPerType))
+				.filter(Optional::isPresent)
+				.map(price -> new PriceDTO(price.get()))
+				.collect(Collectors.toList());
+
+		GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true);
+		response.setPrices(quotePrices);
+		return response;
 	}
-	
-	public void offerQuotation(QuoteOffer quoteOffer) {
+
+	private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType) {
+		return pricesPerType.get(key).stream().reduce((a, b) -> {
+			QuotePrice quotePrice = new QuotePrice();
+			quotePrice.setPriceTypeEnum(key);
+			quotePrice.setPriceLevelEnum(PriceLevelEnum.QUOTE);
+			quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
+			quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
+			quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
+			quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
+			quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+			return quotePrice;
+		});
+	}
+
+	public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer) {
 		Subscription subscription=instantiateVirtualSubscription(quoteOffer);
 		List<WalletOperation> walletOperations=quoteRating(subscription, true);
 		QuoteArticleLine quoteArticleLine=null;
 		Map<String, QuoteArticleLine> quoteArticleLines=new HashMap<String, QuoteArticleLine>();
+		List<QuotePrice> accountingPrices = new ArrayList<>();
 		String accountingArticleCode=null;
+		clearExistingQuotations(walletOperations);
 		for(WalletOperation wo:walletOperations) {
-			if(wo.getAccountingArticle()==null) {
-				throw new BusinessException("the walletOperation id="+wo.getId()+" has is not linked to an accounting article");
-			}
 			accountingArticleCode=wo.getAccountingArticle().getCode();
 
 			 if(!quoteArticleLines.containsKey(accountingArticleCode)) {
@@ -832,6 +859,23 @@ public class CpqQuoteApi extends BaseApi {
 			 quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
 			 quotePrice.setTaxRate(wo.getTaxPercent());
 			 quotePriceService.create(quotePrice);
+			 quoteProductService.refresh(wo.getServiceInstance().getQuoteProduct());
+			 accountingPrices.add(quotePrice);
+		}
+		return accountingPrices;
+	}
+
+	private void clearExistingQuotations(List<WalletOperation> walletOperations) {
+		for(WalletOperation wo:walletOperations) {
+			if (wo.getAccountingArticle() == null) {
+				throw new BusinessException("the walletOperation id=" + wo.getId() + " has is not linked to an accounting article");
+			}
+			QuoteProduct quoteProduct = wo.getServiceInstance().getQuoteProduct();
+			if(!quoteProduct.getQuoteArticleLines().isEmpty()) {
+				quoteProduct.getQuoteArticleLines().clear();
+				quoteProductService.update(quoteProduct);
+			}
+
 		}
 	}
 
