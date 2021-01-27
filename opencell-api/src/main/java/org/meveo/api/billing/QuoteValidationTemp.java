@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -60,15 +61,13 @@ public class QuoteValidationTemp extends ModuleScript {
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
 		
-		System.out.println("code:" + cpqQuote.getCode() + " current status : " + cpqQuote.getStatus());
-		
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			var quoteOfferBillableCode = quoteOffer.getBillableAccount().getCode();
 			quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
 				if(quoteProduct.getBillableAccount() != null && quoteOffer.getBillableAccount() != null) {
 					var quoteProductBillableCode = quoteProduct.getBillableAccount().getCode();
 					if(!quoteOfferBillableCode.contentEquals(quoteProductBillableCode)) {
-						createNewOrder(cpqQuote, quoteVersion, quoteOffer, quoteProduct);
+						createNewOrder(cpqQuote, quoteVersion, quoteOffer, quoteProduct, quoteProduct.getBillableAccount() );
 					}
 				}
 				
@@ -78,17 +77,17 @@ public class QuoteValidationTemp extends ModuleScript {
 		
 	}
 	
-	private void createNewOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
-		CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion);
+	private void createNewOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, QuoteOffer quoteOffer, QuoteProduct quoteProduct, BillingAccount billingAccount) {
+		CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billingAccount);
 		OrderLot orderLot = processOrderCustomerService(quoteOffer.getQuoteLot(), order);
 		OrderOffer orderOffer = processOrderOffer(quoteOffer, order);
 		processOrderProduct(quoteProduct, order, orderLot, orderOffer);
 	}
 	
-	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion) {
+	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount billingAccount) {
 		CommercialOrder order = new CommercialOrder();
 		order.setSeller(cpqQuote.getSeller());
-		order.setBillingAccount(cpqQuote.getBillableAccount());
+		order.setBillingAccount(billingAccount);
 		order.setQuote(cpqQuote);
 		order.setContract(cpqQuote.getContract());
 		order.setCustomerServiceBegin(quoteVersion.getStartDate());

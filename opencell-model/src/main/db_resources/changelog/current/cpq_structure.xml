@@ -2050,6 +2050,8 @@
 	            <column name="invoice_type_id" type="bigint">
 	            	<constraints nullable="false"/>
 	            </column>
+	            <column name="user_account_id" type="bigint" />
+	            <column name="access_id" type="bigint" />
 	        </createTable>
 
 	        <createTable tableName="cpq_commercial_order_billing_invoice">
@@ -2921,6 +2923,13 @@
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
 			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="billing_service_instance" constraintName="fk_cpq_quote_product_serviceInstance_id" deferrable="false" initiallyDeferred="false"
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+	</changeSet>
+	
+	<changeSet id="#20210127-540-190" author="TarikFA">
+			<addForeignKeyConstraint baseColumnNames="access_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_access_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="medina_access" />
+			<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_user_account_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
 	</changeSet>
 
 </databaseChangeLog>
