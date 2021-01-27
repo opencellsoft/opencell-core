@@ -46,7 +46,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            recurringChargeTemplateApi.create(postData);
+        	result.setEntityId(recurringChargeTemplateApi.create(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
