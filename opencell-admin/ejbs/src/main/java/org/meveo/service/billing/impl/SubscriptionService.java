@@ -41,6 +41,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -901,5 +902,35 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public long getCountByParent(UserAccount parent) {
 
         return getEntityManager().createNamedQuery("Subscription.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
+    
+    /**
+     * Find matching or overlapping versions for a given subscription code and date range
+     * 
+     * @param code Subscription code
+     * @param from Date period start date
+     * @param to Date period end date
+     * @param entityId Identifier of an entity to ignore (as not to match itself in case of update)
+     * @return Matched subscriptions
+     */
+    public List<Subscription> getMatchingVersions(String code, Date from, Date to, Long entityId) {
+
+        List<Subscription> versions = getEntityManager().createNamedQuery("Subscription.findMatchingVersions", Subscription.class)
+            .setParameter("code", code).setParameter("id", entityId == null ? -10000L : entityId).getResultList(); // Pass a non-existing entity id in case it is null
+
+        List<Subscription> matchedVersions = new ArrayList<Subscription>();
+
+        for (Subscription version : versions) {
+
+            DatePeriod datePeriod = version.getValidity();
+
+            if (datePeriod == null || datePeriod.isCorrespondsToPeriod(from, to, false)) {
+                    matchedVersions.add(version);
+            }
+            
+        }
+
+        return matchedVersions;
+
     }
 }
