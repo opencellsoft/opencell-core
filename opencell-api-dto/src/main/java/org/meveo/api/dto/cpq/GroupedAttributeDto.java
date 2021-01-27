@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -20,8 +22,12 @@ public class GroupedAttributeDto {
 	private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
 	private boolean display;
 	private boolean mandatory;
+	private boolean selectable=Boolean.TRUE;  
+	private boolean ruled=Boolean.FALSE;
 	
-    private List<CommercialRuleHeaderDTO> commercialRules=new ArrayList<CommercialRuleHeaderDTO>();
+	 @XmlElementWrapper(name = "commercialRuleCodes")
+	 @XmlElement(name = "commercialRuleCodes") 
+	 private List<String> commercialRuleCodes=new ArrayList<String>();
 	
 	public GroupedAttributeDto() {
 		
@@ -152,18 +158,49 @@ public class GroupedAttributeDto {
 	}
 
 	/**
-	 * @return the commercialRules
+	 * @return the commercialRuleCodes
 	 */
-	public List<CommercialRuleHeaderDTO> getCommercialRules() {
-		return commercialRules;
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
 	}
 
 	/**
-	 * @param commercialRules the commercialRules to set
+	 * @param commercialRuleCodes the commercialRuleCodes to set
 	 */
-	public void setCommercialRules(List<CommercialRuleHeaderDTO> commercialRules) {
-		this.commercialRules = commercialRules;
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
 	}
+
+	/**
+	 * @return the selectable
+	 */
+	public boolean isSelectable() {
+		return selectable;
+	}
+
+	/**
+	 * @param selectable the selectable to set
+	 */
+	public void setSelectable(boolean selectable) {
+		this.selectable = selectable;
+	}
+
+	/**
+	 * @return the ruled
+	 */
+	public boolean isRuled() {
+		return ruled;
+	}
+
+	/**
+	 * @param ruled the ruled to set
+	 */
+	public void setRuled(boolean ruled) {
+		this.ruled = ruled;
+	}
+
+	
+
 	
 	
 }

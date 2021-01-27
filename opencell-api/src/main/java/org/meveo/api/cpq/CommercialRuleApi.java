@@ -239,6 +239,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 
 		commercialRuleLine.setOperator(dto.getOperator());
 		commercialRuleLine.setSourceAttributeValue(dto.getAttributeValue());
+		commercialRuleLine.setSourceGroupedAttributeValue(dto.getGroupedAttributeValue());
 
 		if(!StringUtils.isBlank(dto.getOfferCode())) {
 			OfferTemplate offerTemplate =offerTemplateService.findByCode(dto.getOfferCode());
