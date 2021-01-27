@@ -320,7 +320,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"TEST_PRODUCT_1\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{codeProductOne}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -452,7 +452,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"TEST_PRODUCT_2\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{codeProductTwo}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2709,66 +2709,6 @@
 			"name": "Account Hierarchy",
 			"item": [
 				{
-					"name": "Create Recurring Charge Template",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.collectionVariables.set(\"chargeTemplate\",JSON.parse(pm.request.body).code);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "{{opencell.password}}",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{opencell.username}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{auth}}"
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"CH_REC_TEMPLATE\",\r\n    \"description\": \"This is recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"recurringChargeTemplate",
-								"createOrUpdate"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Customer Account Hierarchy",
 					"event": [
 						{
@@ -2813,7 +2753,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"crmAccountType\":\"C_CA\",\n            \"crmParentCode\":\"SELLER_FR\",\n            \"code\":\"TEST_CA\",\n            \"description\":\"description_entity\",\n            \"name\":{\n               \"title\":\"MR\",\n               \"lastName\":\"FIRST_NAME\"\n            },\n            \"vatNo\":\"FR89810129666\",\n            \"registrationNo\":\"810129666\",\n            \"address\":{\n               \"address1\":\"14 rue Crespin du Gast\",\n               \"zipCode\":\"75011\",\n               \"city\":\"PARIS\",\n               \"state\":\"Paris Area\",\n               \"country\":\"FR\"\n            },\n            \"email\":\"contact@opencell.com\",\n            \"contactInformation\":{\n                \"email\":\"contact@opencell.com}\"\n            },\n            \"language\":\"FRA\",\n            \"customerCategory\":\"CLIENT\",\n            \"customerBrand\":\"DEFAULT\",\n            \"currency\":\"EUR\",\n            \"billingCycle\":\"CYC_INV_MT_1\",\n            \"country\":\"FR\",\n            \"electronicBilling\":true,\n            \"externalRef1\":\"FR 89810129666\"\n}"
+							"raw": "{\n    \"crmAccountType\":\"C_CA\",\n            \"crmParentCode\":\"SELLER_FR\",\n            \"code\":\"TEST_CA\",\n            \"description\":\"description entity\",\n            \"name\":{\n               \"title\":\"MR\",\n               \"lastName\":\"FIRST_NAME\"\n            },\n            \"vatNo\":\"FR89810129666\",\n            \"registrationNo\":\"810129666\",\n            \"address\":{\n               \"address1\":\"14 rue Crespin du Gast\",\n               \"zipCode\":\"75011\",\n               \"city\":\"PARIS\",\n               \"state\":\"Paris Area\",\n               \"country\":\"FR\"\n            },\n            \"email\":\"contact@opencell.com\",\n            \"contactInformation\":{\n                \"email\":\"contact@opencell.com}\"\n            },\n            \"language\":\"FRA\",\n            \"customerCategory\":\"CLIENT\",\n            \"customerBrand\":\"DEFAULT\",\n            \"currency\":\"EUR\",\n            \"billingCycle\":\"CYC_INV_MT_1\",\n            \"country\":\"FR\",\n            \"electronicBilling\":true,\n            \"externalRef1\":\"FR 89810129666\"\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -2824,6 +2764,66 @@
 								"account",
 								"accountHierarchy",
 								"createOrUpdateCRMAccountHierarchy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Recurring Charge Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"chargeTemplate\",JSON.parse(pm.request.body).code);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{chargeTemplate}}\",\r\n    \"description\": \"This is recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": null,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"recurringChargeTemplate",
+								"createOrUpdate"
 							]
 						}
 					},
@@ -2887,7 +2887,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"SE_TEMPLATE_TEST\",\r\n    \"disabled\": false,\r\n    \"mandatory\": false,\r\n    \"renewalRule\": {\r\n        \"initialTermType\": \"RECURRING\",\r\n        \"autoRenew\": false\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{serviceTemplate}}\",\r\n    \"disabled\": false,\r\n    \"mandatory\": false,\r\n    \"renewalRule\": {\r\n        \"initialTermType\": \"RECURRING\",\r\n        \"autoRenew\": false\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2941,7 +2941,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\":\"OF_CLASSIC_COMMISSION\",\n    \"name\":\"Classic Offer Template\"\n}",
+							"raw": "{\n    \"code\":\"{{offerTemplate}}\",\n    \"name\":\"Classic Offer Template\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3021,7 +3021,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n     \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"serviceTemplateCode\": \"{{serviceTemplate}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
+							"raw": "{\r\n    \"mediaName\": \"MEDIA_NAME\",\r\n    \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{codeProductOne}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3948,6 +3948,31 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "List Price Plan Matrix 153",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/pricePlan/list?eventCode={{chargeTemplate}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"pricePlan",
+										"list"
+									],
+									"query": [
+										{
+											"key": "eventCode",
+											"value": "{{chargeTemplate}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -4174,7 +4199,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_CONTRACT\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"{{billingAccountCode}}\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n",
+							"raw": "{\r\n  \"code\": \"{{contractCode}}\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"{{billingAccountCode}}\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4306,7 +4331,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"TEST_QUOTE\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"TEST_CONTRACT\",\r\n  \"sellerCode\": \"SELLER_FR\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"TEST_QUOTE\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"code\": \"{{quoteCode}}\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4646,6 +4671,24 @@
 					"response": []
 				},
 				{
+					"name": "Read The Quote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Quote Offer 3",
 					"request": {
 						"method": "DELETE",
@@ -4665,7 +4708,125 @@
 					"response": []
 				},
 				{
-					"name": "Place order Accepted",
+					"name": "Create Billing Account 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TEST_BA_1\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{customerAccountCode}}\",\r\n    \"language\": \"FRA\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"country\": \"FR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"billingAccount",
+								"createOrUpdate"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Billing Account 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"TEST_BA_2\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{customerAccountCode}}\",\r\n    \"language\": \"FRA\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"country\": \"FR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"account",
+								"billingAccount",
+								"createOrUpdate"
+							]
+						},
+						"description": "Creating a new tag type"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Quote Offer Validation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"quoteVersion\": 1,\r\n    \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplate}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{codeProductOne}}\",\r\n            \"billableAccountCode\": \"TEST_BA_1\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        },\r\n        {\r\n            \"productCode\": \"{{codeProductTwo}}\",\r\n            \"billableAccountCode\": \"TEST_BA_2\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place The Order",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -4680,7 +4841,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"quoteCode\",JSON.parse(pm.request.body).code);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -4691,7 +4852,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{quoteCode}}\",\r\n  \"description\": \"This is a quote test description\",\r\n  \"quoteDate\": \"2020-12-14\",\r\n  \"status\": \"InProgress\",\r\n  \"applicantAccountCode\": \"{{billingAccountCode}}\",\r\n  \"billableAccountCode\": \"{{billingAccountCode}}\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\",\r\n  \"quoteVersion\": {\r\n    \"shortDescription\": \"Quote version description\",\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-12-14\",\r\n    \"startDate\": \"2020-12-14\",\r\n    \"endDate\": \"2020-12-31\"\r\n  }\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4714,18 +4875,42 @@
 					"response": []
 				},
 				{
-					"name": "Read The Quote",
+					"name": "List Commercial Orders",
 					"request": {
-						"method": "GET",
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"raw": "{{opencell.url}}/commercialOrder/list",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"{{quoteCode}}"
+								"commercialOrder",
+								"list"
 							]
 						}
 					},
@@ -4914,7 +5099,7 @@
 		},
 		{
 			"key": "chargeTemplate",
-			"value": "CH_REC_TEMPLATE"
+			"value": "REC_CH_TEMPLATE"
 		},
 		{
 			"key": "pricePlanCode",
@@ -4941,10 +5126,6 @@
 			"value": "TV_DECODER"
 		},
 		{
-			"key": "QuoteCode",
-			"value": "TEST_QUOTE"
-		},
-		{
 			"key": "executeQuotation",
 			"value": "false"
 		},
@@ -4954,7 +5135,7 @@
 		},
 		{
 			"key": "serviceTemplate",
-			"value": ""
+			"value": "SE_TEMPLATE_TEST"
 		}
 	]
 }
