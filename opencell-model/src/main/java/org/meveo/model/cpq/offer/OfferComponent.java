@@ -67,23 +67,8 @@ public class OfferComponent extends BaseEntity {
 	}
 	
 	public OfferComponent(OfferComponent copy) {
-		this.offerTemplate = copy.getCommercialOffer();
 		this.product = copy.getProduct();
 		this.tagsList = new HashSet<>(copy.getTagsList());
-	}
-	/**
-	 * @return the commercialOffer
-	 */
-	public OfferTemplate getCommercialOffer() {
-		return offerTemplate;
-	}
-
-
-	/**
-	 * @param commercialOffer the commercialOffer to set
-	 */
-	public void setCommercialOffer(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
 	}
 
 
