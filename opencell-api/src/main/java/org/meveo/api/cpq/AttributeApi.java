@@ -86,8 +86,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
-		processTags(postData,attribute);
 		attributeService.create(attribute);
+		processTags(postData,attribute);
 		return attribute;
 	}
 	
@@ -100,6 +100,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				if(tag == null) { 
 					throw new EntityDoesNotExistsException(Tag.class,code);
 				}
+				tag.setAttribute(attribute);
 				tags.add(tag);
 			}
 			attribute.getTags().addAll(tags);
