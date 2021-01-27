@@ -314,7 +314,11 @@ public class CpqQuoteApi extends BaseApi {
 		}
 	
 	
-	
+	public void generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf){
+		QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+
+
+	}
 	
 	public GetQuoteDtoResponse getQuote(String quoteCode) {
 		if(Strings.isEmpty(quoteCode)) {

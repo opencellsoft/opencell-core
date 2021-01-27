@@ -48,6 +48,10 @@ public class QuoteArticleLine extends AuditableEntity {
 	@NotNull
 	private BillingAccount billableAccount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_lot_id", nullable = false, referencedColumnName = "id")
+    private QuoteLot quoteLot;
+
     /**
      * account article
      */
@@ -136,5 +140,13 @@ public class QuoteArticleLine extends AuditableEntity {
 
 	public void setQuotePrices(List<QuotePrice> quotePrices) {
 		this.quotePrices = quotePrices;
+	}
+
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
 	}
 }
