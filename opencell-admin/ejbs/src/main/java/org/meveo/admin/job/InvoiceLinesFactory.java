@@ -17,7 +17,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.AccountingArticleService; 
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
 public class InvoiceLinesFactory {
