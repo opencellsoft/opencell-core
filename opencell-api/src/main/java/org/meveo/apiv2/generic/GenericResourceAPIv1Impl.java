@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author Thang Nguyen
@@ -82,18 +81,18 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException {
+        String getPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
         String pathGetAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        String pathGetAllEntities = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
-
         URI redirectURI;
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAllEntities ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
@@ -110,20 +109,20 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 }
 
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
+                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath )
                         + METHOD_GET_ALL + queryParams.substring( 0, queryParams.length() - 1 ) );
 System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAllEntities )
+                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath )
                         + METHOD_GET_ALL );
 System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             }
             return httpClient.target( redirectURI ).request().get();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathGetAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathGetAnEntity );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAnEntity ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAnEntity );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
@@ -132,18 +131,17 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
 System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             return httpClient.target( redirectURI ).request().get();
         }
-        // Handle the special endpoint: get an access point based on a subscriptionCode and an accessCode
-        else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/accesses\\/[^\\/^$]*(?:$|\\W)" )
-                .matcher(uriInfo.getPath()).matches() ) {
+        // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getPath );
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + "/account/access?subscriptionCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 3).toString()
+                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR
+                    + "subscriptionCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 3).toString()
                     + PAIR_QUERY_PARAM_SEPARATOR
                     + "accessCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 1).toString() );
 
 System.out.println( "GET redirectURI an AccessPoint : " + redirectURI.toString() );
-            return httpClient.target( redirectURI )
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
+            return httpClient.target( redirectURI ).request().get();
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -152,7 +150,7 @@ System.out.println( "GET redirectURI an AccessPoint : " + redirectURI.toString()
     @Override
     public Response postRequest( String jsonDto ) throws URISyntaxException {
         String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
-        URI redirectURI;
+        URI redirectURI = null;
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         queryParamsMap = uriInfo.getQueryParameters();
         queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
@@ -162,16 +160,27 @@ System.out.println( "GET redirectURI an AccessPoint : " + redirectURI.toString()
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( postPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( postPath );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
+            
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                    + API_REST + pathIBaseRS + METHOD_CREATE );
+System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toString() );
 
+            return httpClient.target( redirectURI )
+                    .request(MediaType.APPLICATION_JSON)
+                    .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+        }
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( postPath );
+            
             // Handle the generic special endpoint: enable a service
             if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
+                System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
             }
             // Handle the generic special endpoint: disable a service
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
@@ -179,12 +188,7 @@ System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toStrin
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
-            }
-            else {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_CREATE );
-System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toString() );
+                System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
             }
 
             return httpClient.target( redirectURI )
@@ -205,8 +209,8 @@ System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toStrin
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
         String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( putPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( putPath );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( putPath );
 
             // Handle the special endpoint: activation of a subscription
             if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ACTIVATION_SERVICE) ) {
@@ -249,8 +253,8 @@ System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toStrin
                         .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
             }
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathUpdateAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathUpdateAnEntity );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
@@ -282,10 +286,10 @@ System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathDeleteAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
+        String deletePath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathDeleteAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathDeleteAnEntity );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( deletePath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( deletePath );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_DELETE

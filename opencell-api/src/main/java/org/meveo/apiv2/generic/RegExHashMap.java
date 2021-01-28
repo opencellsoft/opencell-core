@@ -26,9 +26,6 @@ public class RegExHashMap<K,V> extends HashMap<K,V> {
             regExPatterns.add( (Pattern) aKey );
             regExValues.add( aValue );
         }
-        else {
-            super.put( aKey, aValue );
-        }
 
         return aValue;
     }
@@ -46,7 +43,7 @@ public class RegExHashMap<K,V> extends HashMap<K,V> {
                 return regExValues.get(i);
             }
         }
-        return super.get(aKey);
+        return null;
     }
 
     /**
@@ -62,6 +59,6 @@ public class RegExHashMap<K,V> extends HashMap<K,V> {
             }
         }
 
-        return super.containsKey(aKey);
+        return false;
     }
 }
