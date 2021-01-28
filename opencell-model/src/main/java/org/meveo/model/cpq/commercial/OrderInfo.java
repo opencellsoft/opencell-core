@@ -1,17 +1,18 @@
 package org.meveo.model.cpq.commercial;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.cpq.ProductVersion;
 
 @Embeddable
-public class InfoOrder {
-
-
+public class OrderInfo {
+    
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
 	private CommercialOrder order;
