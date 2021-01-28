@@ -6,7 +6,6 @@ import javax.persistence.NoResultException;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.service.base.PersistenceService;
-import org.w3c.dom.Attr;
 
 
 /**

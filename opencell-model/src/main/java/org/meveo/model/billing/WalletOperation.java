@@ -543,14 +543,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_version__id")
-    private ProductVersion productVersion;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_customer_service_id")
-    private OrderLot orderCustomerService;
-
     /**
      * Constructor
      */
@@ -1461,19 +1453,5 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.accountingArticle = accountingArticle;
     }
 
-    public ProductVersion getProductVersion() {
-        return productVersion;
-    }
-
-    public void setProductVersion(ProductVersion productVersion) {
-        this.productVersion = productVersion;
-    }
-
-    public OrderLot getOrderCustomerService() {
-        return orderCustomerService;
-    }
-
-    public void setOrderCustomerService(OrderLot orderCustomerService) {
-        this.orderCustomerService = orderCustomerService;
-    }
+   
 }
