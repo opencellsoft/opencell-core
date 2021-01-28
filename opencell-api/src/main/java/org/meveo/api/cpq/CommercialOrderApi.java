@@ -22,6 +22,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -32,11 +33,14 @@ import org.meveo.model.order.Order;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.cpq.order.OrderTypeService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
 import org.primefaces.model.SortOrder;
 
@@ -59,6 +63,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject private InvoicingPlanService invoicingPlanService;
 	@Inject private OrderService orderService;
     @Inject private InvoiceTypeService invoiceTypeService;
+    @Inject private UserAccountService userAccountService;
+    @Inject private AccessService accessService;
+    @Inject private SubscriptionService subscriptionService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -95,6 +102,27 @@ public class CommercialOrderApi extends BaseApi {
 			if(billingPlan == null)
 				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
 			order.setInvoicingPlan(billingPlan);
+		}
+		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
+			final UserAccount userAccount = userAccountService.findByCode(orderDto.getUserAccountCode());
+			if(userAccount == null)
+				throw new EntityDoesNotExistsException(UserAccount.class, orderDto.getUserAccountCode());
+			order.setUserAccount(userAccount);
+		}
+		if(orderDto.getAccessDto() != null) {
+			var accessDto = orderDto.getAccessDto();
+			if(Strings.isEmpty(accessDto.getCode()))
+				missingParameters.add("accessDto.code");
+			if(Strings.isEmpty(accessDto.getSubscription()))
+				missingParameters.add("accessDto.subscription");
+			handleMissingParameters();
+			var subscription = subscriptionService.findByCode(accessDto.getSubscription());
+			if(subscription == null) 
+				throw new EntityDoesNotExistsException("No Access found for subscription : " + accessDto.getSubscription());
+			var access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription, accessDto.getStartDate(), accessDto.getEndDate());
+			if(access == null)
+				throw new EntityDoesNotExistsException("No Access found for code : " + accessDto.getCode() + " and subscription : " + accessDto.getSubscription());
+			order.setAccess(access);
 		}
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		order.setStatusDate(Calendar.getInstance().getTime());
@@ -165,6 +193,28 @@ public class CommercialOrderApi extends BaseApi {
 			if(billingPlan == null)
 				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
 			order.setInvoicingPlan(billingPlan);
+		}
+
+		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
+			final UserAccount userAccount = userAccountService.findByCode(orderDto.getUserAccountCode());
+			if(userAccount == null)
+				throw new EntityDoesNotExistsException(UserAccount.class, orderDto.getUserAccountCode());
+			order.setUserAccount(userAccount);
+		}
+		if(orderDto.getAccessDto() != null) {
+			var accessDto = orderDto.getAccessDto();
+			if(Strings.isEmpty(accessDto.getCode()))
+				missingParameters.add("accessDto.code");
+			if(Strings.isEmpty(accessDto.getSubscription()))
+				missingParameters.add("accessDto.subscription");
+			handleMissingParameters();
+			var subscription = subscriptionService.findByCode(accessDto.getSubscription());
+			if(subscription == null) 
+				throw new EntityDoesNotExistsException("No Access found for subscription : " + accessDto.getSubscription());
+			var access = accessService.findByUserIdAndSubscription(accessDto.getCode(), subscription, accessDto.getStartDate(), accessDto.getEndDate());
+			if(access == null)
+				throw new EntityDoesNotExistsException("No Access found for code : " + accessDto.getCode() + " and subscription : " + accessDto.getSubscription());
+			order.setAccess(access);
 		}
 		if(orderDto.getOrderProgress() != null)
 			order.setOrderProgress(orderDto.getOrderProgress());

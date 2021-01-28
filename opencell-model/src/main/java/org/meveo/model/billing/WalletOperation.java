@@ -66,7 +66,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.commercial.InfoOrder;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -537,19 +537,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private String rejectReason;
     
     @Embedded
-    private InfoOrder infoOrder;
+    private OrderInfo infoOrder;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_version__id")
-    private ProductVersion productVersion;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_customer_service_id")
-    private OrderLot orderCustomerService;
 
     /**
      * Constructor
@@ -1442,14 +1434,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * @return the infoOrder
 	 */
-	public InfoOrder getInfoOrder() {
+	public OrderInfo getOrderInfo() {
 		return infoOrder;
 	}
 
 	/**
 	 * @param infoOrder the infoOrder to set
 	 */
-	public void setInfoOrder(InfoOrder infoOrder) {
+	public void setOrderInfo(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
 
@@ -1461,19 +1453,5 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.accountingArticle = accountingArticle;
     }
 
-    public ProductVersion getProductVersion() {
-        return productVersion;
-    }
-
-    public void setProductVersion(ProductVersion productVersion) {
-        this.productVersion = productVersion;
-    }
-
-    public OrderLot getOrderCustomerService() {
-        return orderCustomerService;
-    }
-
-    public void setOrderCustomerService(OrderLot orderCustomerService) {
-        this.orderCustomerService = orderCustomerService;
-    }
+   
 }

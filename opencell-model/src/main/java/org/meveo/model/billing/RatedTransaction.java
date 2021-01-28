@@ -58,7 +58,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.model.cpq.commercial.InfoOrder;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -529,7 +529,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     private AccountingArticle accountingArticle;
     
     @Embedded
-    private InfoOrder infoOrder;
+    private OrderInfo infoOrder;
 
     public RatedTransaction() {
         super();
@@ -1348,14 +1348,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	/**
 	 * @return the infoOrder
 	 */
-	public InfoOrder getInfoOrder() {
+	public OrderInfo getOrderInfo() {
 		return infoOrder;
 	}
 
 	/**
 	 * @param infoOrder the infoOrder to set
 	 */
-	public void setInfoOrder(InfoOrder infoOrder) {
+	public void setOrderInfo(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
 }

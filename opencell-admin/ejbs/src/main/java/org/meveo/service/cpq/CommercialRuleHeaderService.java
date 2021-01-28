@@ -15,6 +15,7 @@ import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.OperatorEnum;
@@ -52,7 +53,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 	@Inject
 	OfferTemplateService offerTemplateService;
 	
-	
+	@Inject
+	GroupedAttributeService groupedAttributeService;
 	
 	@SuppressWarnings("unchecked")
 	public List<CommercialRuleHeader> getTagRules(String tagCode) throws BusinessException{
@@ -87,6 +89,18 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		}
 		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getProductAttributeRules")
 				.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
+		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
+		return commercialRules;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommercialRuleHeader> getGroupedAttributesRules(String groupedAttributeCode,String productCode) throws BusinessException{
+		GroupedAttributes groupedAttribute=groupedAttributeService.findByCode(groupedAttributeCode);
+		if(groupedAttribute == null) { 
+			throw new EntityDoesNotExistsException(GroupedAttributes.class,groupedAttributeCode);
+		}
+		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getGroupedAttributeRules")
+				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("offerTemplateCode", productCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}
@@ -170,8 +184,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
 								String attributeCode = entry.getKey();
 								Object attributeValue = entry.getValue();
-								String convertedValue = String.valueOf(attributeValue);
-								;
+								String convertedValue = String.valueOf(attributeValue); 
 								if (attributeCode.equals(line.getSourceAttribute().getCode())) {
 									switch (line.getSourceAttribute().getAttributeType()) {
 									case LIST_MULTIPLE_TEXT:
@@ -195,6 +208,25 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 										}
 
 									}
+								}
+							}
+						}
+						if (line.getSourceGroupedAttributes() != null) {
+							LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
+							for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
+								String groupedAttributeCode = entry.getKey();
+								Object groupedAttributeValue = entry.getValue();
+								String convertedValue = String.valueOf(groupedAttributeValue); 
+								if (groupedAttributeCode.equals(line.getSourceGroupedAttributes().getCode())) {
+									List<String> values = Arrays.asList(convertedValue.split(";"));
+									if ((isPreRequisite && !values.contains(line.getSourceGroupedAttributeValue()))
+											|| !isPreRequisite && values.contains(line.getSourceGroupedAttributeValue())) {
+										if (continueProcess) {
+											continue;
+										} else {
+											return false;
+										}
+									} 	
 								}
 							}
 						}
