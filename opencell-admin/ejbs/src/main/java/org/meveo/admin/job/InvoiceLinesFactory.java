@@ -1,5 +1,15 @@
 package org.meveo.admin.job;
 
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
+import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.Map;
+
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.cpq.commercial.InvoiceLine;
@@ -7,18 +17,8 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.article.AccountingArticleService1;
+import org.meveo.service.billing.impl.article.AccountingArticleService; 
 import org.meveo.service.catalog.impl.OfferTemplateService;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.Map;
-
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
-import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
-import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 public class InvoiceLinesFactory {
 
@@ -26,8 +26,8 @@ public class InvoiceLinesFactory {
             (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
     private BillingRunService billingRunService =
             (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
-    private AccountingArticleService1 accountingArticleService =
-            (AccountingArticleService1) getServiceInterface(AccountingArticleService1.class.getSimpleName());
+    private AccountingArticleService accountingArticleService =
+            (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private OfferTemplateService offerTemplateService =
             (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
     private ServiceInstanceService instanceService =
