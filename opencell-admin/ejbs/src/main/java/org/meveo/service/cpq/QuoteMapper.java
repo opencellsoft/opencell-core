@@ -21,6 +21,7 @@ import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
 
+import javax.ejb.Stateless;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+@Stateless
 public class QuoteMapper {
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
 
@@ -65,7 +67,14 @@ public class QuoteMapper {
     private org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba, List<QuoteArticleLine> lines){
 
         Map<QuoteLot, List<QuoteArticleLine>> linesByLot = lines.stream()
+                .filter(line -> line.getQuoteLot() != null)
                 .collect(groupingBy(line -> line.getQuoteLot()));
+
+        List<QuoteArticleLine> linesWithoutLot = lines.stream()
+                .filter(line -> line.getQuoteLot() == null)
+                .collect(toList());
+
+        linesByLot.put(new QuoteLot(), linesWithoutLot);
 
         List<org.meveo.api.dto.cpq.xml.QuoteLot> quoteLots = linesByLot.keySet().stream()
                 .map(lot -> mapToLot(lot, linesByLot.get(lot), ba))

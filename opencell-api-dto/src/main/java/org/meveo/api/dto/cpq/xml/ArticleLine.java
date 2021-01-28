@@ -18,8 +18,6 @@ public class ArticleLine {
     private String code;
     @XmlAttribute
     private String label;
-    private String articleCode;
-    private String articleLabel;
     @XmlElementWrapper(name = "quoteLines")
     @XmlElement(name = "quoteLine")
     private List<QuoteLine> quoteLines;
@@ -27,10 +25,8 @@ public class ArticleLine {
     public ArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> lines, String tradingLanguage) {
         this.code = accountingArticle.getCode();
         this.label = accountingArticle.getDescriptionI18nNotNull().get(tradingLanguage) == null ? accountingArticle.getDescription() : accountingArticle.getDescriptionI18n().get(tradingLanguage);
-        this.articleCode = this.code;
-        this.articleLabel = this.label;
         this.quoteLines = lines.stream()
-                .map(line -> new QuoteLine(line))
+                .map(line -> new QuoteLine(line, code, label))
                 .collect(Collectors.toList());
     }
 
@@ -56,21 +52,5 @@ public class ArticleLine {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public String getArticleCode() {
-        return articleCode;
-    }
-
-    public void setArticleCode(String articleCode) {
-        this.articleCode = articleCode;
-    }
-
-    public String getArticleLabel() {
-        return articleLabel;
-    }
-
-    public void setArticleLabel(String articleLabel) {
-        this.articleLabel = articleLabel;
     }
 }

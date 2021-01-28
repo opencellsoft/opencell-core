@@ -14,6 +14,8 @@ public class Address {
     private String state;
 
     public Address(org.meveo.model.shared.Address address) {
+        if(address == null)
+            return;
         this.address1 = address.getAddress1();
         this.address2 = address.getAddress2();
         this.address3 = address.getAddress3();

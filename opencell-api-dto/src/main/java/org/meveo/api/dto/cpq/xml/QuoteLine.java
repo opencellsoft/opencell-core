@@ -5,6 +5,7 @@ import org.meveo.model.quote.QuoteArticleLine;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.math.BigDecimal;
@@ -15,12 +16,19 @@ import java.util.stream.Collectors;
 public class QuoteLine {
     private BigDecimal quantity;
 
+    @XmlAttribute
+    private String accountingArticleCode;
+    @XmlAttribute
+    private String accountingArticleLabel;
+
     @XmlElementWrapper(name = "prices")
     @XmlElement(name = "price")
     private List<PriceDTO> prices;
 
-    public QuoteLine(QuoteArticleLine line) {
+    public QuoteLine(QuoteArticleLine line, String code, String label) {
         this.quantity = line.getQuantity();
+        this.accountingArticleCode = code;
+        this.accountingArticleLabel = label;
         this.prices = line.getQuotePrices().stream()
                 .map(PriceDTO::new)
                 .collect(Collectors.toList());;

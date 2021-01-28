@@ -2905,10 +2905,13 @@
 		
 	        <addColumn tableName="cpq_quote_article_line">
 				<column name="quote_product_id" type="bigint" />
+				<column name="quote_lot_id" type="bigint" />
 	        </addColumn>
 	        
 			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_product_id" deferrable="false" initiallyDeferred="false"
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+			<addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_lot_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 	</changeSet>
 		<changeSet id="#20210122-540-128" author="TarikFA">
 		

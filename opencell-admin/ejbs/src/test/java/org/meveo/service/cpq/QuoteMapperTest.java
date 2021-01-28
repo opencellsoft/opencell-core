@@ -206,8 +206,6 @@ public class QuoteMapperTest {
         ArticleLine articleLine = subCategory.getArticleLines().get(0);
         assertThat(articleLine.getCode()).isEqualTo("ACC_CODE");
         assertThat(articleLine.getLabel()).isEqualTo("ART_LABEL");
-        assertThat(articleLine.getArticleCode()).isEqualTo("ACC_CODE");
-        assertThat(articleLine.getArticleLabel()).isEqualTo("ART_LABEL");
         QuoteLine quoteLine = articleLine.getQuoteLines().get(0);
         assertThat(quoteLine.getQuantity()).isEqualTo(valueOf(10));
         assertThat(quoteLine.getPrices()).isNotEmpty();
@@ -240,12 +238,10 @@ public class QuoteMapperTest {
                 "                            <category code=\"INV_CAT\" label=\"Abonnement\">\n" +
                 "                                <subCategories>\n" +
                 "                                    <subCategory code=\"INV_SUB_CAT\" label=\"Abonnement et services\">\n" +
-                "                                        <articleLines>\n" +
-                "                                            <articleLine code=\"ACC_CODE\" label=\"ART_LABEL\">\n" +
-                "                                                <articleCode>ACC_CODE</articleCode>\n" +
-                "                                                <articleLabel>ART_LABEL</articleLabel>\n" +
+                "                                        <accountingArticles>\n" +
+                "                                            <accountingArticle code=\"ACC_CODE\" label=\"ART_LABEL\">\n" +
                 "                                                <quoteLines>\n" +
-                "                                                    <quoteLine>\n" +
+                "                                                    <quoteLine accountingArticleCode=\"ACC_CODE\" accountingArticleLabel=\"ART_LABEL\">\n" +
                 "                                                        <quantity>10</quantity>\n" +
                 "                                                        <prices>\n" +
                 "                                                            <price priceType=\"RECURRING\">\n" +
@@ -269,8 +265,8 @@ public class QuoteMapperTest {
                 "                                                        </prices>\n" +
                 "                                                    </quoteLine>\n" +
                 "                                                </quoteLines>\n" +
-                "                                            </articleLine>\n" +
-                "                                        </articleLines>\n" +
+                "                                            </accountingArticle>\n" +
+                "                                        </accountingArticles>\n" +
                 "                                    </subCategory>\n" +
                 "                                </subCategories>\n" +
                 "                            </category>\n" +

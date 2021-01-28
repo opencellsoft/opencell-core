@@ -68,7 +68,7 @@ public class QuoteArticleLine extends AuditableEntity {
 
     @OneToMany(mappedBy = "quoteArticleLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<QuotePrice> quotePrices;
+	private List<QuotePrice> quotePrices = new ArrayList<>();
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;

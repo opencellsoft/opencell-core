@@ -37,9 +37,7 @@ public class BillingAccount {
         this.jobTitle = billingAccount.getJobTitle();
         this.registrationNo = billingAccount.getRegistrationNo();
         this.vatNo = billingAccount.getVatNo();
-        this.name = new Name();
-        this.name.setName(billingAccount.getName().getFirstName() + " " + billingAccount.getName().getLastName());
-        this.name.setQuality(billingAccount.getName().getTitle().getIsCompany() ? "Society" : billingAccount.getName().getTitle().getDescription());
+        this.name = new Name(billingAccount.getName());
         this.address = new Address(billingAccount.getAddress());
     }
 

@@ -23,7 +23,7 @@ public class Category {
 
     public Category(InvoiceCategory category, List<SubCategory> subCategories, String tradingLanguage) {
         this.code = category.getCode();
-        this.label = category.getDescriptionI18n().get(tradingLanguage) == null ? category.getDescription() : category.getDescriptionI18n().get(tradingLanguage);
+        this.label = category.getDescriptionI18nNullSafe().get(tradingLanguage) == null ? category.getDescription() : category.getDescriptionI18n().get(tradingLanguage);
         this.sortIndex = category.getSortIndex();
         this.subCategories = subCategories;
     }

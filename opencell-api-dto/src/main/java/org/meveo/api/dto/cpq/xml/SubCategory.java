@@ -18,8 +18,8 @@ public class SubCategory {
     private String label;
     @XmlAttribute
     private Integer sortIndex;
-    @XmlElementWrapper(name = "articleLines")
-    @XmlElement(name = "articleLine")
+    @XmlElementWrapper(name = "accountingArticles")
+    @XmlElement(name = "accountingArticle")
     private List<ArticleLine> articleLines;
 
     public SubCategory(InvoiceSubCategory invoiceSubCategory, List<ArticleLine> articleLines, String tradingLanguage) {
