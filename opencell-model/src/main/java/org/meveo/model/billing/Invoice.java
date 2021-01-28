@@ -46,6 +46,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -133,7 +134,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Billing run that produced the invoice
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
 
@@ -494,7 +495,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      *      -With or without tax depending on provider setting (isEnterprise).
      */
     @Column(name = "raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal rawAmount;
+    private BigDecimal rawAmount= BigDecimal.ZERO;
     
     /**
      * Discount rate to apply (in %).
@@ -577,9 +578,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-        if(this.status ==null || this.status==InvoiceStatusEnum.DRAFT) {
-        	this.status=InvoiceStatusEnum.VALIDATED;
-        }
     }
 
     public Date getProductDate() {
@@ -829,8 +827,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     }
 
     public void setStatus(InvoiceStatusEnum status) {
-        this.status = status;
-        setStatusDate(new Date());
+    	if(status!=null 
+    			&& ((status.getPreviousStats()==null && this.status==null)
+    					|| (status.getPreviousStats().contains(this.status)))) {
+	        this.status = status;
+	        setStatusDate(new Date());
+    	} else {
+    		throw new ValidationException("Not possible to change invoice status from "+this.status+" to "+status) ;
+    	}
     }
 
     @Override

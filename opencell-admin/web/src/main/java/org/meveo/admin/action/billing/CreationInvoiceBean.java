@@ -189,6 +189,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtStartDate;
     private Date rtEndDate;
 
+	private boolean amountsAndlinesUpdated=false;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -235,6 +237,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	        entity.setAmountTax(BigDecimal.ZERO);
 	        entity.setNetToPay(BigDecimal.ZERO);
     	}
+		amountsAndlinesUpdated=false;
     	return entity;
     }
 
@@ -381,7 +384,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException General business exception
      */
     public void updateAmountsAndLines() throws BusinessException {
-
+    	amountsAndlinesUpdated=true;
         BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(aggregateHandler.getSubCatInvAgregateMap().values());
@@ -642,6 +645,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
+    	if(entity.getId()!=null && !amountsAndlinesUpdated) {
+    		return getListViewName();
+    	}
     	List<RatedTransaction> rts = null;
     	for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
@@ -666,14 +672,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	        }
 	        invoiceService.postCreate(entity);
 	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
-	        
+	        try {
+	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
+	        } catch (Exception e) {
+	            log.error("Failed to create an XML and PDF invoice", e);
+	            messages.error("Error generating xml / pdf invoice=" + e.getMessage());
+	        }
     	}
-    	try {
-            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
-        } catch (Exception e) {
-            log.error("Failed to create an XML and PDF invoice", e);
-            messages.error("Error generating xml / pdf invoice=" + e.getMessage());
-        }
         if("DRAFT".equals(entity.getInvoiceType().getCode())){
             for (RatedTransaction rt : rts) {
                 ratedTransactionService.remove(rt);
@@ -1280,15 +1285,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         this.amountWithTax = amountWithTax;
     }
     
-    public void cancelInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.cancelInvoiceWithoutDelete(invoice);
+    public String cancelInvoice() throws BusinessException {
+        invoiceService.cancelInvoiceAndRts(entity);
+        return saveOrUpdate(false);
+    }
+
+    public String validateInvoice() throws BusinessException {
+        invoiceService.validateInvoice(entity, false);
+        return saveOrUpdate(false);
     }
     
-    public void validateInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.validateInvoice(invoice);
+    public String rebuildInvoice() throws BusinessException {
+        invoiceService.rebuildInvoice(entity, false);
+        return saveOrUpdate(false);
     }
     
-    public void rebuildInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.rebuildInvoice(invoice);
-    }
 }
