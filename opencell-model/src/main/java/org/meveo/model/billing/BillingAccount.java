@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -790,6 +791,19 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 	 */
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BillingAccount other = (BillingAccount) obj;
+		return Objects.equals(id, other.id);
 	}
  
     
