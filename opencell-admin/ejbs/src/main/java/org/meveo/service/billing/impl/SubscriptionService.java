@@ -913,24 +913,32 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @param entityId Identifier of an entity to ignore (as not to match itself in case of update)
      * @return Matched subscriptions
      */
+    @SuppressWarnings("unchecked")
     public List<Subscription> getMatchingVersions(String code, Date from, Date to, Long entityId) {
-
-        List<Subscription> versions = getEntityManager().createNamedQuery("Subscription.findMatchingVersions", Subscription.class)
-            .setParameter("code", code).setParameter("id", entityId == null ? -10000L : entityId).getResultList(); // Pass a non-existing entity id in case it is null
-
-        List<Subscription> matchedVersions = new ArrayList<Subscription>();
-
-        for (Subscription version : versions) {
-
-            DatePeriod datePeriod = version.getValidity();
-
-            if (datePeriod == null || datePeriod.isCorrespondsToPeriod(from, to, false)) {
-                    matchedVersions.add(version);
-            }
-            
-        }
-
-        return matchedVersions;
+    	
+    	QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
+    	
+    	if(entityId == null) {
+    		qb.addSql("s.id <> -1000L");
+    	}else {
+    		qb.addSqlCriterion("s.id <> :id", "id", entityId);
+    	}
+    	
+    	qb.addSqlCriterion("s.code = :code","code", code);
+    	
+    	 if (from != null && to != null) {
+             qb.addSqlCriterionMultiple("((s.validity.from is null or s.validity.from<=:endDate) AND (:startDate<s.validity.to or s.validity.to is null))", "startDate", from, "endDate", to);
+         } else if (from != null) {
+             qb.addSqlCriterion("(:startDate<s.validity.to or s.validity.to is null)", "startDate", from);
+         } else if (to != null) {
+             qb.addSqlCriterion("(s.validity.from is null or s.validity.from<=:endDate)", "endDate", to);
+         }
+    	 
+    	 try {
+             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+         } catch (NoResultException e) {
+             return null;
+         }
 
     }
 }
