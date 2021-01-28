@@ -47,18 +47,17 @@
 				</f:facet>
 				<h:outputText value="#{messages['accountingWriting.notExport']}" rendered="#{empty entity.exportDate}" />
 				<h:outputText value="#{entity.exportDate}" rendered="#{not empty entity.exportDate}" >
-                    <f:convertDateTime pattern="#{paramBean.dateFormat}" />
-                </h:outputText>
+					<f:convertDateTime pattern="#{paramBean.dateFormat}" />
+				</h:outputText>
 			</p:column>
 			<p:column headerText="#{messages['commons.actions']}" width="6%" >
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
 				<p:commandButton id="accountOperationListBtn" icon="ui-icon-document" 
-							oncomplete="PF('accountOperationListDialog').show()" update="accountOperationListDialog"
+							oncomplete="PF('cellEntity_datatableLinkedAOs').paginator.setPage(0);PF('accountOperationListDialog').show();" update="accountOperationListDialog"
 							action="#{accountingWritingListBean.selectAccountingWriting(entity.id)}">
-					<f:actionListener></f:actionListener>
-                </p:commandButton>
+				</p:commandButton>
 			</p:column>
 		</hftl:dataList>
 		
@@ -66,12 +65,10 @@
 		<p:dialog id="accountOperationListDialog" header="#{messages['accountingWriting.accountOperationList']}" modal="true"
 					 closeOnEscape="true" widgetVar="accountOperationListDialog" width="85%" closable="true" appendTo="@(body)">
 			<c:if test="#{not empty accountingWritingListBean.selectedAccountingWriting}">
-				<hftl:dataList exportToXml="false" exportXlsxButton="false" resultsId="resultsAO"
-					id="accountOperationList" rowsPerPage="50"
-					label="#{messages['accountOperation.title']}"
-					dataModel="#{accountingWritingListBean.getAccountOperations()}">
-
-					<p:column width="5%">
+				<hftl:dataList resultsId="datatableLinkedAOs" id="accountOperationList" label="#{messages['accountOperation.title']}"
+								   disabled="true" deleteManyButton="false" exportToXml="false" exportXlsxButton="false"
+								   backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.getAccountOperations(accountingWritingListBean.selectedAccountingWriting)}">
+					<p:column width="4%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['accountOperation.type']}" />
 						</f:facet>
@@ -101,7 +98,7 @@
 							<f:param name="customerAccountId" value="#{entity.customerAccount.id}" />
 							<f:param name="edit" value="false" />
 							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                      		<f:param name="backView" value="accountingWritings" />
+							<f:param name="backView" value="accountingWritings" />
 						</h:link>
 					</p:column>
 
@@ -114,7 +111,7 @@
 								<f:param name="objectId" value="#{invoice.id}" />
 								<f:param name="edit" value="false" />
 								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                       			<f:param name="backView" value="accountingWritings" />
+								<f:param name="backView" value="accountingWritings" />
 							</h:link>
 						</p:repeat>
 					</p:column>
@@ -140,19 +137,19 @@
 
 					<hftl:column label="#{messages['accountOperation.matchingStatus']}"
 						field="matchingStatus.label" isMessage="true" width="7%" />
-					
-					<p:column headerText="#{messages['commons.actions']}" width="5%">
-						<!-- <p:tooltip for="aoEditlink"
-				                   value="#{messages['commons.edit']}" showEffect="slide"
-				                   hideEffect="slide"/> -->
-				        <p:link id="aoEditlink" outcome="#{accountingWritingListBean.displayOperation(entity)}"
-				                  icon="ui-icon-document" value="#{messages['accountingWriting.ao.detail']}">
-				            <f:param name="objectId" value="#{entity.id}"/>
-				            <f:param name="edit" value="false"/>
-				            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
-				            <f:param name="backView" value="accountingWritings" />
-				        </p:link>
-			        </p:column>
+
+					<p:column exportable="false" toggleable="false" width="6%">
+						<f:facet name="header">
+							<h:outputText value="#{messages['commons.actions']}"/>
+						</f:facet>
+						<p:link target="_blank" id="aoEditlink" outcome="#{accountOperationBean.displayOperation(entity)}"
+								value="#{messages['accountingWriting.ao.detail']}">
+							<f:param name="objectId" value="#{entity.id}"/>
+							<f:param name="edit" value="false"/>
+							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+							<f:param name="backView" value="accountingWritings" />
+						</p:link>
+					</p:column>
 				</hftl:dataList>
 			</c:if>
 		</p:dialog>
