@@ -9,6 +9,7 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
+import org.meveo.apiv2.generic.RegExHashMap;
 import org.meveo.apiv2.generic.VersionImpl;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
@@ -28,13 +29,14 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationPath(GenericOpencellRestfulAPIv1.API_VERSION)
 public class GenericOpencellRestfulAPIv1 extends Application {
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
-    public static Map<String,String> MAP_NEW_PATH_AND_PATH_IBASE_RS = new HashMap<>();
+    public static RegExHashMap<Object,String> MAP_NEW_PATH_AND_PATH_IBASE_RS = new RegExHashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
     public static final String API_VERSION = "/v1";
 
@@ -144,6 +146,19 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/billing/subscription" ) ) {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions",
                                     ((Path) anAnnotation).value() );
+
+                            // Processing for different services of subscription: activation, suspension, termination, update of existing services
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/activation(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() + "/activate" );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/suspension(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() + "/suspend" );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/termination(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() + "/terminate" );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/services(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() + "/updateServices" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
@@ -152,7 +167,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions",
                                     ((Path) anAnnotation).value() );
-                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions/cancelRatedTransactions",
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/ratedTransactions/cancellation",
                                     ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/wallet" ) ) {
@@ -161,21 +176,72 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + BILLING + "/wallets/operation",
                                     ((Path) anAnnotation).value() + "/operation" );
                         }
-//                        else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
-//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates",
-//                                    ((Path) anAnnotation).value() );
-//
-//                            // Processing for enable and disable an offerTemplate
-//                            String aCode = "^.{1,100}$";
-//                System.out.println( "XAY DUNG MAP DAY NE : " + API_VERSION + CATALOG + "/offerTemplates"
-//                        + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" );
-//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates"
-//                                            + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" ,
-//                                    ((Path) anAnnotation).value() + FORWARD_SLASH + aCode + FORWARD_SLASH + "enable" );
-//                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates"
-//                                            + FORWARD_SLASH + aCode + FORWARD_SLASH + "disable" ,
-//                                    ((Path) anAnnotation).value() + FORWARD_SLASH + aCode + FORWARD_SLASH + "disable" );
-//                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/offerTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable an offerTemplate
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/offerTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/offerTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/oneShotChargeTemplate" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/oneShotChargeTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable an oneShotChargeTemplate
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/oneShotChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/oneShotChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/recurringChargeTemplate" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/recurringChargeTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a recurringChargeTemplate
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/recurringChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/recurringChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/usageChargeTemplate" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/usageChargeTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a usageChargeTemplate
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/usageChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/usageChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/serviceTemplate" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/serviceTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a serviceTemplate
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/serviceTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/serviceTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/pricePlan" ) ) {
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + CATALOG + "/pricePlans",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a pricePlan
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/pricePlans\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_PATH_IBASE_RS.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/pricePlans\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
                         else {
                             MAP_NEW_PATH_AND_PATH_IBASE_RS.put( API_VERSION + ((Path) anAnnotation).value() + "s",
                                     ((Path) anAnnotation).value() );

@@ -47,6 +47,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     // static final string for services
     private static final String ENABLE_SERVICE = "enable";
     private static final String DISABLE_SERVICE = "disable";
+    private static final String ACTIVATION_SERVICE = "activation";
+    private static final String SUSPENSION_SERVICE = "suspension";
+    private static final String TERMINATION_SERVICE = "termination";
+    private static final String UPDATING_SERVICE = "services";
 
     private static final String API_REST = "api/rest";
 
@@ -74,7 +78,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     /*
-     * This request is used to retrieve all entities, or also to retrieve a particular entity
+     * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException {
@@ -128,91 +132,124 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
 System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             return httpClient.target( redirectURI ).request().get();
         }
+        // Handle the special endpoint: get an access point based on a subscriptionCode and an accessCode
+        else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/accesses\\/[^\\/^$]*(?:$|\\W)" )
+                .matcher(uriInfo.getPath()).matches() ) {
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                    + API_REST + "/account/access?subscriptionCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 3).toString()
+                    + PAIR_QUERY_PARAM_SEPARATOR
+                    + "accessCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 1).toString() );
+
+System.out.println( "GET redirectURI an AccessPoint : " + redirectURI.toString() );
+            return httpClient.target( redirectURI )
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+        }
 
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @Override
     public Response postRequest( String jsonDto ) throws URISyntaxException {
-        String pathCreateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
         URI redirectURI;
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
+        queryParamsMap = uriInfo.getQueryParameters();
+        queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
+        for( String aKey : queryParamsMap.keySet() ){
+            queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
+                    + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                    + PAIR_QUERY_PARAM_SEPARATOR );
+        }
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathCreateAnEntity ) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathCreateAnEntity )
-                    + METHOD_CREATE );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( postPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( postPath );
+
+            // Handle the generic special endpoint: enable a service
+            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS
+                        + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
+                        + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
+System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
+            }
+            // Handle the generic special endpoint: disable a service
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS
+                        + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
+                        + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
+System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
+            }
+            else {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE );
 System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toString() );
+            }
 
             return httpClient.target( redirectURI )
                     .request(MediaType.APPLICATION_JSON)
                     .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-        }
-        else if ( segmentsOfPathAPIv2.size() >= 1 ) {
-            queryParamsMap = uriInfo.getQueryParameters();
-            queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
-            for( String aKey : queryParamsMap.keySet() ){
-                queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
-                        + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
-                        + PAIR_QUERY_PARAM_SEPARATOR );
-            }
-            StringBuilder suffixPathBuilder;
-
-            // Handle the generic special endpoint: enable a service
-            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
-                if ( segmentsOfPathAPIv2.size() >= 2 ) {
-                    suffixPathBuilder = new StringBuilder();
-                    for (int i = 0; i < segmentsOfPathAPIv2.size() - 2; i++ )
-                        suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-                    String aPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
-                    if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( aPath ) ) {
-                        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                                + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( aPath )
-                                + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
-                                + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
-
-                        return httpClient.target( redirectURI )
-                                .request(MediaType.APPLICATION_JSON)
-                                .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-                    }
-                }
-            }
-            // Handle the generic special endpoint: disable a service
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
-                if ( segmentsOfPathAPIv2.size() >= 2 ) {
-                    suffixPathBuilder = new StringBuilder();
-                    for (int i = 0; i < segmentsOfPathAPIv2.size() - 2; i++ )
-                        suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-                    String aPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
-                    if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( aPath ) ) {
-                        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                                + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( aPath )
-                                + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
-                                + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
-
-                        return httpClient.target( redirectURI )
-                                .request(MediaType.APPLICATION_JSON)
-                                .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-                    }
-                }
-            }
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @Override
-    public Response updateAnEntity( String jsonDto ) throws URISyntaxException, IOException {
+    public Response putRequest( String jsonDto ) throws URISyntaxException, IOException {
+        String putPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
         URI redirectURI;
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
-        for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
+        for ( int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
         String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathUpdateAnEntity ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( putPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( putPath );
+
+            // Handle the special endpoint: activation of a subscription
+            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ACTIVATION_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+
+System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
+                return httpClient.target( redirectURI )
+                        .request(MediaType.APPLICATION_JSON)
+                        .put( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+            }
+            // Handle the special endpoint: suspension of a subscription
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+
+System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
+                return httpClient.target( redirectURI )
+                        .request(MediaType.APPLICATION_JSON)
+                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: termination of a subscription
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(TERMINATION_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+
+System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
+                return httpClient.target( redirectURI )
+                        .request(MediaType.APPLICATION_JSON)
+                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: update existing services of a subscription
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(UPDATING_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+
+System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
+                return httpClient.target( redirectURI )
+                        .request(MediaType.APPLICATION_JSON)
+                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            }
+        }
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.containsKey( pathUpdateAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
@@ -227,7 +264,6 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
             }
 
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_PATH_IBASE_RS.get( pathUpdateAnEntity );
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
 System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString() );
@@ -235,52 +271,6 @@ System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString
             return httpClient.target( redirectURI )
                     .request(MediaType.APPLICATION_JSON)
                     .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-        }
-        else if ( segmentsOfPathAPIv2.size() >= 1 ) {
-            // Handle the special endpoint: activation of a subscription
-            if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/activation(?:$|\\W)" )
-                    .matcher(uriInfo.getPath()).matches() ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + "/billing/subscription/activate" );
-
-System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
-            }
-            // Handle the special endpoint: suspension of a subscription
-            else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/suspension(?:$|\\W)" )
-                    .matcher(uriInfo.getPath()).matches() ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + "/billing/subscription/suspend" );
-
-System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: termination of a subscription
-            else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/termination(?:$|\\W)" )
-                    .matcher(uriInfo.getPath()).matches() ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + "/billing/subscription/terminate" );
-
-System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: update existing services of a subscription
-            else if ( Pattern.compile( "(?:^|\\W)\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/updateServices(?:$|\\W)" )
-                    .matcher(uriInfo.getPath()).matches() ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + "/billing/subscription/updateServices" );
-
-System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-            }
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();

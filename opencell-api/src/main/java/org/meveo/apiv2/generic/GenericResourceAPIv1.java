@@ -21,7 +21,7 @@ public interface GenericResourceAPIv1 {
 
     @PUT
     @Path("/{segments:.*}")
-    Response updateAnEntity( String postData ) throws URISyntaxException, IOException;
+    Response putRequest( String postData ) throws URISyntaxException, IOException;
 
     @DELETE
     @Path("/{segments:.*}")
