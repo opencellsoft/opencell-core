@@ -2187,9 +2187,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (customFieldValues != null) {
                 invoice.setCfValues(customFieldValues);
             }
-            try {
-                invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
-            } catch (Exception e) {
+			try {
+				if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+					invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
+				}
+			} catch (Exception e) {
                 log.error("Failed to assign invoice number for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
                 continue;
             }
@@ -2324,12 +2326,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
 	public void cancelInvoice(Invoice invoice, boolean remove) {
-		if (invoice.getRecordedInvoice() != null) {
-            throw new BusinessException("Can't cancel an invoice that present in AR");
-        }
-        ratedTransactionService.deleteSupplementalRTs(invoice);
-        ratedTransactionService.uninvoiceRTs(invoice);
-        invoice.setStatus(InvoiceStatusEnum.CANCELED);
+		cancelInvoiceAndRts(invoice);
         if(remove) {
         	super.remove(invoice);
         } else {
@@ -2338,10 +2335,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
 	}
 
-    public void validateInvoice(Invoice invoice) {
-        invoice.setStatus(InvoiceStatusEnum.DRAFT);
-        update(invoice);
-    }
+	public void cancelInvoiceAndRts(Invoice invoice) {
+		if (invoice.getRecordedInvoice() != null) {
+            throw new BusinessException("Can't cancel an invoice that present in AR");
+        }
+        ratedTransactionService.deleteSupplementalRTs(invoice);
+        ratedTransactionService.uninvoiceRTs(invoice);
+        invoice.setStatus(InvoiceStatusEnum.CANCELED);
+	}
+
+	public void validateInvoice(Invoice invoice, boolean save) {
+		if (InvoiceStatusEnum.REJECTED.equals(invoice.getStatus()) || InvoiceStatusEnum.SUSPECT.equals(invoice.getStatus())) {
+			invoice.setStatus(InvoiceStatusEnum.DRAFT);
+			if(save) {
+				update(invoice);
+			}
+		}
+	}
     
 	/**
 	 * @param billingRunId
@@ -2353,7 +2363,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT),
                 Collections.EMPTY_LIST);
 		for(Invoice invoice :invoices) {
-			rebuildInvoice(invoice);
+			rebuildInvoice(invoice, true);
 		}
 	}
 	
@@ -2381,7 +2391,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT),
                 asList(BillingRunStatusEnum.REJECTED, BillingRunStatusEnum.POSTINVOICED));
 		for(Invoice invoice :invoices) {
-			validateInvoice(invoice);
+			validateInvoice(invoice, true);
 		}
 	}
 	
@@ -2493,9 +2503,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return br;
 	}
 
-    public void rebuildInvoice(Invoice invoice) {
-    	applyAutomaticInvoiceCheck(asList(invoice), true);
-    	update(invoice);
+    public void rebuildInvoice(Invoice invoice, boolean save) {
+    	applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
+    	if(save) {
+    		update(invoice);
+    	}
     }
     
     /**
