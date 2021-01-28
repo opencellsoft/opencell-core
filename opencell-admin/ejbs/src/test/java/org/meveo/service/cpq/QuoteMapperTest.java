@@ -214,7 +214,115 @@ public class QuoteMapperTest {
         assertThat(quoteLine.getPrices().get(0).getPriceType()).isEqualTo(PriceTypeEnum.RECURRING);
         assertThat(quoteLine.getPrices().get(1).getPriceType()).isEqualTo(PriceTypeEnum.ONE_SHOT);
 
-        System.out.println(xmlQuoteFormatter.format(quoteXmlDto));
+        String formattedQuote = xmlQuoteFormatter.format(quoteXmlDto);
+        assertThat(formattedQuote).isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<quote>\n" +
+                "    <header>\n" +
+                "        <billingAccount id=\"1\" billingCycleCode=\"BC_CODE\" code=\"BA\" description=\"billing account description\" externalRef1=\"external ref1\" externalRef2=\"external ref2\" jobTitle=\"jobTitle\" registrationNo=\"123456\" vatNo=\"67890\">\n" +
+                "            <name>\n" +
+                "                <name>firstName lastName</name>\n" +
+                "                <quality>Society</quality>\n" +
+                "            </name>\n" +
+                "            <address>\n" +
+                "                <address1>address1</address1>\n" +
+                "                <city>Paris</city>\n" +
+                "                <country>Fr</country>\n" +
+                "                <countryName>France</countryName>\n" +
+                "            </address>\n" +
+                "        </billingAccount>\n" +
+                "    </header>\n" +
+                "    <details>\n" +
+                "        <quote>\n" +
+                "            <billableAccounts billingAccountCode=\"LINE_BA\">\n" +
+                "                <quoteLots>\n" +
+                "                    <quoteLot code=\"QL_CODE\" duration=\"11\" name=\"LOT1\" executionDate=\"2020-01-01T00:00:00+01:00\">\n" +
+                "                        <categories>\n" +
+                "                            <category code=\"INV_CAT\" label=\"Abonnement\">\n" +
+                "                                <subCategories>\n" +
+                "                                    <subCategory code=\"INV_SUB_CAT\" label=\"Abonnement et services\">\n" +
+                "                                        <articleLines>\n" +
+                "                                            <articleLine code=\"ACC_CODE\" label=\"ART_LABEL\">\n" +
+                "                                                <articleCode>ACC_CODE</articleCode>\n" +
+                "                                                <articleLabel>ART_LABEL</articleLabel>\n" +
+                "                                                <quoteLines>\n" +
+                "                                                    <quoteLine>\n" +
+                "                                                        <quantity>10</quantity>\n" +
+                "                                                        <prices>\n" +
+                "                                                            <price priceType=\"RECURRING\">\n" +
+                "                                                                <amountWithtax>5</amountWithtax>\n" +
+                "                                                                <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                                                                <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                                                                <taxAmount>3</taxAmount>\n" +
+                "                                                                <taxRate>3</taxRate>\n" +
+                "                                                                <priceOverCharged>false</priceOverCharged>\n" +
+                "                                                                <currencyCode>EUR</currencyCode>\n" +
+                "                                                            </price>\n" +
+                "                                                            <price priceType=\"ONE_SHOT\">\n" +
+                "                                                                <amountWithtax>5</amountWithtax>\n" +
+                "                                                                <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                                                                <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                                                                <taxAmount>3</taxAmount>\n" +
+                "                                                                <taxRate>3</taxRate>\n" +
+                "                                                                <priceOverCharged>false</priceOverCharged>\n" +
+                "                                                                <currencyCode>EUR</currencyCode>\n" +
+                "                                                            </price>\n" +
+                "                                                        </prices>\n" +
+                "                                                    </quoteLine>\n" +
+                "                                                </quoteLines>\n" +
+                "                                            </articleLine>\n" +
+                "                                        </articleLines>\n" +
+                "                                    </subCategory>\n" +
+                "                                </subCategories>\n" +
+                "                            </category>\n" +
+                "                        </categories>\n" +
+                "                    </quoteLot>\n" +
+                "                </quoteLots>\n" +
+                "                <billingAccountPrices>\n" +
+                "                    <price priceType=\"ONE_SHOT\">\n" +
+                "                        <amountWithtax>5</amountWithtax>\n" +
+                "                        <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                        <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                        <taxAmount>3</taxAmount>\n" +
+                "                        <taxRate>3</taxRate>\n" +
+                "                        <priceOverCharged>false</priceOverCharged>\n" +
+                "                        <currencyCode>EUR</currencyCode>\n" +
+                "                    </price>\n" +
+                "                    <price priceType=\"RECURRING\">\n" +
+                "                        <amountWithtax>5</amountWithtax>\n" +
+                "                        <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                        <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                        <taxAmount>3</taxAmount>\n" +
+                "                        <taxRate>3</taxRate>\n" +
+                "                        <priceOverCharged>false</priceOverCharged>\n" +
+                "                        <currencyCode>EUR</currencyCode>\n" +
+                "                    </price>\n" +
+                "                </billingAccountPrices>\n" +
+                "            </billableAccounts>\n" +
+                "            <quoteDate>2020-01-02T00:00:00+01:00</quoteDate>\n" +
+                "            <quoteNumber>10</quoteNumber>\n" +
+                "        </quote>\n" +
+                "        <quotePrices>\n" +
+                "            <price priceType=\"ONE_SHOT\">\n" +
+                "                <amountWithtax>5</amountWithtax>\n" +
+                "                <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                <taxAmount>3</taxAmount>\n" +
+                "                <taxRate>3</taxRate>\n" +
+                "                <priceOverCharged>false</priceOverCharged>\n" +
+                "                <currencyCode>EUR</currencyCode>\n" +
+                "            </price>\n" +
+                "            <price priceType=\"RECURRING\">\n" +
+                "                <amountWithtax>5</amountWithtax>\n" +
+                "                <unitPriceWithoutTax>10</unitPriceWithoutTax>\n" +
+                "                <amountWithoutTax>15</amountWithoutTax>\n" +
+                "                <taxAmount>3</taxAmount>\n" +
+                "                <taxRate>3</taxRate>\n" +
+                "                <priceOverCharged>false</priceOverCharged>\n" +
+                "                <currencyCode>EUR</currencyCode>\n" +
+                "            </price>\n" +
+                "        </quotePrices>\n" +
+                "    </details>\n" +
+                "</quote>\n");
     }
 
     private QuotePrice createQuotePrice(PriceTypeEnum type) {
