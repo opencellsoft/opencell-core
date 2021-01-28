@@ -196,13 +196,23 @@ public class CpqQuoteApi extends BaseApi {
 		if(!Strings.isEmpty(quote.getSellerCode())) {
 			cpqQuote.setSeller(sellerService.findByCode(quote.getSellerCode()));
 		}
-		final BillingAccount billingAccount = billingAccountService.findByCode(quote.getApplicantAccountCode());
-		if(billingAccount == null) 
+		final BillingAccount applicantAccount = billingAccountService.findByCode(quote.getApplicantAccountCode());
+		if(applicantAccount == null) 
 				throw new EntityDoesNotExistsException(BillingAccount.class, quote.getApplicantAccountCode());
-		cpqQuote.setApplicantAccount(billingAccount);
+		cpqQuote.setApplicantAccount(applicantAccount);
 		if(!Strings.isEmpty(quote.getContractCode())) {
 			cpqQuote.setContract(contractService.findByCode(quote.getContractCode()));
 		}
+		if(!Strings.isEmpty(quote.getBillableAccountCode())) {
+			var billableAccount = billingAccountService.findByCode(quote.getBillableAccountCode());
+			if(billableAccount == null)
+				cpqQuote.setBillableAccount(applicantAccount);
+			else
+				cpqQuote.setBillableAccount(billableAccount);
+				
+		}else
+			cpqQuote.setBillableAccount(applicantAccount);
+			
 		cpqQuote.setStatusDate(Calendar.getInstance().getTime());
 		cpqQuote.setSendDate(quote.getSendDate());
 		
@@ -212,9 +222,6 @@ public class CpqQuoteApi extends BaseApi {
 		cpqQuote.setCustomerRef(quote.getExternalId());
 		cpqQuote.setValidity(quote.getValidity());
 		cpqQuote.setDescription(quote.getDescription());
-		if(!Strings.isEmpty(quote.getBillableAccountCode())) {
-			cpqQuote.setBillableAccount(billingAccountService.findByCode(quote.getBillableAccountCode()));
-		}
 
 		cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
 		try {
@@ -271,16 +278,11 @@ public class CpqQuoteApi extends BaseApi {
 				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
 				if(productVersion == null)
 					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
-				BillingAccount productBillingAccount = billingAccountService.findByCode(quoteProductDTO.getBillableAccountCode());
-				if(productBillingAccount == null) {
-					throw new EntityDoesNotExistsException("No Billable account found four product code : " + quoteProductDTO.getProductCode());
-				}
 				QuoteProduct quoteProduct = null;
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
-				quoteProduct.setBillableAccount(productBillingAccount);
 				quoteProduct.setQuoteOffre(quoteOffer);
 				quoteProductService.create(quoteProduct);
 				newPopulateQuoteAttribute(quoteProductDTO.getQuoteAttributes(), quoteProduct);
@@ -362,8 +364,13 @@ public class CpqQuoteApi extends BaseApi {
 		quote.setStatus(quoteDto.getStatus());
 		quote.setDescription(quoteDto.getDescription());
 		if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {
-			quote.setBillableAccount(billingAccountService.findByCode(quoteDto.getBillableAccountCode()));
-		}
+			var billableAccount = billingAccountService.findByCode(quoteDto.getBillableAccountCode());
+			if(billableAccount == null)
+				quote.setBillableAccount(quote.getApplicantAccount());
+			else
+				quote.setBillableAccount(billableAccount);
+		}else
+			quote.setBillableAccount(quote.getApplicantAccount());
 
 		try {
 			cpqQuoteService.update(quote);
@@ -618,7 +625,6 @@ public class CpqQuoteApi extends BaseApi {
 		}
 		
 		q.setProductVersion(productVersion);
-		q.setBillableAccount(quoteOffer.getBillableAccount());
 		q.setQuantity(quoteProductDTO.getQuantity());
 		q.setQuoteOffre(quoteOffer);
 		if(isNew)

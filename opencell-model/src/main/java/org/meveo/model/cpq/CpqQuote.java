@@ -81,6 +81,7 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "applicant_account_id", nullable = false)
+	@NotNull
 	private BillingAccount applicantAccount;
 	
 	/**
@@ -163,7 +164,8 @@ public class CpqQuote extends BusinessEntity {
 	 * billing account invoice code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billable_account_id")
+	@JoinColumn(name = "billable_account_id", nullable = false)
+	@NotNull
 	private BillingAccount billableAccount;
 	
 

@@ -67,9 +67,6 @@ public class QuoteProductDTO extends BaseEntityDto{
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
     
-    private String billableAccountCode;
-    
-    
     public QuoteProductDTO() {
     	super();
     }
@@ -221,28 +218,4 @@ public class QuoteProductDTO extends BaseEntityDto{
 	public void setQuoteProductId(Long quoteProductId) {
 		this.quoteProductId = quoteProductId;
 	}
-
-
-	/**
-	 * @return the billableAccountCode
-	 */
-	public String getBillableAccountCode() {
-		return billableAccountCode;
-	}
-
-
-	/**
-	 * @param billableAccountCode the billableAccountCode to set
-	 */
-	public void setBillableAccountCode(String billableAccountCode) {
-		this.billableAccountCode = billableAccountCode;
-	}
-
-
-    
-    
-    
-    
-    
-   
 }
