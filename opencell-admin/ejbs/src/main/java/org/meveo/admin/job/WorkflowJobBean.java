@@ -49,6 +49,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.wf.WFTypeScript;
 import org.meveo.service.wf.WorkflowService;
 import org.slf4j.Logger;
@@ -71,6 +72,9 @@ public class WorkflowJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -82,6 +86,7 @@ public class WorkflowJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -110,6 +115,7 @@ public class WorkflowJobBean extends BaseJobBean {
             List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, null);
             log.debug("entities:" + entities.size());
             result.setNbItemsToProcess(entities.size());
+            jobExecutionService.initCounterElementsRemaining(result, entities.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(entities, nbRuns.intValue());
@@ -138,13 +144,13 @@ public class WorkflowJobBean extends BaseJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
         } catch (Exception e) {
             log.error("Failed to run workflow job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

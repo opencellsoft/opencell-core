@@ -81,6 +81,7 @@ public class RatedTransactionAsync {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, walletOperationId);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<>("OK");
     }
@@ -110,6 +111,7 @@ public class RatedTransactionAsync {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, aggregatedWo, aggregationSettings, invoicingDate);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<>("OK");
     }

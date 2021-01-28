@@ -234,11 +234,11 @@ public class FlatFileProcessing {
                 synchronized (outputFileWriter) {
                     if(nbLinesToProcess == 1) {
                         outputFileWriter.println(recordContext.getLineContent());
-                        result.registerSucces();
+                        jobExecutionService.registerError(result);
                     } else {
                         for(RecordContext rContext : recordContexts) {
                             outputFileWriter.println(rContext.getLineContent());
-                            result.registerSucces();
+                            jobExecutionService.registerError(result);
                         }                   
                     }
                 }
@@ -254,12 +254,12 @@ public class FlatFileProcessing {
                     synchronized (rejectFileWriter) {
                         rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
                     }
-                    result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                    jobExecutionService.registerError(result, "file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
                 } else if(nbLinesToProcess > 1) {
                     synchronized (rejectFileWriter) {                   
                         for(RecordContext rContext : recordContexts) {
                             rejectFileWriter.println(rContext.getLineContent());
-                            result.registerError();
+                            jobExecutionService.registerError(result);
                         }      
                     }
                     result.getErrors().add("--> " + e.getMessage());

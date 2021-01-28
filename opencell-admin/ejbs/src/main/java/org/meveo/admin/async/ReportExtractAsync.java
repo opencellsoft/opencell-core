@@ -69,6 +69,7 @@ public class ReportExtractAsync {
                 break;
             }
             unitReportExtractJobBean.execute(result, id, startDate, endDate);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<>("OK");
     }

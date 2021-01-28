@@ -42,8 +42,8 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -71,7 +71,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
     @Inject
-    private FilterService filterService;
+    protected JobExecutionService jobExecutionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -82,6 +82,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -113,6 +114,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
         result.setNbItemsToProcess(walletOperations.size());
+        jobExecutionService.initCounterElementsRemaining(result, walletOperations.size());
 
         SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
         List<Future<String>> futures = new ArrayList<>();
@@ -137,7 +139,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
-                result.registerError(cause.getMessage());
+                jobExecutionService.registerError(result, cause.getMessage());
                 result.addReport(cause.getMessage());
                 log.error("Failed to execute async method", cause);
             }
@@ -158,6 +160,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 
         log.info("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
         result.setNbItemsToProcess(aggregatedWo.size());
+        jobExecutionService.initCounterElementsRemaining(result, aggregatedWo.size());
 
         SubListCreator<AggregatedWalletOperation> subListCreator = new SubListCreator<>(aggregatedWo, nbRuns.intValue());
         List<Future<String>> asyncReturns = new ArrayList<>();

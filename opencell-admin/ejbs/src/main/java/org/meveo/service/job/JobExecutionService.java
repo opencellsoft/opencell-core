@@ -17,6 +17,7 @@
  */
 package org.meveo.service.job;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,12 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetadataBuilder;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.Tag;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -78,6 +85,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    MetricRegistry registry;
 
     /**
      * Persist job execution results.
@@ -255,7 +266,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date).setParameter("jobInstance", jobInstance).getSingleResult();
+            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date)
+                .setParameter("jobInstance", jobInstance).getSingleResult();
         }
 
         return result;
@@ -284,7 +296,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
-            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date).setParameter("jobInstance", jobInstance).executeUpdate();
+            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date)
+                .setParameter("jobInstance", jobInstance).executeUpdate();
         }
 
         log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
@@ -382,9 +395,182 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         qb.addOrderCriterionAsIs("startDate", false);
 
         List resultList = qb.getQuery(getEntityManager()).setMaxResults(1).getResultList();
-        if(resultList!=null && !resultList.isEmpty()) {
-        	return (JobExecutionResultImpl) resultList.get(0);
+        if (resultList != null && !resultList.isEmpty()) {
+            return (JobExecutionResultImpl) resultList.get(0);
         }
         return null;
+    }
+
+    /**
+     * Metric of the number of running threads of jobs
+     * 
+     * @param jobExecutionResultImpl
+     * @param value
+     * @param name the name of metric
+     */
+    public void counterRunningThreads(JobExecutionResultImpl jobExecutionResultImpl, Long value) {
+        counterInc(jobExecutionResultImpl, "running_threads", value);
+    }
+
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     * 
+     * @param jobExecutionResultImpl
+     * @param value
+     * @param name the name of metric
+     */
+    public void initCounterElementsRemaining(JobExecutionResultImpl jobExecutionResultImpl, Number value) {
+        counterInc(jobExecutionResultImpl, "elements_remaining", value.longValue());
+    }
+
+    /**
+     * Decreased elements_remaining counter for JobExecutionResultImpl
+     * 
+     * @param jobExecutionResultImpl
+     * @param name the name of metric
+     */
+    public void decCounterElementsRemaining(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "elements_remaining", -1L);
+    }
+
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     * 
+     * @param jobExecutionResultImpl
+     * @param value
+     * @param name the name of metric
+     */
+    public void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name, Long value) {
+        JobInstance jobInstance = jobExecutionResultImpl.getJobInstance();
+        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).reusable().build();
+        Tag tgName = new Tag("name", jobInstance.getCode());
+        Counter counter = registry.counter(metadata, tgName);
+
+        if (value != null) {
+            counter.inc(value);
+        } else {
+            counter.inc();
+        }
+    }
+
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     * 
+     * @param jobExecutionResultImpl
+     * @param name the name of metric
+     */
+    public void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name) {
+        counterInc(jobExecutionResultImpl, name, null);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param incrementBy
+     */
+    public void addNbItemsCorrectlyProcessed(JobExecutionResultImpl jobExecutionResultImpl, long incrementBy) {
+        jobExecutionResultImpl.addNbItemsCorrectlyProcessed(incrementBy);
+        counterNbItemsProcessed(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param incrementBy
+     */
+    public void addNbItemsProcessedWithWarning(JobExecutionResultImpl jobExecutionResultImpl, long incrementBy) {
+        jobExecutionResultImpl.addNbItemsProcessedWithWarning(incrementBy);
+        counterNbItemsProcessedWithWarning(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param incrementBy
+     */
+    public void addNbItemsProcessedWithError(JobExecutionResultImpl jobExecutionResultImpl, long incrementBy) {
+        jobExecutionResultImpl.addNbItemsProcessedWithError(incrementBy);
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     */
+    public void registerSucces(JobExecutionResultImpl jobExecutionResultImpl) {
+        jobExecutionResultImpl.registerSucces();
+        counterNbItemsProcessed(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param warning
+     */
+    public void registerWarning(JobExecutionResultImpl jobExecutionResultImpl, String warning) {
+        jobExecutionResultImpl.registerWarning(warning);
+        counterNbItemsProcessedWithWarning(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param identifier
+     * @param warning
+     */
+    public void registerWarning(JobExecutionResultImpl jobExecutionResultImpl, Serializable identifier, String warning) {
+        jobExecutionResultImpl.registerWarning(identifier, warning);
+        counterNbItemsProcessedWithWarning(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     */
+    public void registerError(JobExecutionResultImpl jobExecutionResultImpl) {
+        jobExecutionResultImpl.registerError();
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param error
+     */
+    public void registerError(JobExecutionResultImpl jobExecutionResultImpl, String error) {
+        jobExecutionResultImpl.registerError(error);
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     * 
+     * @param jobExecutionResultImpl
+     * @param identifier
+     * @param error
+     */
+    public void registerError(JobExecutionResultImpl jobExecutionResultImpl, Serializable identifier, String error) {
+        jobExecutionResultImpl.registerError(identifier, error);
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    private void counterNbItemsProcessed(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "number_of_ok");
+    }
+
+    private void counterNbItemsProcessedWithWarning(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "number_of_warn");
+    }
+
+    private void counterNbItemsProcessedWithError(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "number_of_ko");
     }
 }

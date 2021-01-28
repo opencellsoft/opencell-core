@@ -99,6 +99,7 @@ public class PaymentAsync {
 			unitPaymentJobBean.execute(result, ao.getCustomerAccount().getId(), aoIds, ao.getUnMatchingAmount().multiply(oneHundred).longValue(), createAO, matchingAO,
 					operationCategory, paymentGateway, paymentMethodType, aoFilterScript);
 
+			jobExecutionService.decCounterElementsRemaining(result);
 		}
 		return new AsyncResult<String>("OK");
 	}

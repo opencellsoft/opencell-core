@@ -81,15 +81,17 @@ public class UsageRatingAsync {
             }
             try {
                 usageRatingService.ratePostpaidUsage(edrId);
-                result.registerSucces();
+                jobExecutionService.registerError(result);
 
             } catch (Exception e) {
 
                 String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
 
                 StringBuilder aLine = new StringBuilder("Edr Id : ").append(edrId).append(" RejectReason : ").append(rejectReason);
-                result.registerError(aLine.toString());
+                jobExecutionService.registerError(result, aLine.toString());
             }
+            
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

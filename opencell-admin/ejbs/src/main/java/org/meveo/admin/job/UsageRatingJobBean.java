@@ -37,6 +37,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -59,6 +60,9 @@ public class UsageRatingJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -68,6 +72,7 @@ public class UsageRatingJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -83,6 +88,7 @@ public class UsageRatingJobBean extends BaseJobBean {
             List<Long> edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
 
             result.setNbItemsToProcess(edrIds.size());
+            jobExecutionService.initCounterElementsRemaining(result, edrIds.size());
 
             List<Future<String>> futures = new ArrayList<>();
             SubListCreator<Long> subListCreator = new SubListCreator(edrIds, nbRuns.intValue());
@@ -110,7 +116,7 @@ public class UsageRatingJobBean extends BaseJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     result.addReport(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
@@ -122,7 +128,7 @@ public class UsageRatingJobBean extends BaseJobBean {
 
         } catch (Exception e) {
             log.error("Failed to run usage rating job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             result.addReport(e.getMessage());
         }
     }

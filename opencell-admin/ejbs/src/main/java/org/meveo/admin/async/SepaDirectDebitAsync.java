@@ -103,7 +103,7 @@ public class SepaDirectDebitAsync {
 			} catch (Exception e) {
 				Log.warn("Error on launchAndForgetPaymentCreation", e);
 				if(result != null) {
-					result.registerError(e.getMessage());
+					jobExecutionService.registerError(result, e.getMessage());
 				}
 			}
 		}

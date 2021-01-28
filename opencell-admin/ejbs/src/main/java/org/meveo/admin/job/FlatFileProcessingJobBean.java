@@ -44,6 +44,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.bi.impl.FlatFileService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -79,6 +80,9 @@ public class FlatFileProcessingJobBean {
 
     @Inject
     private FlatFileService flatFileService;
+
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /**
      * Process a single file
@@ -190,7 +194,7 @@ public class FlatFileProcessingJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }

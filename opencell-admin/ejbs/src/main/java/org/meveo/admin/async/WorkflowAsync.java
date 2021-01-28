@@ -82,6 +82,7 @@ public class WorkflowAsync {
                 break;
             }
             unitWorkflowJobBean.execute(result, entity, workflow);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

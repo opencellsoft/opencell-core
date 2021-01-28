@@ -95,15 +95,16 @@ public class FiltringJobAsync {
             try {
 
                 unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);
-                result.registerSucces();
+                jobExecutionService.registerError(result);
 
             } catch (Exception e) {
 
                 jobExecutionErrorService.registerJobError(result.getJobInstance(), (Long) filtredEntity.getId(), e);
 
-                result.registerError(filtredEntity.getId(), e.getMessage());
+                jobExecutionService.registerError(result, filtredEntity.getId(), e.getMessage());
                 log.error("Failed to run script on filtered entity {}", filtredEntity.getId(), e);
             }
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

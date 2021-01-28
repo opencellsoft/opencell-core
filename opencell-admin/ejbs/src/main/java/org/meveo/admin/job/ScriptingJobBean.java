@@ -74,7 +74,7 @@ public class ScriptingJobBean extends BaseJobBean {
 			script.init(context);
 		} catch (Exception e) {
 			log.error("Exception on init script", e);
-			result.registerError("Error in " + scriptCode + " init :" + e.getMessage());
+			jobExecutionService.registerError(result, "Error in " + scriptCode + " init :" + e.getMessage());
 		}
 	}
 
@@ -129,7 +129,7 @@ public class ScriptingJobBean extends BaseJobBean {
 
 		} catch (Exception e) {
 			log.error("Exception on finalize script", e);
-			result.registerError("Error in " + scriptCode + " finalize :" + e.getMessage());
+			jobExecutionService.registerError(result, "Error in " + scriptCode + " finalize :" + e.getMessage());
 		}
 	}
 

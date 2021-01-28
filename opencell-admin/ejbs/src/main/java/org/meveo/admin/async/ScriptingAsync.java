@@ -32,6 +32,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -51,6 +52,9 @@ public class ScriptingAsync {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
+    @Inject
+    protected JobExecutionService jobExecutionService;
+    
     /**
      * 
      * @param result
@@ -73,7 +77,7 @@ public class ScriptingAsync {
             if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
                 result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
             } else {
-                result.registerSucces();
+                jobExecutionService.registerError(result);
             }
             if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
                 result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
@@ -88,7 +92,7 @@ public class ScriptingAsync {
                 result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
             }
         } catch (Exception e) {
-            result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+            jobExecutionService.registerError(result, "Error in " + scriptCode + " execution :" + e.getMessage());
         }
 
         return "OK";
@@ -107,7 +111,7 @@ public class ScriptingAsync {
 			if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
 				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
 			} else {
-				result.registerSucces();
+				jobExecutionService.registerError(result);
 			}
 			if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
 				result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
@@ -122,7 +126,7 @@ public class ScriptingAsync {
 				result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
 			}
 		} catch (Exception e) {
-			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+			jobExecutionService.registerError(result, "Error in " + scriptCode + " execution :" + e.getMessage());
 		}
 
 		return "OK";
