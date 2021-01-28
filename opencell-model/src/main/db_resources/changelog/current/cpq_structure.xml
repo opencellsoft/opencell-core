@@ -1198,14 +1198,6 @@
 
       <changeSet id="#5569_54052_20201117" author="TarikFAKHOURI">
 
-
-			<addColumn tableName="cpq_quote_product">
-	            <column name="billable_account_id" type="bigint" />
-	        </addColumn>
-	        <addForeignKeyConstraint baseColumnNames="billable_account_id" baseTableName="cpq_quote_product" constraintName="fk_billable_account_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-
-
         	<createSequence sequenceName="cpq_quote_article_line_seq" />
 
 	    	<createTable tableName="cpq_quote_article_line">
@@ -1469,8 +1461,12 @@
 	            <column name="contact_name" type="varchar(52)" />
 	            <column name="register_number" type="varchar(50)" />
 	            <column name="sales_person_name" type="varchar(52)" />
-	            <column name="billable_account_id" type="bigint" />
-	            <column name="applicant_account_id" type="bigint" />
+	            <column name="billable_account_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
+	            <column name="applicant_account_id" type="bigint" >
+	            	<constraints nullable="false"/>
+	            </column>
 	            <column name="valid_from" type="datetime" />
 	            <column name="valid_to" type="datetime" />
 	            <column name="quote_number" type="varchar(50)" />
