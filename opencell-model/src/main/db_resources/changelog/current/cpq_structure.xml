@@ -2949,6 +2949,20 @@
 								 constraintName="billing_offer_template_id_fk"
 								 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
 	</changeSet>
+	<changeSet id="#5916_20210128" author="MohammedELAZZOUZI">
+        <addColumn tableName="cpq_invoice_line">
+            <column name="order_lot_id" type="bigint"/>
+        </addColumn>
+       		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="order_lot_id"
+							 constraintName="cpq_invoice_line__order_lot__fk"
+							 referencedTableName="cpq_order_lot" referencedColumnNames="id"/>
+        <addColumn tableName="cpq_invoice_line">
+            <column name="product_version_id" type="bigint"/>
+        </addColumn>
+  		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="product_version_id"
+							 constraintName="cpq_invoice_line__product_version__fk"
+							 referencedTableName="cpq_product_version" referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
 
 
