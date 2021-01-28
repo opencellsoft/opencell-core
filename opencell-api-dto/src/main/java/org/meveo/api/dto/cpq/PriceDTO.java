@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -42,7 +43,7 @@ public class PriceDTO extends BaseEntityDto {
 	private static final long serialVersionUID = -1054495149414405858L;
 
 	
-	
+	@XmlAttribute
 	private PriceTypeEnum priceType;
 
     private BigDecimal amountWithtax;

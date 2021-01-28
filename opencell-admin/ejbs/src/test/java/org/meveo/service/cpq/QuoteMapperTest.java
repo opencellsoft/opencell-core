@@ -1,16 +1,25 @@
 package org.meveo.service.cpq;
 
-import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
+import org.meveo.api.dto.cpq.xml.ArticleLine;
+import org.meveo.api.dto.cpq.xml.QuoteLine;
+import org.meveo.api.dto.cpq.xml.BillableAccount;
+import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Header;
+import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
+import org.meveo.api.dto.cpq.xml.SubCategory;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
@@ -32,6 +41,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QuoteMapperTest {
 
 
+    private QuoteMapper quoteMapper;
+    private XmlQuoteFormatter xmlQuoteFormatter;
+
+    @Before
+    public void setUp() throws Exception {
+        quoteMapper = new QuoteMapper();
+        xmlQuoteFormatter = new XmlQuoteFormatter();
+    }
+
     @Test
     public void createQuoteVersion() {
         BillingAccount billableAccount = new BillingAccount();
@@ -41,9 +59,7 @@ public class QuoteMapperTest {
         CpqQuote quote = new CpqQuote();
         quote.setApplicantAccount(billingAccount);
 
-        QuoteLot quoteLot = new QuoteLot();
-        quoteLot.setName("LOT1");
-        quoteLot.setExecutionDate(Date.valueOf(LocalDate.of(2020, 1, 1)));
+        QuoteLot quoteLot = createQuoteLot();
 
         QuotePrice price = new QuotePrice();
         price.setUnitPriceWithoutTax(valueOf(10));
@@ -52,20 +68,13 @@ public class QuoteMapperTest {
         price.setAmountWithoutTax(valueOf(15));
         price.setTaxAmount(valueOf(3));
 
-        InvoiceCategory invoiceCategory = new InvoiceCategory();
-        invoiceCategory.setCode("INV_CAT");
+        InvoiceCategory invoiceCategory = createInvoiceCategory();
 
-        InvoiceSubCategory invoiceSubCategory = new InvoiceSubCategory();
-        invoiceSubCategory.setInvoiceCategory(invoiceCategory);
-        invoiceSubCategory.setCode("INV_SUB_CAT");
+        InvoiceSubCategory invoiceSubCategory = createInvoiceSubCategory(invoiceCategory);
 
-        AccountingArticle accountingArticle = new AccountingArticle();
-        accountingArticle.setCode("ACC_CODE");
-        accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
+        AccountingArticle accountingArticle = createAccountingArticle(invoiceSubCategory);
 
-        QuoteArticleLine line = new QuoteArticleLine();
-        line.setQuotePrices(List.of(price));
-        line.setAccountingArticle(accountingArticle);
+        QuoteArticleLine line = createQuoteArticleLine(accountingArticle, quoteLot, List.of(price));
 
         QuoteProduct quoteProduct = new QuoteProduct();
         quoteProduct.setQuoteArticleLines(List.of(line));
@@ -82,11 +91,9 @@ public class QuoteMapperTest {
 
     @Test
     public void can_map_a_quote_version_with_billable_account() {
-        BillingAccount billableAccount = createBillingAccount();
+        BillingAccount billableAccount = createBillingAccount("BA");
 
-        CpqQuote quote = new CpqQuote();
-        quote.setApplicantAccount(billableAccount);
-        quote.setBillableAccount(null);
+        CpqQuote quote = createQuote(billableAccount);
 
         QuoteVersion quoteVersion = new QuoteVersion();
         quoteVersion.setQuote(quote);
@@ -121,19 +128,126 @@ public class QuoteMapperTest {
         assertThat(billingAccount.getAddress().getState()).isNull();
     }
 
-    private BillingAccount createBillingAccount() {
+    @Test
+    public void can_serialize_quote() throws Exception {
+        BillingAccount billableAccount = createBillingAccount("BA");
+
+        CpqQuote quote = createQuote(billableAccount);
+
+        QuoteVersion quoteVersion = new QuoteVersion();
+        quoteVersion.setQuote(quote);
+
+        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion);
+
+        String xmlQuoteRepresentation = xmlQuoteFormatter.format(quoteXmlDto);
+        System.out.println(xmlQuoteRepresentation);
+    }
+
+    @Test
+    public void quote_xml_has_details() throws JAXBException {
+
+        BillingAccount billingAccount = createBillingAccount("BA");
+
+        CpqQuote quote = createQuote(billingAccount);
+
+        QuoteLot quoteLot = createQuoteLot();
+
+        QuotePrice recurring = createQuotePrice(PriceTypeEnum.RECURRING);
+        QuotePrice oneShot = createQuotePrice(PriceTypeEnum.ONE_SHOT);
+
+        InvoiceCategory invoiceCategory = createInvoiceCategory();
+
+        InvoiceSubCategory invoiceSubCategory = createInvoiceSubCategory(invoiceCategory);
+
+        AccountingArticle accountingArticle = createAccountingArticle(invoiceSubCategory);
+
+        QuoteArticleLine line = createQuoteArticleLine(accountingArticle, quoteLot, List.of(recurring, oneShot));
+
+        QuoteProduct quoteProduct = new QuoteProduct();
+        quoteProduct.setQuoteArticleLines(List.of(line));
+
+        QuoteOffer quoteOffer = new QuoteOffer();
+        quoteOffer.setBillableAccount(billingAccount);
+        quoteOffer.setQuoteLot(quoteLot);
+        quoteOffer.setQuoteProduct(List.of(quoteProduct));
+
+        QuoteVersion quoteVersion = new QuoteVersion();
+        quoteVersion.setQuote(quote);
+        quoteVersion.setQuoteOffers(List.of(quoteOffer));
+
+        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion);
+
+        assertThat(quoteXmlDto.getDetails()).isNotNull();
+        Quote quoteXml = quoteXmlDto.getDetails().getQuote();
+        assertThat(quoteXml).isNotNull();
+        assertThat(quoteXml.getQuoteNumber()).isEqualTo("10");
+        assertThat(quoteXml.getQuoteDate()).isEqualTo(Date.valueOf(LocalDate.of(2020, 1, 2)));
+        List<BillableAccount> billableAccounts = quoteXmlDto.getDetails().getQuote().getBillableAccounts();
+        assertThat(billableAccounts).isNotEmpty();
+        BillableAccount billableAccount = billableAccounts.get(0);
+        assertThat(billableAccount.getBillingAccountCode()).isEqualTo("LINE_BA");
+        assertThat(billableAccount.getQuoteLots()).isNotEmpty();
+        org.meveo.api.dto.cpq.xml.QuoteLot quoteLotXml = billableAccount.getQuoteLots().get(0);
+        assertThat(quoteLotXml.getCode()).isEqualTo("QL_CODE");
+        assertThat(quoteLotXml.getDuration()).isEqualTo(11);
+        assertThat(quoteLotXml.getName()).isEqualTo("LOT1");
+        assertThat(quoteLotXml.getExecutionDate()).isEqualTo(Date.valueOf(LocalDate.of(2020, 1, 1)));
+        Category category = quoteLotXml.getCategories().get(0);
+        assertThat(category).isNotNull();
+        assertThat(category.getCode()).isEqualTo("INV_CAT");
+        assertThat(category.getLabel()).isEqualTo("Abonnement");
+        assertThat(category.getSortIndex()).isNull();
+        SubCategory subCategory = category.getSubCategories().get(0);
+        assertThat(subCategory).isNotNull();
+        assertThat(subCategory.getCode()).isEqualTo("INV_SUB_CAT");
+        assertThat(subCategory.getLabel()).isEqualTo("Abonnement et services");
+        assertThat(subCategory.getSortIndex()).isNull();
+        assertThat(subCategory.getArticleLines()).isNotEmpty();
+        ArticleLine articleLine = subCategory.getArticleLines().get(0);
+        assertThat(articleLine.getCode()).isEqualTo("ACC_CODE");
+        assertThat(articleLine.getLabel()).isEqualTo("ART_LABEL");
+        assertThat(articleLine.getArticleCode()).isEqualTo("ACC_CODE");
+        assertThat(articleLine.getArticleLabel()).isEqualTo("ART_LABEL");
+        QuoteLine quoteLine = articleLine.getQuoteLines().get(0);
+        assertThat(quoteLine.getQuantity()).isEqualTo(valueOf(10));
+        assertThat(quoteLine.getPrices()).isNotEmpty();
+        assertThat(quoteLine.getPrices().get(0).getPriceType()).isEqualTo(PriceTypeEnum.RECURRING);
+        assertThat(quoteLine.getPrices().get(1).getPriceType()).isEqualTo(PriceTypeEnum.ONE_SHOT);
+
+        System.out.println(xmlQuoteFormatter.format(quoteXmlDto));
+    }
+
+    private QuotePrice createQuotePrice(PriceTypeEnum type) {
+        QuotePrice price = new QuotePrice();
+        price.setPriceTypeEnum(type);
+        price.setUnitPriceWithoutTax(valueOf(10));
+        price.setTaxRate(valueOf(3));
+        price.setAmountWithTax(valueOf(5));
+        price.setAmountWithoutTax(valueOf(15));
+        price.setTaxAmount(valueOf(3));
+        price.setCurrencyCode("EUR");
+        price.setPriceOverCharged(false);
+        return price;
+    }
+
+    private BillingAccount createBillingAccount(String code) {
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setCode("BC_CODE");
         BillingAccount billableAccount = new BillingAccount();
         billableAccount.setId(1L);
         billableAccount.setJobTitle("jobTitle");
-        billableAccount.setCode("BA");
+        billableAccount.setCode(code);
         billableAccount.setDescription("billing account description");
         billableAccount.setExternalRef1("external ref1");
         billableAccount.setExternalRef2("external ref2");
         billableAccount.setBillingCycle(billingCycle);
         billableAccount.setRegistrationNo("123456");
         billableAccount.setVatNo("67890");
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        Language language = new Language();
+        language.setLanguageCode("Fr");
+        tradingLanguage.setLanguage(language);
+        billableAccount.setTradingLanguage(tradingLanguage);
         Name name = new Name();
         Title title = new Title();
         title.setIsCompany(true);
@@ -153,20 +267,57 @@ public class QuoteMapperTest {
         return billableAccount;
     }
 
-    @Test
-    public void can_serialize_quote() throws Exception {
-        BillingAccount billableAccount = createBillingAccount();
-
+    private CpqQuote createQuote(BillingAccount billableAccount) {
         CpqQuote quote = new CpqQuote();
         quote.setApplicantAccount(billableAccount);
         quote.setBillableAccount(null);
+        quote.setQuoteNumber("10");
+        quote.setSendDate(Date.valueOf(LocalDate.of(2020, 1, 2)));
+        return quote;
+    }
 
-        QuoteVersion quoteVersion = new QuoteVersion();
-        quoteVersion.setQuote(quote);
+    private AccountingArticle createAccountingArticle(InvoiceSubCategory invoiceSubCategory) {
+        AccountingArticle accountingArticle = new AccountingArticle();
+        accountingArticle.setCode("ACC_CODE");
+        accountingArticle.getDescriptionI18nNotNull().put("Fr", "ART_LABEL");
+        accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
+        return accountingArticle;
+    }
 
-        QuoteXmlDto quoteXmlDto = new QuoteMapper().map(quoteVersion);
+    private InvoiceSubCategory createInvoiceSubCategory(InvoiceCategory invoiceCategory) {
+        InvoiceSubCategory invoiceSubCategory = new InvoiceSubCategory();
+        invoiceSubCategory.setInvoiceCategory(invoiceCategory);
+        invoiceSubCategory.setCode("INV_SUB_CAT");
+        invoiceSubCategory.getDescriptionI18nNullSafe().put("Fr", "Abonnement et services");
+        invoiceSubCategory.setSortIndex(null);
+        return invoiceSubCategory;
+    }
 
-        String xmlQuoteRepresentation = new XmlQuoteFormatter().format(quoteXmlDto);
-        System.out.println(xmlQuoteRepresentation);
+    private InvoiceCategory createInvoiceCategory() {
+        //getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode()
+        InvoiceCategory invoiceCategory = new InvoiceCategory();
+        invoiceCategory.setCode("INV_CAT");
+        invoiceCategory.getDescriptionI18nNullSafe().put("Fr", "Abonnement");
+        invoiceCategory.setSortIndex(null);
+        return invoiceCategory;
+    }
+
+    private QuoteLot createQuoteLot() {
+        QuoteLot quoteLot = new QuoteLot();
+        quoteLot.setCode("QL_CODE");
+        quoteLot.setName("LOT1");
+        quoteLot.setExecutionDate(Date.valueOf(LocalDate.of(2020, 1, 1)));
+        quoteLot.setDuration(11);
+        return quoteLot;
+    }
+
+    private QuoteArticleLine createQuoteArticleLine(AccountingArticle accountingArticle, QuoteLot quoteLot, List<QuotePrice> prices) {
+        QuoteArticleLine line = new QuoteArticleLine();
+        line.setQuotePrices(prices);
+        line.setAccountingArticle(accountingArticle);
+        line.setBillableAccount(createBillingAccount("LINE_BA"));
+        line.setQuantity(valueOf(10));
+        line.setQuoteLot(quoteLot);
+        return line;
     }
 }

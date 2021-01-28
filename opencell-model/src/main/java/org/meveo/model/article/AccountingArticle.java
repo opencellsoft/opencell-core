@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.HashMap;
 import java.util.Map;
 
 import static javax.persistence.CascadeType.ALL;
@@ -118,6 +119,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     }
 
     public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public Map<String, String> getDescriptionI18nNotNull() {
+        if(descriptionI18n == null)
+            descriptionI18n = new HashMap<>();
         return descriptionI18n;
     }
 
